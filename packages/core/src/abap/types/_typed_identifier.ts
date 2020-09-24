@@ -12,6 +12,7 @@ export const enum IdentifierMeta {
   ReadOnly = "read_only",
   InlineDefinition = "inline",
   BuiltIn = "built-in",
+  DDIC = "ddic",
 // todo, MethodPreferred
 // todo, Optional
 }
@@ -21,14 +22,26 @@ export class TypedIdentifier extends Identifier {
   private readonly meta: IdentifierMeta[];
   private readonly value: string | undefined;
 
-  public constructor(token: Token, filename: string, type: AbstractType, meta?: IdentifierMeta[], value?: string) {
+  public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: IdentifierMeta[]): TypedIdentifier {
+    return new TypedIdentifier(id.getToken(), id.getFilename(), type, meta);
+  }
+
+  public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType, meta?: IdentifierMeta[], value?: string) {
     super(token, filename);
-    this.type = type;
+    if (type instanceof TypedIdentifier) {
+      this.type = type.getType();
+    } else {
+      this.type = type;
+    }
     this.value = value;
     this.meta = [];
     if (meta) {
       this.meta = meta;
     }
+  }
+
+  public toText(): string {
+    return "TypedIdentifier, " + this.getName();
   }
 
   public getType(): AbstractType {
@@ -42,4 +55,5 @@ export class TypedIdentifier extends Identifier {
   public getValue() {
     return this.value;
   }
+
 }

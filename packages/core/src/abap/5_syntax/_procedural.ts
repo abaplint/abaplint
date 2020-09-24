@@ -85,7 +85,7 @@ export class Procedural {
     const ddic = new DDIC(this.reg);
 
     for (const param of definition.getParameters()) {
-      let found: AbstractType = new CharacterType(1); // fallback
+      let found: TypedIdentifier | AbstractType = new CharacterType(1); // fallback
       if (param.type) {
         found = ddic.lookup(param.type);
       }

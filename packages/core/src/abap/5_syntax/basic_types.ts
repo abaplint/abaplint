@@ -56,7 +56,7 @@ export class BasicTypes {
       } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
         type = type.getRowType();
       } else if (type === undefined) {
-        type = this.scope.getDDIC().lookupNoVoid(name);
+        type = this.scope.getDDIC().lookupNoVoid(name)?.getType();
       }
 
       // todo, this only looks up one level, reuse field_chain.ts?
@@ -96,7 +96,7 @@ export class BasicTypes {
     return type;
   }
 
-  private resolveTypeName(typeName: ExpressionNode | undefined, length?: number): AbstractType | undefined {
+  private resolveTypeName(typeName: ExpressionNode | undefined, length?: number): TypedIdentifier | AbstractType | undefined {
     if (typeName === undefined) {
       return undefined;
     }
@@ -188,7 +188,7 @@ export class BasicTypes {
     return undefined;
   }
 
-  public parseType(node: ExpressionNode | StatementNode): AbstractType | undefined {
+  public parseType(node: ExpressionNode | StatementNode): TypedIdentifier | AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
 
     let text = node.findFirstExpression(Expressions.Type)?.concatTokens().toUpperCase();
@@ -205,7 +205,7 @@ export class BasicTypes {
       text = "TYPE";
     }
 
-    let found: AbstractType | undefined = undefined;
+    let found: TypedIdentifier | AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
       const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
@@ -369,7 +369,12 @@ export class BasicTypes {
       const found = this.scope.findType(subs[0]);
       foundType = found?.getType();
       if (foundType === undefined) {
-        foundType = this.scope.getDDIC().lookupTableOrView(subs[0]);
+        const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
+        if (f instanceof TypedIdentifier) {
+          foundType = f.getType();
+        } else {
+          foundType = f;
+        }
       } else {
         this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
       }

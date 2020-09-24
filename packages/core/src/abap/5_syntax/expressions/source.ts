@@ -17,6 +17,7 @@ import {ReferenceType} from "../_reference";
 import {SwitchBody} from "./switch_body";
 import {CondBody} from "./cond_body";
 import {ConvBody} from "./conv_body";
+import {TypedIdentifier} from "../../types/_typed_identifier";
 
 export class Source {
   public runSyntax(
@@ -134,7 +135,11 @@ export class Source {
       throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
     }
 
-    return found;
+    if (found instanceof TypedIdentifier) {
+      return found.getType();
+    } else {
+      return found;
+    }
   }
 
 }

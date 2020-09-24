@@ -35,7 +35,12 @@ export class Data {
         const typeName = c.findFirstExpression(Expressions.TypeName)?.getFirstToken().getStr();
         let found = scope.findType(typeName)?.getType();
         if (found === undefined) {
-          found = scope.getDDIC().lookupTableOrView(typeName);
+          const f = scope.getDDIC().lookupTableOrView(typeName);
+          if (f instanceof TypedIdentifier) {
+            found = f.getType();
+          } else {
+            found = f;
+          }
         }
         if (found instanceof Basic.VoidType) {
           if (table === true) {

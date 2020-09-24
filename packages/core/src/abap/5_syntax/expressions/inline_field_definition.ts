@@ -9,7 +9,7 @@ import {UnknownType} from "../../types/basic/unknown_type";
 
 export class InlineFieldDefinition {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): void {
-    let type: AbstractType | undefined = undefined;
+    let type: AbstractType | TypedIdentifier | undefined = undefined;
 
     const field = node.findDirectExpression(Expressions.Field);
     if (field === undefined) {

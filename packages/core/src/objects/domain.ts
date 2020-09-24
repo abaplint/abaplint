@@ -3,6 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
+import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export class Domain extends AbstractObject {
   private parsedType: AbstractType | undefined;
@@ -23,11 +24,14 @@ export class Domain extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry): AbstractType {
+  public parseType(reg: IRegistry): TypedIdentifier {
     if (this.parsedType === undefined) {
       this.parsedType = this.parseXML(reg);
     }
-    return this.parsedType;
+    return TypedIdentifier.from(
+      this.getIdentifier()!,
+      this.parsedType,
+      [IdentifierMeta.DDIC]);
   }
 
 ///////////////

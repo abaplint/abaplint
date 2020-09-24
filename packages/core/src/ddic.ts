@@ -8,6 +8,7 @@ import * as Types from "./abap/types/basic";
 import {ABAPObject} from "./objects/_abap_object";
 import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_information";
 import {ObjectReferenceType, UnknownType, VoidType} from "./abap/types/basic";
+import {TypedIdentifier} from "./abap/types/_typed_identifier";
 
 export class DDIC {
   private readonly reg: IRegistry;
@@ -76,7 +77,7 @@ export class DDIC {
     }
   }
 
-  public lookupNoVoid(name: string): AbstractType | undefined {
+  public lookupNoVoid(name: string): TypedIdentifier | undefined {
     const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
     if (foundTABL) {
       return foundTABL.parseType(this.reg);
@@ -101,7 +102,7 @@ export class DDIC {
   }
 
   /** lookup with voiding and unknown types */
-  public lookup(name: string): AbstractType {
+  public lookup(name: string): TypedIdentifier | AbstractType {
     const found = this.lookupNoVoid(name);
     if (found) {
       return found;
@@ -114,7 +115,7 @@ export class DDIC {
     }
   }
 
-  public lookupDomain(name: string): AbstractType {
+  public lookupDomain(name: string): TypedIdentifier | AbstractType {
     const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
       return found.parseType(this.reg);
@@ -125,7 +126,7 @@ export class DDIC {
     }
   }
 
-  public lookupDataElement(name: string | undefined): AbstractType {
+  public lookupDataElement(name: string | undefined): TypedIdentifier | AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupDataElement");
     }
@@ -139,7 +140,7 @@ export class DDIC {
     }
   }
 
-  public lookupTableOrView(name: string | undefined): AbstractType {
+  public lookupTableOrView(name: string | undefined): TypedIdentifier | AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupTableOrView");
     }
@@ -150,7 +151,7 @@ export class DDIC {
     return this.lookupView(name);
   }
 
-  public lookupTable(name: string | undefined): AbstractType {
+  public lookupTable(name: string | undefined): TypedIdentifier | AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupTable");
     }
@@ -164,7 +165,7 @@ export class DDIC {
     }
   }
 
-  public lookupView(name: string | undefined): AbstractType {
+  public lookupView(name: string | undefined): TypedIdentifier | AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupView");
     }
@@ -178,7 +179,7 @@ export class DDIC {
     }
   }
 
-  public lookupTableType(name: string | undefined): AbstractType {
+  public lookupTableType(name: string | undefined): TypedIdentifier | AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupTableType");
     }
