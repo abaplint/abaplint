@@ -431,10 +431,13 @@ export class BasicTypes {
 
     const name = chain.getFirstToken().getStr();
     if (chain.getAllTokens().length === 1) {
+      if (name.toUpperCase() === "OBJECT") {
+        return new Types.GenericObjectReferenceType();
+      }
       const search = this.scope.existsObject(name);
-      if (search.found === true) {
+      if (search.found === true && search.id) {
         this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename);
-        return new Types.ObjectReferenceType(name);
+        return new Types.ObjectReferenceType(search.id);
       }
     }
 

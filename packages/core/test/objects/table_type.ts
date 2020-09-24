@@ -119,7 +119,15 @@ describe("Table Type, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
+    const abap = `CLASS zcl_foobar DEFINITION.
+    ENDCLASS.
+    CLASS zcl_foobar IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("ztest.ttyp.xml", xml1),
+      new MemoryFile("zcl_foobar.clas.abap", abap),
+    ]);
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Objects.TableType;
 

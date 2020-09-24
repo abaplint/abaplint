@@ -818,7 +818,7 @@ ENDCLASS.`;
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
-    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect(type).to.be.instanceof(Basic.GenericObjectReferenceType);
     expect(type?.isGeneric()).to.equal(true);
   });
 

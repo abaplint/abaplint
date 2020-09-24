@@ -7,6 +7,7 @@ import {TableType} from "./objects/table_type";
 import * as Types from "./abap/types/basic";
 import {ABAPObject} from "./objects/_abap_object";
 import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_information";
+import {ObjectReferenceType, UnknownType, VoidType} from "./abap/types/basic";
 
 export class DDIC {
   private readonly reg: IRegistry;
@@ -57,6 +58,22 @@ export class DDIC {
       return true;
     }
     return this.reg.inErrorNamespace(name);
+  }
+
+  public lookupObject(name: string): AbstractType {
+    const globalClas = this.reg.getObject("CLAS", name)?.getIdentifier();
+    if (globalClas) {
+      return new ObjectReferenceType(globalClas);
+    }
+    const globalIntf = this.reg.getObject("INTF", name)?.getIdentifier();
+    if (globalIntf) {
+      return new ObjectReferenceType(globalIntf);
+    }
+    if (this.inErrorNamespace(name) === true) {
+      return new UnknownType(name);
+    } else {
+      return new VoidType(name);
+    }
   }
 
   public lookupNoVoid(name: string): AbstractType | undefined {

@@ -12,7 +12,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
-import {IScopeIdentifier, DeferredType} from "./_spaghetti_scope";
+import {IScopeIdentifier} from "./_spaghetti_scope";
 import {ReferenceType, IReferenceExtras} from "./_reference";
 
 export class CurrentScope {
@@ -29,23 +29,6 @@ export class CurrentScope {
 
     return s;
   }
-
-  // dont call push() and pop() on dummy scopes
-  /*
-  public static buildDummy(sup: CurrentScope): CurrentScope {
-    const s = new CurrentScope(sup.reg);
-
-    const identifier: IScopeIdentifier = {
-      stype: ScopeType.Dummy,
-      sname: ScopeType.Dummy,
-      start: new Position(1, 1),
-      filename: "dummy"};
-
-    s.current = new SpaghettiScopeNode(identifier, sup.current);
-
-    return s;
-  }
-  */
 
   private static addBuiltIn(s: CurrentScope, extras: string[]) {
     const b = new BuiltIn();
@@ -103,11 +86,11 @@ export class CurrentScope {
     this.current?.getData().vars.push({name: identifier.getName(), identifier});
   }
 
-  public addDeferred(name: string | undefined, type: DeferredType) {
-    if (name === undefined) {
+  public addDeferred(token: Token | undefined) {
+    if (token === undefined) {
       return;
     }
-    this.current?.getData().deferred.push({name, type});
+    this.current?.getData().deferred.push(token);
   }
 
   public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {
@@ -158,13 +141,9 @@ export class CurrentScope {
       return {found: false};
     }
 
-    if (name.toUpperCase() === "OBJECT") {
-      return {found: true};
-    } else if (name.toUpperCase() === this.getName().toLocaleUpperCase()
-        && this.getType() === ScopeType.ClassDefinition) {
-      return {found: true};
-    } else if (this.current?.findDeferred(name) !== undefined) {
-      return {found: true};
+    const def = this.current?.findDeferred(name);
+    if (def !== undefined) {
+      return {found: true, id: def};
     }
 
     const findLocalClass = this.current?.findClassDefinition(name);

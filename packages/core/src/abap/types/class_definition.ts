@@ -34,6 +34,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     const def = node.findFirstStatement(Statements.ClassDefinition);
     const name = def!.findDirectExpression(Expressions.ClassName)!.getFirstToken();
     super(name, filename);
+    scope.addClassDefinition(this);
 
     this.node = node;
     this.events = [];

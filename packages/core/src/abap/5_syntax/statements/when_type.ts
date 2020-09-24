@@ -20,7 +20,7 @@ export class WhenType {
     } else if (found === undefined) {
       throw new Error("Class " + className + " not found");
     } else {
-      type = new ObjectReferenceType(className);
+      type = new ObjectReferenceType(found);
     }
 
     const inline = node?.findDirectExpression(Expressions.InlineData);

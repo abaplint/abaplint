@@ -57,7 +57,7 @@ export class MethodCallChain {
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
-          throw new Error("Method \"" + methodName + "\" not found");
+          throw new Error("Method \"" + methodName + "\" not found, methodCallChain");
         } else if (method) {
 
 
@@ -93,7 +93,7 @@ export class MethodCallChain {
         throw new Error("Class " + className + " not found");
       }
       scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, filename);
-      return new ObjectReferenceType(className);
+      return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
       return new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {

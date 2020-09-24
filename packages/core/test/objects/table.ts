@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
-import {StructureType, TableType, ObjectReferenceType, UnknownType, VoidType} from "../../src/abap/types/basic";
+import {StructureType, TableType, UnknownType, VoidType} from "../../src/abap/types/basic";
 import {Config} from "../../src/config";
 
 describe("Table, parse XML", () => {
@@ -364,7 +364,7 @@ describe("Table, parse XML", () => {
     const stru = type as StructureType;
     const components = stru.getComponents();
     expect(components.length).to.equal(1);
-    expect(components[0].type).to.be.instanceof(ObjectReferenceType);
+    expect(components[0].type).to.be.instanceof(VoidType);
   });
 
   it("TABL, parseType, .INCLUDE void", async () => {

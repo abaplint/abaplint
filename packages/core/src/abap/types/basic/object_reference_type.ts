@@ -1,10 +1,11 @@
+import {Identifier} from "../../4_file_information/_identifier";
 import {AbstractType} from "./_abstract_type";
 
 export class ObjectReferenceType implements AbstractType {
   private readonly name: string;
 
-  public constructor(name: string) {
-    this.name = name;
+  public constructor(id: Identifier) {
+    this.name = id.getName();
   }
 
   public getName() {
@@ -16,9 +17,6 @@ export class ObjectReferenceType implements AbstractType {
   }
 
   public isGeneric() {
-    if (this.name.toUpperCase() === "OBJECT") {
-      return true;
-    }
     return false;
   }
 

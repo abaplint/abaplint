@@ -22,6 +22,6 @@ export class Cast {
       throw new Error("Type \"" + typeName + "\" not found in scope, Cast");
     }
 
-    return new ObjectReferenceType(typeName);
+    return new ObjectReferenceType(found);
   }
 }

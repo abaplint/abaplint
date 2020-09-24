@@ -102,7 +102,7 @@ export class Table extends AbstractObject {
         }
         components.push({
           name: field.FIELDNAME,
-          type: new Types.ObjectReferenceType(field.ROLLNAME)});
+          type: ddic.lookupObject(field.ROLLNAME)});
       } else if (comptype === "L") {
         components.push({
           name: field.FIELDNAME,

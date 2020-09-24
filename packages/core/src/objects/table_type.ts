@@ -44,7 +44,7 @@ export class TableType extends AbstractObject {
     } else if (this.parsedXML.rowkind === "L") {
       return new Types.TableType(ddic.lookupTableType(this.parsedXML.rowtype), false);
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
-      return new Types.TableType(new Types.ObjectReferenceType(this.parsedXML.rowtype), false);
+      return new Types.TableType(ddic.lookupObject(this.parsedXML.rowtype), false);
     } else if (this.parsedXML.rowkind === "") {
       const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
       return new Types.TableType(row, false);
