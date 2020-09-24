@@ -2198,6 +2198,20 @@ WRITE bar-bar.
     expect(issues.length).to.equals(0);
   });
 
+  it("LOOP at ddic type", () => {
+    const abap = `
+    DATA lt_cache TYPE STANDARD TABLE OF ztab WITH DEFAULT KEY.
+    FIELD-SYMBOLS <ls_cache> LIKE LINE OF lt_cache.
+    LOOP AT lt_cache ASSIGNING <ls_cache>.
+      WRITE <ls_cache>-field1.
+    ENDLOOP.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("OCCURS in a BEGIN always gives header lines?", () => {
     const abap = `
 TYPES: BEGIN OF bar,

@@ -76,6 +76,15 @@ export class Table extends AbstractObject {
               name: c.name,
               type: c.type});
           }
+        } else if (found instanceof TypedIdentifier) {
+          const stru = found.getType();
+          if (stru instanceof Types.StructureType) {
+            for (const c of stru.getComponents()) {
+              components.push({
+                name: c.name,
+                type: c.type});
+            }
+          }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {
           continue;
