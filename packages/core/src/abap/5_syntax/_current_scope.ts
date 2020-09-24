@@ -136,6 +136,7 @@ export class CurrentScope {
     return undefined;
   }
 
+  // todo, found + type can be removed from method output?
   public existsObject(name: string | undefined): {found: boolean, id?: Identifier, type?: ReferenceType} {
     if (name === undefined) {
       return {found: false};
