@@ -23,8 +23,4 @@ export class VoidType implements AbstractType {
   public containsVoid() {
     return true;
   }
-
-  public getIdentifier() {
-    return undefined;
-  }
 }

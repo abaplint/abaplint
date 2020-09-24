@@ -33,8 +33,4 @@ export class TableType implements AbstractType {
   public containsVoid() {
     return this.rowType.containsVoid();
   }
-
-  public getIdentifier() {
-    return undefined;
-  }
 }

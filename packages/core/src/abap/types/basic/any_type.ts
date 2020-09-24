@@ -12,8 +12,4 @@ export class AnyType implements AbstractType {
   public containsVoid() {
     return false;
   }
-
-  public getIdentifier() {
-    return undefined;
-  }
 }

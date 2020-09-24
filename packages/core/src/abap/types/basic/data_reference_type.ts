@@ -22,8 +22,4 @@ export class DataReference implements AbstractType {
   public containsVoid() {
     return this.type.containsVoid();
   }
-
-  public getIdentifier() {
-    return undefined;
-  }
 }
