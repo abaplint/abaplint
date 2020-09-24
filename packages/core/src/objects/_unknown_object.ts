@@ -24,8 +24,9 @@ export class UnknownObject extends AbstractObject {
 
   public getParsingIssues() {
     const pos = new Position(1, 1);
-    const message = "Unknown object type, add/change filename eg zclass.clas.abap or zprogram.prog.abap";
-    const issue = Issue.atPosition(this.getFiles()[0]!, pos, message, "registry_add", Severity.Error);
+    const file = this.getFiles()[0]!;
+    const message = "Unknown object type, currently not supported in abaplint, open issue on github";
+    const issue = Issue.atPosition(file, pos, message, "registry_add", Severity.Error);
     return [issue];
   }
 

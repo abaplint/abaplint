@@ -95,4 +95,60 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("local class, one issue expected", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_bar TYPE c LENGTH 1.
+    METHODS: method1, method2.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("local class, used, method1", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_bar TYPE c LENGTH 1.
+    METHODS: method1, method2.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method1.
+    DATA foo TYPE ty_bar.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("local class, used, method2", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_bar TYPE c LENGTH 1.
+    METHODS: method1, method2.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+  METHOD method2.
+    DATA foo TYPE ty_bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -314,7 +314,7 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("PROG, no problems, interfaced interface implemented in super class", async () => {
+  it("PROG, no problems, interfaced interface implemented in super class", async () => {
     const prog = `
 INTERFACE lif_top.
   METHODS moo.

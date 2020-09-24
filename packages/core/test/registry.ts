@@ -191,6 +191,15 @@ describe("Registry, object types", () => {
     const issues = registry.findIssues();
     expect(issues.length).to.equal(1);
     expect(issues[0].getKey()).to.equal("registry_add");
+    expect(issues[0].getMessage()).to.include("not supported");
+  });
+
+  it("Unknown object type, .abap extension, file is ignored", async () => {
+    const file = new MemoryFile("zprogram.abap", "BREAK-POINT.");
+    const registry = new Registry().addFile(file);
+    const issues = registry.findIssues();
+    expect(issues.length).to.equal(0);
+    expect(registry.getObjectCount()).to.equal(0);
   });
 
   it("Unknown object type, multi files", async () => {

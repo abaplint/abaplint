@@ -1551,7 +1551,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for abstract methods and methods from interfaces which need implementing.\n\n      Note: classes are currently skipped if they have super classes\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
+              "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1859,7 +1859,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax\nhttps://rules.abaplint.org/parser_missing_space"
+              "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax, Whitespace\nhttps://rules.abaplint.org/parser_missing_space"
             },
             "prefer_inline": {
               "anyOf": [
@@ -2024,7 +2024,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/space_before_dot"
+              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace, Quickfix, Styleguide\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [

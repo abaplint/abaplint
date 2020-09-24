@@ -47,8 +47,14 @@ describe("Message rule", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("REPORT, message class not found", async () => {
+  it("REPORT, message class not found, and not in error namespace", async () => {
     const abap = "REPORT zfoobar MESSAGE-ID asdf.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("REPORT, message class not found, in error namespace", async () => {
+    const abap = "REPORT zfoobar MESSAGE-ID zasdf.";
     const issues = await run(abap);
     expect(issues.length).to.equals(1);
   });
