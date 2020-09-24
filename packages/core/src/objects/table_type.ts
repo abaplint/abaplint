@@ -3,7 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export class TableType extends AbstractObject {
   private parsedXML: {
@@ -52,7 +52,7 @@ export class TableType extends AbstractObject {
       type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName());
     }
 
-    return TypedIdentifier.from(this.getIdentifier()!, type);
+    return TypedIdentifier.from(this.getIdentifier()!, type, [IdentifierMeta.DDIC]);
   }
 
 ////////////////////

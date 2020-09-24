@@ -12,9 +12,10 @@ export class NewObject {
     const typeName = typeToken?.getStr();
     if (typeName === undefined) {
       throw new Error("NewObject, child TypeNameOrInfer not found");
+    } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
+      scope.addReference(typeToken, targetType.getIdentifier(), ReferenceType.InferredType, filename);
+      return targetType;
     } else if (typeName === "#" && targetType) {
-// tooodooo
-//      scope.addReference(typeToken, targetType.getIdentifier(), ReferenceType.InferredType, filename);
       return targetType;
     } else if (typeName === "#") {
       throw new Error("NewObject, todo, infer type");

@@ -214,4 +214,19 @@ ENDINTERFACE.`;
     expect(hover?.value).to.contain("read_only");
   });
 
+  it("Hover inferred type", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+DATA bar TYPE REF TO lcl_bar.
+bar = NEW #( ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 5, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("lcl_bar");
+  });
+
 });

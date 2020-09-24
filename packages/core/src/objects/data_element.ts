@@ -3,7 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import * as Types from "../abap/types/basic";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export class DataElement extends AbstractObject {
   private parsedXML: {
@@ -45,7 +45,7 @@ export class DataElement extends AbstractObject {
       }
     }
 
-    return TypedIdentifier.from(this.getIdentifier()!, type);
+    return TypedIdentifier.from(this.getIdentifier()!, type, [IdentifierMeta.DDIC]);
   }
 
 ////////////////////

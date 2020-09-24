@@ -3,7 +3,7 @@ import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -131,7 +131,7 @@ export class Table extends AbstractObject {
       }
     }
 
-    return TypedIdentifier.from(this.getIdentifier()!, new Types.StructureType(components));
+    return TypedIdentifier.from(this.getIdentifier()!, new Types.StructureType(components), [IdentifierMeta.DDIC]);
   }
 
   public getTableCategory(): TableCategory | undefined {
