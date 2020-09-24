@@ -13,4 +13,8 @@ export class GenericObjectReferenceType implements AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public getIdentifier() {
+    return undefined;
+  }
 }

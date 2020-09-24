@@ -13,6 +13,7 @@ export class NewObject {
     if (typeName === undefined) {
       throw new Error("NewObject, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
+      scope.addReference(typeToken, targetType.getIdentifier(), ReferenceType.InferredType, filename);
       return targetType;
     } else if (typeName === "#") {
       throw new Error("NewObject, todo, infer type");

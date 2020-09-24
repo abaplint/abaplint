@@ -14,6 +14,8 @@ export enum ReferenceType {
 
   DataReadReference = "DataReadReference",
   DataWriteReference = "DataWriteReference",
+
+  InferredType = "InferredType",
 }
 
 export interface IReferenceExtras {

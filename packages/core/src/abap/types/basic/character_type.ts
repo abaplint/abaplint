@@ -25,4 +25,8 @@ export class CharacterType implements AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public getIdentifier() {
+    return undefined;
+  }
 }

@@ -45,4 +45,8 @@ export class StructureType implements AbstractType {
   public containsVoid() {
     return this.getComponents().some(c => c.type.containsVoid());
   }
+
+  public getIdentifier() {
+    return undefined;
+  }
 }

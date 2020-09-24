@@ -116,7 +116,7 @@ export class LSPLookup {
   }
 
   private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode): string {
-    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
+    let ret = "Resolved Reference: " + ref.referenceType + " ```" + ref.resolved.getName() + "```";
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
       ret += "\n\n" + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));

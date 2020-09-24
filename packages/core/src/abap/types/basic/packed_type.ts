@@ -33,4 +33,8 @@ export class PackedType implements AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public getIdentifier() {
+    return undefined;
+  }
 }
