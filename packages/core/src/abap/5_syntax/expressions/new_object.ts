@@ -21,6 +21,10 @@ export class NewObject {
       throw new Error("NewObject, todo, infer type");
     }
 
+    for (const s of node.findAllExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
     const objDefinition = scope.findObjectDefinition(typeName);
     if (objDefinition) {
       scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
@@ -31,10 +35,6 @@ export class NewObject {
     if (type) {
       // todo: scope.addReference
       return new DataReference(type.getType());
-    }
-
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
     }
 
     if (scope.getDDIC().inErrorNamespace(typeName) === false) {
