@@ -347,4 +347,27 @@ ENDCLASS.`;
     expect(hoverVariable?.value).to.contain("Function Module");
   });
 
+  it("Hover, show method defiontion/parameters", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS name
+      IMPORTING bar        TYPE string OPTIONAL
+      RETURNING VALUE(ret) TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_bar=>name( ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 12, 12));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("name");
+    expect(hoverVariable?.value).to.contain("bar");
+    expect(hoverVariable?.value).to.contain("ret");
+  });
+
 });
