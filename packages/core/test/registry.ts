@@ -181,6 +181,16 @@ ENDINTERFACE.`;
     expect(reg.getObject("PROG", "<icon>")).to.not.equal(undefined);
   });
 
+  it("Should give errors, not crash", async () => {
+    const abap = `METHOD blah.
+DATA tree TYPE if_types=>ts_type.
+MOVE-CORRESPONDING structure TO tree.
+ENDMETHOD.`;
+    const reg = new Registry().addFile(new MemoryFile("zmethod123.prog.abap", abap));
+    const issues = reg.findIssues();
+    expect(issues.length).to.be.greaterThan(0);
+  });
+
 });
 
 describe("Registry, object types", () => {

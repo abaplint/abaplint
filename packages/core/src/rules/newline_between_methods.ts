@@ -58,7 +58,7 @@ export class NewlineBetweenMethods extends ABAPRule {
     }
     for (const statement of file.getStatements()) {
       let nextRow = statement.getStart().getRow();
-      if (!(statement.get() instanceof Statements.EndMethod) || (rows[nextRow].toUpperCase().includes("ENDCLASS."))) {
+      if (!(statement.get() instanceof Statements.EndMethod) || (rows[nextRow]?.toUpperCase().includes("ENDCLASS."))) {
         continue;
       }
       let counter = 0;

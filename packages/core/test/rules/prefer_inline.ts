@@ -181,13 +181,13 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
-  /*
+////////////////////
+
   it.skip("Types should not change when inlining", async () => {
     const issues = await findIssues(`
 DATA foo TYPE c.
 foo = |abc|.`);
     expect(issues.length).to.equal(0);
   });
-  */
 
 });
