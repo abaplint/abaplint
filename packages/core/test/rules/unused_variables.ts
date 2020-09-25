@@ -418,4 +418,18 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("move-corresponding", async () => {
+    const abap = `
+FORM foo.
+  TYPES: BEGIN OF ty_stru,
+           bar TYPE i,
+         END OF ty_stru.
+  DATA tree TYPE ty_stru.
+  DATA structure LIKE tree.
+  MOVE-CORRESPONDING structure TO tree.
+ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
