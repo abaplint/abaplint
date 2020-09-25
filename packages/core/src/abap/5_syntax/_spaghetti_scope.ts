@@ -7,7 +7,7 @@ import {IFormDefinition} from "../types/_form_definition";
 import {Position} from "../../position";
 import {Issue} from "../../issue";
 import {IReference} from "./_reference";
-import { Token } from "../1_lexer/tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 
 export interface IScopeIdentifier {
   stype: ScopeType;
