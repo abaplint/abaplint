@@ -53,6 +53,12 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-fu
 
 SET EXTENDED CHECK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm
 
+IS REQUESTED: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenlogexp_requested.htm
+
+WITH HEADER LINE: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abapdata_header_line.htm
+
+FIELD-SYMBOL STRUCTURE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapfield-symbols_obsolete_typing.htm
+
 TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
 
 LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm`,
