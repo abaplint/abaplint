@@ -1,6 +1,6 @@
 import {seq, per, opt, alt, tok, str, ver, star, Expression} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
-import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Source, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
+import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
@@ -34,7 +34,7 @@ export class SelectLoop extends Expression {
 
     const up = seq(str("UP TO"), new SQLSource(), str("ROWS"));
 
-    const pack = seq(str("PACKAGE SIZE"), new Source());
+    const pack = seq(str("PACKAGE SIZE"), new SQLSource());
 
     const from2 = seq(str("FROM"), new DatabaseTable());
 
