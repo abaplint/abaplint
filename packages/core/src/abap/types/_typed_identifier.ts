@@ -21,6 +21,7 @@ export class TypedIdentifier extends Identifier {
   private readonly type: AbstractType;
   private readonly meta: IdentifierMeta[];
   private readonly value: string | undefined;
+  private readonly typeName: string | undefined;
 
   public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: IdentifierMeta[]): TypedIdentifier {
     return new TypedIdentifier(id.getToken(), id.getFilename(), type, meta);
@@ -29,8 +30,10 @@ export class TypedIdentifier extends Identifier {
   public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType, meta?: IdentifierMeta[], value?: string) {
     super(token, filename);
     if (type instanceof TypedIdentifier) {
+      this.typeName = type.getName();
       this.type = type.getType();
     } else {
+      this.typeName = undefined;
       this.type = type;
     }
     this.value = value;
@@ -41,7 +44,11 @@ export class TypedIdentifier extends Identifier {
   }
 
   public toText(): string {
-    return "TypedIdentifier, " + this.getName();
+    return "Identifier: \"" + this.getName() + "\"";
+  }
+
+  public getTypeName(): string | undefined {
+    return this.typeName;
   }
 
   public getType(): AbstractType {

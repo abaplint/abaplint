@@ -161,6 +161,9 @@ export class BasicTypes {
 
     const ddic = this.scope.getDDIC().lookup(chainText);
     if (ddic) {
+      if (ddic instanceof TypedIdentifier) {
+        this.scope.addReference(typeName.getFirstToken(), ddic, ReferenceType.TypeReference, this.filename);
+      }
       return ddic;
     }
 

@@ -229,4 +229,34 @@ bar = NEW #( ).`;
     expect(hover?.value).to.contain("lcl_bar");
   });
 
+  it("Hover data element", () => {
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD04V>
+        <ROLLNAME>ZDDIC</ROLLNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <DATATYPE>CHAR</DATATYPE>
+        <LENG>000002</LENG>
+        <OUTPUTLEN>000002</OUTPUTLEN>
+       </DD04V>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+
+    const abap = `DATA foo TYPE zddic.`;
+    const dtel = new MemoryFile("zddic.dtel.xml", xml);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file, dtel]).parse();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 6));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("ZDDIC");
+    const hoverDDIC = new Hover(reg).find(buildPosition(file, 0, 15));
+    expect(hoverDDIC).to.not.equal(undefined);
+    expect(hoverDDIC?.value).to.contain("ddic");
+    expect(hoverDDIC?.value).to.contain("ZDDIC");
+  });
+
 });
