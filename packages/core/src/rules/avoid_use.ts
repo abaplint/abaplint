@@ -104,13 +104,15 @@ ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE`,
       }
     }
 
-    for (const s of file.getStructure()?.findAllStructures(Structures.Select) || []) {
-      const select = s.findDirectStatement(Statements.SelectLoop);
-      if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
-        continue;
+    if (this.conf.endselect) {
+      for (const s of file.getStructure()?.findAllStructures(Structures.Select) || []) {
+        const select = s.findDirectStatement(Statements.SelectLoop);
+        if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
+          continue;
+        }
+        const issue = Issue.atStatement(file, select, this.getDescription("ENDSELECT"), this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
       }
-      const issue = Issue.atStatement(file, select, this.getDescription("ENDSELECT"), this.getMetadata().key, this.conf.severity);
-      issues.push(issue);
     }
 
     return issues;
