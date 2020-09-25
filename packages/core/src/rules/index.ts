@@ -40,6 +40,7 @@ export * from "./fully_type_constants";
 export * from "./functional_writing";
 export * from "./global_class";
 export * from "./identical_conditions";
+export * from "./identical_contents";
 export * from "./identical_form_names";
 export * from "./if_in_if";
 export * from "./implement_methods";
