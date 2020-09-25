@@ -108,6 +108,7 @@ export class Normal implements IStructure {
                sta(Statements.Hide),
                sta(Statements.ImportDynpro),
                sta(Statements.ImportNametab),
+               sta(Statements.MoveCorresponding),
                sta(Statements.Import),
                sta(Statements.Infotypes),
                sta(Statements.Include), // include does not have to be at top level
