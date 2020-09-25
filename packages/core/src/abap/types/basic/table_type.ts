@@ -24,10 +24,17 @@ export class TableType implements AbstractType {
   }
 
   public toText(level: number) {
+    let extra = "";
+    let type = this.rowType;
+    if (type instanceof TypedIdentifier) {
+      extra = "\n\nType name: \"" + type.getName() + "\"";
+      type = type.getType();
+    }
+
     if (this.withHeader === true) {
-      return "Table with header of " + this.rowType.toText(level + 1);
+      return "Table with header of " + type.toText(level + 1) + extra;
     } else {
-      return "Table of " + this.rowType.toText(level + 1);
+      return "Table of " + type.toText(level + 1) + extra;
     }
   }
 

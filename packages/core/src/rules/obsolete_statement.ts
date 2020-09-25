@@ -6,6 +6,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 import {IRuleMetadata} from "./_irule";
+import {Version} from "../version";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
   /** Check for REFRESH statement */
@@ -26,12 +27,16 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public requested: boolean = true;
   /** Checks for usages of OCCURS */
   public occurs: boolean = true;
-  /** Checks for SET EXTENDED CHECK, https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm */
+  /** Checks for SET EXTENDED CHECK */
   public setExtended: boolean = true;
   /** Checks for WITH HEADER LINE */
   public withHeaderLine: boolean = true;
   /** Checks for FIELD-SYMBOL ... STRUCTURE */
   public fieldSymbolStructure: boolean = true;
+  /** Checks for TYPE-POOLS */
+  public typePools: boolean = true;
+  /** Checks for addition LOAD */
+  public load: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -43,8 +48,20 @@ export class ObsoleteStatement extends ABAPRule {
       key: "obsolete_statement",
       title: "Obsolete statements",
       shortDescription: `Checks for usages of certain obsolete statements`,
-      extendedInformation:
-      `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs`,
+      extendedInformation: `
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs
+
+SET EXTENDED CHECK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm
+
+IS REQUESTED: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenlogexp_requested.htm
+
+WITH HEADER LINE: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abapdata_header_line.htm
+
+FIELD-SYMBOL STRUCTURE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapfield-symbols_obsolete_typing.htm
+
+TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
+
+LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm`,
     };
   }
 
@@ -68,6 +85,9 @@ export class ObsoleteStatement extends ABAPRule {
           || (sta instanceof Statements.Compute && this.conf.compute)
           || (sta instanceof Statements.Add && this.conf.add)
           || (sta instanceof Statements.Subtract && this.conf.subtract)
+          || (sta instanceof Statements.TypePools && this.conf.typePools && this.reg.getConfig().getVersion() >= Version.v702)
+          || (sta instanceof Statements.ClassDefinitionLoad && this.conf.load && this.reg.getConfig().getVersion() >= Version.v702)
+          || (sta instanceof Statements.InterfaceLoad && this.conf.load && this.reg.getConfig().getVersion() >= Version.v702)
           || (sta instanceof Statements.Multiply && this.conf.multiply)
           || (sta instanceof Statements.Move && this.conf.move
           && staNode.getTokens()[0].getStr().toUpperCase() === "MOVE"

@@ -44,7 +44,7 @@ export class TypedIdentifier extends Identifier {
   }
 
   public toText(): string {
-    return "Identifier: \"" + this.getName() + "\"";
+    return "Identifier: ```" + this.getName() + "```";
   }
 
   public getTypeName(): string | undefined {

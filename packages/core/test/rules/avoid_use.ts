@@ -33,6 +33,12 @@ const tests = [
   ENDSELECT.`, cnt: 1},
   {abap: `SELECT * from mara INTO TABLE @<lt_mara> PACKAGE SIZE @lv_pack.
   ENDSELECT.`, cnt: 0},
+
+  // DESCRIBE LINES
+  {abap: `DESCRIBE TABLE foo LINES bar.`, cnt: 1},
+  {abap: `DESCRIBE TABLE foo-bar LINES bar.`, cnt: 1},
+  {abap: `describe table foo-bar lines bar.`, cnt: 1},
+  {abap: `bar = lines( foo ).`, cnt: 0},
 ];
 
 testRule(tests, AvoidUse);

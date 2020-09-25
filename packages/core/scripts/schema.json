@@ -103,7 +103,11 @@
           "type": "boolean"
         },
         "define": {
-          "description": "Detects define (macro definitions) https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm",
+          "description": "Detects DEFINE (macro definitions)",
+          "type": "boolean"
+        },
+        "describeLines": {
+          "description": "Detects DESRIBE TABLE LINES, use lines() instead",
           "type": "boolean"
         },
         "endselect": {
@@ -147,7 +151,8 @@
         "statics",
         "systemCall",
         "defaultKey",
-        "break"
+        "break",
+        "describeLines"
       ],
       "type": "object"
     },
@@ -1520,6 +1525,17 @@
               ],
               "description": "Find identical conditions in IF + CASE + WHILE etc\n\nPrerequsites: code is pretty printed with identical cAsE\nhttps://rules.abaplint.org/identical_conditions"
             },
+            "identical_contents": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalContentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find identical contents in IFs\n\nPrerequsites: code is pretty printed with identical cAsE\nhttps://rules.abaplint.org/identical_contents"
+            },
             "identical_form_names": {
               "anyOf": [
                 {
@@ -2328,6 +2344,23 @@
       "type": "object"
     },
     "IdenticalConditionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "IdenticalContentsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -3218,6 +3251,10 @@
           "description": "Checks for FIELD-SYMBOL ... STRUCTURE",
           "type": "boolean"
         },
+        "load": {
+          "description": "Checks for addition LOAD",
+          "type": "boolean"
+        },
         "move": {
           "description": "Check for MOVE statement",
           "type": "boolean"
@@ -3239,7 +3276,7 @@
           "type": "boolean"
         },
         "setExtended": {
-          "description": "Checks for SET EXTENDED CHECK, https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm",
+          "description": "Checks for SET EXTENDED CHECK",
           "type": "boolean"
         },
         "severity": {
@@ -3248,6 +3285,10 @@
         },
         "subtract": {
           "description": "Check for SUBTRACT statement",
+          "type": "boolean"
+        },
+        "typePools": {
+          "description": "Checks for TYPE-POOLS",
           "type": "boolean"
         },
         "withHeaderLine": {
@@ -3267,7 +3308,9 @@
         "occurs",
         "setExtended",
         "withHeaderLine",
-        "fieldSymbolStructure"
+        "fieldSymbolStructure",
+        "typePools",
+        "load"
       ],
       "type": "object"
     },

@@ -35,6 +35,14 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return undefined;
   }
 
+  public concatTokens(): string {
+    let concat = "";
+    for (const child of this.getChildren()) {
+      concat = concat + child.concatTokens();
+    }
+    return concat;
+  }
+
   public findDirectStatement(type: new () => IStatement): StatementNode | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof StatementNode && child.get() instanceof type) {
@@ -146,6 +154,20 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
       } else {
         ret = ret.concat(child.findAllStatementNodes());
       }
+    }
+    return ret;
+  }
+
+  public findAllStructuresRecursive(type: new () => IStructure): StructureNode[] {
+    let ret: StructureNode[] = [];
+
+    for (const child of this.getChildren()) {
+      if (child instanceof StatementNode) {
+        continue;
+      } else if (child.get() instanceof type) {
+        ret.push(child);
+      }
+      ret = ret.concat(child.findAllStructuresRecursive(type));
     }
     return ret;
   }

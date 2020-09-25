@@ -28,12 +28,10 @@ export class Hover {
     const found = LSPUtils.findCursor(this.reg, pos);
     if (found === undefined) {
       return undefined;
-    } else if (found.token instanceof Tokens.String) {
-      return {kind: LServer.MarkupKind.Markdown, value: "String"};
     } else if (found.token instanceof Tokens.StringTemplate
-        || found.token instanceof Tokens.StringTemplateBegin
-        || found.token instanceof Tokens.StringTemplateEnd
-        || found.token instanceof Tokens.StringTemplateMiddle) {
+      || found.token instanceof Tokens.StringTemplateBegin
+      || found.token instanceof Tokens.StringTemplateEnd
+      || found.token instanceof Tokens.StringTemplateMiddle) {
       return {kind: LServer.MarkupKind.Markdown, value: "String Template"};
     } else if (found.token instanceof Tokens.Comment) {
       return {kind: LServer.MarkupKind.Markdown, value: "Comment"};
@@ -42,6 +40,10 @@ export class Hover {
     const lookup = LSPLookup.lookup(found, this.reg, obj);
     if (lookup?.hover) {
       return {kind: LServer.MarkupKind.Markdown, value: lookup.hover};
+    }
+
+    if (found.token instanceof Tokens.String) {
+      return {kind: LServer.MarkupKind.Markdown, value: "String"};
     }
 
     return undefined;

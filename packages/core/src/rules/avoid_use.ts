@@ -8,9 +8,7 @@ import {TypeTable} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class AvoidUseConf extends BasicRuleConfig {
-  /** Detects define (macro definitions)
-   * https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
-  */
+  /** Detects DEFINE (macro definitions) */
   public define: boolean = true;
   /** Detects ENDSELECT */
   public endselect: boolean = true;
@@ -28,6 +26,8 @@ export class AvoidUseConf extends BasicRuleConfig {
   public defaultKey: boolean = true;
   /** Detects BREAK and BREAK-POINTS */
   public break: boolean = true;
+  /** Detects DESRIBE TABLE LINES, use lines() instead */
+  public describeLines: boolean = true;
 }
 
 export class AvoidUse extends ABAPRule {
@@ -42,7 +42,11 @@ export class AvoidUse extends ABAPRule {
       extendedInformation: `
 DEFAULT KEY: https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-default-key
 
-ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE`,
+Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
+
+ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
+
+DESRIBE TABLE LINES: use lines() instead`,
       tags: [RuleTag.Styleguide],
     };
   }
@@ -72,6 +76,11 @@ ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE`,
         message = "EXEC SQL";
       } else if (this.conf.kernelCall && statement instanceof Statements.CallKernel) {
         message = "KERNEL CALL";
+      } else if (this.conf.describeLines && statement instanceof Statements.Describe) {
+        const children = statementNode.getChildren();
+        if (children.length === 6 && children[3].getFirstToken().getStr().toUpperCase() === "LINES") {
+          message = "DESCRIBE LINES, use lines() instead";
+        }
       } else if (this.conf.systemCall && statement instanceof Statements.SystemCall) {
         message = "SYSTEM-CALL";
       } else if (this.conf.communication && statement instanceof Statements.Communication) {
