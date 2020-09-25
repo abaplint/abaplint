@@ -35,6 +35,12 @@ export class LSPLookup {
       const found = this.ABAPFileResult(inc);
       return {hover: "Include", definition: found, implementation: found};
     }
+
+    const fm = this.findFunctionModule(cursor);
+    if (fm) {
+      return {hover: "Function Module " + fm};
+    }
+
     const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(
       cursor.identifier.getStart(),
       cursor.identifier.getFilename());
@@ -241,6 +247,26 @@ export class LSPLookup {
     }
 
     return undefined;
+  }
+
+  private static findFunctionModule(found: ICursorData): string | undefined {
+    if (!(found.snode.get() instanceof Statements.CallFunction)) {
+      return undefined;
+    }
+
+    const name = found.snode.findFirstExpression(Expressions.FunctionName);
+    if (name === undefined) {
+      return undefined;
+    }
+
+    // check the cursor is at the right token
+    const token = name.getFirstToken();
+    if (token.getStart().getCol() !== found.token.getStart().getCol()
+        || token.getStart().getRow() !== found.token.getStart().getRow()) {
+      return undefined;
+    }
+
+    return token.getStr();
   }
 
   private static findInclude(found: ICursorData, reg: IRegistry): ABAPFile | undefined {

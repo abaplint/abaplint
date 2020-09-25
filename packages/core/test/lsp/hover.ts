@@ -337,4 +337,14 @@ ENDCLASS.`;
     expect(hoverVariable?.value).to.contain("ZTAB");
   });
 
+  it("Hover function module name", () => {
+    const abap = `CALL FUNCTION 'SOMETHING_SOMETHING'.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 20));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("SOMETHING");
+    expect(hoverVariable?.value).to.contain("Function Module");
+  });
+
 });
