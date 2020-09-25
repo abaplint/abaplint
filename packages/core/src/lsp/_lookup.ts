@@ -102,8 +102,8 @@ export class LSPLookup {
 
   private static dumpType(variable: TypedIdentifier): string {
     let value = variable.toText() +
-      (variable.getTypeName() ? "\nTypename: \"" + variable.getTypeName() : "\"") +
-      "\nType: " + variable.getType().toText(0);
+      (variable.getTypeName() ? "\n\nTypename: \"" + variable.getTypeName() + "\"" : "") +
+      "\n\nType: " + variable.getType().toText(0);
     if (variable.getValue()) {
       value = value + "\n\nValue: ```" + variable.getValue() + "```";
     }
