@@ -3,6 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import * as Types from "../abap/types/basic";
+import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export class DataElement extends AbstractObject {
   private parsedXML: {
@@ -28,22 +29,23 @@ export class DataElement extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry): AbstractType {
+  public parseType(reg: IRegistry): TypedIdentifier {
 // note that this might look up in the Registry, so dont cache the resulting type, only the XML
     this.parseXML();
 
+    let type: TypedIdentifier | AbstractType;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
-      return new Types.UnknownType("Data Element " + this.getName() + ", parser error");
+      type = new Types.UnknownType("Data Element " + this.getName() + ", parser error");
+    } else {
+      const ddic = new DDIC(reg);
+      if (this.parsedXML.refkind === "D" && this.parsedXML.domname) {
+        type = ddic.lookupDomain(this.parsedXML.domname);
+      } else {
+        type = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
+      }
     }
 
-    const ddic = new DDIC(reg);
-
-    if (this.parsedXML.refkind === "D" && this.parsedXML.domname) {
-      const lookup = ddic.lookupDomain(this.parsedXML.domname);
-      return lookup;
-    }
-
-    return ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
+    return TypedIdentifier.from(this.getIdentifier()!, type, [IdentifierMeta.DDIC]);
   }
 
 ////////////////////

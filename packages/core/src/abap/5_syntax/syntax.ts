@@ -236,10 +236,10 @@ export class SyntaxLogic {
     const filename = this.currentFile.getFilename();
     const stru = node.get();
     if (stru instanceof Structures.ClassDefinition) {
-      this.scope.addClassDefinition(new ClassDefinition(node, filename, this.scope));
+      new ClassDefinition(node, filename, this.scope);
       return true;
     } else if (stru instanceof Structures.Interface) {
-      this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename, this.scope));
+      new InterfaceDefinition(node, filename, this.scope);
       return true;
     } else if (stru instanceof Structures.Types) {
       this.scope.addType(new Types().runSyntax(node, this.scope, filename));

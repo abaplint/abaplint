@@ -4,7 +4,7 @@ import {Identifier} from "../4_file_information/_identifier";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
-import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope, DeferredType} from "./_spaghetti_scope";
+import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope} from "./_spaghetti_scope";
 import {ReferenceType} from "./_reference";
 
 abstract class ScopeData {
@@ -92,13 +92,13 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return {start: this.identifier.start, end};
   }
 
-  public findDeferred(name: string): DeferredType | undefined {
+  public findDeferred(name: string): Identifier | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {
       for (const d of search.getData().deferred) {
-        if (d.name.toUpperCase() === name.toUpperCase()) {
-          return d.type;
+        if (d.getStr().toUpperCase() === name.toUpperCase()) {
+          return new Identifier(d, search.identifier.filename);
         }
       }
       search = search.getParent();

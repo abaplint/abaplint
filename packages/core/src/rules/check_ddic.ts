@@ -7,6 +7,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {UnknownType, StructureType, TableType} from "../abap/types/basic";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export class CheckDDICConf extends BasicRuleConfig {
 // todo, add option to not allow any void types?
@@ -44,9 +45,9 @@ export class CheckDDIC implements IRule {
     if (obj instanceof Objects.DataElement
         || obj instanceof Objects.Domain
         || obj instanceof Objects.Table
-// todo,        || obj instanceof Objects.View
+        || obj instanceof Objects.View
         || obj instanceof Objects.TableType) {
-      found = obj.parseType(this.reg);
+      found = obj.parseType(this.reg).getType();
     } else {
       return [];
     }
@@ -64,7 +65,7 @@ export class CheckDDIC implements IRule {
     } else if (found instanceof StructureType) {
 // assumption: no circular types
       for (const c of found.getComponents()) {
-        ret = ret.concat(this.check(c.type, obj));
+        ret = ret.concat(this.check(c.type instanceof TypedIdentifier ? c.type.getType() : c.type, obj));
       }
     } else if (found instanceof TableType) {
       ret = ret.concat(this.check(found.getRowType(), obj));

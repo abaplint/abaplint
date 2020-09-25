@@ -13,10 +13,9 @@ export class Catch {
 
     if (target?.findDirectExpression(Expressions.InlineData)) {
       const token = target.findFirstExpression(Expressions.TargetField)?.getFirstToken();
-
       const found = scope.existsObject(className);
-      if (token && found.found === true && className) {
-        const identifier = new TypedIdentifier(token, filename, new ObjectReferenceType(className), [IdentifierMeta.InlineDefinition]);
+      if (token && found.found === true && className && found.id) {
+        const identifier = new TypedIdentifier(token, filename, new ObjectReferenceType(found.id), [IdentifierMeta.InlineDefinition]);
         scope.addIdentifier(identifier);
       } else if (token && scope.getDDIC().inErrorNamespace(className) === false) {
         const identifier = new TypedIdentifier(token, filename, new VoidType(className), [IdentifierMeta.InlineDefinition]);

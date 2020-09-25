@@ -16,9 +16,12 @@ import {IClassDefinition} from "../abap/types/_class_definition";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
 
 export interface LSPLookupResult {
-  hover: string | undefined;                     // in markdown
-  definition?: LServer.Location | undefined;     // used for go to definition
-  implementation?: LServer.Location | undefined; // used for go to implementation
+  /** in markdown */
+  hover: string | undefined;
+  /** used for go to definition */
+  definition?: LServer.Location | undefined;
+  /** used for go to implementation */
+  implementation?: LServer.Location | undefined;
   definitionId?: Identifier;
   scope?: ISpaghettiScopeNode;
 }
@@ -98,7 +101,9 @@ export class LSPLookup {
 ////////////////////////////////////////////
 
   private static dumpType(variable: TypedIdentifier): string {
-    let value = "Type: " + variable.getType().toText(0);
+    let value = variable.toText() +
+      (variable.getTypeName() ? "\nTypename: \"" + variable.getTypeName() : "\"") +
+      "\nType: " + variable.getType().toText(0);
     if (variable.getValue()) {
       value = value + "\n\nValue: ```" + variable.getValue() + "```";
     }
@@ -116,7 +121,7 @@ export class LSPLookup {
   }
 
   private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode): string {
-    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
+    let ret = "Resolved Reference: " + ref.referenceType + " ```" + ref.resolved.getName() + "```";
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
       ret += "\n\n" + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));

@@ -46,6 +46,7 @@ const tests = [
   ORDER BY (sdf).
   `,
 
+  `SELECT * from mara INTO TABLE @<lt_mara> PACKAGE SIZE @lv_pack.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

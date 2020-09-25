@@ -12,6 +12,9 @@ export class NewObject {
     const typeName = typeToken?.getStr();
     if (typeName === undefined) {
       throw new Error("NewObject, child TypeNameOrInfer not found");
+    } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
+      scope.addReference(typeToken, targetType.getIdentifier(), ReferenceType.InferredType, filename);
+      return targetType;
     } else if (typeName === "#" && targetType) {
       return targetType;
     } else if (typeName === "#") {
@@ -21,7 +24,7 @@ export class NewObject {
     const objDefinition = scope.findObjectDefinition(typeName);
     if (objDefinition) {
       scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
-      return new ObjectReferenceType(typeName);
+      return new ObjectReferenceType(objDefinition);
     }
 
     const type = scope.findType(typeName);

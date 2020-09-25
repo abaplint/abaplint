@@ -32,7 +32,7 @@ describe("Table Type, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Objects.TableType;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
     expect(row).to.be.instanceof(Types.UnknownType);
@@ -63,7 +63,7 @@ describe("Table Type, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Objects.TableType;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
     expect(row).to.be.instanceof(Types.CharacterType);
@@ -93,7 +93,7 @@ describe("Table Type, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Objects.TableType;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
     expect(row).to.be.instanceof(Types.StringType);
@@ -119,11 +119,19 @@ describe("Table Type, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
+    const abap = `CLASS zcl_foobar DEFINITION.
+    ENDCLASS.
+    CLASS zcl_foobar IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("ztest.ttyp.xml", xml1),
+      new MemoryFile("zcl_foobar.clas.abap", abap),
+    ]);
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Objects.TableType;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
     expect(row).to.be.instanceof(Types.ObjectReferenceType);

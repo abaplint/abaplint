@@ -13,7 +13,7 @@ export class FormParam {
     if (node.findDirectTokenByText("STRUCTURE")) {
       // STRUCTURES typing
       const typeName = node.findDirectExpression(NamespaceSimpleName)?.getFirstToken().getStr();
-      let type: AbstractType | undefined = undefined;
+      let type: AbstractType | TypedIdentifier | undefined = undefined;
       if (typeName) {
         type = scope.findType(typeName)?.getType();
         if (type === undefined) {

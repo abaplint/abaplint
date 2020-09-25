@@ -86,9 +86,9 @@ describe("View, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as View;
     expect(tabl.getName()).to.equal("ZAG_UNIT_TESTV");
-    let structure = tabl.parseType(reg);
+    const structure = tabl.parseType(reg).getType();
     expect(structure).to.be.instanceof(StructureType);
-    structure = structure as StructureType;
-    expect(structure.getComponents().length).to.equal(4);
+    const casted = structure as StructureType;
+    expect(casted.getComponents().length).to.equal(4);
   });
 });

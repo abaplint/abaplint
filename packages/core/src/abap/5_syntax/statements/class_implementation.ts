@@ -23,11 +23,11 @@ export class ClassImplementation {
 
     classDefinition.getTypeDefinitions().getAll().map((t) => scope.addType(t));
 
-    const sup = classDefinition.getSuperClass();
+    const sup = scope.findClassDefinition(classDefinition.getSuperClass());
     if (sup) {
       scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
     }
-    scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(className)));
+    scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(classDefinition)));
 
     helper.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 

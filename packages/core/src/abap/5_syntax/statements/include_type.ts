@@ -3,6 +3,7 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {IStructureComponent, StructureType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
+import {TypedIdentifier} from "../../types/_typed_identifier";
 
 export class IncludeType {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): IStructureComponent[] | VoidType {
@@ -15,7 +16,12 @@ export class IncludeType {
     const name = iname.getFirstToken().getStr();
 
     const ityp = new BasicTypes(filename, scope).parseType(iname);
-    if (ityp && ityp instanceof StructureType) {
+    if (ityp
+        && ityp instanceof TypedIdentifier
+        && ityp.getType() instanceof StructureType) {
+      const stru = ityp.getType() as StructureType;
+      components = components.concat(stru.getComponents());
+    } else if (ityp && ityp instanceof StructureType) {
       components = components.concat(ityp.getComponents());
     } else if (scope.getDDIC().inErrorNamespace(name) === false) {
       return new VoidType(name);

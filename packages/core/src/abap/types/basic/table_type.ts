@@ -1,11 +1,12 @@
+import {TypedIdentifier} from "../_typed_identifier";
 import {AbstractType} from "./_abstract_type";
 
 export class TableType implements AbstractType {
-  private readonly rowType: AbstractType;
+  private readonly rowType: TypedIdentifier | AbstractType;
   private readonly withHeader: boolean;
 
 // todo: add keys
-  public constructor(rowType: AbstractType, withHeader: boolean) {
+  public constructor(rowType: TypedIdentifier | AbstractType, withHeader: boolean) {
     this.rowType = rowType;
     this.withHeader = withHeader;
   }
@@ -15,7 +16,11 @@ export class TableType implements AbstractType {
   }
 
   public getRowType(): AbstractType {
-    return this.rowType;
+    if (this.rowType instanceof TypedIdentifier) {
+      return this.rowType.getType();
+    } else {
+      return this.rowType;
+    }
   }
 
   public toText(level: number) {
@@ -31,6 +36,10 @@ export class TableType implements AbstractType {
   }
 
   public containsVoid() {
-    return this.rowType.containsVoid();
+    if (this.rowType instanceof TypedIdentifier) {
+      return this.rowType.getType().containsVoid();
+    } else {
+      return this.rowType.containsVoid();
+    }
   }
 }

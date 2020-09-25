@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
-import {StructureType, TableType, ObjectReferenceType, UnknownType, VoidType} from "../../src/abap/types/basic";
+import {StructureType, TableType, VoidType} from "../../src/abap/types/basic";
 import {Config} from "../../src/config";
 
 describe("Table, parse XML", () => {
@@ -79,8 +79,8 @@ describe("Table, parse XML", () => {
 
     expect(tabl.getName()).to.equal("ZABAPGIT_UNIT_T2");
 
-    const fields = tabl.parseType(reg);
-    if (fields instanceof UnknownType || fields instanceof VoidType) {
+    const fields = tabl.parseType(reg).getType();
+    if (!(fields instanceof StructureType)) {
       expect.fail();
     }
     expect(fields.getComponents().length).to.equal(4);
@@ -161,8 +161,9 @@ describe("Table, parse XML", () => {
     const reg = new Registry(all).addFile(new MemoryFile("zsdfsdf.tabl.xml", xml));
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
-    expect(tabl.parseType(reg)).to.be.instanceof(StructureType);
-    const type = tabl.parseType(reg) as StructureType;
+    const typ = tabl.parseType(reg).getType();
+    expect(typ).to.be.instanceof(StructureType);
+    const type = typ as StructureType;
     expect(type.getComponents().length).to.equal(1);
   });
 
@@ -171,7 +172,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     expect(stru.getComponents().length).to.equal(4);
@@ -252,7 +253,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     const components = stru.getComponents();
@@ -315,7 +316,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     const components = stru.getComponents();
@@ -359,12 +360,12 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg);
+    const type = tabl.parseType(reg).getType();
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     const components = stru.getComponents();
     expect(components.length).to.equal(1);
-    expect(components[0].type).to.be.instanceof(ObjectReferenceType);
+    expect(components[0].type).to.be.instanceof(VoidType);
   });
 
   it("TABL, parseType, .INCLUDE void", async () => {
@@ -416,7 +417,115 @@ describe("Table, parse XML", () => {
     const tabl = reg.getFirstObject()! as Table;
 
     const type = tabl.parseType(reg);
-    expect(type).to.be.instanceof(VoidType);
+    expect(type.getType()).to.be.instanceof(VoidType);
+  });
+
+  it("expand .INCLUDEs", async () => {
+    const zabappgp_key_id = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZABAPPGP_KEY_ID</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>06</HEADLEN>
+    <SCRLEN1>06</SCRLEN1>
+    <SCRLEN2>06</SCRLEN2>
+    <SCRLEN3>06</SCRLEN3>
+    <DDTEXT>Key Id</DDTEXT>
+    <REPTEXT>Key Id</REPTEXT>
+    <SCRTEXT_S>Key Id</SCRTEXT_S>
+    <SCRTEXT_M>Key Id</SCRTEXT_M>
+    <SCRTEXT_L>Key Id</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>RAW</DATATYPE>
+    <LENG>000008</LENG>
+    <OUTPUTLEN>000016</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const zabappgp_keys_key = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZABAPPGP_KEYS_KEY</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>ZABAPPGP_KEYS Key Fields</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <TABNAME>ZABAPPGP_KEYS_KEY</TABNAME>
+     <FIELDNAME>KEY_ID</FIELDNAME>
+     <POSITION>0001</POSITION>
+     <ROLLNAME>ZABAPPGP_KEY_ID</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const zabappgp_keys = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZABAPPGP_KEYS</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <CLIDEP>X</CLIDEP>
+    <LANGDEP>X</LANGDEP>
+    <DDTEXT>abapPGP keys</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZABAPPGP_KEYS</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL1</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <TABNAME>ZABAPPGP_KEYS</TABNAME>
+     <FIELDNAME>.INCLUDE</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0002</POSITION>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <PRECFIELD>ZABAPPGP_KEYS_KEY</PRECFIELD>
+     <NOTNULL>X</NOTNULL>
+     <MASK>      S</MASK>
+     <DDTEXT>ZABAPPGP_KEYS Key Fields</DDTEXT>
+     <COMPTYPE>S</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zabappgp_keys.tabl.xml", zabappgp_keys),
+      new MemoryFile("zabappgp_key_id.dtel.xml", zabappgp_key_id),
+      new MemoryFile("zabappgp_keys_key.tabl.xml", zabappgp_keys_key),
+    ]);
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const type = tabl.parseType(reg).getType();
+    expect(type).to.be.instanceof(StructureType);
+    const stru = type as StructureType;
+    expect(stru.getComponentByName("KEY_ID")).to.not.equal(undefined);
   });
 
 });

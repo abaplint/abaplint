@@ -95,8 +95,9 @@ export class Target {
       }
       return found?.getType();
     } else if (node.get() instanceof Expressions.ClassName) {
-      if (scope.findObjectDefinition(name)) {
-        return new ObjectReferenceType(name);
+      const found = scope.findObjectDefinition(name);
+      if (found) {
+        return new ObjectReferenceType(found);
       } else if (scope.getDDIC().inErrorNamespace(name) === false) {
         return new VoidType(name);
       } else {

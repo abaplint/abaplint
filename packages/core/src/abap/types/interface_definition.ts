@@ -33,6 +33,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     const name = node.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
     super(name, filename);
+    scope.addInterfaceDefinition(this);
 
     this.node = node;
     this.events = [];
