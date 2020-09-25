@@ -103,7 +103,11 @@
           "type": "boolean"
         },
         "define": {
-          "description": "Detects define (macro definitions) https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm",
+          "description": "Detects DEFINE (macro definitions)",
+          "type": "boolean"
+        },
+        "describeLines": {
+          "description": "Detects DESRIBE TABLE LINES, use lines() instead",
           "type": "boolean"
         },
         "endselect": {
@@ -147,7 +151,8 @@
         "statics",
         "systemCall",
         "defaultKey",
-        "break"
+        "break",
+        "describeLines"
       ],
       "type": "object"
     },
@@ -1520,6 +1525,17 @@
               ],
               "description": "Find identical conditions in IF + CASE + WHILE etc\n\nPrerequsites: code is pretty printed with identical cAsE\nhttps://rules.abaplint.org/identical_conditions"
             },
+            "identical_contents": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalContentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find identical contents in IFs\n\nPrerequsites: code is pretty printed with identical cAsE\nhttps://rules.abaplint.org/identical_contents"
+            },
             "identical_form_names": {
               "anyOf": [
                 {
@@ -2328,6 +2344,23 @@
       "type": "object"
     },
     "IdenticalConditionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "IdenticalContentsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
