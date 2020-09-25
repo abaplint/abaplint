@@ -259,4 +259,20 @@ bar = NEW #( ).`;
     expect(hoverDDIC?.value).to.contain("ZDDIC");
   });
 
+  it("Hover method definition name", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+PUBLIC SECTION.
+METHODS foo.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+METHOD foo.
+ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Method");
+  });
+
 });

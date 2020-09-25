@@ -14,6 +14,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 
 export interface LSPLookupResult {
   /** in markdown */
@@ -68,14 +69,21 @@ export class LSPLookup {
     }
 
     const type = bottomScope.findType(cursor.token.getStr());
-    if (type instanceof TypedIdentifier && type.getStart().equals(cursor.token.getStart())) {
+    if (type !== undefined && type.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(type);
       const hover = "Type definition, " + cursor.token.getStr() + "\n\n" + this.dumpType(type);
       return {hover, definition: found, definitionId: type, scope: bottomScope};
     }
 
+    const method = this.findMethodDefinition(cursor, bottomScope);
+    if (method !== undefined && method.getStart().equals(cursor.token.getStart())) {
+      const found = LSPUtils.identiferToLocation(method);
+      const hover = "Method definition \"" + method.getName() + "\"";
+      return {hover, definition: found, definitionId: method, scope: bottomScope};
+    }
+
     const variable = bottomScope.findVariable(cursor.token.getStr());
-    if (variable instanceof TypedIdentifier && variable.getStart().equals(cursor.token.getStart())) {
+    if (variable !== undefined && variable.getStart().equals(cursor.token.getStart())) {
       const hover = "Variable definition\n\n" + this.dumpType(variable);
 
       let location: LServer.Location | undefined = undefined;
@@ -187,6 +195,27 @@ export class LSPLookup {
       uri: abap.getFilename(),
       range: LServer.Range.create(0, 0, 0, 0),
     };
+  }
+
+  private static findMethodDefinition(found: ICursorData, scope: ISpaghettiScopeNode): Identifier | undefined {
+    if (scope.getIdentifier().stype !== ScopeType.ClassDefinition
+        || !(found.snode.get() instanceof Statements.MethodDef)) {
+      return undefined;
+    }
+
+    const nameToken = found.snode.findFirstExpression(Expressions.MethodName)?.getFirstToken();
+    if (nameToken === undefined) {
+      return undefined;
+    }
+
+    // check the cursor is at the right token
+    if (nameToken.getStart().getCol() !== found.token.getStart().getCol()
+        || nameToken.getStart().getRow() !== found.token.getStart().getRow()) {
+      return undefined;
+    }
+
+    const def = scope.getParent()?.findClassDefinition(scope.getIdentifier().sname)?.getMethodDefinitions().getByName(nameToken.getStr());
+    return def;
   }
 
   private static findPerform(found: ICursorData, scope: ISpaghettiScopeNode): IFormDefinition | undefined {
