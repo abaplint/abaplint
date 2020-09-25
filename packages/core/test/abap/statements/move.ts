@@ -5,7 +5,6 @@ import {Version} from "../../../src/version";
 const tests = [
   "move 2 to lv_foo.",
   "move exact c_val to l_int.",
-  "MOVE-CORRESPONDING EXACT <res> TO ls_line.",
   "MOVE foo ?TO bar.",
   "MOVE '2' TO %bar.",
   "lv_foo = 2.",
@@ -35,8 +34,6 @@ const tests = [
   "rv_res = ( iv_x BIT-AND iv_y ) BIT-OR ( iv_x BIT-AND iv_z ).",
   "foo = method(\n2 ).",
   "index1 = index2 = index1 - 1.",
-  "move-corresponding ls_usbapilink to lr_usbapilink_cd->*.",
-  "MOVE-CORRESPONDING bar TO bar KEEPING TARGET LINES.",
   "lv_chunk = iv_line+<match>-offset.",
   "lv_chunk = iv_line(<match>-length).",
   "lv_chunk = iv_line+<match>-offset(<match>-length).",
@@ -243,7 +240,6 @@ const versions = [
   {abap: "et_blah = VALUE #( field = 2 ( id = c_bac ) ( id = c_gen ) ).", ver: Version.v740sp02},
   {abap: "foo = EXACT #( blah ).", ver: Version.v740sp02},
   {abap: "DATA(lv_end_date) = CONV zcreated( ms_periods-end_d ) + 235959.", ver: Version.v740sp02},
-  {abap: "MOVE-CORRESPONDING gt_input TO gt_output EXPANDING NESTED TABLES KEEPING TARGET LINES.", ver: Version.v740sp05},
   {abap: "target[] = FILTER #( lt_tab[] IN lt_tab2[] WHERE field = var ).", ver: Version.v740sp08},
   {abap: "lt_result = CORRESPONDING table_type( lt_input DISCARDING DUPLICATES ).", ver: Version.v751},
   {abap: "DATA(result) = REDUCE string(\n" +

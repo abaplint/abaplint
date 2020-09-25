@@ -1,4 +1,5 @@
 import * as Statements from "../abap/2_statements/statements";
+import * as Structures from "../abap/3_structures/structures";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
@@ -11,7 +12,7 @@ export class AvoidUseConf extends BasicRuleConfig {
    * https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
   */
   public define: boolean = true;
-  /** Detects endselect */
+  /** Detects ENDSELECT */
   public endselect: boolean = true;
   /** Detects execSQL (dynamic SQL) */
   public execSQL: boolean = true;
@@ -38,7 +39,10 @@ export class AvoidUse extends ABAPRule {
       key: "avoid_use",
       title: "Avoid use of certain statements",
       shortDescription: `Detects usage of certain statements.`,
-      extendedInformation: `DEFAULT KEY: https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-default-key`,
+      extendedInformation: `
+DEFAULT KEY: https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-default-key
+
+ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE`,
       tags: [RuleTag.Styleguide],
     };
   }
@@ -58,13 +62,12 @@ export class AvoidUse extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
     let isStaticsBlock: boolean = false;
+
     for (const statementNode of file.getStatements()) {
       const statement = statementNode.get();
       let message: string | undefined = undefined;
       if (this.conf.define && statement instanceof Statements.Define) {
         message = "DEFINE";
-      } else if (this.conf.endselect && statement instanceof Statements.EndSelect) {
-        message = "ENDSELECT";
       } else if (this.conf.execSQL && statement instanceof Statements.ExecSQL) {
         message = "EXEC SQL";
       } else if (this.conf.kernelCall && statement instanceof Statements.CallKernel) {
@@ -99,7 +102,17 @@ export class AvoidUse extends ABAPRule {
           issues.push(issue);
         }
       }
+    }
 
+    if (this.conf.endselect) {
+      for (const s of file.getStructure()?.findAllStructures(Structures.Select) || []) {
+        const select = s.findDirectStatement(Statements.SelectLoop);
+        if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
+          continue;
+        }
+        const issue = Issue.atStatement(file, select, this.getDescription("ENDSELECT"), this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
     }
 
     return issues;

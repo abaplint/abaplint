@@ -126,6 +126,7 @@ export * from "./define";
 export * from "./enddefine";
 export * from "./find";
 export * from "./move";
+export * from "./move_corresponding";
 export * from "./get_time";
 export * from "./enhancement_point";
 export * from "./enhancement_section";

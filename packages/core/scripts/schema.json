@@ -107,7 +107,7 @@
           "type": "boolean"
         },
         "endselect": {
-          "description": "Detects endselect",
+          "description": "Detects ENDSELECT",
           "type": "boolean"
         },
         "exclude": {
@@ -1894,6 +1894,17 @@
               ],
               "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nTags: Styleguide\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
+            "prefer_xsdbool": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferXsdboolConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer xsdbool over boolc\nTags: Styleguide, Upport, Quickfix\nhttps://rules.abaplint.org/prefer_xsdbool"
+            },
             "preferred_compare_operator": {
               "anyOf": [
                 {
@@ -3336,6 +3347,23 @@
       "type": "object"
     },
     "PreferReturningToExportingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferXsdboolConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

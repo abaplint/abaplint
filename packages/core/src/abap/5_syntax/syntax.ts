@@ -37,6 +37,7 @@ import {Call} from "./statements/call";
 import {ClassImplementation} from "./statements/class_implementation";
 import {MethodImplementation} from "./statements/method_implementation";
 import {Move} from "./statements/move";
+import {MoveCorresponding} from "./statements/move_corresponding";
 import {Catch} from "./statements/catch";
 import {Loop} from "./statements/loop";
 import {ReadTable} from "./statements/read_table";
@@ -403,6 +404,8 @@ export class SyntaxLogic {
       new SelectLoop().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Write) {
       new Write().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.MoveCorresponding) {
+      new MoveCorresponding().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.AuthorityCheck) {
       new AuthorityCheck().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.InsertReport) {
