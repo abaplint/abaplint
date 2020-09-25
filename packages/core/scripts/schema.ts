@@ -75,6 +75,7 @@ import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
+import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
@@ -187,6 +188,7 @@ export interface IConfig {
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
+    "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,

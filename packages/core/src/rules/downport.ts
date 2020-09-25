@@ -28,7 +28,11 @@ Much like the 'commented_code' rule this rule loops through unknown statements a
 a higher level language version. If successful, various rules are applied to downport the statement.
 
 Current rules:
-* NEW transformed to CREATE OBJECT
+* NEW transformed to CREATE OBJECT, opposite of https://rules.abaplint.org/use_new/
+
+Future rules, todo:
+* outline, opposite of https://rules.abaplint.org/prefer_inline/
+* boolc, opposite of https://rules.abaplint.org/prefer_xsdbool/
 
 The target version is the overall target version set in the main configuration file as syntax.version
 
