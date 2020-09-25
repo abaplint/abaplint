@@ -45,6 +45,19 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("Dont inline MOVE-CORRESPONDING", async () => {
+    const issues = await findIssues(`
+FORM foo.
+  TYPES: BEGIN OF ty_stru,
+           bar TYPE i,
+         END OF ty_stru.
+  DATA tree TYPE ty_stru.
+  DATA structure LIKE tree.
+  MOVE-CORRESPONDING structure TO tree.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Defined outside FORM", async () => {
     const issues = await findIssues(`
 DATA moo TYPE i.
