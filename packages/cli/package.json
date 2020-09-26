@@ -1,7 +1,7 @@
 {
     "name": "@abaplint/cli",
     "version": "2.51.0",
-    "description": "Command Line Interface",
+    "description": "abaplint - Command Line Interface",
     "bin": {
         "abaplint": "./abaplint"
     },
