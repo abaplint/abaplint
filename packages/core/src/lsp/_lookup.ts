@@ -15,7 +15,8 @@ import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {Class} from "../objects";
+import {Class, Interface} from "../objects";
+import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 
 export interface LSPLookupResult {
   /** in markdown */
@@ -139,11 +140,16 @@ export class LSPLookup {
     let ret = "Resolved Reference: " + ref.referenceType + " ```" + ref.resolved.getName() + "```";
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
-      let cdef = scope.findClassDefinition(ref.extra.className);
+      let cdef: IClassDefinition | IInterfaceDefinition | undefined = scope.findClassDefinition(ref.extra.className);
+      if (cdef === undefined) {
+        cdef = scope.findInterfaceDefinition(ref.extra.className);
+      }
       if (cdef === undefined) {
         cdef = (reg.getObject("CLAS", ref.extra.className) as Class | undefined)?.getDefinition();
       }
-      // todo, interfaces??
+      if (cdef === undefined) {
+        cdef = (reg.getObject("INTF", ref.extra.className) as Interface | undefined)?.getDefinition();
+      }
 
       ret += "\n\n" + this.hoverMethod(ref.position.getName(), cdef);
     } else if (ref.resolved instanceof TypedIdentifier) {
@@ -157,32 +163,49 @@ export class LSPLookup {
     return ret;
   }
 
-  private static hoverMethod(method: string, cdef: IClassDefinition | undefined): string {
-    if (cdef === undefined) {
+  private static hoverMethod(method: string, def: IClassDefinition | IInterfaceDefinition | undefined): string {
+    if (def === undefined) {
       return "class not found";
     }
 
-    const mdef = cdef.getMethodDefinitions().getByName(method);
+    const mdef = def.getMethodDefinitions().getByName(method);
     if (mdef === undefined) {
       return "method not found in definition";
     }
 
     let ret = "";
-    for (const p of mdef.getParameters().getImporting()) {
-      ret = ret + "IMPORTING: " + p.getName() + " TYPE " + p.getType().toText(0) + "\n\n";
+    if (mdef.getParameters().getImporting().length > 0) {
+      ret += "IMPORTING\n";
+      for (const p of mdef.getParameters().getImporting()) {
+        ret += this.singleParameter(p);
+      }
     }
-    for (const p of mdef.getParameters().getExporting()) {
-      ret = ret + "EXPORTING: " + p.getName() + " TYPE " + p.getType().toText(0) + "\n\n";
+    if (mdef.getParameters().getExporting().length > 0) {
+      ret += "EXPORTING\n";
+      for (const p of mdef.getParameters().getExporting()) {
+        ret += this.singleParameter(p);
+      }
     }
-    for (const p of mdef.getParameters().getChanging()) {
-      ret = ret + "CHANGING: " + p.getName() + " TYPE " + p.getType().toText(0) + "\n\n";
+    if (mdef.getParameters().getChanging().length > 0) {
+      ret += "CHANGING\n";
+      for (const p of mdef.getParameters().getChanging()) {
+        ret += this.singleParameter(p);
+      }
     }
     const r = mdef.getParameters().getReturning();
     if (r) {
-      ret = ret + "RETURNING: " + r.getName() + " TYPE " + r.getType().toText(0) + "\n\n";
+      ret += this.singleParameter(r);
     }
 
     return ret;
+  }
+
+  private static singleParameter(p: TypedIdentifier): string {
+    let extra = p.getMeta().join(", ");
+    if (extra !== "") {
+      extra = ", Meta: " + extra;
+    }
+    return "* " + p.getName() + " TYPE " + p.getType().toText(0) + extra + "\n\n";
   }
 
   private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference | undefined {

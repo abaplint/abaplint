@@ -104,6 +104,7 @@ import {SelectLoop} from "./statements/select_loop";
 import {Check} from "./statements/check";
 import {LogPoint} from "./statements/log_point";
 import {Severity} from "../../severity";
+import {RaiseEvent} from "./statements/raise_event";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -416,6 +417,8 @@ export class SyntaxLogic {
       new Ranges().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Add) {
       new Add().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.RaiseEvent) {
+      new RaiseEvent().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Subtract) {
       new Subtract().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.AddCorresponding) {

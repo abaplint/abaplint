@@ -370,4 +370,17 @@ START-OF-SELECTION.
     expect(hoverVariable?.value).to.contain("ret");
   });
 
+  it("Hover, show method defiontion/parameters, interface", () => {
+    const abap = `INTERFACE lif_bar.
+  METHODS name RETURNING VALUE(val) TYPE i.
+ENDINTERFACE.
+DATA bar TYPE REF TO lif_bar.
+bar->name( ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 4, 7));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("val");
+  });
+
 });

@@ -432,4 +432,26 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("RAISE EVENT", async () => {
+    const abap = `
+  DATA lv_action TYPE string.
+  RAISE EVENT foobar
+    EXPORTING
+      action = lv_action.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("NEW", async () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+  DATA lv_action TYPE string.
+  NEW lcl_bar( lv_action ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
