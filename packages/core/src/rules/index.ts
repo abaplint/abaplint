@@ -6,6 +6,7 @@ export * from "./ambiguous_statement";
 export * from "./avoid_use";
 export * from "./begin_end_names";
 export * from "./begin_single_include";
+export * from "./call_transaction_authority_check";
 export * from "./chain_mainly_declarations";
 export * from "./check_abstract";
 export * from "./check_comments";

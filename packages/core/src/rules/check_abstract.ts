@@ -47,7 +47,7 @@ export class CheckAbstract extends ABAPRule {
 
     for (const classDef of file.getInfo().listClassDefinitions()) {
       if (classDef.isAbstract === true) {
-        if (classDef.isFinal === true) {
+        if (classDef.isFinal === true && classDef.isForTesting === false) {
           issues.push(Issue.atIdentifier(
             classDef.identifier,
             this.getDescription(IssueType.AbstractAndFinal, classDef.name),

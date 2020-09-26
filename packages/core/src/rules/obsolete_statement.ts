@@ -31,7 +31,7 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public setExtended: boolean = true;
   /** Checks for WITH HEADER LINE */
   public withHeaderLine: boolean = true;
-  /** Checks for FIELD-SYMBOL ... STRUCTURE */
+  /** Checks for FIELD-SYMBOLS ... STRUCTURE */
   public fieldSymbolStructure: boolean = true;
   /** Checks for TYPE-POOLS */
   public typePools: boolean = true;
@@ -57,7 +57,7 @@ IS REQUESTED: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenlog
 
 WITH HEADER LINE: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abapdata_header_line.htm
 
-FIELD-SYMBOL STRUCTURE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapfield-symbols_obsolete_typing.htm
+FIELD-SYMBOLS STRUCTURE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapfield-symbols_obsolete_typing.htm
 
 TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
 
@@ -149,7 +149,7 @@ LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en
       if (this.conf.fieldSymbolStructure && sta instanceof Statements.FieldSymbol){
         const token = staNode.findDirectTokenByText("STRUCTURE");
         if (token) {
-          const issue = Issue.atToken(file, token, "FIELD-SYMBOL ... STRUCTURE is obsolete", this.getMetadata().key, this.conf.severity);
+          const issue = Issue.atToken(file, token, "FIELD-SYMBOLS ... STRUCTURE is obsolete", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }

@@ -43,6 +43,11 @@ const tests = [
               METHODS:
                 normal_method.
           ENDCLASS.`, cnt: 0},
+  {abap: `CLASS lcl_abc DEFINITION ABSTRACT FINAL FOR TESTING.
+          PUBLIC SECTION.
+            METHODS:
+              normal_method.
+        ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, CheckAbstract);
