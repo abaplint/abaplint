@@ -190,6 +190,23 @@
       },
       "type": "object"
     },
+    "CallTransactionAuthorityCheckConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ChainMainlyDeclarationsConf": {
       "additionalProperties": false,
       "properties": {
@@ -1150,6 +1167,17 @@
                 }
               ],
               "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nhttps://rules.abaplint.org/begin_single_include"
+            },
+            "call_transaction_authority_check": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CallTransactionAuthorityCheckConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -3054,7 +3082,7 @@
         },
         "logic": {
           "$ref": "#/definitions/NewlineLogic",
-          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\n\nLess: the required number of newlines has to be less than \"newlineAmount\""
+          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\r \r Less: the required number of newlines has to be less than \"newlineAmount\""
         },
         "severity": {
           "$ref": "#/definitions/Severity",
@@ -3646,7 +3674,7 @@
           "type": "array"
         },
         "lines": {
-          "description": "An equal or higher number of sequential blank lines will trigger a violation. Example: if lines = 3, a maximum of 2 is allowed.",
+          "description": "An equal or higher number of sequential blank lines will trigger a violation.\r Example: if lines = 3, a maximum of 2 is allowed.",
           "type": "number"
         },
         "severity": {
@@ -3702,7 +3730,7 @@
           "type": "array"
         },
         "length": {
-          "description": "The smallest number of WHEN branches which will trigger a violation. Example: if length = 1, at least 2 branches are required",
+          "description": "The smallest number of WHEN branches which will trigger a violation.\r Example: if length = 1, at least 2 branches are required",
           "type": "number"
         },
         "severity": {
