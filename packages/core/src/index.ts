@@ -36,11 +36,12 @@ import {ISpaghettiScope, ISpaghettiScopeNode} from "./abap/5_syntax/_spaghetti_s
 import {Empty, Unknown, Comment} from "./abap/2_statements/statements/_statement";
 import {applyEditSingle, applyEditList, IEdit} from "./edit_helper";
 import {IClassDefinition} from "./abap/types/_class_definition";
+import {ReferenceType} from "./abap/5_syntax/_reference";
 
 // do not include this file from anywhere within abaplint
 
 // file used to build typings, index.d.ts
-export {MemoryFile, Issue, Config, Version,
+export {MemoryFile, Issue, Config, Version, ReferenceType,
   Registry, LanguageServer, MethodLengthStats, IProgress,
   Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
