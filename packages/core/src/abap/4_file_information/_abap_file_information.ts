@@ -36,6 +36,7 @@ export interface InfoMethodDefinition {
 // todo, level, Instance or Static
   isRedefinition: boolean,
   isEventHandler: boolean,
+  isForTesting: boolean,
   isAbstract: boolean,
   visibility: Visibility,
   parameters: InfoMethodParameter[],
