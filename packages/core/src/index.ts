@@ -37,6 +37,7 @@ import {Empty, Unknown, Comment} from "./abap/2_statements/statements/_statement
 import {applyEditSingle, applyEditList, IEdit} from "./edit_helper";
 import {IClassDefinition} from "./abap/types/_class_definition";
 import {ReferenceType} from "./abap/5_syntax/_reference";
+import {IObject} from "./objects/_iobject";
 
 // do not include this file from anywhere within abaplint
 
@@ -46,7 +47,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment,
-  IClassDefinition, IMethodLengthResult, VirtualPosition,
+  IClassDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
