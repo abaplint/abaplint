@@ -194,7 +194,7 @@ export class LSPLookup {
     }
     const r = mdef.getParameters().getReturning();
     if (r) {
-      ret += this.singleParameter(r);
+      ret += "RETURNING\n" + this.singleParameter(r);
     }
 
     return ret;
