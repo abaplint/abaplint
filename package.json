@@ -21,7 +21,7 @@
     "mocha": {
         "recursive": true,
         "reporter": "progress",
-        "spec": "build/test/**/*.js",
+        "spec": "packages/*/build/test/**/*.js",
         "require": "source-map-support/register"
     },
     "author": "Lars Hvam Petersen",
