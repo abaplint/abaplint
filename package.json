@@ -18,6 +18,12 @@
         "link:monaco-into-playground": "cd web/playground && npm link @abaplint/monaco",
         "unlink-local": "cd web/playground && npm unlink --no-save @abaplint/monaco && npm unlink --no-save @abaplint/core && npm install && cd ../../packages/cli && npm unlink --no-save @abaplint/core && npm install && cd ../monaco && npm unlink --no-save @abaplint/core && npm install"
     },
+    "mocha": {
+        "recursive": true,
+        "reporter": "progress",
+        "spec": "build/test/**/*.js",
+        "require": "source-map-support/register"
+    },
     "author": "Lars Hvam Petersen",
     "license": "MIT",
     "homepage": "https://abaplint.org",
@@ -27,6 +33,9 @@
         "eslint": "^7.10.0",
         "eslint-plugin-import": "^2.22.1",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-        "typescript": "^4.0.3"
+        "typescript": "^4.0.3",
+        "chai": "^4.2.0",
+        "xml-js": "^1.6.11",
+        "vscode-languageserver-types": "^3.15.1"
     }
 }
