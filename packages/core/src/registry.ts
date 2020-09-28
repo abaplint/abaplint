@@ -117,7 +117,7 @@ export class Registry implements IRegistry {
     return this.conf;
   }
 
-// assumption: Config is immutable, and can only be changed via this method
+  // assumption: Config is immutable, and can only be changed via this method
   public setConfig(conf: IConfiguration): IRegistry {
     for (const obj of this.getObjects()) {
       obj.setDirty();
@@ -213,7 +213,12 @@ export class Registry implements IRegistry {
     this.issues = [];
     for (const o of this.getObjects()) {
       this.parsePrivate(o);
-      this.issues = this.issues.concat(o.getParsingIssues());
+      const parsingIssues = o.getParsingIssues();
+      const parsingIssuesWithoutGlobalExclude = this.withoutGloballyExcludedFiles(
+        parsingIssues.slice(),
+        this.conf.getGlobal().exclude ?? []);
+
+      this.issues = this.issues.concat(parsingIssuesWithoutGlobalExclude);
     }
     new FindGlobalDefinitions(this).run();
 
@@ -232,7 +237,12 @@ export class Registry implements IRegistry {
     for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
-      this.issues = this.issues.concat(o.getParsingIssues());
+      const parsingIssues = o.getParsingIssues();
+      const parsingIssuesWithoutGlobalExclude = this.withoutGloballyExcludedFiles(
+        parsingIssues.slice(),
+        this.conf.getGlobal().exclude ?? []);
+
+      this.issues = this.issues.concat(parsingIssuesWithoutGlobalExclude);
     }
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
@@ -242,16 +252,39 @@ export class Registry implements IRegistry {
     return this;
   }
 
-//////////////////////////////////////////
+  //////////////////////////////////////////
 
   // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
       const before = Date.now();
-      input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
+      const config = this.getConfig();
+      input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros, config.getGlobal().exclude);
       const runtime = Date.now() - before;
       ParsingPerformance.push(input, runtime);
     }
+  }
+
+  private withoutGloballyExcludedFiles(issues: Issue[], globalExclude: string[]): Issue[] {
+
+    if (!globalExclude || globalExclude.length === 0) {
+      return issues;
+    }
+
+    const globalExcludePatterns = (globalExclude).map(pattern => new RegExp(pattern, "i"));
+    const afterExclude: Issue[] = [];
+
+    for (const issue of issues) {
+      for (const exclude of globalExcludePatterns) {
+        if (exclude.exec(issue.getFilename())) {
+          continue;
+        } else {
+          afterExclude.push(issue);
+        }
+      }
+    }
+
+    return afterExclude;
   }
 
   private isDirty(): boolean {
@@ -311,7 +344,7 @@ export class Registry implements IRegistry {
       for (const p in rulePerformance) {
         perf.push({name: p, time: rulePerformance[p]});
       }
-      perf.sort((a, b) => { return b.time - a.time; });
+      perf.sort((a, b) => {return b.time - a.time;});
       for (const p of perf) {
         process.stderr.write("\t" + p.time + "ms\t" + p.name + "\n");
       }
@@ -401,7 +434,7 @@ export class Registry implements IRegistry {
     const searchName = name.toUpperCase();
 
     if (this.objects[searchName] !== undefined
-        && this.objects[searchName][searchType]) {
+      && this.objects[searchName][searchType]) {
       return this.objects[searchName][searchType];
     }
 

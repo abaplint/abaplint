@@ -21,7 +21,7 @@ export interface IObject extends IArtifact {
   isDirty(): boolean;
 
   /** returns true if the object was parsed, false if no changes since last parse */
-  parse(version?: Version, globalMacros?: readonly string[]): IParseResult;
+  parse(version?: Version, globalMacros?: readonly string[], globalExclude?: readonly string[]): IParseResult;
   getParsingIssues(): readonly Issue[];
 
   getFiles(): readonly IFile[];

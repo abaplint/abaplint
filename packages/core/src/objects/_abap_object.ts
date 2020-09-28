@@ -5,6 +5,7 @@ import {ABAPParser} from "../abap/abap_parser";
 import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {IParseResult} from "./_iobject";
+import {IFile} from "..";
 
 export interface ITextElement {
   key: string;
@@ -24,16 +25,18 @@ export abstract class ABAPObject extends AbstractObject {
     this.texts = undefined;
   }
 
-  public static is(x: any): x is ABAPObject{
+  public static is(x: any): x is ABAPObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros: readonly string[] | undefined): IParseResult {
+  public parse(version: Version, globalMacros?: readonly string[], globalExclude?: readonly string[]): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
     }
 
-    const abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
+    let abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
+    abapFiles = this.withoutGloballyExcluded(globalExclude ?? [], abapFiles);
+
     const result = new ABAPParser(version, globalMacros).parse(abapFiles);
 
     this.parsed = result.output;
@@ -41,6 +44,28 @@ export abstract class ABAPObject extends AbstractObject {
     this.dirty = false;
 
     return {updated: true, runtime: result.runtime};
+  }
+
+  private withoutGloballyExcluded(globalExclude: readonly string[], files: IFile[]): IFile[] {
+
+    if (!globalExclude || globalExclude.length === 0) {
+      return files;
+    }
+
+    const globalExcludePatterns = (globalExclude).map(pattern => new RegExp(pattern, "i"));
+    const afterExclude: IFile[] = [];
+
+    for (const file of files) {
+      for (const exclude of globalExcludePatterns) {
+        if (exclude.exec(file.getFilename())) {
+          continue;
+        } else {
+          afterExclude.push(file);
+        }
+      }
+    }
+
+    return afterExclude;
   }
 
   public setDirty(): void {
@@ -100,7 +125,8 @@ export abstract class ABAPObject extends AbstractObject {
         }
         this.texts.push({
           key: t.KEY._text,
-          text: t.ENTRY ? t.ENTRY._text : ""});
+          text: t.ENTRY ? t.ENTRY._text : "",
+        });
       }
     }
   }
