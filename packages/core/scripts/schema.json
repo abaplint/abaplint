@@ -2180,6 +2180,17 @@
               ],
               "description": "Checks for unreachable code.\nhttps://rules.abaplint.org/unreachable_code"
             },
+            "unused_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unused methods\nTags: Experimental\nhttps://rules.abaplint.org/unused_methods"
+            },
             "unused_types": {
               "anyOf": [
                 {
@@ -3915,6 +3926,23 @@
       "type": "object"
     },
     "UnreachableCodeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UnusedMethodsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
