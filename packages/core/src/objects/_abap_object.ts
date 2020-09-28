@@ -6,6 +6,7 @@ import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {IParseResult} from "./_iobject";
 import {IFile} from "..";
+import {ExcludeHelper} from "../utils/excludeHelper";
 
 export interface ITextElement {
   key: string;
@@ -56,12 +57,9 @@ export abstract class ABAPObject extends AbstractObject {
     const afterExclude: IFile[] = [];
 
     for (const file of files) {
-      for (const exclude of globalExcludePatterns) {
-        if (exclude.exec(file.getFilename())) {
-          continue;
-        } else {
-          afterExclude.push(file);
-        }
+
+      if (!ExcludeHelper.isExcluded(file.getFilename(), globalExcludePatterns)) {
+        afterExclude.push(file);
       }
     }
 

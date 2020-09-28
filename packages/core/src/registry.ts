@@ -10,6 +10,7 @@ import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
 import {SyntaxLogic} from "./abap/5_syntax/syntax";
+import {ExcludeHelper} from "./utils/excludeHelper";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -275,12 +276,8 @@ export class Registry implements IRegistry {
     const afterExclude: Issue[] = [];
 
     for (const issue of issues) {
-      for (const exclude of globalExcludePatterns) {
-        if (exclude.exec(issue.getFilename())) {
-          continue;
-        } else {
-          afterExclude.push(issue);
-        }
+      if (!ExcludeHelper.isExcluded(issue.getFilename(), globalExcludePatterns)) {
+        afterExclude.push(issue);
       }
     }
 
@@ -356,12 +353,13 @@ export class Registry implements IRegistry {
   private excludeIssues(issues: Issue[]): Issue[] {
 
     const ret: Issue[] = issues;
-    const globalExclude = this.conf.getGlobal().exclude ?? [];
+    const globalExcludePatterns = (this.conf.getGlobal().exclude ?? []).map(x => new RegExp(x, "i"));
 
     // exclude issues, as now we know both the filename and issue key
     for (const rule of ArtifactsRules.getRules()) {
       const key = rule.getMetadata().key;
-      const ruleExclude: string[] = this.conf.readByKey(key, "exclude") ?? [];
+      const ruleExclude: string[] = (this.conf.readByKey(key, "exclude") ?? []);
+      const ruleExcludePatterns = ruleExclude.map(x => new RegExp(x, "i"));
 
       for (let i = ret.length - 1; i >= 0; i--) {
 
@@ -369,24 +367,10 @@ export class Registry implements IRegistry {
           continue;
         }
 
-        let remove = false;
-        for (const globalExcl of globalExclude) {
-          if (new RegExp(globalExcl, "i").exec(ret[i].getFilename())) {
-            remove = true;
-            break;
-          }
-        }
+        const filename = ret[i].getFilename();
 
-        if (!remove) {
-          for (const excl of ruleExclude) {
-            if (new RegExp(excl, "i").exec(ret[i].getFilename())) {
-              remove = true;
-              break;
-            }
-          }
-        }
-
-        if (remove) {
+        if (ExcludeHelper.isExcluded(filename, globalExcludePatterns)
+          || ExcludeHelper.isExcluded(filename, ruleExcludePatterns)) {
           ret.splice(i, 1);
         }
       }
