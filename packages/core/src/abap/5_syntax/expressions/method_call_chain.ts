@@ -49,7 +49,7 @@ export class MethodCallChain {
         if (method === undefined) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
           if (method) {
-            scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename, {className: className});
+            scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename);
           }
         } else {
           scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, {className: className});

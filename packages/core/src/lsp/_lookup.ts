@@ -194,7 +194,7 @@ export class LSPLookup {
     }
     const r = mdef.getParameters().getReturning();
     if (r) {
-      ret += this.singleParameter(r);
+      ret += "RETURNING\n" + this.singleParameter(r);
     }
 
     return ret;
@@ -203,9 +203,9 @@ export class LSPLookup {
   private static singleParameter(p: TypedIdentifier): string {
     let extra = p.getMeta().join(", ");
     if (extra !== "") {
-      extra = ", Meta: " + extra;
+      extra = "(Meta: " + extra + ")";
     }
-    return "* " + p.getName() + " TYPE " + p.getType().toText(0) + extra + "\n\n";
+    return "* " + p.getName() + extra + " TYPE " + p.getType().toText(1) + "\n\n";
   }
 
   private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference | undefined {

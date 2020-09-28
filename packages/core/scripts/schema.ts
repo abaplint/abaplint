@@ -99,6 +99,7 @@ import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
+import {UnusedMethodsConf} from "../src/rules/unused_methods";
 import {UnusedTypesConf} from "../src/rules/unused_types";
 import {UnusedVariablesConf} from "../src/rules/unused_variables";
 import {UseBoolExpressionConf} from "../src/rules/use_bool_expression";
@@ -214,6 +215,7 @@ export interface IConfig {
     "types_naming"?: TypesNamingConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
+    "unused_methods"?: UnusedMethodsConf | boolean,
     "unused_types"?: UnusedTypesConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,
     "use_bool_expression"?: UseBoolExpressionConf | boolean,

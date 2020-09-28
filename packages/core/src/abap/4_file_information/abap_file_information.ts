@@ -178,7 +178,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         }
       }
 
-      const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
+      const partial = node.concatTokens().toUpperCase().includes(" PARTIALLY IMPLEMENTED");
       const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
       ret.push({
         name,
@@ -274,6 +274,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         name: methodName.getStr(),
         identifier: new Identifier(methodName, this.filename),
         isRedefinition: def.findFirstExpression(Expressions.Redefinition) !== undefined,
+        isForTesting: def.concatTokens().includes(" FOR TESTING"),
         isAbstract: def.findFirstExpression(Expressions.Abstract) !== undefined,
         isEventHandler: node.findFirstExpression(Expressions.EventHandler) !== undefined,
         visibility,

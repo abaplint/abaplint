@@ -98,6 +98,7 @@ export * from "./type_form_parameters";
 export * from "./types_naming";
 export * from "./unknown_types";
 export * from "./unreachable_code";
+export * from "./unused_methods";
 export * from "./unused_types";
 export * from "./unused_variables";
 export * from "./use_bool_expression";

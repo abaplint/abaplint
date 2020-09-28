@@ -162,7 +162,7 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Statements.Constant) {
           const found = new ConstantStatement().runSyntax(c, scope, this.filename);
           if (found) {
-            this.constants.push(new ClassConstant(found, visibility, "todo"));
+            this.constants.push(new ClassConstant(found, visibility, found.getValue() || "todo, constant value fallback"));
             scope.addIdentifier(found);
           }
         }
