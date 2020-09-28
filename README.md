@@ -30,5 +30,3 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 ### Debugging
 
 The [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer) extension will give you an overview of tests as well as codelens above each test to run/debug.
-
-Note that the root folder contains multiple packages and for this to work seamlessly you should open one of the subpackage folders and work from there.
