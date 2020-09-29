@@ -17,6 +17,8 @@ import {IEventDefinition} from "./_event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {IAliases} from "./_aliases";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
+import {IImplementing} from "./_interface_definition";
+import {ReferenceType} from "../5_syntax/_reference";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
@@ -25,6 +27,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly attributes: Attributes;
   private readonly events: IEventDefinition[];
   private readonly superClass: string | undefined;
+  private readonly implementing: IImplementing[];
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -38,11 +41,14 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     this.node = node;
     this.events = [];
+    this.implementing = [];
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
 
     const token = def?.findDirectExpression(SuperClassName);
     this.superClass = token?.getFirstToken().getStr();
+
+    this.parse(filename, scope);
 
     const helper = new ObjectOriented(scope);
     helper.fromSuperClass(this);
@@ -54,9 +60,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
     const events = this.node.findAllStatements(Statements.Events);
     for (const e of events) {
-      // todo, all these are not Public
-      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope));
+      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope)); // todo, all these are not Public
     }
+
     scope.pop();
   }
 
@@ -88,14 +94,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return this.node.findFirstExpression(Expressions.ClassFinal) !== undefined;
   }
 
-  public getImplementing(): {name: string, partial: boolean}[] {
-    const ret: {name: string, partial: boolean}[] = [];
-    for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
-      const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
-      const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
-      ret.push({name, partial});
-    }
-    return ret;
+  public getImplementing(): readonly IImplementing[] {
+    return this.implementing;
   }
 
   public getAliases(): IAliases {
@@ -117,5 +117,24 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   public getEvents() {
   }
 */
+
+  ///////////////////
+
+  private parse(filename: string, scope: CurrentScope) {
+    for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
+      const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
+      const token = node.findFirstExpression(Expressions.InterfaceName)?.getFirstToken();
+      if (token === undefined) {
+        throw new Error("ClassDefinition, unable to find interface token");
+      }
+      const name = token.getStr().toUpperCase();
+      this.implementing.push({name, partial});
+
+      const intf = scope.findInterfaceDefinition(name);
+      if (intf) {
+        scope.addReference(token, intf, ReferenceType.ObjectOrientedReference, filename);
+      }
+    }
+  }
 
 }

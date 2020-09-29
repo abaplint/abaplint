@@ -9,4 +9,5 @@ export interface IMethodDefinition extends Identifier {
   isStatic(): boolean;
   isEventHandler(): boolean;
   getParameters(): IMethodParameters;
+  getRaising(): readonly string[];
 }

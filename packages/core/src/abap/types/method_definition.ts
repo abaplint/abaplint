@@ -6,6 +6,7 @@ import {Visibility} from "../4_file_information/visibility";
 import {Identifier} from "../4_file_information/_identifier";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IMethodDefinition} from "./_method_definition";
+import {ReferenceType} from "../5_syntax/_reference";
 
 export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly visibility: Visibility;
@@ -14,6 +15,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly eventHandler: boolean;
   private readonly abstract: boolean;
   private readonly static: boolean;
+  private readonly raising: string[];
 
 // todo: final
 
@@ -25,6 +27,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
+
     super(found.getFirstToken(), filename);
 
     this.redefinition = false;
@@ -46,6 +49,17 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     // checks for "CLASS-METHODS"
     if (node.getFirstToken().getStr().toUpperCase().startsWith("CLASS")) {
       this.static = true;
+    }
+
+    this.raising = [];
+    for (const r of node.findDirectExpression(Expressions.MethodDefRaising)?.findAllExpressions(Expressions.ClassName) || []) {
+      const token = r.getFirstToken();
+      const name = token.getStr();
+      this.raising.push(name);
+      const clas = scope.findClassDefinition(name);
+      if (clas) {
+        scope.addReference(token, clas, ReferenceType.ObjectOrientedReference, filename);
+      }
     }
 
     this.visibility = visibility;
@@ -74,6 +88,10 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
   public getParameters(): MethodParameters {
     return this.parameters;
+  }
+
+  public getRaising(): readonly string[] {
+    return this.raising;
   }
 
 }

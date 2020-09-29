@@ -5,7 +5,7 @@ export class ClassConstant extends TypedIdentifier {
   private readonly visibility: Visibility;
 
   public constructor(id: TypedIdentifier, visibility: Visibility, value: string) {
-    super(id.getToken(), id.getFilename(), id.getType(), [IdentifierMeta.ReadOnly], value);
+    super(id.getToken(), id.getFilename(), id.getType(), [IdentifierMeta.ReadOnly, IdentifierMeta.Static], value);
     this.visibility = visibility;
   }
 
