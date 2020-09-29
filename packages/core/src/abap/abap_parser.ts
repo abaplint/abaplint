@@ -13,6 +13,7 @@ export interface IABAPParserResult {
   output: readonly ABAPFile[],
   /** runtime in milliseconds */
   runtime: number,
+  runtimeExtra: {lexing: number, statements: number, structure: number},
 }
 
 export class ABAPParser {
@@ -32,12 +33,17 @@ export class ABAPParser {
     const start = new Date().getMilliseconds();
 
 // 1: lexing
+    const b1 = Date.now();
     const lexerResult: readonly ILexerResult[] = files.map(f => Lexer.run(f));
+    const lexingRuntime = Date.now() - b1;
 
 // 2: statements
+    const b2 = Date.now();
     const statementResult = new StatementParser(this.version).run(lexerResult, this.globalMacros);
+    const statementsRuntime = Date.now() - b2;
 
 // 3: structures
+    const b3 = Date.now();
     for (const f of statementResult) {
       const result = StructureParser.run(f);
 
@@ -47,10 +53,15 @@ export class ABAPParser {
       output.push(new ABAPFile(f.file, f.tokens, f.statements, result.node, info));
       issues = issues.concat(result.issues);
     }
+    const structuresRuntime = Date.now() - b3;
 
     const end = new Date().getMilliseconds();
 
-    return {issues, output, runtime: end - start};
+    return {issues,
+      output,
+      runtime: end - start,
+      runtimeExtra: {lexing: lexingRuntime, statements: statementsRuntime, structure: structuresRuntime},
+    };
   }
 
 }

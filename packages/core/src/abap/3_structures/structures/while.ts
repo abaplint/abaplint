@@ -8,7 +8,7 @@ export class While implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.While),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndWhile));
   }
 

@@ -8,7 +8,7 @@ export class CatchSystemExceptions implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.CatchSystemExceptions),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndCatch));
   }
 

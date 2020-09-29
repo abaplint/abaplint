@@ -7,7 +7,7 @@ import {Normal, OnChange} from ".";
 export class Loop implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const body = alt(sub(new Normal()), sub(new OnChange()));
+    const body = alt(sub(Normal), sub(OnChange));
 
     return beginEnd(sta(Statements.Loop),
                     star(body),

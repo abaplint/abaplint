@@ -9,7 +9,7 @@ export class Case implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.Case),
-                    star(alt(sub(new When()), sta(MacroCall), sta(Statements.Include))),
+                    star(alt(sub(When), sta(MacroCall), sta(Statements.Include))),
                     sta(Statements.EndCase));
   }
 

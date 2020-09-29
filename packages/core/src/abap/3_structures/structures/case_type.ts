@@ -8,7 +8,7 @@ export class CaseType implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.CaseType),
-                    star(sub(new WhenType())),
+                    star(sub(WhenType)),
                     sta(Statements.EndCase));
   }
 

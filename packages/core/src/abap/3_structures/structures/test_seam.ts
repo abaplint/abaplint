@@ -8,7 +8,7 @@ export class TestSeam implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.TestSeam),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndTestSeam));
   }
 

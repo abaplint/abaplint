@@ -10,7 +10,7 @@ export class FunctionModule implements IStructure {
     const body = alt(sta(Statements.Tables),
                      sta(Statements.TypePools),
                      sta(Statements.Ranges),
-                     sub(new Normal()));
+                     sub(Normal));
 
     return beginEnd(sta(Statements.FunctionModule),
                     star(body),

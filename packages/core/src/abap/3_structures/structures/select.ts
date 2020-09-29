@@ -8,7 +8,7 @@ export class Select implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.SelectLoop),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndSelect));
   }
 
