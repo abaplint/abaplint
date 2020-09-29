@@ -1,4 +1,4 @@
-import {IObject} from "./objects/_iobject";
+import {IObject, IParseResult} from "./objects/_iobject";
 import {IFile} from "./files/_ifile";
 import {Config} from "./config";
 import {Issue} from "./issue";
@@ -13,21 +13,29 @@ import {SyntaxLogic} from "./abap/5_syntax/syntax";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
-  private static results: {runtime: number, name: string}[];
+  private static results: {runtime: number, name: string, extra: string}[];
 
   public static clear() {
     this.results = [];
   }
 
-  public static push(obj: IObject, runtime: number): void {
-    if (runtime < 100) {
+  public static push(obj: IObject, result: IParseResult): void {
+    if (result.runtime < 100) {
       return;
     }
     if (this.results === undefined) {
       this.results = [];
     }
 
-    this.results.push({runtime, name: obj.getType() + " " + obj.getName()});
+    const extra = `\t(lexing: ${result.runtimeExtra?.lexing
+    }ms, statements: ${result.runtimeExtra?.statements
+    }ms, structure: ${result.runtimeExtra?.structure}ms)`;
+
+    this.results.push({
+      runtime: result.runtime,
+      extra,
+      name: obj.getType() + " " + obj.getName(),
+    });
   }
 
   public static output() {
@@ -40,7 +48,7 @@ class ParsingPerformance {
       if (row === undefined) {
         break;
       }
-      process.stderr.write("\t" + row.runtime + "ms\t" + row.name + "\n");
+      process.stderr.write(`\t${row.runtime}ms\t${row.name} ${row.extra}\n`);
     }
   }
 }
@@ -247,10 +255,8 @@ export class Registry implements IRegistry {
   // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
-      const before = Date.now();
-      input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
-      const runtime = Date.now() - before;
-      ParsingPerformance.push(input, runtime);
+      const result = input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
+      ParsingPerformance.push(input, result);
     }
   }
 

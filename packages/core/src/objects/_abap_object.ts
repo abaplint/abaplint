@@ -40,7 +40,7 @@ export abstract class ABAPObject extends AbstractObject {
     this.old = result.issues;
     this.dirty = false;
 
-    return {updated: true, runtime: result.runtime};
+    return {updated: true, runtime: result.runtime, runtimeExtra: result.runtimeExtra};
   }
 
   public setDirty(): void {
