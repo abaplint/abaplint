@@ -244,12 +244,7 @@ export class Registry implements IRegistry {
     this.issues = [];
     for (const o of this.getObjects()) {
       this.parsePrivate(o);
-      const parsingIssues = o.getParsingIssues();
-      const parsingIssuesWithoutGlobalExclude = this.withoutGloballyExcludedFiles(
-        parsingIssues.slice(),
-        this.conf.getGlobal().exclude ?? []);
-
-      this.issues = this.issues.concat(parsingIssuesWithoutGlobalExclude);
+      this.issues = this.issues.concat(o.getParsingIssues());
     }
     new FindGlobalDefinitions(this).run();
 
@@ -268,12 +263,7 @@ export class Registry implements IRegistry {
     for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
-      const parsingIssues = o.getParsingIssues();
-      const parsingIssuesWithoutGlobalExclude = this.withoutGloballyExcludedFiles(
-        parsingIssues.slice(),
-        this.conf.getGlobal().exclude ?? []);
-
-      this.issues = this.issues.concat(parsingIssuesWithoutGlobalExclude);
+      this.issues = this.issues.concat(o.getParsingIssues());
     }
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
@@ -292,24 +282,6 @@ export class Registry implements IRegistry {
       const result = input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros);
       ParsingPerformance.push(input, result);
     }
-  }
-
-  private withoutGloballyExcludedFiles(issues: Issue[], globalExclude: string[]): Issue[] {
-
-    if (!globalExclude || globalExclude.length === 0) {
-      return issues;
-    }
-
-    const globalExcludePatterns = (globalExclude).map(pattern => new RegExp(pattern, "i"));
-    const afterExclude: Issue[] = [];
-
-    for (const issue of issues) {
-      if (!ExcludeHelper.isExcluded(issue.getFilename(), globalExcludePatterns)) {
-        afterExclude.push(issue);
-      }
-    }
-
-    return afterExclude;
   }
 
   private isDirty(): boolean {
