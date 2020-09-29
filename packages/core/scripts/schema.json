@@ -1529,7 +1529,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of call method when functional style calls can be used.\nTags: Styleguide\nhttps://rules.abaplint.org/functional_writing"
+              "description": "Detects usage of call method when functional style calls can be used.\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/functional_writing"
             },
             "global_class": {
               "anyOf": [
@@ -3093,7 +3093,7 @@
         },
         "logic": {
           "$ref": "#/definitions/NewlineLogic",
-          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\n\nLess: the required number of newlines has to be less than \"newlineAmount\""
+          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\r\n\r\nLess: the required number of newlines has to be less than \"newlineAmount\""
         },
         "severity": {
           "$ref": "#/definitions/Severity",
@@ -3685,7 +3685,7 @@
           "type": "array"
         },
         "lines": {
-          "description": "An equal or higher number of sequential blank lines will trigger a violation. Example: if lines = 3, a maximum of 2 is allowed.",
+          "description": "An equal or higher number of sequential blank lines will trigger a violation.\r\nExample: if lines = 3, a maximum of 2 is allowed.",
           "type": "number"
         },
         "severity": {
@@ -3741,7 +3741,7 @@
           "type": "array"
         },
         "length": {
-          "description": "The smallest number of WHEN branches which will trigger a violation. Example: if length = 1, at least 2 branches are required",
+          "description": "The smallest number of WHEN branches which will trigger a violation.\r\nExample: if length = 1, at least 2 branches are required",
           "type": "number"
         },
         "severity": {

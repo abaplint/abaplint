@@ -8,7 +8,7 @@ export class Interface implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     const intf = beginEnd(sta(Statements.Interface),
-                          star(sub(new SectionContents())),
+                          star(sub(SectionContents)),
                           sta(Statements.EndInterface));
 
     return seq(star(sta(Statements.TypePools)),

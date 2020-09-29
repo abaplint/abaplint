@@ -6,6 +6,6 @@ import {IStructureRunnable} from "./_structure_runnable";
 
 export class ProtectedSection implements IStructure {
   public getMatcher(): IStructureRunnable {
-    return seq(sta(Statements.Protected), opt(sub(new SectionContents())));
+    return seq(sta(Statements.Protected), opt(sub(SectionContents)));
   }
 }

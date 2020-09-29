@@ -71,10 +71,10 @@ function runExpectFail(abap: string, text: string, version?: Version | undefined
   });
 }
 
-export function structureType(cas: {abap: string}[], expected: IStructure): void {
+export function structureType(cases: {abap: string, only?: boolean}[], expected: IStructure): void {
   describe("Structure type", () => {
-    cas.forEach((c: {abap: string}) => {
-      it(c.abap, () => {
+    cases.forEach(c => {
+      const callback = () => {
         const file = parse(c.abap);
         const statements = file.getStatements();
         const length = statements.length;
@@ -84,7 +84,13 @@ export function structureType(cas: {abap: string}[], expected: IStructure): void
         expect(length).to.equal(statements.length);
         expect(match.error).to.equal(false);
         expect(match.matched.length).to.equal(length);
-      });
+      };
+
+      if (c.only === true) {
+        it.only(c.abap, callback);
+      } else {
+        it(c.abap, callback);
+      }
     });
   });
 }

@@ -11,6 +11,7 @@ interface IArtifact {
 export interface IParseResult {
   updated: boolean,
   runtime: number,
+  runtimeExtra?: {lexing: number, statements: number, structure: number},
 }
 
 export interface IObject extends IArtifact {

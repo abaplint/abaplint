@@ -8,9 +8,9 @@ import {IStructureRunnable} from "./_structure_runnable";
 export class Try implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const normal = star(sub(new Normal()));
+    const normal = star(sub(Normal));
     const cleanup = seq(sta(Statements.Cleanup), normal);
-    const block = seq(normal, star(sub(new Catch())), opt(cleanup));
+    const block = seq(normal, star(sub(Catch)), opt(cleanup));
 
     return beginEnd(sta(Statements.Try),
                     block,
