@@ -383,4 +383,41 @@ bar->name( ).`;
     expect(hoverVariable?.value).to.contain("val");
   });
 
+  it("Hover, INTERFACES", () => {
+    const abap = `INTERFACE lif.
+ENDINTERFACE.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 4, 16));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("lif");
+  });
+
+  it("Hover, exception name", () => {
+    const abap = `CLASS lcx_error DEFINITION.
+ENDCLASS.
+CLASS lcx_error IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar RAISING lcx_error.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 6, 25));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("lcx_error");
+  });
+
 });

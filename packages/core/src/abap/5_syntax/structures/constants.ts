@@ -35,6 +35,6 @@ export class Constants {
       return undefined;
     }
 
-    return new TypedIdentifier(name, filename, new Basic.StructureType(components), [IdentifierMeta.ReadOnly]);
+    return new TypedIdentifier(name, filename, new Basic.StructureType(components), [IdentifierMeta.ReadOnly, IdentifierMeta.Static]);
   }
 }

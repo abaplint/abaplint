@@ -180,21 +180,31 @@ export class LSPLookup {
         ret += this.singleParameter(p);
       }
     }
+
     if (mdef.getParameters().getExporting().length > 0) {
       ret += "EXPORTING\n";
       for (const p of mdef.getParameters().getExporting()) {
         ret += this.singleParameter(p);
       }
     }
+
     if (mdef.getParameters().getChanging().length > 0) {
       ret += "CHANGING\n";
       for (const p of mdef.getParameters().getChanging()) {
         ret += this.singleParameter(p);
       }
     }
+
     const r = mdef.getParameters().getReturning();
     if (r) {
       ret += "RETURNING\n" + this.singleParameter(r);
+    }
+
+    if (mdef.getRaising().length > 0) {
+      ret += "RAISING\n";
+      for (const p of mdef.getRaising()) {
+        ret += "* " + p;
+      }
     }
 
     return ret;
