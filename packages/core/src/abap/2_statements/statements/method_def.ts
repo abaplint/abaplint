@@ -10,9 +10,9 @@ export class MethodDef implements IStatement {
 
     const exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
-    const def = ver(Version.v740sp08, seq(str("DEFAULT"), alt(str("FAIL"), str("IGNORE"))));
+    const def = ver(Version.v740sp08, seq(str("DEFAULT"), altPrio(str("FAIL"), str("IGNORE"))));
 
-    const parameters = seq(optPrio(alt(new Abstract(), str("FINAL"), str("FOR TESTING"), def)),
+    const parameters = seq(optPrio(altPrio(new Abstract(), str("FINAL"), str("FOR TESTING"), def)),
                            optPrio(new MethodDefImporting()),
                            optPrio(new MethodDefExporting()),
                            optPrio(new MethodDefChanging()),

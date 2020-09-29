@@ -9,9 +9,9 @@ export class WhenType implements IStatement {
   public getMatcher(): IStatementRunnable {
     const into = seq(str("INTO"), new InlineData());
 
-    const type = seq(str("TYPE"), new ClassName(), optPrio(into));
+    const type = seq(new ClassName(), optPrio(into));
 
-    return ver(Version.v750, seq(str("WHEN"), type));
+    return ver(Version.v750, seq(str("WHEN TYPE"), type));
   }
 
 }
