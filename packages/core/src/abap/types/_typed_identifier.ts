@@ -20,15 +20,16 @@ export const enum IdentifierMeta {
 
 export class TypedIdentifier extends Identifier {
   private readonly type: AbstractType;
-  private readonly meta: IdentifierMeta[];
+  private readonly meta: readonly IdentifierMeta[];
   private readonly value: string | undefined;
   private readonly typeName: string | undefined;
 
-  public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: IdentifierMeta[]): TypedIdentifier {
+  public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: readonly IdentifierMeta[]): TypedIdentifier {
     return new TypedIdentifier(id.getToken(), id.getFilename(), type, meta);
   }
 
-  public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType, meta?: IdentifierMeta[], value?: string) {
+  public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType,
+                     meta?: readonly IdentifierMeta[], value?: string) {
     super(token, filename);
     if (type instanceof TypedIdentifier) {
       this.typeName = type.getName();
