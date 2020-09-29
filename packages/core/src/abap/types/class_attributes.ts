@@ -129,13 +129,13 @@ export class Attributes implements IAttributes {
         if (ctyp instanceof Structures.Data) {
           const found = new DataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.instance.push(new ClassAttribute(found, visibility));
+            this.instance.push(new ClassAttribute(found, visibility, found.getMeta()));
             scope.addIdentifier(found);
           }
         } else if (ctyp instanceof Structures.ClassData) {
           const found = new ClassDataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.static.push(new ClassAttribute(found, visibility));
+            this.static.push(new ClassAttribute(found, visibility, found.getMeta()));
             scope.addIdentifier(found);
           }
         } else if (ctyp instanceof Structures.Constants) {
@@ -187,7 +187,7 @@ export class Attributes implements IAttributes {
 
     scope.addIdentifier(found);
 
-    return new ClassAttribute(found, visibility);
+    return new ClassAttribute(found, visibility, found.getMeta());
   }
 
 }
