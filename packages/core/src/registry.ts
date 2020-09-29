@@ -288,11 +288,9 @@ export class Registry implements IRegistry {
   // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
-      const before = Date.now();
       const config = this.getConfig();
-      input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros);
-      const runtime = Date.now() - before;
-      ParsingPerformance.push(input, runtime);
+      const result = input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros);
+      ParsingPerformance.push(input, result);
     }
   }
 
