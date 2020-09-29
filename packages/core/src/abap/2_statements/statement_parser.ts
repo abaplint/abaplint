@@ -35,9 +35,11 @@ class StatementMap {
     }
   }
 
-  public lookup(token: Token): IStatement[] {
-    let res = this.map[token.getStr().toUpperCase()];
-    res = res ? res.concat(this.map[""]) : this.map[""];
+  public lookup(str: string): readonly IStatement[] {
+    const res = this.map[str.toUpperCase()];
+    if (res === undefined) {
+      return [];
+    }
     return res;
   }
 }
@@ -231,13 +233,22 @@ export class StatementParser {
       return new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     }
 
-    for (const st of StatementParser.map.lookup(filtered[0])) {
+    for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
       const match = Combi.run(st.getMatcher(), filtered, this.version);
       if (match) {
         const last = tokens[tokens.length - 1];
         return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
       }
     }
+    // next try the statements without specific keywords
+    for (const st of StatementParser.map.lookup("")) {
+      const match = Combi.run(st.getMatcher(), filtered, this.version);
+      if (match) {
+        const last = tokens[tokens.length - 1];
+        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
+      }
+    }
+
     return statement;
   }
 

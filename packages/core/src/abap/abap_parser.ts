@@ -30,7 +30,7 @@ export class ABAPParser {
     let issues: Issue[] = [];
     const output: ABAPFile[] = [];
 
-    const start = new Date().getMilliseconds();
+    const start = Date.now();
 
 // 1: lexing
     const b1 = Date.now();
@@ -55,7 +55,7 @@ export class ABAPParser {
     }
     const structuresRuntime = Date.now() - b3;
 
-    const end = new Date().getMilliseconds();
+    const end = Date.now();
 
     return {issues,
       output,

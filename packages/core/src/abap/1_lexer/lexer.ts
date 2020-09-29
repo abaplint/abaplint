@@ -265,7 +265,6 @@ export class Lexer {
       const ahead = this.stream.nextChar();
       const aahead = this.stream.nextNextChar();
       const prev = this.stream.prevChar();
-      const pprev = this.stream.prevPrevChar();
 
       if (ahead === "'" && this.m === Mode.Normal) {
 // start string
@@ -303,7 +302,7 @@ export class Lexer {
         this.m = Mode.Normal;
       } else if (buf.length > 1
           && (current === "|" || current === "{")
-          && (prev !== "\\" || pprev === "\\\\")
+          && (prev !== "\\" || this.stream.prevPrevChar() === "\\\\")
           && this.m === Mode.Template) {
 // end of template
         this.add();
