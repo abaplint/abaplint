@@ -50,6 +50,10 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     return [];
   }
 
+  public getRaising(): readonly string[] {
+    return [];
+  }
+
   public getChanging(): readonly TypedIdentifier[] {
     return [];
   }

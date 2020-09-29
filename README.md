@@ -27,6 +27,4 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 [Design documentation](https://github.com/abaplint/abaplint/blob/master/docs/design/index.adoc)
 
-### Debugging
-
-The [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer) extension will give you an overview of tests as well as codelens above each test to run/debug.
+[Development](docs/development.md)

@@ -93,8 +93,6 @@ export class MethodDefinitions implements IMethodDefinitions {
         this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
       }
     }
-
-
   }
 
 }
