@@ -13,6 +13,7 @@ export const enum IdentifierMeta {
   InlineDefinition = "inline",
   BuiltIn = "built-in",
   DDIC = "ddic",
+  Static = "static",
 // todo, MethodPreferred
 // todo, Optional
 }
@@ -55,7 +56,7 @@ export class TypedIdentifier extends Identifier {
     return this.type;
   }
 
-  public getMeta(): IdentifierMeta[] {
+  public getMeta(): readonly IdentifierMeta[] {
     return this.meta;
   }
 
