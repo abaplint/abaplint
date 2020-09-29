@@ -14,12 +14,23 @@ import {SyntaxLogic} from "./abap/5_syntax/syntax";
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
   private static results: {runtime: number, name: string, extra: string}[];
+  private static lexing: number;
+  private static statements: number;
+  private static structure: number;
 
   public static clear() {
     this.results = [];
+    this.lexing = 0;
+    this.statements = 0;
+    this.structure = 0;
   }
 
   public static push(obj: IObject, result: IParseResult): void {
+    if (result.runtimeExtra) {
+      this.lexing += result.runtimeExtra.lexing;
+      this.statements += result.runtimeExtra.statements;
+      this.structure += result.runtimeExtra.structure;
+    }
     if (result.runtime < 100) {
       return;
     }
@@ -27,9 +38,12 @@ class ParsingPerformance {
       this.results = [];
     }
 
-    const extra = `\t(lexing: ${result.runtimeExtra?.lexing
-    }ms, statements: ${result.runtimeExtra?.statements
-    }ms, structure: ${result.runtimeExtra?.structure}ms)`;
+    let extra = "";
+    if (result.runtimeExtra) {
+      extra = `\t(lexing: ${result.runtimeExtra.lexing
+      }ms, statements: ${result.runtimeExtra.statements
+      }ms, structure: ${result.runtimeExtra.structure}ms)`;
+    }
 
     this.results.push({
       runtime: result.runtime,
@@ -50,6 +64,9 @@ class ParsingPerformance {
       }
       process.stderr.write(`\t${row.runtime}ms\t${row.name} ${row.extra}\n`);
     }
+    process.stderr.write(`\tTotal lexing:     ${this.lexing}ms\n`);
+    process.stderr.write(`\tTotal statements: ${this.statements}ms\n`);
+    process.stderr.write(`\tTotal structure:  ${this.structure}ms\n`);
   }
 }
 

@@ -181,6 +181,7 @@ class Star implements IStructureRunnable {
 
 class SubStructure implements IStructureRunnable {
   private readonly s: IStructure;
+  private matcher: IStructureRunnable | undefined;
 
   public constructor(s: IStructure) {
     this.s = s;
@@ -196,7 +197,11 @@ class SubStructure implements IStructureRunnable {
 
   public run(statements: StatementNode[], parent: INode): IMatch {
     const nparent = new StructureNode(this.s);
-    const ret = this.s.getMatcher().run(statements, nparent);
+    if (this.matcher === undefined) {
+      // SubStructures are singletons, so the getMatcher can be saved, its expensive to create
+      this.matcher = this.s.getMatcher();
+    }
+    const ret = this.matcher.run(statements, nparent);
     if (ret.matched.length === 0) {
       ret.error = true;
     } else {
@@ -279,6 +284,10 @@ export function sta(s: new () => IStatement): IStructureRunnable {
   return new SubStatement(s);
 }
 
+const singletons: {[index: string]: SubStructure} = {};
 export function sub(s: new () => IStructure): IStructureRunnable {
-  return new SubStructure(new s());
+  if (singletons[s.name] === undefined) {
+    singletons[s.name] = new SubStructure(new s());
+  }
+  return singletons[s.name];
 }
