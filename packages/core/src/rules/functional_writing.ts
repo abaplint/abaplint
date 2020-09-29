@@ -9,6 +9,8 @@ import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_informa
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPObject} from "../objects/_abap_object";
 import {DDIC} from "../ddic";
+import {EditHelper} from "../edit_helper";
+import {StatementNode} from "../abap/nodes/statement_node";
 
 export class FunctionalWritingConf extends BasicRuleConfig {
   /** Ignore functional writing in exception classes, local + global */
@@ -26,7 +28,7 @@ export class FunctionalWriting extends ABAPRule {
       shortDescription: `Detects usage of call method when functional style calls can be used.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
 https://docs.abapopenchecks.org/checks/07/`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
       badExample: `CALL METHOD zcl_class=>method( ).`,
       goodExample: `zcl_class=>method( ).`,
     };
@@ -55,30 +57,58 @@ https://docs.abapopenchecks.org/checks/07/`,
 
     const ddic = new DDIC(this.reg);
 
-    for (const statement of file.getStatements()) {
-      if (statement.get() instanceof Statements.ClassImplementation
-          && definition
-          && ddic.isException(definition, obj)
-          && this.conf.ignoreExceptions) {
+    for (const statNode of file.getStatements()) {
+      if (statNode.get() instanceof Statements.ClassImplementation
+        && definition
+        && ddic.isException(definition, obj)
+        && this.conf.ignoreExceptions) {
         exception = true;
-      } else if (statement.get() instanceof Statements.EndClass) {
+      } else if (statNode.get() instanceof Statements.EndClass) {
         exception = false;
-      } else if (exception === false && statement.get() instanceof Statements.Call) {
-        if (statement.getFirstChild()?.get() instanceof Expressions.MethodCallChain) {
+      } else if (exception === false && statNode.get() instanceof Statements.Call) {
+        if (statNode.getFirstChild()?.get() instanceof Expressions.MethodCallChain) {
           continue;
         }
 
-        const dynamic = statement.findDirectExpression(Expressions.MethodSource)?.findDirectExpression(Expressions.Dynamic);
+        const dynamic = statNode.findDirectExpression(Expressions.MethodSource)?.findDirectExpression(Expressions.Dynamic);
         if (dynamic !== undefined) {
           continue;
         }
-
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+        issues.push(this.createIssueForStatementNode(file, statNode));
       }
     }
 
     return issues;
+  }
+
+  private createIssueForStatementNode(file: ABAPFile, statNode: StatementNode): Issue {
+    const fixString = this.buildFixString(statNode);
+    const fix = EditHelper.replaceRange(file, statNode.getStart(), statNode.getEnd(), fixString);
+    return Issue.atStatement(file, statNode, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private buildFixString(statNode: StatementNode) {
+    // Note: line breaks from source are lost
+    const methodSource = statNode.findDirectExpression(Expressions.MethodSource);
+    let methodSourceStr = methodSource?.concatTokens();
+    const methodBody = statNode.findDirectExpression(Expressions.MethodCallBody);
+    let methodBodyStr = "";
+    if (methodBody) {
+      const methodCallParam = methodBody.findDirectExpression(Expressions.MethodCallParam);
+      if (methodCallParam && methodCallParam.getFirstToken().getStr() === "(") {
+        // has parameters and parantheses
+        methodBodyStr = `${methodBody.concatTokens()}.`;
+      } else {
+        // has parameters, but parentheses are missing
+        methodSourceStr = `${methodSourceStr}( `;
+        methodBodyStr = `${methodBody.concatTokens()} ).`;
+      }
+    }
+    else {
+      // no body means no parentheses and no parameters
+      methodBodyStr = "( ).";
+    }
+    return methodSourceStr + methodBodyStr;
   }
 
 }
