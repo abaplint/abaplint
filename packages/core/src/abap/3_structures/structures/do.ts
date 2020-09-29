@@ -8,7 +8,7 @@ export class Do implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.Do),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndDo));
   }
 

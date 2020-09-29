@@ -7,7 +7,7 @@ import {IStructureRunnable} from "./_structure_runnable";
 export class ElseIf implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const body = opt(sub(new Body()));
+    const body = opt(sub(Body));
     const elseif = seq(sta(Statements.ElseIf), body);
     return elseif;
   }

@@ -7,7 +7,7 @@ export class ClassData implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.ClassDataBegin),
-                    star(alt(sta(Statements.ClassData), sub(new ClassData()))),
+                    star(alt(sta(Statements.ClassData), sub(ClassData))),
                     sta(Statements.ClassDataEnd));
   }
 

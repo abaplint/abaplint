@@ -7,7 +7,7 @@ import {IStructureRunnable} from "./_structure_runnable";
 export class Catch implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const normal = star(sub(new Normal()));
+    const normal = star(sub(Normal));
     const cat = seq(sta(Statements.Catch), normal);
 
     return cat;

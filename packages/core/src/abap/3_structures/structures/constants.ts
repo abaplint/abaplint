@@ -7,7 +7,7 @@ export class Constants implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.ConstantBegin),
-                    star(alt(sta(Statements.Constant), sub(new Constants()))),
+                    star(alt(sta(Statements.Constant), sub(Constants))),
                     sta(Statements.ConstantEnd));
   }
 

@@ -8,7 +8,7 @@ export class Provide implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.Provide),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndProvide));
   }
 

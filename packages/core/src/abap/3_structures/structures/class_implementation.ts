@@ -8,7 +8,7 @@ export class ClassImplementation implements IStructure {
 
   public getMatcher(): IStructureRunnable {
 // the DEFINE statement is allowed between local method implementations, but not global?
-    const body = star(alt(sub(new Structures.Define()), sta(Statements.Include), sub(new Structures.Method())));
+    const body = star(alt(sub(Structures.Define), sta(Statements.Include), sub(Structures.Method)));
 
     return beginEnd(sta(Statements.ClassImplementation),
                     body,

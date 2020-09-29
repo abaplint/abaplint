@@ -279,6 +279,6 @@ export function sta(s: new () => IStatement): IStructureRunnable {
   return new SubStatement(s);
 }
 
-export function sub(s: IStructure): IStructureRunnable {
-  return new SubStructure(s);
+export function sub(s: new () => IStructure): IStructureRunnable {
+  return new SubStructure(new s());
 }

@@ -242,7 +242,7 @@ describe("structure combi alt", () => {
 });
 
 describe("structure combi sub structure", () => {
-  const sub1 = sub(new Structures.Normal());
+  const sub1 = sub(Structures.Normal);
 
   it("sub1 match", () => {
     const parent = new DummyNode();
@@ -289,7 +289,7 @@ describe("structure combi, complex1", () => {
       return alt(sta(Statements.Move), sta(Statements.Do));
     }
   }
-  const sub1 = star(sub(new Normal()));
+  const sub1 = star(sub(Normal));
 
   it("complex1 match", () => {
     const parent = new DummyNode();

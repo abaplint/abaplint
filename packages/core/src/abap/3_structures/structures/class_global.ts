@@ -8,8 +8,8 @@ export class ClassGlobal implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return seq(star(sta(Statements.TypePools)),
-               sub(new Structures.ClassDefinition()),
-               sub(new Structures.ClassImplementation()));
+               sub(Structures.ClassDefinition),
+               sub(Structures.ClassImplementation));
   }
 
 }

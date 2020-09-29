@@ -7,7 +7,7 @@ import {IStructureRunnable} from "./_structure_runnable";
 export class When implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const when = seq(alt(sta(Statements.When), sta(Statements.WhenOthers)), star(sub(new Normal())));
+    const when = seq(alt(sta(Statements.When), sta(Statements.WhenOthers)), star(sub(Normal)));
 
     return when;
   }
