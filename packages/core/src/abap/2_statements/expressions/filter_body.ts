@@ -1,4 +1,4 @@
-import {Expression, seq, opt, str} from "../combi";
+import {Expression, seq, optPrio, str} from "../combi";
 import {Source, SimpleName, ComponentCond} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -6,9 +6,9 @@ export class FilterBody extends Expression {
   public getRunnable(): IStatementRunnable {
     return seq(
       new Source(),
-      opt(str("EXCEPT")),
-      opt(seq(str("IN"), new Source())),
-      opt(seq(str("USING KEY"), new SimpleName())),
+      optPrio(str("EXCEPT")),
+      optPrio(seq(str("IN"), new Source())),
+      optPrio(seq(str("USING KEY"), new SimpleName())),
       seq(str("WHERE"), new ComponentCond()));
   }
 }
