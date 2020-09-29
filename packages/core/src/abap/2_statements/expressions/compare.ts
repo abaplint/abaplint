@@ -1,4 +1,4 @@
-import {seq, opt, ver, tok, plus, alt, str, Expression} from "../combi";
+import {seq, opt, ver, tok, plus, alt, optPrio, altPrio, str, Expression} from "../combi";
 import {FieldSub, ClassName, Constant, Source, MethodCallChain, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -6,23 +6,23 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class Compare extends Expression {
   public getRunnable(): IStatementRunnable {
-    const val = alt(new FieldSub(), new Constant());
+    const val = altPrio(new FieldSub(), new Constant());
 
     const list = seq(tok(WParenLeft),
                      val,
                      plus(seq(str(","), val)),
                      tok(ParenRightW));
 
-    const inn = seq(opt(str("NOT")), str("IN"), alt(new Source(), list));
+    const inn = seq(opt(str("NOT")), str("IN"), altPrio(new Source(), list));
 
     const sopt = seq(str("IS"),
-                     opt(str("NOT")),
-                     alt(str("SUPPLIED"),
-                         str("BOUND"),
-                         ver(Version.v750, seq(str("INSTANCE OF"), new ClassName())),
-                         str("REQUESTED"),
-                         str("ASSIGNED"),
-                         str("INITIAL")));
+                     optPrio(str("NOT")),
+                     altPrio(str("SUPPLIED"),
+                             str("BOUND"),
+                             ver(Version.v750, seq(str("INSTANCE OF"), new ClassName())),
+                             str("REQUESTED"),
+                             str("ASSIGNED"),
+                             str("INITIAL")));
 
     const between = seq(opt(str("NOT")), str("BETWEEN"), new Source(), str("AND"), new Source());
 

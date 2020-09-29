@@ -249,10 +249,7 @@ class OptionalPriority implements IStatementRunnable {
     for (const input of r) {
       const res = this.optional.run([input]);
       if (res.length > 1) {
-//        result.push(input);
         result = result.concat(res);
-//      } else if (res.length === 1) {
-//        result = result.concat(res);
       } else if (res.length === 0) {
         result.push(input);
       } else if (res[0].length() < input.length()) {
@@ -260,10 +257,6 @@ class OptionalPriority implements IStatementRunnable {
       } else {
         result.push(input);
       }
-
-//      console.dir(res);
-//      console.dir(result);
-
     }
 
     return result;
