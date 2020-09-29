@@ -5,8 +5,6 @@ import {ABAPParser} from "../abap/abap_parser";
 import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {IParseResult} from "./_iobject";
-import {IFile} from "..";
-import {ExcludeHelper} from "../utils/excludeHelper";
 
 export interface ITextElement {
   key: string;
@@ -30,14 +28,12 @@ export abstract class ABAPObject extends AbstractObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros?: readonly string[], globalExclude?: readonly string[]): IParseResult {
+  public parse(version: Version, globalMacros?: readonly string[]): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
     }
 
-    let abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
-    abapFiles = this.withoutGloballyExcluded(globalExclude ?? [], abapFiles);
-
+    const abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
     const result = new ABAPParser(version, globalMacros).parse(abapFiles);
 
     this.parsed = result.output;
@@ -45,25 +41,6 @@ export abstract class ABAPObject extends AbstractObject {
     this.dirty = false;
 
     return {updated: true, runtime: result.runtime};
-  }
-
-  private withoutGloballyExcluded(globalExclude: readonly string[], files: IFile[]): IFile[] {
-
-    if (!globalExclude || globalExclude.length === 0) {
-      return files;
-    }
-
-    const globalExcludePatterns = (globalExclude).map(pattern => new RegExp(pattern, "i"));
-    const afterExclude: IFile[] = [];
-
-    for (const file of files) {
-
-      if (!ExcludeHelper.isExcluded(file.getFilename(), globalExcludePatterns)) {
-        afterExclude.push(file);
-      }
-    }
-
-    return afterExclude;
   }
 
   public setDirty(): void {

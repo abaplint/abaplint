@@ -152,9 +152,14 @@ export class Registry implements IRegistry {
   }
 
   public addFiles(files: readonly IFile[]): IRegistry {
+    const globalExclude = (this.conf.getGlobal().exclude ?? [])
+      .map(pattern => new RegExp(pattern, "i"));
+
     for (const f of files) {
-      if (f.getFilename().split(".").length <= 2) {
-        continue; // not a abapGit file
+      const filename = f.getFilename();
+      const isNotAbapgitFile = filename.split(".").length <= 2;
+      if (isNotAbapgitFile || ExcludeHelper.isExcluded(filename, globalExclude)) {
+        continue;
       }
       const found = this.findOrCreate(f.getObjectName(), f.getObjectType());
 
@@ -260,7 +265,7 @@ export class Registry implements IRegistry {
     if (input instanceof ABAPObject) {
       const before = Date.now();
       const config = this.getConfig();
-      input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros, config.getGlobal().exclude);
+      input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros);
       const runtime = Date.now() - before;
       ParsingPerformance.push(input, runtime);
     }
@@ -353,7 +358,6 @@ export class Registry implements IRegistry {
   private excludeIssues(issues: Issue[]): Issue[] {
 
     const ret: Issue[] = issues;
-    const globalExcludePatterns = (this.conf.getGlobal().exclude ?? []).map(x => new RegExp(x, "i"));
 
     // exclude issues, as now we know both the filename and issue key
     for (const rule of ArtifactsRules.getRules()) {
@@ -369,8 +373,7 @@ export class Registry implements IRegistry {
 
         const filename = ret[i].getFilename();
 
-        if (ExcludeHelper.isExcluded(filename, globalExcludePatterns)
-          || ExcludeHelper.isExcluded(filename, ruleExcludePatterns)) {
+        if (ExcludeHelper.isExcluded(filename, ruleExcludePatterns)) {
           ret.splice(i, 1);
         }
       }
