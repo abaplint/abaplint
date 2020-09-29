@@ -11,10 +11,11 @@ export class Constant {
     const found = basic.simpleType(node);
     if (found) {
       const val = basic.findValue(node);
+      const meta = [IdentifierMeta.ReadOnly, IdentifierMeta.Static];
       if (val !== undefined) {
-        return new TypedIdentifier(found.getToken(), filename, found.getType(), [IdentifierMeta.ReadOnly], val);
+        return new TypedIdentifier(found.getToken(), filename, found.getType(), meta, val);
       } else {
-        return new TypedIdentifier(found.getToken(), filename, new UnknownType("todo, TypedConstantIdentifier"), [IdentifierMeta.ReadOnly], "unknown");
+        return new TypedIdentifier(found.getToken(), filename, new UnknownType("todo, TypedConstantIdentifier"), meta, "unknown");
       }
     }
 

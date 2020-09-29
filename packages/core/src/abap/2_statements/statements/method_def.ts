@@ -1,19 +1,13 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, tok, ver, regex as reg, plus, optPrio} from "../combi";
-import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
-import {MethodDefChanging, MethodDefReturning, Redefinition, ClassName, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract} from "../expressions";
+import {str, seq, alt, opt, ver, regex as reg, plus, optPrio} from "../combi";
+import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const resumable = seq(str("RESUMABLE"),
-                          tok(ParenLeft),
-                          new ClassName(),
-                          tok(ParenRightW));
 
-    const raising = seq(str("RAISING"), plus(alt(resumable, new ClassName())));
 
     const exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
@@ -24,7 +18,7 @@ export class MethodDef implements IStatement {
                            opt(new MethodDefExporting()),
                            opt(new MethodDefChanging()),
                            opt(new MethodDefReturning()),
-                           opt(alt(raising, exceptions)));
+                           opt(alt(new MethodDefRaising(), exceptions)));
 
 // todo, this is only from version something
     const tableFunction = seq(str("FOR TABLE FUNCTION"), reg(/^\w+?$/));
