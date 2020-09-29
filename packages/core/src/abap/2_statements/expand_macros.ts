@@ -76,8 +76,9 @@ export class ExpandMacros {
     }
   }
 
-  public handleMacros(statements: StatementNode[]): StatementNode[] {
+  public handleMacros(statements: StatementNode[]): {statements: StatementNode[], containsUnknown: boolean} {
     const result: StatementNode[] = [];
+    let containsUnknown = false;
 
     for (const statement of statements) {
       if (statement.get() instanceof Unknown) {
@@ -91,12 +92,14 @@ export class ExpandMacros {
           }
 
           continue;
+        } else {
+          containsUnknown = true;
         }
       }
       result.push(statement);
     }
 
-    return result;
+    return {statements: result, containsUnknown};
   }
 
   //////////////
