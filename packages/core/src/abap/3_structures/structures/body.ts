@@ -7,7 +7,7 @@ export class Body implements IStructure {
 
   public getMatcher(): IStructureRunnable {
 // todo, this should be a "plus" instead, however its not implemented yet
-    return star(sub(new Normal()));
+    return star(sub(Normal));
   }
 
 }

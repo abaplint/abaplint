@@ -13,8 +13,6 @@ export class StructureParser {
 
   public static run(input: IStatementResult): IStructureResult {
     const structure = this.findStructureForFile(input.file.getFilename());
-// todo, comments and empty statements will not be part of the structure
-// is this a problem? Plus unknowns
     const statements = input.statements.slice().filter((s) => {
       return !(s.get() instanceof StatementComment || s.get() instanceof Empty || s.get() instanceof Unknown);
     });

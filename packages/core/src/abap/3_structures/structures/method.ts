@@ -8,7 +8,7 @@ export class Method implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.Method),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndMethod));
   }
 

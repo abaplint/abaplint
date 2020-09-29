@@ -7,7 +7,7 @@ import {IStructureRunnable} from "./_structure_runnable";
 export class Module implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const body = alt(sub(new Normal()),
+    const body = alt(sub(Normal),
                      sta(Statements.Ranges),
                      sta(Statements.Tables));
 

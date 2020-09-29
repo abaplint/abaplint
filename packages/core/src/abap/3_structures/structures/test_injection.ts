@@ -8,7 +8,7 @@ export class TestInjection implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.TestInjection),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndTestInjection));
   }
 

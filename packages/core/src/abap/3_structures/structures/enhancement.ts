@@ -8,7 +8,7 @@ export class Enhancement implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.Enhancement),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndEnhancement));
   }
 

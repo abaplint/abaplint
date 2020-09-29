@@ -8,7 +8,7 @@ export class OnChange implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.OnChange),
-                    star(sub(new Normal())),
+                    star(sub(Normal)),
                     sta(Statements.EndOn));
   }
 

@@ -13,9 +13,9 @@ export class ClassDefinition implements IStructure {
     const body = seq(
       opt(sta(SetExtendedCheck)),
       star(sta(TypePools)),
-      opt(sub(new PublicSection())),
-      opt(sub(new ProtectedSection())),
-      opt(sub(new PrivateSection())),
+      opt(sub(PublicSection)),
+      opt(sub(ProtectedSection)),
+      opt(sub(PrivateSection)),
       opt(sta(SetExtendedCheck)));
 
     return beginEnd(sta(Statements.ClassDefinition), body, sta(Statements.EndClass));

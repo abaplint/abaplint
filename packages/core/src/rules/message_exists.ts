@@ -64,12 +64,13 @@ export class MessageExistsRule extends ABAPRule {
         }
         const token = clas.getFirstToken();
         const name = token.getStr();
-        const msag = this.reg.getObject("MSAG", name) as MessageClass;
-        if (msag === undefined
-            && new DDIC(this.reg).inErrorNamespace(name) === true) {
-          const message = this.getDescription("Message class \"" + token.getStr() + "\" not found");
-          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
+        const msag = this.reg.getObject("MSAG", name) as MessageClass | undefined;
+        if (msag === undefined) {
+          if (new DDIC(this.reg).inErrorNamespace(name) === true) {
+            const message = this.getDescription("Message class \"" + token.getStr() + "\" not found");
+            const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
+            issues.push(issue);
+          }
           continue;
         }
         const typeNumber = node.findFirstExpression(Expressions.MessageTypeAndNumber);
