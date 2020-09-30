@@ -24,11 +24,11 @@ export abstract class ABAPObject extends AbstractObject {
     this.texts = undefined;
   }
 
-  public static is(x: any): x is ABAPObject{
+  public static is(x: any): x is ABAPObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros: readonly string[] | undefined): IParseResult {
+  public parse(version: Version, globalMacros?: readonly string[]): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
     }
@@ -100,7 +100,8 @@ export abstract class ABAPObject extends AbstractObject {
         }
         this.texts.push({
           key: t.KEY._text,
-          text: t.ENTRY ? t.ENTRY._text : ""});
+          text: t.ENTRY ? t.ENTRY._text : "",
+        });
       }
     }
   }
