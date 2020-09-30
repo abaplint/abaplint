@@ -201,7 +201,7 @@ export class ImplementMethods extends ABAPRule {
     for (const interfaceInfo of def.interfaces) {
       const idef = this.findInterface(def.identifier, interfaceInfo.name);
 
-      if (idef === undefined || interfaceInfo.partial === true) {
+      if (idef === undefined || interfaceInfo.partial === true || interfaceInfo.allAbstract === true) {
         continue; // ignore parser errors in interface
       } else if (idef instanceof Issue) {
         return [idef];

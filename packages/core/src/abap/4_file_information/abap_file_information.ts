@@ -178,11 +178,14 @@ export class ABAPFileInformation implements IABAPFileInformation {
         }
       }
 
+      const allAbstract = node.concatTokens().toUpperCase().includes(" ALL METHODS ABSTRACT");
+
       const partial = node.concatTokens().toUpperCase().includes(" PARTIALLY IMPLEMENTED");
       const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
       ret.push({
         name,
         partial,
+        allAbstract,
         abstractMethods,
         finalMethods,
       });
