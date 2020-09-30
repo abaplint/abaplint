@@ -10,6 +10,7 @@ import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
 import {SyntaxLogic} from "./abap/5_syntax/syntax";
+import {ExcludeHelper} from "./utils/excludeHelper";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -142,7 +143,7 @@ export class Registry implements IRegistry {
     return this.conf;
   }
 
-// assumption: Config is immutable, and can only be changed via this method
+  // assumption: Config is immutable, and can only be changed via this method
   public setConfig(conf: IConfiguration): IRegistry {
     for (const obj of this.getObjects()) {
       obj.setDirty();
@@ -176,9 +177,14 @@ export class Registry implements IRegistry {
   }
 
   public addFiles(files: readonly IFile[]): IRegistry {
+    const globalExclude = (this.conf.getGlobal().exclude ?? [])
+      .map(pattern => new RegExp(pattern, "i"));
+
     for (const f of files) {
-      if (f.getFilename().split(".").length <= 2) {
-        continue; // not a abapGit file
+      const filename = f.getFilename();
+      const isNotAbapgitFile = filename.split(".").length <= 2;
+      if (isNotAbapgitFile || ExcludeHelper.isExcluded(filename, globalExclude)) {
+        continue;
       }
       const found = this.findOrCreate(f.getObjectName(), f.getObjectType());
 
@@ -267,12 +273,13 @@ export class Registry implements IRegistry {
     return this;
   }
 
-//////////////////////////////////////////
+  //////////////////////////////////////////
 
   // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
-      const result = input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
+      const config = this.getConfig();
+      const result = input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros);
       ParsingPerformance.push(input, result);
     }
   }
@@ -336,7 +343,7 @@ export class Registry implements IRegistry {
           perf.push({name: p, time: rulePerformance[p]});
         }
       }
-      perf.sort((a, b) => { return b.time - a.time; });
+      perf.sort((a, b) => {return b.time - a.time;});
       for (const p of perf) {
         process.stderr.write("\t" + p.time + "ms\t" + p.name + "\n");
       }
@@ -348,12 +355,12 @@ export class Registry implements IRegistry {
   private excludeIssues(issues: Issue[]): Issue[] {
 
     const ret: Issue[] = issues;
-    const globalExclude = this.conf.getGlobal().exclude ?? [];
 
     // exclude issues, as now we know both the filename and issue key
     for (const rule of ArtifactsRules.getRules()) {
       const key = rule.getMetadata().key;
-      const ruleExclude: string[] = this.conf.readByKey(key, "exclude") ?? [];
+      const ruleExclude: string[] = (this.conf.readByKey(key, "exclude") ?? []);
+      const ruleExcludePatterns = ruleExclude.map(x => new RegExp(x, "i"));
 
       for (let i = ret.length - 1; i >= 0; i--) {
 
@@ -361,24 +368,9 @@ export class Registry implements IRegistry {
           continue;
         }
 
-        let remove = false;
-        for (const globalExcl of globalExclude) {
-          if (new RegExp(globalExcl, "i").exec(ret[i].getFilename())) {
-            remove = true;
-            break;
-          }
-        }
+        const filename = ret[i].getFilename();
 
-        if (!remove) {
-          for (const excl of ruleExclude) {
-            if (new RegExp(excl, "i").exec(ret[i].getFilename())) {
-              remove = true;
-              break;
-            }
-          }
-        }
-
-        if (remove) {
+        if (ExcludeHelper.isExcluded(filename, ruleExcludePatterns)) {
           ret.splice(i, 1);
         }
       }
@@ -426,7 +418,7 @@ export class Registry implements IRegistry {
     const searchName = name.toUpperCase();
 
     if (this.objects[searchName] !== undefined
-        && this.objects[searchName][searchType]) {
+      && this.objects[searchName][searchType]) {
       return this.objects[searchName][searchType];
     }
 
