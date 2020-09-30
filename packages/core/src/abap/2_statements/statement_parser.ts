@@ -35,9 +35,11 @@ class StatementMap {
     }
   }
 
-  public lookup(token: Token): IStatement[] {
-    let res = this.map[token.getStr().toUpperCase()];
-    res = res ? res.concat(this.map[""]) : this.map[""];
+  public lookup(str: string): readonly IStatement[] {
+    const res = this.map[str.toUpperCase()];
+    if (res === undefined) {
+      return [];
+    }
     return res;
   }
 }
@@ -96,9 +98,12 @@ export class StatementParser {
     }
 
     for (const w of wa) {
-      w.statements = macros.handleMacros(w.statements);
-      this.lazyUnknown(w);
-      this.nativeSQL(w);
+      const res = macros.handleMacros(w.statements);
+      w.statements = res.statements;
+      if (res.containsUnknown === true) {
+        this.lazyUnknown(w);
+        this.nativeSQL(w);
+      }
     }
 
     return wa.map(w => w.toResult());
@@ -159,14 +164,15 @@ export class StatementParser {
 
     for (let i = 0; i < wa.statements.length; i++) {
       const statement = wa.statements[i];
-      if (statement.get() instanceof Statements.ExecSQL
-          || (statement.get() instanceof Statements.Method && statement.findFirstExpression(Expressions.Language))) {
+      const type = statement.get();
+      if (type instanceof Statements.ExecSQL
+          || (type instanceof Statements.Method && statement.findDirectExpression(Expressions.Language))) {
         sql = true;
       } else if (sql === true) {
-        if (statement.get() instanceof Statements.EndExec
-            || statement.get() instanceof Statements.EndMethod) {
+        if (type instanceof Statements.EndExec
+            || type instanceof Statements.EndMethod) {
           sql = false;
-        } else if (!(statement.get() instanceof Comment)) {
+        } else if (!(type instanceof Comment)) {
           wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(this.tokensToNodes(statement.getTokens()));
         }
       }
@@ -187,18 +193,16 @@ export class StatementParser {
   private categorizeStatement(input: StatementNode) {
     let statement = input;
 
-    const tokens = statement.getTokens();
-    const length = tokens.length;
-    const last = tokens[length - 1];
+    const length = input.getChildren().length;
+    const isPunctuation = input.getLastToken() instanceof Tokens.Punctuation;
 
-    if (length === 1
-        && last instanceof Tokens.Punctuation) {
+    if (length === 1 && isPunctuation) {
+      const tokens = statement.getTokens();
       statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
 // if the statement contains more than STATEMENT_MAX_TOKENS tokens, just give up
     } else if (length > STATEMENT_MAX_TOKENS && statement.get() instanceof Unknown) {
       statement = input;
-    } else if (statement.get() instanceof Unknown
-        && last instanceof Tokens.Punctuation) {
+    } else if (statement.get() instanceof Unknown && isPunctuation) {
       statement = this.match(statement);
     }
 
@@ -229,13 +233,22 @@ export class StatementParser {
       return new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     }
 
-    for (const st of StatementParser.map.lookup(filtered[0])) {
+    for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
       const match = Combi.run(st.getMatcher(), filtered, this.version);
       if (match) {
         const last = tokens[tokens.length - 1];
         return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
       }
     }
+    // next try the statements without specific keywords
+    for (const st of StatementParser.map.lookup("")) {
+      const match = Combi.run(st.getMatcher(), filtered, this.version);
+      if (match) {
+        const last = tokens[tokens.length - 1];
+        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
+      }
+    }
+
     return statement;
   }
 
@@ -254,20 +267,22 @@ export class StatementParser {
       }
 
       add.push(token);
-      if (token.getStr() === ".") {
+
+      const str = token.getStr();
+      if (str === ".") {
         wa.addUnknown(pre.concat(add), colon);
         add = [];
         pre = [];
         colon = undefined;
-      } else if (token.getStr() === "," && pre.length > 0) {
+      } else if (str === "," && pre.length > 0) {
         wa.addUnknown(pre.concat(add), colon);
         add = [];
-      } else if (token.getStr() === ":" && colon === undefined) {
+      } else if (str === ":" && colon === undefined) {
         colon = token;
         add.pop(); // do not add colon token to statement
         pre = add.slice(0);
         add = [];
-      } else if (token.getStr() === ":") {
+      } else if (str === ":") {
         add.pop(); // do not add colon token to statement
       }
     }

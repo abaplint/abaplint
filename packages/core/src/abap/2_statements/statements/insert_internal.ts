@@ -34,7 +34,7 @@ export class InsertInternal implements IStatement {
     const tab = seq(str("TABLE"), new Source());
 
     const ret = seq(str("INSERT"),
-                    alt(tab, seq(altPrio(initial, lines, src), foo)));
+                    altPrio(tab, seq(altPrio(initial, lines, src), foo)));
 
     return ret;
   }

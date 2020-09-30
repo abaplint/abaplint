@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt} from "../combi";
+import {verNot, str, seq, optPrio} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class DeleteReport implements IStatement {
 
     const ret = seq(str("DELETE REPORT"),
                     new Source(),
-                    opt(state));
+                    optPrio(state));
 
     return verNot(Version.Cloud, ret);
   }

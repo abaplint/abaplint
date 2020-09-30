@@ -90,18 +90,6 @@ class Word implements IStatementRunnable {
   }
 }
 
-function className(cla: Expression) {
-  return cla.constructor.name;
-}
-
-function className2(cla: Tokens_Token) {
-  return cla.constructor.name;
-}
-
-function functionName(fun: any) {
-  return fun.name;
-}
-
 class Token implements IStatementRunnable {
 
   private readonly s: string;
@@ -123,7 +111,7 @@ class Token implements IStatementRunnable {
 
     for (const input of r) {
       if (input.length() !== 0
-          && className2(input.peek()).toUpperCase() === this.s.toUpperCase()) {
+          && input.peek().constructor.name.toUpperCase() === this.s.toUpperCase()) {
         result.push(input.shift(new TokenNode(input.peek())));
       }
     }
@@ -261,10 +249,7 @@ class OptionalPriority implements IStatementRunnable {
     for (const input of r) {
       const res = this.optional.run([input]);
       if (res.length > 1) {
-//        result.push(input);
         result = result.concat(res);
-//      } else if (res.length === 1) {
-//        result = result.concat(res);
       } else if (res.length === 0) {
         result.push(input);
       } else if (res[0].length() < input.length()) {
@@ -272,10 +257,6 @@ class OptionalPriority implements IStatementRunnable {
       } else {
         result.push(input);
       }
-
-//      console.dir(res);
-//      console.dir(result);
-
     }
 
     return result;
@@ -648,7 +629,7 @@ export abstract class Expression implements IStatementRunnable {
   }
 
   public getName(): string {
-    return className(this);
+    return this.constructor.name;
   }
 
   public railroad() {
@@ -925,7 +906,7 @@ export function optPrio(first: IStatementRunnable): IStatementRunnable {
   return new OptionalPriority(first);
 }
 export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
-  return new Token(functionName(t));
+  return new Token(t.name);
 }
 export function star(first: IStatementRunnable): IStatementRunnable {
   return new Star(first);
