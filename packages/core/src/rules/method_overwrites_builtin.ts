@@ -16,9 +16,9 @@ export class MethodOverwritesBuiltIn extends ABAPRule {
     return {
       key: "method_overwrites_builtin",
       title: "Method name overwrites builtin function",
-      shortDescription: `Method name overwrites builtin function`,
-      extendedInformation: ``,
-      tags: [RuleTag.Styleguide],
+      shortDescription: `Checks Method names that overwrite builtin SAP functions`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abenbuilt_in_functions_overview.htm`,
+      tags: [RuleTag.Naming],
     };
   }
 
@@ -37,16 +37,17 @@ export class MethodOverwritesBuiltIn extends ABAPRule {
   public runParsed(file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
     let methods: InfoMethodDefinition[] = [];
-    for (const classDef of file.getInfo().listClassDefinitions()){
+
+    for (const classDef of file.getInfo().listClassDefinitions()) {
       methods = methods.concat(classDef.methods);
     }
-    for (const intfDef of file.getInfo().listClassDefinitions()){
+    for (const intfDef of file.getInfo().listInterfaceDefinitions()) {
       methods = methods.concat(intfDef.methods);
     }
 
     const builtIn = new BuiltIn();
-    for(const method of methods){
-      if (builtIn.searchBuiltin(method.name.toUpperCase())){
+    for (const method of methods) {
+      if (builtIn.searchBuiltin(method.name.toUpperCase())) {
         issues.push(Issue.atIdentifier(method.identifier, this.getDescription(), this.getMetadata().key));
       }
     }

@@ -4,19 +4,19 @@ import {testRule} from "./_utils";
 const tests = [
   {abap: `CLASS lcl_abc DEFINITION.
             PUBLIC SECTION.
-              METHOD line_exists.
+              METHODS line_exists.
           ENDCLASS.`, cnt: 1},
   {abap: `CLASS lcl_abc DEFINITION.
             PUBLIC SECTION.
-              METHOD to_upper.
+              METHODS to_upper.
           ENDCLASS.`, cnt: 1},
   {abap: `CLASS lcl_abc DEFINITION.
           PUBLIC SECTION.
-            METHOD to_uppercase.
+            METHODS to_uppercase.
         ENDCLASS.`, cnt: 0},
-  {abap: `INTERFACE lif_foo DEFINITION.
-            METHOD xsdbool.
-          ENDCLASS.`, cnt: 1},
+  {abap: `INTERFACE lif_foo.
+            METHODS xsdbool.
+          ENDINTERFACE.`, cnt: 1},
 ];
 
 testRule(tests, MethodOverwritesBuiltIn);
