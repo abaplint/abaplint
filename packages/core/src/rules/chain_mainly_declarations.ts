@@ -97,6 +97,9 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
           || s instanceof Statements.Type
           || s instanceof Statements.TypeBegin
           || s instanceof Statements.TypeEnd
+          || s instanceof Statements.TypeEnumBegin
+          || s instanceof Statements.TypeEnumEnd
+          || s instanceof Statements.TypeEnum
           || s instanceof Statements.Events
           || s instanceof Statements.Ranges
           || s instanceof Statements.TypePools

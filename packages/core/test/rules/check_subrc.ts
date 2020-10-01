@@ -34,6 +34,11 @@ ENDIF.`, cnt: 0},
 READ TABLE lt_results WITH KEY object = 'DTEL' obj_name = 'XMILOGID' TRANSPORTING NO FIELDS.
 cl_abap_unit_assert=>assert_subrc( ).`, cnt: 0},
 
+  {abap: `
+ASSIGN foo TO <left_operand>.
+IF <left_operand> IS ASSIGNED.
+ENDIF.`, cnt: 0},
+
 ];
 
 testRule(tests, CheckSubrc);

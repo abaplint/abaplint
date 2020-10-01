@@ -17,6 +17,12 @@ const tests = [
       pbo.
 ENDCLASS.`, cnt: 0},
   {abap: `LOCAL: foo, bar.`, cnt: 0},
+  {abap: `TYPES:
+  BEGIN OF ENUM te_content_type STRUCTURE content_type,
+    right,
+    target,
+    left,
+  END OF ENUM te_content_type STRUCTURE content_type.`, cnt: 0},
 ];
 
 testRule(tests, ChainMainlyDeclarations);

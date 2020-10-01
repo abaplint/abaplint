@@ -346,4 +346,22 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ALL METHODS ABSTRACT", async () => {
+    const prog = `
+INTERFACE lif_bar.
+  METHODS m1.
+ENDINTERFACE.
+
+CLASS lcl_foo DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif_bar ALL METHODS ABSTRACT.
+ENDCLASS.
+
+CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(0);
+  });
+
 });

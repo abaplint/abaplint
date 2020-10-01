@@ -1,4 +1,5 @@
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
@@ -97,6 +98,12 @@ export class CheckSubrc extends ABAPRule {
 ////////////////
 
   private isChecked(index: number, statements: readonly StatementNode[]): boolean {
+    let assigned: string | undefined = undefined;
+    if (statements[index].get() instanceof Statements.Assign) {
+      const fs = statements[index].findDirectExpression(Expressions.FSTarget
+      )?.findFirstExpression(Expressions.FieldSymbol)?.getFirstToken().getStr();
+      assigned = fs?.toUpperCase() + " IS ASSIGNED";
+    }
 
     for (let i = index + 1; i < statements.length; i++) {
       const statement = statements[i];
@@ -108,7 +115,13 @@ export class CheckSubrc extends ABAPRule {
       } else if (statement.get() instanceof Statements.EndIf) {
         continue;
       } else {
-        return concat.includes("SY-SUBRC") || concat.includes("CL_ABAP_UNIT_ASSERT=>ASSERT_SUBRC");
+        let a = false;
+        if (assigned) {
+          a = concat.includes(assigned);
+        }
+        return concat.includes("SY-SUBRC")
+          || a
+          || concat.includes("CL_ABAP_UNIT_ASSERT=>ASSERT_SUBRC");
       }
     }
     return false;

@@ -2869,6 +2869,21 @@ DATA it_lev LIKE TABLE OF man->foo.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ENUM STRUCTURE", () => {
+    const abap = `
+TYPES:
+  BEGIN OF ENUM te_content_type STRUCTURE content_type,
+    right,
+    target,
+    left,
+  END OF ENUM te_content_type STRUCTURE content_type.
+
+DATA foo TYPE te_content_type.
+foo = content_type-right.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
