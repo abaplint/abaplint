@@ -1784,6 +1784,17 @@
               ],
               "description": "Checks relating to method length.\nTags: Styleguide\nhttps://rules.abaplint.org/method_length"
             },
+            "method_overwrites_builtin": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodOverwritesBuiltInConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks Method names that overwrite builtin SAP functions\nTags: Naming\nhttps://rules.abaplint.org/method_overwrites_builtin"
+            },
             "method_parameter_names": {
               "anyOf": [
                 {
@@ -2955,6 +2966,23 @@
         "errorWhenEmpty",
         "ignoreTestClasses"
       ],
+      "type": "object"
+    },
+    "MethodOverwritesBuiltInConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "MethodParameterNamesConf": {
