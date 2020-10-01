@@ -63,6 +63,7 @@ import {ManyParenthesisConf} from "../src/rules/many_parenthesis";
 import {MaxOneStatementConf} from "../src/rules/max_one_statement";
 import {MessageExistsConf} from "../src/rules/message_exists";
 import {MethodLengthConf} from "../src/rules/method_length";
+import {MethodOverwritesBuiltInConf} from "../src/rules/method_overwrites_builtin";
 import {MethodParameterNamesConf} from "../src/rules/method_parameter_names";
 import {MixReturningConf} from "../src/rules/mix_returning";
 import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
@@ -179,6 +180,7 @@ export interface IConfig {
     "max_one_statement"?: MaxOneStatementConf | boolean,
     "message_exists"?: MessageExistsConf | boolean,
     "method_length"?: MethodLengthConf | boolean,
+    "method_overwrites_builtin"?: MethodOverwritesBuiltInConf | boolean,
     "method_parameter_names"?: MethodParameterNamesConf | boolean,
     "mix_returning"?: MixReturningConf | boolean,
     "msag_consistency"?: MSAGConsistencyConf | boolean,

@@ -63,6 +63,7 @@ export * from "./max_one_statement";
 export * from "./message_exists";
 export * from "./method_length";
 export * from "./method_parameter_names";
+export * from "./method_overwrites_builtin";
 export * from "./mix_returning";
 export * from "./msag_consistency";
 export * from "./names_no_dash";
