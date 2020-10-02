@@ -78,6 +78,7 @@ LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en
 
     const statements = file.getStatements();
     let prev: Position | undefined = undefined;
+    const configVersion = this.reg.getConfig().getVersion();
 
     for (const staNode of statements) {
       const sta = staNode.get();
@@ -85,9 +86,8 @@ LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en
           || (sta instanceof Statements.Compute && this.conf.compute)
           || (sta instanceof Statements.Add && this.conf.add)
           || (sta instanceof Statements.Subtract && this.conf.subtract)
-          || (sta instanceof Statements.TypePools && this.conf.typePools && this.reg.getConfig().getVersion() >= Version.v702)
-          || (sta instanceof Statements.ClassDefinitionLoad && this.conf.load && this.reg.getConfig().getVersion() >= Version.v702)
-          || (sta instanceof Statements.InterfaceLoad && this.conf.load && this.reg.getConfig().getVersion() >= Version.v702)
+          || (sta instanceof Statements.ClassDefinitionLoad && this.conf.load && configVersion >= Version.v702)
+          || (sta instanceof Statements.InterfaceLoad && this.conf.load && configVersion >= Version.v702)
           || (sta instanceof Statements.Multiply && this.conf.multiply)
           || (sta instanceof Statements.Move && this.conf.move
           && staNode.getTokens()[0].getStr().toUpperCase() === "MOVE"
@@ -152,6 +152,11 @@ LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en
           const issue = Issue.atToken(file, token, "FIELD-SYMBOLS ... STRUCTURE is obsolete", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
+      }
+
+      if (this.conf.typePools && sta instanceof Statements.TypePools && configVersion >= Version.v702){
+        const issue = Issue.atStatement(file, staNode, "Statement \"TYPE-POOLS\" is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
       }
     }
     return issues;
