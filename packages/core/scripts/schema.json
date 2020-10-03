@@ -1894,6 +1894,17 @@
               ],
               "description": "Checks for usages of certain obsolete statements\nhttps://rules.abaplint.org/obsolete_statement"
             },
+            "omit_parameter_name": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/OmitParameterNameConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Omit the parameter name in single parameter calls\nTags: Styleguide\nhttps://rules.abaplint.org/omit_parameter_name"
+            },
             "parser_error": {
               "anyOf": [
                 {
@@ -3379,6 +3390,23 @@
         "typePools",
         "load"
       ],
+      "type": "object"
+    },
+    "OmitParameterNameConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "ParserErrorConf": {
