@@ -1894,6 +1894,17 @@
               ],
               "description": "Checks for usages of certain obsolete statements\nhttps://rules.abaplint.org/obsolete_statement"
             },
+            "omit_parameter_name": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/OmitParameterNameConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Omit the parameter name in single parameter calls\nTags: Styleguide\nhttps://rules.abaplint.org/omit_parameter_name"
+            },
             "parser_error": {
               "anyOf": [
                 {
@@ -3121,7 +3132,7 @@
         },
         "logic": {
           "$ref": "#/definitions/NewlineLogic",
-          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\r \r Less: the required number of newlines has to be less than \"newlineAmount\""
+          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\n\nLess: the required number of newlines has to be less than \"newlineAmount\""
         },
         "severity": {
           "$ref": "#/definitions/Severity",
@@ -3379,6 +3390,23 @@
         "typePools",
         "load"
       ],
+      "type": "object"
+    },
+    "OmitParameterNameConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "ParserErrorConf": {
@@ -3713,7 +3741,7 @@
           "type": "array"
         },
         "lines": {
-          "description": "An equal or higher number of sequential blank lines will trigger a violation.\r Example: if lines = 3, a maximum of 2 is allowed.",
+          "description": "An equal or higher number of sequential blank lines will trigger a violation. Example: if lines = 3, a maximum of 2 is allowed.",
           "type": "number"
         },
         "severity": {
@@ -3769,7 +3797,7 @@
           "type": "array"
         },
         "length": {
-          "description": "The smallest number of WHEN branches which will trigger a violation.\r Example: if length = 1, at least 2 branches are required",
+          "description": "The smallest number of WHEN branches which will trigger a violation. Example: if length = 1, at least 2 branches are required",
           "type": "number"
         },
         "severity": {
