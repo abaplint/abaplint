@@ -59,7 +59,8 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
       for (const c of stru.findAllExpressions(Expressions.MethodCall)) {
         const name = c.findDirectExpression(Expressions.MethodName);
         const param = c.findDirectExpression(Expressions.MethodCallParam);
-        if (name === undefined || param === undefined) {
+        if (name === undefined
+            || param === undefined) {
           continue;
         }
 
@@ -71,7 +72,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
         const i = ref.getParameters().getDefaultImporting();
         const p = param.concatTokens().toUpperCase();
 
-        if (p.startsWith("( " + i)) {
+        if (p.startsWith("( " + i + " = ")) {
           const message = "Omit default parameter name \"" + i + "\"";
           issues.push(Issue.atToken(file, name.getFirstToken(), message, this.getMetadata().key, this.getConfig().severity));
         }
@@ -92,8 +93,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
     for (const r of scope.getData().references) {
       if (r.referenceType !== ReferenceType.MethodReference) {
         continue;
-      }
-      if (r.position.getStart().equals(token.getStart())
+      } else if (r.position.getStart().equals(token.getStart())
           && r.resolved instanceof MethodDefinition) {
         return r.resolved;
       }

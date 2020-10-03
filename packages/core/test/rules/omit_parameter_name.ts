@@ -36,4 +36,61 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("simple, one parameter, local data same name as parameter", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING imp TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA imp TYPE i.
+  lcl_bar=>bar( imp ).
+ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("fixed", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING imp TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  lcl_bar=>bar( 2 ).
+ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("simple, two OPTIONAL parameters", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING
+      imp TYPE i OPTIONAL
+      imp2 TYPE i OPTIONAL.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  lcl_bar=>bar( imp = 2 ).
+ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });
