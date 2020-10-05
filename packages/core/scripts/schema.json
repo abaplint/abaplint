@@ -1023,6 +1023,32 @@
       ],
       "type": "object"
     },
+    "FunctionModuleRecommendationsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "recommendations": {
+          "items": {
+            "$ref": "#/definitions/Recommendations"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "recommendations"
+      ],
+      "type": "object"
+    },
     "FunctionalWritingConf": {
       "additionalProperties": false,
       "properties": {
@@ -1519,6 +1545,17 @@
                 }
               ],
               "description": "Checks constants for full typing - no implicit typing allowed.\nhttps://rules.abaplint.org/fully_type_constants"
+            },
+            "function_module_recommendations": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionModuleRecommendationsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Function Module Recommendations\nTags: Styleguide\nhttps://rules.abaplint.org/function_module_recommendations"
             },
             "functional_writing": {
               "anyOf": [
@@ -3584,6 +3621,25 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "Recommendations": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "$ref": "#/definitions/Version"
+        },
+        "name": {
+          "type": "string"
+        },
+        "replace": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "replace"
+      ],
       "type": "object"
     },
     "ReduceStringTemplatesConf": {
