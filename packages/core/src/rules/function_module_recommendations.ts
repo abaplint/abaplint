@@ -9,6 +9,8 @@ export type Recommendations = {name: string, replace: string, from?: Version;};
 
 export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
 
+  /** Tuple of Function Module Name to be replaced, the recommended alternative and
+   * the version from which the recommendation is valid.*/
   public recommendations: Recommendations[] = [
     {name: "SUBST_GET_FILE_LIST", replace: "see note 1686357"},
     {name: "ROUND", replace: "use built in function: round()"},

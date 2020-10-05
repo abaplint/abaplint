@@ -1034,6 +1034,7 @@
           "type": "array"
         },
         "recommendations": {
+          "description": "Tuple of Function Module Name to be replaced, the recommended alternative and the version from which the recommendation is valid.",
           "items": {
             "$ref": "#/definitions/Recommendations"
           },
