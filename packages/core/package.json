@@ -12,7 +12,7 @@
         "compile": "tsc",
         "postcompile": "sh scripts/version.sh",
         "pretest": "npm run compile",
-        "test": "mocha",
+        "test": "mocha --timeout 1000",
         "test:only": "npm run compile && mocha",
         "posttest": "npm run lint && npm run schema && api-extractor run",
         "prepublishOnly": "rm -rf build && npm run test",
