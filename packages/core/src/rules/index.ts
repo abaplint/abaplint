@@ -38,6 +38,7 @@ export * from "./forbidden_pseudo_and_pragma";
 export * from "./forbidden_void_type";
 export * from "./form_tables_obsolete";
 export * from "./fully_type_constants";
+export * from "./function_module_recommendations";
 export * from "./functional_writing";
 export * from "./global_class";
 export * from "./identical_conditions";
