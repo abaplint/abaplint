@@ -183,14 +183,6 @@ export class SyntaxLogic {
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return this.scope;
-      } else if (structure.get() instanceof Structures.Interface) {
-        // special case for global interfaces, todo, look into if the case can be removed
-        try {
-          this.updateScopeStructure(structure);
-        } catch (e) {
-          this.newIssue(structure.getFirstToken(), e.message);
-          break;
-        }
       } else {
         this.traverse(structure);
       }
