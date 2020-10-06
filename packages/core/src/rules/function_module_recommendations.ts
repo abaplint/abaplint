@@ -31,6 +31,8 @@ export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
     {name: "POPUP_TO_DECIDE", replace: "use POPUP_TO_CONFIRM"},
     {name: "REUSE_ALV_GRID_DISPLAY", replace: "use CL_SALV_TABLE=>FACTORY or CL_GUI_ALV_GRID"},
     {name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC"},
+    {name: "FUNCTION_EXISTS", replace: "surround with try-catch CX_SY_DYN_ILLEGAL_METHOD instead"},
+
   ];
 }
 
@@ -44,7 +46,7 @@ export class FunctionModuleRecommendations extends ABAPRule {
       title: "Function Module Recommendations",
       shortDescription: `Function Module Recommendations`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/53/`,
-      tags: [RuleTag.Styleguide],
+      tags: [],
     };
   }
 
@@ -75,7 +77,7 @@ export class FunctionModuleRecommendations extends ABAPRule {
       const index = this.conf.recommendations.findIndex(
         i => i.name.toUpperCase() === funcName && (i.from === undefined || configVersion >= i.from));
       if (index >= 0) {
-        issues.push(Issue.atToken(file, token, this.getMessage(index), this.getMetadata().key));
+        issues.push(Issue.atToken(file, token, this.getMessage(index), this.getMetadata().key, this.conf.severity));
       }
     }
     return issues;
