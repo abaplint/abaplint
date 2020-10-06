@@ -12,7 +12,6 @@ import {TableType, UnknownType} from "./basic";
 
 export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
-  private readonly parameters: TypedIdentifier[];
   private readonly tableParameters: TypedIdentifier[];
   private readonly usingParameters: TypedIdentifier[];
   private readonly changingParameters: TypedIdentifier[];
@@ -28,15 +27,9 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     super(nameToken, filename);
     this.node = st;
 
-    this.parameters = this.findParams(this.node, scope);
     this.tableParameters = this.findTables(scope, filename);
     this.usingParameters = this.findType(Expressions.FormUsing, scope);
     this.changingParameters = this.findType(Expressions.FormChanging, scope);
-  }
-
-  // todo, deprecate this method? it does not contain all table parameters
-  public getParameters(): TypedIdentifier[] {
-    return this.parameters;
   }
 
   public getTablesParameters(): TypedIdentifier[] {
@@ -89,7 +82,6 @@ export class FormDefinition extends Identifier implements IFormDefinition {
   private findParams(node: ExpressionNode | StatementNode, scope: CurrentScope) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
-//      const para = param.get() as Expressions.FormParam;
       res.push(new FormParam().runSyntax(param, scope, this.filename));
     }
     return res;

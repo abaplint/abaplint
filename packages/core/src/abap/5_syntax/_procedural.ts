@@ -26,8 +26,9 @@ export class Procedural {
   public addAllFormDefinitions(file: ABAPFile, obj: ABAPObject) {
     const structure = file.getStructure();
     if (structure) {
+      const dummy = CurrentScope.buildDefault(this.reg);
       for (const found of structure.findAllStructures(Structures.Form)) {
-        this.scope.addFormDefinitions([new FormDefinition(found, file.getFilename(), this.scope)]);
+        this.scope.addFormDefinitions([new FormDefinition(found, file.getFilename(), dummy)]);
       }
     }
 

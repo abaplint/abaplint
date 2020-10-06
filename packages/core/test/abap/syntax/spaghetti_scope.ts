@@ -88,9 +88,6 @@ ENDCLASS.`;
     expect(scope1?.getIdentifier().stype).to.equal(ScopeType.Method);
     expect(scope1?.getIdentifier().sname).to.equal("blahblah");
   });
-});
-
-describe("Spaghetti Scope, Definition + Read + Write positions", () => {
 
   it("inline FIELD-SYMBOL, check definition and write position", () => {
     const abap = `
@@ -104,6 +101,26 @@ describe("Spaghetti Scope, Definition + Read + Write positions", () => {
     expect(reads.length).to.equal(1, "reads");
     const writes = spaghetti.listWritePositions(filename);
     expect(writes.length).to.equal(1, "writes");
+  });
+
+  it("FORM should not add references to _global", () => {
+    const abap = `
+    FORM foo CHANGING bar TYPE sy.
+    ENDFORM.`;
+    const spaghetti = runProgram(abap);
+
+    const glob = spaghetti.getTop().getFirstChild();
+    expect(glob?.getIdentifier().stype).to.equal(ScopeType.Global);
+    expect(glob?.getData().forms.length).to.equal(1);
+    expect(glob?.getData().references.length).to.equal(0);
+
+    const prog = glob?.getFirstChild();
+    expect(prog?.getIdentifier().stype).to.equal(ScopeType.Program);
+    expect(prog?.getData().references.length).to.equal(0);
+
+    const form = prog?.getFirstChild();
+    expect(form?.getIdentifier().stype).to.equal(ScopeType.Form);
+    expect(form?.getData().references.length).to.equal(1);
   });
 
 });
