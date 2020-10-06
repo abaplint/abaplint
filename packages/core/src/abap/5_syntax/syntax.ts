@@ -105,6 +105,7 @@ import {Check} from "./statements/check";
 import {LogPoint} from "./statements/log_point";
 import {Severity} from "../../severity";
 import {RaiseEvent} from "./statements/raise_event";
+import {Form} from "./statements/form";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -425,18 +426,17 @@ export class SyntaxLogic {
       new Divide().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Check) {
       new Check().runSyntax(node, this.scope, filename);
-
-
     } else if (s instanceof Statements.Form) {
-      this.helpers.proc.findFormScope(node, filename);
+      new Form().runSyntax(node, this.scope, filename);
+
     } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
 
-    } else if (s instanceof Statements.EndMethod) {
-      this.scope.pop();
     } else if (s instanceof Statements.EndForm
         || s instanceof Statements.EndFunction
-        || s instanceof Statements.EndClass) {
+        || s instanceof Statements.EndMethod
+        || s instanceof Statements.EndClass
+        || s instanceof Statements.EndInterface) {
       this.scope.pop();
     }
   }
