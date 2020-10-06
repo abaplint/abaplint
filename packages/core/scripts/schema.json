@@ -1556,7 +1556,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Function Module Recommendations\nTags: Styleguide\nhttps://rules.abaplint.org/function_module_recommendations"
+              "description": "Function Module Recommendations\nhttps://rules.abaplint.org/function_module_recommendations"
             },
             "functional_writing": {
               "anyOf": [
