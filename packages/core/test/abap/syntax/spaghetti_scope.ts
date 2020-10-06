@@ -123,4 +123,29 @@ ENDCLASS.`;
     expect(form?.getData().references.length).to.equal(1);
   });
 
+  it("FORM variable 'foo' is read in one place", () => {
+    const abap = `
+CLASS cla DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: foo IMPORTING int TYPE i.
+    METHODS: bar RETURNING VALUE(int) TYPE i.
+ENDCLASS.
+CLASS cla IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM form.
+  DATA foo TYPE REF TO cla.
+  cla=>foo( int = foo->bar( ) ).
+ENDFORM.`;
+
+    const spaghetti = runProgram(abap);
+
+    const reads = spaghetti.listReadPositions(filename);
+    expect(reads.length).to.equal(1);
+  });
+
 });
