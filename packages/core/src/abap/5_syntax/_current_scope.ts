@@ -14,18 +14,24 @@ import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
 import {IScopeIdentifier} from "./_spaghetti_scope";
 import {ReferenceType, IReferenceExtras} from "./_reference";
+import {IObject} from "../../objects/_iobject";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
 
-  public static buildDefault(reg: IRegistry): CurrentScope {
+  public static buildDefault(reg: IRegistry, obj?: IObject): CurrentScope {
     const s = new CurrentScope(reg);
 
     s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
     this.addBuiltIn(s, reg.getConfig().getSyntaxSetttings().globalConstants!);
 
-    s.push(ScopeType.Global, ScopeType.Global, new Position(1, 1), ScopeType.Global);
+    let name: string = ScopeType.Global;
+    if (obj) {
+      name = name + "_" + obj.getName();
+    }
+
+    s.push(ScopeType.Global, name, new Position(1, 1), ScopeType.Global);
 
     return s;
   }

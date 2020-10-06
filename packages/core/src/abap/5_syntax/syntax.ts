@@ -126,7 +126,7 @@ export class SyntaxLogic {
     this.issues = [];
 
     this.object = object;
-    this.scope = CurrentScope.buildDefault(this.reg);
+    this.scope = CurrentScope.buildDefault(this.reg, object);
 
     this.helpers = {
       oooc: new ObjectOriented(this.scope),
