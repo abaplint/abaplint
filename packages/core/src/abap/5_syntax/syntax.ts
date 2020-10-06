@@ -11,7 +11,7 @@ import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
-import {Program} from "../../objects";
+import {FunctionGroup, Program} from "../../objects";
 import {Position} from "../../position";
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -163,17 +163,19 @@ export class SyntaxLogic {
   private traverseObject(): CurrentScope {
     const traversal = this.object.getSequencedFiles();
 
-    const main = this.object.getMainABAPFile();
-    if (main !== undefined) {
-      this.helpers.proc.addAllFormDefinitions(main, this.object);
-    }
+    if (this.object instanceof Program
+        || this.object instanceof FunctionGroup) {
+      const main = this.object.getMainABAPFile();
+      if (main !== undefined) {
+        // add FORM defintions to the _global object scope
+        this.helpers.proc.addAllFormDefinitions(main, this.object);
 
-    if (this.object instanceof Program && main !== undefined) {
-      // todo, this seems like a hack?
-      this.scope.push(ScopeType.Program,
-                      this.object.getName(),
-                      new Position(1, 1),
-                      main.getFilename());
+        if (this.object instanceof Program) {
+          this.scope.push(ScopeType.Program, this.object.getName(), new Position(1, 1), main.getFilename());
+        } else if (this.object instanceof FunctionGroup) {
+          this.scope.push(ScopeType.FunctionGroup, this.object.getName(), new Position(1, 1), main.getFilename());
+        }
+      }
     }
 
     for (const file of traversal) {
