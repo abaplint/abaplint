@@ -11,7 +11,7 @@ import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
-import {Program} from "../../objects";
+import {FunctionGroup, Program} from "../../objects";
 import {Position} from "../../position";
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -105,6 +105,7 @@ import {Check} from "./statements/check";
 import {LogPoint} from "./statements/log_point";
 import {Severity} from "../../severity";
 import {RaiseEvent} from "./statements/raise_event";
+import {Form} from "./statements/form";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -163,17 +164,19 @@ export class SyntaxLogic {
   private traverseObject(): CurrentScope {
     const traversal = this.object.getSequencedFiles();
 
-    const main = this.object.getMainABAPFile();
-    if (main !== undefined) {
-      this.helpers.proc.addAllFormDefinitions(main, this.object);
-    }
+    if (this.object instanceof Program
+        || this.object instanceof FunctionGroup) {
+      const main = this.object.getMainABAPFile();
+      if (main !== undefined) {
+        // add FORM defintions to the _global object scope
+        this.helpers.proc.addAllFormDefinitions(main, this.object);
 
-    if (this.object instanceof Program && main !== undefined) {
-      // todo, this seems like a hack?
-      this.scope.push(ScopeType.Program,
-                      this.object.getName(),
-                      new Position(1, 1),
-                      main.getFilename());
+        if (this.object instanceof Program) {
+          this.scope.push(ScopeType.Program, this.object.getName(), new Position(1, 1), main.getFilename());
+        } else if (this.object instanceof FunctionGroup) {
+          this.scope.push(ScopeType.FunctionGroup, this.object.getName(), new Position(1, 1), main.getFilename());
+        }
+      }
     }
 
     for (const file of traversal) {
@@ -181,14 +184,6 @@ export class SyntaxLogic {
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return this.scope;
-      } else if (structure.get() instanceof Structures.Interface) {
-        // special case for global interfaces, todo, look into if the case can be removed
-        try {
-          this.updateScopeStructure(structure);
-        } catch (e) {
-          this.newIssue(structure.getFirstToken(), e.message);
-          break;
-        }
       } else {
         this.traverse(structure);
       }
@@ -431,18 +426,17 @@ export class SyntaxLogic {
       new Divide().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Check) {
       new Check().runSyntax(node, this.scope, filename);
-
-
     } else if (s instanceof Statements.Form) {
-      this.helpers.proc.findFormScope(node, filename);
+      new Form().runSyntax(node, this.scope, filename);
+
     } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
 
-    } else if (s instanceof Statements.EndMethod) {
-      this.scope.pop();
     } else if (s instanceof Statements.EndForm
         || s instanceof Statements.EndFunction
-        || s instanceof Statements.EndClass) {
+        || s instanceof Statements.EndMethod
+        || s instanceof Statements.EndClass
+        || s instanceof Statements.EndInterface) {
       this.scope.pop();
     }
   }

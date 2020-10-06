@@ -38,12 +38,14 @@ import {applyEditSingle, applyEditList, IEdit} from "./edit_helper";
 import {IClassDefinition} from "./abap/types/_class_definition";
 import {ReferenceType} from "./abap/5_syntax/_reference";
 import {IObject} from "./objects/_iobject";
+import {BuiltIn} from "./abap/5_syntax/_builtin";
 
 // do not include this file from anywhere within abaplint
+// https://github.com/abaplint/abaplint/issues/873
 
 // file used to build typings, index.d.ts
 export {MemoryFile, Issue, Config, Version, ReferenceType,
-  Registry, LanguageServer, MethodLengthStats, IProgress,
+  Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
   Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment,

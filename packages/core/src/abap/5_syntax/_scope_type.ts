@@ -1,13 +1,15 @@
 export enum ScopeType {
   BuiltIn = "_builtin",
+  Dummy = "_dummy",
+  Global = "_global",
+  Program = "_program",
+  FunctionGroup = "_function_group",
+
   ClassDefinition = "class_definition",
   Interface = "interface",
   ClassImplementation = "class_implementation",
-  Dummy = "_dummy",
   Form = "form",
   FunctionModule = "function",
-  Global = "_global",
   Method = "method",
   OpenSQL = "open_sql",
-  Program = "_program",
 }

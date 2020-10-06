@@ -26,7 +26,7 @@ export class StructureParser {
     if (filename.match(/\.clas\.abap$/)) {
       return new Structures.ClassGlobal();
     } else if (filename.match(/\.intf\.abap$/)) {
-      return new Structures.Interface();
+      return new Structures.InterfaceGlobal();
     } else {
 // todo
       return new Structures.Any();

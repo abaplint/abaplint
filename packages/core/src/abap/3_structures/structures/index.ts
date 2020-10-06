@@ -22,6 +22,7 @@ export * from "./exec_sql";
 export * from "./form";
 export * from "./function_module";
 export * from "./if";
+export * from "./interface_global";
 export * from "./interface";
 export * from "./loop";
 export * from "./method";
