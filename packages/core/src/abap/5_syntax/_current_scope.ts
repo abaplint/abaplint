@@ -31,7 +31,7 @@ export class CurrentScope {
       name = name + "_" + obj.getName();
     }
 
-    s.push(ScopeType.Global, name, new Position(1, 1), ScopeType.Global);
+    s.push(ScopeType.Global, name, new Position(1, 1), name);
 
     return s;
   }
