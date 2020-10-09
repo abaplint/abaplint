@@ -55,6 +55,7 @@ DEFINE _bar.
 END-OF-DEFINITION.
 _bar.`, cnt: 0},
 
+  {abap: `SYSTEM-CALL OBJMGR CLONE me TO result.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
