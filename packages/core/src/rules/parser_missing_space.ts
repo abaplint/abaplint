@@ -2,10 +2,10 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ParserMissingSpaceConf extends BasicRuleConfig {
 }

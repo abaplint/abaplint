@@ -2,13 +2,13 @@ import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Dynamic, ParameterListExceptions} from "../abap/2_statements/expressions";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes";
+import {ABAPFile} from "../abap/abap_file";
 
 export class UseNewConf extends BasicRuleConfig {
 }

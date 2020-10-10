@@ -1,10 +1,10 @@
 import {Registry} from "../src/registry";
-import {MemoryFile} from "../src/files";
 import {expect} from "chai";
 import {getABAPObjects} from "./get_abap";
 import {ABAPObject} from "../src/objects/_abap_object";
 import {Version} from "../src/version";
 import {Config} from "../src/config";
+import {MemoryFile} from "../src/files/memory_file";
 
 describe("Registry", () => {
 

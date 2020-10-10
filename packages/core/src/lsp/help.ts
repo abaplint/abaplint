@@ -1,13 +1,13 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {INode} from "../abap/nodes/_inode";
-import {ABAPFile} from "../files";
 import {StructureNode, StatementNode, TokenNodeRegex, ExpressionNode, TokenNode} from "../abap/nodes";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {DumpScope} from "./dump_scope";
+import {ABAPFile} from "../abap/abap_file";
 
 export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {

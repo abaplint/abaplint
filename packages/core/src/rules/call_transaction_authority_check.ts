@@ -1,8 +1,9 @@
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {Issue, Statements} from "..";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import * as Statements from "../abap/2_statements/statements";
+import {ABAPFile} from "../abap/abap_file";
+import {Issue} from "../issue";
 
 export class CallTransactionAuthorityCheckConf extends BasicRuleConfig {
 }

@@ -2,7 +2,7 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
+import {ABAPFile} from "../abap/abap_file";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 import {IRuleMetadata, RuleTag} from "./_irule";

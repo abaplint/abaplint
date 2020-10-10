@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {ExpressionNode, StatementNode} from "../abap/nodes";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
   /** Max line length, in characters */

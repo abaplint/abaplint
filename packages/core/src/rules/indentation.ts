@@ -1,6 +1,5 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -12,6 +11,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
 import {Position, VirtualPosition} from "../position";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */

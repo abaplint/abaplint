@@ -1,10 +1,10 @@
 import {AbstractObject} from "./_abstract_object";
-import {ABAPFile} from "../files";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
 import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {IParseResult} from "./_iobject";
+import {ABAPFile} from "../abap/abap_file";
 
 export interface ITextElement {
   key: string;

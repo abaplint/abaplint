@@ -4,9 +4,9 @@ import * as Structures from "../abap/3_structures/structures";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ExpressionNode, StructureNode} from "../abap/nodes";
+import {ABAPFile} from "../abap/abap_file";
 
 class Conditions {
   private readonly arr: string[] = [];

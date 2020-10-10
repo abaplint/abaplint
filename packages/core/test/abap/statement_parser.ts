@@ -5,7 +5,7 @@ import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import {Write, Data, InsertDatabase} from "../../src/abap/2_statements/statements";
 import {defaultVersion, Version} from "../../src/version";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
-import {MemoryFile} from "../../src/files";
+import {MemoryFile} from "../../src/files/memory_file";
 
 
 describe("statement parser", () => {

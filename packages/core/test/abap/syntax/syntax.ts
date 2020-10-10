@@ -1,5 +1,4 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {Issue} from "../../../src/issue";
@@ -7,6 +6,7 @@ import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
 import {Version} from "../../../src/version";
+import {MemoryFile} from "../../../src/files/memory_file";
 
 function run(reg: IRegistry, globalConstants?: string[], version?: Version): Issue[] {
   let ret: Issue[] = [];

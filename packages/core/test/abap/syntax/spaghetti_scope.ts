@@ -1,5 +1,4 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {Position} from "../../../src/position";
@@ -7,6 +6,7 @@ import {ScopeType} from "../../../src/abap/5_syntax/_scope_type";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
 import {ISpaghettiScope} from "../../../src/abap/5_syntax/_spaghetti_scope";
+import {MemoryFile} from "../../../src/files/memory_file";
 
 const filename = "zfoobar.prog.abap";
 

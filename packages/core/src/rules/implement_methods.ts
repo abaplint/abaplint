@@ -1,12 +1,12 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
 import {Class, Interface} from "../objects";
 import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 import {RuleTag} from "./_irule";
 import {Identifier} from "../abap/4_file_information/_identifier";
+import {ABAPFile} from "../abap/abap_file";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 

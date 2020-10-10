@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import {defaultVersion} from "../../src/version";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
-import {MemoryFile} from "../../src/files";
+import {MemoryFile} from "../../src/files/memory_file";
 
 
 describe("macros", () => {

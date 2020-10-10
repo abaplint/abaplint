@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StructureNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty LOOP blocks */

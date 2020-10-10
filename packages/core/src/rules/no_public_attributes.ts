@@ -1,12 +1,12 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoAttribute, AttributeLevel} from "../abap/4_file_information/_abap_file_information";
 import {ABAPObject} from "../objects/_abap_object";
 import {DDIC} from "../ddic";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */

@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {NamingRuleConfig} from "./_naming_rule_config";
 import {NameValidator} from "../utils/name_validator";
 import {RuleTag} from "./_irule";
 import {ABAPObject} from "../objects/_abap_object";
 import {DDIC} from "../ddic";
+import {ABAPFile} from "../abap/abap_file";
 
 export class LocalClassNamingConf extends NamingRuleConfig {
   /** The pattern for local class names */

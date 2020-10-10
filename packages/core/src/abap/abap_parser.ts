@@ -1,12 +1,12 @@
 import {IFile} from "../files/_ifile";
 import {Issue} from "../issue";
-import {ABAPFile} from "../files";
 import {Version, defaultVersion} from "../version";
 import {Lexer} from "./1_lexer/lexer";
 import {StatementParser} from "./2_statements/statement_parser";
 import {StructureParser} from "./3_structures/structure_parser";
 import {ILexerResult} from "./1_lexer/lexer_result";
 import {ABAPFileInformation} from "./4_file_information/abap_file_information";
+import {ABAPFile} from "./abap_file";
 
 export interface IABAPParserResult {
   issues: readonly Issue[],

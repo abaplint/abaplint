@@ -2,10 +2,10 @@
 import {expect} from "chai";
 import * as Combi from "../../src/abap/2_statements/combi";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
-import {MemoryFile} from "../../src/files";
 import {Identifier, WPlusW, Plus} from "../../src/abap/1_lexer/tokens";
 import {Token} from "../../src/abap/1_lexer/tokens/_token";
 import {Result} from "../../src/abap/2_statements/result";
+import {MemoryFile} from "../../src/files/memory_file";
 
 const str  = Combi.str;
 const per  = Combi.per;

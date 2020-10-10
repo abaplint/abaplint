@@ -1,7 +1,7 @@
-import {MemoryFile} from "../src/files";
 import {Registry} from "../src/registry";
 import {expect} from "chai";
 import {SkipLogic} from "../src/skip_logic";
+import {MemoryFile} from "../src/files/memory_file";
 
 describe("Skip logic", () => {
 

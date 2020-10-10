@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Select} from "../abap/2_statements/statements";
 import {Version} from "../version";
 import {RuleTag, IRuleMetadata} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class SQLEscapeHostVariablesConf extends BasicRuleConfig {
 }

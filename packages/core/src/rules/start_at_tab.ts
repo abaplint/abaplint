@@ -3,9 +3,9 @@ import {Position} from "../position";
 import {Comment} from "../abap/2_statements/statements/_statement";
 import {TypeBegin, TypeEnd} from "../abap/2_statements/statements";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class StartAtTabConf extends BasicRuleConfig {
 }

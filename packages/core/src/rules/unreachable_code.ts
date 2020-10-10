@@ -1,12 +1,12 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IStatement, Comment, MacroContent, Empty} from "../abap/2_statements/statements/_statement";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {StatementNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class UnreachableCodeConf extends BasicRuleConfig {
 }

@@ -1,7 +1,7 @@
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {SICFConsistency} from "../../src/rules";
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("rule, sicf_consistency, error", () => {
   it("test", () => {

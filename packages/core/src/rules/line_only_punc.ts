@@ -1,13 +1,13 @@
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
 import {DDIC} from "../ddic";
+import {ABAPFile} from "../abap/abap_file";
 
 export class LineOnlyPuncConf extends BasicRuleConfig {
   /** Ignore lines with only puncutation in global exception classes */

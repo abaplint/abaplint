@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import {Registry} from "../../../src/registry";
 import {IRegistry} from "../../../src/_iregistry";
-import {MemoryFile} from "../../../src/files";
 import {getABAPObjects} from "../../get_abap";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
+import {MemoryFile} from "../../../src/files/memory_file";
 
 let reg: IRegistry = new Registry();
 

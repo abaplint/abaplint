@@ -1,11 +1,11 @@
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {Type, TypeTable, NamespaceSimpleName, DefinitionName} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class FullyTypeConsantsConf extends BasicRuleConfig {
   /** Add check for implicit data definition, require full typing. */

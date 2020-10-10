@@ -3,10 +3,10 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {ABAPFile} from "../files";
 import {Dash, DashW} from "../abap/1_lexer/tokens";
 import {FormName} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class NamesNoDashConf extends BasicRuleConfig {
 }

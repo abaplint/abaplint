@@ -2,7 +2,6 @@ import * as LServer from "vscode-languageserver-types";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
-import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IFormDefinition} from "../abap/types/_form_definition";
@@ -17,6 +16,7 @@ import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {Class, Interface} from "../objects";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
+import {ABAPFile} from "../abap/abap_file";
 
 export interface LSPLookupResult {
   /** in markdown */

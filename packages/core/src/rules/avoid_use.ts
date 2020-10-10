@@ -2,10 +2,10 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {TypeTable} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class AvoidUseConf extends BasicRuleConfig {
   /** Detects DEFINE (macro definitions) */

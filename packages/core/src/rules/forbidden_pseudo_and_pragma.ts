@@ -2,11 +2,11 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Comment} from "../abap/2_statements/statements/_statement";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ForbiddenPseudoAndPragmaConf extends BasicRuleConfig {
   public pseudo: string[] = [];

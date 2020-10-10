@@ -1,6 +1,5 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -11,6 +10,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {DDIC} from "../ddic";
 import {EditHelper} from "../edit_helper";
 import {StatementNode} from "../abap/nodes/statement_node";
+import {ABAPFile} from "../abap/abap_file";
 
 export class FunctionalWritingConf extends BasicRuleConfig {
   /** Ignore functional writing in exception classes, local + global */

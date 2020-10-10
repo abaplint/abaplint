@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../../src/files";
 import {Lexer} from "../../../src/abap/1_lexer/lexer";
 import * as Tokens from "../../../src/abap/1_lexer/tokens";
+import {MemoryFile} from "../../../src/files/memory_file";
 
 const tests = [
   {abap: "foo", type: Tokens.Identifier},

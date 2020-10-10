@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {IdenticalConditions} from "../../src/rules/identical_conditions";
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function run(abap: string){
   const reg = new Registry().addFile(new MemoryFile("zidentical_cond.prog.abap", abap));

@@ -1,5 +1,4 @@
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {Issue} from "../issue";
 import {NamingRuleConfig} from "./_naming_rule_config";
 import {Parameter, SelectOption} from "../abap/2_statements/statements";
@@ -8,6 +7,7 @@ import {NameValidator} from "../utils/name_validator";
 import {FieldSub, Field} from "../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class SelectionScreenNamingConf extends NamingRuleConfig {
   /** The pattern for selection-screen parameters */

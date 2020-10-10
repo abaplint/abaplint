@@ -1,7 +1,7 @@
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {ConstructorVisibilityPublic} from "../../src/rules";
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("rule, constructor_visibility_public, one error", () => {
   it("constructor_visibility_public test", async () => {

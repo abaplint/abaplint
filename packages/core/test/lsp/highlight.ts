@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Highlight} from "../../src/lsp/highlight";
+import {MemoryFile} from "../../src/files/memory_file";
 
 const filename: string = "foobar.prog.abap";
 

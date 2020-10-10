@@ -1,12 +1,12 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import * as Structures from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ClassName, MethodCall, InterfaceName, TypeName} from "../abap/2_statements/expressions";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class PrefixIsCurrentClassConf extends BasicRuleConfig {
   /**

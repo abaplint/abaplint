@@ -1,11 +1,12 @@
 import {expect} from "chai";
 import {PrettyPrinter} from "../../src/pretty_printer/pretty_printer";
-import {MemoryFile, ABAPFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Indent} from "../../src/pretty_printer/indent";
 import {KeywordCaseConf, KeywordCaseStyle} from "../../src/rules";
 import {Config} from "../../src/config";
 import {getABAPObjects} from "../get_abap";
+import {ABAPFile} from "../../src/abap/abap_file";
+import {MemoryFile} from "../../src/files/memory_file";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
 

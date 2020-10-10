@@ -1,6 +1,6 @@
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {CyclomaticComplexityStats} from "../../src/utils/cyclomatic_complexity_stats";
 
 describe("cyclomatic complexity stats", () => {

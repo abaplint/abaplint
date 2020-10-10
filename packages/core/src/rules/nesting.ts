@@ -1,9 +1,9 @@
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class NestingConf extends BasicRuleConfig {
   /** Maximum allowed nesting depth */

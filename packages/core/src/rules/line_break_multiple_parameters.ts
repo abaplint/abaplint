@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
 import {VirtualPosition} from "../position";
+import {ABAPFile} from "../abap/abap_file";
 
 export class LineBreakMultipleParametersConf extends BasicRuleConfig {
 }

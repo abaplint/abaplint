@@ -1,12 +1,12 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Punctuation, Comment as CommentToken} from "../abap/1_lexer/tokens";
 import {Unknown} from "../abap/2_statements/statements/_statement";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Position} from "../position";
+import {ABAPFile} from "../abap/abap_file";
 
 export class EmptyLineinStatementConf extends BasicRuleConfig {
   /** Allow changed empty lines in chanined statements */

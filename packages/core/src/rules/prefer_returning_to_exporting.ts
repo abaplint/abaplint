@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class PreferReturningToExportingConf extends BasicRuleConfig {
 }

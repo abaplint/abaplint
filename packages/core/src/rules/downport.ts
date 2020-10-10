@@ -1,7 +1,6 @@
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {ABAPFile, MemoryFile} from "../files";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPParser} from "../abap/abap_parser";
 import {Unknown} from "../abap/2_statements/statements/_statement";
@@ -10,6 +9,8 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IEdit, EditHelper} from "../edit_helper";
 import {VirtualPosition} from "../position";
+import {ABAPFile} from "../abap/abap_file";
+import {MemoryFile} from "../files/memory_file";
 
 export class DownportConf extends BasicRuleConfig {
 }

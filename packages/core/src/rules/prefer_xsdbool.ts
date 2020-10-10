@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Version} from "../version";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 export class PreferXsdboolConf extends BasicRuleConfig {
 }

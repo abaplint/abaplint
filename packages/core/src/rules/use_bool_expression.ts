@@ -3,11 +3,11 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 // note this rule assumes abap_true and abap_false is used for boolean variables
 // some other rule will in the future find assignments to abap_bool that are not abap_true/abap_false/abap_undefined

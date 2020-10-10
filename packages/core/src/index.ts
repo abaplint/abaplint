@@ -1,4 +1,3 @@
-import {MemoryFile, ABAPFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
 import {Version} from "./version";
@@ -39,6 +38,8 @@ import {IClassDefinition} from "./abap/types/_class_definition";
 import {ReferenceType} from "./abap/5_syntax/_reference";
 import {IObject} from "./objects/_iobject";
 import {BuiltIn} from "./abap/5_syntax/_builtin";
+import {ABAPFile} from "./abap/abap_file";
+import {MemoryFile} from "./files/memory_file";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873

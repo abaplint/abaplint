@@ -7,12 +7,12 @@ import {FormDefinition, FunctionModuleParameterDirection} from "../types";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
-import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {TableType, CharacterType} from "../types/basic";
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
+import {ABAPFile} from "../abap_file";
 
 export class Procedural {
   private readonly scope: CurrentScope;

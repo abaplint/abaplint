@@ -3,10 +3,10 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {Comment} from "../abap/2_statements/statements/_statement";
+import {ABAPFile} from "../abap/abap_file";
 
 export class CheckSubrcConf extends BasicRuleConfig {
   public openDataset: boolean = true;

@@ -1,11 +1,11 @@
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {ABAPFile} from "../files";
 import {TokenNodeRegex, TokenNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ForbiddenIdentifierConf extends BasicRuleConfig {
   /** List of forbideen identifiers, array of string regex */

@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Help} from "../../src/lsp/help";
 import * as LServer from "vscode-languageserver-types";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("LSP, help", () => {
 
