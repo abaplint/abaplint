@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
-// import * as Expressions from "../abap/2_statements/expressions";
+import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -29,8 +29,26 @@ export class OmitReceiving extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(_file: ABAPFile) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+
+    for (const e of file.getStructure()?.findAllExpressions(Expressions.MethodCallParam) || []) {
+      const p = e.findDirectExpression(Expressions.MethodParameters);
+      if (p === undefined) {
+        continue;
+      }
+
+      const r = p.findDirectTokenByText("RECEIVING");
+      if (r === undefined) {
+        continue;
+      }
+      const ex = p.findDirectTokenByText("EXCEPTIONS");
+      if (ex !== undefined) {
+        continue;
+      }
+
+      issues.push(Issue.atToken(file, r, "Omit RECEIVING", this.getMetadata().key, this.getConfig().severity));
+    }
 
     return issues;
   }

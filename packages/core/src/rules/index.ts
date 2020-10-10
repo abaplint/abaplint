@@ -74,6 +74,7 @@ export * from "./no_public_attributes";
 export * from "./object_naming";
 export * from "./obsolete_statement";
 export * from "./omit_parameter_name";
+export * from "./omit_receiving";
 export * from "./parser_error";
 export * from "./parser_missing_space";
 export * from "./prefer_inline";
