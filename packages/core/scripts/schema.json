@@ -99,7 +99,7 @@
           "type": "boolean"
         },
         "defaultKey": {
-          "description": "Detects DEFAULT KEY definitions",
+          "description": "Detects DEFAULT KEY definitions, from version v740sp02 and up",
           "type": "boolean"
         },
         "define": {
@@ -2185,6 +2185,17 @@
               ],
               "description": "Checks that classes which are inherited from are not declared as FINAL.\nTags: Syntax\nhttps://rules.abaplint.org/superclass_final"
             },
+            "sy_modification": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SyModificationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds modification of sy fields\nTags: SingleFile\nhttps://rules.abaplint.org/sy_modification"
+            },
             "tabl_enhancement_category": {
               "anyOf": [
                 {
@@ -3958,6 +3969,23 @@
       "type": "object"
     },
     "SuperclassFinalConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SyModificationConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
