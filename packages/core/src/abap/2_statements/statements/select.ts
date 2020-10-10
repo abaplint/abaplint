@@ -1,12 +1,14 @@
 import {IStatement} from "./_statement";
-import {seq, opt} from "../combi";
+import {seq, str, ver, starPrio, optPrio} from "../combi";
 import {Select as eSelect, SQLHints} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class Select implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return seq(new eSelect(), opt(new SQLHints()));
+    const union = ver(Version.v750, seq(str("UNION"), optPrio(str("DISTINCT")), new eSelect()));
+    return seq(new eSelect(), starPrio(union), optPrio(new SQLHints()));
   }
 
 }
