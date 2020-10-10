@@ -4,9 +4,12 @@ import {IRegistry} from "./_iregistry";
 
 export class SkipLogic {
   private readonly reg: IRegistry;
+  /** TOBJ cache hashmap */
+  private tobj: { [index: string]: boolean } | undefined;
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
+    this.tobj = undefined;
   }
 
   public skip(obj: IObject): boolean {
@@ -74,16 +77,22 @@ export class SkipLogic {
   }
 
   private isGeneratedFunctionGroup(group: FunctionGroup): boolean {
-    for (const obj of this.reg.getObjects()) {
-      if (obj.getType() !== "TOBJ") {
-        continue;
-      }
-      const tobj = obj as MaintenanceAndTransportObject;
-      if (tobj.getArea() === group.getName()) {
-        return true;
+    if (this.tobj === undefined) {
+      this.tobj = {};
+
+      for (const obj of this.reg.getObjects()) {
+        if (obj.getType() !== "TOBJ") {
+          continue;
+        }
+        const tobj = obj as MaintenanceAndTransportObject;
+        const area = tobj.getArea()?.toUpperCase();
+        if (area) {
+          this.tobj[area] = true;
+        }
       }
     }
-    return false;
+
+    return this.tobj[group.getName().toUpperCase()];
   }
 
   private isGeneratedGatewayClass(obj: Class): boolean {
