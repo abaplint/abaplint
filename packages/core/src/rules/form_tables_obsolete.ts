@@ -2,10 +2,10 @@ import {Issue} from "../issue";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject} from "../objects/_abap_object";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class FormTablesObsoleteConf extends BasicRuleConfig {
 }
@@ -20,6 +20,7 @@ export class FormTablesObsolete extends ABAPRule {
       title: "TABLES parameters are obsolete",
       shortDescription: `Checks for TABLES parameters in forms.`,
       extendedInformation: `https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapform_tables.htm`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ExpressionNode} from "../abap/nodes";
 import {RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class TypesNamingConf extends BasicRuleConfig {
   /** The pattern for TYPES */
@@ -21,7 +21,7 @@ export class TypesNaming extends ABAPRule {
       key: "types_naming",
       title: "TYPES naming conventions",
       shortDescription: `Allows you to enforce a pattern for TYPES definitions`,
-      tags: [RuleTag.Naming],
+      tags: [RuleTag.Naming, RuleTag.SingleFile],
     };
   }
 

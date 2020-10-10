@@ -3,9 +3,10 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {ABAPFile} from "../files";
 import {Dash, DashW} from "../abap/1_lexer/tokens";
 import {FormName} from "../abap/2_statements/expressions";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class NamesNoDashConf extends BasicRuleConfig {
 }
@@ -15,11 +16,12 @@ export class NamesNoDash extends ABAPRule {
 
   private conf = new NamesNoDashConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "names_no_dash",
       title: "No dashes in FORM and DATA names",
       shortDescription: `Checks for a "-" in FORM and DATA names`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

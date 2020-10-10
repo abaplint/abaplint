@@ -1,9 +1,10 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Class} from "../objects";
 import {IObject} from "../objects/_iobject";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class LocalTestclassLocationConf extends BasicRuleConfig {
 }
@@ -12,11 +13,12 @@ export class LocalTestclassLocation extends ABAPRule {
 
   private conf = new LocalTestclassLocationConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "local_testclass_location",
       title: "Local testclass location",
       shortDescription: `Checks that local test classes are placed in the test include.`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

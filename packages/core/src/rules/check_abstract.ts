@@ -1,7 +1,8 @@
+import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class CheckAbstractConf extends BasicRuleConfig {
 }
@@ -16,13 +17,14 @@ export class CheckAbstract extends ABAPRule {
 
   private conf = new CheckAbstractConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "check_abstract",
       title: "Check abstract methods and classes",
       shortDescription: `Checks abstract methods and classes:
 - class defined as abstract and final,
 - non-abstract class contains abstract methods`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

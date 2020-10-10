@@ -1,10 +1,10 @@
 import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ExpressionNode, TokenNode} from "../abap/nodes";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ManyParenthesisConf extends BasicRuleConfig {
 }
@@ -18,7 +18,7 @@ export class ManyParenthesis extends ABAPRule {
       key: "many_parenthesis",
       title: "Too many parenthesis",
       shortDescription: `Searches for expressions where extra parenthesis can safely be removed`,
-      tags: [],
+      tags: [RuleTag.SingleFile],
       badExample: `
 IF ( destination IS INITIAL ).
 ENDIF.

@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile, MemoryFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Unknown, Empty, Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPObject} from "../objects/_abap_object";
@@ -10,6 +9,8 @@ import {Include} from "../abap/2_statements/statements";
 import {ABAPParser} from "../abap/abap_parser";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
+import {MemoryFile} from "../files/memory_file";
 
 export class CommentedCodeConf extends BasicRuleConfig {
   /** Allow INCLUDEs in function groups */
@@ -27,7 +28,7 @@ export class CommentedCode extends ABAPRule {
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
 https://docs.abapopenchecks.org/checks/14/`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

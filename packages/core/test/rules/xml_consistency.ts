@@ -1,9 +1,9 @@
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {XMLConsistency} from "../../src/rules";
 import {expect} from "chai";
 import {IRegistry} from "../../src/_iregistry";
 import {Issue} from "../../src/issue";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function run(reg: IRegistry): Promise<Issue[]> {
   await reg.parseAsync();

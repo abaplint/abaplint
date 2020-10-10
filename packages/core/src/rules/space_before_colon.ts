@@ -1,6 +1,6 @@
+import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 
@@ -17,7 +17,7 @@ export class SpaceBeforeColon extends ABAPRule {
       title: "Space before colon",
       shortDescription: `Checks that there are no spaces in front of colons in chained statements.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/80/`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.SingleFile],
       badExample: `DATA : foo TYPE string.`,
       goodExample: `DATA: foo TYPE string.`,
     };

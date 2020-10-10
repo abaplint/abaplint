@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class WhitespaceEndConf extends BasicRuleConfig {
 }
@@ -18,7 +18,7 @@ export class WhitespaceEnd extends ABAPRule {
       key: "whitespace_end",
       title: "Whitespace at end of line",
       shortDescription: `Checks for redundant whitespace at the end of each line.`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

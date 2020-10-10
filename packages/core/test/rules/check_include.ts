@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import {CheckInclude} from "../../src/rules";
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {Issue} from "../../src/issue";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function runMulti(files: {filename: string, contents: string}[]): Promise<Issue[]> {
   const reg = new Registry();

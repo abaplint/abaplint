@@ -1,5 +1,4 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/4_file_information/visibility";
@@ -8,6 +7,7 @@ import {UnknownType} from "../../../src/abap/types/basic";
 import {IClassDefinition} from "../../../src/abap/types/_class_definition";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {IRegistry} from "../../../src/_iregistry";
+import {MemoryFile} from "../../../src/files/memory_file";
 
 function run(reg: IRegistry): IClassDefinition | undefined {
   const clas = getABAPObjects(reg)[0] as Class;

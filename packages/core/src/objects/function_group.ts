@@ -1,8 +1,8 @@
 import {ABAPObject, ITextElement} from "./_abap_object";
 import {FunctionModuleDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
-import {ABAPFile} from "../files";
 import * as xmljs from "xml-js";
+import {ABAPFile} from "../abap/abap_file";
 
 export class FunctionGroup extends ABAPObject {
 

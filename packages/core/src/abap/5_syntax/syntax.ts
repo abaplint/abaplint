@@ -4,7 +4,6 @@ import {Issue} from "../../issue";
 import {INode} from "../nodes/_inode";
 import {Token} from "../1_lexer/tokens/_token";
 import {StatementNode, StructureNode} from "../nodes";
-import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {CurrentScope} from "./_current_scope";
@@ -106,6 +105,7 @@ import {LogPoint} from "./statements/log_point";
 import {Severity} from "../../severity";
 import {RaiseEvent} from "./statements/raise_event";
 import {Form} from "./statements/form";
+import {ABAPFile} from "../abap_file";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -126,7 +126,7 @@ export class SyntaxLogic {
     this.issues = [];
 
     this.object = object;
-    this.scope = CurrentScope.buildDefault(this.reg);
+    this.scope = CurrentScope.buildDefault(this.reg, object);
 
     this.helpers = {
       oooc: new ObjectOriented(this.scope),

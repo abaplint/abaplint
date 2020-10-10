@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {ExpressionNode, StatementNode} from "../abap/nodes";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
   /** Max line length, in characters */
@@ -20,7 +20,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
       title: "Keep single parameters on one line",
       shortDescription: `Keep single parameter calls on one line`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line`,
-      tags: [RuleTag.Whitespace, RuleTag.Styleguide],
+      tags: [RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: `call_method(\n  2 ).`,
       goodExample: `call_method( 2 ).`,
     };

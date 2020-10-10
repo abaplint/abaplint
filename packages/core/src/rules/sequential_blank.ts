@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 export class SequentialBlankConf extends BasicRuleConfig {
   /** An equal or higher number of sequential blank lines will trigger a violation.
@@ -25,7 +25,7 @@ export class SequentialBlank extends ABAPRule {
       key: "sequential_blank",
       title: "Sequential blank lines",
       shortDescription: `Checks that code does not contain more than the configured number of blank lines in a row.`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

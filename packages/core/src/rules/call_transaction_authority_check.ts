@@ -1,8 +1,9 @@
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {Issue, Statements} from "..";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import * as Statements from "../abap/2_statements/statements";
+import {ABAPFile} from "../abap/abap_file";
+import {Issue} from "../issue";
 
 export class CallTransactionAuthorityCheckConf extends BasicRuleConfig {
 }
@@ -16,7 +17,7 @@ export class CallTransactionAuthorityCheck extends ABAPRule {
       title: "Call Transaction Authority-Check",
       shortDescription: `Checks that usages of CALL TRANSACTION contain an authority-check.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/54/`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: `CALL TRANSACTION 'FOO'.`,
       goodExample: `CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.`,
     };

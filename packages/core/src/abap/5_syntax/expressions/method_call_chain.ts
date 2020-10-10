@@ -59,8 +59,6 @@ export class MethodCallChain {
         } else if (method === undefined && !(context instanceof VoidType)) {
           throw new Error("Method \"" + methodName + "\" not found, methodCallChain");
         } else if (method) {
-
-
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;
         }

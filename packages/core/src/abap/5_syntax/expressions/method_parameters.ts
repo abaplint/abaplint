@@ -138,12 +138,9 @@ export class MethodParameters {
         parameterType = parameter.getType();
       }
 
-      if (item.sourceType) {
-// todo, check that targetType and parameterType are compatible
-        new Source().runSyntax(item.source, scope, filename);
-        if (0) {
-          console.log(parameterType); // todo
-        }
+      // todo, check that targetType and parameterType are compatible
+      if (0) {
+        console.log(parameterType); // todo
       }
     }
   }

@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ContainsTabConf extends BasicRuleConfig {
   /** quick fix replace with number of spaces */
@@ -23,7 +23,7 @@ export class ContainsTab extends ABAPRule {
       extendedInformation: `
 https://docs.abapopenchecks.org/checks/09/
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

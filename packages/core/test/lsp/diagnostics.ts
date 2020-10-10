@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Diagnostics} from "../../src/lsp/diagnostics";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("LSP, diagnostics", () => {
 

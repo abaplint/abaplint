@@ -1,6 +1,5 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import {Class, Interface} from "../objects";
@@ -11,6 +10,7 @@ import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
+import {ABAPFile} from "../abap/abap_file";
 
 export class SpaceBeforeDotConf extends BasicRuleConfig {
   public ignoreGlobalDefinition: boolean = true;
@@ -29,7 +29,7 @@ export class SpaceBeforeDot extends ABAPRule {
       extendedInformation: `
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#be-consistent
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#condense-your-code`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: `WRITE bar .`,
       goodExample: `WRITE bar.`,
     };

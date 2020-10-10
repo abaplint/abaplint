@@ -1,5 +1,4 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {Position} from "../../../src/position";
@@ -7,6 +6,7 @@ import {ScopeType} from "../../../src/abap/5_syntax/_scope_type";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
 import {ISpaghettiScope} from "../../../src/abap/5_syntax/_spaghetti_scope";
+import {MemoryFile} from "../../../src/files/memory_file";
 
 const filename = "zfoobar.prog.abap";
 
@@ -121,6 +121,31 @@ ENDCLASS.`;
     const form = prog?.getFirstChild();
     expect(form?.getIdentifier().stype).to.equal(ScopeType.Form);
     expect(form?.getData().references.length).to.equal(1);
+  });
+
+  it("FORM variable 'foo' is read in one place", () => {
+    const abap = `
+CLASS cla DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: foo IMPORTING int TYPE i.
+    METHODS: bar RETURNING VALUE(int) TYPE i.
+ENDCLASS.
+CLASS cla IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM form.
+  DATA foo TYPE REF TO cla.
+  cla=>foo( int = foo->bar( ) ).
+ENDFORM.`;
+
+    const spaghetti = runProgram(abap);
+
+    const reads = spaghetti.listReadPositions(filename);
+    expect(reads.length).to.equal(1);
   });
 
 });

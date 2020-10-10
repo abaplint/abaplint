@@ -2,9 +2,9 @@ import * as Structures from "../abap/3_structures/structures";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {StructureNode} from "../abap/nodes";
+import {ABAPFile} from "../abap/abap_file";
 
 export class IdenticalContentsConf extends BasicRuleConfig {
 }
@@ -19,7 +19,7 @@ export class IdenticalContents extends ABAPRule {
       shortDescription: `Find identical contents in IFs
 
 Prerequsites: code is pretty printed with identical cAsE`,
-      tags: [],
+      tags: [RuleTag.SingleFile],
     };
   }
 

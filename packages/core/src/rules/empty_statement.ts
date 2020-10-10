@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
 import {Empty} from "../abap/2_statements/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {Position} from "../position";
 import {RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class EmptyStatementConf extends BasicRuleConfig {
 }
@@ -19,7 +19,7 @@ export class EmptyStatement extends ABAPRule {
       key: "empty_statement",
       title: "Remove emty statement",
       shortDescription: `Checks for empty statements (an empty statement is a single dot)`,
-      tags: [RuleTag.Quickfix],
+      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

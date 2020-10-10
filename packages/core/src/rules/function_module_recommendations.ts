@@ -2,7 +2,7 @@ import {ABAPFile, Issue, Version} from "..";
 import {FunctionName} from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 
 export type Recommendations = {name: string, replace: string, from?: Version;};
@@ -46,7 +46,7 @@ export class FunctionModuleRecommendations extends ABAPRule {
       title: "Function Module Recommendations",
       shortDescription: `Function Module Recommendations`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/53/`,
-      tags: [],
+      tags: [RuleTag.SingleFile],
     };
   }
 

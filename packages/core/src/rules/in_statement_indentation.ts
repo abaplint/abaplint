@@ -1,6 +1,5 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -10,6 +9,7 @@ import {DDIC} from "../ddic";
 import {Unknown, Comment} from "../abap/2_statements/statements/_statement";
 import {EditHelper} from "../edit_helper";
 import {Position} from "../position";
+import {ABAPFile} from "../abap/abap_file";
 
 export class InStatementIndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -34,7 +34,7 @@ ENDIF.`,
     AND 2 = 2.
   WRITE 'hello'.
 ENDIF.`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

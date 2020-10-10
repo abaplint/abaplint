@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {Try, Catch} from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Cleanup} from "../abap/2_statements/statements";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class TryWithoutCatchConf extends BasicRuleConfig {
 }
@@ -18,6 +18,7 @@ export class TryWithoutCatch extends ABAPRule {
       title: "TRY without CATCH",
       shortDescription: `Checks for TRY blocks without a CATCH and CLEANUP block`,
       badExample: `TRY.\n  WRITE 'hello world'.\nENDTRY.`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

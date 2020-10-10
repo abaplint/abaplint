@@ -1,10 +1,10 @@
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {MacroContent, Comment, Empty} from "../abap/2_statements/statements/_statement";
-import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {IIndentationOptions} from "./indentation_options";
 import {VirtualPosition} from "../position";
+import {ABAPFile} from "../abap/abap_file";
 
 // todo, will break if there is multiple statements per line?
 export class Indent {

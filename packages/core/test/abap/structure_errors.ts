@@ -2,8 +2,8 @@ import * as Structures from "../../src/abap/3_structures/structures";
 import {expect} from "chai";
 import {IStructure} from "../../src/abap/3_structures/structures/_structure";
 import {findIssues} from "./_utils";
-import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../src/files/memory_file";
 
 const cases = [
   {abap: "IF foo = bar.", error: "Expected ENDIF", structure: new Structures.If(), errorMatched: 1},

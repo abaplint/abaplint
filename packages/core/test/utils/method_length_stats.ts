@@ -1,6 +1,6 @@
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {MethodLengthStats} from "../../src/utils/method_length_stats";
 
 describe("method length stats", () => {

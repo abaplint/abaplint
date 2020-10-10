@@ -1,6 +1,5 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight} from "../abap/1_lexer/tokens";
@@ -10,6 +9,7 @@ import {MethodDef} from "../abap/2_statements/statements";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class DoubleSpaceConf extends BasicRuleConfig {
   /** Check for double space after keywords */
@@ -31,7 +31,7 @@ export class DoubleSpace extends ABAPRule {
       key: "double_space",
       title: "Double space",
       shortDescription: `Checks that only a single space follows certain common statements.`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `DATA  foo TYPE i.`,
       goodExample: `DATA foo TYPE i.`,
     };

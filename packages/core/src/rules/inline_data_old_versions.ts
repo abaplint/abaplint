@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {Version} from "../version";
 import {Target} from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class InlineDataOldVersionsConf extends BasicRuleConfig {
 }
@@ -17,7 +17,7 @@ export class InlineDataOldVersions extends ABAPRule {
       key: "inline_data_old_versions",
       title: "Inline data, old versions",
       shortDescription: `Checks for inline data declarations in older releases. Only active for versions less than v740sp02`,
-      tags: [RuleTag.Syntax],
+      tags: [RuleTag.Syntax, RuleTag.SingleFile],
     };
   }
 

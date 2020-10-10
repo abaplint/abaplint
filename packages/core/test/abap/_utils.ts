@@ -1,4 +1,3 @@
-import {MemoryFile} from "../../src/files";
 import {Config} from "../../src/config";
 import {expect} from "chai";
 import {Version, getPreviousVersion, defaultVersion} from "../../src/version";
@@ -11,6 +10,7 @@ import {IFile} from "../../src/files/_ifile";
 import {Token} from "../../src/abap/1_lexer/tokens/_token";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {getABAPObjects} from "../get_abap";
+import {MemoryFile} from "../../src/files/memory_file";
 
 // utils for testing
 

@@ -1,8 +1,8 @@
 import {MethodLength, MethodLengthConf} from "../../src/rules/method_length";
 import {testRule} from "./_utils";
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 
 function testRulesWithFile(tests: any): void {
   describe("test files for method length", () => {

@@ -31,7 +31,7 @@ export class MethodParameterNames implements IRule {
       key: "method_parameter_names",
       title: "Method parameter naming conventions",
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for method parameter names`,
-      tags: [RuleTag.Naming],
+      tags: [RuleTag.Naming, RuleTag.SingleFile],
     };
   }
 

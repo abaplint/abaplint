@@ -1,5 +1,4 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Interface} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/4_file_information/visibility";
@@ -7,6 +6,7 @@ import {getABAPObjects} from "../../get_abap";
 import {IInterfaceDefinition} from "../../../src/abap/types/_interface_definition";
 import {IRegistry} from "../../../src/_iregistry";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
+import {MemoryFile} from "../../../src/files/memory_file";
 
 function run(reg: IRegistry): IInterfaceDefinition | undefined {
   const intf = getABAPObjects(reg)[0] as Interface;

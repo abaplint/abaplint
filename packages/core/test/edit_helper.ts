@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import {applyEditList, EditHelper, applyEditSingle} from "../src/edit_helper";
-import {MemoryFile} from "../src/files";
 import {Registry} from "../src/registry";
 import {Position} from "../src/position";
 import {ABAPObject} from "../src/objects/_abap_object";
+import {MemoryFile} from "../src/files/memory_file";
 
 function testDeleteStatement(abapCode: string, statementIndex: number) {
   const filename = "filename.prog.abap";

@@ -1,7 +1,7 @@
 import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
 import {DescriptionEmpty} from "../../src/rules";
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("rule, description_empty, error", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>

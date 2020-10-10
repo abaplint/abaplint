@@ -1,10 +1,10 @@
 import * as LServer from "vscode-languageserver-types";
 import {expect} from "chai";
-import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Hover} from "../../src/lsp/hover";
 import {IFile} from "../../src/files/_ifile";
 import {ITextDocumentPositionParams} from "../../src/lsp/_interfaces";
+import {MemoryFile} from "../../src/files/memory_file";
 
 function buildPosition(file: IFile, row: number, column: number): ITextDocumentPositionParams {
   return {

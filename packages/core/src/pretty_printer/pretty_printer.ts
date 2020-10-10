@@ -1,11 +1,11 @@
 import {Unknown, MacroContent, MacroCall, Comment} from "../abap/2_statements/statements/_statement";
-import {ABAPFile} from "../files";
 import {FixCase} from "./fix_keyword_case";
 import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";
 import {RemoveSequentialBlanks} from "./remove_sequential_blanks";
 import {IConfiguration} from "../_config";
 import {VirtualPosition} from "../position";
+import {ABAPFile} from "../abap/abap_file";
 
 export class PrettyPrinter {
   private result: string;

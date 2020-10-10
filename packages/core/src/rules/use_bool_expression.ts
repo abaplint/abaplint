@@ -3,11 +3,11 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 // note this rule assumes abap_true and abap_false is used for boolean variables
 // some other rule will in the future find assignments to abap_bool that are not abap_true/abap_false/abap_undefined
@@ -25,7 +25,7 @@ export class UseBoolExpression extends ABAPRule {
       shortDescription: `Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up`,
       extendedInformation:
         `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-xsdbool-to-set-boolean-variables`,
-      tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `IF line IS INITIAL.
   has_entries = abap_false.
 ELSE.

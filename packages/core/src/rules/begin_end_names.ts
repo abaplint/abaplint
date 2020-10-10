@@ -1,6 +1,5 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Structures from "../abap/3_structures/structures";
 import * as Expressions from "../abap/2_statements/expressions";
@@ -10,6 +9,7 @@ import {IStructure} from "../abap/3_structures/structures/_structure";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 export class BeginEndNamesConf extends BasicRuleConfig {
 }
@@ -22,7 +22,7 @@ export class BeginEndNames extends ABAPRule {
       key: "begin_end_names",
       title: "Check BEGIN END names",
       shortDescription: `Check BEGIN OF and END OF names match`,
-      tags: [RuleTag.Syntax, RuleTag.Quickfix],
+      tags: [RuleTag.Syntax, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `DATA: BEGIN OF stru,
       field TYPE i,
     END OF structure_not_the_same.`,

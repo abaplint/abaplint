@@ -2,8 +2,8 @@ import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
-import {ABAPFile} from "../files";
 import {IRegistry} from "../_iregistry";
+import {ABAPFile} from "../abap/abap_file";
 
 export abstract class ABAPRule implements IRule {
   protected reg: IRegistry;

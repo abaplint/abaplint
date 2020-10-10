@@ -1,10 +1,10 @@
 import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ReduceStringTemplatesConf extends BasicRuleConfig {
 }
@@ -18,7 +18,7 @@ export class ReduceStringTemplates extends ABAPRule {
       key: "reduce_string_templates",
       title: "Reduce string templates",
       shortDescription: `Checks for string templates`,
-      tags: [],
+      tags: [RuleTag.SingleFile],
       badExample: `WRITE |{ |sdf| }|.\nWRITE |{ 'sdf' }|.`,
       goodExample: `WRITE |sdf|.`,
     };

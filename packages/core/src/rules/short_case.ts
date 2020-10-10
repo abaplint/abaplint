@@ -1,10 +1,11 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ShortCaseConf extends BasicRuleConfig {
   /** The smallest number of WHEN branches which will trigger a violation.
@@ -18,11 +19,12 @@ export class ShortCaseConf extends BasicRuleConfig {
 export class ShortCase extends ABAPRule {
   private conf = new ShortCaseConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "short_case",
       title: "Short CASE",
       shortDescription: `Checks for CASE statements which have fewer than the specified number of branches`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

@@ -3,9 +3,9 @@ import {Position} from "../position";
 import {Comment} from "../abap/2_statements/statements/_statement";
 import {TypeBegin, TypeEnd} from "../abap/2_statements/statements";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class StartAtTabConf extends BasicRuleConfig {
 }
@@ -20,7 +20,7 @@ export class StartAtTab extends ABAPRule {
       title: "Start at tab",
       shortDescription: `Checks that statements start at tabstops.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
-      tags: [RuleTag.Whitespace, RuleTag.Styleguide],
+      tags: [RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: ` WRITE a.`,
       goodExample: `  WRITE a.`,
     };

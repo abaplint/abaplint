@@ -1,9 +1,10 @@
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {ABAPFile} from "../files";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
 
 export class AbapdocConf extends BasicRuleConfig {
   /** Check local classes and interfaces for abapdoc. */
@@ -14,12 +15,13 @@ export class Abapdoc extends ABAPRule {
 
   private conf = new AbapdocConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "abapdoc",
       title: "Check abapdoc",
       shortDescription: `Various checks regarding abapdoc.
 Base rule checks for existence of abapdoc for public class methods and all interface methods.`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

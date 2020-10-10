@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {MethodParameters, MethodCallBody, MethodCall} from "../abap/2_statements/expressions";
 import {ExpressionNode} from "../abap/nodes";
 import {EditHelper} from "../edit_helper";
+import {ABAPFile} from "../abap/abap_file";
 
 export class ExportingConf extends BasicRuleConfig {
 }
@@ -24,7 +24,7 @@ export class Exporting extends ABAPRule {
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
 https://docs.abapopenchecks.org/checks/30/`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

@@ -1,10 +1,10 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Rename} from "../../src/lsp/rename";
 import {ApplyWorkSpaceEdit} from "./_apply_edit";
 import * as LServer from "vscode-languageserver-types";
 import {Class} from "../../src/objects";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("LSP, prepare rename, global class", () => {
 
