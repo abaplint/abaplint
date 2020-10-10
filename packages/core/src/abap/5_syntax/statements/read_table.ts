@@ -11,7 +11,11 @@ export class ReadTable {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const sources = node.findDirectExpressions(Expressions.Source);
-    const firstSource = sources[0];
+
+    let firstSource = node.findDirectExpression(Expressions.BasicSource);
+    if (firstSource === undefined) {
+      firstSource = sources[0];
+    }
     let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : undefined;
 
     if (sourceType === undefined) {

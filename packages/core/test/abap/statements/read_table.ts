@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {statementType, statementVersion} from "../_utils";
+import {Version} from "../../../src/version";
 
 const tests = [
   "READ TABLE tt_fields ASSIGNING <ls_fbranch> WITH KEY tabname = 'TEXTL'.",
@@ -51,3 +52,10 @@ const tests = [
 ];
 
 statementType(tests, "READ TABLE", Statements.ReadTable);
+
+
+const versions = [
+  {abap: "READ TABLE mo_repo->get_files_local( ) INTO ls_local_file WITH KEY file = is_file.", ver: Version.v740sp02},
+];
+
+statementVersion(versions, "READ TABLE", Statements.ReadTable);

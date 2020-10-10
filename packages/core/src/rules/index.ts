@@ -96,6 +96,7 @@ export * from "./space_before_dot";
 export * from "./sql_escape_host_variables";
 export * from "./start_at_tab";
 export * from "./superclass_final";
+export * from "./sy_modification";
 export * from "./tabl_enhancement_category";
 export * from "./try_without_catch";
 export * from "./type_form_parameters";

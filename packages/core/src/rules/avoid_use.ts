@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {TypeTable} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {Version} from "../version";
 
 export class AvoidUseConf extends BasicRuleConfig {
   /** Detects DEFINE (macro definitions) */
@@ -22,7 +23,7 @@ export class AvoidUseConf extends BasicRuleConfig {
   public statics: boolean = true;
   /** Detects SYSTEM-CALL */
   public systemCall: boolean = true;
-  /** Detects DEFAULT KEY definitions */
+  /** Detects DEFAULT KEY definitions, from version v740sp02 and up */
   public defaultKey: boolean = true;
   /** Detects BREAK and BREAK-POINTS */
   public break: boolean = true;
@@ -101,6 +102,7 @@ DESRIBE TABLE LINES: use lines() instead`,
       }
 
       if (this.conf.defaultKey
+          && this.reg.getConfig().getVersion() >= Version.v740sp02
           && (statement instanceof Statements.Data || statement instanceof Statements.Type)) {
         const tt = statementNode.findFirstExpression(TypeTable);
         const token = tt?.findDirectTokenByText("DEFAULT");

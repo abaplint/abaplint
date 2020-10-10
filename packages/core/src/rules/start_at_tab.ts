@@ -19,7 +19,8 @@ export class StartAtTab extends ABAPRule {
       key: "start_at_tab",
       title: "Start at tab",
       shortDescription: `Checks that statements start at tabstops.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
+      extendedInformation: `Reports max 100 issues per file
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
       tags: [RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: ` WRITE a.`,
       goodExample: `  WRITE a.`,
@@ -64,6 +65,9 @@ export class StartAtTab extends ABAPRule {
       if ((pos.getCol() - 1) % 2 !== 0 && raw[pos.getRow() - 1].includes("\t") === false) {
         const issue = Issue.atPosition(file, pos, this.getMessage(), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
+        if (issues.length >= 100) {
+          return issues; // only max 100 issues perfile
+        }
       }
       previous = pos;
     }

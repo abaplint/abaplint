@@ -18,6 +18,9 @@ const tests = [
   {abap: "IF bar ='RETURNING'. ENDIF.", cnt: 1},
   {abap: "IF token-str EQ 'RETURNING'. ENDIF.", cnt: 0},
   {abap: "IF bar = 'RETURNING'. ENDIF.", cnt: 0},
+  {abap: "DATA(test) = VALUE string_table( ( `( 1 =`) ).", cnt: 1},
+  {abap: "DATA(test) = VALUE string_table( (`( 1 =` ) ).", cnt: 1},
+  {abap: "DATA(test) = VALUE string_table( ( `( 1 =` ) ).", cnt: 0},
 ];
 
 testRule(tests, ParserMissingSpace);
