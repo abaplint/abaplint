@@ -159,6 +159,8 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
 
   "DATA(bar) = + '11'.",
   "DATA(bar) = +'sdf'.",
+  "DATA(test) = VALUE string_table( ( `( 1 =`) ).",
+  "DATA(test) = VALUE string_table( (`( 1 =` ) ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);

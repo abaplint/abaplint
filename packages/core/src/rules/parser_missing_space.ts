@@ -2,7 +2,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {StatementNode} from "../abap/nodes";
+import {StatementNode, TokenNode} from "../abap/nodes";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
@@ -69,6 +69,34 @@ This rule makes sure the spaces are consistently required across the language.`,
           if (next.getStr() === ")"
               && next.getRow() === current.getLastToken().getRow()
               && next.getCol() === current.getLastToken().getEnd().getCol()) {
+            return current.getLastToken().getEnd();
+          }
+
+        }
+      }
+    }
+
+    for (const vb of statement.findAllExpressions(Expressions.ValueBody)) {
+
+      const children = vb.getChildren();
+      for (let i = 0; i < children.length; i++) {
+        const current = children[i];
+
+        if (current instanceof TokenNode) {
+          const prev = children[i - 1]?.getLastToken();
+          const next = children[i + 1]?.getFirstToken();
+
+          if (current.getFirstToken().getStr() === "("
+              && next
+              && next.getRow() === current.getLastToken().getRow()
+              && next.getCol() === current.getLastToken().getEnd().getCol()) {
+            return current.getFirstToken().getStart();
+          }
+
+          if (current.getFirstToken().getStr() === ")"
+              && prev
+              && prev.getRow() === current.getFirstToken().getRow()
+              && prev.getEnd().getCol() === current.getFirstToken().getStart().getCol()) {
             return current.getLastToken().getEnd();
           }
 
