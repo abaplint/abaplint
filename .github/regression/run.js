@@ -25,7 +25,7 @@ for (let r of repos) {
   map[r].after_end = new Date();
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 
-  map[r].version = childProcess.execSync(`node -p "require('${folder}/abaplint.json').syntax.version"`);
+  map[r].version = childProcess.execSync(`node -p "require('./${folder}/abaplint.json').syntax.version"`);
 }
 
 let issues = "";
