@@ -28,18 +28,16 @@ export class MaintenanceAndTransportObject extends AbstractObject {
 
 ////////////
 
-  private parseXML(): string | undefined {
+  private parseXML() {
     if (this.getFiles().length === 0) {
-      return undefined;
+      return;
     }
 
     const xml = this.getFiles()[0].getRaw();
 
     const result = xml.match(/<AREA>([\w/]+)<\/AREA>/);
     if (result) {
-      return result[1];
-    } else {
-      return undefined;
+      this.area = result[1];
     }
   }
 
