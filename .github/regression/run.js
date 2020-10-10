@@ -24,13 +24,15 @@ for (let r of repos) {
   childProcess.execSync("node ./abaplint_after " + folder + "/abaplint.json -f json > output.json || true");
   map[r].after_end = new Date();
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
+
+  map[r].version = childProcess.execSync(`node -p "require('${folder}/abaplint.json').syntax.version"`);
 }
 
 let issues = "";
 let comment = "Regression test results:\n";
 
-comment += "| Repository | Issues | Runtime |\n";
-comment += "| :--- | :--- | :--- |\n";
+comment += "| Repository | Issues | Runtime | Target Version |\n";
+comment += "| :--- | :--- | :--- | :--- |\n";
 for (let name in map) {
   const link = "[" + name + "](https://github.com/" + name + ")"
   // todo, this assumes the array content is the same
@@ -41,11 +43,14 @@ for (let name in map) {
   } else {
     comment += "| " + link + "| :red_circle:";
   }
+
   let runtimeBefore = Math.ceil( ( map[name].before_end - map[name].before_start ) / 1000);
   let runtimeAfter = Math.ceil( ( map[name].after_end - map[name].after_start ) / 1000);
   let runtimeIcon = Math.abs(runtimeBefore - runtimeAfter) > 2 ? ":yellow_circle:" : ":green_circle:";
   let runtimeInfo = runtimeIcon + " " + runtimeBefore + "s -> " + runtimeAfter + "s";
-  comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |\n";
+  comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |";
+
+  comment += map[name].version + "|\n";
 
   for (const i of map[name].after) {
     if (issues.length > 3000) { // keep the comment at a reasonable size
