@@ -17,7 +17,7 @@ export class SyModification extends ABAPRule {
       key: "sy_modification",
       title: "Modification of SY fields",
       shortDescription: `Finds modification of sy fields`,
-      extendedInformation: ``,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abensystem_fields.htm`,
       tags: [RuleTag.SingleFile],
       badExample: `
 sy-uname = 2.
