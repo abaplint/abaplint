@@ -5,6 +5,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {Token} from "../abap/1_lexer/tokens/_token";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class PreferredCompareOperatorConf extends BasicRuleConfig {
   /** Operators which are not allowed */
@@ -17,11 +18,12 @@ export class PreferredCompareOperator extends ABAPRule {
 
   private readonly operatorMapping: Map<string, string> = new Map<string, string>();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "preferred_compare_operator",
       title: "Preferred compare operator",
       shortDescription: `Configure undesired operator variants`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

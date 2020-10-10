@@ -22,7 +22,7 @@ export class MaxOneStatement extends ABAPRule {
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line
 https://docs.abapopenchecks.org/checks/11/`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `WRITE foo. WRITE bar.`,
       goodExample: `WRITE foo.\nWRITE bar.`,
     };

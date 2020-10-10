@@ -1,6 +1,6 @@
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {CyclomaticComplexityStats} from "../utils/cyclomatic_complexity_stats";
@@ -13,11 +13,12 @@ export class CyclomaticComplexity implements IRule {
 
   private conf = new CyclomaticComplexityConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "cyclomatic_complexity",
       title: "Cyclomatic Complexity",
       shortDescription: `Cyclomatic complexity, only reported for methods`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

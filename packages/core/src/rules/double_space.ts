@@ -31,7 +31,7 @@ export class DoubleSpace extends ABAPRule {
       key: "double_space",
       title: "Double space",
       shortDescription: `Checks that only a single space follows certain common statements.`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `DATA  foo TYPE i.`,
       goodExample: `DATA foo TYPE i.`,
     };

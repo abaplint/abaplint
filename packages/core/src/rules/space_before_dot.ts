@@ -29,7 +29,7 @@ export class SpaceBeforeDot extends ABAPRule {
       extendedInformation: `
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#be-consistent
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#condense-your-code`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: `WRITE bar .`,
       goodExample: `WRITE bar.`,
     };

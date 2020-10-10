@@ -5,7 +5,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {Version} from "../version";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
@@ -48,6 +48,7 @@ export class ObsoleteStatement extends ABAPRule {
       key: "obsolete_statement",
       title: "Obsolete statements",
       shortDescription: `Checks for usages of certain obsolete statements`,
+      tags: [RuleTag.SingleFile],
       extendedInformation: `
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs
 

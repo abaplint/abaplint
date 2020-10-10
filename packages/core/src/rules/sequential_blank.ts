@@ -25,7 +25,7 @@ export class SequentialBlank extends ABAPRule {
       key: "sequential_blank",
       title: "Sequential blank lines",
       shortDescription: `Checks that code does not contain more than the configured number of blank lines in a row.`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

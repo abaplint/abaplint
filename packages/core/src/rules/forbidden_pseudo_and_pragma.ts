@@ -24,7 +24,7 @@ export class ForbiddenPseudoAndPragma extends ABAPRule {
       key: "forbidden_pseudo_and_pragma",
       title: "Forbidden pseudo comments and pragma",
       shortDescription: `Checks for unwanted pseudo comments and pragma`,
-      tags: [RuleTag.Quickfix],
+      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

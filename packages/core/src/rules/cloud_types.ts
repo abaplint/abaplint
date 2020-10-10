@@ -1,4 +1,4 @@
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import * as Objects from "../objects";
@@ -14,11 +14,12 @@ export class CloudTypes implements IRule {
   private reg: IRegistry;
   private conf = new CloudTypesConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "cloud_types",
       title: "Check cloud types",
       shortDescription: `Checks that the package does not contain any object types unsupported in cloud ABAP.`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

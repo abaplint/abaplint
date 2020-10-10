@@ -8,6 +8,7 @@ import {IStatement} from "../abap/2_statements/statements/_statement";
 import {Combi} from "../abap/2_statements/combi";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class AmbiguousStatementConf extends BasicRuleConfig {
 }
@@ -15,12 +16,13 @@ export class AmbiguousStatementConf extends BasicRuleConfig {
 export class AmbiguousStatement extends ABAPRule {
   private conf = new AmbiguousStatementConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "ambiguous_statement",
       title: "Check for ambigious statements",
       shortDescription: `Checks for ambiguity between deleting or modifying from internal and database table
 Add "TABLE" keyword or "@" for escaping SQL variables`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

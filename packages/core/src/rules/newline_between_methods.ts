@@ -30,7 +30,7 @@ export class NewlineBetweenMethods extends ABAPRule {
       key: "newline_between_methods",
       title: "New line between methods",
       shortDescription: `Checks for newlines between method implementations.`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.SingleFile],
     };
   }
 

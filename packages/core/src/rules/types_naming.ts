@@ -21,7 +21,7 @@ export class TypesNaming extends ABAPRule {
       key: "types_naming",
       title: "TYPES naming conventions",
       shortDescription: `Allows you to enforce a pattern for TYPES definitions`,
-      tags: [RuleTag.Naming],
+      tags: [RuleTag.Naming, RuleTag.SingleFile],
     };
   }
 

@@ -25,7 +25,7 @@ export class LineOnlyPunc extends ABAPRule {
       shortDescription: `Detects lines containing only punctuation.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end
 https://docs.abapopenchecks.org/checks/16/`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: "zcl_class=>method(\n).",
       goodExample: "zcl_class=>method( ).",
     };

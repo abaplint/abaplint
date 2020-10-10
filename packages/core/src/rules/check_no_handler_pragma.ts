@@ -5,7 +5,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
 import {Comment} from "../abap/2_statements/statements/_statement";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class CheckNoHandlerPragmaConf extends BasicRuleConfig {
 }
@@ -18,6 +18,7 @@ export class CheckNoHandlerPragma extends ABAPRule {
       key: "check_no_handler_pragma",
       title: "Check if NO_HANDLER can be removed",
       shortDescription: `Checks NO_HANDLER pragmas that can be removed`,
+      tags: [RuleTag.SingleFile],
       badExample: `TRY.
     ...
   CATCH zcx_abapgit_exception ##NO_HANDLER.

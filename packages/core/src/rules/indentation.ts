@@ -30,7 +30,7 @@ export class Indentation extends ABAPRule {
       key: "indentation",
       title: "Indentation",
       shortDescription: `Checks indentation`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

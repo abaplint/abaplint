@@ -21,7 +21,7 @@ export class PreferIsNot extends ABAPRule {
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-is-not-to-not-is
 
 "if not is_valid( )." examples are skipped`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
       goodExample: `IF variable IS NOT INITIAL.
 IF variable NP 'TODO*'.
 IF variable <> 42.`,

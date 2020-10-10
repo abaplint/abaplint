@@ -5,7 +5,7 @@ import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {Type, TypeTable, NamespaceSimpleName, DefinitionName} from "../abap/2_statements/expressions";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class FullyTypeConsantsConf extends BasicRuleConfig {
   /** Add check for implicit data definition, require full typing. */
@@ -22,6 +22,7 @@ export class FullyTypeConstants extends ABAPRule {
       shortDescription: `Checks constants for full typing - no implicit typing allowed.`,
       badExample: "CONSTANTS foo VALUE 'a'.",
       goodExample: "CONSTANTS foo TYPE c LENGTH 1 VALUE 'a'.",
+      tags: [RuleTag.SingleFile],
     };
   }
 

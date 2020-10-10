@@ -23,7 +23,7 @@ export class EmptyLineinStatement extends ABAPRule {
       title: "Find empty lines in statements",
       shortDescription: `Checks that statements do not contain empty lines.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/41/`,
-      tags: [RuleTag.Quickfix, RuleTag.Whitespace],
+      tags: [RuleTag.Quickfix, RuleTag.Whitespace, RuleTag.SingleFile],
     };
   }
 

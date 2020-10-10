@@ -20,7 +20,7 @@ export class LineLength extends ABAPRule {
       shortDescription: `Detects lines exceeding the provided maximum length.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length
 https://docs.abapopenchecks.org/checks/04/`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

@@ -26,7 +26,7 @@ export class NoPublicAttributes extends ABAPRule {
 Exceptions are excluded from this rule.`,
       extendedInformation:
         `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#members-private-by-default-protected-only-if-needed`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

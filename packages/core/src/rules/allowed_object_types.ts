@@ -1,4 +1,4 @@
-import {IRule, IRuleMetadata} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -20,6 +20,7 @@ export class AllowedObjectTypes implements IRule {
       title: "Check allowed object types",
       shortDescription: `Restricts the set of allowed object types.`,
       extendedInformation: `allowed is a list of 4 character object types, example: ["CLAS", "INTF"]`,
+      tags: [RuleTag.SingleFile],
     };
   }
 

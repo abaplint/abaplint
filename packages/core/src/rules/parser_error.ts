@@ -20,7 +20,7 @@ export class ParserError extends ABAPRule {
       shortDescription: `Checks for syntax not recognized by abaplint.
 
 See recognized syntax at https://syntax.abaplint.org`,
-      tags: [RuleTag.Syntax],
+      tags: [RuleTag.Syntax, RuleTag.SingleFile],
     };
   }
 

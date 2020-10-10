@@ -24,7 +24,7 @@ export class Exporting extends ABAPRule {
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
 https://docs.abapopenchecks.org/checks/30/`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

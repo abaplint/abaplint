@@ -4,7 +4,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class WhenOthersLastConf extends BasicRuleConfig {
 }
@@ -18,6 +18,7 @@ export class WhenOthersLast extends ABAPRule {
       key: "when_others_last",
       title: "WHEN OTHERS last",
       shortDescription: `Checks that WHEN OTHERS is placed the last within a CASE statement.`,
+      tags: [RuleTag.SingleFile],
       badExample: `CASE bar.
   WHEN OTHERS.
   WHEN 2.

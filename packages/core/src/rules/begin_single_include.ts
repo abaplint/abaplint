@@ -4,7 +4,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class BeginSingleIncludeConf extends BasicRuleConfig {
 }
@@ -18,6 +18,7 @@ export class BeginSingleInclude extends ABAPRule {
       key: "begin_single_include",
       title: "BEGIN contains single INCLUDE",
       shortDescription: `Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE`,
+      tags: [RuleTag.SingleFile],
       badExample: `TYPES: BEGIN OF dummy1.
   INCLUDE TYPE dselc.
 TYPES: END OF dummy1.

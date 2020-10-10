@@ -23,7 +23,7 @@ export class CheckComments extends ABAPRule {
       shortDescription: `Various checks for comment usage.`,
       extendedInformation:
         `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#put-comments-before-the-statement-they-relate-to`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

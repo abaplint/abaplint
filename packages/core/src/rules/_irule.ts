@@ -11,7 +11,10 @@ export enum RuleTag {
   Naming = "Naming",
   Quickfix = "Quickfix",
   Syntax = "Syntax",
+  /** Relevant wrt the official SAP ABAP style guide*/
   Styleguide = "Styleguide",
+  /** Single file compatible, the rule gives correct results when having only information about the single file */
+  SingleFile = "SingleFile",
 }
 
 /** Rule Metadata */

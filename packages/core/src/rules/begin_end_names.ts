@@ -22,7 +22,7 @@ export class BeginEndNames extends ABAPRule {
       key: "begin_end_names",
       title: "Check BEGIN END names",
       shortDescription: `Check BEGIN OF and END OF names match`,
-      tags: [RuleTag.Syntax, RuleTag.Quickfix],
+      tags: [RuleTag.Syntax, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `DATA: BEGIN OF stru,
       field TYPE i,
     END OF structure_not_the_same.`,

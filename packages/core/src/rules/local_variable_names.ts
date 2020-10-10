@@ -30,7 +30,7 @@ export class LocalVariableNames extends ABAPRule {
       shortDescription: `
 Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.
 Regexes are case-insensitive.`,
-      tags: [RuleTag.Naming],
+      tags: [RuleTag.Naming, RuleTag.SingleFile],
     };
   }
 

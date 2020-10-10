@@ -20,7 +20,7 @@ export class PreferReturningToExporting extends ABAPRule {
       shortDescription: `Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting
 https://docs.abapopenchecks.org/checks/44/`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

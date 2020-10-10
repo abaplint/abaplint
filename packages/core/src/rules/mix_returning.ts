@@ -20,7 +20,7 @@ export class MixReturning extends ABAPRule {
       shortDescription: `Checks that methods don't have a mixture of returning and exporting/changing parameters`,
       // eslint-disable-next-line max-len
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

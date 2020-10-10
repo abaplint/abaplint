@@ -27,7 +27,7 @@ ENDIF.`,
       goodExample: `IF ( condition1 ) AND ( condition2 ).
   ...
 ENDIF.`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

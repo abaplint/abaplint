@@ -36,7 +36,7 @@ export class EmptyStructure extends ABAPRule {
       title: "Find empty blocks",
       shortDescription: `Checks that the code does not contain empty blocks.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-empty-if-branches`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

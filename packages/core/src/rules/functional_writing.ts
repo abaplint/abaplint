@@ -28,7 +28,7 @@ export class FunctionalWriting extends ABAPRule {
       shortDescription: `Detects usage of call method when functional style calls can be used.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
 https://docs.abapopenchecks.org/checks/07/`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `CALL METHOD zcl_class=>method( ).`,
       goodExample: `zcl_class=>method( ).`,
     };

@@ -27,7 +27,7 @@ export class CommentedCode extends ABAPRule {
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
 https://docs.abapopenchecks.org/checks/14/`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

@@ -17,7 +17,7 @@ export class LineBreakStyle implements IRule {
       shortDescription: `Enforces LF as newlines in ABAP files
 
 abapGit does not work with CRLF`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.SingleFile],
     };
   }
 

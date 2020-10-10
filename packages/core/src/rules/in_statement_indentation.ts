@@ -34,7 +34,7 @@ ENDIF.`,
     AND 2 = 2.
   WRITE 'hello'.
 ENDIF.`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

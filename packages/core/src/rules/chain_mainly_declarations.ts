@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class ChainMainlyDeclarationsConf extends BasicRuleConfig {
   /** Allow definition statements to be chained */
@@ -42,6 +42,7 @@ https://docs.abapopenchecks.org/checks/23/
 
 https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statements_guidl.htm
 `,
+      tags: [RuleTag.SingleFile],
       badExample: `CALL METHOD: bar.`,
       goodExample: `CALL METHOD bar.`,
     };

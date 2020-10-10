@@ -19,7 +19,7 @@ export class EmptyStatement extends ABAPRule {
       key: "empty_statement",
       title: "Remove emty statement",
       shortDescription: `Checks for empty statements (an empty statement is a single dot)`,
-      tags: [RuleTag.Quickfix],
+      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

@@ -24,7 +24,7 @@ export class UseNew extends ABAPRule {
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-new-to-create-object`,
       badExample: `CREATE OBJECT ref.`,
       goodExample: `ref = NEW #( ).`,
-      tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 

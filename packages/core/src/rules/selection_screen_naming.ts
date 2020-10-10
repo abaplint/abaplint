@@ -7,7 +7,7 @@ import {IStatement} from "../abap/2_statements/statements/_statement";
 import {NameValidator} from "../utils/name_validator";
 import {FieldSub, Field} from "../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../abap/nodes";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class SelectionScreenNamingConf extends NamingRuleConfig {
   /** The pattern for selection-screen parameters */
@@ -19,12 +19,12 @@ export class SelectionScreenNaming extends ABAPRule {
 
   private conf = new SelectionScreenNamingConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "selection_screen_naming",
       title: "Selection screen naming conventions",
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.`,
-      tags: [RuleTag.Naming],
+      tags: [RuleTag.Naming, RuleTag.SingleFile],
     };
   }
 

@@ -25,7 +25,7 @@ export class LocalClassNaming extends ABAPRule {
       key: "local_class_naming",
       title: "Local class naming conventions",
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for local class names.`,
-      tags: [RuleTag.Naming],
+      tags: [RuleTag.Naming, RuleTag.SingleFile],
     };
   }
 

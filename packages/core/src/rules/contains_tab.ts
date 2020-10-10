@@ -23,7 +23,7 @@ export class ContainsTab extends ABAPRule {
       extendedInformation: `
 https://docs.abapopenchecks.org/checks/09/
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 

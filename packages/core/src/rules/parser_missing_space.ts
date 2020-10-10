@@ -19,7 +19,7 @@ export class ParserMissingSpace extends ABAPRule {
       title: "Parser Error, missing space",
       shortDescription: `In special cases the ABAP language allows for not having spaces before or after string literals.
 This rule makes sure the spaces are consistently required across the language.`,
-      tags: [RuleTag.Syntax, RuleTag.Whitespace],
+      tags: [RuleTag.Syntax, RuleTag.Whitespace, RuleTag.SingleFile],
       badExample: `IF ( foo = 'bar').`,
       goodExample: `IF ( foo = 'bar' ).`,
     };

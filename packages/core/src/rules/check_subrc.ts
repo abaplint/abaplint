@@ -4,7 +4,7 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {Comment} from "../abap/2_statements/statements/_statement";
 
@@ -29,7 +29,7 @@ export class CheckSubrc extends ABAPRule {
       title: "Check sy-subrc",
       shortDescription: `Check sy-subrc`,
       extendedInformation: `Pseudo comment "#EC CI_SUBRC can be added to suppress findings`,
-      tags: [],
+      tags: [RuleTag.SingleFile],
     };
   }
 
