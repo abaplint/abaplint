@@ -5,9 +5,17 @@ import * as xmljs from "xml-js";
 import {ABAPFile} from "../abap/abap_file";
 
 export class FunctionGroup extends ABAPObject {
+  private includes: string[] | undefined = undefined;
+  private modules: FunctionModuleDefinition[] | undefined = undefined;
 
   public getType(): string {
     return "FUGR";
+  }
+
+  public setDirty() {
+    super.setDirty();
+    this.includes = undefined;
+    this.modules = undefined;
   }
 
   public getAllowedNaming() {
@@ -39,18 +47,15 @@ export class FunctionGroup extends ABAPObject {
     return sequence;
   }
 
-  // todo, cache parsed data
   public getModules(): FunctionModuleDefinition[] {
-    const xml = this.getXML();
-    if (xml === undefined) {
-      return [];
+    if (this.modules === undefined) {
+      this.parseXML();
     }
-    const parsed = this.parseRaw();
-    if (parsed === undefined) {
-      return [];
+    if (this.modules === undefined) {
+      throw new Error("getIncludes, undefined");
     }
 
-    return this.parseModules(parsed);
+    return this.modules;
   }
 
   public getIncludeFiles(): {file: ABAPFile, name: string}[] {
@@ -100,26 +105,14 @@ export class FunctionGroup extends ABAPObject {
   }
 
   public getIncludes(): string[] {
-    const xml = this.getXML();
-    if (xml === undefined) {
-      return [];
+    if (this.includes === undefined) {
+      this.parseXML();
+    }
+    if (this.includes === undefined) {
+      throw new Error("getIncludes, undefined");
     }
 
-    const parsed = this.parseRaw();
-    if (parsed === undefined) {
-      return [];
-    }
-    const includes = parsed.abapGit["asx:abap"]["asx:values"].INCLUDES;
-    if (includes === undefined) {
-      return [];
-    }
-
-    const ret: string[] = [];
-    for (const i of xmlToArray(includes.SOBJ_NAME)) {
-      ret.push(i?._text);
-    }
-
-    return ret;
+    return this.includes;
   }
 
   public getModule(name: string): FunctionModuleDefinition | undefined {
@@ -147,15 +140,29 @@ export class FunctionGroup extends ABAPObject {
 
 /////////////////////////////////
 
-  private parseModules(data: any): FunctionModuleDefinition[] {
-    const ret: FunctionModuleDefinition[] = [];
+  private parseXML() {
+    this.includes = [];
+    this.modules = [];
 
-    const functions = data.abapGit["asx:abap"]["asx:values"].FUNCTIONS;
-    for (const module of xmlToArray(functions?.item)) {
-      ret.push(new FunctionModuleDefinition(module));
+    const parsed = this.parseRaw();
+    if (parsed === undefined) {
+      return;
     }
 
-    return ret;
+    // INCLUDES
+    const includes = parsed.abapGit["asx:abap"]["asx:values"]?.INCLUDES;
+    if (includes === undefined) {
+      return;
+    }
+    for (const i of xmlToArray(includes.SOBJ_NAME)) {
+      this.includes.push(i?._text);
+    }
+
+    // FUNCTION MODULES
+    const functions = parsed.abapGit["asx:abap"]["asx:values"]?.FUNCTIONS;
+    for (const module of xmlToArray(functions?.item)) {
+      this.modules.push(new FunctionModuleDefinition(module));
+    }
   }
 
   private findTextFile() {
