@@ -48,9 +48,9 @@ for (let name in map) {
   let runtimeAfter = Math.ceil( ( map[name].after_end - map[name].after_start ) / 1000);
   let runtimeIcon = Math.abs(runtimeBefore - runtimeAfter) > 2 ? ":yellow_circle:" : ":green_circle:";
   let runtimeInfo = runtimeIcon + " " + runtimeBefore + "s -> " + runtimeAfter + "s";
-  comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |";
+  comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " | ";
 
-  comment += map[name].version + "|\n";
+  comment += map[name].version.trim() + " |\n";
 
   for (const i of map[name].after) {
     if (issues.length > 3000) { // keep the comment at a reasonable size
