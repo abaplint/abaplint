@@ -28,7 +28,7 @@ export class OmitReceiving extends ABAPRule {
         RECEIVING
           rt_objects      = et_objects ).`,
       goodExample: `
-      bar = upload_pack(
+      et_objects = upload_pack(
         io_client       = lo_client
         iv_url          = iv_url
         iv_deepen_level = iv_deepen_level
