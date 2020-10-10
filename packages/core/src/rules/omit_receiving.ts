@@ -18,6 +18,21 @@ export class OmitReceiving extends ABAPRule {
       shortDescription: `Omit RECEIVING`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-receiving`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `
+      upload_pack(
+        EXPORTING
+          io_client       = lo_client
+          iv_url          = iv_url
+          iv_deepen_level = iv_deepen_level
+          it_hashes       = lt_hashes
+        RECEIVING
+          rt_objects      = et_objects ).`,
+      goodExample: `
+      bar = upload_pack(
+        io_client       = lo_client
+        iv_url          = iv_url
+        iv_deepen_level = iv_deepen_level
+        it_hashes       = lt_hashes ).`,
     };
   }
 
