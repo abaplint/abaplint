@@ -98,6 +98,16 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return undefined;
   }
 
+  public getFirstStatement(): StatementNode | undefined {
+    for (const child of this.getChildren()) {
+      if (child instanceof StatementNode) {
+        return child;
+      }
+      return child.getFirstStatement();
+    }
+    return undefined;
+  }
+
   public getFirstToken(): Token {
     const child = this.getFirstChild();
 
