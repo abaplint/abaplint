@@ -10,7 +10,6 @@ export class View extends AbstractObject {
     fields: {
       VIEWFIELD: string,
       TABNAME: string,
-      ROLLNAME: string,
       FIELDNAME: string}[]} | undefined;
 
   public getType(): string {
@@ -44,9 +43,21 @@ export class View extends AbstractObject {
         // ignore, this is a special case of old style .INCLUDE
         continue;
       }
+      let found = ddic.lookupTableOrView(field.TABNAME);
+      if (found instanceof TypedIdentifier) {
+        found = found.getType();
+      }
+      if (found instanceof Types.StructureType) {
+        const s = found.getComponentByName(field.FIELDNAME);
+        if (s === undefined) {
+          found = new Types.UnknownType(field.FIELDNAME + " not found in " + field.TABNAME + ", VIEW parse type");
+        } else {
+          found = s;
+        }
+      }
       components.push({
         name: field.VIEWFIELD,
-        type: ddic.lookupDataElement(field.ROLLNAME)});
+        type: found});
     }
 
     return TypedIdentifier.from(this.getIdentifier()!, new Types.StructureType(components), [IdentifierMeta.DDIC]);
@@ -67,7 +78,6 @@ export class View extends AbstractObject {
       this.parsedData.fields.push({
         VIEWFIELD: field.VIEWFIELD?._text,
         TABNAME: field.TABNAME?._text,
-        ROLLNAME: field.ROLLNAME?._text,
         FIELDNAME: field.FIELDNAME?._text,
       });
     }

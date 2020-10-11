@@ -3,7 +3,7 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {StructureNode} from "../abap/nodes";
+import {StatementNode, StructureNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
 
 export class IdenticalContentsConf extends BasicRuleConfig {
@@ -18,7 +18,9 @@ export class IdenticalContents extends ABAPRule {
       title: "Identical contents",
       shortDescription: `Find identical contents in IFs
 
-Prerequsites: code is pretty printed with identical cAsE`,
+Prerequsites: code is pretty printed with identical cAsE
+
+Chained statments are ignored`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -65,7 +67,7 @@ Prerequsites: code is pretty printed with identical cAsE`,
     {
       const ifFirst = ifBody.getFirstChild();
       const elseFirst = elseBody.getFirstChild();
-      if (ifFirst === undefined || elseFirst === undefined) {
+      if (ifFirst === undefined || elseFirst === undefined || this.isChained(ifFirst)) {
         return [];
       } else if (ifFirst.concatTokens() === elseFirst.concatTokens()) {
         const message = "Identical contents";
@@ -77,7 +79,7 @@ Prerequsites: code is pretty printed with identical cAsE`,
     {
       const ifLast = ifBody.getLastChild();
       const elseLast = elseBody.getLastChild();
-      if (ifLast === undefined || elseLast === undefined) {
+      if (ifLast === undefined || elseLast === undefined || this.isChained(ifLast)) {
         return [];
       } else if (ifLast.concatTokens() === elseLast.concatTokens()) {
         const message = "Identical contents";
@@ -87,6 +89,16 @@ Prerequsites: code is pretty printed with identical cAsE`,
     }
 
     return [];
+  }
+
+  private isChained(node: StructureNode | StatementNode | undefined): boolean {
+    if (node === undefined) {
+      return false;
+    } else if (node instanceof StatementNode) {
+      return node.getColon() !== undefined;
+    } else {
+      return this.isChained(node.getFirstStatement());
+    }
   }
 
 }

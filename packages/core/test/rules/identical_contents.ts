@@ -7,7 +7,7 @@ const tests = [
   {abap: `
   IF lv_foo = lv_bar.
     lv_moo = abap_true.
-    WRITE: / lv_moo.
+    WRITE / lv_moo.
   ELSE.
     lv_moo = abap_true.
   ENDIF.`, cnt: 1},
@@ -15,12 +15,12 @@ const tests = [
   {abap: `
   lv_moo = abap_true.
   IF lv_foo = lv_bar.
-    WRITE: / lv_moo.
+    WRITE / lv_moo.
   ENDIF.`, cnt: 0},
 
   {abap: `
   IF lv_foo = lv_bar.
-    WRITE: / lv_moo.
+    WRITE / lv_moo.
     lv_moo = abap_true.
   ELSE.
     lv_moo = abap_true.
@@ -36,32 +36,32 @@ const tests = [
 
   {abap: `
   IF lv_foo = lv_bar.
-    WRITE: / lv_moo.
+    WRITE / lv_moo.
     IF 1 = 2.
-      WRITE: / lv_text.
+      WRITE / lv_text.
     ENDIF.
   ELSE.
     IF 1 = 2.
-      WRITE: / lv_bar.
+      WRITE / lv_bar.
     ENDIF.
   ENDIF.`, cnt: 0},
 
   {abap: `
     IF 1 = 2.
-      WRITE: / lv_text.
+      WRITE / lv_text.
     ENDIF.
     IF 1 = 2.
-      WRITE: / lv_bar.
+      WRITE / lv_bar.
     ENDIF.`, cnt: 0},
 
   {abap: `
   IF 1 = 2.
-    WRITE: / lv_text.
+    WRITE / lv_text.
   ENDIF.
   IF 1 = 2.
-    WRITE: / lv_bar.
+    WRITE / lv_bar.
   ELSE.
-    WRITE: / lv_bar.
+    WRITE / lv_bar.
   ENDIF.`, cnt: 1},
 
   {abap: `
@@ -87,6 +87,16 @@ const tests = [
     ENDIF.
   ELSE.
     CLEAR moo.
+  ENDIF.`, cnt: 0},
+
+  {abap: `
+  IF p_obje = abap_true.
+    WRITE: / 'Found', lv_lines, 'dependencies for', p_type, p_name.
+  ELSE.
+    WRITE: / 'Found', lv_lines, 'dependencies for the following packages:'.
+    LOOP AT lt_packages INTO lv_package.
+      WRITE: AT /5 lv_package.
+    ENDLOOP.
   ENDIF.`, cnt: 0},
 
 ];

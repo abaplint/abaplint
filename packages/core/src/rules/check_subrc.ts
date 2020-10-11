@@ -28,7 +28,9 @@ export class CheckSubrc extends ABAPRule {
       key: "check_subrc",
       title: "Check sy-subrc",
       shortDescription: `Check sy-subrc`,
-      extendedInformation: `Pseudo comment "#EC CI_SUBRC can be added to suppress findings`,
+      extendedInformation: `Pseudo comment "#EC CI_SUBRC can be added to suppress findings
+
+If sy-dbcnt is checked after database statements, it is considered okay.`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -63,19 +65,23 @@ export class CheckSubrc extends ABAPRule {
       } else if (config.selectSingle === true
           && statement.get() instanceof Statements.Select
           && statement.concatTokens().toUpperCase().startsWith("SELECT SINGLE ")
-          && this.isChecked(i, statements) === false) {
+          && this.isChecked(i, statements) === false
+          && this.checksDbcnt(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.updateDatabase === true
           && statement.get() instanceof Statements.UpdateDatabase
-          && this.isChecked(i, statements) === false) {
+          && this.isChecked(i, statements) === false
+          && this.checksDbcnt(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.insertDatabase === true
           && statement.get() instanceof Statements.InsertDatabase
-          && this.isChecked(i, statements) === false) {
+          && this.isChecked(i, statements) === false
+          && this.checksDbcnt(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.modifyDatabase === true
           && statement.get() instanceof Statements.ModifyDatabase
-          && this.isChecked(i, statements) === false) {
+          && this.isChecked(i, statements) === false
+          && this.checksDbcnt(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.readTable === true
           && statement.get() instanceof Statements.ReadTable
@@ -96,6 +102,21 @@ export class CheckSubrc extends ABAPRule {
   }
 
 ////////////////
+
+  private checksDbcnt(index: number, statements: readonly StatementNode[]): boolean {
+    for (let i = index + 1; i < statements.length; i++) {
+      const statement = statements[i];
+      const concat = statement.concatTokens().toUpperCase();
+      if (statement.get() instanceof Comment) {
+        continue;
+      } else if (statement.get() instanceof Statements.EndIf) {
+        continue;
+      } else {
+        return concat.includes("SY-DBCNT");
+      }
+    }
+    return false;
+  }
 
   private isChecked(index: number, statements: readonly StatementNode[]): boolean {
     let assigned: string | undefined = undefined;
