@@ -1600,7 +1600,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find identical contents in IFs\n\nPrerequsites: code is pretty printed with identical cAsE\nTags: SingleFile\nhttps://rules.abaplint.org/identical_contents"
+              "description": "Find identical contents in IFs\n\nPrerequsites: code is pretty printed with identical cAsE\n\nChained statments are ignored\nTags: SingleFile\nhttps://rules.abaplint.org/identical_contents"
             },
             "identical_form_names": {
               "anyOf": [
