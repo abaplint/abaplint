@@ -39,6 +39,12 @@ ASSIGN foo TO <left_operand>.
 IF <left_operand> IS ASSIGNED.
 ENDIF.`, cnt: 0},
 
+  {abap: `
+UPDATE zabaplint_pack
+  SET json = iv_json
+  WHERE devclass = iv_devclass.
+ASSERT sy-dbcnt = 1.`, cnt: 0},
+
 ];
 
 testRule(tests, CheckSubrc);
