@@ -2359,7 +2359,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the consistency of main XML files, eg. naming\nhttps://rules.abaplint.org/xml_consistency"
+              "description": "Checks the consistency of main XML files, eg. naming for CLAS and INTF objects\nTags: Naming, Syntax\nhttps://rules.abaplint.org/xml_consistency"
             }
           },
           "type": "object"
