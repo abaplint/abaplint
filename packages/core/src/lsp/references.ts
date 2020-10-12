@@ -94,7 +94,7 @@ export class References {
       }
 
       for (const r of node.getData().references) {
-        if (r.resolved.equals(identifier)) {
+        if (r.resolved?.equals(identifier)) {
           ret.push(r.position);
         }
       }

@@ -83,9 +83,11 @@ export class MethodCallChain {
 
   private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
-      const className = first.getFirstToken().getStr();
+      const token = first.getFirstToken();
+      const className = token.getStr();
       const classDefinition = scope.findObjectDefinition(className);
       if (classDefinition === undefined && scope.getDDIC().inErrorNamespace(className) === false) {
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {className: className});
         return new VoidType(className);
       } else if (classDefinition === undefined) {
         throw new Error("Class " + className + " not found");

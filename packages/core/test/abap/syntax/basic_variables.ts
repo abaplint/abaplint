@@ -1586,4 +1586,18 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.UTCLongType);
   });
 
+  it("decfloat34", () => {
+    const abap = `DATA my_decfloat34 TYPE decfloat34.`;
+    const identifier = resolveVariable(abap, "my_decfloat34");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.DecFloat34Type);
+  });
+
+  it("decfloat16", () => {
+    const abap = `DATA my_decfloat16 TYPE decfloat16.`;
+    const identifier = resolveVariable(abap, "my_decfloat16");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.DecFloat16Type);
+  });
+
 });

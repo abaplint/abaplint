@@ -125,6 +125,10 @@ export class BasicTypes {
       return new Types.NumericGenericType();
     } else if (chainText === "UTCLONG") { // todo, take version into account
       return new Types.UTCLongType();
+    } else if (chainText === "DECFLOAT16") {
+      return new Types.DecFloat16Type();
+    } else if (chainText === "DECFLOAT34") {
+      return new Types.DecFloat34Type();
     } else if (chainText === "CSEQUENCE") {
       return new Types.CSequenceType();
     } else if (chainText === "I" || chainText === "INT8") { // todo, take version into account
@@ -287,8 +291,10 @@ export class BasicTypes {
         return found.getRowType();
       } else if (found instanceof Types.VoidType) {
         return found;
+      } else if (found instanceof Types.UnknownType) {
+        return new Types.UnknownType("TYPE LINE OF, unknown type, " + found.getError());
       } else {
-        return new Types.UnknownType("TYPE LINE OF, could not resolve type");
+        return new Types.UnknownType("TYPE LINE OF, unexpected type");
       }
     } else if (text.startsWith("TYPE REF TO ")) {
       found = this.resolveTypeRef(typename);

@@ -158,11 +158,11 @@ First position used must be a full/pure write.`,
     let firstRead: IVariableReference | undefined = undefined;
     for (const r of node.getData().references) {
       if (r.referenceType !== ReferenceType.DataReadReference
-          || r.resolved.getStart().equals(v.identifier.getStart()) === false) {
+          || r.resolved?.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
-      if (firstRead === undefined) {
-        firstRead = r;
+      if (firstRead === undefined && r.resolved) {
+        firstRead = {position: r.position, resolved: r.resolved};
         break;
       }
     }
@@ -170,11 +170,11 @@ First position used must be a full/pure write.`,
     let firstWrite: IVariableReference | undefined = undefined;
     for (const w of node.getData().references) {
       if (w.referenceType !== ReferenceType.DataWriteReference
-          || w.resolved.getStart().equals(v.identifier.getStart()) === false) {
+          || w.resolved?.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
-      if (firstWrite === undefined) {
-        firstWrite = w;
+      if (firstWrite === undefined && w.resolved) {
+        firstWrite = {position: w.position, resolved: w.resolved};
         break;
       }
     }

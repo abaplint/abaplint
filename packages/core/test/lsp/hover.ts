@@ -420,4 +420,14 @@ ENDCLASS.`;
     expect(hoverVariable?.value).to.contain("lcx_error");
   });
 
+  it("Hover, object oriented void type", () => {
+    const abap = `NEW cl_abapgit_2fa_github_auth( ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 10));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("Void");
+  });
+
 });

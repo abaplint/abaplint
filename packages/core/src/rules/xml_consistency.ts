@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {IRegistry} from "../_iregistry";
@@ -13,11 +13,12 @@ export class XMLConsistency implements IRule {
 
   private conf = new XMLConsistencyConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "xml_consistency",
       title: "XML consistency",
-      shortDescription: `Checks the consistency of main XML files, eg. naming`,
+      shortDescription: `Checks the consistency of main XML files, eg. naming for CLAS and INTF objects`,
+      tags: [RuleTag.Naming, RuleTag.Syntax],
     };
   }
 
