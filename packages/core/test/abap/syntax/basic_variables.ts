@@ -1600,4 +1600,32 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.DecFloat16Type);
   });
 
+  it("DDIC TTYP", () => {
+    const dtel = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZAG_UNIT_TEST_TT</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>TADIR</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <DATATYPE>STRU</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>unit test</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const prog = `DATA foo TYPE LINE OF zag_unit_test_tt.`;
+    const type = runMulti(
+      [{filename: "zag_unit_test_tt.ttyp.xml", contents: dtel},
+        {filename: "zfoobar.prog.abap", contents: prog}],
+      "foo");
+    expect(type?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
 });
