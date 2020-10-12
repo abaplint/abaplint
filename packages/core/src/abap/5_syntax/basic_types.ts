@@ -291,8 +291,10 @@ export class BasicTypes {
         return found.getRowType();
       } else if (found instanceof Types.VoidType) {
         return found;
+      } else if (found instanceof Types.UnknownType) {
+        return new Types.UnknownType("TYPE LINE OF, unknown type, " + found.getError());
       } else {
-        return new Types.UnknownType("TYPE LINE OF, could not resolve type");
+        return new Types.UnknownType("TYPE LINE OF, unexpected type");
       }
     } else if (text.startsWith("TYPE REF TO ")) {
       found = this.resolveTypeRef(typename);
