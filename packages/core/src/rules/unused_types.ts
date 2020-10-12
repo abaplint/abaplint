@@ -162,7 +162,7 @@ export class UnusedTypes implements IRule {
     }
 
     for (const r of node.getData().references) {
-      if (r.referenceType === ReferenceType.TypeReference) {
+      if (r.referenceType === ReferenceType.TypeReference && r.resolved) {
         this.workarea.removeIfExists(r.resolved);
       }
     }

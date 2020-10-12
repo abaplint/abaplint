@@ -10,6 +10,7 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {StructureType} from "../abap/types/basic";
 import {IRuleMetadata, IRule} from "./_irule";
+import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class ForbiddenVoidTypeConf extends BasicRuleConfig {
   /** List of forbidden void types, array of string regex, case in-sensitive */
@@ -64,14 +65,21 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       for (const t of node.getData().types) {
         const typ = t.identifier.getType();
-        if (this.isForbidden(typ)) {
+        if (this.isForbiddenType(typ)) {
           ret.push(Issue.atIdentifier(t.identifier, message + typ.toText(0), this.getMetadata().key, this.conf.severity));
         }
       }
       for (const v of node.getData().vars) {
         const typ = v.identifier.getType();
-        if (this.isForbidden(typ)) {
+        if (this.isForbiddenType(typ)) {
           ret.push(Issue.atIdentifier(v.identifier, message + typ.toText(0), this.getMetadata().key, this.conf.severity));
+        }
+      }
+      for (const r of node.getData().references) {
+        if (r.referenceType === ReferenceType.ObjectOrientedVoidReference
+            && r.extra?.className
+            && this.isForbiddenName(r.extra?.className)) {
+          ret.push(Issue.atIdentifier(r.position, message + r.extra?.className, this.getMetadata().key, this.conf.severity));
         }
       }
     }
@@ -83,14 +91,18 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
     return ret;
   }
 
-  private isForbidden(type: AbstractType): boolean {
+  private isForbiddenType(type: AbstractType): boolean {
     if (type instanceof StructureType) {
-      return type.getComponents().some(c => this.isForbidden(c.type));
+      return type.getComponents().some(c => this.isForbiddenType(c.type));
     } else if (!(type instanceof VoidType)) {
       return false;
     }
 
     const name = type.getVoided();
+    return this.isForbiddenName(name);
+  }
+
+  private isForbiddenName(name: string | undefined): boolean {
     if (name === undefined) {
       return false;
     }

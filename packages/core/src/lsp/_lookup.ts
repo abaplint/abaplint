@@ -104,9 +104,12 @@ export class LSPLookup {
     const ref = this.searchReferences(bottomScope, cursor.token);
     if (ref !== undefined) {
       const value = this.referenceHover(ref, bottomScope, reg);
-      let definition: LServer.Location | undefined = LSPUtils.identiferToLocation(ref.resolved);
-      if (definition.uri === BuiltIn.filename) {
-        definition = undefined;
+      let definition: LServer.Location | undefined = undefined;
+      if (ref.resolved) {
+        definition = LSPUtils.identiferToLocation(ref.resolved);
+        if (definition.uri === BuiltIn.filename) {
+          definition = undefined;
+        }
       }
       return {hover: value, definition, definitionId: ref.resolved, scope: bottomScope};
     }
@@ -137,7 +140,11 @@ export class LSPLookup {
   }
 
   private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode, reg: IRegistry): string {
-    let ret = "Resolved Reference: " + ref.referenceType + " ```" + ref.resolved.getName() + "```";
+    let name = "";
+    if (ref.resolved) {
+      name = "```" + ref.resolved.getName() + "```";
+    }
+    let ret = "Resolved Reference: " + ref.referenceType + " " + name;
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
       let cdef: IClassDefinition | IInterfaceDefinition | undefined = scope.findClassDefinition(ref.extra.className);

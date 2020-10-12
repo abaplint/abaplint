@@ -140,7 +140,7 @@ Skips:
 
   private checkNode(node: ISpaghettiScopeNode) {
     for (const v of node.getData().references) {
-      if (v.referenceType === ReferenceType.MethodReference) {
+      if (v.referenceType === ReferenceType.MethodReference && v.resolved) {
         this.wa.removeIfExists(v.resolved);
       }
     }

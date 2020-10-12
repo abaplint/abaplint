@@ -29,6 +29,8 @@ export class NewObject {
     if (objDefinition) {
       scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
       return new ObjectReferenceType(objDefinition);
+    } else {
+      scope.addReference(typeToken, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {className: typeName});
     }
 
     const type = scope.findType(typeName);
