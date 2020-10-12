@@ -151,11 +151,10 @@ export class FunctionGroup extends ABAPObject {
 
     // INCLUDES
     const includes = parsed.abapGit["asx:abap"]["asx:values"]?.INCLUDES;
-    if (includes === undefined) {
-      return;
-    }
-    for (const i of xmlToArray(includes.SOBJ_NAME)) {
-      this.includes.push(i?._text);
+    if (includes !== undefined) {
+      for (const i of xmlToArray(includes.SOBJ_NAME)) {
+        this.includes.push(i?._text);
+      }
     }
 
     // FUNCTION MODULES
