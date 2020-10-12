@@ -113,6 +113,7 @@ export class Indent {
         continue;
       }
       if (previousStatement
+        && !(previousStatement.get() instanceof Comment)
         && previousStatement.getLastToken().getEnd().getRow() === statement.getFirstToken().getStart().getRow()) {
 // any indentation allowed if there are multiple statements on the same line
         ret.push(-1);

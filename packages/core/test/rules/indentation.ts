@@ -139,6 +139,19 @@ FORM bar.
   ENDIF.
 ENDFORM.`, cnt: 0},
 
+  {abap: `
+SELECT * FROM bar "sdfsd
+    WHERE moo = 2.
+  WRITE 'sdf'.
+ENDSELECT.`, cnt: 0},
+
+  {abap: `
+* sdfsd
+SELECT * FROM bar
+    WHERE moo = 2.
+  WRITE 'sdf'.
+ENDSELECT.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);
