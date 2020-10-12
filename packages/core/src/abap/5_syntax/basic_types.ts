@@ -127,8 +127,8 @@ export class BasicTypes {
       return new Types.UTCLongType();
     } else if (chainText === "DECFLOAT16") {
       return new Types.DecFloat16Type();
-    } else if (chainText === "DECFLOAT32") {
-      return new Types.DecFloat32Type();
+    } else if (chainText === "DECFLOAT34") {
+      return new Types.DecFloat34Type();
     } else if (chainText === "CSEQUENCE") {
       return new Types.CSequenceType();
     } else if (chainText === "I" || chainText === "INT8") { // todo, take version into account

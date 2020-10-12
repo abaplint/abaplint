@@ -1,8 +1,8 @@
 import {AbstractType} from "./_abstract_type";
 
-export class DecFloat32Type implements AbstractType {
+export class DecFloat34Type implements AbstractType {
   public toText() {
-    return "```decfloat32```";
+    return "```decfloat34```";
   }
 
   public isGeneric() {
