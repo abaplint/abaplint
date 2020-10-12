@@ -69,21 +69,15 @@ export class Table extends AbstractObject {
           name: field.FIELDNAME,
           type: ddic.lookupDataElement(field.ROLLNAME)});
       } else if (field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP") { // incude or append structure
-        const found = ddic.lookupTableOrView(field.PRECFIELD);
+        let found = ddic.lookupTableOrView(field.PRECFIELD);
+        if (found instanceof TypedIdentifier) {
+          found = found.getType();
+        }
         if (found instanceof Types.StructureType) {
           for (const c of found.getComponents()) {
             components.push({
               name: c.name,
               type: c.type});
-          }
-        } else if (found instanceof TypedIdentifier) {
-          const stru = found.getType();
-          if (stru instanceof Types.StructureType) {
-            for (const c of stru.getComponents()) {
-              components.push({
-                name: c.name,
-                type: c.type});
-            }
           }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {

@@ -287,6 +287,9 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
+      if (found instanceof TypedIdentifier) {
+        found = found.getType();
+      }
       if (found instanceof Types.TableType) {
         return found.getRowType();
       } else if (found instanceof Types.VoidType) {
@@ -294,7 +297,7 @@ export class BasicTypes {
       } else if (found instanceof Types.UnknownType) {
         return new Types.UnknownType("TYPE LINE OF, unknown type, " + found.getError());
       } else {
-        return new Types.UnknownType("TYPE LINE OF, unexpected type");
+        return new Types.UnknownType("TYPE LINE OF, unexpected type, " + found?.constructor.name);
       }
     } else if (text.startsWith("TYPE REF TO ")) {
       found = this.resolveTypeRef(typename);
