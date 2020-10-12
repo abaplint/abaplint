@@ -39,6 +39,9 @@ function buildChips(json: any) {
       default:
         break;
     }
+    if (icon === "") {
+      continue;
+    }
 
     let count = 0;
     for (const rule of json) {
