@@ -167,7 +167,7 @@ export class Table extends AbstractObject {
     this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS?._text;
 
 // fields
-    const fields = parsed.abapGit["asx:abap"]["asx:values"].DD03P_TABLE;
+    const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD03P_TABLE;
     for (const field of xmlToArray(fields?.DD03P)) {
       this.parsedData.fields.push({
         FIELDNAME: field.FIELDNAME._text,
