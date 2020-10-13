@@ -8,6 +8,10 @@ export class Raise {
 
 // todo
 
+    for (const s of node.findAllExpressions(Expressions.SimpleSource)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
