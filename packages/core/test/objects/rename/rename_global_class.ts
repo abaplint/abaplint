@@ -81,4 +81,42 @@ ENDCLASS.`;
     }
   });
 
+  it("Two classes, static method call", () => {
+    const clas1 = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+ENDCLASS.
+CLASS ZCL_FOO IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const clas2 = `CLASS zcl_bar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+ENDCLASS.
+CLASS ZCL_bar IMPLEMENTATION.
+  METHOD bar.
+    zcl_foo=>bar( ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcl_foo.clas.abap", clas1),
+      new MemoryFile("zcl_bar.clas.abap", clas2),
+    ]).parse();
+
+    new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "cl_foo.clas.abap") {
+        continue;
+      } else if (f.getFilename() === "zcl_bar.clas.abap") {
+        expect(f.getRaw()).to.include("CL_FOO=>bar( ).");
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });
