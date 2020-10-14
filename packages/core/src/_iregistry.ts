@@ -36,4 +36,5 @@ export interface IRegistry {
   removeFile(file: IFile): IRegistry;
   addFiles(files: IFile[]): IRegistry;
   getFileByName(filename: string): IFile | undefined;
+  getFiles(): Generator<IFile, void, undefined>;
 }

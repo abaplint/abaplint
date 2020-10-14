@@ -17,18 +17,17 @@ export class RenameGlobalClass implements ObjectRenamer {
     let changes: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[] = [];
     const clas = this.reg.getObject("CLAS", oldName) as Class | undefined;
     if (clas === undefined) {
-      return undefined;
+      throw new Error("CLAS not found");
     }
 
-    // todo, refactor to somewhere else, overlaps with rule allowed_object_naming
     // todo, also do not allow strange characters and spaces
     if (newName.length > clas.getAllowedNaming().maxLength) {
-      return undefined;
+      throw new Error("Name not allowed");
     }
 
     const main = clas.getMainABAPFile();
     if (main === undefined) {
-      return undefined;
+      throw new Error("Main file not found");
     }
 
 // todo, make this more generic, specify array of node paths to be replaced
@@ -67,7 +66,7 @@ export class RenameGlobalClass implements ObjectRenamer {
 
     for (const f of clas.getFiles()) {
 // todo, this is not completely correct, ie. if the URI contains the same directory name as the object name
-      const newFilename = f.getFilename().replace(oldName, newName);
+      const newFilename = f.getFilename().replace(oldName.toLowerCase(), newName.toLowerCase());
       list.push(RenameFile.create(f.getFilename(), newFilename));
     }
 
@@ -78,17 +77,19 @@ export class RenameGlobalClass implements ObjectRenamer {
     const changes: TextDocumentEdit[] = [];
     const xml = clas.getXMLFile();
 
-    if (xml !== undefined) {
-      const search = "<CLSNAME>" + oldName.toUpperCase() + "</CLSNAME>";
-      const rows = xml.getRawRows();
-      for (let i = 0; i < rows.length; i++) {
-        const index = rows[i].indexOf(search);
-        if (index >= 0) {
-          const range = Range.create(i, index + 9, i, index + oldName.length + 9);
-          changes.push(
-            TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
-          break;
-        }
+    if (xml === undefined) {
+      return [];
+    }
+
+    const search = "<CLSNAME>" + oldName.toUpperCase() + "</CLSNAME>";
+    const rows = xml.getRawRows();
+    for (let i = 0; i < rows.length; i++) {
+      const index = rows[i].indexOf(search);
+      if (index >= 0) {
+        const range = Range.create(i, index + 9, i, index + oldName.length + 9);
+        changes.push(
+          TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
+        break;
       }
     }
 

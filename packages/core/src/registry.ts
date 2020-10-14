@@ -95,6 +95,14 @@ export class Registry implements IRegistry {
     }
   }
 
+  public* getFiles(): Generator<IFile, void, undefined> {
+    for (const obj of this.getObjects()) {
+      for (const file of obj.getFiles()) {
+        yield file;
+      }
+    }
+  }
+
   public getFirstObject(): IObject | undefined {
     for (const name in this.objects) {
       for (const type in this.objects[name]) {
