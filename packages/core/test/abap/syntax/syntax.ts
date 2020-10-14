@@ -2884,6 +2884,14 @@ foo = content_type-right.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CREATE OBJECT TYPE, not found", () => {
+    const abap = `
+DATA ref TYPE REF TO object.
+CREATE OBJECT ref TYPE zcl_not_found.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

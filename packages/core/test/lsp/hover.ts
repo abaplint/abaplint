@@ -461,4 +461,20 @@ ENDCLASS.`;
     expect(hoverVariable?.value).to.contain("lcl_super");
   });
 
+  it("Hover, create object type", () => {
+    const abap = `CLASS lcl_sub DEFINITION.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA bar TYPE REF TO object.
+CREATE OBJECT bar TYPE lcl_sub.`;
+    const file = new MemoryFile("zhover_create_type.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 6, 25));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("lcl_sub");
+  });
+
 });
