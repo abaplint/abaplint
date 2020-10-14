@@ -96,11 +96,11 @@ ENDCLASS.`);
     await reg.parseAsync();
     const rename = new Rename(reg);
 
-    const result = rename.rename({
+    const func = () => rename.rename({
       textDocument: {uri: abap.getFilename()},
       position: LServer.Position.create(0, 10),
       newName: "foobar_foobar_foobar_foobar_foobar_foobar_foobar_foobar_foobar"});
-    expect(result).to.equal(undefined);
+    expect(() => { func(); }).to.throw("Name not allowed");
   });
 
   it("rename global class, normal naming", async () => {

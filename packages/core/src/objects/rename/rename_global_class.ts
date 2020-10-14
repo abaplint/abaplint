@@ -1,35 +1,38 @@
-import * as Statements from "../abap/2_statements/statements";
-import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../../abap/2_statements/statements";
+import * as Expressions from "../../abap/2_statements/expressions";
 import {WorkspaceEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, TextEdit, Range} from "vscode-languageserver-types";
-import {IRegistry} from "../_iregistry";
-import {Class} from "../objects";
-import {LSPUtils} from "./_lsp_utils";
+import {IRegistry} from "../../_iregistry";
+import {Class} from "..";
+import {LSPUtils} from "../../lsp/_lsp_utils";
+import {ObjectRenamer} from "./_object_renamer";
+import {RenamerHelper} from "./renamer_helper";
 
-// todo, move this logic to somewhere else?
-
-export class RenameGlobalClass {
+export class RenameGlobalClass implements ObjectRenamer {
   private readonly reg: IRegistry;
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 
-  public run(oldName: string, newName: string): WorkspaceEdit | undefined {
+  public buildEdits(oldName: string, newName: string): WorkspaceEdit | undefined {
     let changes: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[] = [];
     const clas = this.reg.getObject("CLAS", oldName) as Class | undefined;
     if (clas === undefined) {
-      return undefined;
+      throw new Error("CLAS not found");
+    }
+    const id = clas.getIdentifier();
+    if (id === undefined) {
+      throw new Error("CLAS, identifier not found");
     }
 
-    // todo, refactor to somewhere else, overlaps with rule allowed_object_naming
     // todo, also do not allow strange characters and spaces
     if (newName.length > clas.getAllowedNaming().maxLength) {
-      return undefined;
+      throw new Error("Name not allowed");
     }
 
     const main = clas.getMainABAPFile();
     if (main === undefined) {
-      return undefined;
+      throw new Error("Main file not found");
     }
 
 // todo, make this more generic, specify array of node paths to be replaced
@@ -54,10 +57,14 @@ export class RenameGlobalClass {
     changes = changes.concat(this.buildXMLFileEdits(clas, oldName, newName));
     changes = changes.concat(this.renameFiles(clas, oldName, newName));
 
+    changes = changes.concat(new RenamerHelper(this.reg).renameReferences(id, newName));
+
     return {
       documentChanges: changes,
     };
   }
+
+//////////////////////
 
   private renameFiles(clas: Class, oldName: string, name: string): RenameFile[] {
     const list: RenameFile[] = [];
@@ -66,7 +73,7 @@ export class RenameGlobalClass {
 
     for (const f of clas.getFiles()) {
 // todo, this is not completely correct, ie. if the URI contains the same directory name as the object name
-      const newFilename = f.getFilename().replace(oldName, newName);
+      const newFilename = f.getFilename().replace(oldName.toLowerCase(), newName.toLowerCase());
       list.push(RenameFile.create(f.getFilename(), newFilename));
     }
 
@@ -77,17 +84,19 @@ export class RenameGlobalClass {
     const changes: TextDocumentEdit[] = [];
     const xml = clas.getXMLFile();
 
-    if (xml !== undefined) {
-      const search = "<CLSNAME>" + oldName.toUpperCase() + "</CLSNAME>";
-      const rows = xml.getRawRows();
-      for (let i = 0; i < rows.length; i++) {
-        const index = rows[i].indexOf(search);
-        if (index >= 0) {
-          const range = Range.create(i, index + 9, i, index + oldName.length + 9);
-          changes.push(
-            TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
-          break;
-        }
+    if (xml === undefined) {
+      return [];
+    }
+
+    const search = "<CLSNAME>" + oldName.toUpperCase() + "</CLSNAME>";
+    const rows = xml.getRawRows();
+    for (let i = 0; i < rows.length; i++) {
+      const index = rows[i].indexOf(search);
+      if (index >= 0) {
+        const range = Range.create(i, index + 9, i, index + oldName.length + 9);
+        changes.push(
+          TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
+        break;
       }
     }
 
