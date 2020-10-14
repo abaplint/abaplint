@@ -83,7 +83,7 @@ export class DumpScope {
     ret += sident + node.getData().forms.length + " form definitions<br>";
     ret += sident + node.getData().references.length + " references<br>";
     for (const r of node.getData().references) {
-      ret += sident + "&nbsp;&nbsp;" + r.referenceType + ", line " + r.position.getStart().getRow() + "<br>";
+      ret += sident + "&nbsp;&nbsp;" + r.referenceType + ", line " + r.position.getStart().getRow() + " " + this.escape(r.position.getFilename()) + " " + this.escape(r.position.getName()) + "<br>";
     }
 
     return ret;
