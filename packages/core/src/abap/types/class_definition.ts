@@ -45,8 +45,16 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
 
-    const token = def?.findDirectExpression(SuperClassName);
-    this.superClass = token?.getFirstToken().getStr();
+    const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();
+    this.superClass = token?.getStr();
+    if (this.superClass) {
+      const s = scope.findClassDefinition(this.superClass);
+      if (s) {
+        scope.addReference(token, s, ReferenceType.ObjectOrientedReference, filename);
+      } else if (scope.getDDIC().inErrorNamespace(this.superClass) === false) {
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
+      }
+    }
 
     this.parse(filename, scope);
 
