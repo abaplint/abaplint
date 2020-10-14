@@ -46,6 +46,18 @@ ENDIF.`, cnt: 1},
 READ TABLE my_table TRANSPORTING NO FIELDS WITH KEY key = 'A'.
 IF sy-subrc IS INITIAL.
 ENDIF.`, cnt: 1},
+  {abap: `
+READ TABLE nested_tree TRANSPORTING NO FIELDS
+      WITH TABLE KEY
+        left = min-left.
+CHECK ( sy-subrc = 0 ).
+LOOP AT nested_tree ASSIGNING FIELD-SYMBOL(<item>) FROM sy-tabix.
+  IF ( <item>-left > max-right ).
+    EXIT.
+  ENDIF.
+  INSERT <item>-left INTO TABLE result.
+ENDLOOP.`, cnt: 0},
+
 ];
 
 testRule(tests, UseLineExists);
