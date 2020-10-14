@@ -2,7 +2,7 @@ import * as LServer from "vscode-languageserver-types";
 import {ITextDocumentPositionParams, IRenameParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 import {IRegistry} from "../_iregistry";
-import {RenameGlobalClass} from "./rename_global_class";
+import {RenameGlobalClass} from "../objects/rename/rename_global_class";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPLookup} from "./_lookup";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
@@ -64,7 +64,7 @@ export class Rename {
 
     switch (prepare.type) {
       case RenameType.GlobalClass:
-        return new RenameGlobalClass(this.reg).run(prepare.placeholder, params.newName);
+        return new RenameGlobalClass(this.reg).buildEdits(prepare.placeholder, params.newName);
       case RenameType.Variable:
       {
         const workspace: LServer.WorkspaceEdit = {documentChanges: []};

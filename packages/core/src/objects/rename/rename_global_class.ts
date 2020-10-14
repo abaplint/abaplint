@@ -1,20 +1,19 @@
-import * as Statements from "../abap/2_statements/statements";
-import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../../abap/2_statements/statements";
+import * as Expressions from "../../abap/2_statements/expressions";
 import {WorkspaceEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, TextEdit, Range} from "vscode-languageserver-types";
-import {IRegistry} from "../_iregistry";
-import {Class} from "../objects";
-import {LSPUtils} from "./_lsp_utils";
+import {IRegistry} from "../../_iregistry";
+import {Class} from "..";
+import {LSPUtils} from "../../lsp/_lsp_utils";
+import {ObjectRenamer} from "./_object_renamer";
 
-// todo, move this logic to somewhere else?
-
-export class RenameGlobalClass {
+export class RenameGlobalClass implements ObjectRenamer {
   private readonly reg: IRegistry;
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 
-  public run(oldName: string, newName: string): WorkspaceEdit | undefined {
+  public buildEdits(oldName: string, newName: string): WorkspaceEdit | undefined {
     let changes: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[] = [];
     const clas = this.reg.getObject("CLAS", oldName) as Class | undefined;
     if (clas === undefined) {
@@ -58,6 +57,8 @@ export class RenameGlobalClass {
       documentChanges: changes,
     };
   }
+
+//////////////////////
 
   private renameFiles(clas: Class, oldName: string, name: string): RenameFile[] {
     const list: RenameFile[] = [];

@@ -40,6 +40,7 @@ import {IObject} from "./objects/_iobject";
 import {BuiltIn} from "./abap/5_syntax/_builtin";
 import {ABAPFile} from "./abap/abap_file";
 import {MemoryFile} from "./files/memory_file";
+import {Rename} from "./objects/rename/rename";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -54,4 +55,4 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
-  ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter};
+  ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Rename};
