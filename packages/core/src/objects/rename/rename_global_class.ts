@@ -5,6 +5,7 @@ import {IRegistry} from "../../_iregistry";
 import {Class} from "..";
 import {LSPUtils} from "../../lsp/_lsp_utils";
 import {ObjectRenamer} from "./_object_renamer";
+import {RenamerHelper} from "./renamer_helper";
 
 export class RenameGlobalClass implements ObjectRenamer {
   private readonly reg: IRegistry;
@@ -18,6 +19,10 @@ export class RenameGlobalClass implements ObjectRenamer {
     const clas = this.reg.getObject("CLAS", oldName) as Class | undefined;
     if (clas === undefined) {
       throw new Error("CLAS not found");
+    }
+    const id = clas.getIdentifier();
+    if (id === undefined) {
+      throw new Error("CLAS, identifier not found");
     }
 
     // todo, also do not allow strange characters and spaces
@@ -51,6 +56,8 @@ export class RenameGlobalClass implements ObjectRenamer {
     changes.push(TextDocumentEdit.create({uri: main.getFilename(), version: 1}, edits));
     changes = changes.concat(this.buildXMLFileEdits(clas, oldName, newName));
     changes = changes.concat(this.renameFiles(clas, oldName, newName));
+
+    changes = changes.concat(new RenamerHelper(this.reg).renameReferences(id, newName));
 
     return {
       documentChanges: changes,

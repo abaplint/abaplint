@@ -12,8 +12,10 @@ export class Renamer {
   }
 
   /** Applies the renaming to the objects and files in the registry,
-   *  after renaming the registry is not parsed  */
+   *  after renaming the registry is not parsed */
   public rename(type: string, oldName: string, newName: string) {
+    this.reg.parse(); // the registry must be parsed to dermine references
+
     let r: ObjectRenamer | undefined = undefined;
     switch (type) {
       case "CLAS":
