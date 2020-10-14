@@ -20,8 +20,10 @@ export class UseLineExists extends ABAPRule {
       key: "use_line_exists",
       title: "Use line_exists",
       shortDescription: `Use line_exists, from 740sp02 and up`,
-      extendedInformation:
-        `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-line_exists-to-read-table-or-loop-at`,
+      extendedInformation: `
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-line_exists-to-read-table-or-loop-at
+
+`,
       tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
@@ -46,7 +48,8 @@ export class UseLineExists extends ABAPRule {
       const statement = statements[i];
       if (statement.get() instanceof Statements.ReadTable
           && statement.concatTokens().toUpperCase().includes("TRANSPORTING NO FIELDS")
-          && this.checksSubrc(i, statements) === true) {
+          && this.checksSubrc(i, statements) === true
+          && this.usesTabix(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, "Use line_exists", this.getMetadata().key, this.conf.severity));
       }
     }
@@ -70,6 +73,21 @@ export class UseLineExists extends ABAPRule {
         }
       }
       return false;
+    }
+    return false;
+  }
+
+  // this is a heuristic, data flow analysis is required to get the correct result
+  private usesTabix(index: number, statements: readonly StatementNode[]): boolean {
+    for (let i = index + 1; i < index + 5; i++) {
+      const statement = statements[i];
+      if (statement === undefined) {
+        break;
+      } else if (statement.get() instanceof Comment) {
+        continue;
+      } else if (statement.concatTokens().toUpperCase().includes(" SY-TABIX")) {
+        return true;
+      }
     }
     return false;
   }
