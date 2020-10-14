@@ -125,6 +125,10 @@ export class Table extends AbstractObject {
       }
     }
 
+    if (components.length === 0) {
+      throw new Error("Table/Structure " + this.getName() + " does not contain any components");
+    }
+
     return TypedIdentifier.from(this.getIdentifier()!, new Types.StructureType(components), [IdentifierMeta.DDIC]);
   }
 

@@ -60,6 +60,10 @@ export class View extends AbstractObject {
         type: found});
     }
 
+    if (components.length === 0) {
+      throw new Error("View " + this.getName() + " does not contain any components");
+    }
+
     return TypedIdentifier.from(this.getIdentifier()!, new Types.StructureType(components), [IdentifierMeta.DDIC]);
   }
 
