@@ -4,10 +4,26 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
+import {ReferenceType} from "../_reference";
 
 export class CreateObject {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     // todo, validate parameters
+
+    // CREATE OBJECT, TYPE
+    const type = node.findDirectExpression(Expressions.ClassName);
+    if (type) {
+      const token = type.getFirstToken();
+      const name = token.getStr();
+      const found = scope.findClassDefinition(name);
+      if (found) {
+        scope.addReference(token, found, ReferenceType.ObjectOrientedReference, filename);
+      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
+      } else {
+        throw new Error("TYPE \"" + name + "\" not found");
+      }
+    }
 
     // just recurse
     for (const s of node.findAllExpressions(Expressions.Source)) {

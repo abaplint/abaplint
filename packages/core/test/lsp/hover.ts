@@ -430,4 +430,51 @@ ENDCLASS.`;
     expect(hoverVariable?.value).to.contain("Void");
   });
 
+  it("Hover, voided super class", () => {
+    const abap = `CLASS zcl_abapgit_repo_online DEFINITION PUBLIC INHERITING FROM cl_abapgit_repo FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_abapgit_repo_online IMPLEMENTATION.
+ENDCLASS.`;
+    const file = new MemoryFile("zcl_abapgit_repo_online.clas.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 70));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("Void");
+  });
+
+  it("Hover, super", () => {
+    const abap = `CLASS lcl_super DEFINITION.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_super.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 5, 45));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("lcl_super");
+  });
+
+  it("Hover, create object type", () => {
+    const abap = `CLASS lcl_sub DEFINITION.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA bar TYPE REF TO object.
+CREATE OBJECT bar TYPE lcl_sub.`;
+    const file = new MemoryFile("zhover_create_type.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 6, 25));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("lcl_sub");
+  });
+
 });
