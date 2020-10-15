@@ -2,6 +2,7 @@ import {RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver
 import {MemoryFile} from "../../files/memory_file";
 import {IRegistry} from "../../_iregistry";
 import {RenameGlobalClass} from "./rename_global_class";
+import {RenameGlobalInterface} from "./rename_global_interface";
 import {ObjectRenamer} from "./_object_renamer";
 
 export class Renamer {
@@ -14,17 +15,7 @@ export class Renamer {
   /** Applies the renaming to the objects and files in the registry,
    *  after renaming the registry is not parsed */
   public rename(type: string, oldName: string, newName: string) {
-    this.reg.parse(); // the registry must be parsed to dermine references
-
-    let r: ObjectRenamer | undefined = undefined;
-    switch (type) {
-      case "CLAS":
-        r = new RenameGlobalClass(this.reg);
-        break;
-      default:
-        throw new Error("Renaming of " + type + " not yet supported");
-    }
-    const edits = r.buildEdits(oldName.toUpperCase(), newName.toUpperCase());
+    const edits = this.buildEdits(type, oldName, newName);
 
     if (edits === undefined) {
       throw new Error("no changes could be determined");
@@ -35,7 +26,35 @@ export class Renamer {
     this.apply(edits);
   }
 
+  /** Builds edits, but does not apply to registry, used by LSP */
+  public buildEdits(type: string, oldName: string, newName: string): WorkspaceEdit | undefined {
+    this.reg.parse(); // the registry must be parsed to dermine references
+
+    const obj = this.reg.getObject(type, oldName);
+    if (obj === undefined) {
+      throw new Error("rename, object not found");
+    } else if (newName.length > obj.getAllowedNaming().maxLength) {
+      // todo, also do not allow strange characters and spaces
+      throw new Error("Name not allowed");
+    }
+
+    const r = this.factory(type);
+
+    return r.buildEdits(obj, oldName.toUpperCase(), newName);
+  }
+
 //////////////////
+
+  private factory(type: string): ObjectRenamer {
+    switch (type) {
+      case "CLAS":
+        return new RenameGlobalClass(this.reg);
+      case "INTF":
+        return new RenameGlobalInterface(this.reg);
+      default:
+        throw new Error("Renaming of " + type + " not yet supported");
+    }
+  }
 
   private apply(edits: WorkspaceEdit) {
     const renames: RenameFile[] = [];

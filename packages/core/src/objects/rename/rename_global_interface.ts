@@ -2,13 +2,13 @@ import * as Statements from "../../abap/2_statements/statements";
 import * as Expressions from "../../abap/2_statements/expressions";
 import {WorkspaceEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, TextEdit} from "vscode-languageserver-types";
 import {IRegistry} from "../../_iregistry";
-import {Class} from "..";
 import {LSPUtils} from "../../lsp/_lsp_utils";
 import {ObjectRenamer} from "./_object_renamer";
 import {RenamerHelper} from "./renamer_helper";
 import {IObject} from "../_iobject";
+import {Interface} from "../interface";
 
-export class RenameGlobalClass implements ObjectRenamer {
+export class RenameGlobalInterface implements ObjectRenamer {
   private readonly reg: IRegistry;
 
   public constructor(reg: IRegistry) {
@@ -16,8 +16,8 @@ export class RenameGlobalClass implements ObjectRenamer {
   }
 
   public buildEdits(obj: IObject, oldName: string, newName: string): WorkspaceEdit | undefined {
-    if (!(obj instanceof Class)) {
-      throw new Error("not a class");
+    if (!(obj instanceof Interface)) {
+      throw new Error("not an interface");
     }
 
     const main = obj.getMainABAPFile();
@@ -31,14 +31,8 @@ export class RenameGlobalClass implements ObjectRenamer {
     {
       const edits: TextEdit[] = [];
       for (const s of main.getStatements()) {
-        if (s.get() instanceof Statements.ClassDefinition) {
-          const exp = s.findFirstExpression(Expressions.ClassName);
-          if (exp === undefined) {
-            continue;
-          }
-          edits.push(TextEdit.replace(LSPUtils.tokenToRange(exp.getFirstToken()), newName));
-        } else if (s.get() instanceof Statements.ClassImplementation) {
-          const exp = s.findFirstExpression(Expressions.ClassName);
+        if (s.get() instanceof Statements.Interface) {
+          const exp = s.findFirstExpression(Expressions.InterfaceName);
           if (exp === undefined) {
             continue;
           }

@@ -1,10 +1,11 @@
-import {Range, TextDocumentEdit, TextEdit} from "vscode-languageserver-types";
+import {Range, RenameFile, TextDocumentEdit, TextEdit} from "vscode-languageserver-types";
 import {Identifier} from "../../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../../abap/5_syntax/syntax";
 import {ScopeType} from "../../abap/5_syntax/_scope_type";
 import {ISpaghettiScopeNode} from "../../abap/5_syntax/_spaghetti_scope";
 import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../_abap_object";
+import {AbstractObject} from "../_abstract_object";
 
 
 export class RenamerHelper {
@@ -14,7 +15,10 @@ export class RenamerHelper {
     this.reg = reg;
   }
 
-  public renameReferences(id: Identifier, newName: string): TextDocumentEdit[] {
+  public renameReferences(id: Identifier | undefined, newName: string): TextDocumentEdit[] {
+    if (id === undefined) {
+      throw new Error("renameReferences, no main identifier found");
+    }
     let refs: Identifier[] = [];
     for (const o of this.reg.getObjects()) {
       if (o instanceof ABAPObject) {
@@ -26,6 +30,44 @@ export class RenamerHelper {
     }
 
     return this.replaceRefs(refs, newName);
+  }
+
+  public buildXMLFileEdits(clas: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const xml = clas.getXMLFile();
+
+    if (xml === undefined) {
+      return [];
+    }
+
+    const tag = xmlTag.toUpperCase();
+    const search = "<" + tag + ">" + oldName.toUpperCase() + "</" + tag + ">";
+    const rows = xml.getRawRows();
+    for (let i = 0; i < rows.length; i++) {
+      const index = rows[i].indexOf(search);
+      if (index >= 0) {
+        const range = Range.create(i, index + 9, i, index + oldName.length + 9);
+        changes.push(
+          TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
+        break;
+      }
+    }
+
+    return changes;
+  }
+
+  public renameFiles(obj: ABAPObject, oldName: string, name: string): RenameFile[] {
+    const list: RenameFile[] = [];
+
+    const newName = name.toLowerCase().replace(/\//g, "%23");
+
+    for (const f of obj.getFiles()) {
+// todo, this is not completely correct, ie. if the URI contains the same directory name as the object name
+      const newFilename = f.getFilename().replace(oldName.toLowerCase(), newName.toLowerCase());
+      list.push(RenameFile.create(f.getFilename(), newFilename));
+    }
+
+    return list;
   }
 
 ////////////////////////
@@ -40,7 +82,7 @@ export class RenamerHelper {
         r.getStart().getRow() - 1,
         r.getStart().getCol() - 1 + r.getToken().getStr().length);
       changes.push(
-        TextDocumentEdit.create({uri: r.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
+        TextDocumentEdit.create({uri: r.getFilename(), version: 1}, [TextEdit.replace(range, newName)]));
     }
     return changes;
   }

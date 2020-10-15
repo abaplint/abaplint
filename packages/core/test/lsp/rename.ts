@@ -151,7 +151,7 @@ ENDCLASS.`);
     expect(obj.getMainABAPFile()!.getFilename()).to.equal(newName.toLowerCase() + ".clas.abap");
 
     const issues = reg.findIssues();
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(0, "expected zero issues");
   });
 
   it("rename global class, add namespace", async () => {
