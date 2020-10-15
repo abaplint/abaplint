@@ -454,4 +454,21 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("ASSERT", async () => {
+    const abap = `
+  DATA bar TYPE c.
+  ASSERT 2 = bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("IF with paren", async () => {
+    const abap = `
+  DATA foo TYPE c.
+  IF ( 2 = foo ).
+  ENDIF.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

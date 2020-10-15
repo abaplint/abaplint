@@ -106,6 +106,7 @@ import {Severity} from "../../severity";
 import {RaiseEvent} from "./statements/raise_event";
 import {Form} from "./statements/form";
 import {ABAPFile} from "../abap_file";
+import {Assert} from "./statements/assert";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -294,6 +295,8 @@ export class SyntaxLogic {
       new Move().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Replace) {
       new Replace().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Assert) {
+      new Assert().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Catch) {
       new Catch().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Loop) {
