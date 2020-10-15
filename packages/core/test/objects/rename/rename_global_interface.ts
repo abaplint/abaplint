@@ -46,4 +46,45 @@ ENDINTERFACE.`;
     }
   });
 
+  it("INTF with CLAS implementation", () => {
+    const intf = `INTERFACE zif_abapgit_auth PUBLIC.
+  METHODS is_allowed.
+ENDINTERFACE.`;
+
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+PUBLIC SECTION.
+  INTERFACES zif_abapgit_auth.
+ENDCLASS.
+CLASS ZCL_FOO IMPLEMENTATION.
+  METHOD zif_abapgit_auth~is_allowed.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zif_abapgit_auth.intf.abap", intf),
+      new MemoryFile("zcl_abapgit_auth.clas.abap", clas),
+    ]).parse();
+
+    new Renamer(reg).rename("INTF", "zif_abapgit_auth", "if_abapgit_auth");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "if_abapgit_auth.intf.abap") {
+        continue;
+      } else if (f.getFilename() === "zcl_abapgit_auth.clas.abap") {
+        const expected = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+PUBLIC SECTION.
+  INTERFACES if_abapgit_auth.
+ENDCLASS.
+CLASS ZCL_FOO IMPLEMENTATION.
+  METHOD if_abapgit_auth~is_allowed.
+  ENDMETHOD.
+ENDCLASS.`;
+        expect(f.getRaw()).to.equal(expected);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });

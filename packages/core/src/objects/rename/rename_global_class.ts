@@ -51,7 +51,7 @@ export class RenameGlobalClass implements ObjectRenamer {
     const helper = new RenamerHelper(this.reg);
     changes = changes.concat(helper.buildXMLFileEdits(obj, "CLSNAME", oldName, newName));
     changes = changes.concat(helper.renameFiles(obj, oldName, newName));
-    changes = changes.concat(helper.renameReferences(obj.getIdentifier(), newName));
+    changes = changes.concat(helper.renameReferences(obj.getIdentifier(), oldName, newName));
 
     return {
       documentChanges: changes,
