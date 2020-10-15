@@ -1,4 +1,4 @@
-import {StructureNode} from "../nodes";
+import {StatementNode, StructureNode} from "../nodes";
 import {MethodDefinitions} from "./method_definitions";
 import {SuperClassName} from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
@@ -19,6 +19,7 @@ import {IAliases} from "./_aliases";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
 import {ReferenceType} from "../5_syntax/_reference";
+import {Token} from "../1_lexer/tokens/_token";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
@@ -26,6 +27,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly types: TypeDefinitions;
   private readonly attributes: Attributes;
   private readonly events: IEventDefinition[];
+  private readonly friends: string[];
   private readonly superClass: string | undefined;
   private readonly implementing: IImplementing[];
 
@@ -45,16 +47,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
 
-    const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();
-    this.superClass = token?.getStr();
-    if (this.superClass) {
-      const s = scope.findClassDefinition(this.superClass);
-      if (s) {
-        scope.addReference(token, s, ReferenceType.ObjectOrientedReference, filename);
-      } else if (scope.getDDIC().inErrorNamespace(this.superClass) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
-      }
-    }
+    this.superClass = this.findSuper(def, filename, scope);
+    this.friends = this.findFriends(def, filename, scope);
 
     this.parse(filename, scope);
 
@@ -72,6 +66,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
 
     scope.pop();
+  }
+
+  public getFriends() {
+    return this.friends;
   }
 
   public getEvents() {
@@ -119,14 +117,41 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 
 /*
-  public getFriends() {
-  }
-
   public getEvents() {
   }
 */
 
   ///////////////////
+
+  private findSuper(def: StatementNode | undefined, filename: string, scope: CurrentScope): string | undefined {
+    const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();
+    this.addReference(token, filename, scope);
+    const name = token?.getStr();
+    return name;
+  }
+
+  private findFriends(def: StatementNode | undefined, filename: string, scope: CurrentScope): string[] {
+    const result: string[] = [];
+    for (const n of def?.findDirectExpression(Expressions.ClassFriends)?.findDirectExpressions(Expressions.ClassName) || []) {
+      const token = n.getFirstToken();
+      this.addReference(token, filename, scope);
+      const name = token.getStr();
+      result.push(name);
+    }
+    return result;
+  }
+
+  private addReference(token: Token | undefined, filename: string, scope: CurrentScope) {
+    const name = token?.getStr();
+    if (name) {
+      const s = scope.findClassDefinition(name);
+      if (s) {
+        scope.addReference(token, s, ReferenceType.ObjectOrientedReference, filename);
+      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
+      }
+    }
+  }
 
   private parse(filename: string, scope: CurrentScope) {
     for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {

@@ -477,4 +477,21 @@ CREATE OBJECT bar TYPE lcl_sub.`;
     expect(hoverVariable?.value).to.contain("lcl_sub");
   });
 
+  it("Hover, FRIENDS", () => {
+    const abap = `CLASS lcl_friend DEFINITION.
+ENDCLASS.
+CLASS lcl_friend IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION FRIENDS lcl_friend.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_friends.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 4, 40));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("lcl_friend");
+  });
+
 });

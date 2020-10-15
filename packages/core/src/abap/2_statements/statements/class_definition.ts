@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, per, plus, ver} from "../combi";
-import {ClassName, SuperClassName, ClassGlobal, ClassFinal, SimpleName} from "../expressions";
+import {str, seq, opt, alt, per, ver} from "../combi";
+import {ClassName, SuperClassName, ClassGlobal, ClassFinal, SimpleName, ClassFriends} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -25,7 +25,7 @@ export class ClassDefinition implements IStatement {
                      str("SHARED MEMORY ENABLED"),
                      duration,
                      ver(Version.v754, seq(str("FOR BEHAVIOR OF"), new SimpleName())),
-                     seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new ClassName())));
+                     new ClassFriends());
 
     const def = seq(str("DEFINITION"), opt(blah));
 
