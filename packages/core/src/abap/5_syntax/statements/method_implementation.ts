@@ -3,13 +3,15 @@ import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {ObjectOriented} from "../_object_oriented";
 import {ScopeType} from "../_scope_type";
+import {ReferenceType} from "../_reference";
 
 export class MethodImplementation {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const helper = new ObjectOriented(scope);
 
     const className = scope.getName();
-    const methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
+    const methodToken = node.findFirstExpression(Expressions.MethodName)!.getFirstToken();
+    const methodName = methodToken?.getStr();
     scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
 
     const classDefinition = scope.findClassDefinition(className);
@@ -27,11 +29,17 @@ export class MethodImplementation {
 
     for (const i of helper.findInterfaces(classDefinition)) {
       const idef = scope.findInterfaceDefinition(i.name);
-      if (idef) {
-        scope.addListPrefix(idef.getAttributes()!.getConstants(), i.name + "~");
-        scope.addListPrefix(idef.getAttributes()!.getStatic(), i.name + "~");
-        // todo, only add instance variables if its an instance method
-        scope.addListPrefix(idef.getAttributes()!.getInstance(), i.name + "~");
+      if (idef === undefined) {
+        continue;
+      }
+
+      scope.addListPrefix(idef.getAttributes()!.getConstants(), i.name + "~");
+      scope.addListPrefix(idef.getAttributes()!.getStatic(), i.name + "~");
+      // todo, only add instance variables if its an instance method
+      scope.addListPrefix(idef.getAttributes()!.getInstance(), i.name + "~");
+
+      if (methodName.toUpperCase().startsWith(idef.getName().toUpperCase() + "~")) {
+        scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, filename);
       }
     }
   }

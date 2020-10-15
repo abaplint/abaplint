@@ -15,7 +15,7 @@ export class RenamerHelper {
     this.reg = reg;
   }
 
-  public renameReferences(id: Identifier | undefined, newName: string): TextDocumentEdit[] {
+  public renameReferences(id: Identifier | undefined, oldName: string, newName: string): TextDocumentEdit[] {
     if (id === undefined) {
       throw new Error("renameReferences, no main identifier found");
     }
@@ -29,7 +29,7 @@ export class RenamerHelper {
       }
     }
 
-    return this.replaceRefs(refs, newName);
+    return this.replaceRefs(refs, oldName, newName);
   }
 
   public buildXMLFileEdits(clas: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
@@ -72,15 +72,16 @@ export class RenamerHelper {
 
 ////////////////////////
 
-  private replaceRefs(refs: Identifier[], newName: string): TextDocumentEdit[] {
+  private replaceRefs(refs: Identifier[], oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
 
+    // "zif_abapgit_auth~is_allowed" is a single token so only replace the first part of a token
     for (const r of refs) {
       const range = Range.create(
         r.getStart().getRow() - 1,
         r.getStart().getCol() - 1,
         r.getStart().getRow() - 1,
-        r.getStart().getCol() - 1 + r.getToken().getStr().length);
+        r.getStart().getCol() - 1 + oldName.length);
       changes.push(
         TextDocumentEdit.create({uri: r.getFilename(), version: 1}, [TextEdit.replace(range, newName)]));
     }
