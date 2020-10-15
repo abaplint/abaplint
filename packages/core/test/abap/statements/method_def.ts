@@ -76,6 +76,14 @@ const tests = [
   "METHODS run IMPORTING parameter TYPE zif_definitions~ty_type.",
   "CLASS-METHODS foo FOR TABLE FUNCTION bar.",
   "class-methods run importing it_list like gt_list[].",
+
+  `METHODS get_uri_query_parameter
+    IMPORTING
+      name      TYPE string
+      default   TYPE string OPTIONAL
+      mandatory TYPE abap_bool
+    EXPORTING
+      value     TYPE string.`,
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);
