@@ -38,9 +38,9 @@ ENDCLASS.`;
     expect(reg.getObjectCount()).to.equal(1);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
-        const expected = `CLASS CL_FOO DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
 ENDCLASS.
-CLASS CL_FOO IMPLEMENTATION.
+CLASS cl_foo IMPLEMENTATION.
 ENDCLASS.`;
         expect(f.getRaw()).to.equal(expected);
       } else if (f.getFilename() === "cl_foo.clas.xml") {
@@ -68,13 +68,13 @@ ENDCLASS.`;
     expect(reg.getObjectCount()).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
-        const expected = `CLASS CL_FOO DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
 ENDCLASS.
-CLASS CL_FOO IMPLEMENTATION.
+CLASS cl_foo IMPLEMENTATION.
 ENDCLASS.`;
         expect(f.getRaw()).to.equal(expected);
       } else if (f.getFilename() === "zfoo.prog.abap") {
-        expect(f.getRaw()).to.equal(`DATA foo TYPE REF TO CL_FOO.`);
+        expect(f.getRaw()).to.equal(`DATA foo TYPE REF TO cl_foo.`);
       } else {
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }
@@ -112,7 +112,7 @@ ENDCLASS.`;
       if (f.getFilename() === "cl_foo.clas.abap") {
         continue;
       } else if (f.getFilename() === "zcl_bar.clas.abap") {
-        expect(f.getRaw()).to.include("CL_FOO=>bar( ).");
+        expect(f.getRaw()).to.include("cl_foo=>bar( ).");
       } else {
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }

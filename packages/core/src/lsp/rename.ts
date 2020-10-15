@@ -2,18 +2,19 @@ import * as LServer from "vscode-languageserver-types";
 import {ITextDocumentPositionParams, IRenameParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 import {IRegistry} from "../_iregistry";
-import {RenameGlobalClass} from "../objects/rename/rename_global_class";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPLookup} from "./_lookup";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {ClassDefinition} from "../abap/types";
+import {ClassDefinition, InterfaceDefinition} from "../abap/types";
 import {References} from "./references";
 import {IFile} from "../files/_ifile";
+import {Renamer} from "../objects/rename/renamer";
 
 
 export enum RenameType {
   GlobalClass = 1,
   Variable = 2,
+  GlobalInterface = 3,
 }
 
 export interface IPrepareResult {
@@ -51,6 +52,8 @@ export class Rename {
       return {range, placeholder: cursor.token.getStr(), type: RenameType.Variable, file};
     } else if (lookup?.definitionId instanceof ClassDefinition) {
       return {range, placeholder: cursor.token.getStr(), type: RenameType.GlobalClass, file};
+    } else if (lookup?.definitionId instanceof InterfaceDefinition) {
+      return {range, placeholder: cursor.token.getStr(), type: RenameType.GlobalInterface, file};
     }
 
     return undefined;
@@ -64,22 +67,27 @@ export class Rename {
 
     switch (prepare.type) {
       case RenameType.GlobalClass:
-        return new RenameGlobalClass(this.reg).buildEdits(prepare.placeholder, params.newName);
+        return new Renamer(this.reg).buildEdits("CLAS", prepare.placeholder, params.newName);
+      case RenameType.GlobalInterface:
+        return new Renamer(this.reg).buildEdits("INTF", prepare.placeholder, params.newName);
       case RenameType.Variable:
-      {
-        const workspace: LServer.WorkspaceEdit = {documentChanges: []};
-        const refs = new References(this.reg).references(params);
-        for (const r of refs) {
-          const doc: LServer.VersionedTextDocumentIdentifier = {uri: r.uri, version: 1};
-          const edit = LServer.TextDocumentEdit.create(doc, [LServer.TextEdit.replace(r.range, params.newName)]);
-          workspace.documentChanges?.push(edit);
-        }
-        return workspace;
-      }
+        return this.renameVariable(params);
       default:
         return undefined;
     }
+  }
 
+////
+
+  private renameVariable(params: IRenameParams): LServer.WorkspaceEdit | undefined {
+    const workspace: LServer.WorkspaceEdit = {documentChanges: []};
+    const refs = new References(this.reg).references(params);
+    for (const r of refs) {
+      const doc: LServer.VersionedTextDocumentIdentifier = {uri: r.uri, version: 1};
+      const edit = LServer.TextDocumentEdit.create(doc, [LServer.TextEdit.replace(r.range, params.newName)]);
+      workspace.documentChanges?.push(edit);
+    }
+    return workspace;
   }
 
 }

@@ -9,6 +9,7 @@ export * from "./basic_source";
 export * from "./block_name";
 export * from "./cast";
 export * from "./class_final";
+export * from "./class_friends";
 export * from "./class_global";
 export * from "./class_name";
 export * from "./color";
