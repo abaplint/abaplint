@@ -4,6 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {InlineFS} from "../expressions/inline_fs";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
+import {FSTarget} from "../expressions/fstarget";
 
 export class InsertInternal {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -19,6 +20,8 @@ export class InsertInternal {
       const inlinefs = afterAssigning?.findDirectExpression(Expressions.InlineFS);
       if (inlinefs) {
         new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
+      } else {
+        new FSTarget().runSyntax(afterAssigning, scope, filename, sourceType);
       }
     }
 

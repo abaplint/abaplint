@@ -488,4 +488,13 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("insert into table assigning", async () => {
+    const abap = `
+  FIELD-SYMBOLS <bar> TYPE i.
+  DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+  INSERT 2 INTO TABLE tab ASSIGNING <bar>.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
