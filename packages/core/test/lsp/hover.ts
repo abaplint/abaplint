@@ -472,9 +472,9 @@ CREATE OBJECT bar TYPE lcl_sub.`;
     const file = new MemoryFile("zhover_create_type.prog.abap", abap);
     const reg = new Registry().addFiles([file]).parse();
     reg.findIssues();
-    const hoverVariable = new Hover(reg).find(buildPosition(file, 6, 25));
-    expect(hoverVariable).to.not.equal(undefined);
-    expect(hoverVariable?.value).to.contain("lcl_sub");
+    const hover = new Hover(reg).find(buildPosition(file, 6, 25));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("lcl_sub");
   });
 
   it("Hover, FRIENDS", () => {
@@ -489,9 +489,53 @@ ENDCLASS.`;
     const file = new MemoryFile("zhover_friends.prog.abap", abap);
     const reg = new Registry().addFiles([file]).parse();
     reg.findIssues();
-    const hoverVariable = new Hover(reg).find(buildPosition(file, 4, 40));
-    expect(hoverVariable).to.not.equal(undefined);
-    expect(hoverVariable?.value).to.contain("lcl_friend");
+    const hover = new Hover(reg).find(buildPosition(file, 4, 40));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("lcl_friend");
+  });
+
+  it("Hover, FOR EVENT", () => {
+    const abap = `INTERFACE zif_event.
+  EVENTS bar.
+ENDINTERFACE.
+
+CLASS zcl_event DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_event.
+    METHODS on_event FOR EVENT bar OF zif_event.
+ENDCLASS.
+CLASS zcl_event IMPLEMENTATION.
+  METHOD on_event.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_friends.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hover = new Hover(reg).find(buildPosition(file, 7, 40));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zif_event");
+  });
+
+  it("Hover, both method and class reference", () => {
+    const abap = `INTERFACE zif_test.
+  METHODS moo.
+ENDINTERFACE.
+
+CLASS zcl_test DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_test.
+ENDCLASS.
+CLASS zcl_test IMPLEMENTATION.
+  METHOD zif_test~moo.
+    zif_test~moo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_friends.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hover = new Hover(reg).find(buildPosition(file, 10, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zif_test");
   });
 
 });

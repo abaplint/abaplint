@@ -121,4 +121,39 @@ ENDCLASS.`;
     }
   });
 
+  it("INTF, reference via RAISE EVENT", () => {
+    const intf = `INTERFACE zif_event PUBLIC.
+  EVENTS bar.
+ENDINTERFACE.`;
+
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_event.
+    METHODS foo.
+ENDCLASS.
+CLASS ZCL_FOO IMPLEMENTATION.
+  METHOD foo.
+    RAISE EVENT zif_event~bar.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zif_event.intf.abap", intf),
+      new MemoryFile("zcl_foo.clas.abap", clas),
+    ]).parse();
+
+    new Renamer(reg).rename("INTF", "zif_event", "if_event");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "if_event.intf.abap") {
+        continue;
+      } else if (f.getFilename() === "zcl_foo.clas.abap") {
+        expect(f.getRaw()).to.include("RAISE EVENT if_event~bar.");
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });
