@@ -494,4 +494,26 @@ ENDCLASS.`;
     expect(hoverVariable?.value).to.contain("lcl_friend");
   });
 
+  it("Hover, FOR EVENT", () => {
+    const abap = `INTERFACE zif_event.
+  EVENTS bar.
+ENDINTERFACE.
+
+CLASS zcl_event DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_event.
+    METHODS on_event FOR EVENT bar OF zif_event.
+ENDCLASS.
+CLASS zcl_event IMPLEMENTATION.
+  METHOD on_event.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_friends.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 7, 40));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("zif_event");
+  });
+
 });

@@ -9,6 +9,7 @@ import {MethodDefReturning} from "../5_syntax/expressions/method_def_returning";
 import {MethodParam} from "../5_syntax/expressions/method_param";
 import {IMethodParameters} from "./_method_parameters";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
+import {ReferenceType} from "../5_syntax/_reference";
 
 // todo:
 // this.exceptions = [];
@@ -38,7 +39,7 @@ export class MethodParameters implements IMethodParameters{
     this.exceptions = [];
     this.filename = filename;
 
-    this.parse(node, scope);
+    this.parse(node, scope, filename);
   }
 
   public getAll(): TypedIdentifier[] {
@@ -93,13 +94,17 @@ export class MethodParameters implements IMethodParameters{
 
 ///////////////////
 
-  private parse(node: StatementNode, scope: CurrentScope): void {
+  private parse(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const handler = node.findFirstExpression(Expressions.EventHandler);
     if (handler) {
-      const className = node.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr();
-      const def = scope.findObjectDefinition(className);
-      const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(className);
+      const nameToken = node.findFirstExpression(Expressions.ClassName)?.getFirstToken();
+      const ooName = nameToken?.getStr();
+      const def = scope.findObjectDefinition(ooName);
+      if (def) {
+        scope.addReference(nameToken, def, ReferenceType.ObjectOrientedReference, filename);
+      }
+      const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(ooName);
 
       const eventName = node.findFirstExpression(Expressions.Field)?.getFirstToken().getStr();
       const event = new ObjectOriented(scope).searchEvent(def, eventName);
@@ -110,7 +115,7 @@ export class MethodParameters implements IMethodParameters{
         if (found) {
           this.importing.push(new TypedIdentifier(token, this.filename, found.getType(), [IdentifierMeta.EventParameter]));
         } else if (doVoid) {
-          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType(className), [IdentifierMeta.EventParameter]));
+          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType(ooName), [IdentifierMeta.EventParameter]));
         } else {
           const type = new UnknownType(`handler parameter not found "${search}"`);
           this.importing.push(new TypedIdentifier(token, this.filename, type, [IdentifierMeta.EventParameter]));
