@@ -20,12 +20,15 @@ export class FieldChain {
     filename: string,
     refType?: ReferenceType | undefined): AbstractType | undefined {
 
-    const found = scope.findVariable(node.concatTokens()); // workaround for names with dashes
-    if (found) {
-      if (refType) {
-        scope.addReference(node.getFirstToken(), found, refType, filename);
+    if (node.concatTokens().includes("-")) {
+      // workaround for names with dashes
+      const found = scope.findVariable(node.concatTokens());
+      if (found) {
+        if (refType) {
+          scope.addReference(node.getFirstToken(), found, refType, filename);
+        }
+        return found.getType();
       }
-      return found.getType();
     }
 
     const children = node.getChildren().slice();
@@ -99,6 +102,12 @@ export class FieldChain {
       }
       if (type) {
         scope.addReference(token, found, type, filename);
+      }
+      if (name.includes("~")) {
+        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
+        if (idef) {
+          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, filename);
+        }
       }
       return found.getType();
     }

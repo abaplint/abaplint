@@ -57,6 +57,7 @@ PUBLIC SECTION.
 ENDCLASS.
 CLASS ZCL_FOO IMPLEMENTATION.
   METHOD zif_abapgit_auth~is_allowed.
+    zif_abapgit_auth~is_allowed( ). zif_abapgit_auth~is_allowed( ).
   ENDMETHOD.
 ENDCLASS.`;
 
@@ -78,6 +79,7 @@ PUBLIC SECTION.
 ENDCLASS.
 CLASS ZCL_FOO IMPLEMENTATION.
   METHOD if_abapgit_auth~is_allowed.
+    if_abapgit_auth~is_allowed( ). if_abapgit_auth~is_allowed( ).
   ENDMETHOD.
 ENDCLASS.`;
         expect(f.getRaw()).to.equal(expected);

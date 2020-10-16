@@ -29,7 +29,8 @@ export class RenamerHelper {
       }
     }
 
-    return this.replaceRefs(refs, oldName, newName);
+    // start with the last reference in the file first, if there are multiple refs per line
+    return this.replaceRefs(refs, oldName, newName).reverse();
   }
 
   public buildXMLFileEdits(clas: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {

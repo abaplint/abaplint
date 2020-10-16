@@ -25,6 +25,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   private typeDefinitions: ITypeDefinitions;
   private methodDefinitions: IMethodDefinitions;
   private readonly events: IEventDefinition[];
+  private aliases: IAliases;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.Interface)) {
@@ -53,7 +54,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   }
 
   public getAliases(): IAliases {
-    return new Aliases(this.node, this.filename);
+    return this.aliases;
   }
 
   public getEvents() {
@@ -101,6 +102,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
       }
     }
 
+    this.aliases = new Aliases(this.node, this.filename, scope);
   }
 
 }

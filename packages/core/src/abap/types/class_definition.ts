@@ -30,6 +30,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly friends: string[];
   private readonly superClass: string | undefined;
   private readonly implementing: IImplementing[];
+  private aliases: IAliases;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -105,7 +106,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 
   public getAliases(): IAliases {
-    return new Aliases(this.node, this.filename);
+    return this.aliases;
   }
 
   public isForTesting(): boolean {
@@ -168,6 +169,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
         scope.addReference(token, intf, ReferenceType.ObjectOrientedReference, filename);
       }
     }
+
+    this.aliases = new Aliases(this.node, this.filename, scope);
   }
 
 }
