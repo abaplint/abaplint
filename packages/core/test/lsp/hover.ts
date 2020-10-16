@@ -530,12 +530,41 @@ CLASS zcl_test IMPLEMENTATION.
     zif_test~moo( ).
   ENDMETHOD.
 ENDCLASS.`;
-    const file = new MemoryFile("zhover_friends.prog.abap", abap);
+    const file = new MemoryFile("zhover_both.prog.abap", abap);
     const reg = new Registry().addFiles([file]).parse();
     reg.findIssues();
     const hover = new Hover(reg).find(buildPosition(file, 10, 10));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("zif_test");
+  });
+
+  it("Hover, interface variable", () => {
+    const abap = `INTERFACE zif_test.
+  DATA moo TYPE i.
+ENDINTERFACE.
+
+CLASS zcl_test DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_test.
+    METHODS bar.
+ENDCLASS.
+CLASS zcl_test IMPLEMENTATION.
+  METHOD bar.
+    zif_test~moo = 2.
+    WRITE zif_test~moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_var.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+
+    const hover1 = new Hover(reg).find(buildPosition(file, 11, 10));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain("zif_test", "hover1");
+
+    const hover2 = new Hover(reg).find(buildPosition(file, 12, 15));
+    expect(hover2).to.not.equal(undefined);
+    expect(hover2?.value).to.contain("zif_test", "hover2");
   });
 
 });
