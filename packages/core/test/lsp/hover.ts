@@ -567,4 +567,25 @@ ENDCLASS.`;
     expect(hover2?.value).to.contain("zif_test", "hover2");
   });
 
+  it("Hover, alias", () => {
+    const abap = `INTERFACE zif_test.
+  DATA moo TYPE i.
+ENDINTERFACE.
+
+CLASS zcl_test DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_test.
+    ALIASES bar FOR zif_test~moo.
+ENDCLASS.
+CLASS zcl_test IMPLEMENTATION.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_var.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+
+    const hover1 = new Hover(reg).find(buildPosition(file, 7, 25));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain("zif_test", "hover1");
+  });
+
 });
