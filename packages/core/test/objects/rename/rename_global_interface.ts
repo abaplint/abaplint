@@ -87,7 +87,7 @@ ENDCLASS.`;
     }
   });
 
-  it.skip("INTF, reference via DEFAULT", () => {
+  it("INTF, reference via DEFAULT", () => {
     const intf = `INTERFACE zif_abapgit_auth PUBLIC.
   CONSTANTS bar TYPE i VALUE 2.
 ENDINTERFACE.`;
@@ -95,7 +95,7 @@ ENDINTERFACE.`;
     const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
 PUBLIC SECTION.
   METHODS bar
-    IMPORTING foo DEFAULT zif_abapgit_auth=>bar.
+    IMPORTING foo TYPE i DEFAULT zif_abapgit_auth=>bar.
 ENDCLASS.
 CLASS ZCL_FOO IMPLEMENTATION.
   METHOD bar.
@@ -104,7 +104,7 @@ ENDCLASS.`;
 
     const reg = new Registry().addFiles([
       new MemoryFile("zif_abapgit_auth.intf.abap", intf),
-      new MemoryFile("zcl_abapgit_auth.clas.abap", clas),
+      new MemoryFile("zcl_foo.clas.abap", clas),
     ]).parse();
 
     new Renamer(reg).rename("INTF", "zif_abapgit_auth", "if_abapgit_auth");
@@ -113,7 +113,7 @@ ENDCLASS.`;
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "if_abapgit_auth.intf.abap") {
         continue;
-      } else if (f.getFilename() === "zcl_abapgit_auth.clas.abap") {
+      } else if (f.getFilename() === "zcl_foo.clas.abap") {
         expect(f.getRaw()).to.include("DEFAULT if_abapgit_auth=>");
       } else {
         expect(1).to.equal(f.getFilename(), "unexpected file");
