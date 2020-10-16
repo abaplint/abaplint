@@ -480,4 +480,12 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SET PARAMETER", async () => {
+    const abap = `
+  DATA lv_field TYPE string.
+  SET PARAMETER ID lv_field FIELD ''.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
