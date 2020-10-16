@@ -54,6 +54,14 @@ export class MethodCallChain {
         } else {
           scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, {className: className});
         }
+        if (methodName?.includes("~")) {
+          const name = methodName.split("~")[0];
+          const idef = scope.findInterfaceDefinition(name);
+          if (idef) {
+            scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, filename);
+          }
+        }
+
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {

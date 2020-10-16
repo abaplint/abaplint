@@ -101,17 +101,24 @@ export class LSPLookup {
       return {hover, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
-    const ref = this.searchReferences(bottomScope, cursor.token);
-    if (ref !== undefined) {
-      const value = this.referenceHover(ref, bottomScope, reg);
+    const refs = this.searchReferences(bottomScope, cursor.token);
+    if (refs.length > 0) {
+      let value = "";
+      for (const ref of refs) {
+        if (value !== "") {
+          value += "\n_________________\n";
+        }
+        value += this.referenceHover(ref, bottomScope, reg);
+      }
+
       let definition: LServer.Location | undefined = undefined;
-      if (ref.resolved) {
-        definition = LSPUtils.identiferToLocation(ref.resolved);
+      if (refs[0].resolved) {
+        definition = LSPUtils.identiferToLocation(refs[0].resolved);
         if (definition.uri === BuiltIn.filename) {
           definition = undefined;
         }
       }
-      return {hover: value, definition, definitionId: ref.resolved, scope: bottomScope};
+      return {hover: value, definition, definitionId: refs[0].resolved, scope: bottomScope};
     }
 
     return undefined;
@@ -225,20 +232,21 @@ export class LSPLookup {
     return "* " + p.getName() + extra + " TYPE " + p.getType().toText(1) + "\n\n";
   }
 
-  private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference | undefined {
+  private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference[] {
+    let ret: IReference[] = [];
 
     for (const r of scope.getData().references) {
       if (r.position.getStart().equals(token.getStart())) {
-        return r;
+        ret.push(r);
       }
     }
 
     const parent = scope.getParent();
     if (parent) {
-      return this.searchReferences(parent, token);
+      ret = ret.concat(this.searchReferences(parent, token));
     }
 
-    return undefined;
+    return ret;
   }
 
   private static ABAPFileResult(abap: ABAPFile): LServer.Location {
