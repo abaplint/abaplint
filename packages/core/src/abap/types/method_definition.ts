@@ -27,7 +27,6 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-
     super(found.getFirstToken(), filename);
 
     this.redefinition = false;

@@ -4,6 +4,7 @@ import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
+import {Default} from "./default";
 
 export class MethodParam {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, meta: IdentifierMeta[]): TypedIdentifier {
@@ -15,6 +16,11 @@ export class MethodParam {
     const type = node.findDirectExpression(Expressions.TypeParam);
     if (type === undefined) {
       throw new Error("MethodParam, unexpected structure");
+    }
+
+    const def = type.findDirectExpression(Expressions.Default);
+    if (def) {
+      new Default().runSyntax(def, scope, filename);
     }
 
     const found = new BasicTypes(filename, scope).parseType(type);

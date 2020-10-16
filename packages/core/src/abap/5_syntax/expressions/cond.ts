@@ -9,8 +9,11 @@ export class Cond {
       throw new Error("Cond, expected node input");
     }
 
-    for (const t of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(t, scope, filename);
+    for (const t of node.findDirectExpressions(Expressions.CondSub)) {
+      const c = t.findDirectExpression(Expressions.Cond);
+      if (c) {
+        new Cond().runSyntax(c, scope, filename);
+      }
     }
 
     for (const t of node.findDirectExpressions(Expressions.Compare)) {
