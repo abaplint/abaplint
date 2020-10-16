@@ -471,4 +471,13 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("GET PARAMETER", async () => {
+    const abap = `
+  DATA lv_field TYPE string.
+  DATA lv_package TYPE string.
+  GET PARAMETER ID lv_field FIELD lv_package.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
