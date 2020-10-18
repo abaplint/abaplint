@@ -88,7 +88,7 @@ export class Target {
     }
 
     const token = node.getFirstToken();
-    const name = node.getFirstToken().getStr();
+    const name = token.getStr();
 
     if (node.get() instanceof Expressions.TargetField
         || node.get() instanceof Expressions.TargetFieldSymbol) {
@@ -106,8 +106,10 @@ export class Target {
     } else if (node.get() instanceof Expressions.ClassName) {
       const found = scope.findObjectDefinition(name);
       if (found) {
+        scope.addReference(token, found, ReferenceType.ObjectOrientedReference, filename);
         return new ObjectReferenceType(found);
       } else if (scope.getDDIC().inErrorNamespace(name) === false) {
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
         return new VoidType(name);
       } else {
         return new UnknownType(name + " unknown, Target");

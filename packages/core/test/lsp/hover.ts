@@ -620,5 +620,31 @@ ENDCLASS.`;
     expect(hover1?.value).to.contain("zif_test", "hover1");
   });
 
+  it("Hover, static attributes, source and target", () => {
+    const abap = `CLASS zcl_test DEFINITION.
+  PUBLIC SECTION.
+    METHODS m.
+    CLASS-DATA bar TYPE i.
+ENDCLASS.
+CLASS zcl_test IMPLEMENTATION.
+  METHOD m.
+    WRITE zcl_test=>bar.
+    zcl_test=>bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_static.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+
+    const hover1 = new Hover(reg).find(buildPosition(file, 7, 15));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain("Reference", "hover1");
+    expect(hover1?.value).to.contain("zcl_test", "hover1");
+
+    const hover2 = new Hover(reg).find(buildPosition(file, 8, 10));
+    expect(hover2).to.not.equal(undefined);
+    expect(hover2?.value).to.contain("Reference", "hover2");
+    expect(hover2?.value).to.contain("zcl_test", "hover2");
+  });
 
 });

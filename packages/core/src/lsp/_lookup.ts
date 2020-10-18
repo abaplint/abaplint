@@ -277,7 +277,7 @@ export class LSPLookup {
       return undefined;
     }
 
-    const def = scope.getParent()?.findClassDefinition(scope.getIdentifier().sname)?.getMethodDefinitions().getByName(nameToken.getStr());
+    const def = scope.getParent()?.findClassDefinition(scope.getIdentifier().sname)?.getMethodDefinitions()?.getByName(nameToken.getStr());
     return def;
   }
 
