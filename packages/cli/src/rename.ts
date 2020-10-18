@@ -11,7 +11,6 @@ export class Rename {
   }
 
   public run(config: abaplint.Config, base: string) {
-
     const rconfig = config.get().rename;
     if (rconfig === undefined) {
       return;
@@ -24,7 +23,7 @@ export class Rename {
 
   ////////////////////////
 
-  private write(rconfig: any, base: string) {
+  private write(rconfig: abaplint.IRenameSettings, base: string) {
     const outputFolder = base + path.sep + rconfig.output;
     console.log("Base: " + base);
     console.log("Output folder: " + outputFolder);
@@ -43,7 +42,7 @@ export class Rename {
     }
   }
 
-  private rename(rconfig: any) {
+  private rename(rconfig: abaplint.IRenameSettings) {
     const renamer = new abaplint.Rename(this.reg);
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
@@ -65,7 +64,7 @@ export class Rename {
     }
   }
 
-  private skip(rconfig: any) {
+  private skip(rconfig: abaplint.IRenameSettings) {
     if (rconfig.skip) {
       for (const s of rconfig.skip) {
         const all: abaplint.IFile[] = [];
