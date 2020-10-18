@@ -10,6 +10,7 @@ import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
 import {applyFixes} from "./fixes";
+import {Rename} from "./rename";
 
 class Progress implements IProgress {
   private bar: ProgressBar;
@@ -123,6 +124,7 @@ function displayHelp(): string {
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
     "  --fix                  apply quick fixes to files\n" +
+    "  --rename               rename object according to rules in abaplint.json\n" +
     "  -p                     output performance information\n" +
     "  -c                     compress files in memory\n";
 }
@@ -144,7 +146,7 @@ async function run() {
   // @ts-ignore
   JSON5.stringify = JSON5.default.stringify;
 
-  const argv = minimist(process.argv.slice(2), {boolean: ["p", "c", "fix"]});
+  const argv = minimist(process.argv.slice(2), {boolean: ["p", "c", "fix", "rename"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
@@ -194,6 +196,13 @@ async function run() {
       // @ts-ignore
       issues = applyFixes(issues, reg, fs);
       extra = "Fixes applied";
+    } else if (argv["rename"] && reg) {
+      if (issues.length === 0) {
+        new Rename(reg).run(config, base);
+        extra = "Renames applied";
+      } else {
+        extra = "Renames NOT applied, issues found";
+      }
     }
 
     output = out(issues, format, loaded.length, argv) + extra;
