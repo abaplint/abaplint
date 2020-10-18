@@ -25,7 +25,7 @@ import * as Nodes from "./abap/nodes";
 import * as BasicTypes from "./abap/types/basic";
 import * as Types from "./abap/types";
 import * as Tokens from "./abap/1_lexer/tokens";
-import {IConfig, IDependency} from "./_config";
+import {IConfig, IDependency, IRenameSettings} from "./_config";
 import {IRegistry} from "./_iregistry";
 import {IFile} from "./files/_ifile";
 import {Position, VirtualPosition} from "./position";
@@ -55,4 +55,5 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
-  ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename};
+  ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
+  IRenameSettings};
