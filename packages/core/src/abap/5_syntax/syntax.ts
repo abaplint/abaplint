@@ -107,6 +107,7 @@ import {RaiseEvent} from "./statements/raise_event";
 import {Form} from "./statements/form";
 import {ABAPFile} from "../abap_file";
 import {Assert} from "./statements/assert";
+import {SetParameter} from "./statements/set_parameter";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -333,6 +334,8 @@ export class SyntaxLogic {
       new Assign().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.SetLocale) {
       new SetLocale().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SetParameter) {
+      new SetParameter().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Convert) {
       new Convert().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Controls) {

@@ -33,11 +33,28 @@ export interface ISyntaxSettings {
   globalMacros?: string[];
 }
 
+export interface IRenameSettings {
+  /** output folder */
+  output: string;
+  /** list of regex, matches filenames to be skipped, case insensitive */
+  skip?: string[];
+  /** List of rename patterns */
+  patterns: {
+    /** Object type, example "CLAS", regex, case insensitive */
+    type: string,
+    /** Matches object name, regex, case insensitive */
+    oldName: string,
+    /** new name, match groups from oldName regex can be used */
+    newName: string,
+  }[];
+}
+
 export interface IConfig {
   global: IGlobalConfig;
   /** External git dependencies used for syntax checks */
   dependencies?: IDependency[];
   syntax: ISyntaxSettings;
+  rename?: IRenameSettings;
   rules: any;
 }
 

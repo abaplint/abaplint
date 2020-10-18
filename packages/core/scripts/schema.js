@@ -35,7 +35,7 @@ for(const rule of abaplint.ArtifactsRules.getRules()) {
 }
 rules.sort((a, b) => { return a.key.localeCompare(b.key); });
 
-let output = "import {IGlobalConfig, IDependency, ISyntaxSettings} from \"../src/_config\";\n";
+let output = "import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings} from \"../src/_config\";\n";
 for(const rule of rules) {
   output = output + "import {" + rule.config + "} from \"" + ruledir + findFile(rule.key) + "\";\n";
 }
@@ -46,6 +46,7 @@ output = output + `\nexport interface IConfig {
   /** External git dependencies used for syntax checks */
   dependencies?: IDependency[];
   syntax: ISyntaxSettings;
+  rename?: IRenameSettings;
   rules: {\n`;
 for (const rule of rules) {
   output = output + "    \"" + rule.key + "\"?: " + rule.config + " | boolean" + ",\n";

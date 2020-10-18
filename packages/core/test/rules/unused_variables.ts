@@ -471,4 +471,30 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("GET PARAMETER", async () => {
+    const abap = `
+  DATA lv_field TYPE string.
+  DATA lv_package TYPE string.
+  GET PARAMETER ID lv_field FIELD lv_package.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SET PARAMETER", async () => {
+    const abap = `
+  DATA lv_field TYPE string.
+  SET PARAMETER ID lv_field FIELD ''.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("insert into table assigning", async () => {
+    const abap = `
+  FIELD-SYMBOLS <bar> TYPE i.
+  DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+  INSERT 2 INTO TABLE tab ASSIGNING <bar>.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

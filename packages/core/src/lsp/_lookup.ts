@@ -267,6 +267,10 @@ export class LSPLookup {
       return undefined;
     }
 
+    if (found.snode.findFirstExpression(Expressions.Redefinition)) {
+      return undefined;
+    }
+
     // check the cursor is at the right token
     if (nameToken.getStart().getCol() !== found.token.getStart().getCol()
         || nameToken.getStart().getRow() !== found.token.getStart().getRow()) {
