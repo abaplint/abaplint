@@ -1,4 +1,4 @@
-import {IGlobalConfig, IDependency, ISyntaxSettings} from "../src/_config";
+import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings} from "../src/_config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
 import {AllowedObjectNamingConf} from "../src/rules/allowed_object_naming";
@@ -119,6 +119,7 @@ export interface IConfig {
   /** External git dependencies used for syntax checks */
   dependencies?: IDependency[];
   syntax: ISyntaxSettings;
+  rename?: IRenameSettings;
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,

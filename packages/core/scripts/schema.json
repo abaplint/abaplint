@@ -1104,6 +1104,9 @@
         "global": {
           "$ref": "#/definitions/IGlobalConfig"
         },
+        "rename": {
+          "$ref": "#/definitions/IRenameSettings"
+        },
         "rules": {
           "additionalProperties": false,
           "properties": {
@@ -2429,6 +2432,54 @@
         "skipGeneratedGatewayClasses",
         "skipGeneratedPersistentClasses",
         "skipGeneratedFunctionGroups"
+      ],
+      "type": "object"
+    },
+    "IRenameSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "output": {
+          "description": "output folder",
+          "type": "string"
+        },
+        "patterns": {
+          "description": "List of rename patterns",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "newName": {
+                "description": "new name, match groups from oldName regex can be used",
+                "type": "string"
+              },
+              "oldName": {
+                "description": "Matches object name, regex, case insensitive",
+                "type": "string"
+              },
+              "type": {
+                "description": "Object type, example \"CLAS\", regex, case insensitive",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "oldName",
+              "newName"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "skip": {
+          "description": "list of regex, matches filenames to be skipped, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "output",
+        "patterns"
       ],
       "type": "object"
     },
