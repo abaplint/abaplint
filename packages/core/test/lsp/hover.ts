@@ -588,4 +588,37 @@ ENDCLASS.`;
     expect(hover1?.value).to.contain("zif_test", "hover1");
   });
 
+  it("Hover, redefinition", () => {
+    const abap = `INTERFACE zif_test.
+  METHODS moo.
+ENDINTERFACE.
+
+CLASS zcl_super DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_test.
+ENDCLASS.
+CLASS zcl_super IMPLEMENTATION.
+  METHOD zif_test~moo.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS zcl_test DEFINITION INHERITING FROM zcl_super.
+  PUBLIC SECTION.
+    METHODS zif_test~moo REDEFINITION.
+ENDCLASS.
+CLASS zcl_test IMPLEMENTATION.
+  METHOD zif_test~moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zhover_var.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+
+    const hover1 = new Hover(reg).find(buildPosition(file, 15, 15));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain("Reference", "hover1");
+    expect(hover1?.value).to.contain("zif_test", "hover1");
+  });
+
+
 });

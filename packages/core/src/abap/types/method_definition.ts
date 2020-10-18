@@ -23,6 +23,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
+
     const found = node.findDirectExpression(Expressions.MethodName);
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
@@ -32,6 +33,14 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     this.redefinition = false;
     if (node.findDirectExpression(Expressions.Redefinition)) {
       this.redefinition = true;
+
+      const name = found.getFirstToken().getStr();
+      if (name.includes("~")) {
+        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
+        if (idef) {
+          scope.addReference(found.getFirstToken(), idef, ReferenceType.ObjectOrientedReference, filename);
+        }
+      }
     }
 
     this.eventHandler = false;
