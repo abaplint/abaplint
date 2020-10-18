@@ -159,7 +159,16 @@ export class BasicTypes {
 
     const typ = this.scope.findType(chainText);
     if (typ) {
-      this.scope.addReference(typeName.getFirstToken(), typ, ReferenceType.TypeReference, this.filename);
+      const token = typeName.getFirstToken();
+
+      if (chainText.includes("~")) {
+        const idef = this.scope.findInterfaceDefinition(chainText.split("~")[0]);
+        if (idef) {
+          this.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename);
+        }
+      }
+
+      this.scope.addReference(token, typ, ReferenceType.TypeReference, this.filename);
       return typ.getType();
     }
 
