@@ -50,7 +50,6 @@ export class RenamerHelper {
         const range = Range.create(i, index + 9, i, index + oldName.length + 9);
         changes.push(
           TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
-        break;
       }
     }
 
