@@ -42,6 +42,12 @@ export class AttributeName {
       if (type) {
         scope.addReference(token, found, type, filename);
       }
+      if (found && name.includes("~")) {
+        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
+        if (idef) {
+          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, filename);
+        }
+      }
       ret = found.getType();
     } else if (context instanceof DataReference) {
       const sub = context.getType();
