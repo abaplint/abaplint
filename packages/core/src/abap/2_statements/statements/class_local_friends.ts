@@ -3,7 +3,7 @@ import {str, seq, plus} from "../combi";
 import {ClassName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
-export class ClassOther implements IStatement {
+export class ClassLocalFriends implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

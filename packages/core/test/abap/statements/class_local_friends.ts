@@ -7,4 +7,4 @@ const tests = [
   "CLASS zcl_aoc_super DEFINITION LOCAL FRIENDS ltcl_test.",
 ];
 
-statementType(tests, "CLASS other", Statements.ClassOther);
+statementType(tests, "CLASS other", Statements.ClassLocalFriends);
