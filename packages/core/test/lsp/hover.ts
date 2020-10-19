@@ -670,4 +670,30 @@ ENDCLASS.`;
     expect(hover1?.value).to.contain("zif_bar1", "hover1");
   });
 
+  it("Hover, interfaced chained variable", () => {
+    const abap = `INTERFACE lif_properties.
+  DATA zoomscale TYPE i.
+ENDINTERFACE.
+
+CLASS lcl_worksheet DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_properties.
+ENDCLASS.
+CLASS lcl_worksheet IMPLEMENTATION.
+ENDCLASS.
+
+DATA lo_worksheet TYPE REF TO lcl_worksheet.
+
+IF lo_worksheet->lif_properties~zoomscale GT 400.
+ENDIF.`;
+    const file = new MemoryFile("zhover_intf_chain.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    reg.findIssues();
+
+    const hover1 = new Hover(reg).find(buildPosition(file, 13, 25));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain("Reference", "hover1");
+    expect(hover1?.value).to.contain("lif_properties", "hover1");
+  });
+
 });

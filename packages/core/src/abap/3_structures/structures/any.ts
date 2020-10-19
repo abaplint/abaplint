@@ -8,7 +8,7 @@ export class Any implements IStructure {
 
   public getMatcher(): IStructureRunnable {
 
-    return star(alt(sta(Statements.ClassOther),
+    return star(alt(sta(Statements.ClassLocalFriends),
                     sta(Statements.ClassDeferred),
                     sta(Statements.Report),
                     sta(Statements.Program),

@@ -61,7 +61,7 @@ export * from "./case";
 export * from "./create_object";
 export * from "./select";
 export * from "./call";
-export * from "./class_other";
+export * from "./class_local_friends";
 export * from "./class_deferred";
 export * from "./fieldsymbol";
 export * from "./class_definition";

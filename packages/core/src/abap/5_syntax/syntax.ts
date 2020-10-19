@@ -108,6 +108,7 @@ import {Form} from "./statements/form";
 import {ABAPFile} from "../abap_file";
 import {Assert} from "./statements/assert";
 import {SetParameter} from "./statements/set_parameter";
+import {ClassLocalFriends} from "./statements/class_local_friends";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -326,6 +327,8 @@ export class SyntaxLogic {
       new Receive().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetBit) {
       new GetBit().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.ClassLocalFriends) {
+      new ClassLocalFriends().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Select) {
       new Select().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.InsertInternal) {
