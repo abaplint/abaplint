@@ -17,9 +17,16 @@ module.exports = ({mode} = {mode: "development"}) => ({
   },
   devServer: {
     contentBase: path.join(__dirname, "public"),
+    open: true,
+    hot: true,
     inline: true,
   },
   resolve: {
+    fallback: {
+      "buffer": require.resolve("buffer/"),
+      "stream": require.resolve("stream-browserify"),
+      "crypto": require.resolve("crypto-browserify"),
+    },
     extensions: [".js", ".ts", ".tsx"],
   },
   module: {
