@@ -9,6 +9,10 @@ export class IntegerType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "i";
+  }
+
   public containsVoid() {
     return false;
   }

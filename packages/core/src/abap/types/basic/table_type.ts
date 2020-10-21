@@ -23,6 +23,10 @@ export class TableType implements AbstractType {
     }
   }
 
+  public toABAP(): string {
+    throw new Error("TableType, toABAP, todo");
+  }
+
   public toText(level: number) {
     let extra = "";
     let type = this.rowType;

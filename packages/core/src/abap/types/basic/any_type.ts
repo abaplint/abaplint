@@ -5,6 +5,10 @@ export class AnyType implements AbstractType {
     return "```any```";
   }
 
+  public toABAP() {
+    return "any";
+  }
+
   public isGeneric() {
     return true;
   }

@@ -13,6 +13,7 @@ export interface IRegistry {
   parse(): IRegistry;
   parseAsync(input?: IRunInput): Promise<IRegistry>;
   addDependencies(files: readonly IFile[]): IRegistry;
+  addDependency(file: IFile): IRegistry;
   isDependency(obj: IObject): boolean;
   findIssues(input?: IRunInput): readonly Issue[];
   findIssuesObject(iobj: IObject): readonly Issue[];
@@ -23,8 +24,9 @@ export interface IRegistry {
   setConfig(conf: IConfiguration): IRegistry;
 
   // object operations
+  /** Get all objects, including dependencies */
   getObjects(): Generator<IObject, void, undefined>;
-    /** Get number of objects in the registry */
+  /** Get number of objects in the registry */
   getObjectCount(skipDependencies?: boolean): number;
   getFirstObject(): IObject | undefined;
   getObject(type: string | undefined, name: string): IObject | undefined;

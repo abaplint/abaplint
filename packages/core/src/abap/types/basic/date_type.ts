@@ -9,6 +9,10 @@ export class DateType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "d";
+  }
+
   public containsVoid() {
     return false;
   }

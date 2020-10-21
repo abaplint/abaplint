@@ -1,22 +1,27 @@
-import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPParser} from "../abap/abap_parser";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Unknown} from "../abap/2_statements/statements/_statement";
-import {StatementNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IEdit, EditHelper} from "../edit_helper";
 import {VirtualPosition} from "../position";
 import {ABAPFile} from "../abap/abap_file";
-import {MemoryFile} from "../files/memory_file";
+import {IRegistry} from "../_iregistry";
+import {IObject} from "../objects/_iobject";
+import {ABAPObject} from "../objects/_abap_object";
+import {Version} from "../version";
+import {Registry} from "../registry";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 
 export class DownportConf extends BasicRuleConfig {
 }
 
-export class Downport extends ABAPRule {
-
+export class Downport implements IRule {
+  private lowReg: IRegistry;
+  private highReg: IRegistry;
   private conf = new DownportConf();
 
   public getMetadata(): IRuleMetadata {
@@ -27,12 +32,13 @@ export class Downport extends ABAPRule {
       extendedInformation: `
 Much like the 'commented_code' rule this rule loops through unknown statements and tries parsing with
 a higher level language version. If successful, various rules are applied to downport the statement.
+Target downport version is always v702, thus rule is only enabled if target version is v702.
 
 Current rules:
 * NEW transformed to CREATE OBJECT, opposite of https://rules.abaplint.org/use_new/
+* outline, opposite of https://rules.abaplint.org/prefer_inline/
 
 Future rules, todo:
-* outline, opposite of https://rules.abaplint.org/prefer_inline/
 * boolc, opposite of https://rules.abaplint.org/prefer_xsdbool/
 
 The target version is the overall target version set in the main configuration file as syntax.version
@@ -50,14 +56,55 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile): readonly Issue[] {
+  public initialize(reg: IRegistry) {
+    this.lowReg = reg;
+    return this;
+  }
+
+  public run(lowObj: IObject): Issue[] {
     const ret: Issue[] = [];
 
-    for (const s of file.getStatements()) {
-      if (s.get() instanceof Unknown) {
-        const issue = this.checkStatement(s, file);
-        if (issue) {
-          ret.push(issue);
+    if (this.lowReg.getConfig().getVersion() !== Version.v702) {
+      return ret;
+    } else if (!(lowObj instanceof ABAPObject)) {
+      return ret;
+    }
+
+    this.initHighReg();
+    const highObj = this.highReg.getObject(lowObj.getType(), lowObj.getName());
+    if (highObj === undefined || !(highObj instanceof ABAPObject)) {
+      return ret;
+    }
+
+    const highSyntax = new SyntaxLogic(this.highReg, highObj).run();
+
+    for (const lowFile of lowObj.getABAPFiles()) {
+      const highFile = highObj.getABAPFileByName(lowFile.getFilename());
+      if (highFile === undefined) {
+        continue;
+      }
+
+      const lowStatements = lowFile.getStatements();
+      const highStatements = highFile.getStatements();
+      if (lowStatements.length !== highStatements.length) {
+        // after applying a fix, there might be more statements in lowFile
+        // should highReg be initialized again?
+        /*
+        const message = "Internal Error: Statement lengths does not match";
+        ret.push(Issue.atStatement(lowFile, lowStatements[0], message, this.getMetadata().key));
+        */
+        continue;
+      }
+
+      for (let i = 0; i < lowStatements.length; i++) {
+        const low = lowStatements[i];
+        const high = highStatements[i];
+        if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
+            || high.findFirstExpression(Expressions.InlineData)) {
+          const issue = this.checkStatement(low, high, lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+          }
         }
       }
     }
@@ -67,29 +114,44 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
 ////////////////////
 
-  private checkStatement(s: StatementNode, file: ABAPFile): Issue | undefined {
-    if (s.getFirstToken().getStart() instanceof VirtualPosition) {
+  /** clones the orginal repository into highReg, and parses it with higher language version */
+  private initHighReg() {
+    if (this.highReg !== undefined) {
+      return;
+    }
+    // use default configuration, ie. default target version
+    // todo: consider globalConstants, globalMacros, errorNamespace?
+    this.highReg = new Registry();
+
+    for (const o of this.lowReg.getObjects()) {
+      for (const f of o.getFiles()) {
+        if (this.lowReg.isDependency(o) === true) {
+          this.highReg.addDependency(f);
+        } else {
+          this.highReg.addFile(f);
+        }
+      }
+    }
+
+    this.highReg.parse();
+  }
+
+  /** applies one rule at a time, multiple iterations are required to transform complex statements */
+  private checkStatement(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (low.getFirstToken().getStart() instanceof VirtualPosition) {
       return undefined;
     }
 
-    const code = new MemoryFile("_downport.prog.abap", this.buildCode(s));
-    // note that this will take the default langauge vesion
-    const abapFile = new ABAPParser().parse([code]).output[0];
-    const statementNodes = abapFile.getStatements();
-    if (statementNodes.length !== 1 || statementNodes[0].get() instanceof Unknown) {
-      return;
-    }
-
-    const node = statementNodes[0];
-
-    let found = this.newToCreateObject(node, file);
+    let found = this.newToCreateObject(high, lowFile);
     if (found) {
       return found;
     }
-    found = this.outlineData(node, file);
+
+    found = this.outlineData(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
+
     // todo, add more rules here
 
     return undefined;
@@ -97,55 +159,76 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
 //////////////////////////////////////////
 
-  private buildCode(s: StatementNode): string {
-    // the tokens must be at the same position as the original file for easy reporting and building quick fix
+  private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
-    const rows: string[] = [];
-    for(let i = 0; i < s.getLastToken().getRow(); i++){
-      rows.push("");
+    for (const i of node.findAllExpressions(Expressions.InlineData)) {
+      const nameToken = i.findDirectExpression(Expressions.TargetField)?.getFirstToken();
+      if (nameToken === undefined) {
+        continue;
+      }
+      const name = nameToken.getStr();
+      const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
+      if (spag === undefined) {
+        continue;
+      }
+      const found = spag.findVariable(name);
+      if (found === undefined) {
+        continue;
+      }
+      const type = found.getType().toABAP();
+
+      // todo, this assumes that the statement starts with "DATA("
+      const code = `DATA ${name} TYPE ${type}.\n${name}`;
+      const fix = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), code);
+      return Issue.atToken(lowFile, i.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
     }
 
-    for (const t of s.getTokens()) {
-      const length = rows[t.getRow() - 1].length;
-      rows[t.getRow() - 1] = rows[t.getRow() - 1] + " ".repeat(t.getCol() - length - 1);
-      rows[t.getRow() - 1] = rows[t.getRow() - 1] + t.getStr();
-    }
-
-    const code = rows.join("\n");
-    return code;
-  }
-
-  private outlineData(_node: StatementNode, _file: ABAPFile): Issue | undefined {
-// todo
     return undefined;
   }
 
   private newToCreateObject(node: StatementNode, file: ABAPFile): Issue | undefined {
+
+    let fix: IEdit | undefined = undefined;
     if (node.get() instanceof Statements.Move) {
       const target = node.findDirectExpression(Expressions.Target);
       const source = node.findDirectExpression(Expressions.Source);
       const found = source?.findFirstExpression(Expressions.NewObject);
-
-      let fix: IEdit | undefined = undefined;
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
       // todo, assumption: the target is not an inline definition
       if (source && target && found && source.getFirstToken().getStart().equals(found.getFirstToken().getStart())) {
-        const type = found.findDirectExpression(Expressions.TypeNameOrInfer);
-        let extra = type?.concatTokens() === "#" ? "" : " TYPE " + type?.concatTokens();
-
-        const parameters = found.findFirstExpression(Expressions.ParameterListS);
-        extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
-
-        const abap = `CREATE OBJECT ${target.concatTokens()}${extra}.`;
+        const abap = this.newParameters(found, target.concatTokens());
         fix = EditHelper.replaceRange(file, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
       }
+    } else if (node.findFirstExpression(Expressions.NewObject)) {
+      const found = node.findFirstExpression(Expressions.NewObject)!;
+      const name = "temp1";
+      const abap = this.newParameters(found, name);
 
-      if (found) {
-        return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
-      }
+      const type = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
+
+      const data = `DATA ${name} TYPE REF TO ${type}.`;
+      const fix1 = EditHelper.insertAt(file, node.getFirstToken().getStart(), data + "\n" + abap + "\n");
+      const fix2 = EditHelper.replaceRange(file, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
+      fix = EditHelper.merge(fix2, fix1);
     }
 
-    return undefined;
+    if (fix) {
+      return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
+    } else {
+      return undefined;
+    }
+  }
+
+  private newParameters(found: ExpressionNode, name: string): string {
+    const type = found.findDirectExpression(Expressions.TypeNameOrInfer);
+    let extra = type?.concatTokens() === "#" ? "" : " TYPE " + type?.concatTokens();
+
+    const parameters = found.findFirstExpression(Expressions.ParameterListS);
+    extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
+
+    const abap = `CREATE OBJECT ${name}${extra}.`;
+
+    return abap;
   }
 
 }

@@ -18,6 +18,10 @@ export class NumericType implements AbstractType {
     return "```n LENGTH " + this.getLength() + "```";
   }
 
+  public toABAP(): string {
+    return "n LENGTH " + this.getLength();
+  }
+
   public isGeneric() {
     return false;
   }

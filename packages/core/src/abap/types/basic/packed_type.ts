@@ -26,6 +26,10 @@ export class PackedType implements AbstractType {
     return "```p LENGTH " + this.getLength() + " DECIMALS " + this.getDecimals() + "```";
   }
 
+  public toABAP(): string {
+    return "p LENGTH " + this.getLength() + " DECIMALS " + this.getDecimals();
+  }
+
   public isGeneric() {
     return false;
   }

@@ -54,6 +54,10 @@ export class StructureType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    throw new Error("StructureType, toABAP, todo");
+  }
+
   public containsVoid() {
     return this.getComponents().some(c => {
       if (c.type instanceof TypedIdentifier) {

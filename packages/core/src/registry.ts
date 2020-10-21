@@ -208,6 +208,12 @@ export class Registry implements IRegistry {
     return this.addFiles(files);
   }
 
+  public addDependency(file: IFile): IRegistry {
+    this.dependencies[file.getFilename().toUpperCase()] = true;
+    this.addFile(file);
+    return this;
+  }
+
   public isDependency(obj: IObject): boolean {
     const filename = obj.getFiles()[0].getFilename().toUpperCase();
     return this.dependencies[filename] === true;

@@ -20,6 +20,10 @@ export class DataReference implements AbstractType {
     return this.type;
   }
 
+  public toABAP(): string {
+    return "REF TO " + this.type;
+  }
+
   public isGeneric() {
     return this.type.isGeneric();
   }

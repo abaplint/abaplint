@@ -9,6 +9,10 @@ export class TimeType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "t";
+  }
+
   public containsVoid() {
     return false;
   }

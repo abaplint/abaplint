@@ -18,6 +18,10 @@ export class HexType implements AbstractType {
     return "```x LENGTH " + this.getLength() + "```";
   }
 
+  public toABAP(): string {
+    return "x LENGTH " + this.getLength();
+  }
+
   public isGeneric() {
     return false;
   }
