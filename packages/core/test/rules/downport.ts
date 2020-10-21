@@ -48,21 +48,55 @@ describe("Rule: NEW", () => {
   });
 
   it("quick fix, Use CREATE OBJECT instead of NEW", async () => {
-    testFix("foo = NEW #( ).", "CREATE OBJECT foo.");
+    const abap = "foo = NEW #( ).";
+    const expected = "CREATE OBJECT foo.";
+    testFix(abap, expected);
   });
 
   it("test position of quick fix is second line", async () => {
-    testFix("DATA foo TYPE i.\nfoo = NEW #( ).", "DATA foo TYPE i.\nCREATE OBJECT foo.");
+    const abap = "DATA foo TYPE REF TO object.\nfoo = NEW #( ).";
+    const expected = "DATA foo TYPE REF TO object.\nCREATE OBJECT foo.";
+    testFix(abap, expected);
   });
 
   it("quick fix, with TYPE", async () => {
-    testFix("foo = NEW zcl_bar( ).", "CREATE OBJECT foo TYPE zcl_bar.");
+    const abap = "foo = NEW zcl_bar( ).";
+    const expected = "CREATE OBJECT foo TYPE zcl_bar.";
+    testFix(abap, expected);
   });
 
   it("with a parameter", async () => {
     testFix("foo = NEW #( foo = bar ).", "CREATE OBJECT foo EXPORTING foo = bar.");
   });
 
+  it("not a MOVE statement", async () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS m RETURNING VALUE(val) TYPE string.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  WRITE to_lower( NEW lcl_bar( )->m( ) ).`;
+
+    const expected = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS m RETURNING VALUE(val) TYPE string.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  CREATE OBJECT temp1 TYPE lcl_bar.
+WRITE to_lower( temp1->m( ) ).`;
+
+    testFix(abap, expected);
+  });
 });
 
 describe("Rule: downport, outline", () => {

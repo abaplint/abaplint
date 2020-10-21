@@ -2,7 +2,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Unknown} from "../abap/2_statements/statements/_statement";
-import {StatementNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IEdit, EditHelper} from "../edit_helper";
@@ -187,31 +187,45 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   }
 
   private newToCreateObject(node: StatementNode, file: ABAPFile): Issue | undefined {
+
+    let fix: IEdit | undefined = undefined;
     if (node.get() instanceof Statements.Move) {
       const target = node.findDirectExpression(Expressions.Target);
       const source = node.findDirectExpression(Expressions.Source);
       const found = source?.findFirstExpression(Expressions.NewObject);
-
-      let fix: IEdit | undefined = undefined;
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
       // todo, assumption: the target is not an inline definition
       if (source && target && found && source.getFirstToken().getStart().equals(found.getFirstToken().getStart())) {
-        const type = found.findDirectExpression(Expressions.TypeNameOrInfer);
-        let extra = type?.concatTokens() === "#" ? "" : " TYPE " + type?.concatTokens();
-
-        const parameters = found.findFirstExpression(Expressions.ParameterListS);
-        extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
-
-        const abap = `CREATE OBJECT ${target.concatTokens()}${extra}.`;
+        const abap = this.newParameters(found, target.concatTokens());
         fix = EditHelper.replaceRange(file, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
+      } else {
+        return undefined;
       }
+    } else if (node.findFirstExpression(Expressions.NewObject)) {
+      const found = node.findFirstExpression(Expressions.NewObject)!;
+      const name = "temp1";
+      const abap = this.newParameters(found, name);
 
-      if (found) {
-        return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
-      }
+      const fix1 = EditHelper.insertAt(file, node.getFirstToken().getStart(), abap + "\n");
+      const fix2 = EditHelper.replaceRange(file, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
+      fix = EditHelper.merge(fix2, fix1);
+    } else {
+      return undefined;
     }
 
-    return undefined;
+    return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private newParameters(found: ExpressionNode, name: string): string {
+    const type = found.findDirectExpression(Expressions.TypeNameOrInfer);
+    let extra = type?.concatTokens() === "#" ? "" : " TYPE " + type?.concatTokens();
+
+    const parameters = found.findFirstExpression(Expressions.ParameterListS);
+    extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
+
+    const abap = `CREATE OBJECT ${name}${extra}.`;
+
+    return abap;
   }
 
 }
