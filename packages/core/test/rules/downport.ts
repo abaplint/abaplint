@@ -69,7 +69,7 @@ describe("Rule: NEW", () => {
     testFix("foo = NEW #( foo = bar ).", "CREATE OBJECT foo EXPORTING foo = bar.");
   });
 
-  it("not a MOVE statement", async () => {
+  it("Not top level source NEW", async () => {
     const abap = `CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
     METHODS m RETURNING VALUE(val) TYPE string.
@@ -80,7 +80,8 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.
 
 START-OF-SELECTION.
-  WRITE to_lower( NEW lcl_bar( )->m( ) ).`;
+  DATA str TYPE string.
+  str = to_lower( NEW lcl_bar( )->m( ) ).`;
 
     const expected = `CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
@@ -92,9 +93,10 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.
 
 START-OF-SELECTION.
+  DATA str TYPE string.
   DATA temp1 TYPE REF TO lcl_bar.
 CREATE OBJECT temp1 TYPE lcl_bar.
-WRITE to_lower( temp1->m( ) ).`;
+str = to_lower( temp1->m( ) ).`;
 
     testFix(abap, expected);
   });
