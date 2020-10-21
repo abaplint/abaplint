@@ -92,7 +92,8 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.
 
 START-OF-SELECTION.
-  CREATE OBJECT temp1 TYPE lcl_bar.
+  DATA temp1 TYPE REF TO lcl_bar.
+CREATE OBJECT temp1 TYPE lcl_bar.
 WRITE to_lower( temp1->m( ) ).`;
 
     testFix(abap, expected);

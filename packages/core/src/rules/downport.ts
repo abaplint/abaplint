@@ -198,22 +198,25 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       if (source && target && found && source.getFirstToken().getStart().equals(found.getFirstToken().getStart())) {
         const abap = this.newParameters(found, target.concatTokens());
         fix = EditHelper.replaceRange(file, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
-      } else {
-        return undefined;
       }
     } else if (node.findFirstExpression(Expressions.NewObject)) {
       const found = node.findFirstExpression(Expressions.NewObject)!;
       const name = "temp1";
       const abap = this.newParameters(found, name);
 
-      const fix1 = EditHelper.insertAt(file, node.getFirstToken().getStart(), abap + "\n");
+      const type = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
+
+      const data = `DATA ${name} TYPE REF TO ${type}.`;
+      const fix1 = EditHelper.insertAt(file, node.getFirstToken().getStart(), data + "\n" + abap + "\n");
       const fix2 = EditHelper.replaceRange(file, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
       fix = EditHelper.merge(fix2, fix1);
+    }
+
+    if (fix) {
+      return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
     } else {
       return undefined;
     }
-
-    return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private newParameters(found: ExpressionNode, name: string): string {
