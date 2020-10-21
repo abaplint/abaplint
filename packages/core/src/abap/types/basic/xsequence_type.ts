@@ -9,6 +9,10 @@ export class XSequenceType implements AbstractType {
     return true;
   }
 
+  public toABAP(): string {
+    throw new Error("xsequence, generic");
+  }
+
   public containsVoid() {
     return false;
   }

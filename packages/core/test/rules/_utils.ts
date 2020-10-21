@@ -69,9 +69,12 @@ export function testRuleFixSingle(input: string, expected: string, rule: IRule, 
   expect(fix).to.not.equal(undefined, "Fix should exist");
   applyEditSingle(reg, fix!);
 
+  // console.dir(reg.getFirstObject()?.getFiles()[0].getRaw());
+
   reg.parse();
   issues = rule.initialize(reg).run(reg.getFirstObject()!);
-  expect(issues.length).to.equal(0);
+  // console.dir(issues);
+  expect(issues.length).to.equal(0, "after fix, no issue expected");
   const output = reg.getFirstObject()!.getFiles()[0];
   expect(output.getRaw()).to.equal(expected);
 }

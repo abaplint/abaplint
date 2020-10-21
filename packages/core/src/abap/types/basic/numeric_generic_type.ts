@@ -9,6 +9,10 @@ export class NumericGenericType implements AbstractType {
     return true;
   }
 
+  public toABAP(): string {
+    throw new Error("NumericGenericType, generic");
+  }
+
   public containsVoid() {
     return false;
   }

@@ -9,6 +9,10 @@ export class CSequenceType implements AbstractType {
     return true;
   }
 
+  public toABAP(): string {
+    throw new Error("csequence, generic");
+  }
+
   public containsVoid() {
     return false;
   }

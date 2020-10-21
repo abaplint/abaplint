@@ -18,6 +18,10 @@ export class CharacterType implements AbstractType {
     return "```c LENGTH " + this.getLength() + "```";
   }
 
+  public toABAP() {
+    return "c LENGTH " + this.getLength();
+  }
+
   public isGeneric() {
     return false;
   }

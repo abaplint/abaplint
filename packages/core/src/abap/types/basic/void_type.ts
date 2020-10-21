@@ -12,6 +12,10 @@ export class VoidType implements AbstractType {
     return this.voided;
   }
 
+  public toABAP(): string {
+    throw new Error("void, generic");
+  }
+
   public toText() {
     return "Void(" + this.voided + ")";
   }

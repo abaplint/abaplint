@@ -9,6 +9,10 @@ export class StringType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "string";
+  }
+
   public containsVoid() {
     return false;
   }

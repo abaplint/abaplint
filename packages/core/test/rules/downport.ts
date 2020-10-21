@@ -65,10 +65,17 @@ describe("Rule: NEW", () => {
 
 });
 
-describe("Rule: inline DATA", () => {
+describe("Rule: downport, outline", () => {
 
-  it.skip("Inline DATA definition", async () => {
-    const issues = await findIssues("DATA(foo) = 2.");
+  it("Outline DATA i definition", async () => {
+    const abap = "DATA(foo) = 2.";
+    const expected = "DATA foo TYPE i.\nfoo = 2.";
+    testFix(abap, expected);
+  });
+
+  it("Outline DATA string definition", async () => {
+    const abap = "DATA(foo) = |sdfdsfds|.";
+    const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
   });
 

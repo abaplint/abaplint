@@ -9,6 +9,10 @@ export class XStringType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "xstring";
+  }
+
   public containsVoid() {
     return false;
   }

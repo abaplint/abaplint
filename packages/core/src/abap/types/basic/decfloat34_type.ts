@@ -9,6 +9,10 @@ export class DecFloat34Type implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "decfloat34";
+  }
+
   public containsVoid() {
     return false;
   }

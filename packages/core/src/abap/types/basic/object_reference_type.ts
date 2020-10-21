@@ -17,6 +17,10 @@ export class ObjectReferenceType implements AbstractType {
     return "```REF TO " + this.getName() + "```";
   }
 
+  public toABAP(): string {
+    return "REF TO " + this.getName();
+  }
+
   public isGeneric() {
     return false;
   }

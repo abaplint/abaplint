@@ -9,6 +9,10 @@ export class UTCLongType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "utclong";
+  }
+
   public containsVoid() {
     return false;
   }

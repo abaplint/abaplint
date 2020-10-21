@@ -12,6 +12,10 @@ export class FloatType implements AbstractType {
     return false;
   }
 
+  public toABAP(): string {
+    return "f";
+  }
+
   public containsVoid() {
     return false;
   }

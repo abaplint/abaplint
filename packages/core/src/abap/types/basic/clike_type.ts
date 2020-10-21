@@ -9,6 +9,10 @@ export class CLikeType implements AbstractType {
     return true;
   }
 
+  public toABAP(): string {
+    throw new Error("clike, generic");
+  }
+
   public containsVoid() {
     return false;
   }
