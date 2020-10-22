@@ -125,4 +125,36 @@ str = to_lower( temp1->m( ) ).`;
     expect(issues[0].getMessage()).to.include("Outline");
   });
 
+  it("NEW, with default parameter to constructor", async () => {
+    const abap = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_text TYPE REF TO lcl_class.
+  lo_text = NEW lcl_class( 'bar' ).`;
+
+    const expected = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_text TYPE REF TO lcl_class.
+  CREATE OBJECT lo_text TYPE lcl_class EXPORTING STR = 'bar'.`;
+
+    testFix(abap, expected);
+  });
+
 });
