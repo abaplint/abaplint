@@ -1691,7 +1691,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/keyword_case"
+              "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/keyword_case"
             },
             "line_break_multiple_parameters": {
               "anyOf": [
