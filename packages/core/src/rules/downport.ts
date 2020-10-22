@@ -15,6 +15,7 @@ import {Version} from "../version";
 import {Registry} from "../registry";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
+import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -220,16 +221,24 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   }
 
   private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string {
-    const type = found.findDirectExpression(Expressions.TypeNameOrInfer);
-    let extra = type?.concatTokens() === "#" ? "" : " TYPE " + type?.concatTokens();
+    const typeToken = found.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
+    let extra = typeToken?.getStr() === "#" ? "" : " TYPE " + typeToken?.getStr();
 
     const parameters = found.findFirstExpression(Expressions.ParameterListS);
     if (parameters) {
       extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
-    } else if (type) {
+    } else if (typeToken) {
       // find the default parameter name for the constructor
-      const typeName = type.concatTokens();
-      const spag = highSyntax.spaghetti.lookupPosition(type?.getFirstToken().getStart(), lowFile.getFilename());
+      let typeName = typeToken.getStr();
+      const spag = highSyntax.spaghetti.lookupPosition(typeToken?.getStart(), lowFile.getFilename());
+      if (typeName === "#" && spag) {
+        // find the inferred type
+        for (const r of spag.getData().references) {
+          if (r.referenceType === ReferenceType.InferredType && r.resolved && r.position.getStart().equals(typeToken.getStart())) {
+            typeName = r.resolved.getName();
+          }
+        }
+      }
       const importing = spag?.findClassDefinition(typeName)?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
       const source = found.findDirectExpression(Expressions.Source)?.concatTokens();
       if (importing && source) {

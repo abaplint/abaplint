@@ -157,4 +157,38 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
+  it("NEW, inferred type with default parameter", async () => {
+    const abap = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lo_text TYPE REF TO lcl_class.
+  lo_text = NEW #( 'bar' ).
+ENDFORM.`;
+
+    const expected = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lo_text TYPE REF TO lcl_class.
+  CREATE OBJECT lo_text EXPORTING STR = 'bar'.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });
