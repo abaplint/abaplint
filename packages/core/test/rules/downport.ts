@@ -100,9 +100,6 @@ str = to_lower( temp1->m( ) ).`;
 
     testFix(abap, expected);
   });
-});
-
-describe("Rule: downport, outline", () => {
 
   it("Outline DATA i definition", async () => {
     const abap = "DATA(foo) = 2.";
@@ -114,6 +111,50 @@ describe("Rule: downport, outline", () => {
     const abap = "DATA(foo) = |sdfdsfds|.";
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
+  });
+
+  it("Outline DATA and NEW, apply outline first", async () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+    ENDCLASS.
+    CLASS lcl_class IMPLEMENTATION.
+    ENDCLASS.
+    DATA(lo_text) = NEW lcl_class( ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("Outline");
+  });
+
+  it("NEW, with default parameter to constructor", async () => {
+    const abap = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_text TYPE REF TO lcl_class.
+  lo_text = NEW lcl_class( 'bar' ).`;
+
+    const expected = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_text TYPE REF TO lcl_class.
+  CREATE OBJECT lo_text TYPE lcl_class EXPORTING STR = 'bar'.`;
+
+    testFix(abap, expected);
   });
 
 });

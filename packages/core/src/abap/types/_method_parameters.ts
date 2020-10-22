@@ -7,4 +7,5 @@ export interface IMethodParameters {
   getChanging(): readonly TypedIdentifier[];
   getReturning(): TypedIdentifier | undefined;
   getExceptions(): readonly string[];
+  getDefaultImporting(): string | undefined;
 }

@@ -46,6 +46,10 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     return ret;
   }
 
+  public getDefaultImporting(): string | undefined {
+    throw new Error("todo, BuiltInMethod, getDefaultImporting");
+  }
+
   public getExporting(): readonly TypedIdentifier[] {
     return [];
   }

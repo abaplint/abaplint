@@ -10,7 +10,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^14.11.11",
+    "@types/node": "^14.14.2",
     "monaco-editor": "^0.21.2",
     "yaserver": "^0.3.0",
     "ts-node": "^9.0.0"

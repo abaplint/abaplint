@@ -142,12 +142,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return undefined;
     }
 
-    let found = this.newToCreateObject(high, lowFile);
+    let found = this.outlineData(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
 
-    found = this.outlineData(high, lowFile, highSyntax);
+    found = this.newToCreateObject(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -186,7 +186,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     return undefined;
   }
 
-  private newToCreateObject(node: StatementNode, file: ABAPFile): Issue | undefined {
+  private newToCreateObject(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const source = node.findDirectExpression(Expressions.Source);
 
     let fix: IEdit | undefined = undefined;
@@ -196,35 +196,46 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
       // todo, assumption: the target is not an inline definition
       if (source && target && found && source.getFirstToken().getStart().equals(found.getFirstToken().getStart())) {
-        const abap = this.newParameters(found, target.concatTokens());
-        fix = EditHelper.replaceRange(file, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
+        const abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
+        fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
       }
     } else if (node.findFirstExpression(Expressions.NewObject)) {
       const found = node.findFirstExpression(Expressions.NewObject)!;
       const name = "temp1";
-      const abap = this.newParameters(found, name);
+      const abap = this.newParameters(found, name, highSyntax, lowFile);
 
       const type = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
 
       const data = `DATA ${name} TYPE REF TO ${type}.`;
-      const fix1 = EditHelper.insertAt(file, node.getFirstToken().getStart(), data + "\n" + abap + "\n");
-      const fix2 = EditHelper.replaceRange(file, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), data + "\n" + abap + "\n");
+      const fix2 = EditHelper.replaceRange(lowFile, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
       fix = EditHelper.merge(fix2, fix1);
     }
 
     if (fix) {
-      return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
+      return Issue.atToken(lowFile, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
     } else {
       return undefined;
     }
   }
 
-  private newParameters(found: ExpressionNode, name: string): string {
+  private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string {
     const type = found.findDirectExpression(Expressions.TypeNameOrInfer);
     let extra = type?.concatTokens() === "#" ? "" : " TYPE " + type?.concatTokens();
 
     const parameters = found.findFirstExpression(Expressions.ParameterListS);
-    extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
+    if (parameters) {
+      extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
+    } else if (type) {
+      // find the default parameter name for the constructor
+      const typeName = type.concatTokens();
+      const spag = highSyntax.spaghetti.lookupPosition(type?.getFirstToken().getStart(), lowFile.getFilename());
+      const importing = spag?.findClassDefinition(typeName)?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
+      const source = found.findDirectExpression(Expressions.Source)?.concatTokens();
+      if (importing && source) {
+        extra += " EXPORTING " + importing + " = " + source;
+      }
+    }
 
     const abap = `CREATE OBJECT ${name}${extra}.`;
 

@@ -15,7 +15,7 @@ import {ReferenceType} from "../5_syntax/_reference";
 // this.exceptions = [];
 // also consider RAISING vs EXCEPTIONS
 
-export class MethodParameters implements IMethodParameters{
+export class MethodParameters implements IMethodParameters {
   private readonly importing: TypedIdentifier[];
   private readonly optional: string[];
   private readonly exporting: TypedIdentifier[];
