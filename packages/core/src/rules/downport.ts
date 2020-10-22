@@ -142,12 +142,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return undefined;
     }
 
-    let found = this.newToCreateObject(high, lowFile);
+    let found = this.outlineData(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
 
-    found = this.outlineData(high, lowFile, highSyntax);
+    found = this.newToCreateObject(high, lowFile);
     if (found) {
       return found;
     }

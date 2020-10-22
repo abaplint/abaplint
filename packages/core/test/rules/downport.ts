@@ -100,9 +100,6 @@ str = to_lower( temp1->m( ) ).`;
 
     testFix(abap, expected);
   });
-});
-
-describe("Rule: downport, outline", () => {
 
   it("Outline DATA i definition", async () => {
     const abap = "DATA(foo) = 2.";
@@ -114,6 +111,18 @@ describe("Rule: downport, outline", () => {
     const abap = "DATA(foo) = |sdfdsfds|.";
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
+  });
+
+  it("Outline DATA and NEW, apply outline first", async () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+    ENDCLASS.
+    CLASS lcl_class IMPLEMENTATION.
+    ENDCLASS.
+    DATA(lo_text) = NEW lcl_class( ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("Outline");
   });
 
 });
