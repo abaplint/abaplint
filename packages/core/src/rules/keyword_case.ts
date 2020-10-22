@@ -13,6 +13,8 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
 import {VirtualPosition} from "../position";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper, IEdit} from "../edit_helper";
+import {IFile} from "../files/_ifile";
 
 export enum KeywordCaseStyle {
   Upper = "upper",
@@ -43,16 +45,8 @@ export class KeywordCase extends ABAPRule {
       title: "Keyword case",
       shortDescription: `Checks that keywords have the same case. Non-keywords must be lower case.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-your-pretty-printer-team-settings`,
-      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
     };
-  }
-
-  private getDescription(tokenValue: string, keyword: boolean): string {
-    if (keyword === true) {
-      return `Keyword should be ${this.conf.style} case: "${tokenValue}"`;
-    } else {
-      return `Identifiers should be lower case: "${tokenValue}"`;
-    }
   }
 
   public getConfig() {
@@ -141,17 +135,40 @@ export class KeywordCase extends ABAPRule {
 
       const result = this.traverse(statement, statement.get());
       if (result.token) {
+        const {description, fix} = this.build(result.token, result.keyword, file);
         const issue = Issue.atToken(
           file, result.token,
-          this.getDescription(result.token.getStr(), result.keyword),
+          description,
           this.getMetadata().key,
-          this.conf.severity);
+          this.conf.severity,
+          fix);
         issues.push(issue);
         break; // one issue per file
       }
     }
 
     return issues;
+  }
+
+//////////////////
+
+  private build(token: Token, keyword: boolean, file: IFile): {description: string, fix: IEdit} {
+    const tokenValue = token.getStr();
+    let fix: IEdit;
+    let description = "";
+    if (keyword === true) {
+      description = `Keyword should be ${this.conf.style} case: "${tokenValue}"`;
+      if (this.conf.style === KeywordCaseStyle.Lower) {
+        fix = EditHelper.replaceToken(file, token, token.getStr().toLowerCase());
+      } else {
+        fix = EditHelper.replaceToken(file, token, token.getStr().toUpperCase());
+      }
+    } else {
+      description = `Identifiers should be lower case: "${tokenValue}"`;
+      fix = EditHelper.replaceToken(file, token, token.getStr().toLowerCase());
+    }
+
+    return {description, fix};
   }
 
   private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token | undefined, keyword: boolean;} {

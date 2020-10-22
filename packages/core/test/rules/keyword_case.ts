@@ -1,5 +1,5 @@
 import {KeywordCase, KeywordCaseConf, KeywordCaseStyle} from "../../src/rules/keyword_case";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "if a = b.", cnt: 1},
@@ -223,3 +223,16 @@ const configLowerCaseGlobalClass2 = {
   ignoreGlobalClassBoundaries: true,
 };
 testRule(testLowerCaseGlobalClassSuite2, KeywordCase, configLowerCaseGlobalClass2, "keywordCase: lower + ignore boundaries");
+
+const fixTests = [
+  {
+    input: "write bar.",
+    output: "WRITE bar.",
+  },
+  {
+    input: "WRITE BAR.",
+    output: "WRITE bar.",
+  },
+];
+
+testRuleFix(fixTests, KeywordCase);
