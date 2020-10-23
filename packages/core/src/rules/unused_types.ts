@@ -16,6 +16,11 @@ class WorkArea {
   private readonly workarea: TypedIdentifier[] = [];
 
   public push(id: TypedIdentifier) {
+    for (const w of this.workarea) {
+      if (id.equals(w)) {
+        return;
+      }
+    }
     this.workarea.push(id);
   }
 
@@ -100,7 +105,6 @@ export class UnusedTypes implements IRule {
     if (syntax.issues.length > 0) {
       return [];
     }
-
     this.workarea = new WorkArea();
     this.traverse(syntax.spaghetti.getTop(), obj, true);
     this.traverse(syntax.spaghetti.getTop(), obj, false);

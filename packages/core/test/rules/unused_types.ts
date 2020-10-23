@@ -3,6 +3,13 @@ import {UnusedTypes} from "../../src/rules";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
+import {IFile} from "../../src/files/_ifile";
+
+async function runMulti(files: IFile[]): Promise<Issue[]> {
+  const reg = new Registry().addFiles(files);
+  await reg.parseAsync();
+  return new UnusedTypes().initialize(reg).run(reg.getFirstObject()!);
+}
 
 async function runSingle(abap: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
@@ -163,6 +170,36 @@ CLASS lcl_class IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("two classes", async () => {
+    const abap1 = `
+CLASS zcl_wast_parser DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PRIVATE SECTION.
+    METHODS instructions
+      RETURNING
+        VALUE(rt_instructions) TYPE zcl_wasm_instructions=>ty_instructions .
+ENDCLASS.
+CLASS zcl_wast_parser IMPLEMENTATION.
+  METHOD instructions.
+  ENDMETHOD.
+ENDCLASS.`;
+    const abap2 = `
+CLASS zcl_wasm_instructions DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES ty_instruction TYPE x LENGTH 1.
+    TYPES ty_instructions TYPE STANDARD TABLE OF ty_instruction WITH EMPTY KEY.
+ENDCLASS.
+
+CLASS ZCL_WASM_INSTRUCTIONS IMPLEMENTATION.
+ENDCLASS.`;
+    const files = [
+      new MemoryFile("zcl_wasm_instructions.clas.abap", abap2),
+      new MemoryFile("zcl_wast_parser.clas.abap", abap1),
+    ];
+    // note that only the issues for the first file is returned
+    const issues = await runMulti(files);
     expect(issues.length).to.equal(0);
   });
 
