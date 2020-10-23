@@ -432,7 +432,11 @@ export class BasicTypes {
     if (first.get() instanceof Expressions.Field) {
       const name = first.getFirstToken().getStr();
       const found = this.scope.findVariable(name);
-      return found?.getValue();
+      const val = found?.getValue();
+      if (typeof val === "string") {
+        return val;
+      }
+      return undefined;
     } else if (first.get() instanceof Expressions.ClassName) {
       const name = first.getFirstToken().getStr();
       const obj = this.scope.findObjectDefinition(name);
@@ -444,7 +448,11 @@ export class BasicTypes {
       const attr = children[2]?.getFirstToken().getStr();
       const c = new ObjectOriented(this.scope).searchConstantName(obj, attr);
       if (c instanceof ClassConstant) {
-        return c.getValue();
+        const val = c.getValue();
+        if (typeof val === "string") {
+          return val;
+        }
+        return undefined;
       }
       throw new Error("resolveConstantValue, constant not found " + attr);
 

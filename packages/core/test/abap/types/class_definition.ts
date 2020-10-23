@@ -159,4 +159,25 @@ ENDCLASS.`;
     expect(importing[0].getType()).to.not.be.instanceof(UnknownType);
   });
 
+  it("structured constants values", () => {
+    const abap = `CLASS zcl_moo DEFINITION CREATE PUBLIC.
+  PUBLIC SECTION.
+    CONSTANTS:
+      BEGIN OF c_instructions,
+        drop   TYPE x VALUE '1A',
+        select TYPE x VALUE '1B',
+      END OF c_instructions.
+ENDCLASS.
+CLASS zcl_moo IMPLEMENTATION.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    const found = def?.getAttributes().findByName("c_instructions");
+    expect(found).to.not.equal(undefined);
+    const value = found?.getValue();
+    expect(value).to.not.equal(undefined);
+    expect(typeof value).to.equal("object");
+  });
+
 });
