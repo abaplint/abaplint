@@ -39,7 +39,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-li
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];
     }
 

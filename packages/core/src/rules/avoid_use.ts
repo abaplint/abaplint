@@ -102,7 +102,8 @@ DESRIBE TABLE LINES: use lines() instead`,
       }
 
       if (this.conf.defaultKey
-          && this.reg.getConfig().getVersion() >= Version.v740sp02
+          && (this.reg.getConfig().getVersion() >= Version.v740sp02
+          || this.reg.getConfig().getVersion() === Version.Cloud)
           && (statement instanceof Statements.Data || statement instanceof Statements.Type)) {
         const tt = statementNode.findFirstExpression(TypeTable);
         const token = tt?.findDirectTokenByText("DEFAULT");
