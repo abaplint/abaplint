@@ -18,7 +18,11 @@ export class CheckInclude implements IRule {
     return {
       key: "check_include",
       title: "Check INCLUDEs",
-      shortDescription: `Checks INCLUDE statements`,
+      shortDescription: `Checks INCLUDE statements
+
+* Reports unused includes
+* Errors if the includes are not found
+* Error if including a main program`,
       tags: [RuleTag.Syntax],
     };
   }
