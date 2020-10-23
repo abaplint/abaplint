@@ -136,9 +136,10 @@ CLASS lcl_class IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
-START-OF-SELECTION.
+FORM bar.
   DATA lo_text TYPE REF TO lcl_class.
-  lo_text = NEW lcl_class( 'bar' ).`;
+  lo_text = NEW lcl_class( 'bar' ).
+ENDFORM.`;
 
     const expected = `
 CLASS lcl_class DEFINITION.
@@ -150,9 +151,10 @@ CLASS lcl_class IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
-START-OF-SELECTION.
+FORM bar.
   DATA lo_text TYPE REF TO lcl_class.
-  CREATE OBJECT lo_text TYPE lcl_class EXPORTING STR = 'bar'.`;
+  CREATE OBJECT lo_text TYPE lcl_class EXPORTING STR = 'bar'.
+ENDFORM.`;
 
     testFix(abap, expected);
   });

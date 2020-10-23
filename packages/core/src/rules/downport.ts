@@ -16,6 +16,7 @@ import {Registry} from "../registry";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
+import {IClassDefinition} from "../abap/types/_class_definition";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -198,12 +199,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       // todo, assumption: the target is not an inline definition
       if (source && target && found && source.getFirstToken().getStart().equals(found.getFirstToken().getStart())) {
         const abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
-        fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
+        if (abap !== undefined) {
+          fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
+        }
       }
-    } else if (node.findFirstExpression(Expressions.NewObject)) {
+    }
+
+    if (fix === undefined && node.findFirstExpression(Expressions.NewObject)) {
       const found = node.findFirstExpression(Expressions.NewObject)!;
       const name = "temp1";
       const abap = this.newParameters(found, name, highSyntax, lowFile);
+      if (abap === undefined) {
+        return undefined;
+      }
 
       const type = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
 
@@ -220,7 +228,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
   }
 
-  private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string {
+  private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string | undefined {
     const typeToken = found.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
     let extra = typeToken?.getStr() === "#" ? "" : " TYPE " + typeToken?.getStr();
 
@@ -228,21 +236,30 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (parameters) {
       extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
     } else if (typeToken) {
-      // find the default parameter name for the constructor
-      let typeName = typeToken.getStr();
-      const spag = highSyntax.spaghetti.lookupPosition(typeToken?.getStart(), lowFile.getFilename());
-      if (typeName === "#" && spag) {
-        // find the inferred type
-        for (const r of spag.getData().references) {
-          if (r.referenceType === ReferenceType.InferredType && r.resolved && r.position.getStart().equals(typeToken.getStart())) {
-            typeName = r.resolved.getName();
+      const source = found.findDirectExpression(Expressions.Source)?.concatTokens();
+      if (source) {
+        // find the default parameter name for the constructor
+        const spag = highSyntax.spaghetti.lookupPosition(typeToken?.getStart(), lowFile.getFilename());
+
+        let cdef: IClassDefinition | undefined = undefined;
+        for (const r of spag?.getData().references || []) {
+          if ((r.referenceType === ReferenceType.InferredType
+              || r.referenceType === ReferenceType.ObjectOrientedReference)
+              && r.resolved && r.position.getStart().equals(typeToken.getStart())) {
+            cdef = r.resolved as IClassDefinition;
           }
         }
-      }
-      const importing = spag?.findClassDefinition(typeName)?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
-      const source = found.findDirectExpression(Expressions.Source)?.concatTokens();
-      if (importing && source) {
-        extra += " EXPORTING " + importing + " = " + source;
+
+        const importing = cdef?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
+        if (importing) {
+          extra += " EXPORTING " + importing + " = " + source;
+        } else if (spag === undefined) {
+          extra += " SpagUndefined";
+        } else if (cdef === undefined) {
+          extra += " ClassDefinitionNotFound";
+        } else {
+          extra += " SomeError";
+        }
       }
     }
 
