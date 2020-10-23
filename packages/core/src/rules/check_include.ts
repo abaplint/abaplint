@@ -2,7 +2,7 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
 import {IncludeGraph} from "../utils/include_graph";
-import {IRule, RuleTag} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 
@@ -14,12 +14,12 @@ export class CheckInclude implements IRule {
   private conf = new CheckIncludeConf();
   private graph: IncludeGraph;
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "check_include",
       title: "Check INCLUDEs",
-      shortDescription: `Checks INCLUDE statements
-
+      shortDescription: `Checks INCLUDE statements`,
+      extendedInformation: `
 * Reports unused includes
 * Errors if the includes are not found
 * Error if including a main program`,
