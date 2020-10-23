@@ -55,7 +55,7 @@ export class StructureType implements AbstractType {
   }
 
   public toABAP(): string {
-    throw new Error("StructureType, toABAP, todo");
+    return "StructureTypetoABAPtodo";
   }
 
   public containsVoid() {

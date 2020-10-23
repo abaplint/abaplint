@@ -24,7 +24,7 @@ export class TableType implements AbstractType {
   }
 
   public toABAP(): string {
-    throw new Error("TableType, toABAP, todo");
+    return "TableTypetoABAPtodo";
   }
 
   public toText(level: number) {
