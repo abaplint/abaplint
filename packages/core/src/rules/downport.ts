@@ -198,12 +198,18 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       // todo, assumption: the target is not an inline definition
       if (source && target && found && source.getFirstToken().getStart().equals(found.getFirstToken().getStart())) {
         const abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
+        if (abap === undefined) {
+          return undefined;
+        }
         fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
       }
     } else if (node.findFirstExpression(Expressions.NewObject)) {
       const found = node.findFirstExpression(Expressions.NewObject)!;
       const name = "temp1";
       const abap = this.newParameters(found, name, highSyntax, lowFile);
+      if (abap === undefined) {
+        return undefined;
+      }
 
       const type = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
 
@@ -220,7 +226,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
   }
 
-  private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string {
+  private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string | undefined {
     const typeToken = found.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
     let extra = typeToken?.getStr() === "#" ? "" : " TYPE " + typeToken?.getStr();
 
@@ -243,6 +249,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       const source = found.findDirectExpression(Expressions.Source)?.concatTokens();
       if (importing && source) {
         extra += " EXPORTING " + importing + " = " + source;
+      } else if (source) {
+        return undefined;
       }
     }
 
