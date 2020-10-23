@@ -78,7 +78,7 @@ describe("Syntax - Basic Types", () => {
     expect(components[0].type).to.be.instanceof(Basic.IntegerType);
   });
 
-  it("INCLUDE TYPE", () => {
+  it("INCLUDE TYPE, found", () => {
     const abap = `
       TYPES: BEGIN OF foo1,
                field TYPE i,

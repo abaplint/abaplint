@@ -169,7 +169,8 @@ export class BasicTypes {
       }
 
       this.scope.addReference(token, typ, ReferenceType.TypeReference, this.filename);
-      return typ.getType();
+//      console.dir("chaintext");
+      return typ;
     }
 
     const ddic = this.scope.getDDIC().lookup(chainText);

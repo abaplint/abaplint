@@ -193,4 +193,28 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.skip("downport, returning table", async () => {
+    const abap = `
+    TYPES tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        CLASS-METHODS m RETURNING VALUE(val) TYPE tab.
+    ENDCLASS.
+
+    CLASS lcl_class IMPLEMENTATION.
+      METHOD m.
+      ENDMETHOD.
+    ENDCLASS.
+
+    FORM bar.
+      DATA(bar) = lcl_class=>m( ).
+    ENDFORM.`;
+
+    const expected = `
+    todo`;
+
+    testFix(abap, expected);
+  });
+
 });

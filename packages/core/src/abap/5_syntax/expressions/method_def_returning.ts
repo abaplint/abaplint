@@ -18,6 +18,7 @@ export class MethodDefReturning {
     }
 
     const found = new BasicTypes(filename, scope).parseType(type);
+//    console.dir(found);
     if (found) {
       return new TypedIdentifier(name.getFirstToken(), filename, found, meta);
     } else {
