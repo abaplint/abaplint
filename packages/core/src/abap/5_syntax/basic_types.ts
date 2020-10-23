@@ -364,10 +364,13 @@ export class BasicTypes {
       if ((this.scope.getType() === ScopeType.Interface
           || this.scope.getType() === ScopeType.ClassDefinition)
           && this.scope.getName().toUpperCase() === className.toUpperCase()) {
-        foundType = this.scope.findType(subs[0])?.getType();
+        const foundId = this.scope.findType(subs[0]);
+        foundType = foundId?.getType();
         if (foundType === undefined) {
           return new Types.UnknownType("Could not resolve type " + chainText);
         }
+        this.scope.addReference(expr.getTokens()[2], foundId, ReferenceType.TypeReference, this.filename);
+
       } else {
     // lookup in local and global scope
         const obj = this.scope.findObjectDefinition(className);

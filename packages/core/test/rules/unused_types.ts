@@ -151,4 +151,19 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("referenced via class prefix", async () => {
+    const abap = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_bar TYPE string.
+    METHODS m RETURNING VALUE(asdf) TYPE lcl_class=>ty_bar.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
