@@ -4,23 +4,26 @@ import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {ABAPObject} from "../objects/_abap_object";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Position} from "../position";
 import {Comment} from "../abap/2_statements/statements/_statement";
+import {Version} from "../version";
 
 export class MainFileContentsConf extends BasicRuleConfig {
 }
 
 export class MainFileContents implements IRule {
   private conf = new MainFileContentsConf();
+  private reg: IRegistry;
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "main_file_contents",
       title: "Main file contents",
       shortDescription: `Checks related to report declarations.`,
+      extendedInformation: `Does not run if the target version is Cloud`,
     };
   }
 
@@ -36,12 +39,14 @@ export class MainFileContents implements IRule {
     this.conf = conf;
   }
 
-  public initialize(_reg: IRegistry) {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
     return this;
   }
 
   public run(obj: IObject): Issue[] {
-    if (!(obj instanceof ABAPObject)) {
+    if (!(obj instanceof ABAPObject)
+        || this.reg.getConfig().getVersion() === Version.Cloud) {
       return [];
     }
 

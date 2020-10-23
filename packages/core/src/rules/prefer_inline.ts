@@ -59,7 +59,7 @@ First position used must be a full/pure write.`,
 
   public run(obj: IObject): readonly Issue[] {
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];
     } else if (!(obj instanceof ABAPObject)) {
       return [];

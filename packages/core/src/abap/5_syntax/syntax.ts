@@ -245,7 +245,7 @@ export class SyntaxLogic {
       this.scope.addType(new Types().runSyntax(node, this.scope, filename));
       return true;
     } else if (stru instanceof Structures.Constants) {
-      this.scope.addIdentifier(new Constants().runSyntax(node, this.scope, filename));
+      this.scope.addIdentifier(new Constants().runSyntax(node, this.scope, filename).type);
       return true;
     } else if (stru instanceof Structures.Data) {
       this.scope.addIdentifier(new DataStructure().runSyntax(node, this.scope, filename));

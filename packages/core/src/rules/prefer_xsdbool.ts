@@ -38,7 +38,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-xsdbo
   public runParsed(file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp08) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp08 && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];
     }
 

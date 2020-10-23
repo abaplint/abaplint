@@ -47,7 +47,7 @@ ENDIF.`,
     const issues: Issue[] = [];
     const stru = file.getStructure();
 
-    if (stru === undefined || this.reg.getConfig().getVersion() < Version.v702) {
+    if (stru === undefined || (this.reg.getConfig().getVersion() < Version.v702 && this.reg.getConfig().getVersion() !== Version.Cloud)) {
       return [];
     }
 
@@ -84,7 +84,8 @@ ENDIF.`,
       const elseSource = elseStatement.findFirstExpression(Expressions.Source)?.concatTokens().toUpperCase();
       if ((bodySource === "ABAP_TRUE" && elseSource === "ABAP_FALSE")
           || (bodySource === "ABAP_FALSE" && elseSource === "ABAP_TRUE")) {
-        const func = this.reg.getConfig().getVersion() >= Version.v740sp08 ? "xsdbool" : "boolc";
+        const func = ( this.reg.getConfig().getVersion() >= Version.v740sp08
+          || this.reg.getConfig().getVersion() === Version.Cloud ) ? "xsdbool" : "boolc";
         const negate = bodySource === "ABAP_FALSE";
         const message = `Use ${func} instead of IF` + (negate ? ", negate expression" : "");
         const start = i.getFirstToken().getStart();

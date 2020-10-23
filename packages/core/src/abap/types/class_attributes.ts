@@ -139,16 +139,16 @@ export class Attributes implements IAttributes {
             scope.addIdentifier(found);
           }
         } else if (ctyp instanceof Structures.Constants) {
-          const found = new Constants().runSyntax(c, scope, this.filename);
+          const {type: found, values} = new Constants().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.constants.push(new ClassConstant(found, visibility, "todo"));
+            this.constants.push(new ClassConstant(found, visibility, values));
             scope.addIdentifier(found);
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
           const enums = new TypeEnum().runSyntax(c, scope, this.filename);
           for (const e of enums) {
           // for now add ENUM values as constants
-            this.constants.push(new ClassConstant(e, visibility, "todo"));
+            this.constants.push(new ClassConstant(e, visibility, "novalueClassAttributeEnum"));
           }
         } else {
           // begin recursion

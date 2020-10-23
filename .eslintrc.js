@@ -46,6 +46,7 @@ module.exports = {
       "@typescript-eslint/ban-ts-ignore": "off",
       "@typescript-eslint/ban-ts-comment": "off",
       "no-control-regex": "off",
+      "@typescript-eslint/ban-types": "off",
       "@typescript-eslint/camelcase": "off",
       "@typescript-eslint/no-this-alias": "off",
       "@typescript-eslint/no-non-null-assertion": "off",

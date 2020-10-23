@@ -38,7 +38,7 @@ SELECT * FROM tab INTO TABLE @res WHERE field = @val.`,
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];
     }
 

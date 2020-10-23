@@ -21,7 +21,7 @@ export const enum IdentifierMeta {
 export class TypedIdentifier extends Identifier {
   private readonly type: AbstractType;
   private readonly meta: readonly IdentifierMeta[];
-  private readonly value: string | undefined;
+  private readonly value: string | object | undefined;
   private readonly typeName: string | undefined;
 
   public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: readonly IdentifierMeta[]): TypedIdentifier {
@@ -29,7 +29,7 @@ export class TypedIdentifier extends Identifier {
   }
 
   public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType,
-                     meta?: readonly IdentifierMeta[], value?: string) {
+                     meta?: readonly IdentifierMeta[], value?: string | object) {
     super(token, filename);
     if (type instanceof TypedIdentifier) {
       this.typeName = type.getName();
