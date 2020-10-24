@@ -137,8 +137,8 @@ export class LSPLookup {
     if (variable.getType().containsVoid() === true) {
       value = value + "\n\nContains void types";
     }
-    if (variable.getType().getName()) {
-      value = value + "\n\nTypename: ```" + variable.getType().getName() + "```";
+    if (variable.getType().getQualifiedName()) {
+      value = value + "\n\nTypename: ```" + variable.getType().getQualifiedName() + "```";
     }
     if (variable.getType().isGeneric() === true) {
       value = value + "\n\nIs generic type";

@@ -6,7 +6,7 @@ export abstract class AbstractType {
   }
 
   /** fully qualified symbolic name of the type */
-  public getName(): string | undefined {
+  public getQualifiedName(): string | undefined {
     return this.name;
   }
 

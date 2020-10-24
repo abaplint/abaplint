@@ -269,4 +269,39 @@ bar = lcl_class=>m( ).
     testFix(abap, expected);
   });
 
+  it("outline, returning object reference", async () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        CLASS-METHODS m RETURNING VALUE(val) TYPE REF TO lcl_class.
+    ENDCLASS.
+
+    CLASS lcl_class IMPLEMENTATION.
+      METHOD m.
+      ENDMETHOD.
+    ENDCLASS.
+
+    FORM bar.
+      DATA(foobar) = lcl_class=>m( ).
+    ENDFORM.`;
+
+    const expected = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        CLASS-METHODS m RETURNING VALUE(val) TYPE REF TO lcl_class.
+    ENDCLASS.
+
+    CLASS lcl_class IMPLEMENTATION.
+      METHOD m.
+      ENDMETHOD.
+    ENDCLASS.
+
+    FORM bar.
+      DATA foobar TYPE REF TO lcl_class.
+foobar = lcl_class=>m( ).
+    ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });

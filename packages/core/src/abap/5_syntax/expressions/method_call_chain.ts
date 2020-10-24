@@ -42,7 +42,7 @@ export class MethodCallChain {
 
       if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
         // for built-in methods set className to undefined
-        const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
+        const className = context instanceof ObjectReferenceType ? context.getIdentifierName() : undefined;
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
         const methodName = methodToken?.getStr();
         let method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
