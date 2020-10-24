@@ -52,7 +52,7 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
     }
   } else {
     if (fs.existsSync(filename) === false) {
-      process.stderr.write("Specified abaplint configuration file does not exist, using default config\n");
+      process.stderr.write("ERROR: Specified abaplint configuration file does not exist, using default config\n");
       return {config: Config.getDefault(), base: "."};
     } else if (fs.statSync(filename).isDirectory() === true) {
       process.stderr.write("Supply filename, not directory, using default config\n");

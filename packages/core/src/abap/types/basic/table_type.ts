@@ -27,8 +27,8 @@ export class TableType extends AbstractType {
     let extra = "";
     const type = this.rowType;
 
-    if (type.getName()) {
-      extra = "\n\nType name: \"" + type.getName() + "\"";
+    if (type.getQualifiedName()) {
+      extra = "\n\nType name: \"" + type.getQualifiedName() + "\"";
     }
 
     if (this.withHeader === true) {

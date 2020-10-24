@@ -10,16 +10,16 @@ export class ObjectReferenceType extends AbstractType {
     this.identifier = id;
   }
 
-  public getName() {
+  public getIdentifierName() {
     return this.identifier.getName();
   }
 
   public toText() {
-    return "```REF TO " + this.getName() + "```";
+    return "```REF TO " + this.identifier.getName() + "```";
   }
 
   public toABAP(): string {
-    return "REF TO " + this.getName();
+    return "REF TO " + this.identifier.getName();
   }
 
   public isGeneric() {

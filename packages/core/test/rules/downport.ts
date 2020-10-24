@@ -193,7 +193,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("downport, returning table, global type definition", async () => {
+  it("outline, returning table, global type definition", async () => {
     const abap = `
     TYPES tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 
@@ -232,7 +232,7 @@ bar = lcl_class=>m( ).
     testFix(abap, expected);
   });
 
-  it("downport, returning table, type part of class definition", async () => {
+  it("outline, returning table, type part of class definition", async () => {
     const abap = `
     CLASS lcl_class DEFINITION.
       PUBLIC SECTION.
@@ -264,6 +264,41 @@ bar = lcl_class=>m( ).
     FORM bar.
       DATA bar TYPE lcl_class=>tab.
 bar = lcl_class=>m( ).
+    ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("outline, returning object reference", async () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        CLASS-METHODS m RETURNING VALUE(val) TYPE REF TO lcl_class.
+    ENDCLASS.
+
+    CLASS lcl_class IMPLEMENTATION.
+      METHOD m.
+      ENDMETHOD.
+    ENDCLASS.
+
+    FORM bar.
+      DATA(foobar) = lcl_class=>m( ).
+    ENDFORM.`;
+
+    const expected = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        CLASS-METHODS m RETURNING VALUE(val) TYPE REF TO lcl_class.
+    ENDCLASS.
+
+    CLASS lcl_class IMPLEMENTATION.
+      METHOD m.
+      ENDMETHOD.
+    ENDCLASS.
+
+    FORM bar.
+      DATA foobar TYPE REF TO lcl_class.
+foobar = lcl_class=>m( ).
     ENDFORM.`;
 
     testFix(abap, expected);

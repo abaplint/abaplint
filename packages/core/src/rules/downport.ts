@@ -177,7 +177,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       if (found === undefined) {
         continue;
       }
-      const type = found.getType().getName() ? found.getType().getName() : found.getType().toABAP();
+      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
 
       // todo, this assumes that the statement starts with "DATA("
       const code = `DATA ${name} TYPE ${type}.\n${name}`;

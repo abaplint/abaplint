@@ -26,9 +26,9 @@ export class AttributeName {
     let ret: AbstractType | undefined = undefined;
 
     if (context instanceof ObjectReferenceType) {
-      const def = scope.findObjectDefinition(context.getName());
+      const def = scope.findObjectDefinition(context.getIdentifierName());
       if (def === undefined) {
-        throw new Error("Definition for \"" + context.getName() + "\" not found in scope");
+        throw new Error("Definition for \"" + context.getIdentifierName() + "\" not found in scope");
       }
       const token = node.getFirstToken();
       const name = token.getStr();
