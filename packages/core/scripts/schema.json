@@ -1405,7 +1405,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that definitions are placed at the beginning of methods.\nTags: SingleFile\nhttps://rules.abaplint.org/definitions_top"
+              "description": "Checks that definitions are placed at the beginning of methods.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
             },
             "description_empty": {
               "anyOf": [
