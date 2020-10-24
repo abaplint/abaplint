@@ -193,7 +193,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("downport, returning table, global type definition", async () => {
+  it("outline, returning table, global type definition", async () => {
     const abap = `
     TYPES tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 
@@ -232,7 +232,7 @@ bar = lcl_class=>m( ).
     testFix(abap, expected);
   });
 
-  it("downport, returning table, type part of class definition", async () => {
+  it("outline, returning table, type part of class definition", async () => {
     const abap = `
     CLASS lcl_class DEFINITION.
       PUBLIC SECTION.
