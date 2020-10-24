@@ -79,7 +79,7 @@ describe("Table, parse XML", () => {
 
     expect(tabl.getName()).to.equal("ZABAPGIT_UNIT_T2");
 
-    const fields = tabl.parseType(reg).getType();
+    const fields = tabl.parseType(reg);
     if (!(fields instanceof StructureType)) {
       expect.fail();
     }
@@ -161,7 +161,7 @@ describe("Table, parse XML", () => {
     const reg = new Registry(all).addFile(new MemoryFile("zsdfsdf.tabl.xml", xml));
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
-    const typ = tabl.parseType(reg).getType();
+    const typ = tabl.parseType(reg);
     expect(typ).to.be.instanceof(StructureType);
     const type = typ as StructureType;
     expect(type.getComponents().length).to.equal(1);
@@ -172,7 +172,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg).getType();
+    const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     expect(stru.getComponents().length).to.equal(4);
@@ -253,7 +253,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg).getType();
+    const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     const components = stru.getComponents();
@@ -316,7 +316,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg).getType();
+    const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     const components = stru.getComponents();
@@ -360,7 +360,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg).getType();
+    const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     const components = stru.getComponents();
@@ -417,7 +417,7 @@ describe("Table, parse XML", () => {
     const tabl = reg.getFirstObject()! as Table;
 
     const type = tabl.parseType(reg);
-    expect(type.getType()).to.be.instanceof(VoidType);
+    expect(type).to.be.instanceof(VoidType);
   });
 
   it("expand .INCLUDEs", async () => {
@@ -522,7 +522,7 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const type = tabl.parseType(reg).getType();
+    const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     expect(stru.getComponentByName("KEY_ID")).to.not.equal(undefined);

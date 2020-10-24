@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class UTCLongType implements AbstractType {
+export class UTCLongType extends AbstractType {
   public toText() {
     return "```utclong```";
   }

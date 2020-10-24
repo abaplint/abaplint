@@ -49,6 +49,7 @@ export class TypedIdentifier extends Identifier {
     return "Identifier: ```" + this.getName() + "```";
   }
 
+  // SDFSDSDFSDFS, todo, delete this!!!
   public getTypeName(): string | undefined {
     return this.typeName;
   }

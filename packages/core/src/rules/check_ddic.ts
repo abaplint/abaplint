@@ -47,7 +47,7 @@ export class CheckDDIC implements IRule {
         || obj instanceof Objects.Table
         || obj instanceof Objects.View
         || obj instanceof Objects.TableType) {
-      found = obj.parseType(this.reg).getType();
+      found = obj.parseType(this.reg);
     } else {
       return [];
     }

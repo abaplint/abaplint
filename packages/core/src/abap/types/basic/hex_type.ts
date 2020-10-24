@@ -1,9 +1,10 @@
 import {AbstractType} from "./_abstract_type";
 
-export class HexType implements AbstractType {
+export class HexType extends AbstractType {
   private readonly length: number;
 
-  public constructor(length: number) {
+  public constructor(length: number, name?: string) {
+    super(name);
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     }

@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class CSequenceType implements AbstractType {
+export class CSequenceType extends AbstractType {
   public toText() {
     return "```csequence```";
   }

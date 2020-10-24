@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class NumericGenericType implements AbstractType {
+export class NumericGenericType extends AbstractType {
   public toText() {
     return "```NUMERIC```";
   }

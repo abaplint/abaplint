@@ -3,7 +3,8 @@ import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
-import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
 
 export class View extends AbstractObject {
   private parsedData: {
@@ -28,12 +29,12 @@ export class View extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry): TypedIdentifier {
+  public parseType(reg: IRegistry): AbstractType {
     if (this.parsedData === undefined) {
       this.parseXML();
     }
     if (this.parsedData === undefined) {
-      return TypedIdentifier.from(this.getIdentifier()!, new Types.UnknownType("View, parser error"));
+      return new Types.UnknownType("View, parser error", this.getName());
     }
 
     const components: Types.IStructureComponent[] = [];
@@ -64,7 +65,7 @@ export class View extends AbstractObject {
       throw new Error("View " + this.getName() + " does not contain any components");
     }
 
-    return TypedIdentifier.from(this.getIdentifier()!, new Types.StructureType(components), [IdentifierMeta.DDIC]);
+    return new Types.StructureType(components, this.getName());
   }
 
 ///////////////

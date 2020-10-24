@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class GenericObjectReferenceType implements AbstractType {
+export class GenericObjectReferenceType extends AbstractType {
 
   public toText() {
     return "```REF TO object```";
