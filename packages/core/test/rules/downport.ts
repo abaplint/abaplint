@@ -193,7 +193,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("downport, returning table", async () => {
+  it("downport, returning table, global type definition", async () => {
     const abap = `
     TYPES tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 
@@ -226,6 +226,43 @@ ENDFORM.`;
 
     FORM bar.
       DATA bar TYPE tab.
+bar = lcl_class=>m( ).
+    ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("downport, returning table, type part of class definition", async () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        TYPES tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+        CLASS-METHODS m RETURNING VALUE(val) TYPE tab.
+    ENDCLASS.
+
+    CLASS lcl_class IMPLEMENTATION.
+      METHOD m.
+      ENDMETHOD.
+    ENDCLASS.
+
+    FORM bar.
+      DATA(bar) = lcl_class=>m( ).
+    ENDFORM.`;
+
+    const expected = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        TYPES tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+        CLASS-METHODS m RETURNING VALUE(val) TYPE tab.
+    ENDCLASS.
+
+    CLASS lcl_class IMPLEMENTATION.
+      METHOD m.
+      ENDMETHOD.
+    ENDCLASS.
+
+    FORM bar.
+      DATA bar TYPE lcl_class=>tab.
 bar = lcl_class=>m( ).
     ENDFORM.`;
 
