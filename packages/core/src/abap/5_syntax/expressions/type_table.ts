@@ -16,7 +16,7 @@ export class TypeTable {
       return undefined;
     }
     const name = nameExpr.getFirstToken();
-    const type = new BasicTypes(filename, scope).parseType(node);
+    const type = new BasicTypes(filename, scope).parseType(node, name.getStr());
     if (type === undefined) {
       return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }
