@@ -1,15 +1,15 @@
-import {TypedIdentifier} from "../_typed_identifier";
 import {AbstractType} from "./_abstract_type";
 
 export interface IStructureComponent {
   name: string;
-  type: AbstractType | TypedIdentifier;
+  type: AbstractType;
 }
 
-export class StructureType implements AbstractType {
+export class StructureType extends AbstractType {
   private readonly components: IStructureComponent[];
 
-  public constructor(components: IStructureComponent[]) {
+  public constructor(components: IStructureComponent[], name?: string) {
+    super(name);
     if (components.length === 0) {
       throw new Error("Structure does not contain any components");
     }
@@ -22,7 +22,7 @@ export class StructureType implements AbstractType {
     for (const c of this.components) {
       result.push({
         name: c.name,
-        type: c.type instanceof TypedIdentifier ? c.type.getType() : c.type,
+        type: c.type,
       });
     }
     return result;
@@ -31,11 +31,7 @@ export class StructureType implements AbstractType {
   public getComponentByName(name: string): AbstractType | undefined {
     for (const c of this.getComponents()) {
       if (c.name.toUpperCase() === name.toUpperCase()) {
-        if (c.type instanceof TypedIdentifier) {
-          return c.type.getType();
-        } else {
-          return c.type;
-        }
+        return c.type;
       }
     }
     return undefined;
@@ -59,12 +55,6 @@ export class StructureType implements AbstractType {
   }
 
   public containsVoid() {
-    return this.getComponents().some(c => {
-      if (c.type instanceof TypedIdentifier) {
-        c.type.getType().containsVoid();
-      } else {
-        c.type.containsVoid();
-      }
-    });
+    return this.getComponents().some(c => { c.type.containsVoid(); });
   }
 }

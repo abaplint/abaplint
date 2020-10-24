@@ -14,12 +14,11 @@ export class UpdateDatabase {
     const tableName = node.findDirectExpression(Expressions.DatabaseTable);
     const tokenName = tableName?.getFirstToken();
     if (tableName && tokenName) {
-      // todo, this also finds structures
+      // todo, this also finds structures, it should only find transparent tables
       const found = scope.getDDIC().lookupTable(tokenName.getStr());
-      const stru = found instanceof TypedIdentifier ? found.getType() : undefined;
-      if (stru instanceof StructureType) {
+      if (found instanceof StructureType) {
         scope.push(ScopeType.OpenSQL, "UPDATE", tokenName.getStart(), filename);
-        for (const field of stru.getComponents()) {
+        for (const field of found.getComponents()) {
           const fieldToken = new Identifier(new Position(1, 1), field.name);
           const id = new TypedIdentifier(fieldToken, filename, field.type);
           scope.addIdentifier(id);

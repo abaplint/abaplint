@@ -1,10 +1,11 @@
 import {AbstractType} from "./_abstract_type";
 
-export class VoidType implements AbstractType {
+export class VoidType extends AbstractType {
   // this contains the name of the type that was the original reason for the void
   private readonly voided: string | undefined;
 
-  public constructor(voided: string | undefined) {
+  public constructor(voided: string | undefined, name?: string) {
+    super(name);
     this.voided = voided;
   }
 

@@ -56,7 +56,7 @@ export class BasicTypes {
       } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
         type = type.getRowType();
       } else if (type === undefined) {
-        type = this.scope.getDDIC().lookupNoVoid(name)?.getType();
+        type = this.scope.getDDIC().lookupNoVoid(name);
       }
 
       // todo, this only looks up one level, reuse field_chain.ts?
@@ -96,7 +96,7 @@ export class BasicTypes {
     return type;
   }
 
-  private resolveTypeName(typeName: ExpressionNode | undefined, length?: number): TypedIdentifier | AbstractType | undefined {
+  private resolveTypeName(typeName: ExpressionNode | undefined, length?: number): AbstractType | undefined {
     if (typeName === undefined) {
       return undefined;
     }
@@ -169,8 +169,7 @@ export class BasicTypes {
       }
 
       this.scope.addReference(token, typ, ReferenceType.TypeReference, this.filename);
-//      console.dir("chaintext");
-      return typ;
+      return typ.getType();
     }
 
     const ddic = this.scope.getDDIC().lookup(chainText);
@@ -205,7 +204,7 @@ export class BasicTypes {
     return undefined;
   }
 
-  public parseType(node: ExpressionNode | StatementNode): TypedIdentifier | AbstractType | undefined {
+  public parseType(node: ExpressionNode | StatementNode): AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
 
     let text = node.findFirstExpression(Expressions.Type)?.concatTokens().toUpperCase();
@@ -222,7 +221,7 @@ export class BasicTypes {
       text = "TYPE";
     }
 
-    let found: TypedIdentifier | AbstractType | undefined = undefined;
+    let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
       const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);

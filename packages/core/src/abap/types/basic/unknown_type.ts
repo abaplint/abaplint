@@ -1,9 +1,10 @@
 import {AbstractType} from "./_abstract_type";
 
-export class UnknownType implements AbstractType {
+export class UnknownType extends AbstractType {
   private readonly error: string;
 
-  public constructor(error: string) {
+  public constructor(error: string, name?: string) {
+    super(name);
     this.error = error;
   }
 

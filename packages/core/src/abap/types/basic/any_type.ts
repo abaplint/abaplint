@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class AnyType implements AbstractType {
+export class AnyType extends AbstractType {
   public toText() {
     return "```any```";
   }

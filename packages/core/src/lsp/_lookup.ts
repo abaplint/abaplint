@@ -127,9 +127,7 @@ export class LSPLookup {
 ////////////////////////////////////////////
 
   private static dumpType(variable: TypedIdentifier): string {
-    let value = variable.toText() +
-      (variable.getTypeName() ? "\n\nTypename: \"" + variable.getTypeName() + "\"" : "") +
-      "\n\nType: " + variable.getType().toText(0);
+    let value = variable.toText() + "\n\nType: " + variable.getType().toText(0);
     if (variable.getValue()) {
       value = value + "\n\nValue: ```" + variable.getValue() + "```";
     }
@@ -138,6 +136,9 @@ export class LSPLookup {
     }
     if (variable.getType().containsVoid() === true) {
       value = value + "\n\nContains void types";
+    }
+    if (variable.getType().getName()) {
+      value = value + "\n\nTypename: \"" + variable.getType().getName() + "\"";
     }
     if (variable.getType().isGeneric() === true) {
       value = value + "\n\nIs generic type";

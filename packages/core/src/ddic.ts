@@ -8,7 +8,6 @@ import * as Types from "./abap/types/basic";
 import {ABAPObject} from "./objects/_abap_object";
 import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_information";
 import {ObjectReferenceType, UnknownType, VoidType} from "./abap/types/basic";
-import {TypedIdentifier} from "./abap/types/_typed_identifier";
 
 export class DDIC {
   private readonly reg: IRegistry;
@@ -77,7 +76,7 @@ export class DDIC {
     }
   }
 
-  public lookupNoVoid(name: string): TypedIdentifier | undefined {
+  public lookupNoVoid(name: string): AbstractType | undefined {
     const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
     if (foundTABL) {
       return foundTABL.parseType(this.reg);
@@ -102,7 +101,7 @@ export class DDIC {
   }
 
   /** lookup with voiding and unknown types */
-  public lookup(name: string): TypedIdentifier | AbstractType {
+  public lookup(name: string): AbstractType {
     const found = this.lookupNoVoid(name);
     if (found) {
       return found;
@@ -115,7 +114,7 @@ export class DDIC {
     }
   }
 
-  public lookupDomain(name: string): TypedIdentifier | AbstractType {
+  public lookupDomain(name: string): AbstractType {
     const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
       return found.parseType(this.reg);
@@ -126,7 +125,7 @@ export class DDIC {
     }
   }
 
-  public lookupDataElement(name: string | undefined): TypedIdentifier | AbstractType {
+  public lookupDataElement(name: string | undefined): AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupDataElement");
     }
@@ -140,7 +139,7 @@ export class DDIC {
     }
   }
 
-  public lookupTableOrView(name: string | undefined): TypedIdentifier | AbstractType {
+  public lookupTableOrView(name: string | undefined): AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupTableOrView");
     }
@@ -151,7 +150,7 @@ export class DDIC {
     return this.lookupView(name);
   }
 
-  public lookupTable(name: string | undefined): TypedIdentifier | AbstractType {
+  public lookupTable(name: string | undefined): AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupTable");
     }
@@ -165,7 +164,7 @@ export class DDIC {
     }
   }
 
-  public lookupView(name: string | undefined): TypedIdentifier | AbstractType {
+  public lookupView(name: string | undefined): AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupView");
     }
@@ -179,7 +178,7 @@ export class DDIC {
     }
   }
 
-  public lookupTableType(name: string | undefined): TypedIdentifier | AbstractType {
+  public lookupTableType(name: string | undefined): AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupTableType");
     }
@@ -204,38 +203,38 @@ export class DDIC {
       case "CURR":     // 1 <= len <= 31
       case "QUAN":     // 1 <= len <= 31
         if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length, " + parent);
+          return new Types.UnknownType(text + " unknown length, " + parent, parent);
         } else if (decimals === undefined) {
-          return new Types.PackedType(parseInt(length, 10), 0);
+          return new Types.PackedType(parseInt(length, 10), 0, parent);
         }
-        return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10));
+        return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), parent);
       case "ACCP":
-        return new Types.CharacterType(6); // YYYYMM
+        return new Types.CharacterType(6, parent); // YYYYMM
       case "LANG":
-        return new Types.CharacterType(1);
+        return new Types.CharacterType(1, parent);
       case "CLNT":
-        return new Types.CharacterType(3);
+        return new Types.CharacterType(3, parent);
       case "CUKY":
-        return new Types.CharacterType(5);
+        return new Types.CharacterType(5, parent);
       case "UNIT":  // 2 <= len <= 3
-        return new Types.CharacterType(3);
+        return new Types.CharacterType(3, parent);
       case "UTCLONG":
-        return new Types.CharacterType(27);
+        return new Types.CharacterType(27, parent);
       case "NUMC": // 1 <= len <= 255
       case "CHAR": // 1 <= len <= 30000 (1333 for table fields)
       case "LCHR": // 256 <= len <= 32000
         if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length");
+          return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.CharacterType(parseInt(length, 10));
+        return new Types.CharacterType(parseInt(length, 10), parent);
       case "RAW":  // 1 <= len <= 32000
       case "LRAW": // 256 <= len <= 32000
         if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length");
+          return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.HexType(parseInt(length, 10));
+        return new Types.HexType(parseInt(length, 10), parent);
       case "TIMS":
-        return new Types.TimeType(); //HHMMSS
+        return new Types.TimeType(parent); //HHMMSS
       case "DECFLOAT16": // len = 16
       case "DECFLOAT34": // len = 34
       case "D16R":       // len = 16
@@ -244,34 +243,34 @@ export class DDIC {
       case "DF34_RAW":   // len = 34
       case "FLTP":       // len = 16
         if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length");
+          return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.FloatingPointType(parseInt(length, 10));
+        return new Types.FloatingPointType(parseInt(length, 10), parent);
       case "DATS":
-        return new Types.DateType(); //YYYYMMDD
+        return new Types.DateType(parent); //YYYYMMDD
       case "INT1":
       case "INT2":
       case "INT4":
       case "INT8":
-        return new Types.IntegerType();
+        return new Types.IntegerType(parent);
       case "SSTR":    // 1 <= len <= 1333
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return new Types.StringType();
+        return new Types.StringType(parent);
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":
-        return new Types.XStringType();
+        return new Types.XStringType(parent);
       case "D16S":
       case "D34S":
       case "DF16_SCL":
       case "DF34_SCL":
       case "PREC":
       case "VARC":
-        return new Types.UnknownType(text + " is an obsolete data type");
+        return new Types.UnknownType(text + " is an obsolete data type", parent);
       default:
-        return new Types.UnknownType(text + " unknown");
+        return new Types.UnknownType(text + " unknown", parent);
     }
   }
 

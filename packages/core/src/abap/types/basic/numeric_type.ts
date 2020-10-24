@@ -1,9 +1,10 @@
 import {AbstractType} from "./_abstract_type";
 
-export class NumericType implements AbstractType {
+export class NumericType extends AbstractType {
   private readonly length: number;
 
-  public constructor(length: number) {
+  public constructor(length: number, name?: string) {
+    super(name);
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     }

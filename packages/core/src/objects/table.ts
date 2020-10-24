@@ -3,7 +3,8 @@ import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
-import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -52,12 +53,12 @@ export class Table extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry): TypedIdentifier {
+  public parseType(reg: IRegistry): AbstractType {
     if (this.parsedData === undefined) {
       this.parseXML();
     }
     if (this.parsedData === undefined) {
-      return TypedIdentifier.from(this.getIdentifier()!, new Types.UnknownType("Table, parser error"));
+      return new Types.UnknownType("Table, parser error");
     }
 
     const components: Types.IStructureComponent[] = [];
@@ -83,10 +84,10 @@ export class Table extends AbstractObject {
             && found instanceof Types.UnknownType) {
           continue;
         } else if (found instanceof Types.UnknownType) {
-          return TypedIdentifier.from(this.getIdentifier()!, found);
+          return found;
         } else if (found instanceof Types.VoidType) {
           // set the full structure to void
-          return TypedIdentifier.from(this.getIdentifier()!, found);
+          return found;
         } else {
           components.push({
             name: field.FIELDNAME,
@@ -129,7 +130,7 @@ export class Table extends AbstractObject {
       throw new Error("Table/Structure " + this.getName() + " does not contain any components");
     }
 
-    return TypedIdentifier.from(this.getIdentifier()!, new Types.StructureType(components), [IdentifierMeta.DDIC]);
+    return new Types.StructureType(components, this.getName());
   }
 
   public getTableCategory(): TableCategory | undefined {

@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class DateType implements AbstractType {
+export class DateType extends AbstractType {
   public toText() {
     return "```d```";
   }

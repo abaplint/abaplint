@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class IntegerType implements AbstractType {
+export class IntegerType extends AbstractType {
   public toText() {
     return "```i```";
   }

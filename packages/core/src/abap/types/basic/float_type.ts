@@ -3,7 +3,7 @@ import {AbstractType} from "./_abstract_type";
 // this is the ABAP "F" type, which is IEEE?
 // todo, same as FloatingPointType ?
 
-export class FloatType implements AbstractType {
+export class FloatType extends AbstractType {
   public toText() {
     return "```f```";
   }

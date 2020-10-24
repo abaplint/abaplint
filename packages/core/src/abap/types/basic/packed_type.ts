@@ -1,10 +1,11 @@
 import {AbstractType} from "./_abstract_type";
 
-export class PackedType implements AbstractType {
+export class PackedType extends AbstractType {
   private readonly length: number;
   private readonly decimals: number;
 
-  public constructor(length: number, decimals: number) {
+  public constructor(length: number, decimals: number, name?: string) {
+    super(name);
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     } else if (decimals < 0) {

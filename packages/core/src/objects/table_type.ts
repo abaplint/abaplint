@@ -3,7 +3,6 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
-import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export class TableType extends AbstractObject {
   private parsedXML: {
@@ -29,30 +28,30 @@ export class TableType extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry): TypedIdentifier {
+  public parseType(reg: IRegistry): AbstractType {
     this.parseXML();
 
     const ddic = new DDIC(reg);
 
     let type: AbstractType;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
-      type = new Types.UnknownType("Table Type, parser error");
+      type = new Types.UnknownType("Table Type, parser error", this.getName());
     } else if (this.parsedXML.rowkind === "S") {
-      type = new Types.TableType(ddic.lookupTableOrView(this.parsedXML.rowtype), false);
+      type = new Types.TableType(ddic.lookupTableOrView(this.parsedXML.rowtype), false, this.getName());
     } else if (this.parsedXML.rowkind === "E") {
-      type = new Types.TableType(ddic.lookupDataElement(this.parsedXML.rowtype), false);
+      type = new Types.TableType(ddic.lookupDataElement(this.parsedXML.rowtype), false, this.getName());
     } else if (this.parsedXML.rowkind === "L") {
-      type = new Types.TableType(ddic.lookupTableType(this.parsedXML.rowtype), false);
+      type = new Types.TableType(ddic.lookupTableType(this.parsedXML.rowtype), false, this.getName());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
-      type = new Types.TableType(ddic.lookupObject(this.parsedXML.rowtype), false);
+      type = new Types.TableType(ddic.lookupObject(this.parsedXML.rowtype), false, this.getName());
     } else if (this.parsedXML.rowkind === "") {
       const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
-      type = new Types.TableType(row, false);
+      type = new Types.TableType(row, false, this.getName());
     } else {
-      type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName());
+      type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName(), this.getName());
     }
 
-    return TypedIdentifier.from(this.getIdentifier()!, type, [IdentifierMeta.DDIC]);
+    return type;
   }
 
 ////////////////////

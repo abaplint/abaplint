@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class DecFloat16Type implements AbstractType {
+export class DecFloat16Type extends AbstractType {
   public toText() {
     return "```decfloat16```";
   }
