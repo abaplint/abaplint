@@ -304,4 +304,27 @@ foobar = lcl_class=>m( ).
     testFix(abap, expected);
   });
 
+  it("outline, READ TABLE INTO", async () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    APPEND 2 TO tab.
+    READ TABLE tab INDEX 1 INTO DATA(row).`;
+
+    const expected = `
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    APPEND 2 TO tab.
+    DATA row TYPE i.
+READ TABLE tab INDEX 1 INTO row.`;
+
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.`;
+
+    const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`;
+
+    testFix(abap, expected);
+  });
+
 });
