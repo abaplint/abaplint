@@ -5,6 +5,8 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper, IEdit} from "../edit_helper";
+import {StatementNode} from "../abap/nodes/statement_node";
 
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
@@ -25,7 +27,7 @@ export class DefinitionsTop extends ABAPRule {
       title: "Place definitions in top of routine",
       shortDescription: `Checks that definitions are placed at the beginning of methods.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
 
@@ -45,6 +47,7 @@ export class DefinitionsTop extends ABAPRule {
     const issues: Issue[] = [];
 
     let mode = ANY;
+    let start: StatementNode | undefined = undefined;
     let issue: Issue | undefined = undefined;
 
 // todo, this needs refactoring when the paser has become better
@@ -52,6 +55,7 @@ export class DefinitionsTop extends ABAPRule {
       if (statement.get() instanceof Statements.Form
           || statement.get() instanceof Statements.Method) {
         mode = DEFINITION;
+        start = statement;
         issue = undefined;
       } else if (statement.get() instanceof Comment) {
         continue;
@@ -78,7 +82,8 @@ export class DefinitionsTop extends ABAPRule {
           || statement.get() instanceof Statements.StaticEnd
           || statement.get() instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
-          issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          const fix = issues.length === 0 && start ? this.buildFix(file, statement, start) : undefined;
+          issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
           mode = ANY;
         }
       } else if (statement.get() instanceof Statements.Define
@@ -90,5 +95,16 @@ export class DefinitionsTop extends ABAPRule {
     }
 
     return issues;
+  }
+
+//////////////////
+
+  private buildFix(file: ABAPFile, statement: StatementNode, start: StatementNode): IEdit {
+    const concat = statement.concatTokens();
+
+    const fix1 = EditHelper.deleteStatement(file, statement);
+    const fix2 = EditHelper.insertAt(file, start.getEnd(), "\n" + concat);
+
+    return EditHelper.merge(fix1, fix2);
   }
 }
