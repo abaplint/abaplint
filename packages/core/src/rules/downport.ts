@@ -179,9 +179,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
 
-      // todo, this assumes that the statement starts with "DATA("
-      const code = `DATA ${name} TYPE ${type}.\n${name}`;
-      const fix = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), code);
+      const code = `DATA ${name} TYPE ${type}.\n`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), name);
+      const fix = EditHelper.merge(fix2, fix1);
+
       return Issue.atToken(lowFile, i.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
     }
 
