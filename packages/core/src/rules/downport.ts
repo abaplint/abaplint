@@ -39,6 +39,7 @@ Target downport version is always v702, thus rule is only enabled if target vers
 Current rules:
 * NEW transformed to CREATE OBJECT, opposite of https://rules.abaplint.org/use_new/
 * outline, opposite of https://rules.abaplint.org/prefer_inline/
+* EMPTY KEY is changed to DEFAULT KEY
 
 Future rules, todo:
 * boolc, opposite of https://rules.abaplint.org/prefer_xsdbool/
@@ -144,7 +145,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return undefined;
     }
 
-    let found = this.outlineData(high, lowFile, highSyntax);
+    let found = this.emptyKey(high, lowFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineData(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -160,6 +166,25 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   }
 
 //////////////////////////////////////////
+
+  private emptyKey(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+
+    for (const i of node.findAllExpressions(Expressions.TypeTable)) {
+      const concat = i.concatTokens();
+      if (concat.includes("WITH EMPTY KEY") === false) {
+        continue;
+      }
+      const token = i.findDirectTokenByText("EMPTY");
+      if (token === undefined) {
+        continue;
+      }
+
+      const fix = EditHelper.replaceToken(lowFile, token, "DEFAULT");
+      return Issue.atToken(lowFile, i.getFirstToken(), "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return;
+  }
 
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
