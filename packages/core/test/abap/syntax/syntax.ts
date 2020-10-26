@@ -2892,6 +2892,23 @@ CREATE OBJECT ref TYPE zcl_not_found.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("NEW lcl_clas( )->settings", () => {
+    const abap = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    DATA:
+      BEGIN OF settings READ-ONLY,
+        field TYPE abap_bool,
+      END OF settings.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+ENDCLASS.
+
+DATA(bar) = NEW lcl_clas( )->settings.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
