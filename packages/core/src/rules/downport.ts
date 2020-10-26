@@ -39,11 +39,9 @@ Target downport version is always v702, thus rule is only enabled if target vers
 
 Current rules:
 * NEW transformed to CREATE OBJECT, opposite of https://rules.abaplint.org/use_new/
-* outline, opposite of https://rules.abaplint.org/prefer_inline/
-* EMPTY KEY is changed to DEFAULT KEY
-
-Future rules, todo:
-* boolc, opposite of https://rules.abaplint.org/prefer_xsdbool/
+* DATA() definitions are outlined, opposite of https://rules.abaplint.org/prefer_inline/
+* EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
+* CAST changed to ?=
 
 The target version is the overall target version set in the main configuration file as syntax.version
 
@@ -152,6 +150,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineCast(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineData(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -212,6 +215,25 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, i.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  // "CAST" to "?="
+  private outlineCast(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    for (const i of node.findAllExpressions(Expressions.Cast)) {
+      const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const type = i.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens(); // todo, find inferred types
+      const body = i.findDirectExpression(Expressions.Source)?.concatTokens();
+
+      const abap = `DATA ${uniqueName} TYPE REF TO ${type}.\n${uniqueName} ?= ${body}.`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap + "\n");
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, i.getFirstToken(), "Downport CAST", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;

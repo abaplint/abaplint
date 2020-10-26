@@ -26,7 +26,7 @@ async function findIssues(abap: string): Promise<readonly Issue[]> {
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe("Rule: downport, basics", () => {
+describe("Rule: downport", () => {
 
   it("parser error", async () => {
     const issues = await findIssues("parser error");
@@ -37,10 +37,6 @@ describe("Rule: downport, basics", () => {
     const issues = await findIssues("WRITE bar.");
     expect(issues.length).to.equal(0);
   });
-
-});
-
-describe("Rule: NEW", () => {
 
   it("Use CREATE OBJECT instead of NEW", async () => {
     const issues = await findIssues("foo = NEW #( ).");
@@ -324,6 +320,34 @@ READ TABLE tab INDEX 1 INTO row.`;
   it("EMPTY KEY", async () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.`;
     const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`;
+    testFix(abap, expected);
+  });
+
+  it("downport CAST", async () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+    ENDCLASS.
+    CLASS lcl_class IMPLEMENTATION.
+    ENDCLASS.
+    FORM bar.
+      DATA obj TYPE REF TO object.
+      DATA foo TYPE REF TO object.
+      foo = CAST lcl_class( obj ).
+    ENDFORM.`;
+
+    const expected = `
+    CLASS lcl_class DEFINITION.
+    ENDCLASS.
+    CLASS lcl_class IMPLEMENTATION.
+    ENDCLASS.
+    FORM bar.
+      DATA obj TYPE REF TO object.
+      DATA foo TYPE REF TO object.
+      DATA temp1 TYPE REF TO lcl_class.
+temp1 ?= obj.
+foo = temp1.
+    ENDFORM.`;
+
     testFix(abap, expected);
   });
 
