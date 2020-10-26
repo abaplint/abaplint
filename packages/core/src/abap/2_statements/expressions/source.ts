@@ -1,10 +1,11 @@
 import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression} from "../combi";
-import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW} from "../../1_lexer/tokens";
-import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer, ArrowOrDash,
-  MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody} from ".";
+import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash} from "../../1_lexer/tokens";
+import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer,
+  MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {TextElement} from "./text_element";
+import {AttributeName} from "./attribute_name";
 
 // todo, COND and SWITCH are quite similar?
 
@@ -14,7 +15,9 @@ export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
     const ref = seq(tok(InstanceArrow), str("*"));
 
-    const method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new ComponentChain())));
+    const comp = seq(tok(Dash), new ComponentChain());
+    const attr = seq(new Arrow(), new AttributeName());
+    const method = seq(new MethodCallChain(), optPrio(altPrio(comp, attr)));
 
     const rparen = tok(WParenRightW);
 
