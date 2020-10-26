@@ -6,7 +6,7 @@ import {ExpressionNode, StatementNode} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IEdit, EditHelper} from "../edit_helper";
-import {VirtualPosition} from "../position";
+import {Position, VirtualPosition} from "../position";
 import {ABAPFile} from "../abap/abap_file";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
@@ -24,8 +24,8 @@ export class DownportConf extends BasicRuleConfig {
 export class Downport implements IRule {
   private lowReg: IRegistry;
   private highReg: IRegistry;
-  private counter: number;
   private conf = new DownportConf();
+  private counter: number;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -217,6 +217,23 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     return undefined;
   }
 
+  private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult): string {
+    const spag = highSyntax.spaghetti.lookupPosition(position, filename);
+    if (spag === undefined) {
+      return "uniqueErrorSpag";
+    }
+
+    while (true) {
+      const name = "temp" + this.counter;
+      const found = spag.findVariable(name);
+      this.counter++;
+      if (found === undefined) {
+        return name;
+      }
+    }
+
+  }
+
   private newToCreateObject(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const source = node.findDirectExpression(Expressions.Source);
 
@@ -236,7 +253,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
     if (fix === undefined && node.findFirstExpression(Expressions.NewObject)) {
       const found = node.findFirstExpression(Expressions.NewObject)!;
-      const name = "temp" + this.counter++;
+      const name = this.uniqueName(found.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const abap = this.newParameters(found, name, highSyntax, lowFile);
       if (abap === undefined) {
         return undefined;
