@@ -156,11 +156,11 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   ( VALUE #( i_for_entity = parameter_cds-nodeactparam i_dependency_list = VALUE #( ( parameter-nodeactparam ) ) ) )
 ) ).`,
 
-
   "DATA(bar) = + '11'.",
   "DATA(bar) = +'sdf'.",
   "DATA(test) = VALUE string_table( ( `( 1 =`) ).",
   "DATA(test) = VALUE string_table( (`( 1 =` ) ).",
+  "result = NEW cl_oo_class( myname )->class-descript.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
