@@ -79,9 +79,10 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
-START-OF-SELECTION.
-  DATA str TYPE string.
-  str = to_lower( NEW lcl_bar( )->m( ) ).`;
+FORM bar.
+  DATA temp1 TYPE string.
+  temp1 = to_lower( NEW lcl_bar( )->m( ) ).
+ENDFORM.`;
 
     const expected = `CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
@@ -92,11 +93,12 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
-START-OF-SELECTION.
-  DATA str TYPE string.
-  DATA temp1 TYPE REF TO lcl_bar.
-CREATE OBJECT temp1 TYPE lcl_bar.
-str = to_lower( temp1->m( ) ).`;
+FORM bar.
+  DATA temp1 TYPE string.
+  DATA temp2 TYPE REF TO lcl_bar.
+CREATE OBJECT temp2 TYPE lcl_bar.
+temp1 = to_lower( temp2->m( ) ).
+ENDFORM.`;
 
     testFix(abap, expected);
   });
@@ -321,9 +323,7 @@ READ TABLE tab INDEX 1 INTO row.`;
 
   it("EMPTY KEY", async () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.`;
-
     const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`;
-
     testFix(abap, expected);
   });
 
