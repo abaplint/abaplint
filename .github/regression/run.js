@@ -2,8 +2,6 @@
 const fs = require("fs");
 const childProcess = require("child_process");
 
-// todo, also output analysis runtimes
-
 const repos = JSON.parse(process.env.REPOS).sort();
 console.dir(repos);
 
