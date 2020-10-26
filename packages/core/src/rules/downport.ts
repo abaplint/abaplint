@@ -24,6 +24,7 @@ export class DownportConf extends BasicRuleConfig {
 export class Downport implements IRule {
   private lowReg: IRegistry;
   private highReg: IRegistry;
+  private counter: number;
   private conf = new DownportConf();
 
   public getMetadata(): IRuleMetadata {
@@ -66,6 +67,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   public run(lowObj: IObject): Issue[] {
     const ret: Issue[] = [];
+    this.counter = 1;
 
     if (this.lowReg.getConfig().getVersion() !== Version.v702) {
       return ret;
@@ -234,7 +236,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
     if (fix === undefined && node.findFirstExpression(Expressions.NewObject)) {
       const found = node.findFirstExpression(Expressions.NewObject)!;
-      const name = "temp1";
+      const name = "temp" + this.counter++;
       const abap = this.newParameters(found, name, highSyntax, lowFile);
       if (abap === undefined) {
         return undefined;

@@ -321,9 +321,7 @@ READ TABLE tab INDEX 1 INTO row.`;
 
   it("EMPTY KEY", async () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.`;
-
     const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`;
-
     testFix(abap, expected);
   });
 
