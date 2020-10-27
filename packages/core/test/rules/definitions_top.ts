@@ -98,6 +98,17 @@ ENDFORM.`,
     cnt: 0,
   },
 
+  {
+    abap: `
+FORM foo.
+  DEFINE _visit_blob.
+    WRITE 2.
+  END-OF-DEFINITION.
+  DATA bar.
+ENDFORM.`,
+    cnt: 0,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);

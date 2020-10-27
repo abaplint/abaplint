@@ -104,9 +104,9 @@ export class DefinitionsTop extends ABAPRule {
             issues.push(issue);
             continue;
           }
-        } else if (c instanceof StatementNode
-            && (c.get() instanceof Statements.Define
-            || c.get() instanceof Unknown)) {
+        } else if (c instanceof StructureNode && c.get() instanceof Structures.Define) {
+          mode = IGNORE;
+        } else if (c instanceof StatementNode && c.get() instanceof Unknown) {
           mode = IGNORE;
         } else if (mode === DEFINITION) {
           mode = AFTER;
