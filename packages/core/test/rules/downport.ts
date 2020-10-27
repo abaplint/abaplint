@@ -364,4 +364,19 @@ SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
     testFix(abap, expected);
   });
 
+  it("LOOP assigning inline field symbol", async () => {
+    const abap = `
+  DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  LOOP AT lt_rows ASSIGNING FIELD-SYMBOL(<lv_row>).
+  ENDLOOP.`;
+
+    const expected = `
+  DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOL <lv_row> TYPE string.
+LOOP AT lt_rows ASSIGNING <lv_row>.
+  ENDLOOP.`;
+
+    testFix(abap, expected);
+  });
+
 });

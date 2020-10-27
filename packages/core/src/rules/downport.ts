@@ -40,6 +40,7 @@ Target downport version is always v702, thus rule is only enabled if target vers
 Current rules:
 * NEW transformed to CREATE OBJECT, opposite of https://rules.abaplint.org/use_new/
 * DATA() definitions are outlined, opposite of https://rules.abaplint.org/prefer_inline/
+* FIELD-SYMBOL() definitions are outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 
@@ -160,6 +161,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineFS(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.newToCreateObject(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -189,6 +195,35 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     return;
+  }
+
+  private outlineFS(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    for (const i of node.findAllExpressions(Expressions.InlineFS)) {
+      const nameToken = i.findDirectExpression(Expressions.TargetFieldSymbol)?.getFirstToken();
+      if (nameToken === undefined) {
+        continue;
+      }
+      const name = nameToken.getStr();
+      const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
+      if (spag === undefined) {
+        continue;
+      }
+      const found = spag.findVariable(name);
+      if (found === undefined) {
+        continue;
+      }
+      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
+
+      const code = `FIELD-SYMBOL ${name} TYPE ${type}.\n`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), name);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, i.getFirstToken(), "Outline FIELD-SYMBOL", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
   }
 
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

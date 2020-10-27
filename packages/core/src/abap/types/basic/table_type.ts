@@ -1,10 +1,11 @@
 import {AbstractType} from "./_abstract_type";
 
+// todo: add keys and table type
+
 export class TableType extends AbstractType {
   private readonly rowType: AbstractType;
   private readonly withHeader: boolean;
 
-// todo: add keys
   public constructor(rowType: AbstractType, withHeader: boolean, name?: string) {
     super(name);
     this.rowType = rowType;
