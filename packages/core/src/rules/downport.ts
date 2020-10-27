@@ -205,7 +205,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   private outlineFS(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
-    for (const i of node.findAllExpressions(Expressions.InlineFS)) {
+    for (const i of node.findAllExpressionsRecursive(Expressions.InlineFS)) {
       const nameToken = i.findDirectExpression(Expressions.TargetFieldSymbol)?.getFirstToken();
       if (nameToken === undefined) {
         continue;
@@ -234,7 +234,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
-    for (const i of node.findAllExpressions(Expressions.InlineData)) {
+    for (const i of node.findAllExpressionsRecursive(Expressions.InlineData)) {
       const nameToken = i.findDirectExpression(Expressions.TargetField)?.getFirstToken();
       if (nameToken === undefined) {
         continue;
@@ -290,7 +290,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   // "CAST" to "?="
   private outlineCast(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
-    for (const i of node.findAllExpressions(Expressions.Cast)) {
+    for (const i of node.findAllExpressionsRecursive(Expressions.Cast)) {
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const type = i.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens(); // todo, find inferred types
       const body = i.findDirectExpression(Expressions.Source)?.concatTokens();
@@ -340,7 +340,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
     }
 
-    if (fix === undefined && node.findFirstExpression(Expressions.NewObject)) {
+    if (fix === undefined && node.findAllExpressionsRecursive(Expressions.NewObject)) {
       const found = node.findFirstExpression(Expressions.NewObject)!;
       const name = this.uniqueName(found.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const abap = this.newParameters(found, name, highSyntax, lowFile);
