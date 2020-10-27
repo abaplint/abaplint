@@ -211,6 +211,19 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
+  public findAllExpressionsRecursive(type: new () => IStatementRunnable): readonly ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        continue;
+      } else if (child.get() instanceof type) {
+        ret.push(child);
+      }
+      ret = ret.concat(child.findAllExpressions(type));
+    }
+    return ret;
+  }
+
   public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
