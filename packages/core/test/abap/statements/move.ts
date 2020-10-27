@@ -161,6 +161,7 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   "DATA(test) = VALUE string_table( ( `( 1 =`) ).",
   "DATA(test) = VALUE string_table( (`( 1 =` ) ).",
   "result = NEW cl_oo_class( myname )->class-descript.",
+  "rv_inbound_fm = 'CONVERSION_EXIT_' && get_field_ref( iv_table = iv_table iv_field = iv_field )->edit_mask+2 && '_INPUT'.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);

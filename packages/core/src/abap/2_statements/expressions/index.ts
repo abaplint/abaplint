@@ -4,6 +4,7 @@ export * from "./and_return";
 export * from "./arith_operator";
 export * from "./arrow_or_dash";
 export * from "./arrow";
+export * from "./attribute_chain";
 export * from "./attribute_name";
 export * from "./basic_source";
 export * from "./block_name";

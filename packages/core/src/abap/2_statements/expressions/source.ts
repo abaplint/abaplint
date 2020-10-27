@@ -5,7 +5,7 @@ import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody,
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {TextElement} from "./text_element";
-import {AttributeName} from "./attribute_name";
+import {AttributeChain} from "./attribute_chain";
 
 // todo, COND and SWITCH are quite similar?
 
@@ -16,7 +16,7 @@ export class Source extends Expression {
     const ref = seq(tok(InstanceArrow), str("*"));
 
     const comp = seq(tok(Dash), new ComponentChain());
-    const attr = seq(new Arrow(), new AttributeName());
+    const attr = seq(new Arrow(), new AttributeChain());
     const method = seq(new MethodCallChain(), star(attr), optPrio(comp));
 
     const rparen = tok(WParenRightW);
