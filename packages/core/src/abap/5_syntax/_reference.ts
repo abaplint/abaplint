@@ -20,7 +20,8 @@ export enum ReferenceType {
 }
 
 export interface IReferenceExtras {
-  className?: string,
+  ooName?: string,
+  ooType?: "CLAS" | "INTF" | "Void",
 }
 
 export interface IReference {

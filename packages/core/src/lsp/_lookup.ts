@@ -154,16 +154,16 @@ export class LSPLookup {
     }
     let ret = "Resolved Reference: " + ref.referenceType + " " + name;
 
-    if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
-      let cdef: IClassDefinition | IInterfaceDefinition | undefined = scope.findClassDefinition(ref.extra.className);
+    if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.ooName) {
+      let cdef: IClassDefinition | IInterfaceDefinition | undefined = scope.findClassDefinition(ref.extra.ooName);
       if (cdef === undefined) {
-        cdef = scope.findInterfaceDefinition(ref.extra.className);
+        cdef = scope.findInterfaceDefinition(ref.extra.ooName);
       }
       if (cdef === undefined) {
-        cdef = (reg.getObject("CLAS", ref.extra.className) as Class | undefined)?.getDefinition();
+        cdef = (reg.getObject("CLAS", ref.extra.ooName) as Class | undefined)?.getDefinition();
       }
       if (cdef === undefined) {
-        cdef = (reg.getObject("INTF", ref.extra.className) as Interface | undefined)?.getDefinition();
+        cdef = (reg.getObject("INTF", ref.extra.ooName) as Interface | undefined)?.getDefinition();
       }
 
       ret += "\n\n" + this.hoverMethod(ref.position.getName(), cdef);

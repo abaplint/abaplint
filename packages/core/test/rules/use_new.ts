@@ -13,6 +13,14 @@ CREATE OBJECT lo_source
   EXCEPTIONS
     class_not_existing = 1
     OTHERS             = 2.`, cnt: 0},
+// see https://github.com/abaplint/abaplint/issues/1496, referencing itself actually works for CREATE OBJECT
+  {abap: `
+CREATE OBJECT docking_container
+  EXPORTING
+    metric  = cl_gui_control=>metric_pixel
+    ratio   = 50
+    side    = docking_container->dock_at_left
+    caption = 'Test'.`, cnt: 0},
 ];
 
 testRule(tests, UseNew);
