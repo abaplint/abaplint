@@ -77,9 +77,9 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
       }
       for (const r of node.getData().references) {
         if (r.referenceType === ReferenceType.ObjectOrientedVoidReference
-            && r.extra?.className
-            && this.isForbiddenName(r.extra?.className)) {
-          ret.push(Issue.atIdentifier(r.position, message + r.extra?.className, this.getMetadata().key, this.conf.severity));
+            && r.extra?.ooName
+            && this.isForbiddenName(r.extra?.ooName)) {
+          ret.push(Issue.atIdentifier(r.position, message + r.extra?.ooName, this.getMetadata().key, this.conf.severity));
         }
       }
     }

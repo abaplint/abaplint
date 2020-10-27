@@ -115,7 +115,8 @@ export class CurrentScope {
     usage: Token | undefined,
     referencing: Identifier | undefined,
     type: ReferenceType | undefined,
-    filename: string, extra?: IReferenceExtras) {
+    filename: string,
+    extra?: IReferenceExtras) {
 
     if (usage === undefined || type === undefined) {
       return;

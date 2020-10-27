@@ -10,9 +10,10 @@ import {NewObject} from "./new_object";
 import {Cast} from "./cast";
 import {BuiltIn} from "../_builtin";
 import {MethodCallParam} from "./method_call_param";
-import {ReferenceType} from "../_reference";
+import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
+import {ClassDefinition} from "../../types/class_definition";
 
 export class MethodCallChain {
   public runSyntax(
@@ -45,14 +46,18 @@ export class MethodCallChain {
         const className = context instanceof ObjectReferenceType ? context.getIdentifierName() : undefined;
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
         const methodName = methodToken?.getStr();
-        let method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
+        const def = scope.findObjectDefinition(className);
+        let method = helper.searchMethodName(def, methodName);
         if (method === undefined) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
           if (method) {
             scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename);
           }
         } else {
-          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, {className: className});
+          const extra: IReferenceExtras = {
+            ooName: className,
+            ooType: def instanceof ClassDefinition ? "CLAS" : "INTF"};
+          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, extra);
         }
         if (methodName?.includes("~")) {
           const name = methodName.split("~")[0];
@@ -95,7 +100,8 @@ export class MethodCallChain {
       const className = token.getStr();
       const classDefinition = scope.findObjectDefinition(className);
       if (classDefinition === undefined && scope.getDDIC().inErrorNamespace(className) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {className: className});
+        const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
         return new VoidType(className);
       } else if (classDefinition === undefined) {
         throw new Error("Class " + className + " not found");

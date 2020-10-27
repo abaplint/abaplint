@@ -3,7 +3,7 @@ import {CurrentScope} from "../_current_scope";
 import {ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {ReferenceType} from "../_reference";
+import {IReferenceExtras, ReferenceType} from "../_reference";
 import {Source} from "./source";
 
 export class NewObject {
@@ -30,7 +30,8 @@ export class NewObject {
       scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
       return new ObjectReferenceType(objDefinition);
     } else {
-      scope.addReference(typeToken, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {className: typeName});
+      const extra: IReferenceExtras = {ooName: typeName, ooType: "Void"};
+      scope.addReference(typeToken, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
     }
 
     const type = scope.findType(typeName);
