@@ -20,6 +20,18 @@ ENDFORM.`,
     abap: `
 FORM foobar.
 	data: lt_file type foo.
+	write 'hello'.
+  DATA: begin of int,
+  moo type i,
+  end of int.
+ENDFORM.`,
+    cnt: 1,
+  },
+
+  {
+    abap: `
+FORM foobar.
+	data: lt_file type foo.
 	DATA int type i.
 	write 'hello'.
 ENDFORM.`,
