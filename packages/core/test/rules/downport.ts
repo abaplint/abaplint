@@ -351,4 +351,32 @@ foo = temp1.
     testFix(abap, expected);
   });
 
+  it("SPLIT into table", async () => {
+    const abap = `
+  DATA lv_text TYPE string.
+  SPLIT lv_text AT |bar| INTO TABLE DATA(lt_rows).`;
+
+    const expected = `
+  DATA lv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
+
+    testFix(abap, expected);
+  });
+
+  it("LOOP assigning inline field symbol", async () => {
+    const abap = `
+  DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  LOOP AT lt_rows ASSIGNING FIELD-SYMBOL(<lv_row>).
+  ENDLOOP.`;
+
+    const expected = `
+  DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOLS <lv_row> TYPE string.
+LOOP AT lt_rows ASSIGNING <lv_row>.
+  ENDLOOP.`;
+
+    testFix(abap, expected);
+  });
+
 });

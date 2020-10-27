@@ -1,10 +1,11 @@
 import {AbstractType} from "./_abstract_type";
 
+// todo: add keys and table type
+
 export class TableType extends AbstractType {
   private readonly rowType: AbstractType;
   private readonly withHeader: boolean;
 
-// todo: add keys
   public constructor(rowType: AbstractType, withHeader: boolean, name?: string) {
     super(name);
     this.rowType = rowType;
@@ -20,7 +21,8 @@ export class TableType extends AbstractType {
   }
 
   public toABAP(): string {
-    return "TableTypetoABAPtodo";
+// this is used for downport, so use default key for now
+    return "STANDARD TABLE OF " + this.rowType.toABAP() + " WITH DEFAULT KEY";
   }
 
   public toText(level: number) {
