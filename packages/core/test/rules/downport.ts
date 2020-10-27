@@ -351,4 +351,17 @@ foo = temp1.
     testFix(abap, expected);
   });
 
+  it("SPLIT into table", async () => {
+    const abap = `
+  DATA lv_text TYPE string.
+  SPLIT lv_text AT |bar| INTO TABLE DATA(lt_rows).`;
+
+    const expected = `
+  DATA lv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
+
+    testFix(abap, expected);
+  });
+
 });

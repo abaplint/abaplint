@@ -20,7 +20,8 @@ export class TableType extends AbstractType {
   }
 
   public toABAP(): string {
-    return "TableTypetoABAPtodo";
+// this is used for downport, so use default key for now
+    return "STANDARD TABLE OF " + this.rowType.toABAP() + " WITH DEFAULT KEY";
   }
 
   public toText(level: number) {
