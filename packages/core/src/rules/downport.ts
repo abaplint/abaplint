@@ -41,6 +41,7 @@ Current rules:
 * NEW transformed to CREATE OBJECT, opposite of https://rules.abaplint.org/use_new/
 * DATA() definitions are outlined, opposite of https://rules.abaplint.org/prefer_inline/
 * FIELD-SYMBOL() definitions are outlined
+* CONV is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 
@@ -156,6 +157,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineConv(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineData(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -250,6 +256,32 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, i.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private outlineConv(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
+      if (i.getFirstToken().getStr().toUpperCase() !== "CONV") {
+        continue;
+      }
+
+      const body = i.findDirectExpression(Expressions.ConvBody)?.concatTokens();
+      if (body === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const type = i.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens(); // todo, find inferred types
+
+      const abap = `DATA ${uniqueName} TYPE ${type}.\n${uniqueName} = ${body}.`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap + "\n");
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, i.getFirstToken(), "Downport CONV", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;

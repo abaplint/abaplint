@@ -379,4 +379,18 @@ LOOP AT lt_rows ASSIGNING <lv_row>.
     testFix(abap, expected);
   });
 
+  it("CONV", async () => {
+    const abap = `
+    DATA len TYPE i.
+    len = xstrlen( CONV xstring( |AA| ) ).`;
+
+    const expected = `
+    DATA len TYPE i.
+    DATA temp1 TYPE xstring.
+temp1 = |AA|.
+len = xstrlen( temp1 ).`;
+
+    testFix(abap, expected);
+  });
+
 });
