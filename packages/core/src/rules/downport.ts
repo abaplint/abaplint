@@ -215,7 +215,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
 
-      const code = `FIELD-SYMBOL ${name} TYPE ${type}.\n`;
+      const code = `FIELD-SYMBOLS ${name} TYPE ${type}.\n`;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), name);
       const fix = EditHelper.merge(fix2, fix1);

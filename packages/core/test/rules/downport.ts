@@ -372,7 +372,7 @@ SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
 
     const expected = `
   DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-  FIELD-SYMBOL <lv_row> TYPE string.
+  FIELD-SYMBOLS <lv_row> TYPE string.
 LOOP AT lt_rows ASSIGNING <lv_row>.
   ENDLOOP.`;
 
