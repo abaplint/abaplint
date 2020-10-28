@@ -17,7 +17,7 @@ export class Source extends Expression {
 
     const comp = seq(tok(Dash), new ComponentChain());
     const attr = seq(new Arrow(), new AttributeChain());
-    const method = seq(new MethodCallChain(), optPrio(altPrio(attr, comp)));
+    const method = seq(new MethodCallChain(), optPrio(altPrio(attr, comp)), optPrio(ref));
 
     const rparen = tok(WParenRightW);
 
@@ -41,9 +41,9 @@ export class Source extends Expression {
                                              new TextElement(),
                                              bool,
                                              method,
-                                             new FieldChain(),
+                                             seq(new FieldChain(), optPrio(ref)),
                                              paren),
-                    optPrio(altPrio(ref, after)));
+                    optPrio(after));
 
     const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
                                            new TypeNameOrInfer(),
