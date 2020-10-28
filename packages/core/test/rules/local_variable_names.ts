@@ -189,7 +189,7 @@ ENDFUNCTION.`;
   it("no prefix, FORM, fieldsymbol", async () => {
     const abap = `
 FORM foobar.
-  FIELD-SYMBOL <moo> TYPE i.
+  FIELD-SYMBOLs <moo> TYPE i.
 ENDFORM.`;
     const config = new LocalVariableNamesConf();
     config.expectedFS = fsPrefix;
@@ -204,7 +204,7 @@ ENDFORM.`;
   it("prefix, FORM, fieldsymbol", async () => {
     const abap = `
 FORM foobar.
-  FIELD-SYMBOL <lv_moo> TYPE i.
+  FIELD-SYMBOLs <lv_moo> TYPE i.
 ENDFORM.`;
     const config = new LocalVariableNamesConf();
     config.expectedFS = fsPrefix;

@@ -1,12 +1,13 @@
 import {Issue} from "../issue";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import * as Statements from "../abap/2_statements/statements";
+import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper, IEdit} from "../edit_helper";
-import {StatementNode} from "../abap/nodes/statement_node";
+import {StructureNode, StatementNode} from "../abap/nodes";
 
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
@@ -25,7 +26,7 @@ export class DefinitionsTop extends ABAPRule {
     return {
       key: "definitions_top",
       title: "Place definitions in top of routine",
-      shortDescription: `Checks that definitions are placed at the beginning of methods.`,
+      shortDescription: `Checks that definitions are placed at the beginning of METHODs and FORMs.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
     };
@@ -47,50 +48,70 @@ export class DefinitionsTop extends ABAPRule {
     const issues: Issue[] = [];
 
     let mode = ANY;
+    let fixed = false;
     let start: StatementNode | undefined = undefined;
     let issue: Issue | undefined = undefined;
 
-// todo, this needs refactoring when the paser has become better
-    for (const statement of file.getStatements()) {
-      if (statement.get() instanceof Statements.Form
-          || statement.get() instanceof Statements.Method) {
-        mode = DEFINITION;
-        start = statement;
-        issue = undefined;
-      } else if (statement.get() instanceof Comment) {
-        continue;
-      } else if (statement.get() instanceof Statements.EndForm
-          || statement.get() instanceof Statements.EndMethod) {
-        mode = ANY;
-        if (issue !== undefined) {
-          issues.push(issue);
-          issue = undefined;
+    const structure = file.getStructure();
+    if (structure === undefined) {
+      return [];
+    }
+
+    const routines = structure.findAllStructures(Structures.Form).concat(structure.findAllStructures(Structures.Method));
+    for (const r of routines) {
+      mode = DEFINITION;
+      start = r.getFirstStatement();
+
+      for (let c of r.getChildren()) {
+        if (c instanceof StatementNode) {
+          continue;
         }
-      } else if (statement.get() instanceof Statements.Data
-          || statement.get() instanceof Statements.DataBegin
-          || statement.get() instanceof Statements.DataEnd
-          || statement.get() instanceof Statements.Type
-          || statement.get() instanceof Statements.TypeBegin
-          || statement.get() instanceof Statements.TypeEnd
-          || statement.get() instanceof Statements.Constant
-          || statement.get() instanceof Statements.ConstantBegin
-          || statement.get() instanceof Statements.ConstantEnd
-          || statement.get() instanceof Statements.Include
-          || statement.get() instanceof Statements.IncludeType
-          || statement.get() instanceof Statements.Static
-          || statement.get() instanceof Statements.StaticBegin
-          || statement.get() instanceof Statements.StaticEnd
-          || statement.get() instanceof Statements.FieldSymbol) {
-        if (mode === AFTER) {
-          const fix = issues.length === 0 && start ? this.buildFix(file, statement, start) : undefined;
-          issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
-          mode = ANY;
+        const child = c.getFirstChild();
+        if (child === undefined) {
+          continue;
         }
-      } else if (statement.get() instanceof Statements.Define
-          || statement.get() instanceof Unknown) {
-        mode = IGNORE;
-      } else if (mode === DEFINITION) {
-        mode = AFTER;
+        c = child;
+
+        if (c instanceof StatementNode && c.get() instanceof Comment) {
+          continue;
+        }
+
+        if (c instanceof StructureNode
+            && (c.get() instanceof Structures.Data
+            || c.get() instanceof Structures.Types
+            || c.get() instanceof Structures.Constants
+            || c.get() instanceof Structures.Statics)) {
+          if (mode === AFTER) {
+            // no quick fixes for these, its difficult?
+            issue = Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity);
+            issues.push(issue);
+            continue;
+          }
+        } else if (c instanceof StatementNode
+            && (c.get() instanceof Statements.Data
+            || c.get() instanceof Statements.Type
+            || c.get() instanceof Statements.Constant
+            || c.get() instanceof Statements.Static
+            || c.get() instanceof Statements.FieldSymbol)) {
+          if (mode === AFTER) {
+            // only one fix per file, as it reorders a lot
+            let fix = undefined;
+            if (fixed === false && start) {
+              fix = this.buildFix(file, c, start);
+              fixed = true;
+            }
+            issue = Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
+            issues.push(issue);
+            continue;
+          }
+        } else if (c instanceof StructureNode && c.get() instanceof Structures.Define) {
+          mode = IGNORE;
+        } else if (c instanceof StatementNode && c.get() instanceof Unknown) {
+          mode = IGNORE;
+        } else if (mode === DEFINITION) {
+          mode = AFTER;
+        }
+
       }
     }
 
