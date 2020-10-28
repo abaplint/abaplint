@@ -2926,6 +2926,16 @@ DATA(bar) = NEW lcl_clas( )->settings-field.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ref via ->*", () => {
+    const abap = `
+  FIELD-SYMBOLS <table_structure> TYPE any.
+  DATA dynamic_line TYPE REF TO data.
+  CREATE DATA dynamic_line TYPE ('sdfds').
+  ASSIGN dynamic_line->* TO <table_structure>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
