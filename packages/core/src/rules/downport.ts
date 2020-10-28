@@ -340,8 +340,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
     }
 
-    if (fix === undefined && node.findAllExpressionsRecursive(Expressions.NewObject)) {
-      const found = node.findFirstExpression(Expressions.NewObject)!;
+    if (fix === undefined && node.findAllExpressions(Expressions.NewObject)) {
+      const found = node.findFirstExpression(Expressions.NewObject);
+      if (found === undefined) {
+        return undefined;
+      }
       const name = this.uniqueName(found.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const abap = this.newParameters(found, name, highSyntax, lowFile);
       if (abap === undefined) {
