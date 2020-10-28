@@ -31,6 +31,11 @@ export class BasicTypes {
       chain = node.findFirstExpression(Expressions.TypeName);
     }
     const fullName = chain?.concatTokens();
+    /*
+    if (fullName && fullName.endsWith("[]")) {
+      fullName = fullName.substr(0, fullName.length - 2);
+    }
+    */
     const children = chain?.getChildren();
 
     if (children === undefined) {
@@ -51,7 +56,7 @@ export class BasicTypes {
         this.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
       }
 
-      if (type instanceof TableType && node.getLastChild()?.get() instanceof Expressions.TableBody) {
+      if (type instanceof TableType && chain.getLastChild()?.get() instanceof Expressions.TableBody) {
         type = new TableType(type.getRowType(), false);
       } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
         type = type.getRowType();

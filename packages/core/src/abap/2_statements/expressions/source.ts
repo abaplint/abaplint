@@ -1,6 +1,6 @@
-import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression, star} from "../combi";
-import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash} from "../../1_lexer/tokens";
-import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer,
+import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression} from "../combi";
+import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash} from "../../1_lexer/tokens";
+import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,11 +13,11 @@ import {AttributeChain} from "./attribute_chain";
 
 export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ref = seq(tok(InstanceArrow), str("*"));
+//    const ref = seq(tok(InstanceArrow), str("*"));
 
     const comp = seq(tok(Dash), new ComponentChain());
     const attr = seq(new Arrow(), new AttributeChain());
-    const method = seq(new MethodCallChain(), star(attr), optPrio(comp));
+    const method = seq(new MethodCallChain(), optPrio(altPrio(attr, comp)));
 
     const rparen = tok(WParenRightW);
 
@@ -40,8 +40,10 @@ export class Source extends Expression {
                                              new StringTemplate(),
                                              new TextElement(),
                                              bool,
-                                             altPrio(method, new FieldChain(), paren)),
-                    optPrio(altPrio(ref, after, new TableBody())));
+                                             method,
+                                             new FieldChain(),
+                                             paren),
+                    optPrio(after));
 
     const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
                                            new TypeNameOrInfer(),
