@@ -13,7 +13,7 @@ export class DefinitionsTopConf extends BasicRuleConfig {
 }
 
 // todo, use enum instead?
-const ANY = 1;
+// const ANY = 1;
 const DEFINITION = 2;
 const AFTER = 3;
 const IGNORE = 4;
@@ -21,6 +21,10 @@ const IGNORE = 4;
 export class DefinitionsTop extends ABAPRule {
 
   private conf = new DefinitionsTopConf();
+
+  private mode: number;
+  private fixed: boolean;
+  private start: StatementNode | undefined;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -47,71 +51,22 @@ export class DefinitionsTop extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    let mode = ANY;
-    let fixed = false;
-    let start: StatementNode | undefined = undefined;
-    let issue: Issue | undefined = undefined;
-
     const structure = file.getStructure();
     if (structure === undefined) {
       return [];
     }
 
+    // one fix per file
+    this.fixed = false;
+
     const routines = structure.findAllStructures(Structures.Form).concat(structure.findAllStructures(Structures.Method));
     for (const r of routines) {
-      mode = DEFINITION;
-      start = r.getFirstStatement();
+      this.mode = DEFINITION;
+      this.start = r.getFirstStatement();
 
-      for (let c of r.getChildren()) {
-        if (c instanceof StatementNode) {
-          continue;
-        }
-        const child = c.getFirstChild();
-        if (child === undefined) {
-          continue;
-        }
-        c = child;
-
-        if (c instanceof StatementNode && c.get() instanceof Comment) {
-          continue;
-        }
-
-        if (c instanceof StructureNode
-            && (c.get() instanceof Structures.Data
-            || c.get() instanceof Structures.Types
-            || c.get() instanceof Structures.Constants
-            || c.get() instanceof Structures.Statics)) {
-          if (mode === AFTER) {
-            // no quick fixes for these, its difficult?
-            issue = Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity);
-            issues.push(issue);
-            continue;
-          }
-        } else if (c instanceof StatementNode
-            && (c.get() instanceof Statements.Data
-            || c.get() instanceof Statements.Type
-            || c.get() instanceof Statements.Constant
-            || c.get() instanceof Statements.Static
-            || c.get() instanceof Statements.FieldSymbol)) {
-          if (mode === AFTER) {
-            // only one fix per file, as it reorders a lot
-            let fix = undefined;
-            if (fixed === false && start) {
-              fix = this.buildFix(file, c, start);
-              fixed = true;
-            }
-            issue = Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
-            issues.push(issue);
-            continue;
-          }
-        } else if (c instanceof StructureNode && c.get() instanceof Structures.Define) {
-          mode = IGNORE;
-        } else if (c instanceof StatementNode && c.get() instanceof Unknown) {
-          mode = IGNORE;
-        } else if (mode === DEFINITION) {
-          mode = AFTER;
-        }
-
+      const found = this.walk(r, file);
+      if (found) {
+        issues.push(found);
       }
     }
 
@@ -119,6 +74,59 @@ export class DefinitionsTop extends ABAPRule {
   }
 
 //////////////////
+
+  private walk(r: StructureNode, file: ABAPFile): Issue | undefined {
+    for (const c of r.getChildren()) {
+      if (c instanceof StatementNode && c.get() instanceof Comment) {
+        continue;
+      } else if (c instanceof StatementNode && c.get() instanceof Statements.Form) {
+        continue;
+      } else if (c instanceof StatementNode && c.get() instanceof Statements.Method) {
+        continue;
+      }
+
+      if (c instanceof StructureNode
+          && (c.get() instanceof Structures.Data
+          || c.get() instanceof Structures.Types
+          || c.get() instanceof Structures.Constants
+          || c.get() instanceof Structures.Statics)) {
+        if (this.mode === AFTER) {
+          // no quick fixes for these, its difficult?
+          return Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity);
+        }
+      } else if (c instanceof StatementNode
+          && (c.get() instanceof Statements.Data
+          || c.get() instanceof Statements.Type
+          || c.get() instanceof Statements.Constant
+          || c.get() instanceof Statements.Static
+          || c.get() instanceof Statements.FieldSymbol)) {
+        if (this.mode === AFTER) {
+          // only one fix per file, as it reorders a lot
+          let fix = undefined;
+          if (this.fixed === false && this.start) {
+            fix = this.buildFix(file, c, this.start);
+            this.fixed = true;
+          }
+          return Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
+        }
+      } else if (c instanceof StructureNode && c.get() instanceof Structures.Define) {
+        this.mode = IGNORE;
+        return undefined;
+      } else if (c instanceof StatementNode && c.get() instanceof Unknown) {
+        this.mode = IGNORE;
+        return undefined;
+      } else if (c instanceof StatementNode && this.mode === DEFINITION) {
+        this.mode = AFTER;
+      } else if (c instanceof StructureNode) {
+        const found = this.walk(c, file);
+        if (found) {
+          return found;
+        }
+      }
+    }
+
+    return undefined;
+  }
 
   private buildFix(file: ABAPFile, statement: StatementNode, start: StatementNode): IEdit {
     const concat = statement.concatTokens();
