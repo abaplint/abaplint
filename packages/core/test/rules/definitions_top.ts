@@ -109,6 +109,27 @@ ENDFORM.`,
     cnt: 0,
   },
 
+  {
+    abap: `
+FORM func.
+  CASE 2.
+    WHEN '(export'.
+      DATA lv_export_name TYPE string.
+  ENDCASE.
+ENDFORM.`,
+    cnt: 1,
+  },
+
+  {
+    abap: `
+FORM func.
+  IF 1 = 2.
+    DATA lv_export_name TYPE string.
+  ENDIF.
+ENDFORM.`,
+    cnt: 1,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);

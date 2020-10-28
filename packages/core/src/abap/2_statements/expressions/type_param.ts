@@ -1,5 +1,5 @@
 import {seq, optPrio, alt, altPrio, str, Expression, opt} from "../combi";
-import {TableBody, Default, FieldChain, TypeNameOrInfer} from ".";
+import {Default, FieldChain, TypeNameOrInfer} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class TypeParam extends Expression {
@@ -15,7 +15,7 @@ export class TypeParam extends Expression {
                     new TypeNameOrInfer(),
                     opt(new Default()));
 
-    const like = seq(str("LIKE"), opt(str("LINE OF")), new FieldChain(), optPrio(new TableBody()), optPrio(new Default()));
+    const like = seq(str("LIKE"), opt(str("LINE OF")), new FieldChain(), optPrio(new Default()));
 
     return alt(seq(str("TYPE"), alt(table, ret)), like);
   }
