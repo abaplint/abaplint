@@ -714,4 +714,15 @@ ENDIF.`;
     expect(hover1?.value).to.contain("lif_properties", "hover1");
   });
 
+  it("hover type in interface should contain fully qualified name", () => {
+    const abap = `INTERFACE zif_wasm_value PUBLIC.
+  TYPES ty_values TYPE STANDARD TABLE OF REF TO zif_wasm_value WITH DEFAULT KEY.
+ENDINTERFACE.`;
+    const file = new MemoryFile("zif_interface.intf.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zif_wasm_value=>ty_values");
+  });
+
 });

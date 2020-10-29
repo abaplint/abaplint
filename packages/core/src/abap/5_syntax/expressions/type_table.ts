@@ -18,13 +18,13 @@ export class TypeTable {
     }
     const name = nameExpr.getFirstToken();
 
-    let fullName = name.getStr();
-    if (scope.getType() === ScopeType.ClassDefinition) {
-      // fully qualify the name
-      fullName = scope.getName() + "=>" + fullName;
+    let qualifiedName = name.getStr();
+    if (scope.getType() === ScopeType.ClassDefinition
+        || scope.getType() === ScopeType.Interface) {
+      qualifiedName = scope.getName() + "=>" + qualifiedName;
     }
 
-    const type = new BasicTypes(filename, scope).parseType(node, fullName);
+    const type = new BasicTypes(filename, scope).parseType(node, qualifiedName);
     if (type === undefined) {
       return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }
