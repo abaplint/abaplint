@@ -31,11 +31,6 @@ export class BasicTypes {
       chain = node.findFirstExpression(Expressions.TypeName);
     }
     const fullName = chain?.concatTokens();
-    /*
-    if (fullName && fullName.endsWith("[]")) {
-      fullName = fullName.substr(0, fullName.length - 2);
-    }
-    */
     const children = chain?.getChildren();
 
     if (children === undefined) {
