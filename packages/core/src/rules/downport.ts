@@ -17,6 +17,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -45,6 +46,7 @@ Current rules:
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 * LOOP AT method_call( ) is outlined
+* VALUE # with structure fields
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -156,6 +158,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineValue(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineCast(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -231,6 +238,78 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP input", this.getMetadata().key, this.conf.severity, fix);
   }
 
+  private outlineValue(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
+      const firstToken = i.getFirstToken();
+      if (firstToken.getStr().toUpperCase() !== "VALUE") {
+        continue;
+      }
+
+      const type = this.findType(i, lowFile, highSyntax);
+      if (type === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+
+      let body = "";
+      let concat = "";
+      for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
+        concat += b.concatTokens() + " ";
+        if (b.get() instanceof Expressions.Source) {
+          body += uniqueName + "-" + concat.trim() + ".\n";
+          concat = "";
+        }
+      }
+
+      const abap = `DATA ${uniqueName} TYPE ${type}.\n${body.trim()}`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap + "\n");
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, firstToken, "Downport VALUE", this.getMetadata().key, this.conf.severity, fix);
+
+    }
+
+    return undefined;
+  }
+
+  private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {
+
+    const expr = i.findDirectExpression(Expressions.TypeNameOrInfer);
+    if (expr === undefined) {
+      return undefined;
+    }
+    const firstToken = expr.getFirstToken();
+
+    const concat = expr.concatTokens();
+    if (concat !== "#") {
+      return concat;
+    }
+
+    const spag = highSyntax.spaghetti.lookupPosition(firstToken.getStart(), lowFile.getFilename());
+    if (spag === undefined) {
+      return undefined;
+    }
+
+    let inferred: TypedIdentifier | undefined = undefined;
+    for (const r of spag?.getData().references || []) {
+      if (r.referenceType === ReferenceType.InferredType
+          && r.resolved
+          && r.position.getStart().equals(firstToken.getStart())
+          && r.resolved instanceof TypedIdentifier) {
+        inferred = r.resolved;
+        break;
+      }
+    }
+    if (inferred === undefined) {
+      return undefined;
+    }
+
+    return inferred.getType().getQualifiedName();
+  }
+
   private outlineFS(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
     for (const i of node.findAllExpressionsRecursive(Expressions.InlineFS)) {
@@ -302,7 +381,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
 
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const type = i.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens(); // todo, find inferred types
+      const type = this.findType(i, lowFile, highSyntax);
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n${uniqueName} = ${body}.`;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap + "\n");
@@ -320,7 +399,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
     for (const i of node.findAllExpressionsRecursive(Expressions.Cast)) {
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const type = i.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens(); // todo, find inferred types
+      const type = this.findType(i, lowFile, highSyntax);
       const body = i.findDirectExpression(Expressions.Source)?.concatTokens();
 
       const abap = `DATA ${uniqueName} TYPE REF TO ${type}.\n${uniqueName} ?= ${body}.`;
@@ -379,7 +458,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         return undefined;
       }
 
-      const type = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
+      const type = this.findType(found, lowFile, highSyntax);
 
       const data = `DATA ${name} TYPE REF TO ${type}.`;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), data + "\n" + abap + "\n");
