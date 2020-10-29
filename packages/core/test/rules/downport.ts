@@ -429,4 +429,27 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.skip("outline structure type", async () => {
+    const abap = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_structure,
+             field TYPE i,
+           END OF ty_structure.
+    CLASS-METHODS run
+      RETURNING VALUE(structure) TYPE ty_structure.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA(struc) = lcl_clas=>run( ).
+ENDFORM.`;
+
+    const expected = `exp`;
+
+    testFix(abap, expected);
+  });
+
 });
