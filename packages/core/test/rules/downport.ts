@@ -505,4 +505,20 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.skip("APPEND VALUE #", async () => {
+    const abap = `
+FORM bar.
+  TYPES: BEGIN OF ty_stru,
+           field TYPE i,
+         END OF ty_stru.
+  TYPES ty_tab TYPE STANDARD TABLE OF ty_stru WITH DEFAULT KEY.
+  DATA tab TYPE ty_tab.
+  APPEND VALUE #( field = 1 ) TO tab.
+ENDFORM.`;
+
+    const expected = `asdfds`;
+
+    testFix(abap, expected);
+  });
+
 });
