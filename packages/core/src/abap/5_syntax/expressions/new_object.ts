@@ -8,6 +8,10 @@ import {Source} from "./source";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
+    for (const s of node.findAllExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
     const typeToken = node.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
     const typeName = typeToken?.getStr();
     if (typeName === undefined) {
@@ -19,10 +23,6 @@ export class NewObject {
       return targetType;
     } else if (typeName === "#") {
       throw new Error("NewObject, todo, infer type");
-    }
-
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
     }
 
     const objDefinition = scope.findObjectDefinition(typeName);
