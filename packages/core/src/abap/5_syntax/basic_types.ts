@@ -21,6 +21,18 @@ export class BasicTypes {
     this.scope = scope;
   }
 
+  public lookupQualifiedName(name: string | undefined): TypedIdentifier | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
+    const found = this.scope.findType(name);
+
+// todo: global types
+
+    return found;
+  }
+
   public resolveLikeName(node: ExpressionNode | StatementNode | undefined, headerLogic = true): AbstractType | undefined {
     if (node === undefined) {
       return undefined;

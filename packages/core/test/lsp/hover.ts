@@ -280,6 +280,23 @@ bar = NEW #( ).`;
     expect(hover?.value).to.contain("lcl_bar");
   });
 
+  it("Hover inferred row type", () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_stru,
+    field TYPE i,
+    END OF ty_stru.
+  TYPES: ty_tab TYPE STANDARD TABLE OF ty_stru WITH DEFAULT KEY.
+  DATA tab TYPE ty_tab.
+  APPEND VALUE #( field = 1 ) TO tab.
+ENDFORM.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 6, 15));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("ty_stru");
+  });
+
   it("Hover data element", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>
