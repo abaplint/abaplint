@@ -69,7 +69,8 @@ export class Source {
           return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":
         {
-          const bodyType = new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename);
+          const b = node.findDirectExpression(Expressions.ValueBody);
+          const bodyType = new ValueBody().runSyntax(b, scope, filename);
           return this.value(node, scope, filename, targetType, bodyType);
         }
         default:
@@ -117,11 +118,18 @@ export class Source {
                 targetType: AbstractType | undefined,
                 bodyType: AbstractType | undefined): AbstractType | undefined {
 
+    const basic = new BasicTypes(filename, scope);
+
     const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
-    const typeName = typeExpression?.getFirstToken().getStr();
+    const typeToken = typeExpression?.getFirstToken();
+    const typeName = typeToken?.getStr();
     if (typeName === undefined) {
       throw new Error("VALUE, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
+      const found = basic.lookupQualifiedName(targetType.getQualifiedName());
+      if (found) {
+        scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
+      }
       return targetType;
     } else if (typeName === "#" && bodyType) {
       return bodyType;
@@ -131,7 +139,7 @@ export class Source {
       throw new Error("VALUE, expression node expected");
     }
 
-    const found = new BasicTypes(filename, scope).parseType(typeExpression);
+    const found = basic.parseType(typeExpression);
     if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
       return new VoidType(typeName);
     } else if (found === undefined) {

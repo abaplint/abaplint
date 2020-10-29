@@ -1,13 +1,13 @@
 export abstract class AbstractType {
-  private readonly name: string | undefined;
+  private readonly qualifiedName: string | undefined;
 
-  public constructor(name?: string) {
-    this.name = name;
+  public constructor(qualifiedName?: string) {
+    this.qualifiedName = qualifiedName;
   }
 
   /** fully qualified symbolic name of the type */
   public getQualifiedName(): string | undefined {
-    return this.name;
+    return this.qualifiedName;
   }
 
   abstract toText(level: number): string;

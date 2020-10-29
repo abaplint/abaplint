@@ -21,6 +21,34 @@ export class BasicTypes {
     this.scope = scope;
   }
 
+  public lookupQualifiedName(name: string | undefined): TypedIdentifier | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
+    const found = this.scope.findType(name);
+    if (found) {
+      return found;
+    }
+
+    if (name.includes("=>")) {
+      const split = name.split("=>");
+      const ooName = split[0];
+      const typeName = split[1];
+      const oo = this.scope.findObjectDefinition(ooName);
+      if (oo) {
+        const f = oo.getTypeDefinitions().getByName(typeName);
+        if (f) {
+          return f;
+        }
+      }
+    }
+
+// todo: DDIC types
+
+    return undefined;
+  }
+
   public resolveLikeName(node: ExpressionNode | StatementNode | undefined, headerLogic = true): AbstractType | undefined {
     if (node === undefined) {
       return undefined;

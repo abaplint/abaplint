@@ -468,4 +468,41 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("LOOP AT method call", async () => {
+    const abap = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    CLASS-METHODS run RETURNING VALUE(tab) TYPE ty_tab.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lv_int TYPE i.
+  LOOP AT lcl_clas=>run( ) INTO lv_int.
+  ENDLOOP.
+ENDFORM.`;
+
+    const expected = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    CLASS-METHODS run RETURNING VALUE(tab) TYPE ty_tab.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lv_int TYPE i.
+  DATA(temp1) = lcl_clas=>run( ).
+LOOP AT temp1 INTO lv_int.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });

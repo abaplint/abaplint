@@ -41,7 +41,7 @@ export class Loop implements IStatement {
 
     const at = seq(str("AT"),
                    opt(ver(Version.v740sp08, str("GROUP"))),
-                   alt(ver(Version.v740sp02, new Source()), new BasicSource()),
+                   alt(new BasicSource(), ver(Version.v740sp02, new Source())),
                    opt(options));
 
     return seq(str("LOOP"), opt(at));

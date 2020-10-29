@@ -26,17 +26,12 @@ export class TableType extends AbstractType {
   }
 
   public toText(level: number) {
-    let extra = "";
     const type = this.rowType;
 
-    if (type.getQualifiedName()) {
-      extra = "\n\nType name: \"" + type.getQualifiedName() + "\"";
-    }
-
     if (this.withHeader === true) {
-      return "Table with header of " + type.toText(level + 1) + extra;
+      return "Table with header of " + type.toText(level + 1);
     } else {
-      return "Table of " + type.toText(level + 1) + extra;
+      return "Table of " + type.toText(level + 1);
     }
   }
 
