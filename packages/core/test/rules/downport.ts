@@ -505,7 +505,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it.skip("APPEND VALUE #", async () => {
+  it("APPEND VALUE #", async () => {
     const abap = `
 FORM bar.
   TYPES: BEGIN OF ty_stru,
@@ -516,7 +516,17 @@ FORM bar.
   APPEND VALUE #( field = 1 ) TO tab.
 ENDFORM.`;
 
-    const expected = `asdfds`;
+    const expected = `
+FORM bar.
+  TYPES: BEGIN OF ty_stru,
+           field TYPE i,
+         END OF ty_stru.
+  TYPES ty_tab TYPE STANDARD TABLE OF ty_stru WITH DEFAULT KEY.
+  DATA tab TYPE ty_tab.
+  DATA temp1 TYPE ty_stru.
+temp1-field = 1.
+APPEND temp1 TO tab.
+ENDFORM.`;
 
     testFix(abap, expected);
   });

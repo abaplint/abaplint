@@ -251,8 +251,24 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         continue;
       }
 
-      // todo
-      console.dir(type);
+      const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+
+      let body = "";
+      let concat = "";
+      for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
+        concat += b.concatTokens() + " ";
+        if (b.get() instanceof Expressions.Source) {
+          body += uniqueName + "-" + concat.trim() + ".\n";
+          concat = "";
+        }
+      }
+
+      const abap = `DATA ${uniqueName} TYPE ${type}.\n${body.trim()}`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap + "\n");
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, firstToken, "Downport VALUE", this.getMetadata().key, this.conf.severity, fix);
 
     }
 

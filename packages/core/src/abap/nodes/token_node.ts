@@ -20,6 +20,10 @@ export class TokenNode implements INode {
     return [];
   }
 
+  public concatTokens(): string {
+    return this.token.getStr();
+  }
+
   public get(): Token {
     return this.token;
   }
