@@ -7,6 +7,7 @@ import {CurrentScope} from "../_current_scope";
 import {IncludeType} from "../statements/include_type";
 import {Type} from "../statements/type";
 import * as Basic from "../../types/basic";
+import {ScopeType} from "../_scope_type";
 
 export class Types {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
@@ -34,6 +35,12 @@ export class Types {
       return undefined;
     }
 
-    return new TypedIdentifier(name, filename, new Basic.StructureType(components));
+    let qualifiedName = name.getStr();
+    if (scope.getType() === ScopeType.ClassDefinition
+        || scope.getType() === ScopeType.Interface) {
+      qualifiedName = scope.getName() + "=>" + qualifiedName;
+    }
+
+    return new TypedIdentifier(name, filename, new Basic.StructureType(components, qualifiedName));
   }
 }

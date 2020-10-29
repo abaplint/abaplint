@@ -327,12 +327,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const source = node.findDirectExpression(Expressions.Source);
 
     let fix: IEdit | undefined = undefined;
-    if (node.get() instanceof Statements.Move && source?.concatTokens().startsWith("NEW ")) {
+    if (node.get() instanceof Statements.Move && source && source.concatTokens().startsWith("NEW ")) {
       const target = node.findDirectExpression(Expressions.Target);
       const found = source?.findFirstExpression(Expressions.NewObject);
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
       // todo, assumption: the target is not an inline definition
-      if (source && target && found && source.getFirstToken().getStart().equals(found.getFirstToken().getStart())) {
+      if (target && found && source.concatTokens() === found.concatTokens()) {
         const abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
         if (abap !== undefined) {
           fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
@@ -340,8 +340,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
     }
 
-    if (fix === undefined && node.findAllExpressionsRecursive(Expressions.NewObject)) {
-      const found = node.findFirstExpression(Expressions.NewObject)!;
+    if (fix === undefined && node.findAllExpressions(Expressions.NewObject)) {
+      const found = node.findFirstExpression(Expressions.NewObject);
+      if (found === undefined) {
+        return undefined;
+      }
       const name = this.uniqueName(found.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const abap = this.newParameters(found, name, highSyntax, lowFile);
       if (abap === undefined) {

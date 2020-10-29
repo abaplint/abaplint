@@ -22,7 +22,6 @@ export class TypedIdentifier extends Identifier {
   private readonly type: AbstractType;
   private readonly meta: readonly IdentifierMeta[];
   private readonly value: string | object | undefined;
-  private readonly typeName: string | undefined;
 
   public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: readonly IdentifierMeta[]): TypedIdentifier {
     return new TypedIdentifier(id.getToken(), id.getFilename(), type, meta);
@@ -31,13 +30,13 @@ export class TypedIdentifier extends Identifier {
   public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType,
                      meta?: readonly IdentifierMeta[], value?: string | object) {
     super(token, filename);
+
     if (type instanceof TypedIdentifier) {
-      this.typeName = type.getName();
       this.type = type.getType();
     } else {
-      this.typeName = undefined;
       this.type = type;
     }
+
     this.value = value;
     this.meta = [];
     if (meta) {
@@ -47,11 +46,6 @@ export class TypedIdentifier extends Identifier {
 
   public toText(): string {
     return "Identifier: ```" + this.getName() + "```";
-  }
-
-  // SDFSDSDFSDFS, todo, delete this!!!
-  public getTypeName(): string | undefined {
-    return this.typeName;
   }
 
   public getType(): AbstractType {

@@ -393,4 +393,79 @@ len = xstrlen( temp1 ).`;
     testFix(abap, expected);
   });
 
+  it("code after NEW", async () => {
+    const abap = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    METHODS run
+      RETURNING VALUE(self) TYPE REF TO lcl_clas.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lo_module TYPE REF TO lcl_clas.
+  lo_module = NEW lcl_clas( )->run( ).
+ENDFORM.`;
+
+    const expected = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    METHODS run
+      RETURNING VALUE(self) TYPE REF TO lcl_clas.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lo_module TYPE REF TO lcl_clas.
+  DATA temp1 TYPE REF TO lcl_clas.
+CREATE OBJECT temp1 TYPE lcl_clas.
+lo_module = temp1->run( ).
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("outline structure type", async () => {
+    const abap = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_structure,
+             field TYPE i,
+           END OF ty_structure.
+    CLASS-METHODS run
+      RETURNING VALUE(structure) TYPE ty_structure.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA(struc) = lcl_clas=>run( ).
+ENDFORM.`;
+
+    const expected = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_structure,
+             field TYPE i,
+           END OF ty_structure.
+    CLASS-METHODS run
+      RETURNING VALUE(structure) TYPE ty_structure.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA struc TYPE lcl_clas=>ty_structure.
+struc = lcl_clas=>run( ).
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });
