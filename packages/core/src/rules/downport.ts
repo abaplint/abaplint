@@ -44,8 +44,7 @@ Current rules:
 * CONV is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
-
-The target version is the overall target version set in the main configuration file as syntax.version
+* LOOP AT method_call( ) is outlined
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -152,6 +151,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineLoop(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineCast(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -201,6 +205,30 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     return;
+  }
+
+  private outlineLoop(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    if (!(node.get() instanceof Statements.Loop)) {
+      return undefined;
+    } else if (node.findDirectExpression(Expressions.BasicSource)) {
+      return undefined;
+    }
+
+    // the first Source must be outlined
+    const s = node.findDirectExpression(Expressions.Source);
+    if (s === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+
+    const code = `DATA(${uniqueName}) = ${s.concatTokens()}.\n`;
+    const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, s.getFirstToken().getStart(), s.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP input", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private outlineFS(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
