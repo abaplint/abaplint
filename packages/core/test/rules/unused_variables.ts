@@ -497,4 +497,24 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("NEW with inferred type, no unused variables", async () => {
+    const abap = `
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING imp TYPE string.
+ENDCLASS.
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD constructor.
+    WRITE imp.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA foo TYPE REF TO lcl_clas.
+  DATA(lv_text) = |abc|.
+  foo = NEW #( lv_text ).
+ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
