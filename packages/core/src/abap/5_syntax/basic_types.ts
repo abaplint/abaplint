@@ -27,10 +27,26 @@ export class BasicTypes {
     }
 
     const found = this.scope.findType(name);
+    if (found) {
+      return found;
+    }
 
-// todo: global types
+    if (name.includes("=>")) {
+      const split = name.split("=>");
+      const ooName = split[0];
+      const typeName = split[1];
+      const oo = this.scope.findObjectDefinition(ooName);
+      if (oo) {
+        const f = oo.getTypeDefinitions().getByName(typeName);
+        if (f) {
+          return f;
+        }
+      }
+    }
 
-    return found;
+// todo: DDIC types
+
+    return undefined;
   }
 
   public resolveLikeName(node: ExpressionNode | StatementNode | undefined, headerLogic = true): AbstractType | undefined {
