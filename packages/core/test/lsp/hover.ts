@@ -336,7 +336,6 @@ ENDCLASS.`;
     const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 6));
     expect(hoverVariable).to.not.equal(undefined);
     expect(hoverVariable?.value).to.contain("FIELD1");
-    expect(hoverVariable?.value).to.contain("ZTAB");
   });
 
   it("Hover function module name", () => {
