@@ -1,12 +1,17 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
-import {TypeNameOrInfer} from "../../2_statements/expressions";
+import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {Source} from "./source";
 
 export class Cast {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined): AbstractType {
-    const typeName = node.findDirectExpression(TypeNameOrInfer)?.getFirstToken().getStr();
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
+    for (const s of node.findAllExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
+    const typeName = node.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken().getStr();
     if (typeName === undefined) {
       throw new Error("Cast, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {

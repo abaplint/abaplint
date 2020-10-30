@@ -517,4 +517,18 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("foo used in inline CAST", async () => {
+    const abap = `
+  CLASS lcl_clas DEFINITION.
+  ENDCLASS.
+  CLASS lcl_clas IMPLEMENTATION.
+  ENDCLASS.
+  FORM bar.
+    DATA foo TYPE REF TO lcl_clas.
+    CAST lcl_clas( foo ).
+  ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

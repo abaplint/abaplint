@@ -113,7 +113,7 @@ export class MethodCallChain {
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
       return new NewObject().runSyntax(first, scope, targetType, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {
-      return new Cast().runSyntax(first, scope, targetType);
+      return new Cast().runSyntax(first, scope, targetType, filename);
     } else {
       const meType = scope.findVariable("me")?.getType();
       if (meType) {
