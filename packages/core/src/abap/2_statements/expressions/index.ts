@@ -33,7 +33,6 @@ export * from "./conv_body";
 export * from "./corresponding_body";
 export * from "./data_definition";
 export * from "./database_connection";
-export * from "./database_field";
 export * from "./database_table";
 export * from "./decimals";
 export * from "./default";
