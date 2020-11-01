@@ -11,3 +11,4 @@ node ./generate.js
 set +x #echo off
 rm -f ./build/*.json
 cp ./public/* ./build/
+node ./where_used.js
