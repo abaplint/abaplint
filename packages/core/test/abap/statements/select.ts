@@ -239,6 +239,7 @@ statementType(tests, "SELECT", Statements.Select);
 
 const versions = [
   {abap: "SELECT field, uuid( ) AS uuid FROM table INTO TABLE @DATA(result).", ver: Version.v754},
+  {abap: "SELECT SINGLE abs( field ) FROM ztable INTO @DATA(sdfsd).", ver: Version.v751},
 ];
 
 statementVersion(versions, "SELECT", Statements.Select);
