@@ -1,5 +1,5 @@
-import {alt, str, plus, seq, opt, ver, tok, Expression, optPrio} from "../combi";
-import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation} from ".";
+import {alt, str, plus, seq, opt, ver, tok, Expression, optPrio, altPrio} from "../combi";
+import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation, SQLCase} from ".";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -15,6 +15,11 @@ export class SQLFieldList extends Expression {
 
     return alt(str("*"),
                new Dynamic(),
-               plus(seq(alt(new SQLAggregation(), new SQLFieldName(), new SQLFunction(), abap, new Constant()), optPrio(as), comma)));
+               plus(seq(altPrio(new SQLAggregation(),
+                                new SQLCase(),
+                                new SQLFunction(),
+                                new SQLFieldName(),
+                                abap,
+                                new Constant()), optPrio(as), comma)));
   }
 }

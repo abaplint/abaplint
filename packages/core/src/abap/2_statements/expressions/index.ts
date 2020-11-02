@@ -124,6 +124,7 @@ export * from "./source";
 export * from "./sql_aggregation";
 export * from "./sql_alias_field";
 export * from "./sql_as_name";
+export * from "./sql_case";
 export * from "./sql_cds_parameters";
 export * from "./sql_compare_operator";
 export * from "./sql_compare";
