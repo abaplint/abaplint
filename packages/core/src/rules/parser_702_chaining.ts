@@ -61,7 +61,7 @@ Only active on target version 702 and below.`,
         }
         if (param.findDirectTokenByText("IMPORTING")
             || param.findDirectTokenByText("CHANGING")
-            || param.findDirectTokenByText("EXPORTING")) {
+            || param.findDirectTokenByText("EXCEPTIONS")) {
           const message = "This kind of method chaining not possible in 702";
           const issue = Issue.atPosition(file, param.getFirstToken().getStart(), message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
