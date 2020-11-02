@@ -1957,6 +1957,17 @@
               ],
               "description": "Omit RECEIVING\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/omit_receiving"
             },
+            "parser_702_chaining": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Parser702ChainingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "ABAP on 702 does not allow for method chaining with IMPORTING/EXPORTING/CHANGING keywords,\nthis rule finds these and reports errors.\nOnly active on target version 702 and below.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_702_chaining"
+            },
             "parser_error": {
               "anyOf": [
                 {
@@ -3521,6 +3532,23 @@
       "type": "object"
     },
     "OmitReceivingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "Parser702ChainingConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
