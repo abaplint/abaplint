@@ -43,6 +43,18 @@ describe("Rule: Parser702Chaining", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("issue3, exporting with exceptions", async () => {
+    const abap = `get_persistence( )->lock(
+    EXPORTING
+      p_objname_tr = objname
+    EXCEPTIONS
+      foreign_lock = 1
+      OTHERS       = 3 ).
+`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
   it("no issues, method call2", async () => {
     const abap = `get_repo_from_package(
       EXPORTING
