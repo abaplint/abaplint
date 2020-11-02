@@ -76,6 +76,7 @@ import {ObjectNamingConf} from "../src/rules/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {OmitParameterNameConf} from "../src/rules/omit_parameter_name";
 import {OmitReceivingConf} from "../src/rules/omit_receiving";
+import {Parser702ChainingConf} from "../src/rules/parser_702_chaining";
 import {ParserErrorConf} from "../src/rules/parser_error";
 import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
@@ -198,6 +199,7 @@ export interface IConfig {
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "omit_parameter_name"?: OmitParameterNameConf | boolean,
     "omit_receiving"?: OmitReceivingConf | boolean,
+    "parser_702_chaining"?: Parser702ChainingConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,

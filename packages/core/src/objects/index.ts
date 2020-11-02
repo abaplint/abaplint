@@ -65,6 +65,7 @@ export * from "./push_channel";
 export * from "./rfc_service";
 export * from "./sapscript";
 export * from "./search_help";
+export * from "./service_binding";
 export * from "./service_definition";
 export * from "./shared_memory";
 export * from "./smart_form";
