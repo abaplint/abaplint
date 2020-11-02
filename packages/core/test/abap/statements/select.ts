@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   "SELECT SINGLE objct FROM tobj INTO lv_objct WHERE objct = ms_item-obj_name.",
@@ -235,3 +236,9 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
 ];
 
 statementType(tests, "SELECT", Statements.Select);
+
+const versions = [
+  {abap: "SELECT field, uuid( ) AS uuid FROM table INTO TABLE @DATA(result).", ver: Version.v754},
+];
+
+statementVersion(versions, "SELECT", Statements.Select);

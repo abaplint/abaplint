@@ -133,6 +133,7 @@ export * from "./sql_field_name";
 export * from "./sql_for_all_entries";
 export * from "./sql_from_source";
 export * from "./sql_from";
+export * from "./sql_function";
 export * from "./sql_group_by";
 export * from "./sql_having";
 export * from "./sql_hints";

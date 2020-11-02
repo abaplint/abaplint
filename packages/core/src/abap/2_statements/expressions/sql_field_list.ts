@@ -3,6 +3,7 @@ import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation} from ".";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
+import {SQLFunction} from "./sql_function";
 
 export class SQLFieldList extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -14,6 +15,6 @@ export class SQLFieldList extends Expression {
 
     return alt(str("*"),
                new Dynamic(),
-               plus(seq(alt(new SQLAggregation(), new SQLFieldName(), abap, new Constant()), optPrio(as), comma)));
+               plus(seq(alt(new SQLAggregation(), new SQLFieldName(), new SQLFunction(), abap, new Constant()), optPrio(as), comma)));
   }
 }
