@@ -7,8 +7,8 @@ export class ServiceBinding extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 30,
+    return {
+      maxLength: 26,
       allowNamespace: true,
     };
   }
