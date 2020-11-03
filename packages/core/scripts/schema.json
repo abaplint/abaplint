@@ -2285,7 +2285,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused methods\nTags: Experimental\nhttps://rules.abaplint.org/unused_methods"
+              "description": "Checks for unused methods\nhttps://rules.abaplint.org/unused_methods"
             },
             "unused_types": {
               "anyOf": [
