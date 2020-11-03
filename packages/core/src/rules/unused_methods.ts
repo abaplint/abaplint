@@ -11,31 +11,32 @@ import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Visibility} from "../abap/4_file_information/visibility";
+import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export class UnusedMethodsConf extends BasicRuleConfig {
 }
 
 class WorkArea {
-  private readonly list: Identifier[] = [];
+  private readonly list: InfoMethodDefinition[] = [];
 
   public constructor() {
     this.list = [];
   }
 
-  public push(id: Identifier) {
+  public push(id: InfoMethodDefinition) {
     this.list.push(id);
   }
 
   public removeIfExists(id: Identifier) {
     for (let i = 0; i < this.list.length; i++) {
-      if (id.equals(this.list[i])) {
+      if (id.equals(this.list[i].identifier)) {
         this.list.splice(i, 1);
         return;
       }
     }
   }
 
-  public get(): readonly Identifier[] {
+  public get(): readonly InfoMethodDefinition[] {
     return this.list;
   }
 }
@@ -111,7 +112,7 @@ Skips:
 
           if (method.visibility === Visibility.Private
               || method.visibility === Visibility.Protected) {
-            this.wa.push(method.identifier);
+            this.wa.push(method);
           }
         }
       }
@@ -121,8 +122,8 @@ Skips:
 
     const issues: Issue[] = [];
     for (const i of this.wa.get()) {
-      const message = "Method \"" + i.getName() + "\" not used";
-      issues.push(Issue.atIdentifier(i, message, this.getMetadata().key, this.conf.severity));
+      const message = "Method \"" + i.identifier.getName() + "\" not used";
+      issues.push(Issue.atIdentifier(i.identifier, message, this.getMetadata().key, this.conf.severity));
     }
 
     return issues;

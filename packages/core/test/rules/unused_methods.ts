@@ -10,6 +10,16 @@ async function runSingle(abap: string): Promise<Issue[]> {
   return new UnusedMethods().initialize(reg).run(reg.getFirstObject()!);
 }
 
+async function runMulti(files: MemoryFile[]): Promise<Issue[]> {
+  const reg = new Registry().addFiles(files);
+  await reg.parseAsync();
+  let issues: Issue[] = [];
+  for (const o of reg.getObjects()) {
+    issues = issues.concat(new UnusedMethods().initialize(reg).run(o));
+  }
+  return issues;
+}
+
 describe("Rule: unused_methods, single file", () => {
 
   it("test1", async () => {
@@ -81,6 +91,60 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("subclass, local program", async () => {
+    const abap = `
+CLASS zcl_xml DEFINITION.
+  PROTECTED SECTION.
+    METHODS to_xml.
+ENDCLASS.
+CLASS zcl_xml IMPLEMENTATION.
+  METHOD to_xml.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS zcl_output DEFINITION INHERITING FROM zcl_xml.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS zcl_output IMPLEMENTATION.
+  METHOD bar.
+    to_xml( ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  NEW zcl_output( )->bar( ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it.skip("Global class with subclass", async () => {
+    const abap1 = `CLASS zcl_xml DEFINITION PUBLIC.
+  PROTECTED SECTION.
+    METHODS to_xml.
+ENDCLASS.
+CLASS zcl_xml IMPLEMENTATION.
+  METHOD to_xml.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file1 = new MemoryFile("zcl_xml.clas.abap", abap1);
+
+    const abap2 = `CLASS zcl_output DEFINITION PUBLIC INHERITING FROM zcl_xml.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS zcl_output IMPLEMENTATION.
+  METHOD bar.
+    to_xml( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const file2 = new MemoryFile("zcl_output.clas.abap", abap2);
+
+    const issues = await runMulti([file1, file2]);
+    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 
