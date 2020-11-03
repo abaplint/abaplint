@@ -1,12 +1,12 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
-import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {Interface} from "../objects";
+import {Class, Interface, Program} from "../objects";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ReferenceType} from "../abap/5_syntax/_reference";
@@ -36,6 +36,19 @@ class WorkArea {
     }
   }
 
+  public containsProteted(): boolean {
+    for (const m of this.list) {
+      if (m.visibility === Visibility.Protected) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public getLength(): number {
+    return this.list.length;
+  }
+
   public get(): readonly InfoMethodDefinition[] {
     return this.list;
   }
@@ -53,17 +66,16 @@ export class UnusedMethods implements IRule {
       key: "unused_methods",
       title: "Unused methods",
       shortDescription: `Checks for unused methods`,
-      extendedInformation: `Experimental, might give false positives.
-
-Checks private and protected methods.
+      extendedInformation: `Checks private and protected methods.
 
 Skips:
 * methods FOR TESTING
 * methods SETUP + TEARDOWN + CLASS_SETUP + CLASS_TEARDOWN in testclasses
 * event handlers
 * methods that are redefined
+* INCLUDEs
 `,
-      tags: [RuleTag.Experimental],
+      tags: [],
     };
   }
 
@@ -84,6 +96,8 @@ Skips:
     if (!(obj instanceof ABAPObject)) {
       return [];
     } else if (obj instanceof Interface) { // todo, how to handle interfaces?
+      return [];
+    } else if (obj instanceof Program && obj.isInclude() === true) {
       return [];
     }
 
@@ -120,6 +134,8 @@ Skips:
 
     this.traverse(syntax.spaghetti.getTop());
 
+    this.searchGlobalSubclasses(obj);
+
     const issues: Issue[] = [];
     for (const i of this.wa.get()) {
       const message = "Method \"" + i.identifier.getName() + "\" not used";
@@ -127,6 +143,30 @@ Skips:
     }
 
     return issues;
+  }
+
+  private searchGlobalSubclasses(obj: ABAPObject) {
+    if (this.wa.getLength() === 0
+        || !(obj instanceof Class)
+        || this.wa.containsProteted() === false) {
+      return;
+    }
+
+    const sup = obj.getDefinition();
+    if (sup === undefined) {
+      return;
+    }
+
+    for (const r of this.reg.getObjects()) {
+      if (r instanceof Class
+          && r.getDefinition()?.getSuperClass()?.toUpperCase() === sup.getName().toUpperCase()) {
+        const syntax = new SyntaxLogic(this.reg, r).run();
+        this.traverse(syntax.spaghetti.getTop());
+        // recurse to sub-sub-* classes
+        this.searchGlobalSubclasses(r);
+      }
+    }
+
   }
 
   private traverse(node: ISpaghettiScopeNode) {

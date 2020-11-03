@@ -121,7 +121,7 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("Global class with subclass", async () => {
+  it("Global class with subclass", async () => {
     const abap1 = `CLASS zcl_xml DEFINITION PUBLIC.
   PROTECTED SECTION.
     METHODS to_xml.
@@ -144,7 +144,6 @@ ENDCLASS.`;
     const file2 = new MemoryFile("zcl_output.clas.abap", abap2);
 
     const issues = await runMulti([file1, file2]);
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 
