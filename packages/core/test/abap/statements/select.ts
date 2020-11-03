@@ -233,6 +233,10 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
     ON l~partner_guid = c~partner_guid
   WHERE t~iban = 'IBAN'
   INTO TABLE @DATA(foo).`,
+
+  `SELECT @zcl_class=>option-eq AS option, devclass AS low
+    FROM tdevc
+    INTO CORRESPONDING FIELDS OF TABLE @target.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
