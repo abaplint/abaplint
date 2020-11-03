@@ -1,5 +1,5 @@
 import {IFile} from "./files/_ifile";
-import {Position} from "./position";
+import {Position, VirtualPosition} from "./position";
 import {Token} from "./abap/1_lexer/tokens/_token";
 import {Identifier} from "./abap/4_file_information/_identifier";
 import {StatementNode} from "./abap/nodes";
@@ -109,6 +109,11 @@ export class Issue {
 
   private constructor(data: IIssueData) {
     this.data = data;
+
+    if (this.data.start instanceof VirtualPosition) {
+      // no quick fixes inside macros
+      this.data.fix = undefined;
+    }
 
     if (this.data.start.getCol() < 1) {
       throw new Error("issue, start col < 1");
