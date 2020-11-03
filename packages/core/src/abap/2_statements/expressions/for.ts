@@ -1,7 +1,8 @@
 import {seq, opt, str, alt, ver, plus, Expression} from "../combi";
-import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, InlineLoopDefinition} from ".";
+import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, InlineLoopDefinition, Target} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {FieldChain} from "./field_chain";
 
 export class For extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -12,7 +13,13 @@ export class For extends Expression {
     const then = seq(str("THEN"), new Source());
     const whil = seq(alt(str("UNTIL"), str("WHILE")), new Cond());
     const itera = seq(new InlineFieldDefinition(), opt(then), whil);
-    const f = seq(str("FOR"), alt(itera, inn));
+
+    const groupBy = seq(str("GROUP BY"), new FieldChain());
+
+    const groups = ver(Version.v740sp08, seq(str("GROUPS"), new FieldChain(), str("OF"), new Target(), str("IN"), new Source(), opt(groupBy)));
+
+    const f = seq(str("FOR"), alt(itera, inn, groups));
+
     return ver(Version.v740sp05, plus(seq(f, opt(new Let()))));
   }
 }

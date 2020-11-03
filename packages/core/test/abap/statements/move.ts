@@ -285,6 +285,11 @@ const versions = [
     "  WHEN 'U' THEN asdf\n" +
     "  ELSE THROW zcx_exception( ) ).", ver: Version.v740sp02},
 
+  {abap: `output = VALUE #(
+    FOR GROUPS _tabname OF _dd03l IN dd03l
+    GROUP BY _dd03l-tabname
+    ( _tabname ) ).`, ver: Version.v740sp08},
+
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

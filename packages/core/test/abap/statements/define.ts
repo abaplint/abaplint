@@ -11,6 +11,7 @@ const tests = [
   "DEFINE foo_bar.",
   "DEFINE %_foo-*bar*.",
   "define &xdsfds.",
+  "DEFINE /afl/log_init.",
 ];
 
 statementType(tests, "DEFINE", Statements.Define);
