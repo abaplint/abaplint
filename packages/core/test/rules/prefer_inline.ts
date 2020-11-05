@@ -194,6 +194,21 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("skip if data is casted", async () => {
+    const issues = await findIssues(`
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+
+  FORM bar.
+    DATA io_repo TYPE REF TO lcl_bar.
+    DATA lo_repo_online TYPE REF TO lcl_bar.
+    lo_repo_online ?= io_repo.
+  ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
 ////////////////////
 
   it.skip("Types should not change when inlining", async () => {
