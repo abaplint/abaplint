@@ -1,17 +1,21 @@
 import * as memfs from "memfs";
-import {Issue, IRegistry, applyEditList, IEdit} from "@abaplint/core";
+import {Issue, IRegistry, applyEditList, IEdit, IProgress} from "@abaplint/core";
 
-export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: memfs.IFs): readonly Issue[] {
+export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: memfs.IFs, bar?: IProgress): readonly Issue[] {
   let changed: string[] = [];
-  let iterations = 0;
+  let iteration = 1;
   let issues = inputIssues;
+  const MAX_ITERATIONS = 10;
 
-  while(iterations <= 10) {
+  bar?.set(MAX_ITERATIONS, "Apply Fixes");
+  while(iteration <= MAX_ITERATIONS) {
+    bar?.tick("Apply Fixes, iteration " + iteration + ", " + issues.length + " candidates");
+
     changed = applyList(issues, reg, fs);
     if (changed.length === 0) {
       break;
     }
-    iterations--;
+    iteration++;
 
     issues = reg.parse().findIssues();
   }

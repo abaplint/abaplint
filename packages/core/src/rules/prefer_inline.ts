@@ -32,12 +32,19 @@ export class PreferInline implements IRule {
     return {
       key: "prefer_inline",
       title: "Prefer Inline Declarations",
-      shortDescription: `Prefer inline to up-front declarations.
+      shortDescription: `Prefer inline to up-front declarations.`,
+      extendedInformation: `
 Activates if language version is v740sp02 or above.
+
 Variables must be local(METHOD or FORM).
+
 No generic or void typed variables.
-First position used must be a full/pure write.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-inline-to-up-front-declarations`,
+
+First position used must be a full/pure write.
+
+Move statment is not a cast(?=)
+
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-inline-to-up-front-declarations`,
       tags: [RuleTag.Styleguide, RuleTag.Upport, RuleTag.Experimental, RuleTag.Quickfix],
       badExample: `DATA foo TYPE i.\nfoo = 2.`,
       goodExample: `DATA(foo) = 2.`,
@@ -111,10 +118,12 @@ First position used must be a full/pure write.`,
       }
 
       // for now only allow some specific target statements, todo refactor
+      const concat = writeStatement?.concatTokens();
       if (!(statementType instanceof Statements.Move
           || statementType instanceof Statements.Catch
           || statementType instanceof Statements.ReadTable
-          || statementType instanceof Statements.Loop)) {
+          || statementType instanceof Statements.Loop)
+          || concat?.includes("?=")) {
         continue;
       }
 
@@ -182,6 +191,10 @@ First position used must be a full/pure write.`,
     if (firstRead === undefined) {
       return firstWrite;
     } else if (firstWrite === undefined) {
+      return undefined;
+    } else if (firstWrite.position.getStart().getRow() === firstRead.position.getStart().getRow()) {
+// if the same statement both reads and write the same variable
+// note that currently just the line number is compared, this is not correct, it should check if its the same statement
       return undefined;
     } else if (firstWrite.position.getStart().isBefore(firstRead.position.getStart())) {
       return firstWrite;

@@ -194,7 +194,7 @@ async function run() {
     let extra = "";
     if (argv["fix"] && reg) {
       // @ts-ignore
-      issues = applyFixes(issues, reg, fs);
+      issues = applyFixes(issues, reg, fs, progress);
       extra = "Fixes applied";
     } else if (argv["rename"] && reg) {
       if (issues.length === 0) {
