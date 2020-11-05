@@ -209,6 +209,16 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("skip if there is a read in the same statement", async () => {
+    const issues = await findIssues(`
+FORM bar.
+  DATA lv_prev TYPE i.
+  DATA lv_count TYPE i.
+  lv_prev = lv_prev + lv_count.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
 ////////////////////
 
   it.skip("Types should not change when inlining", async () => {

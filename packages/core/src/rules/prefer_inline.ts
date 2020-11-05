@@ -118,10 +118,12 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
       }
 
       // for now only allow some specific target statements, todo refactor
+      const concat = writeStatement?.concatTokens();
       if (!(statementType instanceof Statements.Move
           || statementType instanceof Statements.Catch
           || statementType instanceof Statements.ReadTable
-          || statementType instanceof Statements.Loop) || writeStatement?.concatTokens().includes("?=")) {
+          || statementType instanceof Statements.Loop)
+          || concat?.includes("?=")) {
         continue;
       }
 
@@ -189,6 +191,10 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
     if (firstRead === undefined) {
       return firstWrite;
     } else if (firstWrite === undefined) {
+      return undefined;
+    } else if (firstWrite.position.getStart().getRow() === firstRead.position.getStart().getRow()) {
+// if the same statement both reads and write the same variable
+// note that currently just the line number is compared, this is not correct, it should check if its the same statement
       return undefined;
     } else if (firstWrite.position.getStart().isBefore(firstRead.position.getStart())) {
       return firstWrite;
