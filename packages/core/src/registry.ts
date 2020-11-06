@@ -220,7 +220,7 @@ export class Registry implements IRegistry {
   }
 
   public isFileDependency(filename: string): boolean {
-    return this.dependencies[filename] === true;
+    return this.dependencies[filename.toUpperCase()] === true;
   }
 
   // assumption: the file is already in the registry
