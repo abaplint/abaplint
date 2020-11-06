@@ -15,6 +15,7 @@ export interface IRegistry {
   addDependencies(files: readonly IFile[]): IRegistry;
   addDependency(file: IFile): IRegistry;
   isDependency(obj: IObject): boolean;
+  isFileDependency(filename: string): boolean;
   findIssues(input?: IRunInput): readonly Issue[];
   findIssuesObject(iobj: IObject): readonly Issue[];
   inErrorNamespace(name: string): boolean;

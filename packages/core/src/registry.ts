@@ -219,6 +219,10 @@ export class Registry implements IRegistry {
     return this.dependencies[filename] === true;
   }
 
+  public isFileDependency(filename: string): boolean {
+    return this.dependencies[filename] === true;
+  }
+
   // assumption: the file is already in the registry
   public findObjectForFile(file: IFile): IObject | undefined {
     for (const obj of this.getObjects()) {
