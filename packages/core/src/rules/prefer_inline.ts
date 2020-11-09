@@ -167,13 +167,20 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
   private firstUseIsWrite(node: ISpaghettiScopeNode, v: IScopeVariable): IVariableReference | undefined {
 // assumption: variables are local, so only the current scope must be searched
 
+    for (const r of node.getData().references) {
+      if (r.referenceType === ReferenceType.TypeReference
+          && r.resolved?.getStart().equals(v.identifier.getStart()) === true) {
+        return undefined;
+      }
+    }
+
     let firstRead: IVariableReference | undefined = undefined;
     for (const r of node.getData().references) {
       if (r.referenceType !== ReferenceType.DataReadReference
           || r.resolved?.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
-      if (firstRead === undefined && r.resolved) {
+      if (r.resolved) {
         firstRead = {position: r.position, resolved: r.resolved};
         break;
       }
@@ -185,7 +192,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
           || w.resolved?.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
-      if (firstWrite === undefined && w.resolved) {
+      if (w.resolved) {
         firstWrite = {position: w.position, resolved: w.resolved};
         break;
       }

@@ -232,6 +232,15 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("Dont inline ls_files, there is a type reference", async () => {
+    const issues = await findIssues(`
+  FORM bar.
+    DATA: ls_files TYPE string,
+          ls_like LIKE ls_files.
+    ls_files = 'abc'.
+  ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
 
 ////////////////////
 
