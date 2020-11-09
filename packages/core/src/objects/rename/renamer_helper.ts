@@ -3,6 +3,7 @@ import {Identifier} from "../../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../../abap/5_syntax/syntax";
 import {ScopeType} from "../../abap/5_syntax/_scope_type";
 import {ISpaghettiScopeNode} from "../../abap/5_syntax/_spaghetti_scope";
+import {VirtualPosition} from "../../position";
 import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../_abap_object";
 import {AbstractObject} from "../_abstract_object";
@@ -93,7 +94,8 @@ export class RenamerHelper {
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       for (const r of node.getData().references) {
-        if (r.resolved?.equals(identifier)) {
+        if (r.resolved?.equals(identifier)
+            && !(r.position.getStart() instanceof VirtualPosition)) {
           ret.push(r.position);
         }
       }
