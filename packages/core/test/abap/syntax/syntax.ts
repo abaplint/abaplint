@@ -2936,6 +2936,20 @@ DATA(bar) = NEW lcl_clas( )->settings-field.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("LOOP AT REFERENCE INTO", () => {
+    const abap = `
+TYPES: BEGIN OF ty_tab,
+         text TYPE string,
+       END OF ty_tab.
+DATA lt_message TYPE STANDARD TABLE OF ty_tab.
+
+LOOP AT lt_message REFERENCE INTO DATA(lr_message).
+  WRITE lr_message->text.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

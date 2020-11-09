@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType, UnknownType} from "../../types/basic";
+import {VoidType, TableType, UnknownType, DataReference} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
@@ -36,6 +36,9 @@ export class Loop {
 
     if (sourceType instanceof TableType) {
       sourceType = sourceType.getRowType();
+      if (node.concatTokens().toUpperCase().includes(" REFERENCE INTO ")) {
+        sourceType = new DataReference(sourceType);
+      }
     }
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
