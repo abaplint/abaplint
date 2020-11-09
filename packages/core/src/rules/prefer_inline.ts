@@ -118,16 +118,19 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
       }
 
       // for now only allow some specific target statements, todo refactor
-      const concat = writeStatement?.concatTokens();
       if (!(statementType instanceof Statements.Move
           || statementType instanceof Statements.Catch
           || statementType instanceof Statements.ReadTable
           || statementType instanceof Statements.Loop)
-          || concat?.includes("?=")) {
+          || writeStatement?.concatTokens()?.includes("?=")) {
         continue;
       }
 
       const statement = EditHelper.findStatement(d.identifier.getToken(), file);
+      const concat = statement?.concatTokens().toUpperCase();
+      if (concat?.includes("BEGIN OF")) {
+        continue;
+      }
       let fix: IEdit | undefined = undefined;
       if (file && statement) {
         const fix1 = EditHelper.deleteStatement(file, statement);
