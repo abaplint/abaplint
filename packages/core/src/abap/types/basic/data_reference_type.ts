@@ -1,16 +1,11 @@
-import {TypedIdentifier} from "../_typed_identifier";
 import {AbstractType} from "./_abstract_type";
 
 export class DataReference extends AbstractType {
   private readonly type: AbstractType;
 
-  public constructor(type: AbstractType | TypedIdentifier, name?: string) {
+  public constructor(type: AbstractType, name?: string) {
     super(name);
-    if (type instanceof TypedIdentifier) {
-      this.type = type.getType();
-    } else {
-      this.type = type;
-    }
+    this.type = type;
   }
 
   public toText(level: number) {
