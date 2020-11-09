@@ -182,6 +182,9 @@ export class UnusedTypes implements IRule {
 
     const statement = EditHelper.findStatement(v.getToken(), file);
     if (statement) {
+      if (statement.concatTokens().toUpperCase().includes("BEGIN OF")) {
+        return undefined;
+      }
       return EditHelper.deleteStatement(file, statement);
     }
 

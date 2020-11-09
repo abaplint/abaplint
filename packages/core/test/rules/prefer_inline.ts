@@ -219,6 +219,29 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("skip if BEGIN OF", async () => {
+    const issues = await findIssues(`
+FORM bar.
+  DATA BEGIN OF ls_udmo_long_text.
+  DATA language TYPE dm40t-sprache.
+  DATA header   TYPE thead.
+  DATA content TYPE xstring.
+  DATA END OF ls_udmo_long_text.
+  ls_udmo_long_text = 'A'.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Dont inline ls_files, there is a type reference", async () => {
+    const issues = await findIssues(`
+  FORM bar.
+    DATA: ls_files TYPE string,
+          ls_like LIKE ls_files.
+    ls_files = 'abc'.
+  ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
 ////////////////////
 
   it.skip("Types should not change when inlining", async () => {

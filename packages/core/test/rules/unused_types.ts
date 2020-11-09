@@ -203,4 +203,14 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("BEGIN END, should not have quick fix", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_includes,
+             programm TYPE programm,
+           END OF ty_includes.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getFix()).to.equal(undefined);
+  });
+
 });
