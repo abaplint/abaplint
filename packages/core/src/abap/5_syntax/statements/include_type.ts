@@ -26,7 +26,7 @@ export class IncludeType {
     } else if (scope.getDDIC().inErrorNamespace(name) === false) {
       return new VoidType(name);
     } else {
-      throw new Error("IncludeType, type not found " + iname.concatTokens());
+      throw new Error("IncludeType, type not found \"" + iname.concatTokens() + "\"");
     }
 
     return components;
