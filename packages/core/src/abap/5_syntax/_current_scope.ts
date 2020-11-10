@@ -144,7 +144,8 @@ export class CurrentScope {
   }
 
   // todo, found + type can be removed from method output?
-  public existsObject(name: string | undefined): {found: boolean, id?: Identifier, type?: ReferenceType} {
+  public existsObject(name: string | undefined): {found: boolean, id?: Identifier, type?: ReferenceType,
+    ooType?: IReferenceExtras["ooType"]} {
     if (name === undefined) {
       return {found: false};
     }
@@ -156,22 +157,22 @@ export class CurrentScope {
 
     const findLocalClass = this.current?.findClassDefinition(name);
     if (findLocalClass) {
-      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference};
+      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
     }
 
     const globalClas = this.reg.getObject("CLAS", name);
     if (globalClas) {
-      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference};
+      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
     }
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
     if (findLocalInterface) {
-      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference};
+      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
     }
 
     const globalIntf = this.reg.getObject("INTF", name);
     if (globalIntf) {
-      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference};
+      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
     }
 
     return {found: false};

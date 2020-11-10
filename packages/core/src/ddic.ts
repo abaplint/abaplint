@@ -22,6 +22,9 @@ export class DDIC {
     if (def === undefined) {
       return false;
     }
+    if (def.name.toUpperCase() === "CX_ROOT") {
+      return true;
+    }
     let superClassName = def.superClassName;
     if (superClassName === undefined) {
       return false;

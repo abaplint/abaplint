@@ -5,7 +5,7 @@ export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: me
   let changed: string[] = [];
   let iteration = 1;
   let issues = inputIssues;
-  const MAX_ITERATIONS = 10;
+  const MAX_ITERATIONS = 20;
 
   bar?.set(MAX_ITERATIONS, "Apply Fixes");
   while(iteration <= MAX_ITERATIONS) {
