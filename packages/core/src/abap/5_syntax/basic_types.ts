@@ -11,6 +11,7 @@ import {Identifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
 import {TableType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
+import {ClassDefinition} from "../types";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -190,9 +191,10 @@ export class BasicTypes {
       const token = typeName.getFirstToken();
 
       if (chainText.includes("~")) {
-        const idef = this.scope.findInterfaceDefinition(chainText.split("~")[0]);
+        const name = chainText.split("~")[0];
+        const idef = this.scope.findInterfaceDefinition(name);
         if (idef) {
-          this.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename);
+          this.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooType: "INTF", ooName: name});
         }
       }
 
@@ -407,7 +409,10 @@ export class BasicTypes {
         } else if (obj === undefined) {
           return new Types.UnknownType("Could not resolve top " + className + ", resolveTypeChain");
         }
-        this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename);
+        const type = obj instanceof ClassDefinition ? "CLAS" : "INTF";
+
+        this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename,
+                                {ooType: type, ooName: className});
 
         const byName = new ObjectOriented(this.scope).searchTypeName(obj, subs[0]);
         foundType = byName?.getType();
@@ -503,7 +508,8 @@ export class BasicTypes {
       }
       const search = this.scope.existsObject(name);
       if (search.found === true && search.id) {
-        this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename);
+        this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename,
+                                {ooType: search.ooType, ooName: name});
         return new Types.ObjectReferenceType(search.id);
       }
     }
