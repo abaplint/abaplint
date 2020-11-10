@@ -50,6 +50,7 @@ import {ImplementMethodsConf} from "../src/rules/implement_methods";
 import {InStatementIndentationConf} from "../src/rules/in_statement_indentation";
 import {IndentationConf} from "../src/rules/indentation";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
+import {IntfReferencingClasConf} from "../src/rules/intf_referencing_clas";
 import {KeepSingleParameterCallsOnOneLineConf} from "../src/rules/keep_single_parameter_on_one_line";
 import {KeywordCaseConf} from "../src/rules/keyword_case";
 import {LineBreakMultipleParametersConf} from "../src/rules/line_break_multiple_parameters";
@@ -173,6 +174,7 @@ export interface IConfig {
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_break_multiple_parameters"?: LineBreakMultipleParametersConf | boolean,
