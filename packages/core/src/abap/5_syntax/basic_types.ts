@@ -441,7 +441,9 @@ export class BasicTypes {
 
     subs.shift();
     while (subs.length > 0) {
-      if (!(foundType instanceof Types.StructureType)) {
+      if (foundType instanceof Types.UnknownType) {
+        return foundType;
+      } else if (!(foundType instanceof Types.StructureType)) {
         return new Types.UnknownType("Not a structured type");
       }
       foundType = foundType.getComponentByName(subs[0]);
