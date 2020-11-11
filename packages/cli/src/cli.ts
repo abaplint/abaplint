@@ -61,9 +61,13 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
     f = filename;
   }
 
+  // evil hack to get JSON5 working
+  // @ts-ignore
+  JSON5.parse = JSON5.default.parse;
+
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
-  const parsed = JSON.parse(json);
+  const parsed = JSON5.parse(json);
   if (Object.keys(Version).some(v => v === parsed.syntax.version) === false) {
     throw "Error: Unknown version in abaplint.json";
   }
