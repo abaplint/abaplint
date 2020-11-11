@@ -5,7 +5,7 @@ import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
 import * as JSON5 from "json5";
-import {Issue, IProgress, IFile, Position, Config, Registry, MemoryFile, IRegistry} from "@abaplint/core";
+import {Issue, IProgress, IFile, Position, Config, Registry, Version, MemoryFile, IRegistry} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
@@ -61,8 +61,17 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
     f = filename;
   }
 
+  // evil hack to get JSON5 working
+  // @ts-ignore
+  JSON5.parse = JSON5.default.parse;
+
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
+  const parsed = JSON5.parse(json);
+  if (Object.keys(Version).some(v => v === parsed.syntax.version) === false) {
+    throw "Error: Unknown version in abaplint.json";
+  }
+
   return {
     config: new Config(json),
     base: path.dirname(f) === process.cwd() ? "." : path.dirname(f),
