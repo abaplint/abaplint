@@ -224,7 +224,7 @@ ENDFORM.`;
 
     FORM bar.
       DATA bar TYPE tab.
-bar = lcl_class=>m( ).
+      bar = lcl_class=>m( ).
     ENDFORM.`;
 
     testFix(abap, expected);
@@ -261,7 +261,7 @@ bar = lcl_class=>m( ).
 
     FORM bar.
       DATA bar TYPE lcl_class=>tab.
-bar = lcl_class=>m( ).
+      bar = lcl_class=>m( ).
     ENDFORM.`;
 
     testFix(abap, expected);
@@ -296,7 +296,7 @@ bar = lcl_class=>m( ).
 
     FORM bar.
       DATA foobar TYPE REF TO lcl_class.
-foobar = lcl_class=>m( ).
+      foobar = lcl_class=>m( ).
     ENDFORM.`;
 
     testFix(abap, expected);
@@ -312,7 +312,7 @@ foobar = lcl_class=>m( ).
     DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     APPEND 2 TO tab.
     DATA row TYPE i.
-READ TABLE tab INDEX 1 INTO row.`;
+    READ TABLE tab INDEX 1 INTO row.`;
 
     testFix(abap, expected);
   });
@@ -359,7 +359,7 @@ foo = temp1.
     const expected = `
   DATA lv_text TYPE string.
   DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
+  SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
 
     testFix(abap, expected);
   });
@@ -462,7 +462,7 @@ CLASS lcl_clas IMPLEMENTATION.
 ENDCLASS.
 FORM bar.
   DATA struc TYPE lcl_clas=>ty_structure.
-struc = lcl_clas=>run( ).
+  struc = lcl_clas=>run( ).
 ENDFORM.`;
 
     testFix(abap, expected);
