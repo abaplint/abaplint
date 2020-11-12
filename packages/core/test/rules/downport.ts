@@ -93,7 +93,7 @@ FORM bar.
   DATA temp1 TYPE string.
   DATA temp2 TYPE REF TO lcl_bar.
   CREATE OBJECT temp2 TYPE lcl_bar.
-temp1 = to_lower( temp2->m( ) ).
+  temp1 = to_lower( temp2->m( ) ).
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -423,7 +423,7 @@ FORM bar.
   DATA lo_module TYPE REF TO lcl_clas.
   DATA temp1 TYPE REF TO lcl_clas.
   CREATE OBJECT temp1 TYPE lcl_clas.
-lo_module = temp1->run( ).
+  lo_module = temp1->run( ).
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -524,8 +524,8 @@ FORM bar.
   TYPES ty_tab TYPE STANDARD TABLE OF ty_stru WITH DEFAULT KEY.
   DATA tab TYPE ty_tab.
   DATA temp1 TYPE ty_stru.
-temp1-field = 1.
-APPEND temp1 TO tab.
+  temp1-field = 1.
+  APPEND temp1 TO tab.
 ENDFORM.`;
 
     testFix(abap, expected);
