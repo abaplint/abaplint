@@ -230,7 +230,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
     const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
 
-    const code = `DATA(${uniqueName}) = ${s.concatTokens()}.\n`;
+    const code = `DATA(${uniqueName}) = ${s.concatTokens()}.\n` +
+      " ".repeat(node.getFirstToken().getStart().getCol() - 1);
     const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
     const fix2 = EditHelper.replaceRange(lowFile, s.getFirstToken().getStart(), s.getLastToken().getEnd(), uniqueName);
     const fix = EditHelper.merge(fix2, fix1);
@@ -328,7 +329,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
 
-      const code = `FIELD-SYMBOLS ${name} TYPE ${type}.\n`;
+      const code = `FIELD-SYMBOLS ${name} TYPE ${type}.\n` +
+        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), name);
       const fix = EditHelper.merge(fix2, fix1);
@@ -384,8 +386,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const type = this.findType(i, lowFile, highSyntax);
 
-      const abap = `DATA ${uniqueName} TYPE ${type}.\n${uniqueName} = ${body}.`;
-      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap + "\n");
+      const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
+        " ".repeat(node.getFirstToken().getStart().getCol() - 1) +
+        `${uniqueName} = ${body}.\n` +
+        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
@@ -403,8 +408,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       const type = this.findType(i, lowFile, highSyntax);
       const body = i.findDirectExpression(Expressions.Source)?.concatTokens();
 
-      const abap = `DATA ${uniqueName} TYPE REF TO ${type}.\n${uniqueName} ?= ${body}.`;
-      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap + "\n");
+      const abap = `DATA ${uniqueName} TYPE REF TO ${type}.\n` +
+        " ".repeat(node.getFirstToken().getStart().getCol() - 1) +
+        `${uniqueName} ?= ${body}.\n` +
+        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
@@ -461,8 +469,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
       const type = this.findType(found, lowFile, highSyntax);
 
-      const data = `DATA ${name} TYPE REF TO ${type}.`;
-      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), data + "\n" + abap + "\n");
+      const data = `DATA ${name} TYPE REF TO ${type}.\n` +
+        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), data + abap + "\n");
       const fix2 = EditHelper.replaceRange(lowFile, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
       fix = EditHelper.merge(fix2, fix1);
     }
