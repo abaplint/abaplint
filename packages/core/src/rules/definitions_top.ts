@@ -132,7 +132,8 @@ export class DefinitionsTop extends ABAPRule {
     const concat = statement.concatTokens();
 
     const fix1 = EditHelper.deleteStatement(file, statement);
-    const fix2 = EditHelper.insertAt(file, start.getEnd(), "\n" + concat);
+    const indentation = " ".repeat(statement.getFirstToken().getCol() - 1);
+    const fix2 = EditHelper.insertAt(file, start.getEnd(), "\n" + indentation + concat);
 
     return EditHelper.merge(fix1, fix2);
   }

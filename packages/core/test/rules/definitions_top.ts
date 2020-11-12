@@ -154,7 +154,7 @@ ENDCLASS.`;
 ENDCLASS.
 CLASS lcl_bar IMPLEMENTATION.
   METHOD bar.
-DATA foo TYPE c.
+    DATA foo TYPE c.
     WRITE 2.
 ` + "    " + `
   ENDMETHOD.

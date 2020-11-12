@@ -92,8 +92,8 @@ ENDCLASS.
 FORM bar.
   DATA temp1 TYPE string.
   DATA temp2 TYPE REF TO lcl_bar.
-CREATE OBJECT temp2 TYPE lcl_bar.
-temp1 = to_lower( temp2->m( ) ).
+  CREATE OBJECT temp2 TYPE lcl_bar.
+  temp1 = to_lower( temp2->m( ) ).
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -224,7 +224,7 @@ ENDFORM.`;
 
     FORM bar.
       DATA bar TYPE tab.
-bar = lcl_class=>m( ).
+      bar = lcl_class=>m( ).
     ENDFORM.`;
 
     testFix(abap, expected);
@@ -261,7 +261,7 @@ bar = lcl_class=>m( ).
 
     FORM bar.
       DATA bar TYPE lcl_class=>tab.
-bar = lcl_class=>m( ).
+      bar = lcl_class=>m( ).
     ENDFORM.`;
 
     testFix(abap, expected);
@@ -296,7 +296,7 @@ bar = lcl_class=>m( ).
 
     FORM bar.
       DATA foobar TYPE REF TO lcl_class.
-foobar = lcl_class=>m( ).
+      foobar = lcl_class=>m( ).
     ENDFORM.`;
 
     testFix(abap, expected);
@@ -312,7 +312,7 @@ foobar = lcl_class=>m( ).
     DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     APPEND 2 TO tab.
     DATA row TYPE i.
-READ TABLE tab INDEX 1 INTO row.`;
+    READ TABLE tab INDEX 1 INTO row.`;
 
     testFix(abap, expected);
   });
@@ -344,8 +344,8 @@ READ TABLE tab INDEX 1 INTO row.`;
       DATA obj TYPE REF TO object.
       DATA foo TYPE REF TO object.
       DATA temp1 TYPE REF TO lcl_class.
-temp1 ?= obj.
-foo = temp1.
+      temp1 ?= obj.
+      foo = temp1.
     ENDFORM.`;
 
     testFix(abap, expected);
@@ -359,7 +359,7 @@ foo = temp1.
     const expected = `
   DATA lv_text TYPE string.
   DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
+  SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
 
     testFix(abap, expected);
   });
@@ -373,7 +373,7 @@ SPLIT lv_text AT |bar| INTO TABLE lt_rows.`;
     const expected = `
   DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   FIELD-SYMBOLS <lv_row> TYPE string.
-LOOP AT lt_rows ASSIGNING <lv_row>.
+  LOOP AT lt_rows ASSIGNING <lv_row>.
   ENDLOOP.`;
 
     testFix(abap, expected);
@@ -387,8 +387,8 @@ LOOP AT lt_rows ASSIGNING <lv_row>.
     const expected = `
     DATA len TYPE i.
     DATA temp1 TYPE xstring.
-temp1 = |AA|.
-len = xstrlen( temp1 ).`;
+    temp1 = |AA|.
+    len = xstrlen( temp1 ).`;
 
     testFix(abap, expected);
   });
@@ -422,8 +422,8 @@ ENDCLASS.
 FORM bar.
   DATA lo_module TYPE REF TO lcl_clas.
   DATA temp1 TYPE REF TO lcl_clas.
-CREATE OBJECT temp1 TYPE lcl_clas.
-lo_module = temp1->run( ).
+  CREATE OBJECT temp1 TYPE lcl_clas.
+  lo_module = temp1->run( ).
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -462,7 +462,7 @@ CLASS lcl_clas IMPLEMENTATION.
 ENDCLASS.
 FORM bar.
   DATA struc TYPE lcl_clas=>ty_structure.
-struc = lcl_clas=>run( ).
+  struc = lcl_clas=>run( ).
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -498,7 +498,7 @@ ENDCLASS.
 FORM bar.
   DATA lv_int TYPE i.
   DATA(temp1) = lcl_clas=>run( ).
-LOOP AT temp1 INTO lv_int.
+  LOOP AT temp1 INTO lv_int.
   ENDLOOP.
 ENDFORM.`;
 
@@ -524,8 +524,8 @@ FORM bar.
   TYPES ty_tab TYPE STANDARD TABLE OF ty_stru WITH DEFAULT KEY.
   DATA tab TYPE ty_tab.
   DATA temp1 TYPE ty_stru.
-temp1-field = 1.
-APPEND temp1 TO tab.
+  temp1-field = 1.
+  APPEND temp1 TO tab.
 ENDFORM.`;
 
     testFix(abap, expected);
