@@ -34,6 +34,7 @@ const tests = [
   "APPEND CORRESPONDING #( BASE ( VALUE #( account = lv_account ) ) ls_ms04 ) TO lt_foo.",
   "APPEND LINES OF tab TO index TO target.",
   "APPEND LINES OF tab FROM index TO target.",
+  `APPEND VALUE #( %tky = travel-%tky ) TO reported-travel.`,
 ];
 
 statementType(tests, "APPEND", Statements.Append);
