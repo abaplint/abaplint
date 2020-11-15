@@ -1,6 +1,7 @@
-import {str, seq, per, alt, Expression} from "../combi";
+import {str, seq, per, alt, ver, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class StringTemplateFormatting extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -67,14 +68,15 @@ export class StringTemplateFormatting extends Expression {
     const number = seq(str("NUMBER"), str("="), numberOptions);
     const sign = seq(str("SIGN"), str("="), signOptions);
     const decimals = seq(str("DECIMALS"), str("="), new Source());
-    const alpha = seq(str("ALPHA"), str("="), alphaOptions);
+    const alpha = ver(Version.v740sp02, seq(str("ALPHA"), str("="), alphaOptions));
+    const xsd = ver(Version.v740sp02, seq(str("XSD"), str("="), zeroXSDOptions));
 
     const formatting = alt(seq(str("TIME"), str("="), dateTimeOptions),
                            seq(str("DATE"), str("="), dateTimeOptions),
                            seq(str("CASE"), str("="), caseOptions),
                            seq(str("EXPONENT"), new Source()),
                            seq(str("ZERO"), str("="), zeroXSDOptions),
-                           seq(str("XSD"), str("="), zeroXSDOptions),
+                           xsd,
                            seq(str("STYLE"), str("="), styleOptions),
                            seq(str("CURRENCY"), str("="), new Source()),
                            seq(str("COUNTRY"), str("="), new Source()),
