@@ -82,6 +82,7 @@ export * from "./hide";
 export * from "./get_locale";
 export * from "./set_locale";
 export * from "./commit";
+export * from "./commit_entities";
 export * from "./summary";
 export * from "./on_change";
 export * from "./at_user_command";
