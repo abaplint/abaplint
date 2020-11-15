@@ -2950,6 +2950,40 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("READ TABLE any, expect error", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+    PUBLIC SECTION.
+      METHODS method IMPORTING act TYPE any.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+    METHOD method.
+      FIELD-SYMBOLS <row1> TYPE any.
+      READ TABLE act INDEX 1 ASSIGNING <row1>.
+    ENDMETHOD.
+  ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("READ INDEX TABLE INDEX, ok", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method IMPORTING act TYPE any.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+    FIELD-SYMBOLS <tab> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <row1> TYPE any.
+    ASSIGN act TO <tab>.
+    READ TABLE <tab> INDEX 1 ASSIGNING <row1>.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
