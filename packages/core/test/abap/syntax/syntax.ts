@@ -2984,6 +2984,21 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("DESCRIBE, variables not defined, expect error", () => {
+    const abap = `DESCRIBE FIELD act TYPE type1.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("DESCRIBE, ok", () => {
+    const abap = `
+    DATA act TYPE i.
+    DATA type1 TYPE c LENGTH 1.
+    DESCRIBE FIELD act TYPE type1.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
