@@ -256,7 +256,7 @@ export class ObjectOriented {
   }
 
   public findMethod(def: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
-    for (const method of def.getMethodDefinitions()!.getAll()) {
+    for (const method of def.getMethodDefinitions().getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         if (method.isRedefinition()) {
           return this.findMethodInSuper(def, methodName);
