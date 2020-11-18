@@ -30,6 +30,10 @@ export class ObjectOriented {
         const name = i.name + "~" + t.getName();
         this.scope.addTypeNamed(name, t);
       }
+
+      this.scope.addListPrefix(idef.getAttributes().getConstants(), i.name + "~");
+      this.scope.addListPrefix(idef.getAttributes().getStatic(), i.name + "~");
+      this.scope.addListPrefix(idef.getAttributes().getInstance(), i.name + "~");
     }
   }
 
@@ -256,7 +260,7 @@ export class ObjectOriented {
   }
 
   public findMethod(def: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
-    for (const method of def.getMethodDefinitions()!.getAll()) {
+    for (const method of def.getMethodDefinitions().getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         if (method.isRedefinition()) {
           return this.findMethodInSuper(def, methodName);

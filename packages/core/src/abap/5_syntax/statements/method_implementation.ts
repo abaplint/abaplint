@@ -28,19 +28,14 @@ export class MethodImplementation {
     scope.addList(methodDefinition.getParameters().getAll());
 
     for (const i of helper.findInterfaces(classDefinition)) {
+      if (methodName.toUpperCase().startsWith(i.name.toUpperCase() + "~") === false) {
+        continue;
+      }
       const idef = scope.findInterfaceDefinition(i.name);
       if (idef === undefined) {
         continue;
       }
-
-      scope.addListPrefix(idef.getAttributes()!.getConstants(), i.name + "~");
-      scope.addListPrefix(idef.getAttributes()!.getStatic(), i.name + "~");
-      // todo, only add instance variables if its an instance method
-      scope.addListPrefix(idef.getAttributes()!.getInstance(), i.name + "~");
-
-      if (methodName.toUpperCase().startsWith(idef.getName().toUpperCase() + "~")) {
-        scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, filename);
-      }
+      scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, filename);
     }
   }
 }
