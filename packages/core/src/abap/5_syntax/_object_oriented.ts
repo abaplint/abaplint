@@ -30,6 +30,10 @@ export class ObjectOriented {
         const name = i.name + "~" + t.getName();
         this.scope.addTypeNamed(name, t);
       }
+
+      this.scope.addListPrefix(idef.getAttributes().getConstants(), i.name + "~");
+      this.scope.addListPrefix(idef.getAttributes().getStatic(), i.name + "~");
+      this.scope.addListPrefix(idef.getAttributes().getInstance(), i.name + "~");
     }
   }
 
