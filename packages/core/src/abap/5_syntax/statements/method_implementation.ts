@@ -19,7 +19,7 @@ export class MethodImplementation {
       throw new Error("Class definition for \"" + className + "\" not found");
     }
 
-    const methodDefinition = helper.searchMethodName(classDefinition, methodName);
+    const {method: methodDefinition} = helper.searchMethodName(classDefinition, methodName);
     if (methodDefinition === undefined) {
       scope.pop();
       throw new Error("Method definition \"" + methodName + "\" not found");

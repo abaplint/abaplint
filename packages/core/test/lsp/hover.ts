@@ -725,4 +725,30 @@ ENDINTERFACE.`;
     expect(hover?.value).to.contain("zif_wasm_value=>ty_values");
   });
 
+  it("hover, interface method", () => {
+    const abap = `INTERFACE zif_test.
+  METHODS moo.
+ENDINTERFACE.
+
+CLASS zcl_super DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_test.
+ENDCLASS.
+CLASS zcl_super IMPLEMENTATION.
+  METHOD zif_test~moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA bar TYPE REF TO zcl_super.
+  CREATE OBJECT bar.
+  bar->zif_test~moo( ).`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 16, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`MethodReference`);
+    expect(hover?.value).to.contain(`{"ooName":"zif_test","ooType":"INTF"}`);
+  });
+
 });

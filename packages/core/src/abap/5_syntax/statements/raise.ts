@@ -8,6 +8,13 @@ export class Raise {
 
 // todo
 
+    const classTok = node.findDirectExpression(Expressions.ClassName)?.getFirstToken();
+    const classNam = classTok?.getStr();
+    const found = scope.existsObject(classNam);
+    if (found.found === true && found.id) {
+      scope.addReference(classTok, found.id, found.type, filename);
+    }
+
     for (const s of node.findAllExpressions(Expressions.SimpleSource)) {
       new Source().runSyntax(s, scope, filename);
     }

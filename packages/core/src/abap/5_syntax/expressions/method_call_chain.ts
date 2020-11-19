@@ -47,7 +47,8 @@ export class MethodCallChain {
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
         const methodName = methodToken?.getStr();
         const def = scope.findObjectDefinition(className);
-        let method = helper.searchMethodName(def, methodName);
+        // eslint-disable-next-line prefer-const
+        let {method, def: foundDef} = helper.searchMethodName(def, methodName);
         if (method === undefined) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
           if (method) {
@@ -55,8 +56,8 @@ export class MethodCallChain {
           }
         } else {
           const extra: IReferenceExtras = {
-            ooName: className,
-            ooType: def instanceof ClassDefinition ? "CLAS" : "INTF"};
+            ooName: foundDef?.getName(),
+            ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
           scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, extra);
         }
         if (methodName?.includes("~")) {
