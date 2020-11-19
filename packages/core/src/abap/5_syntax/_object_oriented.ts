@@ -50,7 +50,7 @@ export class ObjectOriented {
     }
   }
 
-  public findMethodInInterface(interfaceName: string, methodName: string): IMethodDefinition | undefined {
+  private findMethodInInterface(interfaceName: string, methodName: string): IMethodDefinition | undefined {
     const idef = this.scope.findInterfaceDefinition(interfaceName);
     if (idef) {
       const methods = idef.getMethodDefinitions().getAll();
@@ -64,7 +64,7 @@ export class ObjectOriented {
     return undefined;
   }
 
-  public findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition): IMethodDefinition | undefined {
+  private findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition): IMethodDefinition | undefined {
     for (const a of def.getAliases().getAll()) {
       if (a.getName().toUpperCase() === methodName.toUpperCase()) {
         const comp = a.getComponent();
@@ -230,13 +230,16 @@ export class ObjectOriented {
   // search in via super class, interfaces and aliases
   public searchMethodName(
     def: IClassDefinition | IInterfaceDefinition | undefined,
-    name: string | undefined): IMethodDefinition | undefined {
+    name: string | undefined): {method: IMethodDefinition | undefined, def: IClassDefinition | IInterfaceDefinition | undefined} {
 
     if (def === undefined || name === undefined) {
-      return undefined;
+      return {method: undefined, def: undefined};
     }
 
     let methodDefinition = this.findMethod(def, name);
+    if (methodDefinition) {
+      return {method: methodDefinition, def};
+    }
 
     let interfaceName: string | undefined = undefined;
     if (name.includes("~")) {
@@ -247,16 +250,20 @@ export class ObjectOriented {
     if (methodDefinition === undefined && interfaceName) {
       name = name.split("~")[1];
       methodDefinition = this.findMethodInInterface(interfaceName, name);
+      if (methodDefinition) {
+        const idef = this.scope.findInterfaceDefinition(interfaceName);
+        return {method: methodDefinition, def: idef};
+      }
     } else if (methodDefinition === undefined) {
       methodDefinition = this.findMethodViaAlias(name, def);
     }
 
     const sup = def.getSuperClass();
     if (methodDefinition === undefined && sup) {
-      methodDefinition = this.searchMethodName(this.findSuperDefinition(sup), name);
+      return this.searchMethodName(this.findSuperDefinition(sup), name);
     }
 
-    return methodDefinition;
+    return {method: methodDefinition, def: def};
   }
 
   public findMethod(def: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
