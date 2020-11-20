@@ -751,4 +751,32 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain(`{"ooName":"zif_test","ooType":"INTF"}`);
   });
 
+  it("hover, aliased method reference from interface", () => {
+    const abap = `INTERFACE zif_test.
+  METHODS moo.
+ENDINTERFACE.
+
+CLASS zcl_super DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_test.
+    ALIASES moo FOR zif_test~moo.
+ENDCLASS.
+CLASS zcl_super IMPLEMENTATION.
+  METHOD zif_test~moo.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA bar TYPE REF TO zcl_super.
+  CREATE OBJECT bar.
+  bar->moo( ).
+ENDFORM.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 17, 8));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`MethodReference`);
+    expect(hover?.value).to.contain(`{"ooName":"zif_test","ooType":"INTF"}`);
+  });
+
 });
