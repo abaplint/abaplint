@@ -50,13 +50,15 @@ export class ObjectOriented {
     }
   }
 
-  private findMethodInInterface(interfaceName: string, methodName: string): IMethodDefinition | undefined {
+  private findMethodInInterface(interfaceName: string, methodName: string):
+  {method: IMethodDefinition, def: IInterfaceDefinition} | undefined {
+
     const idef = this.scope.findInterfaceDefinition(interfaceName);
     if (idef) {
       const methods = idef.getMethodDefinitions().getAll();
       for (const method of methods) {
         if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-          return method;
+          return {method, def: idef};
         }
       }
       return this.findMethodViaAlias(methodName, idef);
@@ -64,7 +66,9 @@ export class ObjectOriented {
     return undefined;
   }
 
-  private findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition): IMethodDefinition | undefined {
+  private findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition):
+  {method: IMethodDefinition, def: IInterfaceDefinition} | undefined {
+
     for (const a of def.getAliases().getAll()) {
       if (a.getName().toUpperCase() === methodName.toUpperCase()) {
         const comp = a.getComponent();
@@ -236,7 +240,7 @@ export class ObjectOriented {
       return {method: undefined, def: undefined};
     }
 
-    let methodDefinition = this.findMethod(def, name);
+    const methodDefinition = this.findMethod(def, name);
     if (methodDefinition) {
       return {method: methodDefinition, def};
     }
@@ -249,13 +253,15 @@ export class ObjectOriented {
 // todo, this is not completely correct? hmm, why? visibility?
     if (methodDefinition === undefined && interfaceName) {
       name = name.split("~")[1];
-      methodDefinition = this.findMethodInInterface(interfaceName, name);
-      if (methodDefinition) {
-        const idef = this.scope.findInterfaceDefinition(interfaceName);
-        return {method: methodDefinition, def: idef};
+      const found = this.findMethodInInterface(interfaceName, name);
+      if (found) {
+        return found;
       }
     } else if (methodDefinition === undefined) {
-      methodDefinition = this.findMethodViaAlias(name, def);
+      const found = this.findMethodViaAlias(name, def);
+      if (found) {
+        return found;
+      }
     }
 
     const sup = def.getSuperClass();
@@ -263,7 +269,7 @@ export class ObjectOriented {
       return this.searchMethodName(this.findSuperDefinition(sup), name);
     }
 
-    return {method: methodDefinition, def: def};
+    return {method: undefined, def: undefined};
   }
 
   public findMethod(def: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
