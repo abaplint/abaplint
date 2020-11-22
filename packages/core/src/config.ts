@@ -32,6 +32,7 @@ export class Config implements IConfiguration {
         skipGeneratedPersistentClasses: true,
         skipGeneratedFunctionGroups: true,
         useApackDependencies: false,
+        skipIncludesWithoutMain: false,
       },
       dependencies: [{
         url: "https://github.com/abaplint/deps",
@@ -90,6 +91,9 @@ export class Config implements IConfiguration {
     }
     if (this.config.syntax.globalConstants === undefined) {
       this.config.syntax.globalConstants = [];
+    }
+    if (this.config.global.skipIncludesWithoutMain === undefined) {
+      this.config.global.skipIncludesWithoutMain = false;
     }
     this.checkVersion();
   }
