@@ -2444,6 +2444,10 @@
         "skipGeneratedPersistentClasses": {
           "type": "boolean"
         },
+        "skipIncludesWithoutMain": {
+          "description": "Do not report any issues for includes without main programs",
+          "type": "boolean"
+        },
         "useApackDependencies": {
           "description": "Clone and parse dependencies specified in .apack-manifest.xml if it is present",
           "type": "boolean"

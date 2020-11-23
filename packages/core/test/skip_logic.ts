@@ -2,6 +2,7 @@ import {Registry} from "../src/registry";
 import {expect} from "chai";
 import {SkipLogic} from "../src/skip_logic";
 import {MemoryFile} from "../src/files/memory_file";
+import {Config} from "../src/config";
 
 describe("Skip logic", () => {
 
@@ -94,5 +95,49 @@ ENDINTERFACE.`;
     await reg.parseAsync();
     expect(reg.getObjectCount()).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
+  });
+
+  it("skipIncludesWithoutMain, skip", async () => {
+    const reg = new Registry();
+    const config = reg.getConfig().get();
+    config.global.skipIncludesWithoutMain = true;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
+    const abap = `write bar.`;
+    reg.addFile(new MemoryFile("zprog.prog.abap", abap));
+
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>ZPROG</NAME>
+        <SUBC>I</SUBC>
+        <RLOAD>E</RLOAD>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    reg.addFile(new MemoryFile("zprog.prog.xml", xml));
+
+    await reg.parseAsync();
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
+  });
+
+  it("skipIncludesWithoutMain, not an include, do not skip", async () => {
+    const reg = new Registry();
+    const config = reg.getConfig().get();
+    config.global.skipIncludesWithoutMain = true;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
+    const abap = `write bar.`;
+    reg.addFile(new MemoryFile("zprog.prog.abap", abap));
+
+    await reg.parseAsync();
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(false);
   });
 });

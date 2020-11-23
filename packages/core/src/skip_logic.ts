@@ -1,6 +1,7 @@
 import {IObject} from "./objects/_iobject";
-import {Class, ClassCategory, FunctionGroup, MaintenanceAndTransportObject, Interface} from "./objects";
+import {Class, ClassCategory, FunctionGroup, MaintenanceAndTransportObject, Interface, Program} from "./objects";
 import {IRegistry} from "./_iregistry";
+import {IncludeGraph} from "./utils/include_graph";
 
 export class SkipLogic {
   private readonly reg: IRegistry;
@@ -13,16 +14,25 @@ export class SkipLogic {
   }
 
   public skip(obj: IObject): boolean {
+    const global = this.reg.getConfig().getGlobal();
 
-    if (this.reg.getConfig().getGlobal().skipGeneratedGatewayClasses
+    if (global.skipGeneratedGatewayClasses
         && obj instanceof Class
         && this.isGeneratedGatewayClass(obj)) {
       return true;
-    } else if (this.reg.getConfig().getGlobal().skipGeneratedPersistentClasses
+    } else if (global.skipIncludesWithoutMain === true
+        && obj instanceof Program
+        && obj.isInclude() === true) {
+      const ig = new IncludeGraph(this.reg);
+      const file = obj.getMainABAPFile();
+      if (file && ig.listMainForInclude(file.getFilename()).length === 0) {
+        return true;
+      }
+    } else if (global.skipGeneratedPersistentClasses
         && obj instanceof Class
         && this.isGeneratedPersistentClass(obj)) {
       return true;
-    } else if (this.reg.getConfig().getGlobal().skipGeneratedFunctionGroups
+    } else if (global.skipGeneratedFunctionGroups
         && obj instanceof FunctionGroup
         && this.isGeneratedFunctionGroup(obj)) {
       return true;
@@ -36,6 +46,8 @@ export class SkipLogic {
 
     return false;
   }
+
+///////////////////////////
 
   private isGeneratedBOPFInterface(obj: Interface): boolean {
     const implementing = obj.getDefinition()?.getImplementing();
