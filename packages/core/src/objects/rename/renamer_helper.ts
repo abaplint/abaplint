@@ -84,7 +84,7 @@ export class RenamerHelper {
         r.getStart().getRow() - 1,
         r.getStart().getCol() - 1 + oldName.length);
       changes.push(
-        TextDocumentEdit.create({uri: r.getFilename(), version: 1}, [TextEdit.replace(range, newName)]));
+        TextDocumentEdit.create({uri: r.getFilename(), version: 1}, [TextEdit.replace(range, newName.toLowerCase())]));
     }
     return changes;
   }
