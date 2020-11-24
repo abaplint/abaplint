@@ -152,10 +152,11 @@ export class KeywordCase extends ABAPRule {
       }
 
       const result = this.traverse(statement, statement.get());
-      if (result.token) {
-        const {description, fix} = this.build(result.token, result.keyword, file);
+      if (result.length > 0) {
+        const first = result[0];
+        const {description, fix} = this.build(first.token, first.keyword, file);
         const issue = Issue.atToken(
-          file, result.token,
+          file, first.token,
           description,
           this.getMetadata().key,
           this.conf.severity,
@@ -189,7 +190,9 @@ export class KeywordCase extends ABAPRule {
     return {description, fix};
   }
 
-  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token | undefined, keyword: boolean;} {
+  /** returns a list of tokens which violates the keyword_case rule */
+  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token, keyword: boolean}[] {
+    let ret: {token: Token, keyword: boolean}[] = [];
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
@@ -198,7 +201,7 @@ export class KeywordCase extends ABAPRule {
           continue;
         }
         const str = child.get().getStr();
-        // todo, this is a hack, the parser should recongize OTHERS as a keyword
+        // todo, this is a hack, the parser should recongize OTHERS/TEXT as a keyword
         if (str.toUpperCase() === "OTHERS" || str.toUpperCase() === "TEXT") {
           continue;
         }
@@ -218,24 +221,21 @@ export class KeywordCase extends ABAPRule {
           continue;
         }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
-          return {token: child.get(), keyword: false};
+          ret.push({token: child.get(), keyword: false});
         }
       } else if (child instanceof TokenNode) {
         const str = child.get().getStr();
         if (this.violatesRule(str) && child.get() instanceof Identifier) {
-          return {token: child.get(), keyword: true};
+          ret.push({token: child.get(), keyword: true});
         }
       } else if (child instanceof ExpressionNode) {
-        const tok = this.traverse(child, parent);
-        if (tok.token !== undefined) {
-          return tok;
-        }
+        ret = ret.concat(this.traverse(child, parent));
       } else {
-        throw new Error("traverseStatement, unexpected node type");
+        throw new Error("keyword_case, traverseStatement, unexpected node type");
       }
     }
 
-    return {token: undefined, keyword: false};
+    return ret;
   }
 
   public violatesRule(keyword: string): boolean {
