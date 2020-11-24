@@ -31,9 +31,8 @@ export class MethodImplementedTwice extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    const names: {[index: string]: boolean} = {};
-
     for (const classDef of file.getInfo().listClassImplementations()) {
+      const names: {[index: string]: boolean} = {};
       for (const m of classDef.methods) {
         const name = m.getName();
         if (names[name] === undefined) {

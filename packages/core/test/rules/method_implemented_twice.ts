@@ -43,4 +43,23 @@ describe("Rule: Method implemented twice", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("two classes", async () => {
+    const abap = `
+    class lcl_bar definition.
+    endclass.
+    class lcl_bar implementation.
+    method bar.
+    endmethod.
+    endclass.
+
+    class lcl_foo definition.
+    endclass.
+    class lcl_foo implementation.
+    method bar.
+    endmethod.
+    endclass.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
