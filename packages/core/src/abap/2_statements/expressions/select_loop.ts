@@ -1,4 +1,4 @@
-import {seq, per, opt, alt, tok, str, ver, star, Expression} from "../combi";
+import {seq, per, opt, alt, tok, str, ver, star, Expression, optPrio} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -26,7 +26,7 @@ export class SelectLoop extends Expression {
 
 // todo, use SQLFieldList instead?
     const fields = alt(str("*"),
-                       seq(opt(str("DISTINCT")), new Dynamic()),
+                       new Dynamic(),
                        fieldList);
 
     const client = str("CLIENT SPECIFIED");
@@ -52,6 +52,7 @@ export class SelectLoop extends Expression {
                      alt(tab, into));
 
     const ret = seq(str("SELECT"),
+                    optPrio(str("DISTINCT")),
                     fields,
                     perm);
 

@@ -43,10 +43,14 @@ const tests = [
   WHERE (sdf)
   GROUP BY (sdf)
   HAVING (sdf)
-  ORDER BY (sdf).
-  `,
+  ORDER BY (sdf).`,
 
   `SELECT * from mara INTO TABLE @<lt_mara> PACKAGE SIZE @lv_pack.`,
+
+  `SELECT blah FROM (db_table_name) INTO @tree WHERE (t_where_clause_blah).`,
+  `SELECT DISTINCT * FROM (db_table_name) INTO @tree WHERE (t_where_clause_blah).`,
+  `SELECT DISTINCT blah FROM (db_table_name) INTO @tree WHERE (t_where_clause_blah).`,
+  `SELECT DISTINCT blah, blah_blah FROM (db_table_name) INTO @tree WHERE (t_where_clause_blah).`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
