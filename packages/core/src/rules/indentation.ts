@@ -43,7 +43,7 @@ export class Indentation extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, obj: IObject) {
-
+    const MAX_ISSUES = 100;
     let skip = false;
 
     if (file.getStructure() === undefined) {
@@ -67,6 +67,7 @@ export class Indentation extends ABAPRule {
     };
 
     const expected = new Indent(indentOpts).getExpectedIndents(file);
+    const ret: Issue[] = [];
 
     for (const statement of file.getStatements()) {
       const position = statement.getFirstToken().getStart();
@@ -107,10 +108,13 @@ export class Indentation extends ABAPRule {
         const fix = EditHelper.replaceRange(file, new Position(position.getRow(), 1), position, " ".repeat(expected));
         const message = "Indentation problem, expected " + expected + " spaces";
         const issue = Issue.atPosition(file, position, message, this.getMetadata().key, this.conf.severity, fix);
-        return [issue]; // only one finding per include
+        ret.push(issue);
+        if (ret.length >= MAX_ISSUES) {
+          break;
+        }
       }
     }
 
-    return [];
+    return ret;
   }
 }
