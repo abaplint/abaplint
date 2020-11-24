@@ -20,6 +20,57 @@ export interface IEdit {
   [filename: string]: ITextEdit[];
 }
 
+export class EditDraft {
+  private start: Position | undefined = undefined;
+  private end: Position | undefined = undefined;
+  private readonly rows: string[];
+  private readonly file: IFile;
+
+  public constructor(file: IFile) {
+    this.rows = file.getRawRows();
+    this.file = file;
+  }
+
+  /** replace existing text, insert text wont work */
+  public replace(pos: Position, value: string) {
+    if (this.start === undefined || pos.isBefore(this.start)) {
+      this.start = pos;
+    }
+    const end = new Position(pos.getRow(), pos.getCol() + value.length);
+    if (this.end === undefined || end.isAfter(this.end)) {
+      this.end = end;
+    }
+
+    const str = this.rows[pos.getRow() - 1];
+    this.rows[pos.getRow() - 1] = str.substr(0, pos.getCol() - 1) + value + str.substr(pos.getCol() + value.length - 1);
+  }
+
+  public toEdit(): IEdit {
+    if (this.start === undefined) {
+      throw "EditDraft, start undefined";
+    } else if (this.end === undefined) {
+      throw "EditDraft, end undefined";
+    }
+    let value = "";
+    for (let row = this.start.getRow(); row <= this.end.getRow(); row++) {
+      if (row === this.start.getRow() && row === this.end.getRow()) {
+        // first and last row
+        value = this.rows[row - 1].substring(this.start.getCol() - 1, this.end.getCol() - 1);
+      } else if (row === this.start.getRow()) {
+        // first row
+        value = this.rows[row - 1].substring(this.start.getCol() - 1);
+      } else if (row === this.end.getRow()) {
+        // last row
+        value += "\n" + this.rows[row - 1].substring(0, this.end.getCol() - 1);
+      } else {
+        // middle row
+        value += "\n" + this.rows[row - 1];
+      }
+    }
+    return EditHelper.replaceRange(this.file, this.start, this.end, value);
+  }
+}
+
 export class EditHelper {
 
   public static mergeList(fixes: IEdit[]): IEdit {

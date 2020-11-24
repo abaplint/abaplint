@@ -13,7 +13,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
 import {VirtualPosition} from "../position";
 import {ABAPFile} from "../abap/abap_file";
-import {EditHelper, IEdit} from "../edit_helper";
+import {EditDraft} from "../edit_helper";
 import {IFile} from "../files/_ifile";
 
 export enum KeywordCaseStyle {
@@ -138,6 +138,7 @@ export class KeywordCase extends ABAPRule {
   public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
     const ddic = new DDIC(this.reg);
+    const MAX_ISSUES = 100;
 
     if (this.conf.ignoreExceptions && obj instanceof Class) {
       const definition = obj.getClassDefinition();
@@ -158,8 +159,11 @@ export class KeywordCase extends ABAPRule {
           // if its a chained statement, go token by token
           result = [result[0]];
         }
-        issues.push(this.build(result, file));
-        break; // one issue per file
+        const issue = this.build(result, file);
+        issues.push(issue);
+        if (issues.length > MAX_ISSUES) {
+          break;
+        }
       }
     }
 
@@ -173,20 +177,29 @@ export class KeywordCase extends ABAPRule {
     const firstToken = tokens[0].token;
     const lastToken = tokens[tokens.length - 1].token;
     const firstTokenValue = firstToken.getStr();
-    let fix: IEdit;
-    let description = "";
 
+    let description = "";
     if (first.keyword === true) {
       description = `Keyword should be ${this.conf.style} case: "${firstTokenValue}"`;
-      if (this.conf.style === KeywordCaseStyle.Lower) {
-        fix = EditHelper.replaceToken(file, firstToken, firstTokenValue.toLowerCase());
-      } else {
-        fix = EditHelper.replaceToken(file, firstToken, firstTokenValue.toUpperCase());
-      }
     } else {
       description = `Identifiers should be lower case: "${firstTokenValue}"`;
-      fix = EditHelper.replaceToken(file, firstToken, firstTokenValue.toLowerCase());
     }
+
+    const draft = new EditDraft(file);
+    for (const token of tokens) {
+      const str = token.token.getStr();
+      const pos = token.token.getStart();
+      if (token.keyword === true) {
+        if (this.conf.style === KeywordCaseStyle.Lower) {
+          draft.replace(pos, str.toLowerCase());
+        } else {
+          draft.replace(pos, str.toUpperCase());
+        }
+      } else {
+        draft.replace(pos, str.toLowerCase());
+      }
+    }
+    const fix = draft.toEdit();
 
     return Issue.atRange(
       file,

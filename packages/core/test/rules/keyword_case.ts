@@ -56,6 +56,7 @@ END-OF-DEFINITION.
 _bar.`, cnt: 0},
 
   {abap: `SYSTEM-CALL OBJMGR CLONE me TO result.`, cnt: 0},
+  {abap: `write BAR.`, cnt: 1},
 ];
 
 testRule(tests, KeywordCase);
@@ -168,7 +169,7 @@ const testLowerCaseGlobalClassSuite1 = [
         method x. endmethod.
       ENDCLASS.
       `,
-    cnt: 1,
+    cnt: 4,
   },
   {
     abap: `
@@ -176,7 +177,7 @@ const testLowerCaseGlobalClassSuite1 = [
         methods x.
       ENDINTERFACE.
       `,
-    cnt: 1,
+    cnt: 2,
   },
   {
     abap: `
@@ -233,12 +234,18 @@ const fixTests = [
     input: "WRITE BAR.",
     output: "WRITE bar.",
   },
-  /*
-  { // fix as much as possible in the statement
+  {
     input: "write BAR.",
     output: "WRITE bar.",
   },
-  */
+  {
+    input: "write\nBAR.",
+    output: "WRITE\nbar.",
+  },
+  {
+    input: "call\nfunction\n'BAR'.",
+    output: "CALL\nFUNCTION\n'BAR'.",
+  },
 ];
 
 testRuleFix(fixTests, KeywordCase);
