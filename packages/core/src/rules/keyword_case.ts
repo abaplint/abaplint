@@ -36,6 +36,74 @@ export class KeywordCaseConf extends BasicRuleConfig {
   public ignoreKeywords: string[] = [];
 }
 
+class Skip {
+  private readonly conf: KeywordCaseConf;
+  private skip = false;
+  private isGlobalClass = false;
+  private isGlobalIf = false;
+
+  public constructor(conf: KeywordCaseConf) {
+    this.conf = conf;
+  }
+
+  public skipStatement(statement: StatementNode): boolean {
+    const get = statement.get();
+    if (get instanceof Unknown
+      || get instanceof MacroContent
+      || get instanceof MacroCall
+      || statement.getFirstToken().getStart() instanceof VirtualPosition
+      || get instanceof Comment) {
+      return true;
+    }
+
+    if (this.conf.ignoreGlobalClassBoundaries) {
+      const node = get;
+      if (node instanceof Statements.Interface && statement.findFirstExpression(Expressions.ClassGlobal)) {
+        this.isGlobalIf = true;
+        return true;
+      } else if (this.isGlobalIf === true && node instanceof Statements.EndInterface) {
+        return true;
+      }
+      if (node instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
+        this.isGlobalClass = true;
+        return true;
+      } else if (this.isGlobalClass === true
+        && (node instanceof Statements.EndClass || node instanceof Statements.ClassImplementation)) {
+        return true;
+      }
+    }
+
+    if (this.conf.ignoreGlobalClassDefinition) {
+      if (get instanceof Statements.ClassDefinition
+        && statement.findFirstExpression(Expressions.ClassGlobal)) {
+        this.skip = true;
+        return true;
+      } else if (this.skip === true && get instanceof Statements.EndClass) {
+        this.skip = false;
+        return true;
+      } else if (this.skip === true) {
+        return true;
+      }
+    }
+
+    if (this.conf.ignoreGlobalInterface) {
+      if (get instanceof Statements.Interface
+        && statement.findFirstExpression(Expressions.ClassGlobal)) {
+        this.skip = true;
+        return true;
+      } else if (this.skip === true && get instanceof Statements.EndInterface) {
+        this.skip = false;
+        return true;
+      } else if (this.skip === true) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+}
+
 export class KeywordCase extends ABAPRule {
   private conf = new KeywordCaseConf();
 
@@ -68,10 +136,6 @@ export class KeywordCase extends ABAPRule {
 
   public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
-    let skip = false;
-    let isGlobalClass = false;
-    let isGlobalIf = false;
-
     const ddic = new DDIC(this.reg);
 
     if (this.conf.ignoreExceptions && obj instanceof Class) {
@@ -81,56 +145,10 @@ export class KeywordCase extends ABAPRule {
       }
     }
 
+    const skip = new Skip(this.getConfig());
     for (const statement of file.getStatements()) {
-      if (statement.get() instanceof Unknown
-        || statement.get() instanceof MacroContent
-        || statement.get() instanceof MacroCall
-        || statement.getFirstToken().getStart() instanceof VirtualPosition
-        || statement.get() instanceof Comment) {
+      if (skip.skipStatement(statement) === true) {
         continue;
-      }
-
-      if (this.conf.ignoreGlobalClassBoundaries) {
-        const node = statement.get();
-        if (node instanceof Statements.Interface && statement.findFirstExpression(Expressions.ClassGlobal)) {
-          isGlobalIf = true;
-          continue;
-        } else if (isGlobalIf === true && node instanceof Statements.EndInterface) {
-          continue;
-        }
-        if (node instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
-          isGlobalClass = true;
-          continue;
-        } else if (isGlobalClass === true
-          && (node instanceof Statements.EndClass || node instanceof Statements.ClassImplementation)) {
-          continue;
-        }
-      }
-
-      if (this.conf.ignoreGlobalClassDefinition) {
-        if (statement.get() instanceof Statements.ClassDefinition
-          && statement.findFirstExpression(Expressions.ClassGlobal)) {
-          skip = true;
-          continue;
-        } else if (skip === true && statement.get() instanceof Statements.EndClass) {
-          skip = false;
-          continue;
-        } else if (skip === true) {
-          continue;
-        }
-      }
-
-      if (this.conf.ignoreGlobalInterface) {
-        if (statement.get() instanceof Statements.Interface
-          && statement.findFirstExpression(Expressions.ClassGlobal)) {
-          skip = true;
-          continue;
-        } else if (skip === true && statement.get() instanceof Statements.EndInterface) {
-          skip = false;
-          continue;
-        } else if (skip === true) {
-          continue;
-        }
       }
 
       const result = this.traverse(statement, statement.get());

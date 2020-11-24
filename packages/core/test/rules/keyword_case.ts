@@ -233,6 +233,12 @@ const fixTests = [
     input: "WRITE BAR.",
     output: "WRITE bar.",
   },
+  /*
+  { // fix as much as possible in the statement
+    input: "write BAR.",
+    output: "WRITE bar.",
+  },
+  */
 ];
 
 testRuleFix(fixTests, KeywordCase);
