@@ -64,6 +64,7 @@ import {MainFileContentsConf} from "../src/rules/main_file_contents";
 import {ManyParenthesisConf} from "../src/rules/many_parenthesis";
 import {MaxOneStatementConf} from "../src/rules/max_one_statement";
 import {MessageExistsConf} from "../src/rules/message_exists";
+import {MethodImplementedTwiceConf} from "../src/rules/method_implemented_twice";
 import {MethodLengthConf} from "../src/rules/method_length";
 import {MethodOverwritesBuiltInConf} from "../src/rules/method_overwrites_builtin";
 import {MethodParameterNamesConf} from "../src/rules/method_parameter_names";
@@ -188,6 +189,7 @@ export interface IConfig {
     "many_parenthesis"?: ManyParenthesisConf | boolean,
     "max_one_statement"?: MaxOneStatementConf | boolean,
     "message_exists"?: MessageExistsConf | boolean,
+    "method_implemented_twice"?: MethodImplementedTwiceConf | boolean,
     "method_length"?: MethodLengthConf | boolean,
     "method_overwrites_builtin"?: MethodOverwritesBuiltInConf | boolean,
     "method_parameter_names"?: MethodParameterNamesConf | boolean,

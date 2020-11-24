@@ -63,6 +63,7 @@ export * from "./main_file_contents";
 export * from "./many_parenthesis";
 export * from "./max_one_statement";
 export * from "./message_exists";
+export * from "./method_implemented_twice";
 export * from "./method_length";
 export * from "./method_overwrites_builtin";
 export * from "./method_parameter_names";

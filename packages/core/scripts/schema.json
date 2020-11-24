@@ -1825,6 +1825,17 @@
               ],
               "description": "In message statements, check that the message class + id exist\nhttps://rules.abaplint.org/message_exists"
             },
+            "method_implemented_twice": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodImplementedTwiceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports an error if a method is implemented or defined twice\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/method_implemented_twice"
+            },
             "method_length": {
               "anyOf": [
                 {
@@ -3083,6 +3094,23 @@
       "type": "object"
     },
     "MessageExistsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "MethodImplementedTwiceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
