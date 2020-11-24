@@ -152,8 +152,12 @@ export class KeywordCase extends ABAPRule {
         continue;
       }
 
-      const result = this.traverse(statement, statement.get());
+      let result = this.traverse(statement, statement.get());
       if (result.length > 0) {
+        if (statement.getColon() !== undefined) {
+          // if its a chained statement, go token by token
+          result = [result[0]];
+        }
         issues.push(this.build(result, file));
         break; // one issue per file
       }
@@ -166,23 +170,28 @@ export class KeywordCase extends ABAPRule {
 
   private build(tokens: TokenAndKeyword[], file: IFile): Issue {
     const first = tokens[0];
-    const tokenValue = first.token.getStr();
+    const firstToken = tokens[0].token;
+    const lastToken = tokens[tokens.length - 1].token;
+    const firstTokenValue = firstToken.getStr();
     let fix: IEdit;
     let description = "";
+
     if (first.keyword === true) {
-      description = `Keyword should be ${this.conf.style} case: "${tokenValue}"`;
+      description = `Keyword should be ${this.conf.style} case: "${firstTokenValue}"`;
       if (this.conf.style === KeywordCaseStyle.Lower) {
-        fix = EditHelper.replaceToken(file, first.token, first.token.getStr().toLowerCase());
+        fix = EditHelper.replaceToken(file, firstToken, firstTokenValue.toLowerCase());
       } else {
-        fix = EditHelper.replaceToken(file, first.token, first.token.getStr().toUpperCase());
+        fix = EditHelper.replaceToken(file, firstToken, firstTokenValue.toUpperCase());
       }
     } else {
-      description = `Identifiers should be lower case: "${tokenValue}"`;
-      fix = EditHelper.replaceToken(file, first.token, first.token.getStr().toLowerCase());
+      description = `Identifiers should be lower case: "${firstTokenValue}"`;
+      fix = EditHelper.replaceToken(file, firstToken, firstTokenValue.toLowerCase());
     }
 
-    return Issue.atToken(
-      file, first.token,
+    return Issue.atRange(
+      file,
+      firstToken.getStart(),
+      lastToken.getEnd(),
       description,
       this.getMetadata().key,
       this.conf.severity,
