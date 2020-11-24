@@ -101,8 +101,9 @@ class Skip {
 
     return false;
   }
-
 }
+
+type TokenAndKeyword = {token: Token, keyword: boolean};
 
 export class KeywordCase extends ABAPRule {
   private conf = new KeywordCaseConf();
@@ -153,15 +154,7 @@ export class KeywordCase extends ABAPRule {
 
       const result = this.traverse(statement, statement.get());
       if (result.length > 0) {
-        const first = result[0];
-        const {description, fix} = this.build(first.token, first.keyword, file);
-        const issue = Issue.atToken(
-          file, first.token,
-          description,
-          this.getMetadata().key,
-          this.conf.severity,
-          fix);
-        issues.push(issue);
+        issues.push(this.build(result, file));
         break; // one issue per file
       }
     }
@@ -171,28 +164,34 @@ export class KeywordCase extends ABAPRule {
 
 //////////////////
 
-  private build(token: Token, keyword: boolean, file: IFile): {description: string, fix: IEdit} {
-    const tokenValue = token.getStr();
+  private build(tokens: TokenAndKeyword[], file: IFile): Issue {
+    const first = tokens[0];
+    const tokenValue = first.token.getStr();
     let fix: IEdit;
     let description = "";
-    if (keyword === true) {
+    if (first.keyword === true) {
       description = `Keyword should be ${this.conf.style} case: "${tokenValue}"`;
       if (this.conf.style === KeywordCaseStyle.Lower) {
-        fix = EditHelper.replaceToken(file, token, token.getStr().toLowerCase());
+        fix = EditHelper.replaceToken(file, first.token, first.token.getStr().toLowerCase());
       } else {
-        fix = EditHelper.replaceToken(file, token, token.getStr().toUpperCase());
+        fix = EditHelper.replaceToken(file, first.token, first.token.getStr().toUpperCase());
       }
     } else {
       description = `Identifiers should be lower case: "${tokenValue}"`;
-      fix = EditHelper.replaceToken(file, token, token.getStr().toLowerCase());
+      fix = EditHelper.replaceToken(file, first.token, first.token.getStr().toLowerCase());
     }
 
-    return {description, fix};
+    return Issue.atToken(
+      file, first.token,
+      description,
+      this.getMetadata().key,
+      this.conf.severity,
+      fix);
   }
 
   /** returns a list of tokens which violates the keyword_case rule */
-  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token, keyword: boolean}[] {
-    let ret: {token: Token, keyword: boolean}[] = [];
+  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): TokenAndKeyword[] {
+    let ret: TokenAndKeyword[] = [];
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
