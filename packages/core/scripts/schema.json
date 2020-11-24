@@ -1834,7 +1834,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Reports an error if a method is implemented twice\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/method_implemented_twice"
+              "description": "Reports an error if a method is implemented or defined twice\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/method_implemented_twice"
             },
             "method_length": {
               "anyOf": [
