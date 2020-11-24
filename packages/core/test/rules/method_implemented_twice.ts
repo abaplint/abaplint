@@ -62,4 +62,51 @@ describe("Rule: Method implemented twice", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("constructor", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("defined twice", async () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+    METHODS bar.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("defined twice, two different sections", async () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+  PRIVATE SECTION.
+    METHODS bar.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
 });

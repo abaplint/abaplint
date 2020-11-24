@@ -15,7 +15,7 @@ export class MethodImplementedTwice extends ABAPRule {
     return {
       key: "method_implemented_twice",
       title: "Method implemented twice",
-      shortDescription: `Reports an error if a method is implemented twice`,
+      shortDescription: `Reports an error if a method is implemented or defined twice`,
       tags: [RuleTag.SingleFile, RuleTag.Syntax],
     };
   }
@@ -34,12 +34,25 @@ export class MethodImplementedTwice extends ABAPRule {
     for (const classDef of file.getInfo().listClassImplementations()) {
       const names: {[index: string]: boolean} = {};
       for (const m of classDef.methods) {
-        const name = m.getName();
+        const name = m.getName().toUpperCase();
         if (names[name] === undefined) {
           names[name] = true;
         } else {
           const message = `Method ${name} implemented twice`;
           issues.push(Issue.atToken(file, m.getToken(), message, this.getMetadata().key, this.getConfig().severity));
+        }
+      }
+    }
+
+    for (const classDef of file.getInfo().listClassDefinitions()) {
+      const names: {[index: string]: boolean} = {};
+      for (const m of classDef.methods) {
+        const name = m.name.toUpperCase();
+        if (names[name] === undefined) {
+          names[name] = true;
+        } else {
+          const message = `Method ${name} defined twice`;
+          issues.push(Issue.atToken(file, m.identifier.getToken(), message, this.getMetadata().key, this.getConfig().severity));
         }
       }
     }
