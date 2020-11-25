@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, altPrio, opt, per, plus, tok} from "../combi";
+import {str, seq, alt, altPrio, opt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
-import {Target, Source, Dynamic, ParameterS, FieldSub, SimpleName, NamespaceSimpleName} from "../expressions";
+import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 // todo, cloud, split?
@@ -15,7 +15,7 @@ export class Export implements IStatement {
 
     const cluster = seq(new NamespaceSimpleName(),
                         tok(ParenLeft),
-                        new SimpleName(),
+                        regex(/^[\w$%\^]{2}$/),
                         tok(ParenRightW));
 
     const buffer = seq(str("DATA BUFFER"), new Target());

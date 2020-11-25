@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, plus, tok} from "../combi";
+import {verNot, str, seq, opt, alt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
-import {Target, Source, Dynamic, ComponentChainSimple, SimpleName, NamespaceSimpleName} from "../expressions";
+import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -15,7 +15,7 @@ export class Import implements IStatement {
 
     const cluster = seq(new NamespaceSimpleName(),
                         tok(ParenLeft),
-                        new SimpleName(),
+                        regex(/^[\w$%\^]{2}$/),
                         tok(ParenRightW));
 
     const buffer = seq(str("DATA BUFFER"), new Source());

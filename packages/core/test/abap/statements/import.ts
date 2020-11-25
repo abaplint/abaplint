@@ -24,6 +24,7 @@ const tests = [
   "IMPORT foo-bar = foo-bar FROM DATABASE datab(aa) ID lv_id USING lv_read.",
   "IMPORT field = field FROM SHARED BUFFER INDX(AA) ID 'FOO' TO var.",
   "IMPORT data = lt_data FROM DATABASE indx(zr) TO lv_data CLIENT lv_clnt ID lc_id.",
+  "IMPORT foo = lv_bar FROM DATABASE indx(^a) ID lc_id.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);
