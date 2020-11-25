@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {str, seq, opt, alt, star} from "../combi";
-import {SQLSource, DatabaseTable, Dynamic, SQLFieldName, SQLCond, DatabaseConnection} from "../expressions";
+import {SQLSource, DatabaseTable, Dynamic, SQLFieldName, SQLCond, DatabaseConnection, SQLClient} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class UpdateDatabase implements IStatement {
@@ -19,11 +19,9 @@ export class UpdateDatabase implements IStatement {
                           opt(str("TABLE")),
                           new SQLSource());
 
-    const client = str("CLIENT SPECIFIED");
-
     const ret = seq(str("UPDATE"),
                     target,
-                    opt(client),
+                    opt(new SQLClient()),
                     opt(new DatabaseConnection()),
                     opt(alt(fromTable, set)));
 
