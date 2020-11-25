@@ -12,7 +12,7 @@ export class MethodDef implements IStatement {
 
     const def = ver(Version.v740sp08, seq(str("DEFAULT"), altPrio(str("FAIL"), str("IGNORE"))));
 
-    const parameters = seq(optPrio(altPrio(new Abstract(), str("FINAL"), str("FOR TESTING"), def)),
+    const parameters = seq(optPrio(altPrio(seq(new Abstract(), optPrio(str("FOR TESTING"))), str("FINAL"), str("FOR TESTING"), def)),
                            optPrio(new MethodDefImporting()),
                            optPrio(new MethodDefExporting()),
                            optPrio(new MethodDefChanging()),
