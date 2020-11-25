@@ -24,6 +24,7 @@ const tests = [
   "MODIFY TABLE <ls_transport>-import_info FROM VALUE #( system = <ls_info>-system ).",
   "MODIFY TABLE <ls_transport>-import_info FROM VALUE #( system = <ls_info>-system ) USING KEY unique.",
   "MODIFY <lt_tab> FROM <lt_source>.",
+//  "MODIFY sdfsd INDEX sy-tabix USING KEY key FROM ls_sdf TRANSPORTING tra.",
 ];
 
 statementType(tests, "MODIFY", Statements.ModifyInternal);
