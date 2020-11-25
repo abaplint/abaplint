@@ -297,7 +297,7 @@ export class Lexer {
           && current === "`"
           && aahead !== "``"
           && (buf.match(/`/g) || []).length % 2 === 0
-          && (buf.concat(ahead).match(/`/g) || []).length % 2 === 0) {
+          && ahead !== "`") {
 // end of ping
         this.add();
         this.m = Mode.Normal;
@@ -313,7 +313,7 @@ export class Lexer {
           && buf.length > 1
           && aahead !== "''"
           && (buf.match(/'/g) || []).length % 2 === 0
-          && (buf.concat(ahead).match(/'/g) || []).length % 2 === 0) {
+          && ahead !== "'") {
 // end of string
         this.add();
         if (ahead === "\"") {
@@ -343,7 +343,6 @@ export class Lexer {
         this.m = Mode.Normal;
       } else if (this.m === Mode.Template && current === "\n") {
         this.add();
-        this.m = Mode.Template;
       } else if (current === ">"
           && (prev === "-" || prev === "=")
           && ahead !== " "
