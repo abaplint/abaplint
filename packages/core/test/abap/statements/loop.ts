@@ -27,6 +27,8 @@ const tests = [
   "loop at table assigning field-symbol(<fs>) group by field ascending assigning field-symbol(<tar>).",
   "LOOP AT mt_data ASSIGNING <ls_dummy> GROUP BY <ls_dummy>-abc WITHOUT MEMBERS INTO lv_def.",
   "LOOP AT mt_out ASSIGNING FIELD-SYMBOL(<ls_out>) GROUP BY ( d = <ls_out>-d group_size = GROUP SIZE ) REFERENCE INTO DATA(lr_group).",
+  "LOOP AT tab ASSIGNING FIELD-SYMBOL(<fs>) WHERE field IS NOT INITIAL.",
+  "LOOP AT tab ASSIGNING FIELD-SYMBOL(<fs>) WHERE field IS NOT INITIAL GROUP BY <fs>-key.",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

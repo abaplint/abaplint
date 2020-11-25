@@ -21,20 +21,20 @@ export class Raise implements IStatement {
                        new Source(),
                        str("NUMBER"),
                        new Source(),
-                       opt(wit));
+                       optPrio(wit));
 
     const exporting = seq(str("EXPORTING"), new ParameterListS());
 
     const from = altPrio(seq(str("TYPE"), new ClassName()),
-                         alt(ver(Version.v752, new Source()), new BasicSource()));
+                         altPrio(ver(Version.v752, new Source()), new BasicSource()));
 
     const clas = seq(optPrio(str("RESUMABLE")),
                      str("EXCEPTION"),
                      from,
                      opt(alt(ver(Version.v750, alt(mess, messid)), ver(Version.v752, str("USING MESSAGE")))),
-                     opt(exporting));
+                     optPrio(exporting));
 
-    const ret = seq(str("RAISE"), alt(new Field(), clas));
+    const ret = seq(str("RAISE"), altPrio(clas, new Field()));
 
     return ret;
   }

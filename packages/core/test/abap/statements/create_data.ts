@@ -25,6 +25,7 @@ const tests = [
   "create data lt_ref type sorted table of (iv_tabname) with unique key foo bar.",
   "CREATE DATA ref TYPE STANDARD TABLE OF (table) WITH KEY (key).",
   "CREATE DATA rr_data TYPE TABLE OF REF TO data.",
+  "CREATE DATA lr_data TYPE STANDARD TABLE OF (foo-bar) WITH EMPTY KEY.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

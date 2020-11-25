@@ -36,13 +36,13 @@ export class RenameGlobalClass implements ObjectRenamer {
           if (exp === undefined) {
             continue;
           }
-          edits.push(TextEdit.replace(LSPUtils.tokenToRange(exp.getFirstToken()), newName));
+          edits.push(TextEdit.replace(LSPUtils.tokenToRange(exp.getFirstToken()), newName.toLowerCase()));
         } else if (s.get() instanceof Statements.ClassImplementation) {
           const exp = s.findFirstExpression(Expressions.ClassName);
           if (exp === undefined) {
             continue;
           }
-          edits.push(TextEdit.replace(LSPUtils.tokenToRange(exp.getFirstToken()), newName));
+          edits.push(TextEdit.replace(LSPUtils.tokenToRange(exp.getFirstToken()), newName.toLowerCase()));
         }
       }
       changes.push(TextDocumentEdit.create({uri: main.getFilename(), version: 1}, edits));
