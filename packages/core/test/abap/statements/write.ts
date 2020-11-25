@@ -74,6 +74,7 @@ const tests = [
   "write at 5(ls_structure-field) 'hello world'.",
   "WRITE foo COLOR OFF INTENSIFIED.",
   "WRITE (6)sy-sysid.",
+  "WRITE |{ bar DECIMALS = 0 ALIGN = RIGHT WIDTH = 15 }|.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

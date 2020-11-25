@@ -23,11 +23,11 @@ export class StringTemplateFormatting extends Expression {
                                 str("ENVIRONMENT"),
                                 new Source());
 
-    const timeStampOptions = (alt(str("SPACE"),
-                                  str("ISO"),
-                                  str("USER"),
-                                  str("ENVIRONMENT"),
-                                  new Source()));
+    const timeStampOptions = alt(str("SPACE"),
+                                 str("ISO"),
+                                 str("USER"),
+                                 str("ENVIRONMENT"),
+                                 new Source());
 
     const numberOptions = alt(str("RAW"),
                               str("USER"),
@@ -80,9 +80,8 @@ export class StringTemplateFormatting extends Expression {
                            seq(str("STYLE"), str("="), styleOptions),
                            seq(str("CURRENCY"), str("="), new Source()),
                            seq(str("COUNTRY"), str("="), new Source()),
-                           per(sign, number, decimals),
-                           per(timezone, timestamp),
-                           per(width, pad, alpha, align));
+                           per(sign, number, decimals, width, pad, alpha, align),
+                           per(timezone, timestamp));
 
     return formatting;
   }
