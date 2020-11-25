@@ -29,6 +29,7 @@ const tests = [
     TO DATABASE rfdt(kk) ID h_runkey.`,
 
   `EXPORT $hcat1 TO MEMORY ID sy-uname.`,
+  "EXPORT <tab> FROM <tab> TO DATABASE bar(as) FROM fr ID id.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);
