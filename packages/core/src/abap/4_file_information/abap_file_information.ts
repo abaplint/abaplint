@@ -277,7 +277,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         name: methodName.getStr(),
         identifier: new Identifier(methodName, this.filename),
         isRedefinition: def.findFirstExpression(Expressions.Redefinition) !== undefined,
-        isForTesting: def.concatTokens().includes(" FOR TESTING"),
+        isForTesting: def.concatTokens().toUpperCase().includes(" FOR TESTING"),
         isAbstract: def.findFirstExpression(Expressions.Abstract) !== undefined,
         isEventHandler: node.findFirstExpression(Expressions.EventHandler) !== undefined,
         visibility,
