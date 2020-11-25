@@ -59,6 +59,7 @@ const tests = [
 
   "SORT table BY ref->num.",
   "SORT AS TEXT.",
+//  "sort et_entityset by (lt_sort_options[]).",
 ];
 
 statementType(tests, "SORT", Statements.Sort);
