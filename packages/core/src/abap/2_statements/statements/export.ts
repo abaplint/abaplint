@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
 import {str, seq, alt, altPrio, opt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
-import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName} from "../expressions";
+import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 // todo, cloud, split?
@@ -26,7 +26,9 @@ export class Export implements IStatement {
 
     const target = alt(buffer, memory, database, table, shared);
 
-    const source = alt(plus(altPrio(new ParameterS(), seq(new FieldSub(), from), new FieldSub())),
+    const left = alt(new FieldSub(), new FieldSymbol());
+
+    const source = alt(plus(altPrio(new ParameterS(), seq(left, from), left)),
                        new Dynamic());
 
     const compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));

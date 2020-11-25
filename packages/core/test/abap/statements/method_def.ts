@@ -84,6 +84,8 @@ const tests = [
       mandatory TYPE abap_bool
     EXPORTING
       value     TYPE string.`,
+  "class-methods bar exceptions /space/cx_error.",
+  "METHODS test1 ABSTRACT FOR TESTING RAISING cx_static_check.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

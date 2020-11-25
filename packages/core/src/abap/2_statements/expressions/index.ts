@@ -126,6 +126,7 @@ export * from "./sql_alias_field";
 export * from "./sql_as_name";
 export * from "./sql_case";
 export * from "./sql_cds_parameters";
+export * from "./sql_client";
 export * from "./sql_compare_operator";
 export * from "./sql_compare";
 export * from "./sql_cond";

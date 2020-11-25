@@ -1,18 +1,18 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
-import {str, seq, alt, altPrio, ver, regex as reg, plus, optPrio} from "../combi";
-import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising} from "../expressions";
+import {str, seq, alt, altPrio, ver, regex as reg, plusPrio, optPrio} from "../combi";
+import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, NamespaceSimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
+    const exceptions = seq(str("EXCEPTIONS"), plusPrio(new NamespaceSimpleName()));
 
     const def = ver(Version.v740sp08, seq(str("DEFAULT"), altPrio(str("FAIL"), str("IGNORE"))));
 
-    const parameters = seq(optPrio(altPrio(new Abstract(), str("FINAL"), str("FOR TESTING"), def)),
+    const parameters = seq(optPrio(altPrio(seq(new Abstract(), optPrio(str("FOR TESTING"))), str("FINAL"), str("FOR TESTING"), def)),
                            optPrio(new MethodDefImporting()),
                            optPrio(new MethodDefExporting()),
                            optPrio(new MethodDefChanging()),

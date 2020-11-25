@@ -292,27 +292,28 @@ export class Lexer {
 // end of pragma
         this.add();
         this.m = Mode.Normal;
-      } else if (buf.length > 1 && current === "`" && this.m === Mode.Ping
+      } else if (this.m === Mode.Ping
+          && buf.length > 1
           && current === "`"
           && aahead !== "``"
           && (buf.match(/`/g) || []).length % 2 === 0
-          && (buf.concat(ahead).match(/`/g) || []).length % 2 === 0) {
+          && ahead !== "`") {
 // end of ping
         this.add();
         this.m = Mode.Normal;
-      } else if (buf.length > 1
+      } else if (this.m === Mode.Template
+          && buf.length > 1
           && (current === "|" || current === "{")
-          && (prev !== "\\" || this.stream.prevPrevChar() === "\\\\")
-          && this.m === Mode.Template) {
+          && (prev !== "\\" || this.stream.prevPrevChar() === "\\\\")) {
 // end of template
         this.add();
         this.m = Mode.Normal;
       } else if (this.m === Mode.Str
-          && buf.length > 1
           && current === "'"
+          && buf.length > 1
           && aahead !== "''"
           && (buf.match(/'/g) || []).length % 2 === 0
-          && (buf.concat(ahead).match(/'/g) || []).length % 2 === 0) {
+          && ahead !== "'") {
 // end of string
         this.add();
         if (ahead === "\"") {
@@ -320,7 +321,8 @@ export class Lexer {
         } else {
           this.m = Mode.Normal;
         }
-      } else if ((ahead === " "
+      } else if (this.m === Mode.Normal
+          && (ahead === " "
           || ahead === ":"
           || ahead === "."
           || ahead === ","
@@ -334,22 +336,21 @@ export class Lexer {
           || aahead === "->"
           || aahead === "=>"
           || ahead === "\t"
-          || ahead === "\n")
-          && this.m === Mode.Normal) {
+          || ahead === "\n")) {
         this.add();
       } else if (ahead === "\n" && this.m !== Mode.Template) {
         this.add();
         this.m = Mode.Normal;
-      } else if (current === "\n" && this.m === Mode.Template) {
+      } else if (this.m === Mode.Template && current === "\n") {
         this.add();
-        this.m = Mode.Template;
       } else if (current === ">"
           && (prev === "-" || prev === "=")
           && ahead !== " "
           && this.m === Mode.Normal) {
 // arrows
         this.add();
-      } else if ((buf === "."
+      } else if (this.m === Mode.Normal
+          && (buf === "."
           || buf === ","
           || buf === ":"
           || buf === "("
@@ -358,8 +359,7 @@ export class Lexer {
           || buf === "]"
           || buf === "+"
           || buf === "@"
-          || (buf === "-" && ahead !== ">"))
-          && this.m === Mode.Normal) {
+          || (buf === "-" && ahead !== ">"))) {
         this.add();
       }
 
