@@ -79,6 +79,21 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("skip FOR TESTING, lower case", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    METHODS: method1 for testing.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Skip SETUP method in testclasses", async () => {
     const abap = `
 CLASS lcl_bar DEFINITION FOR TESTING.

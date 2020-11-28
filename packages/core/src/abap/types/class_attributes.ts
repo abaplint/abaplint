@@ -129,20 +129,23 @@ export class Attributes implements IAttributes {
         if (ctyp instanceof Structures.Data) {
           const found = new DataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.instance.push(new ClassAttribute(found, visibility, found.getMeta()));
-            scope.addIdentifier(found);
+            const attr = new ClassAttribute(found, visibility, found.getMeta());
+            this.instance.push(attr);
+            scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.ClassData) {
           const found = new ClassDataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.static.push(new ClassAttribute(found, visibility, found.getMeta()));
-            scope.addIdentifier(found);
+            const attr = new ClassAttribute(found, visibility, found.getMeta());
+            this.static.push(attr);
+            scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.Constants) {
           const {type: found, values} = new Constants().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.constants.push(new ClassConstant(found, visibility, values));
-            scope.addIdentifier(found);
+            const attr = new ClassConstant(found, visibility, values);
+            this.constants.push(attr);
+            scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
           const enums = new TypeEnum().runSyntax(c, scope, this.filename);
@@ -162,8 +165,9 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Statements.Constant) {
           const found = new ConstantStatement().runSyntax(c, scope, this.filename);
           if (found) {
-            this.constants.push(new ClassConstant(found, visibility, found.getValue() || "todo, constant value fallback"));
-            scope.addIdentifier(found);
+            const attr = new ClassConstant(found, visibility, found.getValue() || "todo, constant value fallback");
+            this.constants.push(attr);
+            scope.addIdentifier(attr);
           }
         }
       }
