@@ -57,6 +57,10 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
       }
 
       for (const c of stru.findAllExpressions(Expressions.MethodCall)) {
+        const count = c.findAllExpressions(Expressions.ParameterS);
+        if (count.length > 1) {
+          continue;
+        }
         const name = c.findDirectExpression(Expressions.MethodName);
         const param = c.findDirectExpression(Expressions.MethodCallParam);
         if (name === undefined

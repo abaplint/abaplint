@@ -93,4 +93,23 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Two parameters supplied", async () => {
+    const abap = `
+INTERFACE zif_abaplint_code_inspector.
+  METHODS run
+    IMPORTING
+      iv_variant TYPE sci_chkv
+      iv_save    TYPE abap_bool DEFAULT abap_false.
+endinterface.
+
+FORM bar.
+  DATA li_code_inspector TYPE REF TO zif_abaplint_code_inspector.
+  li_code_inspector->run(
+    iv_variant = |{ p_chkv }|
+    iv_save    = abap_true ).
+ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });
