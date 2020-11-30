@@ -141,6 +141,7 @@ export * from "./sql_having";
 export * from "./sql_hints";
 export * from "./sql_join";
 export * from "./sql_order_by";
+export * from "./sql_path";
 export * from "./sql_source_simple";
 export * from "./sql_source";
 export * from "./sql_target_table";
