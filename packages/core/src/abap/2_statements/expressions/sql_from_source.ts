@@ -1,4 +1,4 @@
-import {str, alt, seq, opt, Expression, ver, tok} from "../combi";
+import {str, alt, seq, optPrio, Expression, ver, tok} from "../combi";
 import {SQLAsName, Dynamic, SQLCDSParameters, DatabaseTable, FieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -10,6 +10,8 @@ export class SQLFromSource extends Expression {
     const tab = ver(Version.v752, seq(tok(WAt), new FieldChain()));
     const aas = seq(str("AS"), new SQLAsName());
 
-    return seq(alt(new Dynamic(), seq(new DatabaseTable(), opt(new SQLCDSParameters())), tab), opt(aas));
+    return seq(alt(new Dynamic(), seq(new DatabaseTable(), optPrio(new SQLCDSParameters())), tab),
+               optPrio(str("WITH PRIVILEGED ACCESS")),
+               optPrio(aas));
   }
 }
