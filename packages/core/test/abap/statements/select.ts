@@ -237,6 +237,8 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
   `SELECT @zcl_class=>option-eq AS option, devclass AS low
     FROM tdevc
     INTO CORRESPONDING FIELDS OF TABLE @target.`,
+
+  `SELECT aaa, \\_association-shortText AS ShortText FROM cds_view INTO @DATA(var).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
