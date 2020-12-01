@@ -68,6 +68,7 @@ IMPORTING
 EXCEPTIONS
   not_found = 1.`,
 
+  `assert_true( xsdbool( not->negated_expression IS INSTANCE OF cl_blah ) ).`,
 ];
 
 statementType(tests, "CALL", Statements.Call);

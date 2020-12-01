@@ -35,7 +35,9 @@ export class Table extends AbstractObject {
       LENG?: string,
       INTLEN?: string,
       DATATYPE?: string,
-      DECIMALS?: string}[]} | undefined;
+      DECIMALS?: string,
+      KEYFLAG?: string
+    }[]} | undefined;
 
   public getType(): string {
     return "TABL";
@@ -51,6 +53,23 @@ export class Table extends AbstractObject {
   public setDirty(): void {
     this.parsedData = undefined;
     super.setDirty();
+  }
+
+  public listKeys(): string[] {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    if (this.parsedData === undefined) {
+      return [];
+    }
+
+    const ret: string[] = [];
+    for (const p of this.parsedData.fields) {
+      if (p.KEYFLAG === "X") {
+        ret.push(p.FIELDNAME);
+      }
+    }
+    return ret;
   }
 
   public parseType(reg: IRegistry): AbstractType {
@@ -183,6 +202,7 @@ export class Table extends AbstractObject {
         INTLEN: field.INTLEN?._text,
         DATATYPE: field.DATATYPE?._text,
         DECIMALS: field.DECIMALS?._text,
+        KEYFLAG: field.KEYFLAG?._text,
       });
     }
   }
