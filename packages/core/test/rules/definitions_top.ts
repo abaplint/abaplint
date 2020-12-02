@@ -135,7 +135,7 @@ ENDFORM.`,
 testRule(tests, DefinitionsTop);
 
 
-describe("Rule: definitions_top", () => {
+describe("Rule: definitions_top, quick fixes", () => {
 
   it("quick fix 1", async () => {
     const abap = `CLASS lcl_bar DEFINITION.
@@ -159,6 +159,23 @@ CLASS lcl_bar IMPLEMENTATION.
 ` + "    " + `
   ENDMETHOD.
 ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("quick fix 2", async () => {
+    const abap = `
+FORM bar.
+  TYPES ty_foo TYPE i.
+  WRITE 'hello'.
+  DATA moo TYPE ty_foo.
+ENDFORM.`;
+    const expected = `
+FORM bar.
+  TYPES ty_foo TYPE i.
+  DATA moo TYPE ty_foo.
+  WRITE 'hello'.
+` + "  " + `
+ENDFORM.`;
     testFix(abap, expected);
   });
 
