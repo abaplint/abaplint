@@ -11,7 +11,7 @@ export class SQLFromSource extends Expression {
     const aas = seq(str("AS"), new SQLAsName());
 
     return seq(alt(new Dynamic(), seq(new DatabaseTable(), optPrio(new SQLCDSParameters())), tab),
-               optPrio(str("WITH PRIVILEGED ACCESS")),
+               optPrio(ver(Version.v752, str("WITH PRIVILEGED ACCESS"))),
                optPrio(aas));
   }
 }

@@ -240,6 +240,7 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
 
   `SELECT aaa, \\_association-shortText AS ShortText FROM cds_view INTO @DATA(var).`,
   `SELECT * FROM cds_view WITH PRIVILEGED ACCESS WHERE test = @foo INTO CORRESPONDING FIELDS OF TABLE @rt_values.`,
+  `SELECT foo, bar FROM dbtab WHERE id = @key-id AND name IS NOT INITIAL INTO TABLE @DATA(result).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

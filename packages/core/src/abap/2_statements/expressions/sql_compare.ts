@@ -23,7 +23,7 @@ export class SQLCompare extends Expression {
 
     const like = seq(opt(str("NOT")), str("LIKE"), new SQLSource(), optPrio(seq(str("ESCAPE"), new SQLSource())));
 
-    const nul = seq(str("IS"), opt(str("NOT")), str("NULL"));
+    const nul = seq(str("IS"), opt(str("NOT")), alt(str("NULL"), ver(Version.v753, str("INITIAL"))));
 
     const source = new SQLSource();
 

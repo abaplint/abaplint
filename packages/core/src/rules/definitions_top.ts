@@ -24,7 +24,7 @@ export class DefinitionsTop extends ABAPRule {
 
   private mode: number;
   private fixed: boolean;
-  private start: StatementNode | undefined;
+  private moveTo: StatementNode | undefined;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -62,7 +62,7 @@ export class DefinitionsTop extends ABAPRule {
     const routines = structure.findAllStructures(Structures.Form).concat(structure.findAllStructures(Structures.Method));
     for (const r of routines) {
       this.mode = DEFINITION;
-      this.start = r.getFirstStatement();
+      this.moveTo = r.getFirstStatement();
 
       const found = this.walk(r, file);
       if (found) {
@@ -76,6 +76,7 @@ export class DefinitionsTop extends ABAPRule {
 //////////////////
 
   private walk(r: StructureNode, file: ABAPFile): Issue | undefined {
+
     for (const c of r.getChildren()) {
       if (c instanceof StatementNode && c.get() instanceof Comment) {
         continue;
@@ -103,11 +104,13 @@ export class DefinitionsTop extends ABAPRule {
         if (this.mode === AFTER) {
           // only one fix per file, as it reorders a lot
           let fix = undefined;
-          if (this.fixed === false && this.start) {
-            fix = this.buildFix(file, c, this.start);
+          if (this.fixed === false && this.moveTo) {
+            fix = this.buildFix(file, c, this.moveTo);
             this.fixed = true;
           }
           return Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
+        } else {
+          this.moveTo = c;
         }
       } else if (c instanceof StructureNode && c.get() instanceof Structures.Define) {
         this.mode = IGNORE;
