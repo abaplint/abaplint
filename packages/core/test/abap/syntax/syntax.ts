@@ -2999,6 +2999,25 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("No infer error for NEW#", () => {
+    const abap = `
+CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING foo TYPE REF TO foo.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  foo=>bar( NEW #( ) ).
+  foo=>bar( foo = NEW #( ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
