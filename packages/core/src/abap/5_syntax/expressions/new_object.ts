@@ -5,14 +5,13 @@ import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {Source} from "./source";
+import {ObjectOriented} from "../_object_oriented";
+import {IMethodDefinition} from "../../types/_method_definition";
+import {MethodParameters} from "./method_parameters";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
     let ret: AbstractType | undefined = undefined;
-
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
-    }
 
     const typeToken = node.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
     const typeName = typeToken?.getStr();
@@ -50,7 +49,55 @@ export class NewObject {
       }
     }
 
+    if (ret instanceof ObjectReferenceType) {
+      this.parameters(node, ret, scope, filename);
+    } else {
+      for (const s of node.findAllExpressions(Expressions.Source)) {
+        new Source().runSyntax(s, scope, filename);
+      }
+    }
+
     return ret;
+  }
+
+  private parameters(node: ExpressionNode, obj: ObjectReferenceType, scope: CurrentScope, filename: string) {
+
+    const def = scope.findObjectDefinition(obj.getIdentifier().getName());
+    const helper = new ObjectOriented(scope);
+    // eslint-disable-next-line prefer-const
+    let {method} = helper.searchMethodName(def, "CONSTRUCTOR");
+
+    const source = node.findDirectExpression(Expressions.Source);
+    const parameters = node.findDirectExpression(Expressions.ParameterListS);
+    if (source) {
+      // single unnamed parameter
+      const type = this.defaultImportingType(method);
+      if (type === undefined) {
+        throw new Error("NewObject, no default importing parameter found");
+      }
+      new Source().runSyntax(source, scope, filename, type);
+    } else if (parameters) {
+      // parameters with names
+      if (method === undefined) {
+        throw new Error("NewObject, no parameters for constructor found");
+      }
+      new MethodParameters().checkExporting(parameters, scope, method, filename);
+    }
+    // else: no paramters, and the constructor always exist
+  }
+
+  private defaultImportingType(method: IMethodDefinition | undefined) {
+    let targetType: AbstractType | undefined = undefined;
+    if (method === undefined) {
+      return undefined;
+    }
+    const name = method.getParameters().getDefaultImporting();
+    for (const i of method.getParameters().getImporting()) {
+      if (i.getName().toUpperCase() === name) {
+        targetType = i.getType();
+      }
+    }
+    return targetType;
   }
 
 }

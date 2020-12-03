@@ -3018,7 +3018,7 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("No infer error for NEW #, called via NEW", () => {
+  it("No infer error for NEW #, called via NEW", () => {
     const abap = `
 CLASS bar DEFINITION.
 ENDCLASS.
@@ -3036,10 +3036,9 @@ CLASS foo IMPLEMENTATION.
 ENDCLASS.
 
 START-OF-SELECTION.
-*  NEW foo( bar = NEW #( ) ).
+  NEW foo( bar = NEW #( ) ).
   NEW foo( NEW #( ) ).`;
     const issues = runProgram(abap);
-    console.dir(issues);
     expect(issues.length).to.equals(0);
   });
 
