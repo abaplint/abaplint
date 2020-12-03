@@ -13,8 +13,9 @@ export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
     let ret: AbstractType | undefined = undefined;
 
-    const typeToken = node.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
-    const typeName = typeToken?.getStr();
+    const typeExpr = node.findDirectExpression(Expressions.TypeNameOrInfer);
+    const typeToken = typeExpr?.getFirstToken();
+    const typeName = typeExpr?.concatTokens();
     if (typeName === undefined) {
       throw new Error("NewObject, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
@@ -31,12 +32,6 @@ export class NewObject {
       if (objDefinition) {
         scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
         ret = new ObjectReferenceType(objDefinition);
-        /*
-      } else {
-        const extra: IReferenceExtras = {ooName: typeName, ooType: "Void"};
-        scope.addReference(typeToken, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
-        ret = new VoidType(typeName);
-        */
       }
     }
 
