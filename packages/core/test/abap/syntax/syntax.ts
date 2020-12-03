@@ -2999,6 +2999,90 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("No infer error for NEW#", () => {
+    const abap = `
+CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING foo TYPE REF TO foo.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  foo=>bar( NEW #( ) ).
+  foo=>bar( foo = NEW #( ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("No infer error for NEW #, called via NEW", () => {
+    const abap = `
+CLASS bar DEFINITION.
+ENDCLASS.
+CLASS bar IMPLEMENTATION.
+ENDCLASS.
+
+CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE REF TO bar.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  NEW foo( bar = NEW #( ) ).
+  NEW foo( NEW #( ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("NEW infer, voids", () => {
+    const abap = `
+    NEW cl_void( parameter = NEW #( ) ).
+    NEW cl_void( NEW #( ) ).
+    DATA foo TYPE REF TO cl_void.
+    foo = NEW #( parameter = NEW #( ) ).
+    foo = NEW #( NEW #( ) ).
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("NEW data reference via class type", () => {
+    const abap = `
+CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             moo TYPE i,
+           END OF ty.
+ENDCLASS.
+CLASS foo IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA(structure) = NEW foo=>ty( moo = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("NEW data reference via interface type", () => {
+    const abap = `
+INTERFACE yif_foo.
+    TYPES: BEGIN OF ty,
+             moo TYPE i,
+           END OF ty.
+ENDINTERFACE.
+START-OF-SELECTION.
+  DATA(structure) = NEW yif_foo=>ty( moo = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -6,6 +6,7 @@ import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
 import {WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {Source} from "./source";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 export class MethodCallParam {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string): void {
@@ -27,7 +28,16 @@ export class MethodCallParam {
       if (!(method instanceof VoidType) && method.getParameters().getImporting().length === 0) {
         throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
       }
-      const type = new Source().runSyntax(child, scope, filename);
+      let targetType: AbstractType | undefined = undefined;
+      if (!(method instanceof VoidType)) {
+        const name = method.getParameters().getDefaultImporting();
+        for (const i of method.getParameters().getImporting()) {
+          if (i.getName().toUpperCase() === name) {
+            targetType = i.getType();
+          }
+        }
+      }
+      const type = new Source().runSyntax(child, scope, filename, targetType);
 
       if (type === undefined) {
         throw new Error("No source type determined, method source");
