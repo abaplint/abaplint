@@ -3042,6 +3042,18 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("NEW infer, voids", () => {
+    const abap = `
+    NEW cl_void( parameter = NEW #( ) ).
+    NEW cl_void( NEW #( ) ).
+    DATA foo TYPE REF TO cl_void.
+    foo = NEW #( parameter = NEW #( ) ).
+    foo = NEW #( NEW #( ) ).
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

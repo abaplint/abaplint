@@ -3,7 +3,7 @@ import {CurrentScope} from "../_current_scope";
 import {ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {IReferenceExtras, ReferenceType} from "../_reference";
+import {ReferenceType} from "../_reference";
 import {Source} from "./source";
 import {ObjectOriented} from "../_object_oriented";
 import {IMethodDefinition} from "../../types/_method_definition";
@@ -31,9 +31,12 @@ export class NewObject {
       if (objDefinition) {
         scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
         ret = new ObjectReferenceType(objDefinition);
+        /*
       } else {
         const extra: IReferenceExtras = {ooName: typeName, ooType: "Void"};
         scope.addReference(typeToken, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+        ret = new VoidType(typeName);
+        */
       }
     }
 
@@ -43,6 +46,7 @@ export class NewObject {
         // todo: scope.addReference
         ret = new DataReference(type.getType());
       } else if (scope.getDDIC().inErrorNamespace(typeName) === false) {
+        scope.addReference(typeToken, undefined, ReferenceType.VoidType, filename);
         ret = new VoidType(typeName);
       } else {
         throw new Error("Type \"" + typeName + "\" not found in scope, NewObject");
@@ -53,7 +57,7 @@ export class NewObject {
       this.parameters(node, ret, scope, filename);
     } else {
       for (const s of node.findAllExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, scope, filename);
+        new Source().runSyntax(s, scope, filename, ret);
       }
     }
 

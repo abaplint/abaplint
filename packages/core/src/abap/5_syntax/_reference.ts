@@ -16,6 +16,7 @@ export enum ReferenceType {
   DataReadReference = "DataReadReference",
   DataWriteReference = "DataWriteReference",
 
+  VoidType = "VoidType",
   InferredType = "InferredType",
 }
 
