@@ -3070,6 +3070,19 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("NEW data reference via interface type", () => {
+    const abap = `
+INTERFACE yif_foo.
+    TYPES: BEGIN OF ty,
+             moo TYPE i,
+           END OF ty.
+ENDINTERFACE.
+START-OF-SELECTION.
+  DATA(structure) = NEW yif_foo=>ty( moo = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -8,6 +8,7 @@ import {Source} from "./source";
 import {ObjectOriented} from "../_object_oriented";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
+import {BasicTypes} from "../basic_types";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
@@ -36,13 +37,14 @@ export class NewObject {
     }
 
     if (ret === undefined) {
-      const type = scope.findType(typeName);
-      if (type) {
+      const basic = new BasicTypes(filename, scope);
+      const type = basic.resolveTypeName(typeExpr);
+      if (type && !(type instanceof VoidType)) {
         // todo: scope.addReference
-        ret = new DataReference(type.getType());
-      } else if (scope.getDDIC().inErrorNamespace(typeName) === false) {
+        ret = new DataReference(type);
+      } else if (type instanceof VoidType) {
         scope.addReference(typeToken, undefined, ReferenceType.VoidType, filename);
-        ret = new VoidType(typeName);
+        ret = type;
       } else {
         throw new Error("Type \"" + typeName + "\" not found in scope, NewObject");
       }

@@ -125,7 +125,7 @@ export class BasicTypes {
     return type;
   }
 
-  private resolveTypeName(typeName: ExpressionNode | undefined, length?: number): AbstractType | undefined {
+  public resolveTypeName(typeName: ExpressionNode | undefined, length?: number): AbstractType | undefined {
     if (typeName === undefined) {
       return undefined;
     }
