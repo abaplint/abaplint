@@ -779,4 +779,22 @@ ENDFORM.`;
     expect(hover?.value).to.contain(`{"ooName":"zif_test","ooType":"INTF"}`);
   });
 
+  it("hover, CATCH oo reference expected", () => {
+// note that lcx is not really an excpetion for this test case
+    const abap = `CLASS lcx DEFINITION.
+ENDCLASS.
+CLASS lcx IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  TRY.
+    CATCH lcx.
+  ENDTRY.
+ENDFORM.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 6, 12));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`ObjectOrientedReference`);
+  });
+
 });
