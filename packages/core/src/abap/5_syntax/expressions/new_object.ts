@@ -8,6 +8,8 @@ import {Source} from "./source";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
+    let ret: AbstractType | undefined = undefined;
+
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
@@ -18,33 +20,37 @@ export class NewObject {
       throw new Error("NewObject, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
       scope.addReference(typeToken, targetType.getIdentifier(), ReferenceType.InferredType, filename);
-      return targetType;
+      ret = targetType;
     } else if (typeName === "#" && targetType) {
-      return targetType;
+      ret = targetType;
     } else if (typeName === "#") {
       throw new Error("NewObject, todo, infer type");
     }
 
-    const objDefinition = scope.findObjectDefinition(typeName);
-    if (objDefinition) {
-      scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
-      return new ObjectReferenceType(objDefinition);
-    } else {
-      const extra: IReferenceExtras = {ooName: typeName, ooType: "Void"};
-      scope.addReference(typeToken, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+    if (ret === undefined) {
+      const objDefinition = scope.findObjectDefinition(typeName);
+      if (objDefinition) {
+        scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
+        ret = new ObjectReferenceType(objDefinition);
+      } else {
+        const extra: IReferenceExtras = {ooName: typeName, ooType: "Void"};
+        scope.addReference(typeToken, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+      }
     }
 
-    const type = scope.findType(typeName);
-    if (type) {
-      // todo: scope.addReference
-      return new DataReference(type.getType());
+    if (ret === undefined) {
+      const type = scope.findType(typeName);
+      if (type) {
+        // todo: scope.addReference
+        ret = new DataReference(type.getType());
+      } else if (scope.getDDIC().inErrorNamespace(typeName) === false) {
+        ret = new VoidType(typeName);
+      } else {
+        throw new Error("Type \"" + typeName + "\" not found in scope, NewObject");
+      }
     }
 
-    if (scope.getDDIC().inErrorNamespace(typeName) === false) {
-      return new VoidType(typeName);
-    } else {
-      throw new Error("Type \"" + typeName + "\" not found in scope, NewObject");
-    }
-
+    return ret;
   }
+
 }

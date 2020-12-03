@@ -3018,6 +3018,31 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it.skip("No infer error for NEW #, called via NEW", () => {
+    const abap = `
+CLASS bar DEFINITION.
+ENDCLASS.
+CLASS bar IMPLEMENTATION.
+ENDCLASS.
+
+CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE REF TO bar.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+*  NEW foo( bar = NEW #( ) ).
+  NEW foo( NEW #( ) ).`;
+    const issues = runProgram(abap);
+    console.dir(issues);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
