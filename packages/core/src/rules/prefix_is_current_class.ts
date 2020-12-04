@@ -87,7 +87,8 @@ export class PrefixIsCurrentClass extends ABAPRule {
       const staticAccess = className + "=>";
 
       for (const s of c.findAllStatementNodes()) {
-        if (s.concatTokensWithoutStringsAndComments().toUpperCase().includes(staticAccess)) {
+        const concat = s.concatTokensWithoutStringsAndComments().toUpperCase();
+        if (concat.includes(staticAccess)) {
           const tokenPos = s.findTokenSequencePosition(className, "=>");
           if (tokenPos) {
             const end = new Position(tokenPos.getRow(), tokenPos.getCol() + className.length + 2);
@@ -101,7 +102,7 @@ export class PrefixIsCurrentClass extends ABAPRule {
               fix));
           }
         } else if (this.conf.omitMeInstanceCalls === true
-            && s.concatTokensWithoutStringsAndComments().toUpperCase().includes(meAccess)
+            && concat.includes(meAccess)
             && s.findFirstExpression(MethodCall)) {
           const tokenPos = s.findTokenSequencePosition("me", "->");
           if (tokenPos) {

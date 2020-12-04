@@ -2,7 +2,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
-import {StatementNode, TokenNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
@@ -52,92 +52,115 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   private missingSpace(statement: StatementNode): Position | undefined {
 
-    for (const cond of statement.findAllExpressions(Expressions.CondSub)) {
-      const children = cond.getChildren();
-      for (let i = 0; i < children.length; i++) {
-        if (children[i].get() instanceof Expressions.Cond) {
-          const current = children[i];
-          const prev = children[i - 1].getLastToken();
-          const next = children[i + 1].getFirstToken();
+    const found = statement.findAllExpressionsMulti([Expressions.CondSub,
+      Expressions.ValueBody, Expressions.Cond, Expressions.MethodCallParam], true);
+    let pos: Position | undefined = undefined;
+    for (const f of found) {
+      if (f.get() instanceof Expressions.CondSub) {
+        pos = this.checkCondSub(f);
+      } else if (f.get() instanceof Expressions.ValueBody) {
+        pos = this.checkValueBody(f);
+      } else if (f.get() instanceof Expressions.Cond) {
+        pos = this.checkCond(f);
+      } else if (f.get() instanceof Expressions.MethodCallParam) {
+        pos = this.checkMethodCallParam(f);
+      }
 
-          if (prev.getStr() === "("
-              && prev.getRow() === current.getFirstToken().getRow()
-              && prev.getCol() + 1 === current.getFirstToken().getStart().getCol()) {
-            return current.getFirstToken().getStart();
-          }
-
-          if (next.getStr() === ")"
-              && next.getRow() === current.getLastToken().getRow()
-              && next.getCol() === current.getLastToken().getEnd().getCol()) {
-            return current.getLastToken().getEnd();
-          }
-
-        }
+      if (pos) {
+        return pos;
       }
     }
 
-    for (const vb of statement.findAllExpressions(Expressions.ValueBody)) {
+    return undefined;
+  }
 
-      const children = vb.getChildren();
-      for (let i = 0; i < children.length; i++) {
+  private checkCondSub(cond: ExpressionNode): Position | undefined {
+    const children = cond.getChildren();
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].get() instanceof Expressions.Cond) {
         const current = children[i];
+        const prev = children[i - 1].getLastToken();
+        const next = children[i + 1].getFirstToken();
 
-        if (current instanceof TokenNode) {
-          const prev = children[i - 1]?.getLastToken();
-          const next = children[i + 1]?.getFirstToken();
-
-          if (current.getFirstToken().getStr() === "("
-              && next
-              && next.getRow() === current.getLastToken().getRow()
-              && next.getCol() === current.getLastToken().getEnd().getCol()) {
-            return current.getFirstToken().getStart();
-          }
-
-          if (current.getFirstToken().getStr() === ")"
-              && prev
-              && prev.getRow() === current.getFirstToken().getRow()
-              && prev.getEnd().getCol() === current.getFirstToken().getStart().getCol()) {
-            return current.getLastToken().getEnd();
-          }
-
+        if (prev.getStr() === "("
+            && prev.getRow() === current.getFirstToken().getRow()
+            && prev.getCol() + 1 === current.getFirstToken().getStart().getCol()) {
+          return current.getFirstToken().getStart();
         }
+
+        if (next.getStr() === ")"
+            && next.getRow() === current.getLastToken().getRow()
+            && next.getCol() === current.getLastToken().getEnd().getCol()) {
+          return current.getLastToken().getEnd();
+        }
+
+      }
+    }
+    return undefined;
+  }
+
+  private checkValueBody(vb: ExpressionNode): Position | undefined {
+    const children = vb.getChildren();
+    for (let i = 0; i < children.length; i++) {
+      const current = children[i];
+
+      if (current instanceof TokenNode) {
+        const prev = children[i - 1]?.getLastToken();
+        const next = children[i + 1]?.getFirstToken();
+
+        if (current.getFirstToken().getStr() === "("
+            && next
+            && next.getRow() === current.getLastToken().getRow()
+            && next.getCol() === current.getLastToken().getEnd().getCol()) {
+          return current.getFirstToken().getStart();
+        }
+
+        if (current.getFirstToken().getStr() === ")"
+            && prev
+            && prev.getRow() === current.getFirstToken().getRow()
+            && prev.getEnd().getCol() === current.getFirstToken().getStart().getCol()) {
+          return current.getLastToken().getEnd();
+        }
+
+      }
+    }
+    return undefined;
+  }
+
+  private checkCond(cond: ExpressionNode): Position | undefined {
+    const children = cond.getAllTokens();
+    for (let i = 0; i < children.length - 1; i++) {
+      const current = children[i];
+      const next = children[i + 1];
+
+      if (next.getStr().startsWith("'")
+          && next.getRow() === current.getRow()
+          && next.getCol() === current.getEnd().getCol()) {
+        return current.getEnd();
       }
     }
 
-    for (const cond of statement.findAllExpressions(Expressions.Cond)) {
-      const children = cond.getAllTokens();
-      for (let i = 0; i < children.length - 1; i++) {
-        const current = children[i];
-        const next = children[i + 1];
+    return undefined;
+  }
 
-        if (next.getStr().startsWith("'")
-            && next.getRow() === current.getRow()
-            && next.getCol() === current.getEnd().getCol()) {
-          return current.getEnd();
-        }
+  private checkMethodCallParam(call: ExpressionNode): Position | undefined {
+    const children = call.getChildren();
+
+    {
+      const first = children[0].getFirstToken();
+      const second = children[1].getFirstToken();
+      if (first.getRow() === second.getRow()
+          && first.getCol() + 1 === second.getStart().getCol()) {
+        return second.getStart();
       }
     }
 
-    const calls = statement.findAllExpressions(Expressions.MethodCallParam);
-    for (const call of calls) {
-      const children = call.getChildren();
-
-      {
-        const first = children[0].getFirstToken();
-        const second = children[1].getFirstToken();
-        if (first.getRow() === second.getRow()
-            && first.getCol() + 1 === second.getStart().getCol()) {
-          return second.getStart();
-        }
-      }
-
-      {
-        const first = children[children.length - 2].getLastToken();
-        const second = children[children.length - 1].getFirstToken();
-        if (first.getRow() === second.getRow()
-            && first.getEnd().getCol() === second.getStart().getCol()) {
-          return second.getStart();
-        }
+    {
+      const first = children[children.length - 2].getLastToken();
+      const second = children[children.length - 1].getFirstToken();
+      if (first.getRow() === second.getRow()
+          && first.getEnd().getCol() === second.getStart().getCol()) {
+        return second.getStart();
       }
     }
 
