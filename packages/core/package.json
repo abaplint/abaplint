@@ -14,6 +14,7 @@
         "pretest": "npm run compile",
         "test": "mocha --timeout 1000",
         "test:only": "npm run compile && mocha",
+        "test:parallel": "npm run compile && mocha --parallel --reporter dot",
         "posttest": "npm run lint && npm run schema && api-extractor run",
         "prepublishOnly": "rm -rf build && npm run test",
         "precoverage": "npm run compile",
