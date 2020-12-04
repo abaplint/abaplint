@@ -224,7 +224,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
-  public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
+  public findAllExpressionsMulti(type: (new () => IStatementRunnable)[], recursive = false): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
@@ -236,7 +236,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
           ret.push(child);
         }
       }
-      if (before === ret.length) {
+      if (before === ret.length || recursive === true) {
         ret = ret.concat(child.findAllExpressionsMulti(type));
       }
     }

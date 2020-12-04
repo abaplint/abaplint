@@ -34,7 +34,7 @@ async function run(abap: string): Promise<readonly Issue[]> {
   return new MessageExistsRule().initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe("Message rule", () => {
+describe("Rule message_exists", () => {
   it("parser error", async () => {
     const abap = "sfsdfd";
     const issues = await run(abap);

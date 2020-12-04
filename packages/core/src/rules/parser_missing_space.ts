@@ -52,29 +52,20 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   private missingSpace(statement: StatementNode): Position | undefined {
 
-    for (const cond of statement.findAllExpressions(Expressions.CondSub)) {
-      const pos = this.checkCondSub(cond);
-      if (pos) {
-        return pos;
+    const found = statement.findAllExpressionsMulti([Expressions.CondSub,
+      Expressions.ValueBody, Expressions.Cond, Expressions.MethodCallParam], true);
+    let pos: Position | undefined = undefined;
+    for (const f of found) {
+      if (f.get() instanceof Expressions.CondSub) {
+        pos = this.checkCondSub(f);
+      } else if (f.get() instanceof Expressions.ValueBody) {
+        pos = this.checkValueBody(f);
+      } else if (f.get() instanceof Expressions.Cond) {
+        pos = this.checkCond(f);
+      } else if (f.get() instanceof Expressions.MethodCallParam) {
+        pos = this.checkMethodCallParam(f);
       }
-    }
 
-    for (const vb of statement.findAllExpressions(Expressions.ValueBody)) {
-      const pos = this.checkValueBody(vb);
-      if (pos) {
-        return pos;
-      }
-    }
-
-    for (const cond of statement.findAllExpressions(Expressions.Cond)) {
-      const pos = this.checkCond(cond);
-      if (pos) {
-        return pos;
-      }
-    }
-
-    for (const call of statement.findAllExpressions(Expressions.MethodCallParam)) {
-      const pos = this.checkMethodCallParam(call);
       if (pos) {
         return pos;
       }
