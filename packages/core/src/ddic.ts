@@ -195,8 +195,17 @@ export class DDIC {
     }
   }
 
-  public textToType(text: string | undefined, length: string | undefined, decimals: string | undefined, parent: string): AbstractType {
+  public textToType(
+    text: string | undefined,
+    length: string | undefined,
+    decimals: string | undefined,
+    parent: string,
+    qualify = true): AbstractType {
+
 // todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length
+
+    const qualified = qualify ? parent : undefined;
+
     switch (text) {
       case "DEC":      // 1 <= len <= 31
       case "D16F":     // 1 <= len <= 31
@@ -208,36 +217,36 @@ export class DDIC {
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length, " + parent, parent);
         } else if (decimals === undefined) {
-          return new Types.PackedType(parseInt(length, 10), 0, parent);
+          return new Types.PackedType(parseInt(length, 10), 0, qualified);
         }
-        return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), parent);
+        return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), qualified);
       case "ACCP":
-        return new Types.CharacterType(6, parent); // YYYYMM
+        return new Types.CharacterType(6, qualified); // YYYYMM
       case "LANG":
-        return new Types.CharacterType(1, parent);
+        return new Types.CharacterType(1, qualified);
       case "CLNT":
-        return new Types.CharacterType(3, parent);
+        return new Types.CharacterType(3, qualified);
       case "CUKY":
-        return new Types.CharacterType(5, parent);
+        return new Types.CharacterType(5, qualified);
       case "UNIT":  // 2 <= len <= 3
-        return new Types.CharacterType(3, parent);
+        return new Types.CharacterType(3, qualified);
       case "UTCLONG":
-        return new Types.CharacterType(27, parent);
+        return new Types.CharacterType(27, qualified);
       case "NUMC": // 1 <= len <= 255
       case "CHAR": // 1 <= len <= 30000 (1333 for table fields)
       case "LCHR": // 256 <= len <= 32000
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.CharacterType(parseInt(length, 10), parent);
+        return new Types.CharacterType(parseInt(length, 10), qualified);
       case "RAW":  // 1 <= len <= 32000
       case "LRAW": // 256 <= len <= 32000
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.HexType(parseInt(length, 10), parent);
+        return new Types.HexType(parseInt(length, 10), qualified);
       case "TIMS":
-        return new Types.TimeType(parent); //HHMMSS
+        return new Types.TimeType(qualified); //HHMMSS
       case "DECFLOAT16": // len = 16
       case "DECFLOAT34": // len = 34
       case "D16R":       // len = 16
@@ -248,23 +257,23 @@ export class DDIC {
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.FloatingPointType(parseInt(length, 10), parent);
+        return new Types.FloatingPointType(parseInt(length, 10), qualified);
       case "DATS":
-        return new Types.DateType(parent); //YYYYMMDD
+        return new Types.DateType(qualified); //YYYYMMDD
       case "INT1":
       case "INT2":
       case "INT4":
       case "INT8":
-        return new Types.IntegerType(parent);
+        return new Types.IntegerType(qualified);
       case "SSTR":    // 1 <= len <= 1333
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return new Types.StringType(parent);
+        return new Types.StringType(qualified);
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":
-        return new Types.XStringType(parent);
+        return new Types.XStringType(qualified);
       case "D16S":
       case "D34S":
       case "DF16_SCL":

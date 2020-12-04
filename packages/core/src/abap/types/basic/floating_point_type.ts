@@ -5,8 +5,8 @@ import {AbstractType} from "./_abstract_type";
 export class FloatingPointType extends AbstractType {
   private readonly length: number;
 
-  public constructor(length: number, name?: string) {
-    super(name);
+  public constructor(length: number, qualifiedName?: string) {
+    super(qualifiedName);
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     }
