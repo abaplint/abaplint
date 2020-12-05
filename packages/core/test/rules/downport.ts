@@ -531,4 +531,19 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("LOOP REFERENCE INTO DATA()", async () => {
+    const abap = `
+    DATA table TYPE STANDARD TABLE OF string.
+    LOOP AT table REFERENCE INTO DATA(inline).
+    ENDLOOP.`;
+
+    const expected = `
+    DATA table TYPE STANDARD TABLE OF string.
+    DATA inline TYPE REF TO string.
+    LOOP AT table REFERENCE INTO inline.
+    ENDLOOP.`;
+
+    testFix(abap, expected);
+  });
+
 });
