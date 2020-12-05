@@ -1,4 +1,4 @@
-import {str, seq, per, alt, ver, Expression} from "../combi";
+import {str, seqs, per, alt, ver, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -60,26 +60,26 @@ export class StringTemplateFormatting extends Expression {
                              str("ENGINEERING "),
                              new Source());
 
-    const width = seq(str("WIDTH"), str("="), new Source());
-    const align = seq(str("ALIGN"), str("="), alignOptions);
-    const timezone = seq(str("TIMEZONE"), str("="), new Source());
-    const timestamp = seq(str("TIMESTAMP"), str("="), timeStampOptions);
-    const pad = seq(str("PAD"), str("="), new Source());
-    const number = seq(str("NUMBER"), str("="), numberOptions);
-    const sign = seq(str("SIGN"), str("="), signOptions);
-    const decimals = seq(str("DECIMALS"), str("="), new Source());
-    const alpha = ver(Version.v740sp02, seq(str("ALPHA"), str("="), alphaOptions));
-    const xsd = ver(Version.v740sp02, seq(str("XSD"), str("="), zeroXSDOptions));
+    const width = seqs("WIDTH", "=", Source);
+    const align = seqs("ALIGN", "=", alignOptions);
+    const timezone = seqs("TIMEZONE", "=", Source);
+    const timestamp = seqs("TIMESTAMP", "=", timeStampOptions);
+    const pad = seqs("PAD", "=", Source);
+    const number = seqs("NUMBER", "=", numberOptions);
+    const sign = seqs("SIGN", "=", signOptions);
+    const decimals = seqs("DECIMALS", "=", Source);
+    const alpha = ver(Version.v740sp02, seqs("ALPHA", "=", alphaOptions));
+    const xsd = ver(Version.v740sp02, seqs("XSD", "=", zeroXSDOptions));
 
-    const formatting = alt(seq(str("TIME"), str("="), dateTimeOptions),
-                           seq(str("DATE"), str("="), dateTimeOptions),
-                           seq(str("CASE"), str("="), caseOptions),
-                           seq(str("EXPONENT"), new Source()),
-                           seq(str("ZERO"), str("="), zeroXSDOptions),
+    const formatting = alt(seqs("TIME", "=", dateTimeOptions),
+                           seqs("DATE", "=", dateTimeOptions),
+                           seqs("CASE", "=", caseOptions),
+                           seqs("EXPONENT", Source),
+                           seqs("ZERO", "=", zeroXSDOptions),
                            xsd,
-                           seq(str("STYLE"), str("="), styleOptions),
-                           seq(str("CURRENCY"), str("="), new Source()),
-                           seq(str("COUNTRY"), str("="), new Source()),
+                           seqs("STYLE", "=", styleOptions),
+                           seqs("CURRENCY", "=", Source),
+                           seqs("COUNTRY", "=", Source),
                            per(sign, number, decimals, width, pad, alpha, align),
                            per(timezone, timestamp));
 

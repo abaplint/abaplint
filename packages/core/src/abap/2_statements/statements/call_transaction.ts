@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per} from "../combi";
+import {verNot, str, seqs, opt, alt, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,22 +8,22 @@ export class CallTransaction implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const options = seq(str("OPTIONS FROM"), new Source());
-    const messages = seq(str("MESSAGES INTO"), new Target());
+    const options = seqs("OPTIONS FROM", Source);
+    const messages = seqs("MESSAGES INTO", Target);
 
-    const auth = seq(alt(str("WITH"), str("WITHOUT")), str("AUTHORITY-CHECK"));
+    const auth = seqs(alt(str("WITH"), str("WITHOUT")), "AUTHORITY-CHECK");
 
-    const perm = per(seq(str("UPDATE"), new Source()),
+    const perm = per(seqs("UPDATE", Source),
                      str("AND SKIP FIRST SCREEN"),
                      options,
                      messages,
-                     seq(str("MODE"), new Source()));
+                     seqs("MODE", Source));
 
-    const ret = seq(str("CALL TRANSACTION"),
-                    new Source(),
-                    opt(auth),
-                    opt(seq(str("USING"), new Source())),
-                    opt(perm));
+    const ret = seqs("CALL TRANSACTION",
+                     Source,
+                     opt(auth),
+                     opt(seqs("USING", Source)),
+                     opt(perm));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,4 +1,4 @@
-import {seq, str, plus, Expression, altPrio} from "../combi";
+import {seqs, str, plus, Expression, altPrio} from "../combi";
 import {Constant} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -12,7 +12,7 @@ export class SQLHints extends Expression {
                          str("MSSQLNT"),
                          str("SYBASE"),
                          str("DB6"));
-    const ret = seq(str("%_HINTS"), plus(seq(type, new Constant())));
+    const ret = seqs("%_HINTS", plus(seqs(type, Constant)));
     return ret;
   }
 }

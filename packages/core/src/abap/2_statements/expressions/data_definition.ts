@@ -1,13 +1,12 @@
-import {str, seq, alt, opt, per, Expression} from "../combi";
+import {str, seqs, alt, opt, per, Expression} from "../combi";
 import * as Expressions from ".";
-import {Integer} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class DataDefinition extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const occurs = seq(str("OCCURS"), new Integer());
-    const initial = seq(str("INITIAL SIZE"), new Expressions.Integer());
+    const occurs = seqs("OCCURS", Expressions.Integer);
+    const initial = seqs("INITIAL SIZE", Expressions.Integer);
 
     const simple = opt(per(str("READ-ONLY"),
                            occurs,
@@ -18,13 +17,13 @@ export class DataDefinition extends Expression {
                            new Expressions.Decimals(),
                            new Expressions.Value()));
 
-    const table = seq(new Expressions.TypeTable(),
-                      opt(str("READ-ONLY")),
-                      opt(initial));
+    const table = seqs(Expressions.TypeTable,
+                       opt(str("READ-ONLY")),
+                       opt(initial));
 
-    return seq(new Expressions.DefinitionName(),
-               opt(new Expressions.ConstantFieldLength()),
-               alt(simple, table));
+    return seqs(Expressions.DefinitionName,
+                opt(new Expressions.ConstantFieldLength()),
+                alt(simple, table));
 
   }
 }

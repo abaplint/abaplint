@@ -887,6 +887,7 @@ export function str(s: string): IStatementRunnable {
     return new Word(s);
   }
 }
+
 export function seq(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Sequence([first, second].concat(rest));
 }
@@ -928,4 +929,27 @@ export function ver(version: Version, first: IStatementRunnable): IStatementRunn
 }
 export function verNot(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new VersNot(version, first);
+}
+
+
+const singletons: {[index: string]: Expression} = {};
+type input = (new () => Expression) | string | IStatementRunnable;
+function map(s: input): IStatementRunnable {
+  const type = typeof s;
+  if (type === "string") {
+    return str(s as string);
+  } else if (type === "function") {
+    // @ts-ignore
+    const name = s.name;
+    if (singletons[name] === undefined) {
+      // @ts-ignore
+      singletons[name] = new s();
+    }
+    return singletons[name];
+  } else {
+    return s as IStatementRunnable;
+  }
+}
+export function seqs(first: input, second: input, ...rest: input[]): IStatementRunnable {
+  return new Sequence([map(first), map(second)].concat(rest.map(map)));
 }

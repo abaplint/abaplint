@@ -1,23 +1,23 @@
-import {seq, str, opt, optPrio, altPrio, alt, Expression} from "../combi";
+import {seqs, str, opt, optPrio, altPrio, alt, Expression} from "../combi";
 import {Constant, FieldChain, TypeName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class FormParamType extends Expression {
   public getRunnable(): IStatementRunnable {
-    const def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
+    const def = seqs("DEFAULT", alt(new Constant(), new FieldChain()));
 
-    const table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
-                      str("TABLE"));
+    const table = seqs(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
+                       "TABLE");
 
-    const tabseq = seq(table, optPrio(seq(str("OF"), new TypeName())));
+    const tabseq = seqs(table, optPrio(seqs("OF", TypeName)));
 
-    const ret = seq(optPrio(alt(str("REF TO"), str("LINE OF"))),
-                    new TypeName(),
-                    opt(def));
+    const ret = seqs(optPrio(alt(str("REF TO"), str("LINE OF"))),
+                     TypeName,
+                     opt(def));
 
-    const like = seq(str("LIKE"), optPrio(alt(str("REF TO"), str("LINE OF"))),
-                     new FieldChain());
+    const like = seqs("LIKE", optPrio(alt(str("REF TO"), str("LINE OF"))),
+                      FieldChain);
 
-    return alt(seq(str("TYPE"), altPrio(tabseq, ret)), like);
+    return alt(seqs("TYPE", altPrio(tabseq, ret)), like);
   }
 }

@@ -1,4 +1,4 @@
-import {seq, ver, tok, plus, opt, optPrio, altPrio, str, Expression} from "../combi";
+import {seqs, ver, tok, plus, opt, optPrio, altPrio, str, Expression} from "../combi";
 import {FieldSub, ClassName, Constant, Source, MethodCallChain, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -8,33 +8,33 @@ export class Compare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = altPrio(new FieldSub(), new Constant());
 
-    const list = seq(tok(WParenLeft),
-                     val,
-                     plus(seq(str(","), val)),
-                     tok(ParenRightW));
+    const list = seqs(tok(WParenLeft),
+                      val,
+                      plus(seqs(",", val)),
+                      tok(ParenRightW));
 
-    const inn = seq(optPrio(str("NOT")), str("IN"), altPrio(new Source(), list));
+    const inn = seqs(optPrio(str("NOT")), str("IN"), altPrio(new Source(), list));
 
-    const sopt = seq(str("IS"),
-                     optPrio(str("NOT")),
-                     altPrio(str("SUPPLIED"),
-                             str("BOUND"),
-                             ver(Version.v750, seq(str("INSTANCE OF"), new ClassName())),
-                             str("REQUESTED"),
-                             str("ASSIGNED"),
-                             str("INITIAL")));
+    const sopt = seqs(str("IS"),
+                      optPrio(str("NOT")),
+                      altPrio(str("SUPPLIED"),
+                              str("BOUND"),
+                              ver(Version.v750, seqs("INSTANCE OF", ClassName)),
+                              str("REQUESTED"),
+                              str("ASSIGNED"),
+                              str("INITIAL")));
 
-    const between = seq(optPrio(str("NOT")), str("BETWEEN"), new Source(), str("AND"), new Source());
+    const between = seqs(optPrio(str("NOT")), "BETWEEN", Source, "AND", Source);
 
     const predicate = ver(Version.v740sp08, new MethodCallChain());
 
-    const rett = seq(new Source(),
-                     altPrio(seq(new CompareOperator(), new Source()),
-                             inn,
-                             between,
-                             sopt));
+    const rett = seqs(Source,
+                      altPrio(seqs(CompareOperator, Source),
+                              inn,
+                              between,
+                              sopt));
 
-    const ret = seq(opt(str("NOT")), altPrio(rett, predicate));
+    const ret = seqs(opt(str("NOT")), altPrio(rett, predicate));
 
     return ret;
   }

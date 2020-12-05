@@ -1,4 +1,4 @@
-import {seq, per, opt, alt, tok, str, ver, star, Expression, optPrio} from "../combi";
+import {seqs, per, opt, alt, tok, str, ver, star, Expression, optPrio} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -10,19 +10,19 @@ import {SQLTarget} from "./sql_target";
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
-                         star(seq(new SQLTarget(), str(","))),
-                         new SQLTarget(),
-                         str(")"));
-    const intoSimple = seq(opt(str("CORRESPONDING FIELDS OF")), new SQLTarget());
+    const intoList = seqs(alt(tok(WParenLeft), tok(WParenLeftW)),
+                          star(seqs(SQLTarget, ",")),
+                          SQLTarget,
+                          ")");
+    const intoSimple = seqs(opt(str("CORRESPONDING FIELDS OF")), SQLTarget);
 
-    const into = seq(str("INTO"), alt(intoList, intoSimple));
+    const into = seqs("INTO", alt(intoList, intoSimple));
 
-    const where = seq(str("WHERE"), new SQLCond());
+    const where = seqs("WHERE", SQLCond);
 
     const comma = opt(ver(Version.v740sp05, str(",")));
-    const someField = seq(alt(new SQLFieldName(), new SQLAggregation()), comma);
-    const fieldList = seq(star(someField), new SQLFieldName(), comma, star(someField));
+    const someField = seqs(alt(new SQLFieldName(), new SQLAggregation()), comma);
+    const fieldList = seqs(star(someField), SQLFieldName, comma, star(someField));
 
 // todo, use SQLFieldList instead?
     const fields = alt(str("*"),
@@ -32,13 +32,13 @@ export class SelectLoop extends Expression {
     const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");
 
-    const up = seq(str("UP TO"), new SQLSource(), str("ROWS"));
+    const up = seqs("UP TO", SQLSource, "ROWS");
 
-    const pack = seq(str("PACKAGE SIZE"), new SQLSource());
+    const pack = seqs("PACKAGE SIZE", SQLSource);
 
-    const from2 = seq(str("FROM"), new DatabaseTable());
+    const from2 = seqs("FROM", DatabaseTable);
 
-    const tab = seq(new SQLTargetTable(), alt(pack, seq(from2, pack), seq(pack, from2)));
+    const tab = seqs(SQLTargetTable, alt(pack, seqs(from2, pack), seqs(pack, from2)));
 
     const perm = per(new SQLFrom(),
                      where,
@@ -51,10 +51,10 @@ export class SelectLoop extends Expression {
                      new SQLForAllEntries(),
                      alt(tab, into));
 
-    const ret = seq(str("SELECT"),
-                    optPrio(str("DISTINCT")),
-                    fields,
-                    perm);
+    const ret = seqs("SELECT",
+                     optPrio(str("DISTINCT")),
+                     fields,
+                     perm);
 
     return ret;
   }

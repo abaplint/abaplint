@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt} from "../combi";
+import {verNot, seqs, opt} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,10 +7,10 @@ import {IStatementRunnable} from "../statement_runnable";
 export class CallScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const starting = seq(str("STARTING AT"), new Source(), new Source());
-    const ending = seq(str("ENDING AT"), new Source(), new Source());
+    const starting = seqs("STARTING AT", Source, Source);
+    const ending = seqs("ENDING AT", Source, Source);
 
-    const ret = seq(str("CALL SCREEN"), new Source(), opt(seq(starting, opt(ending))));
+    const ret = seqs("CALL SCREEN", Source, opt(seqs(starting, opt(ending))));
 
     return verNot(Version.Cloud, ret);
   }
