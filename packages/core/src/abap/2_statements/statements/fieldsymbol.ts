@@ -1,16 +1,16 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt} from "../combi";
+import {seqs, alt, opt} from "../combi";
 import {FieldSymbol as Name, Type, TypeTable, TypeName, Field} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class FieldSymbol implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const stru = seq(str("STRUCTURE"), new TypeName(), str("DEFAULT"), new Field());
+    const stru = seqs("STRUCTURE", TypeName, "DEFAULT", Field);
 
-    return seq(str("FIELD-SYMBOLS"),
-               new Name(),
-               opt(alt(new Type(), new TypeTable(), stru)));
+    return seqs("FIELD-SYMBOLS",
+                Name,
+                opt(alt(new Type(), new TypeTable(), stru)));
   }
 
 }

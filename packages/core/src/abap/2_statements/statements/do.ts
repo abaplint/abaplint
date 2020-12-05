@@ -1,24 +1,24 @@
 import {IStatement} from "./_statement";
-import {str, opt, seq, per, plus} from "../combi";
+import {opt, seqs, per, plus} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Do implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const range = seq(str("RANGE"), new Source());
+    const range = seqs("RANGE", Source);
 
-    const vary = seq(str("VARYING"),
-                     new Target(),
-                     str("FROM"),
-                     new Source(),
-                     str("NEXT"),
-                     new Source(),
-                     opt(range));
+    const vary = seqs("VARYING",
+                      Target,
+                      "FROM",
+                      Source,
+                      "NEXT",
+                      Source,
+                      opt(range));
 
-    const times = seq(new Source(), str("TIMES"));
+    const times = seqs(Source, "TIMES");
 
-    return seq(str("DO"), opt(per(plus(vary), times)));
+    return seqs("DO", opt(per(plus(vary), times)));
   }
 
 }

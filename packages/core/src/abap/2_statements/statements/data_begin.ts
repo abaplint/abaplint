@@ -1,20 +1,20 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt} from "../combi";
+import {str, seqs, opt} from "../combi";
 import {Integer, DefinitionName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class DataBegin implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const occurs = seq(str("OCCURS"), new Integer());
+    const occurs = seqs("OCCURS", Integer);
 
-    const structure = seq(str("BEGIN OF"),
-                          opt(str("COMMON PART")),
-                          new DefinitionName(),
-                          opt(str("READ-ONLY")),
-                          opt(occurs));
+    const structure = seqs("BEGIN OF",
+                           opt(str("COMMON PART")),
+                           DefinitionName,
+                           opt(str("READ-ONLY")),
+                           opt(occurs));
 
-    return seq(str("DATA"), structure);
+    return seqs("DATA", structure);
   }
 
 }

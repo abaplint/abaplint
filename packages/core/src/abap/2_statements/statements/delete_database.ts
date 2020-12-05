@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, optPrio, alt, opt} from "../combi";
+import {str, seqs, optPrio, alt, opt} from "../combi";
 import {Dynamic, SQLCond, DatabaseTable, SQLSourceSimple, DatabaseConnection} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLClient} from "../expressions/sql_client";
@@ -7,19 +7,19 @@ import {SQLClient} from "../expressions/sql_client";
 export class DeleteDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const where = seq(str("WHERE"), alt(new SQLCond(), new Dynamic()));
+    const where = seqs("WHERE", alt(new SQLCond(), new Dynamic()));
     const source = alt(new Dynamic(), new DatabaseTable());
 
-    const from = seq(str("FROM"), source, optPrio(new SQLClient()), optPrio(new DatabaseConnection()), opt(where));
+    const from = seqs("FROM", source, optPrio(new SQLClient()), optPrio(new DatabaseConnection()), opt(where));
 
-    const table = seq(source,
-                      optPrio(new SQLClient()),
-                      opt(new DatabaseConnection()),
-                      str("FROM"),
-                      opt(str("TABLE")),
-                      new SQLSourceSimple());
+    const table = seqs(source,
+                       optPrio(new SQLClient()),
+                       opt(new DatabaseConnection()),
+                       "FROM",
+                       opt(str("TABLE")),
+                       SQLSourceSimple);
 
-    const ret = seq(str("DELETE"), alt(from, table));
+    const ret = seqs("DELETE", alt(from, table));
 
     return ret;
   }
