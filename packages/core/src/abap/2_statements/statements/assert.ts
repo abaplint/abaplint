@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, opt, plus, optPrio} from "../combi";
+import {str, seqs, opts, plus, optPrio} from "../combi";
 import {Source, NamespaceSimpleName, Cond} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -13,7 +13,7 @@ export class Assert implements IStatement {
     return seqs("ASSERT",
                 optPrio(id),
                 optPrio(subkey),
-                opt(fields),
+                opts(fields),
                 optPrio(str("CONDITION")),
                 Cond);
   }

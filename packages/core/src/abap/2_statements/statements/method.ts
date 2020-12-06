@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, opt, optPrio, alts, plus, altPrios, regex as reg} from "../combi";
+import {seqs, opts, optPrio, alts, plus, altPrios, regex as reg} from "../combi";
 import {MethodName, Language} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -16,8 +16,8 @@ export class Method implements IStatement {
 
     const database = seqs("DATABASE", alts("PROCEDURE", "FUNCTION"), "FOR HDB",
                           Language,
-                          opt(str("OPTIONS READ-ONLY")),
-                          opt(using));
+                          opts("OPTIONS READ-ONLY"),
+                          opts(using));
 
     const by = seqs("BY", alts(kernel, database));
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, alts, opt} from "../combi";
+import {verNot, seqs, alts, opts} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class Communication implements IStatement {
 
     const init = seqs("INIT ID", Source, "DESTINATION", Target);
     const allocate = seqs("ALLOCATE ID", Source);
-    const send = seqs("SEND ID", Source, "BUFFER", Target, opt(length));
+    const send = seqs("SEND ID", Source, "BUFFER", Target, opts(length));
     const deallocate = seqs("DEALLOCATE ID", Source);
     const accept = seqs("ACCEPT ID", Source);
 
@@ -19,7 +19,7 @@ export class Communication implements IStatement {
                          Source,
                          "BUFFER",
                          Source,
-                         opt(length),
+                         opts(length),
                          "DATAINFO",
                          Target,
                          "STATUSINFO",

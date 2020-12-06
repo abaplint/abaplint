@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opt} from "../combi";
+import {verNot, seqs, opts} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,8 +12,8 @@ export class DeleteTextpool implements IStatement {
 
     const ret = seqs("DELETE TEXTPOOL",
                      Source,
-                     opt(language),
-                     opt(state));
+                     opts(language),
+                     opts(state));
 
     return verNot(Version.Cloud, ret);
   }

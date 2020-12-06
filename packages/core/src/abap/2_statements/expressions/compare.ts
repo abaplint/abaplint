@@ -1,4 +1,4 @@
-import {seqs, ver, tok, plus, opt, optPrio, altPrios, str, Expression} from "../combi";
+import {seqs, ver, tok, plus, opts, optPrio, altPrios, str, Expression} from "../combi";
 import {FieldSub, ClassName, Constant, Source, MethodCallChain, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -30,7 +30,7 @@ export class Compare extends Expression {
 
     const rett = seqs(Source, altPrios(seqs(CompareOperator, Source), inn, between, sopt));
 
-    const ret = seqs(opt(str("NOT")), altPrios(rett, predicate));
+    const ret = seqs(opts("NOT"), altPrios(rett, predicate));
 
     return ret;
   }

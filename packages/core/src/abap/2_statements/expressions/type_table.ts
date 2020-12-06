@@ -1,4 +1,4 @@
-import {seqs, opt, alts, str, ver, per, Expression, altPrios, plus, plusPrio, optPrio} from "../combi";
+import {seqs, opts, alts, str, ver, per, Expression, altPrios, plus, plusPrio, optPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -16,35 +16,35 @@ export class TypeTable extends Expression {
 //    const named = seq(new Field(), opt(components));
 
     const key = seqs("WITH",
-                     opt(uniqueness),
+                     opts(uniqueness),
                      altPrios(defaultKey, emptyKey,
-                              seqs(opt(alts("SORTED", "HASHED")),
+                              seqs(opts(alts("SORTED", "HASHED")),
                                    "KEY",
                                    alts(seqs(Field, "COMPONENTS", plus(new FieldSub())),
                                         plus(new FieldSub())))));
 
-    const normal1 = seqs(opt(alts("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
+    const normal1 = seqs(opts(alts("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                          "TABLE",
-                         opt(str("OF")),
-                         opt(str("REF TO")),
-                         opt(new TypeName()));
+                         opts("OF"),
+                         opts("REF TO"),
+                         opts(TypeName));
 
-    const likeType = seqs(opt(alts("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
+    const likeType = seqs(opts(alts("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                           "TABLE OF",
                           optPrio(str("REF TO")),
-                          opt(new FieldChain()),
-                          opt(key),
-                          opt(header));
+                          opts(FieldChain),
+                          opts(key),
+                          opts(header));
 
     const range = seqs("RANGE OF", TypeName);
 
     const typetable = seqs(alts(normal1, range),
-                           opt(per(header, initial, plusPrio(key))));
+                           opts(per(header, initial, plusPrio(key))));
 
     const occurs = seqs("OCCURS", Integer);
 
     const old = seqs(TypeName,
-                     alts(seqs(occurs, opt(header)), header));
+                     alts(seqs(occurs, opts(header)), header));
 
     const ret = altPrios(
       seqs("LIKE", alts(likeType, range)),

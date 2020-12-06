@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alts, opt, regex as reg} from "../combi";
+import {verNot, str, seqs, alts, opts, regex as reg} from "../combi";
 import {FieldSub, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -24,7 +24,7 @@ export class AtSelectionScreen implements IStatement {
     const help = seqs("ON HELP-REQUEST FOR", FieldSub);
 
     const ret = seqs("AT SELECTION-SCREEN",
-                     opt(alts(output, value, radio, exit, field, end, help, block)));
+                     opts(alts(output, value, radio, exit, field, end, help, block)));
 
     return verNot(Version.Cloud, ret);
   }

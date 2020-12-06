@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, alts, per} from "../combi";
+import {verNot, str, seqs, opts, alts, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -21,9 +21,9 @@ export class CallTransaction implements IStatement {
 
     const ret = seqs("CALL TRANSACTION",
                      Source,
-                     opt(auth),
-                     opt(seqs("USING", Source)),
-                     opt(perm));
+                     opts(auth),
+                     opts(seqs("USING", Source)),
+                     opts(perm));
 
     return verNot(Version.Cloud, ret);
   }

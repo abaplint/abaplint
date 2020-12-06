@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opt, alts} from "../combi";
+import {verNot, seqs, opts, alts} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -14,8 +14,8 @@ export class IncludeType implements IStatement {
     const ret = seqs("INCLUDE",
                      alts("TYPE", "STRUCTURE"),
                      Expressions.TypeName,
-                     opt(tas),
-                     opt(renaming));
+                     opts(tas),
+                     opts(renaming));
 
     return verNot(Version.Cloud, ret);
   }

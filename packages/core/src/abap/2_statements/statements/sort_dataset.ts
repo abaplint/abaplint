@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, alts, opt, plus, optPrio} from "../combi";
+import {verNot, seqs, alts, opts, plus, optPrio} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -17,7 +17,7 @@ export class SortDataset implements IStatement {
 
     const by = seqs("BY", fields);
 
-    const ret = seqs("SORT", opt(by));
+    const ret = seqs("SORT", opts(by));
 
     return verNot(Version.Cloud, ret);
   }

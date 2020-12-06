@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alts, opt, per, plus, optPrio} from "../combi";
+import {verNot, str, seqs, alts, opts, per, plus, optPrio} from "../combi";
 import {Source, Color} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -14,7 +14,7 @@ export class ModifyLine implements IStatement {
 
     const from = seqs("FROM", Source);
     const value = seqs("FIELD VALUE", plus(seqs(Source, optPrio(from))));
-    const format = seqs("FIELD FORMAT", Source, opt(form));
+    const format = seqs("FIELD FORMAT", Source, opts(form));
     const lineValue = seqs("LINE VALUE FROM", Source);
     const index = seqs("INDEX", Source);
     const page = seqs("OF PAGE", Source);
@@ -29,7 +29,7 @@ export class ModifyLine implements IStatement {
     const ret = seqs("MODIFY",
                      alts("CURRENT LINE",
                           seqs("LINE", Source)),
-                     opt(options));
+                     opts(options));
 
     return verNot(Version.Cloud, ret);
   }

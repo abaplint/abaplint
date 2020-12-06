@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opt, per} from "../combi";
+import {seqs, alts, opts, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,14 +9,14 @@ export class Replace implements IStatement {
     const length = seqs("LENGTH", Source);
     const offset = seqs("OFFSET", Source);
 
-    const section = seqs(opt(str("IN")),
+    const section = seqs(opts("IN"),
                          "SECTION",
                          per(offset, length),
                          "OF",
                          Source);
 
-    const source = seqs(opt(str("OF")),
-                        opt(alts("REGEX", "SUBSTRING")),
+    const source = seqs(opts("OF"),
+                        opts(alts("REGEX", "SUBSTRING")),
                         Source);
 
     const cas = alts("IGNORING CASE", "RESPECTING CASE");
@@ -38,9 +38,9 @@ export class Replace implements IStatement {
     const into = seqs("INTO", Target);
 
     return seqs("REPLACE",
-                per(section, seqs(opt(occ), source)),
-                opt(seqs("IN", opt(str("TABLE")), Target)),
-                opt(per(wit, into, cas, mode, repl, replo, repll, repli, length)));
+                per(section, seqs(opts(occ), source)),
+                opts(seqs("IN", opts("TABLE"), Target)),
+                opts(per(wit, into, cas, mode, repl, replo, repll, repli, length)));
   }
 
 }

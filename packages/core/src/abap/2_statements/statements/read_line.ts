@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, per, opt, alts, plus} from "../combi";
+import {verNot, str, seqs, per, opts, alts, plus} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,7 +10,7 @@ export class ReadLine implements IStatement {
     const val = seqs("LINE VALUE INTO",
                      Target);
 
-    const fields = seqs(Target, opt(seqs("INTO", Target)));
+    const fields = seqs(Target, opts(seqs("INTO", Target)));
 
     const field = seqs("FIELD VALUE",
                        plus(fields));
@@ -23,7 +23,7 @@ export class ReadLine implements IStatement {
 
     const ret = seqs("READ",
                      alts("CURRENT LINE", seqs("LINE", Source)),
-                     opt(per(val, index, field, page, current)));
+                     opts(per(val, index, field, page, current)));
 
     return verNot(Version.Cloud, ret);
   }

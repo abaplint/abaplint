@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, altPrios, opt, regex, per, plus, tok} from "../combi";
+import {seqs, alts, altPrios, opts, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -34,7 +34,7 @@ export class Export implements IStatement {
     const compression = seqs("COMPRESSION", alts("ON", "OFF"));
     const hint = seqs("CODE PAGE HINT", Source);
 
-    return seqs("EXPORT", source, "TO", target, opt(compression), opt(hint));
+    return seqs("EXPORT", source, "TO", target, opts(compression), opts(hint));
   }
 
 }

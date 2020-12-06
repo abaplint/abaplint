@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opt, ver, optPrio, altPrios} from "../combi";
+import {str, seqs, alts, opts, ver, optPrio, altPrios} from "../combi";
 import {Version} from "../../../version";
 import {Source, Field, ParameterListS, ClassName, MessageSource, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,13 +9,13 @@ export class Raise implements IStatement {
   public getMatcher(): IStatementRunnable {
     const wit = seqs("WITH",
                      Source,
-                     opt(new Source()),
-                     opt(new Source()),
-                     opt(new Source()));
+                     opts(Source),
+                     opts(Source),
+                     opts(Source));
 
     const mess = seqs("MESSAGE",
                       MessageSource,
-                      opt(wit));
+                      opts(wit));
 
     const messid = seqs("MESSAGE ID",
                         Source,
@@ -31,7 +31,7 @@ export class Raise implements IStatement {
     const clas = seqs(optPrio(str("RESUMABLE")),
                       "EXCEPTION",
                       from,
-                      opt(alts(ver(Version.v750, alts(mess, messid)), ver(Version.v752, str("USING MESSAGE")))),
+                      opts(alts(ver(Version.v750, alts(mess, messid)), ver(Version.v752, str("USING MESSAGE")))),
                       optPrio(exporting));
 
     const ret = seqs("RAISE", altPrios(clas, Field));

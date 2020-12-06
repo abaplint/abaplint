@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {Version} from "../../../version";
-import {str, seqs, opt, alts, ver, plus} from "../combi";
+import {str, seqs, opts, alts, ver, plus} from "../combi";
 import {Source, InterfaceName, AttributeName, AbstractMethods, FinalMethods} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -20,8 +20,8 @@ export class InterfaceDef implements IStatement {
 
     return seqs("INTERFACES",
                 InterfaceName,
-                opt(options),
-                opt(dataValues));
+                opts(options),
+                opts(dataValues));
   }
 
 }

@@ -1,4 +1,4 @@
-import {seqs, per, opt, alts, tok, str, ver, star, Expression, optPrio} from "../combi";
+import {seqs, per, opts, alts, tok, str, ver, star, Expression, optPrio} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -14,13 +14,13 @@ export class SelectLoop extends Expression {
                           star(seqs(SQLTarget, ",")),
                           SQLTarget,
                           ")");
-    const intoSimple = seqs(opt(str("CORRESPONDING FIELDS OF")), SQLTarget);
+    const intoSimple = seqs(opts("CORRESPONDING FIELDS OF"), SQLTarget);
 
     const into = seqs("INTO", alts(intoList, intoSimple));
 
     const where = seqs("WHERE", SQLCond);
 
-    const comma = opt(ver(Version.v740sp05, str(",")));
+    const comma = opts(ver(Version.v740sp05, str(",")));
     const someField = seqs(alts(SQLFieldName, SQLAggregation), comma);
     const fieldList = seqs(star(someField), SQLFieldName, comma, star(someField));
 

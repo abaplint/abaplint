@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opt} from "../combi";
+import {verNot, seqs, opts} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,7 +10,7 @@ export class CallScreen implements IStatement {
     const starting = seqs("STARTING AT", Source, Source);
     const ending = seqs("ENDING AT", Source, Source);
 
-    const ret = seqs("CALL SCREEN", Source, opt(seqs(starting, opt(ending))));
+    const ret = seqs("CALL SCREEN", Source, opts(seqs(starting, opts(ending))));
 
     return verNot(Version.Cloud, ret);
   }

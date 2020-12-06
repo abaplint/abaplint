@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, opt, alts, per, plus} from "../combi";
+import {seqs, opts, alts, per, plus} from "../combi";
 import {FSTarget, Target, Source, Dynamic, ComponentCond, FieldSub, SimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -20,12 +20,12 @@ export class ModifyInternal implements IStatement {
 
     const options = alts(
       per(index, transporting),
-      seqs(from, opt(per(index, transporting))),
-      seqs(per(index, transporting), from, opt(per(index, transporting))));
+      seqs(from, opts(per(index, transporting))),
+      seqs(per(index, transporting), from, opts(per(index, transporting))));
 
-    const long = seqs("MODIFY", opt(str("TABLE")), target, opt(options), opt(additions));
+    const long = seqs("MODIFY", opts("TABLE"), target, opts(options), opts(additions));
 
-    const simple = seqs("MODIFY TABLE", target, from, opt(using));
+    const simple = seqs("MODIFY TABLE", target, from, opts(using));
 
     return alts(long, simple);
   }

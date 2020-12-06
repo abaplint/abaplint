@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, opt} from "../combi";
+import {seqs, opts} from "../combi";
 import {Target, Source, FSTarget} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,8 +11,8 @@ export class Collect implements IStatement {
 
     return seqs("COLLECT",
                 Source,
-                opt(into),
-                opt(assigning));
+                opts(into),
+                opts(assigning));
   }
 
 }

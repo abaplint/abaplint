@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opt, tok} from "../combi";
+import {str, seqs, alts, opts, tok} from "../combi";
 import {DatabaseTable, Dynamic, SQLSource, Select, DatabaseConnection} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,20 +13,20 @@ export class InsertDatabase implements IStatement {
 
     const sub = seqs(tok(WParenLeftW), Select, tok(WParenRightW));
 
-    const f = seqs(opt(client),
-                   opt(new DatabaseConnection()),
+    const f = seqs(opts(client),
+                   opts(DatabaseConnection),
                    "FROM",
-                   opt(str("TABLE")),
+                   opts("TABLE"),
                    alts(SQLSource, sub),
-                   opt(str("ACCEPTING DUPLICATE KEYS")));
+                   opts("ACCEPTING DUPLICATE KEYS"));
 
     const from = seqs(target,
-                      opt(alts(f, client, DatabaseConnection)));
+                      opts(alts(f, client, DatabaseConnection)));
 
     const into = seqs("INTO",
                       target,
-                      opt(str("CLIENT SPECIFIED")),
-                      opt(new DatabaseConnection()),
+                      opts("CLIENT SPECIFIED"),
+                      opts(DatabaseConnection),
                       "VALUES",
                       SQLSource);
 

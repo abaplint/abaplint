@@ -1,9 +1,9 @@
-import {str, Expression, seqs, opt, plus} from "../combi";
+import {str, Expression, seqs, opts, plus} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {ClassName} from "./class_name";
 
 export class ClassFriends extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seqs(opt(str("GLOBAL")), str("FRIENDS"), plus(new ClassName()));
+    return seqs(opts("GLOBAL"), str("FRIENDS"), plus(new ClassName()));
   }
 }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, regex, plus} from "../combi";
+import {verNot, str, seqs, opts, regex, plus} from "../combi";
 import {Target, Source, Constant} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -16,10 +16,10 @@ export class CallOLE implements IStatement {
     const ret = seqs("CALL METHOD OF",
                      Source,
                      Constant,
-                     opt(rc),
-                     opt(str("NO FLUSH")),
-                     opt(str("QUEUEONLY")),
-                     opt(exporting));
+                     opts(rc),
+                     opts("NO FLUSH"),
+                     opts("QUEUEONLY"),
+                     opts(exporting));
 
     return verNot(Version.Cloud, ret);
   }

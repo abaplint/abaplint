@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, opt, alts, per, ver} from "../combi";
+import {str, seqs, opts, alts, per, ver} from "../combi";
 import {ClassName, SuperClassName, ClassGlobal, ClassFinal, SimpleName, ClassFriends} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -27,7 +27,7 @@ export class ClassDefinition implements IStatement {
                      ver(Version.v754, seqs("FOR BEHAVIOR OF", SimpleName)),
                      new ClassFriends());
 
-    const def = seqs("DEFINITION", opt(blah));
+    const def = seqs("DEFINITION", opts(blah));
 
     return seqs("CLASS", ClassName, def);
   }

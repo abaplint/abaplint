@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opt, plus} from "../combi";
+import {verNot, seqs, opts, plus} from "../combi";
 import {Target, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -15,7 +15,7 @@ export class Demand implements IStatement {
                      plus(field),
                      "FROM CONTEXT",
                      Field,
-                     opt(messages));
+                     opts(messages));
 
     return verNot(Version.Cloud, ret);
   }

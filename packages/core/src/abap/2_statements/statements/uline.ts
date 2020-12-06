@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, tok, alts, regex as reg, optPrio, altPrios} from "../combi";
+import {verNot, str, seqs, opts, tok, alts, regex as reg, optPrio, altPrios} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Dynamic, Field} from "../expressions";
 import {Version} from "../../../version";
@@ -13,15 +13,15 @@ export class Uline implements IStatement {
     const contents = altPrios(Field, reg(/^\d+$/));
 
     // todo, reuse the "AT" thing in ULINE and WRITE?
-    const pos = seqs(reg(/^(\/\d*|\d+)$/), opt(seqs(tok(ParenLeft), contents, right)));
+    const pos = seqs(reg(/^(\/\d*|\d+)$/), opts(seqs(tok(ParenLeft), contents, right)));
 
     const pos1 = seqs(tok(WParenLeft), contents, right);
 
-    const dyn = seqs(opt(str("/")), new Dynamic());
+    const dyn = seqs(opts("/"), Dynamic);
 
     const field = seqs(Field, tok(ParenLeft), contents, right);
 
-    const ret = seqs("ULINE", optPrio(str("AT")), opt(alts(pos, pos1, dyn, field)), optPrio(str("NO-GAP")));
+    const ret = seqs("ULINE", optPrio(str("AT")), opts(alts(pos, pos1, dyn, field)), optPrio(str("NO-GAP")));
 
     return verNot(Version.Cloud, ret);
   }

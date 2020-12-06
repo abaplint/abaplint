@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opt, altPrios, optPrio, plus, per, ver} from "../combi";
+import {str, seqs, alts, opts, altPrios, optPrio, plus, per, ver} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -39,7 +39,7 @@ export class ReadTable implements IStatement {
 
     return seqs("READ TABLE",
                 alts(ver(Version.v740sp02, new Source()), BasicSource),
-                opt(perm));
+                opts(perm));
   }
 
 }

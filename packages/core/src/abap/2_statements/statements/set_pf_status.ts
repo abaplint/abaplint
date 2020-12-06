@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, per} from "../combi";
+import {verNot, str, seqs, opts, per} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -15,7 +15,7 @@ export class SetPFStatus implements IStatement {
 
     const ret = seqs("SET PF-STATUS",
                      Source,
-                     opt(options));
+                     opts(options));
 
     return verNot(Version.Cloud, ret);
   }

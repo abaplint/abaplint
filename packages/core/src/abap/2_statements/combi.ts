@@ -969,3 +969,6 @@ export function alts(first: input, second: input, ...rest: input[]): IStatementR
 export function altPrios(first: input, second: input, ...rest: input[]): IStatementRunnable {
   return new AlternativePriority([map(first), map(second)].concat(rest.map(map)));
 }
+export function opts(first: input): IStatementRunnable {
+  return new Optional(map(first));
+}

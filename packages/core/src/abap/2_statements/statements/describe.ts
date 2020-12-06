@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opt, alts, per, altPrios} from "../combi";
+import {verNot, seqs, opts, alts, per, altPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class Describe implements IStatement {
 
     const table = seqs("TABLE",
                        Source,
-                       opt(per(tlines, kind, occurs)));
+                       opts(per(tlines, kind, occurs)));
 
     const mode = seqs("IN", alts("BYTE", "CHARACTER"), "MODE");
 
@@ -21,7 +21,7 @@ export class Describe implements IStatement {
                        Source,
                        per(seqs("TYPE", Target),
                            seqs("COMPONENTS", Target),
-                           seqs("LENGTH", Target, opt(mode)),
+                           seqs("LENGTH", Target, opts(mode)),
                            seqs("DECIMALS", Target),
                            seqs("HELP-ID", Target),
                            seqs("OUTPUT-LENGTH", Target),

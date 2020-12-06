@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, per, opt, plus} from "../combi";
+import {verNot, str, seqs, per, opts, plus} from "../combi";
 import {Target, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class Get implements IStatement {
 
     const ret = seqs("GET",
                      Target,
-                     opt(options));
+                     opts(options));
 
     return verNot(Version.Cloud, ret);
   }

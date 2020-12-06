@@ -1,4 +1,4 @@
-import {seqs, per, opt, alts, tok, str, star, Expression, altPrios, optPrio, ver} from "../combi";
+import {seqs, per, opts, alts, tok, str, star, Expression, altPrios, optPrio, ver} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLTarget, SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLTargetTable, SQLOrderBy, SQLHaving, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -12,7 +12,7 @@ export class Select extends Expression {
                           star(seqs(SQLTarget, ",")),
                           SQLTarget,
                           ")");
-    const intoSimple = seqs(opt(str("CORRESPONDING FIELDS OF")),
+    const intoSimple = seqs(opts("CORRESPONDING FIELDS OF"),
                             SQLTarget);
 
     const into = alts(seqs("INTO", alts(intoList, intoSimple)), SQLTargetTable);
@@ -32,7 +32,7 @@ export class Select extends Expression {
 
     const ret = seqs("SELECT",
                      altPrios("DISTINCT", optPrio(seqs("SINGLE", optPrio(str("FOR UPDATE"))))),
-                     opt(new SQLFieldList()),
+                     opts(SQLFieldList),
                      perm);
 
     return ret;

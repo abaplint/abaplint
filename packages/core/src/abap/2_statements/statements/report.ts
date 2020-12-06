@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, per, tok} from "../combi";
+import {verNot, str, seqs, opts, per, tok} from "../combi";
 import {Integer, MessageClass, Field, ReportName} from "../expressions";
 import {Version} from "../../../version";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
@@ -11,13 +11,13 @@ export class Report implements IStatement {
     const more = seqs(tok(ParenLeft), Integer, tok(ParenRightW));
     const heading = str("NO STANDARD PAGE HEADING");
     const size = seqs("LINE-SIZE", Integer);
-    const count = seqs("LINE-COUNT", Integer, opt(more));
+    const count = seqs("LINE-COUNT", Integer, opts(more));
     const message = seqs("MESSAGE-ID", MessageClass);
     const database = seqs("USING DATABASE", Field);
 
     const ret = seqs("REPORT",
-                     opt(new ReportName()),
-                     opt(per(heading, size, count, database, message)));
+                     opts(ReportName),
+                     opts(per(heading, size, count, database, message)));
 
     return verNot(Version.Cloud, ret);
   }

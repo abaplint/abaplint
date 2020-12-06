@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, opt} from "../combi";
+import {seqs, alts, opts} from "../combi";
 import {Integer, DefinitionName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,7 +11,7 @@ export class StaticBegin implements IStatement {
     const ret = seqs(alts("STATIC", "STATICS"),
                      "BEGIN OF",
                      DefinitionName,
-                     opt(occurs));
+                     opts(occurs));
 
     return ret;
   }

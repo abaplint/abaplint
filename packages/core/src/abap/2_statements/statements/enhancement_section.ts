@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, starPrio, tok} from "../combi";
+import {verNot, seqs, opts, starPrio, tok} from "../combi";
 import {Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class EnhancementSection implements IStatement {
                      seqs(Field, starPrio(seqs(tok(Dash), new Field()))),
                      "SPOTS",
                      Field,
-                     opt(str("STATIC")));
+                     opts("STATIC"));
 
     return verNot(Version.Cloud, ret);
   }
