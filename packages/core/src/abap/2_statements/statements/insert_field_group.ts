@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, vers, pluss} from "../combi";
+import {seq, alts, vers, pluss} from "../combi";
 import {Version} from "../../../version";
 import {Target, Source, SimpleSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,11 +7,11 @@ import {IStatementRunnable} from "../statement_runnable";
 export class InsertFieldGroup implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const into = seqs("INTO", Target);
+    const into = seq("INTO", Target);
 
     const src = alts(vers(Version.v740sp02, pluss(Source)), pluss(SimpleSource));
 
-    const ret = seqs("INSERT", src, into);
+    const ret = seq("INSERT", src, into);
 
     return ret;
   }

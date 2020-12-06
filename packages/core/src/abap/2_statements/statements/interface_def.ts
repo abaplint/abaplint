@@ -1,15 +1,15 @@
 import {IStatement} from "./_statement";
 import {Version} from "../../../version";
-import {seqs, opts, alts, vers, pluss} from "../combi";
+import {seq, opts, alts, vers, pluss} from "../combi";
 import {Source, InterfaceName, AttributeName, AbstractMethods, FinalMethods} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class InterfaceDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const val = seqs(AttributeName, "=", Source);
+    const val = seq(AttributeName, "=", Source);
 
-    const dataValues = seqs("DATA VALUES", pluss(val));
+    const dataValues = seq("DATA VALUES", pluss(val));
 
     const options = alts(AbstractMethods,
                          FinalMethods,
@@ -17,10 +17,10 @@ export class InterfaceDef implements IStatement {
                          "ALL METHODS FINAL",
                          vers(Version.v740sp02, "PARTIALLY IMPLEMENTED"));
 
-    return seqs("INTERFACES",
-                InterfaceName,
-                opts(options),
-                opts(dataValues));
+    return seq("INTERFACES",
+               InterfaceName,
+               opts(options),
+               opts(dataValues));
   }
 
 }

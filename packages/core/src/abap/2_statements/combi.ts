@@ -920,7 +920,7 @@ function map(s: InputType): IStatementRunnable {
     return s as IStatementRunnable;
   }
 }
-export function seqs(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
+export function seq(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new Sequence([map(first), map(second)].concat(rest.map(map)));
 }
 export function alts(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {

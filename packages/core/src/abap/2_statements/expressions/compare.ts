@@ -1,4 +1,4 @@
-import {seqs, vers, tok, pluss, opts, optPrios, altPrios, Expression} from "../combi";
+import {seq, vers, tok, pluss, opts, optPrios, altPrios, Expression} from "../combi";
 import {FieldSub, ClassName, Constant, Source, MethodCallChain, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -8,29 +8,29 @@ export class Compare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = altPrios(FieldSub, Constant);
 
-    const list = seqs(tok(WParenLeft),
-                      val,
-                      pluss(seqs(",", val)),
-                      tok(ParenRightW));
+    const list = seq(tok(WParenLeft),
+                     val,
+                     pluss(seq(",", val)),
+                     tok(ParenRightW));
 
-    const inn = seqs(optPrios("NOT"), "IN", altPrios(Source, list));
+    const inn = seq(optPrios("NOT"), "IN", altPrios(Source, list));
 
-    const sopt = seqs("IS",
-                      optPrios("NOT"),
-                      altPrios("SUPPLIED",
-                               "BOUND",
-                               vers(Version.v750, seqs("INSTANCE OF", ClassName)),
-                               "REQUESTED",
-                               "ASSIGNED",
-                               "INITIAL"));
+    const sopt = seq("IS",
+                     optPrios("NOT"),
+                     altPrios("SUPPLIED",
+                              "BOUND",
+                              vers(Version.v750, seq("INSTANCE OF", ClassName)),
+                              "REQUESTED",
+                              "ASSIGNED",
+                              "INITIAL"));
 
-    const between = seqs(optPrios("NOT"), "BETWEEN", Source, "AND", Source);
+    const between = seq(optPrios("NOT"), "BETWEEN", Source, "AND", Source);
 
     const predicate = vers(Version.v740sp08, MethodCallChain);
 
-    const rett = seqs(Source, altPrios(seqs(CompareOperator, Source), inn, between, sopt));
+    const rett = seq(Source, altPrios(seq(CompareOperator, Source), inn, between, sopt));
 
-    const ret = seqs(opts("NOT"), altPrios(rett, predicate));
+    const ret = seq(opts("NOT"), altPrios(rett, predicate));
 
     return ret;
   }

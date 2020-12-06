@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, opts, alts, pers, pluss, optPrios} from "../combi";
+import {seq, opts, alts, pers, pluss, optPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,29 +10,29 @@ export class Find implements IStatement {
                          "RESPECTING CASE",
                          "IN BYTE MODE",
                          "IN CHARACTER MODE",
-                         seqs("OF", Source),
-                         seqs("FROM", Source),
-                         seqs("TO", Source),
-                         seqs("MATCH OFFSET", Target),
-                         seqs("MATCH LINE", Target),
-                         seqs("MATCH COUNT", Target),
-                         seqs("MATCH LENGTH", Target),
-                         seqs("LENGTH", Source),
-                         seqs("RESULTS", Target),
-                         seqs("SUBMATCHES", pluss(Target)));
+                         seq("OF", Source),
+                         seq("FROM", Source),
+                         seq("TO", Source),
+                         seq("MATCH OFFSET", Target),
+                         seq("MATCH LINE", Target),
+                         seq("MATCH COUNT", Target),
+                         seq("MATCH LENGTH", Target),
+                         seq("LENGTH", Source),
+                         seq("RESULTS", Target),
+                         seq("SUBMATCHES", pluss(Target)));
 
-    const sectionLength = seqs("SECTION LENGTH", Source, "OF");
+    const sectionLength = seq("SECTION LENGTH", Source, "OF");
 
-    const before = seqs(optPrios(alts("TABLE", "SECTION OFFSET", sectionLength)),
-                        Source);
+    const before = seq(optPrios(alts("TABLE", "SECTION OFFSET", sectionLength)),
+                       Source);
 
-    const ret = seqs("FIND",
-                     opts(alts("FIRST OCCURRENCE OF", "ALL OCCURRENCES OF")),
-                     opts(alts("REGEX", "SUBSTRING")),
-                     Source,
-                     "IN",
-                     before,
-                     opts(options));
+    const ret = seq("FIND",
+                    opts(alts("FIRST OCCURRENCE OF", "ALL OCCURRENCES OF")),
+                    opts(alts("REGEX", "SUBSTRING")),
+                    Source,
+                    "IN",
+                    before,
+                    opts(options));
 
     return ret;
   }

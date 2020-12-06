@@ -1,4 +1,4 @@
-import {seqs, tok, Expression, optPrios, altPrios, plusPrios, vers} from "../combi";
+import {seq, tok, Expression, optPrios, altPrios, plusPrios, vers} from "../combi";
 import {ParenRightW, WParenLeft, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {FieldSub, Source, Let, For} from ".";
 import {Version} from "../../../version";
@@ -6,19 +6,19 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class ValueBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const fieldList = seqs(FieldSub, "=", Source);
+    const fieldList = seq(FieldSub, "=", Source);
 
-    const base = seqs("BASE", Source);
+    const base = seq("BASE", Source);
 
     // missing spaces caught by rule "parser_missing_space"
-    const foo = seqs(altPrios(tok(WParenLeftW), tok(WParenLeft)),
-                     optPrios(altPrios(plusPrios(fieldList), seqs(optPrios("LINES OF"), Source))),
-                     altPrios(tok(WParenRightW), tok(ParenRightW)));
+    const foo = seq(altPrios(tok(WParenLeftW), tok(WParenLeft)),
+                    optPrios(altPrios(plusPrios(fieldList), seq(optPrios("LINES OF"), Source))),
+                    altPrios(tok(WParenRightW), tok(ParenRightW)));
 
-    const strucOrTab = seqs(optPrios(Let), optPrios(base), optPrios(For), plusPrios(altPrios(fieldList, foo)));
+    const strucOrTab = seq(optPrios(Let), optPrios(base), optPrios(For), plusPrios(altPrios(fieldList, foo)));
 
-    const tabdef = vers(Version.v740sp08, altPrios("OPTIONAL", seqs("DEFAULT", Source)));
+    const tabdef = vers(Version.v740sp08, altPrios("OPTIONAL", seq("DEFAULT", Source)));
 
-    return optPrios(altPrios(strucOrTab, seqs(Source, optPrios(tabdef))));
+    return optPrios(altPrios(strucOrTab, seq(Source, optPrios(tabdef))));
   }
 }

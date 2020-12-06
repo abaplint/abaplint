@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts, alts, pers} from "../combi";
+import {verNot, seq, opts, alts, pers} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,22 +9,22 @@ export class SelectOption implements IStatement {
   public getMatcher(): IStatementRunnable {
     const sourc = alts(Constant, FieldChain);
 
-    const to = seqs("TO", sourc);
+    const to = seq("TO", sourc);
 
-    const def = seqs("DEFAULT",
-                     sourc,
-                     opts(to));
+    const def = seq("DEFAULT",
+                    sourc,
+                    opts(to));
 
-    const option = seqs("OPTION", Field);
-    const sign = seqs("SIGN", Field);
+    const option = seq("OPTION", Field);
+    const sign = seq("SIGN", Field);
 
-    const memory = seqs("MEMORY ID", SimpleSource);
+    const memory = seq("MEMORY ID", SimpleSource);
 
-    const match = seqs("MATCHCODE OBJECT", Field);
+    const match = seq("MATCHCODE OBJECT", Field);
 
-    const modif = seqs("MODIF ID", Modif);
+    const modif = seq("MODIF ID", Modif);
 
-    const visible = seqs("VISIBLE LENGTH", Source);
+    const visible = seq("VISIBLE LENGTH", Source);
 
     const options = pers(def,
                          option,
@@ -40,11 +40,11 @@ export class SelectOption implements IStatement {
                          "NO-DISPLAY",
                          "OBLIGATORY");
 
-    const ret = seqs("SELECT-OPTIONS",
-                     Field,
-                     "FOR",
-                     alts(FieldChain, Dynamic),
-                     opts(options));
+    const ret = seq("SELECT-OPTIONS",
+                    Field,
+                    "FOR",
+                    alts(FieldChain, Dynamic),
+                    opts(options));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,17 +1,17 @@
-import {seqs, opts, Expression} from "../combi";
+import {seq, opts, Expression} from "../combi";
 import {ParameterListT, ParameterListExceptions, Field} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ReceiveParameters extends Expression {
   public getRunnable(): IStatementRunnable {
-    const importing = seqs("IMPORTING", ParameterListT);
-    const tables = seqs("TABLES", ParameterListT);
-    const changing = seqs("CHANGING", ParameterListT);
-    const exceptions = seqs("EXCEPTIONS", opts(ParameterListExceptions), opts(Field));
-    const long = seqs(opts(importing),
-                      opts(changing),
-                      opts(tables),
-                      opts(exceptions));
+    const importing = seq("IMPORTING", ParameterListT);
+    const tables = seq("TABLES", ParameterListT);
+    const changing = seq("CHANGING", ParameterListT);
+    const exceptions = seq("EXCEPTIONS", opts(ParameterListExceptions), opts(Field));
+    const long = seq(opts(importing),
+                     opts(changing),
+                     opts(tables),
+                     opts(exceptions));
 
     return long;
   }

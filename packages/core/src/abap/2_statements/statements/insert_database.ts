@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opts, tok} from "../combi";
+import {str, seq, alts, opts, tok} from "../combi";
 import {DatabaseTable, Dynamic, SQLSource, Select, DatabaseConnection} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,26 +11,26 @@ export class InsertDatabase implements IStatement {
 
     const client = str("CLIENT SPECIFIED");
 
-    const sub = seqs(tok(WParenLeftW), Select, tok(WParenRightW));
+    const sub = seq(tok(WParenLeftW), Select, tok(WParenRightW));
 
-    const f = seqs(opts(client),
-                   opts(DatabaseConnection),
-                   "FROM",
-                   opts("TABLE"),
-                   alts(SQLSource, sub),
-                   opts("ACCEPTING DUPLICATE KEYS"));
+    const f = seq(opts(client),
+                  opts(DatabaseConnection),
+                  "FROM",
+                  opts("TABLE"),
+                  alts(SQLSource, sub),
+                  opts("ACCEPTING DUPLICATE KEYS"));
 
-    const from = seqs(target,
-                      opts(alts(f, client, DatabaseConnection)));
+    const from = seq(target,
+                     opts(alts(f, client, DatabaseConnection)));
 
-    const into = seqs("INTO",
-                      target,
-                      opts("CLIENT SPECIFIED"),
-                      opts(DatabaseConnection),
-                      "VALUES",
-                      SQLSource);
+    const into = seq("INTO",
+                     target,
+                     opts("CLIENT SPECIFIED"),
+                     opts(DatabaseConnection),
+                     "VALUES",
+                     SQLSource);
 
-    return seqs("INSERT", alts(from, into));
+    return seq("INSERT", alts(from, into));
   }
 
 }

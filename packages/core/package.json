@@ -9,6 +9,7 @@
         "madge.svg": "madge --extensions ts --ts-config tsconfig.json  --image graph.svg src/",
         "madge.circular": "madge --extensions ts --ts-config tsconfig.json --circular src/",
         "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
+        "lint:fix": "eslint src/**/*.ts test/**/*.ts --format unix --fix",
         "compile": "tsc",
         "postcompile": "sh scripts/version.sh",
         "pretest": "npm run compile",

@@ -1,34 +1,34 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, pers} from "../combi";
+import {seq, alts, pers} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Convert implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const intoTime = seqs("TIME", Target);
-    const intoDate = seqs("DATE", Target);
-    const into = seqs("INTO", pers(intoTime, intoDate));
+    const intoTime = seq("TIME", Target);
+    const intoDate = seq("DATE", Target);
+    const into = seq("INTO", pers(intoTime, intoDate));
 
-    const daylight = seqs("DAYLIGHT SAVING TIME", Source);
-    const zone = seqs("TIME ZONE", Source);
+    const daylight = seq("DAYLIGHT SAVING TIME", Source);
+    const zone = seq("TIME ZONE", Source);
 
-    const time = seqs("TIME STAMP",
-                      Source,
-                      pers(zone, into, daylight));
+    const time = seq("TIME STAMP",
+                     Source,
+                     pers(zone, into, daylight));
 
-    const dat = seqs("DATE", Source);
-    const tim = seqs("TIME", Source);
+    const dat = seq("DATE", Source);
+    const tim = seq("TIME", Source);
 
-    const stamp = seqs("INTO TIME STAMP", Target);
-    const invert = seqs("INTO INVERTED-DATE", Target);
+    const stamp = seq("INTO TIME STAMP", Target);
+    const invert = seq("INTO INVERTED-DATE", Target);
 
-    const date = seqs(pers(dat, tim),
-                      pers(daylight, stamp, zone, invert));
+    const date = seq(pers(dat, tim),
+                     pers(daylight, stamp, zone, invert));
 
-    const inv = seqs("INVERTED-DATE", Source, "INTO DATE", Target);
+    const inv = seq("INVERTED-DATE", Source, "INTO DATE", Target);
 
-    return seqs("CONVERT", alts(time, date, inv));
+    return seq("CONVERT", alts(time, date, inv));
   }
 
 }

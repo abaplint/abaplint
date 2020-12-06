@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, alts, seqs} from "../combi";
+import {verNot, alts, seq} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,10 +7,10 @@ import {IStatementRunnable} from "../statement_runnable";
 export class PrintControl implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const index = seqs("INDEX-LINE", Source);
-    const func = seqs("FUNCTION", Source);
+    const index = seq("INDEX-LINE", Source);
+    const func = seq("FUNCTION", Source);
 
-    const ret = seqs("PRINT-CONTROL", alts(index, func));
+    const ret = seq("PRINT-CONTROL", alts(index, func));
 
     return verNot(Version.Cloud, ret);
   }

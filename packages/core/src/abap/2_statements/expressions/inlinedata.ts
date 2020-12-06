@@ -1,4 +1,4 @@
-import {seqs, tok, vers, Expression} from "../combi";
+import {seq, tok, vers, Expression} from "../combi";
 import {ParenRightW, ParenLeft} from "../../1_lexer/tokens";
 import {TargetField} from ".";
 import {Version} from "../../../version";
@@ -8,7 +8,7 @@ export class InlineData extends Expression {
   public getRunnable(): IStatementRunnable {
     const right = tok(ParenRightW);
     const left = tok(ParenLeft);
-    const data = seqs("DATA", left, TargetField, right);
+    const data = seq("DATA", left, TargetField, right);
 
     return vers(Version.v740sp02, data);
   }

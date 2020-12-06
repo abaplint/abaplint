@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts, alts, pers, altPrios} from "../combi";
+import {verNot, seq, opts, alts, pers, altPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,46 +7,46 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Describe implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const tlines = seqs("LINES", Target);
-    const kind = seqs("KIND", Target);
-    const occurs = seqs("OCCURS", Target);
+    const tlines = seq("LINES", Target);
+    const kind = seq("KIND", Target);
+    const occurs = seq("OCCURS", Target);
 
-    const table = seqs("TABLE",
-                       Source,
-                       opts(pers(tlines, kind, occurs)));
+    const table = seq("TABLE",
+                      Source,
+                      opts(pers(tlines, kind, occurs)));
 
-    const mode = seqs("IN", alts("BYTE", "CHARACTER"), "MODE");
+    const mode = seq("IN", alts("BYTE", "CHARACTER"), "MODE");
 
-    const field = seqs("FIELD",
-                       Source,
-                       pers(seqs("TYPE", Target),
-                            seqs("COMPONENTS", Target),
-                            seqs("LENGTH", Target, opts(mode)),
-                            seqs("DECIMALS", Target),
-                            seqs("HELP-ID", Target),
-                            seqs("OUTPUT-LENGTH", Target),
-                            seqs("EDIT MASK", Target),
-                            seqs("INTO", Target)));
+    const field = seq("FIELD",
+                      Source,
+                      pers(seq("TYPE", Target),
+                           seq("COMPONENTS", Target),
+                           seq("LENGTH", Target, opts(mode)),
+                           seq("DECIMALS", Target),
+                           seq("HELP-ID", Target),
+                           seq("OUTPUT-LENGTH", Target),
+                           seq("EDIT MASK", Target),
+                           seq("INTO", Target)));
 
-    const distance = seqs("DISTANCE BETWEEN",
-                          Source,
-                          "AND",
-                          Source,
-                          "INTO",
-                          Target,
-                          mode);
+    const distance = seq("DISTANCE BETWEEN",
+                         Source,
+                         "AND",
+                         Source,
+                         "INTO",
+                         Target,
+                         mode);
 
-    const lines = seqs("NUMBER OF LINES", Target);
-    const line = seqs("LINE", Source);
-    const page = seqs("PAGE", Source);
-    const index = seqs("INDEX", Source);
-    const top = seqs("TOP-LINES", Target);
-    const lineSize = seqs("LINE-SIZE", Target);
-    const first = seqs("FIRST-LINE", Target);
+    const lines = seq("NUMBER OF LINES", Target);
+    const line = seq("LINE", Source);
+    const page = seq("PAGE", Source);
+    const index = seq("INDEX", Source);
+    const top = seq("TOP-LINES", Target);
+    const lineSize = seq("LINE-SIZE", Target);
+    const first = seq("FIRST-LINE", Target);
 
-    const list = seqs("LIST", pers(lines, index, line, page, top, first, lineSize));
+    const list = seq("LIST", pers(lines, index, line, page, top, first, lineSize));
 
-    const ret = seqs("DESCRIBE", altPrios(table, field, distance, list));
+    const ret = seq("DESCRIBE", altPrios(table, field, distance, list));
 
     return verNot(Version.Cloud, ret);
   }

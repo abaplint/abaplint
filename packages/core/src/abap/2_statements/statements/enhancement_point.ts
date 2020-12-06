@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts} from "../combi";
+import {verNot, seq, opts} from "../combi";
 import {Field, FieldSub} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,12 +7,12 @@ import {IStatementRunnable} from "../statement_runnable";
 export class EnhancementPoint implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const ret = seqs("ENHANCEMENT-POINT",
-                     FieldSub,
-                     "SPOTS",
-                     Field,
-                     opts("STATIC"),
-                     opts("INCLUDE BOUND"));
+    const ret = seq("ENHANCEMENT-POINT",
+                    FieldSub,
+                    "SPOTS",
+                    Field,
+                    opts("STATIC"),
+                    opts("INCLUDE BOUND"));
 
     return verNot(Version.Cloud, ret);
   }

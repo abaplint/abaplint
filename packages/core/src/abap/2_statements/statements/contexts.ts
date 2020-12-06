@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs} from "../combi";
+import {verNot, seq} from "../combi";
 import {Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,8 +7,8 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Contexts implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const ret = seqs("CONTEXTS",
-                     Field);
+    const ret = seq("CONTEXTS",
+                    Field);
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, altPrios, opts, regex, pers, pluss, tok} from "../combi";
+import {seq, alts, altPrios, opts, regex, pers, pluss, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,33 +8,33 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Export implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const from = seqs("FROM", Source);
-    const client = seqs("CLIENT", Source);
-    const id = seqs("ID", Source);
-    const using = seqs("USING", Source);
+    const from = seq("FROM", Source);
+    const client = seq("CLIENT", Source);
+    const id = seq("ID", Source);
+    const using = seq("USING", Source);
 
-    const cluster = seqs(NamespaceSimpleName,
-                         tok(ParenLeft),
-                         regex(/^[\w$%\^]{2}$/),
-                         tok(ParenRightW));
+    const cluster = seq(NamespaceSimpleName,
+                        tok(ParenLeft),
+                        regex(/^[\w$%\^]{2}$/),
+                        tok(ParenRightW));
 
-    const buffer = seqs("DATA BUFFER", Target);
-    const memory = seqs("MEMORY ID", Source);
-    const table = seqs("INTERNAL TABLE", Target);
-    const shared = seqs(alts("SHARED MEMORY", "SHARED BUFFER"), cluster, pers(from, client, id));
-    const database = seqs("DATABASE", cluster, pers(from, client, id, using));
+    const buffer = seq("DATA BUFFER", Target);
+    const memory = seq("MEMORY ID", Source);
+    const table = seq("INTERNAL TABLE", Target);
+    const shared = seq(alts("SHARED MEMORY", "SHARED BUFFER"), cluster, pers(from, client, id));
+    const database = seq("DATABASE", cluster, pers(from, client, id, using));
 
     const target = alts(buffer, memory, database, table, shared);
 
     const left = alts(FieldSub, FieldSymbol);
 
-    const source = alts(pluss(altPrios(ParameterS, seqs(left, from), left)),
+    const source = alts(pluss(altPrios(ParameterS, seq(left, from), left)),
                         Dynamic);
 
-    const compression = seqs("COMPRESSION", alts("ON", "OFF"));
-    const hint = seqs("CODE PAGE HINT", Source);
+    const compression = seq("COMPRESSION", alts("ON", "OFF"));
+    const hint = seq("CODE PAGE HINT", Source);
 
-    return seqs("EXPORT", source, "TO", target, opts(compression), opts(hint));
+    return seq("EXPORT", source, "TO", target, opts(compression), opts(hint));
   }
 
 }

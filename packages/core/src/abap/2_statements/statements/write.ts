@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts, alts, pers, tok, regex as reg, altPrios} from "../combi";
+import {verNot, seq, opts, alts, pers, tok, regex as reg, altPrios} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft, ParenRight} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -9,11 +9,11 @@ export class Write implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const mask = seqs("USING",
-                      alts("NO EDIT MASK",
-                           seqs("EDIT MASK", Source)));
+    const mask = seq("USING",
+                     alts("NO EDIT MASK",
+                          seq("EDIT MASK", Source)));
 
-    const onOff = alts(alts("ON", "OFF"), seqs("=", FieldSub));
+    const onOff = alts(alts("ON", "OFF"), seq("=", FieldSub));
 
     const dateFormat = alts("DD/MM/YY",
                             "MM/DD/YY",
@@ -23,53 +23,53 @@ export class Write implements IStatement {
                             "MMDDYY",
                             "YYMMDD");
 
-    const to = seqs("TO", Target);
+    const to = seq("TO", Target);
     const options = pers(mask,
                          to,
-                         seqs("EXPONENT", Source),
+                         seq("EXPONENT", Source),
                          "NO-GROUPING",
                          "NO-ZERO",
                          "CENTERED",
-                         seqs("INPUT", opts(onOff)),
+                         seq("INPUT", opts(onOff)),
                          "NO-GAP",
                          "LEFT-JUSTIFIED",
                          "AS LINE",
                          "AS ICON",
-                         seqs("FRAMES", onOff),
-                         seqs("HOTSPOT", opts(onOff)),
+                         seq("FRAMES", onOff),
+                         seq("HOTSPOT", opts(onOff)),
                          "AS CHECKBOX",
                          "AS SYMBOL",
                          "RIGHT-JUSTIFIED",
-                         seqs("TIME ZONE", Source),
-                         seqs("UNDER", Source),
-                         seqs("STYLE", Source),
-                         seqs("ROUND", Source),
-                         seqs("QUICKINFO", Source),
+                         seq("TIME ZONE", Source),
+                         seq("UNDER", Source),
+                         seq("STYLE", Source),
+                         seq("ROUND", Source),
+                         seq("QUICKINFO", Source),
                          "ENVIRONMENT TIME FORMAT",
                          dateFormat,
-                         seqs("UNIT", Source),
-                         seqs("INTENSIFIED", opts(onOff)),
-                         seqs("INDEX", Source),
-                         seqs("DECIMALS", Source),
-                         seqs("INVERSE", opts(onOff)),
+                         seq("UNIT", Source),
+                         seq("INTENSIFIED", opts(onOff)),
+                         seq("INDEX", Source),
+                         seq("DECIMALS", Source),
+                         seq("INVERSE", opts(onOff)),
                          Color,
-                         seqs("CURRENCY", Source),
+                         seq("CURRENCY", Source),
                          "NO-SIGN");
 
-    const post = seqs(alts(FieldChain, reg(/^[\d]+$/), reg(/^\*$/)), alts(tok(ParenRightW), tok(ParenRight)));
-    const wlength = seqs(tok(WParenLeft), post);
-    const length = seqs(tok(ParenLeft), post);
+    const post = seq(alts(FieldChain, reg(/^[\d]+$/), reg(/^\*$/)), alts(tok(ParenRightW), tok(ParenRight)));
+    const wlength = seq(tok(WParenLeft), post);
+    const length = seq(tok(ParenLeft), post);
 
 // todo, move to expression?
     const complex = alts(wlength,
-                         seqs(alts(FieldChain, reg(/^\/?[\w\d]+$/), "/"), opts(length)));
+                         seq(alts(FieldChain, reg(/^\/?[\w\d]+$/), "/"), opts(length)));
 
-    const at = seqs(opts("AT"), complex);
+    const at = seq(opts("AT"), complex);
 
-    const ret = seqs("WRITE",
-                     opts(at),
-                     altPrios(Source, Dynamic, "/"),
-                     opts(options));
+    const ret = seq("WRITE",
+                    opts(at),
+                    altPrios(Source, Dynamic, "/"),
+                    opts(options));
 
     return verNot(Version.Cloud, ret);
   }

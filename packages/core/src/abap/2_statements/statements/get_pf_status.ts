@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts} from "../combi";
+import {verNot, seq, opts} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,13 +7,13 @@ import {IStatementRunnable} from "../statement_runnable";
 export class GetPFStatus implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const program = seqs("PROGRAM", Source);
-    const excl = seqs("EXCLUDING", Source);
+    const program = seq("PROGRAM", Source);
+    const excl = seq("EXCLUDING", Source);
 
-    const ret = seqs("GET PF-STATUS",
-                     Target,
-                     opts(program),
-                     opts(excl));
+    const ret = seq("GET PF-STATUS",
+                    Target,
+                    opts(program),
+                    opts(excl));
 
     return verNot(Version.Cloud, ret);
   }

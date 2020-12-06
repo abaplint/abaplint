@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, alts, opts, regex as reg} from "../combi";
+import {verNot, seq, alts, opts, regex as reg} from "../combi";
 import {FieldSub, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,22 +9,22 @@ export class AtSelectionScreen implements IStatement {
   public getMatcher(): IStatementRunnable {
     const output = "OUTPUT";
 
-    const value = seqs("ON VALUE-REQUEST FOR", FieldSub);
+    const value = seq("ON VALUE-REQUEST FOR", FieldSub);
 
     const exit = "ON EXIT-COMMAND";
 
-    const field = seqs("ON", FieldSub);
+    const field = seq("ON", FieldSub);
 
-    const end = seqs("ON END OF", Field);
+    const end = seq("ON END OF", Field);
 
-    const radio = seqs("ON RADIOBUTTON GROUP", Field);
+    const radio = seq("ON RADIOBUTTON GROUP", Field);
 
-    const block = seqs("ON BLOCK", reg(/^\w+$/));
+    const block = seq("ON BLOCK", reg(/^\w+$/));
 
-    const help = seqs("ON HELP-REQUEST FOR", FieldSub);
+    const help = seq("ON HELP-REQUEST FOR", FieldSub);
 
-    const ret = seqs("AT SELECTION-SCREEN",
-                     opts(alts(output, value, radio, exit, field, end, help, block)));
+    const ret = seq("AT SELECTION-SCREEN",
+                    opts(alts(output, value, radio, exit, field, end, help, block)));
 
     return verNot(Version.Cloud, ret);
   }

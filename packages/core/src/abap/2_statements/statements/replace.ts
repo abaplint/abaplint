@@ -1,30 +1,30 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, opts, pers} from "../combi";
+import {seq, alts, opts, pers} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Replace implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const length = seqs("LENGTH", Source);
-    const offset = seqs("OFFSET", Source);
+    const length = seq("LENGTH", Source);
+    const offset = seq("OFFSET", Source);
 
-    const section = seqs(opts("IN"),
-                         "SECTION",
-                         pers(offset, length),
-                         "OF",
-                         Source);
-
-    const source = seqs(opts("OF"),
-                        opts(alts("REGEX", "SUBSTRING")),
+    const section = seq(opts("IN"),
+                        "SECTION",
+                        pers(offset, length),
+                        "OF",
                         Source);
+
+    const source = seq(opts("OF"),
+                       opts(alts("REGEX", "SUBSTRING")),
+                       Source);
 
     const cas = alts("IGNORING CASE", "RESPECTING CASE");
 
-    const repl = seqs("REPLACEMENT COUNT", Target);
-    const replo = seqs("REPLACEMENT OFFSET", Target);
-    const repll = seqs("REPLACEMENT LENGTH", Target);
-    const repli = seqs("REPLACEMENT LINE", Target);
+    const repl = seq("REPLACEMENT COUNT", Target);
+    const replo = seq("REPLACEMENT OFFSET", Target);
+    const repll = seq("REPLACEMENT LENGTH", Target);
+    const repli = seq("REPLACEMENT LINE", Target);
 
     const occ = alts("ALL OCCURRENCES",
                      "ALL OCCURENCES",
@@ -34,13 +34,13 @@ export class Replace implements IStatement {
     const mode = alts("IN CHARACTER MODE",
                       "IN BYTE MODE");
 
-    const wit = seqs("WITH", Source);
-    const into = seqs("INTO", Target);
+    const wit = seq("WITH", Source);
+    const into = seq("INTO", Target);
 
-    return seqs("REPLACE",
-                pers(section, seqs(opts(occ), source)),
-                opts(seqs("IN", opts("TABLE"), Target)),
-                opts(pers(wit, into, cas, mode, repl, replo, repll, repli, length)));
+    return seq("REPLACE",
+               pers(section, seq(opts(occ), source)),
+               opts(seq("IN", opts("TABLE"), Target)),
+               opts(pers(wit, into, cas, mode, repl, replo, repll, repli, length)));
   }
 
 }

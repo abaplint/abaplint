@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, alts, opts} from "../combi";
+import {verNot, seq, alts, opts} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,28 +7,28 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Communication implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const length = seqs("LENGTH", Target);
+    const length = seq("LENGTH", Target);
 
-    const init = seqs("INIT ID", Source, "DESTINATION", Target);
-    const allocate = seqs("ALLOCATE ID", Source);
-    const send = seqs("SEND ID", Source, "BUFFER", Target, opts(length));
-    const deallocate = seqs("DEALLOCATE ID", Source);
-    const accept = seqs("ACCEPT ID", Source);
+    const init = seq("INIT ID", Source, "DESTINATION", Target);
+    const allocate = seq("ALLOCATE ID", Source);
+    const send = seq("SEND ID", Source, "BUFFER", Target, opts(length));
+    const deallocate = seq("DEALLOCATE ID", Source);
+    const accept = seq("ACCEPT ID", Source);
 
-    const receive = seqs("RECEIVE ID",
-                         Source,
-                         "BUFFER",
-                         Source,
-                         opts(length),
-                         "DATAINFO",
-                         Target,
-                         "STATUSINFO",
-                         Target,
-                         "RECEIVED",
-                         Target);
+    const receive = seq("RECEIVE ID",
+                        Source,
+                        "BUFFER",
+                        Source,
+                        opts(length),
+                        "DATAINFO",
+                        Target,
+                        "STATUSINFO",
+                        Target,
+                        "RECEIVED",
+                        Target);
 
-    const ret = seqs("COMMUNICATION",
-                     alts(init, allocate, send, deallocate, receive, accept));
+    const ret = seq("COMMUNICATION",
+                    alts(init, allocate, send, deallocate, receive, accept));
 
     return verNot(Version.Cloud, ret);
   }

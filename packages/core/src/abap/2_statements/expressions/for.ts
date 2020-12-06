@@ -1,4 +1,4 @@
-import {seqs, opts, alts, vers, pluss, Expression} from "../combi";
+import {seq, opts, alts, vers, pluss, Expression} from "../combi";
 import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, InlineLoopDefinition, Target} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -6,20 +6,20 @@ import {FieldChain} from "./field_chain";
 
 export class For extends Expression {
   public getRunnable(): IStatementRunnable {
-    const where = seqs("WHERE", ComponentCond);
-    const from = seqs("FROM", Source);
-    const to = seqs("TO", Source);
-    const inn = seqs(InlineLoopDefinition, opts(from), opts(to), opts(where));
-    const then = seqs("THEN", Source);
-    const whil = seqs(alts("UNTIL", "WHILE"), Cond);
-    const itera = seqs(InlineFieldDefinition, opts(then), whil);
+    const where = seq("WHERE", ComponentCond);
+    const from = seq("FROM", Source);
+    const to = seq("TO", Source);
+    const inn = seq(InlineLoopDefinition, opts(from), opts(to), opts(where));
+    const then = seq("THEN", Source);
+    const whil = seq(alts("UNTIL", "WHILE"), Cond);
+    const itera = seq(InlineFieldDefinition, opts(then), whil);
 
-    const groupBy = seqs("GROUP BY", FieldChain);
+    const groupBy = seq("GROUP BY", FieldChain);
 
-    const groups = vers(Version.v740sp08, seqs("GROUPS", FieldChain, "OF", Target, "IN", Source, opts(groupBy)));
+    const groups = vers(Version.v740sp08, seq("GROUPS", FieldChain, "OF", Target, "IN", Source, opts(groupBy)));
 
-    const f = seqs("FOR", alts(itera, inn, groups));
+    const f = seq("FOR", alts(itera, inn, groups));
 
-    return vers(Version.v740sp05, pluss(seqs(f, opts(Let))));
+    return vers(Version.v740sp05, pluss(seq(f, opts(Let))));
   }
 }

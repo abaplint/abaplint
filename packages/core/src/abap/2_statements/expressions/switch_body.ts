@@ -1,17 +1,17 @@
-import {Expression, seqs, stars, alts, opts, pluss} from "../combi";
+import {Expression, seq, stars, alts, opts, pluss} from "../combi";
 import {Source, Throw, Let} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SwitchBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const or = seqs("OR", Source);
+    const or = seq("OR", Source);
 
-    const swhen = seqs("WHEN", Source, stars(or), "THEN", alts(Source, Throw));
+    const swhen = seq("WHEN", Source, stars(or), "THEN", alts(Source, Throw));
 
-    return seqs(
+    return seq(
       opts(Let),
       Source,
       pluss(swhen),
-      opts(seqs("ELSE", alts(Source, Throw))));
+      opts(seq("ELSE", alts(Source, Throw))));
   }
 }

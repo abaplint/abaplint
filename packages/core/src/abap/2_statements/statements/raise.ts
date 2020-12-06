@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, opts, vers, optPrios, altPrios} from "../combi";
+import {seq, alts, opts, vers, optPrios, altPrios} from "../combi";
 import {Version} from "../../../version";
 import {Source, Field, ParameterListS, ClassName, MessageSource, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,34 +7,34 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Raise implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const wit = seqs("WITH",
-                     Source,
-                     opts(Source),
-                     opts(Source),
-                     opts(Source));
+    const wit = seq("WITH",
+                    Source,
+                    opts(Source),
+                    opts(Source),
+                    opts(Source));
 
-    const mess = seqs("MESSAGE",
-                      MessageSource,
-                      opts(wit));
+    const mess = seq("MESSAGE",
+                     MessageSource,
+                     opts(wit));
 
-    const messid = seqs("MESSAGE ID",
-                        Source,
-                        "NUMBER",
-                        Source,
-                        optPrios(wit));
+    const messid = seq("MESSAGE ID",
+                       Source,
+                       "NUMBER",
+                       Source,
+                       optPrios(wit));
 
-    const exporting = seqs("EXPORTING", ParameterListS);
+    const exporting = seq("EXPORTING", ParameterListS);
 
-    const from = altPrios(seqs("TYPE", ClassName),
+    const from = altPrios(seq("TYPE", ClassName),
                           altPrios(vers(Version.v752, Source), BasicSource));
 
-    const clas = seqs(optPrios("RESUMABLE"),
-                      "EXCEPTION",
-                      from,
-                      opts(alts(vers(Version.v750, alts(mess, messid)), vers(Version.v752, "USING MESSAGE"))),
-                      optPrios(exporting));
+    const clas = seq(optPrios("RESUMABLE"),
+                     "EXCEPTION",
+                     from,
+                     opts(alts(vers(Version.v750, alts(mess, messid)), vers(Version.v752, "USING MESSAGE"))),
+                     optPrios(exporting));
 
-    const ret = seqs("RAISE", altPrios(clas, Field));
+    const ret = seq("RAISE", altPrios(clas, Field));
 
     return ret;
   }

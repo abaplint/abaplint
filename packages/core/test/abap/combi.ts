@@ -9,7 +9,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 
 const str  = Combi.str;
 const per  = Combi.pers;
-const seq  = Combi.seqs;
+const seq  = Combi.seq;
 const alt  = Combi.alts;
 const opt  = Combi.opts;
 const plus = Combi.pluss;

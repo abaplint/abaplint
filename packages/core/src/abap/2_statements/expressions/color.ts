@@ -1,10 +1,10 @@
-import {alts, Expression, seqs, altPrios, opts} from "../combi";
+import {alts, Expression, seq, altPrios, opts} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {Source} from "./source";
 
 export class Color extends Expression {
   public getRunnable(): IStatementRunnable {
-    const eq = seqs("=", Source);
+    const eq = seq("=", Source);
     const integers = alts("1", "2", "3", "4", "5", "6", "7");
     const texts = alts("COL_BACKGROUND",
                        "COL_HEADING",
@@ -17,6 +17,6 @@ export class Color extends Expression {
     const value = alts(eq, altPrios("ON", "OFF", alts(integers, texts)));
     const toggle = alts("ON", "OFF");
 
-    return seqs("COLOR", value, opts(toggle));
+    return seq("COLOR", value, opts(toggle));
   }
 }

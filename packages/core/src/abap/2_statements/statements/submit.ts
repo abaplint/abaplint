@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, pers, alts, pluss, optPrios} from "../combi";
+import {verNot, str, seq, opts, pers, alts, pluss, optPrios} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,32 +7,32 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Submit implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const sign = seqs("SIGN", Source);
+    const sign = seq("SIGN", Source);
     const eq = alts("=", "EQ", "IN", "NE", "CP", "GE", "LE", "INCL");
-    const compare = seqs(eq, Source);
-    const between = seqs("BETWEEN", Source, "AND", Source);
-    const selectionTable = seqs("WITH SELECTION-TABLE", Source);
-    const awith = seqs("WITH", Field, alts(compare, between), optPrios(sign));
+    const compare = seq(eq, Source);
+    const between = seq("BETWEEN", Source, "AND", Source);
+    const selectionTable = seq("WITH SELECTION-TABLE", Source);
+    const awith = seq("WITH", Field, alts(compare, between), optPrios(sign));
     const prog = alts(NamespaceSimpleName, Dynamic);
-    const job = seqs("VIA JOB", Source, "NUMBER", Source);
+    const job = seq("VIA JOB", Source, "NUMBER", Source);
     const exporting = str("EXPORTING LIST TO MEMORY");
-    const spool = seqs("SPOOL PARAMETERS", Source);
-    const archive = seqs("ARCHIVE PARAMETERS", Source);
-    const lineSize = seqs("LINE-SIZE", Source);
-    const lineCount = seqs("LINE-COUNT", Source);
-    const user = seqs("USER", Source);
-    const sset = seqs("USING SELECTION-SET", Source);
-    const ssetp = seqs("USING SELECTION-SETS OF PROGRAM", Source);
-    const uss = seqs("USING SELECTION-SCREEN", Source);
-    const free = seqs("WITH FREE SELECTIONS", Source);
-    const newList = seqs("NEW LIST IDENTIFICATION", Source);
-    const layout = seqs("LAYOUT", Source);
-    const cover = seqs("SAP COVER PAGE", Source);
+    const spool = seq("SPOOL PARAMETERS", Source);
+    const archive = seq("ARCHIVE PARAMETERS", Source);
+    const lineSize = seq("LINE-SIZE", Source);
+    const lineCount = seq("LINE-COUNT", Source);
+    const user = seq("USER", Source);
+    const sset = seq("USING SELECTION-SET", Source);
+    const ssetp = seq("USING SELECTION-SETS OF PROGRAM", Source);
+    const uss = seq("USING SELECTION-SCREEN", Source);
+    const free = seq("WITH FREE SELECTIONS", Source);
+    const newList = seq("NEW LIST IDENTIFICATION", Source);
+    const layout = seq("LAYOUT", Source);
+    const cover = seq("SAP COVER PAGE", Source);
 
-    const keep = seqs("KEEP IN SPOOL", Source);
-    const imm = seqs("IMMEDIATELY", Source);
-    const dest = seqs("DESTINATION", Source);
-    const language = seqs("LANGUAGE", Source);
+    const keep = seq("KEEP IN SPOOL", Source);
+    const imm = seq("IMMEDIATELY", Source);
+    const dest = seq("DESTINATION", Source);
+    const language = seq("LANGUAGE", Source);
 
     const perm = pers(pluss(awith),
                       selectionTable,
@@ -59,7 +59,7 @@ export class Submit implements IStatement {
                       AndReturn,
                       job);
 
-    const ret = seqs("SUBMIT", prog, opts(perm));
+    const ret = seq("SUBMIT", prog, opts(perm));
 
     return verNot(Version.Cloud, ret);
   }

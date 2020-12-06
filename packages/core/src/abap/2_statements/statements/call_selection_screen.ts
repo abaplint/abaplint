@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts} from "../combi";
+import {verNot, seq, opts} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,13 +7,13 @@ import {IStatementRunnable} from "../statement_runnable";
 export class CallSelectionScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const ending = seqs("ENDING AT", Source, Source);
-    const starting = seqs("STARTING AT", Source, Source);
-    const using = seqs("USING SELECTION-SET", Source);
+    const ending = seq("ENDING AT", Source, Source);
+    const starting = seq("STARTING AT", Source, Source);
+    const using = seq("USING SELECTION-SET", Source);
 
-    const at = seqs(starting, opts(ending));
+    const at = seq(starting, opts(ending));
 
-    const ret = seqs("CALL SELECTION-SCREEN", Source, opts(at), opts(using));
+    const ret = seq("CALL SELECTION-SCREEN", Source, opts(at), opts(using));
 
     return verNot(Version.Cloud, ret);
   }

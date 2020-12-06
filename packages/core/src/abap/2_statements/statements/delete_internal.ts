@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, opts, pers, pluss, altPrios} from "../combi";
+import {seq, alts, opts, pers, pluss, altPrios} from "../combi";
 import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -7,29 +7,29 @@ export class DeleteInternal implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 // todo, is READ and DELETE similar? something can be reused?
-    const index = seqs("INDEX", Source);
+    const index = seq("INDEX", Source);
 
-    const using = seqs("USING KEY", alts(SimpleName, Dynamic));
+    const using = seq("USING KEY", alts(SimpleName, Dynamic));
 
-    const fromTo = seqs(opts(seqs("FROM", Source)),
-                        opts(seqs("TO", Source)));
+    const fromTo = seq(opts(seq("FROM", Source)),
+                       opts(seq("TO", Source)));
 
-    const where = seqs("WHERE", alts(ComponentCond, Dynamic));
+    const where = seq("WHERE", alts(ComponentCond, Dynamic));
 
-    const key = seqs("WITH TABLE KEY",
-                     opts(seqs(SimpleName, "COMPONENTS")),
-                     pluss(ComponentCompare));
+    const key = seq("WITH TABLE KEY",
+                    opts(seq(SimpleName, "COMPONENTS")),
+                    pluss(ComponentCompare));
 
-    const table = seqs(opts("TABLE"),
-                       Target,
-                       alts(pers(index, using), fromTo, key), opts(where));
+    const table = seq(opts("TABLE"),
+                      Target,
+                      alts(pers(index, using), fromTo, key), opts(where));
 
-    const adjacent = seqs("ADJACENT DUPLICATES FROM",
-                          Target,
-                          opts(seqs("COMPARING", altPrios("ALL FIELDS", pluss(alts(FieldSub, Dynamic))))),
-                          opts(seqs("USING KEY", Field)));
+    const adjacent = seq("ADJACENT DUPLICATES FROM",
+                         Target,
+                         opts(seq("COMPARING", altPrios("ALL FIELDS", pluss(alts(FieldSub, Dynamic))))),
+                         opts(seq("USING KEY", Field)));
 
-    return seqs("DELETE", alts(table, adjacent));
+    return seq("DELETE", alts(table, adjacent));
   }
 
 }

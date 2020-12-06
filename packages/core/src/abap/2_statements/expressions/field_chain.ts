@@ -1,4 +1,4 @@
-import {seqs, optPrios, stars, tok, Expression, altPrios} from "../combi";
+import {seq, optPrios, stars, tok, Expression, altPrios} from "../combi";
 import {AttributeName, ClassName, SourceField, SourceFieldSymbol, TableExpression, ComponentName, FieldOffset, FieldLength, TableBody} from ".";
 import {InstanceArrow, StaticArrow, Dash, DashW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -6,17 +6,17 @@ import {IStatementRunnable} from "../statement_runnable";
 export class FieldChain extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const attr = seqs(tok(InstanceArrow), altPrios(AttributeName, "*"));
-    const comp = seqs(tok(Dash), optPrios(ComponentName));
+    const attr = seq(tok(InstanceArrow), altPrios(AttributeName, "*"));
+    const comp = seq(tok(Dash), optPrios(ComponentName));
 
     const chain = stars(altPrios(attr, comp, TableExpression));
 
-    const clas = seqs(ClassName, tok(StaticArrow), AttributeName);
+    const clas = seq(ClassName, tok(StaticArrow), AttributeName);
     const start = altPrios(clas, SourceField, SourceFieldSymbol);
 
-    const after = altPrios(tok(DashW), seqs(optPrios(TableBody), optPrios(FieldOffset), optPrios(FieldLength)));
+    const after = altPrios(tok(DashW), seq(optPrios(TableBody), optPrios(FieldOffset), optPrios(FieldLength)));
 
-    const ret = seqs(start, chain, after);
+    const ret = seq(start, chain, after);
 
     return ret;
   }

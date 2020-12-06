@@ -1,4 +1,4 @@
-import {seqs, opts, vers, tok, pluss, alts, Expression} from "../combi";
+import {seq, opts, vers, tok, pluss, alts, Expression} from "../combi";
 import {ComponentChainSimple, FieldSub, Constant, Source, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -8,27 +8,27 @@ export class ComponentCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = alts(FieldSub, Constant);
 
-    const list = seqs(tok(WParenLeft),
-                      val,
-                      pluss(seqs(",", val)),
-                      tok(ParenRightW));
+    const list = seq(tok(WParenLeft),
+                     val,
+                     pluss(seq(",", val)),
+                     tok(ParenRightW));
 
-    const inn = seqs(opts("NOT"), "IN", alts(Source, list));
+    const inn = seq(opts("NOT"), "IN", alts(Source, list));
 
-    const sopt = seqs("IS",
-                      opts("NOT"),
-                      alts("SUPPLIED",
-                           "BOUND",
-                           vers(Version.v750, seqs("INSTANCE OF", Source)),
-                           "REQUESTED",
-                           "ASSIGNED",
-                           "INITIAL"));
+    const sopt = seq("IS",
+                     opts("NOT"),
+                     alts("SUPPLIED",
+                          "BOUND",
+                          vers(Version.v750, seq("INSTANCE OF", Source)),
+                          "REQUESTED",
+                          "ASSIGNED",
+                          "INITIAL"));
 
-    const between = seqs(opts("NOT"), "BETWEEN", Source, "AND", Source);
+    const between = seq(opts("NOT"), "BETWEEN", Source, "AND", Source);
 
-    const rett = seqs(ComponentChainSimple, alts(seqs(CompareOperator, Source), inn, between, sopt));
+    const rett = seq(ComponentChainSimple, alts(seq(CompareOperator, Source), inn, between, sopt));
 
-    const ret = seqs(opts("NOT"), rett);
+    const ret = seq(opts("NOT"), rett);
 
     return ret;
   }

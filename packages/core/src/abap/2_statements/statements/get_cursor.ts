@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, pers, opts} from "../combi";
+import {verNot, seq, pers, opts} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,15 +7,15 @@ import {IStatementRunnable} from "../statement_runnable";
 export class GetCursor implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const line = seqs("LINE", Target);
-    const field = seqs("FIELD", Target);
-    const offset = seqs("OFFSET", Target);
-    const value = seqs("VALUE", Target);
-    const length = seqs("LENGTH", Target);
-    const area = seqs("AREA", Target);
+    const line = seq("LINE", Target);
+    const field = seq("FIELD", Target);
+    const offset = seq("OFFSET", Target);
+    const value = seq("VALUE", Target);
+    const length = seq("LENGTH", Target);
+    const area = seq("AREA", Target);
 
-    const ret = seqs("GET CURSOR",
-                     pers(line, opts("DISPLAY"), field, offset, value, length, area));
+    const ret = seq("GET CURSOR",
+                    pers(line, opts("DISPLAY"), field, offset, value, length, area));
 
     return verNot(Version.Cloud, ret);
   }

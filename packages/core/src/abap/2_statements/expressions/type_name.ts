@@ -1,4 +1,4 @@
-import {seqs, alts, opts, tok, regex as reg, Expression, starPrios} from "../combi";
+import {seq, alts, opts, tok, regex as reg, Expression, starPrios} from "../combi";
 import {StaticArrow, Dash, InstanceArrow} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,9 +8,9 @@ export class TypeName extends Expression {
 
   public getRunnable(): IStatementRunnable {
     const name = reg(/^[\w~\/%$]+$/);
-    const cla = seqs(name, alts(tok(StaticArrow), tok(InstanceArrow)));
-    const field = seqs(tok(Dash), name);
-    return seqs(opts(cla), name, starPrios(field));
+    const cla = seq(name, alts(tok(StaticArrow), tok(InstanceArrow)));
+    const field = seq(tok(Dash), name);
+    return seq(opts(cla), name, starPrios(field));
   }
 
 }

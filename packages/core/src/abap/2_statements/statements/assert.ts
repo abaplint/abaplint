@@ -1,21 +1,21 @@
 import {IStatement} from "./_statement";
-import {seqs, opts, pluss, optPrios} from "../combi";
+import {seq, opts, pluss, optPrios} from "../combi";
 import {Source, NamespaceSimpleName, Cond} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Assert implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const fields = seqs("FIELDS", pluss(Source));
-    const subkey = seqs("SUBKEY", Source);
-    const id = seqs("ID", NamespaceSimpleName);
+    const fields = seq("FIELDS", pluss(Source));
+    const subkey = seq("SUBKEY", Source);
+    const id = seq("ID", NamespaceSimpleName);
 
-    return seqs("ASSERT",
-                optPrios(id),
-                optPrios(subkey),
-                opts(fields),
-                optPrios("CONDITION"),
-                Cond);
+    return seq("ASSERT",
+               optPrios(id),
+               optPrios(subkey),
+               opts(fields),
+               optPrios("CONDITION"),
+               Cond);
   }
 
 }
