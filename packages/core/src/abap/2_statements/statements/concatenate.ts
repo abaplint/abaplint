@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, optPrio, seqs, alts, per, plus, altPrios} from "../combi";
+import {str, optPrios, seqs, alts, per, plus, altPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -21,7 +21,7 @@ export class Concatenate implements IStatement {
                 altPrios(lines, sourc),
                 "INTO",
                 Target,
-                optPrio(options));
+                optPrios(options));
   }
 
 }

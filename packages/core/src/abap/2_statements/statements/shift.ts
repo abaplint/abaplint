@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, opts, altPrios, optPrio, per} from "../combi";
+import {str, seqs, opts, altPrios, optPrios, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class Shift implements IStatement {
     const up = seqs("UP TO", Source);
     const mode = seqs("IN", altPrios("CHARACTER", "BYTE"), "MODE");
     const dir = altPrios("LEFT", "RIGHT");
-    const by = seqs("BY", Source, optPrio(str("PLACES")));
+    const by = seqs("BY", Source, optPrios("PLACES"));
 
     const options = per(deleting, up, mode, dir, by, str("CIRCULAR"));
 

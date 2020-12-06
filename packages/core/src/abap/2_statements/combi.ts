@@ -911,9 +911,11 @@ export function altPrio(first: IStatementRunnable, second: IStatementRunnable, .
 export function per(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Permutation([first, second].concat(rest));
 }
+/*
 export function opt(first: IStatementRunnable): IStatementRunnable {
   return new Optional(first);
 }
+*/
 export function optPrio(first: IStatementRunnable): IStatementRunnable {
   return new OptionalPriority(first);
 }
@@ -971,4 +973,7 @@ export function altPrios(first: input, second: input, ...rest: input[]): IStatem
 }
 export function opts(first: input): IStatementRunnable {
   return new Optional(map(first));
+}
+export function optPrios(first: input): IStatementRunnable {
+  return new OptionalPriority(map(first));
 }

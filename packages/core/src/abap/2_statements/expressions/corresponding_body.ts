@@ -1,4 +1,4 @@
-import {seqs, tok, Expression, str, plus, ver, optPrio, alts} from "../combi";
+import {seqs, tok, Expression, str, plus, ver, optPrios, alts} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {ComponentName, Source, Field} from ".";
 import {Version} from "../../../version";
@@ -14,12 +14,12 @@ export class CorrespondingBody extends Expression {
     const discarding = ver(Version.v751, str("DISCARDING DUPLICATES"));
 
     return seqs(
-      optPrio(str("DEEP")),
-      optPrio(baseParen),
+      optPrios("DEEP"),
+      optPrios(baseParen),
       Source,
-      optPrio(discarding),
-      optPrio(mapping),
-      optPrio(seqs("EXCEPT", alts(plus(new Field()), "*"))),
+      optPrios(discarding),
+      optPrios(mapping),
+      optPrios(seqs("EXCEPT", alts(plus(new Field()), "*"))),
     );
   }
 }

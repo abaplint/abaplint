@@ -1,4 +1,4 @@
-import {str, alts, seqs, optPrio, Expression, ver, tok} from "../combi";
+import {str, alts, seqs, optPrios, Expression, ver, tok} from "../combi";
 import {SQLAsName, Dynamic, SQLCDSParameters, DatabaseTable, FieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -10,8 +10,8 @@ export class SQLFromSource extends Expression {
     const tab = ver(Version.v752, seqs(tok(WAt), FieldChain));
     const aas = seqs("AS", SQLAsName);
 
-    return seqs(alts(Dynamic, seqs(DatabaseTable, optPrio(new SQLCDSParameters())), tab),
-                optPrio(ver(Version.v752, str("WITH PRIVILEGED ACCESS"))),
-                optPrio(aas));
+    return seqs(alts(Dynamic, seqs(DatabaseTable, optPrios(SQLCDSParameters)), tab),
+                optPrios(ver(Version.v752, str("WITH PRIVILEGED ACCESS"))),
+                optPrios(aas));
   }
 }

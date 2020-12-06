@@ -1,4 +1,4 @@
-import {alts, str, plus, seqs, opts, ver, tok, Expression, optPrio, altPrios} from "../combi";
+import {alts, str, plus, seqs, opts, ver, tok, Expression, optPrios, altPrios} from "../combi";
 import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation, SQLCase} from ".";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
@@ -23,6 +23,6 @@ export class SQLFieldList extends Expression {
                                    SQLPath,
                                    SQLFieldName,
                                    abap,
-                                   Constant), optPrio(as), comma)));
+                                   Constant), optPrios(as), comma)));
   }
 }

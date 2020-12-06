@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opts, altPrios, optPrio, plus, per, ver} from "../combi";
+import {str, seqs, alts, opts, altPrios, optPrios, plus, per, ver} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -20,7 +20,7 @@ export class ReadTable implements IStatement {
     const key = seqs(altPrios("WITH KEY", "WITH TABLE KEY"),
                      alts(plus(compare),
                           components,
-                          seqs(optPrio(str("=")), Source)));
+                          seqs(optPrios("="), Source)));
 
     const using = seqs("USING KEY", alts(Field, Dynamic));
 

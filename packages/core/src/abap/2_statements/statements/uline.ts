@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, tok, alts, regex as reg, optPrio, altPrios} from "../combi";
+import {verNot, seqs, opts, tok, alts, regex as reg, optPrios, altPrios} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Dynamic, Field} from "../expressions";
 import {Version} from "../../../version";
@@ -21,7 +21,7 @@ export class Uline implements IStatement {
 
     const field = seqs(Field, tok(ParenLeft), contents, right);
 
-    const ret = seqs("ULINE", optPrio(str("AT")), opts(alts(pos, pos1, dyn, field)), optPrio(str("NO-GAP")));
+    const ret = seqs("ULINE", optPrios("AT"), opts(alts(pos, pos1, dyn, field)), optPrios("NO-GAP"));
 
     return verNot(Version.Cloud, ret);
   }

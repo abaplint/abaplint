@@ -1,11 +1,11 @@
-import {seqs, optPrio, alts, Expression} from "../combi";
+import {seqs, optPrios, alts, Expression} from "../combi";
 import {TypeName, Default, FieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Type extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const typeType = seqs(TypeName, optPrio(new Default()));
+    const typeType = seqs(TypeName, optPrios(Default));
 
     const ret = alts(seqs("LIKE", FieldChain),
                      seqs("LIKE LINE OF", FieldChain),

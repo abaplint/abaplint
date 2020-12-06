@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, per, alts, plus, optPrio} from "../combi";
+import {verNot, str, seqs, opts, per, alts, plus, optPrios} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class Submit implements IStatement {
     const compare = seqs(eq, Source);
     const between = seqs("BETWEEN", Source, "AND", Source);
     const selectionTable = seqs("WITH SELECTION-TABLE", Source);
-    const awith = seqs("WITH", Field, alts(compare, between), optPrio(sign));
+    const awith = seqs("WITH", Field, alts(compare, between), optPrios(sign));
     const prog = alts(NamespaceSimpleName, Dynamic);
     const job = seqs("VIA JOB", Source, "NUMBER", Source);
     const exporting = str("EXPORTING LIST TO MEMORY");

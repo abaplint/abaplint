@@ -16,7 +16,7 @@ const plus = Combi.plus;
 const star = Combi.star;
 const reg  = Combi.regex;
 const tok  = Combi.tok;
-const optPrio = Combi.optPrio;
+const optPrio = Combi.optPrios;
 const starPrio = Combi.starPrio;
 
 function tokenize(s: string): readonly Token[] {

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alts, per, plus, optPrio} from "../combi";
+import {verNot, seqs, alts, per, plus, optPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -22,7 +22,7 @@ export class SyntaxCheck implements IStatement {
     const dump = seqs("SHORTDUMP-ID", Source);
     const filter = seqs("FILTER", Source);
 
-    const syntax = seqs(optPrio(str("PROGRAM")),
+    const syntax = seqs(optPrios("PROGRAM"),
                         Source,
                         per(message,
                             line,

@@ -1,4 +1,4 @@
-import {seqs, alts, optPrio, tok, Expression, starPrio} from "../combi";
+import {seqs, alts, optPrios, tok, Expression, starPrio} from "../combi";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {ClassName, MethodName, Dynamic, FieldChain, MethodCallChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,6 +12,6 @@ export class MethodSource extends Expression {
 
     const part1 = seqs(cname, alts(tok(InstanceArrow), tok(StaticArrow)));
 
-    return seqs(optPrio(stati), starPrio(part1), mname);
+    return seqs(optPrios(stati), starPrio(part1), mname);
   }
 }
