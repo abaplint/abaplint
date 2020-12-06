@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, tok, alts, regex as reg, optPrio, altPrio} from "../combi";
+import {verNot, str, seqs, opt, tok, alts, regex as reg, optPrio, altPrios} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Dynamic, Field} from "../expressions";
 import {Version} from "../../../version";
@@ -10,7 +10,7 @@ export class Uline implements IStatement {
   public getMatcher(): IStatementRunnable {
     const right = tok(ParenRightW);
 
-    const contents = altPrio(new Field(), reg(/^\d+$/));
+    const contents = altPrios(Field, reg(/^\d+$/));
 
     // todo, reuse the "AT" thing in ULINE and WRITE?
     const pos = seqs(reg(/^(\/\d*|\d+)$/), opt(seqs(tok(ParenLeft), contents, right)));

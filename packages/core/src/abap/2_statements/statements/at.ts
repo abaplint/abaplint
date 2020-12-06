@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opt, regex, altPrio} from "../combi";
+import {seqs, alts, opt, regex, altPrios} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -14,7 +14,7 @@ export class At implements IStatement {
     const atEnd = seqs("END OF", field);
     const group = regex(/^\w+$/);
 
-    const ret = seqs("AT", altPrio(str("FIRST"), str("LAST"), atNew, atEnd, group));
+    const ret = seqs("AT", altPrios("FIRST", "LAST", atNew, atEnd, group));
 
     return ret;
   }

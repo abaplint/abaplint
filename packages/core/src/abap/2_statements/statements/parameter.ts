@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, altPrio, per, regex as reg} from "../combi";
+import {verNot, str, seqs, opt, altPrios, per, regex as reg} from "../combi";
 import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName, SimpleSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,10 +7,10 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Parameter implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const para = altPrio(str("PARAMETER"), str("PARAMETERS"));
-    const def = seqs("DEFAULT", altPrio(new Constant(), new FieldChain()));
+    const para = altPrios("PARAMETER", "PARAMETERS");
+    const def = seqs("DEFAULT", altPrios(Constant, FieldChain));
     const radio = seqs("RADIOBUTTON GROUP", RadioGroupName);
-    const type = seqs(altPrio(str("TYPE"), str("LIKE")), altPrio(new TypeName(), new Dynamic()));
+    const type = seqs(altPrios("TYPE", "LIKE"), altPrios(TypeName, Dynamic));
     const memory = seqs("MEMORY ID", SimpleSource);
     const listbox = str("AS LISTBOX");
     const cmd = seqs("USER-COMMAND", reg(/^\w+$/));

@@ -903,9 +903,11 @@ export function alt(first: IStatementRunnable, second: IStatementRunnable, ...re
   return new Alternative([first, second].concat(rest));
 }
 */
+/*
 export function altPrio(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new AlternativePriority([first, second].concat(rest));
 }
+*/
 export function per(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Permutation([first, second].concat(rest));
 }
@@ -963,4 +965,7 @@ export function seqs(first: input, second: input, ...rest: input[]): IStatementR
 }
 export function alts(first: input, second: input, ...rest: input[]): IStatementRunnable {
   return new Alternative([map(first), map(second)].concat(rest.map(map)));
+}
+export function altPrios(first: input, second: input, ...rest: input[]): IStatementRunnable {
+  return new AlternativePriority([map(first), map(second)].concat(rest.map(map)));
 }

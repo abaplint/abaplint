@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, per, alts, seqs, opt, altPrio} from "../combi";
+import {verNot, str, per, alts, seqs, opt, altPrios} from "../combi";
 import {Source, Color} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,7 +8,7 @@ export class Format implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const eq = seqs("=", Source);
-    const value = alts(eq, altPrio(str("ON"), str("OFF"), new Source()));
+    const value = alts(eq, altPrios("ON", "OFF", Source));
 
     const options = per(str("RESET"),
                         seqs("INTENSIFIED", opt(value)),

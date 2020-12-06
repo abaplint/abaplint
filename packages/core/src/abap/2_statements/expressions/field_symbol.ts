@@ -1,4 +1,4 @@
-import {regex as reg, Expression, altPrio, tok, seqs} from "../combi";
+import {regex as reg, Expression, altPrios, tok, seqs} from "../combi";
 import {Dash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -7,6 +7,6 @@ export class FieldSymbol extends Expression {
 // todo, this only allows one dash in the name
     const dashes = seqs(reg(/^<[\w\/%$\*]+$/), tok(Dash), reg(/^[\w\/%$\*]+>$/));
 
-    return altPrio(reg(/^<[\w\/%$\*]+>$/), dashes);
+    return altPrios(reg(/^<[\w\/%$\*]+>$/), dashes);
   }
 }

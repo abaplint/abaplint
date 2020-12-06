@@ -1,4 +1,4 @@
-import {ver, seqs, tok, str, altPrio, optPrio, regex, Expression} from "../combi";
+import {ver, seqs, tok, str, altPrios, optPrio, regex, Expression} from "../combi";
 import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, InstanceArrow} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
@@ -17,7 +17,7 @@ export class Source extends Expression {
 
     const comp = seqs(tok(Dash), ComponentChain);
     const attr = seqs(Arrow, AttributeChain);
-    const method = seqs(MethodCallChain, optPrio(altPrio(attr, comp)), optPrio(ref));
+    const method = seqs(MethodCallChain, optPrio(altPrios(attr, comp)), optPrio(ref));
 
     const rparen = tok(WParenRightW);
 
@@ -26,23 +26,23 @@ export class Source extends Expression {
                        Source,
                        rparen);
 
-    const after = seqs(altPrio(str("&"), str("&&"), new ArithOperator()), Source);
+    const after = seqs(altPrios("&", "&&", ArithOperator), Source);
 
-    const bool = seqs(altPrio(ver(Version.v702, regex(/^BOOLC$/i)),
-                              ver(Version.v740sp08, regex(/^XSDBOOL$/i))),
+    const bool = seqs(altPrios(ver(Version.v702, regex(/^BOOLC$/i)),
+                               ver(Version.v740sp08, regex(/^XSDBOOL$/i))),
                       tok(ParenLeftW),
                       Cond,
                       ")");
 
-    const prefix = altPrio(tok(WDashW), tok(WPlus), tok(WPlusW), str("BIT-NOT"));
+    const prefix = altPrios(tok(WDashW), tok(WPlus), tok(WPlusW), "BIT-NOT");
 
-    const old = seqs(optPrio(prefix), altPrio(new Constant(),
-                                              new StringTemplate(),
-                                              new TextElement(),
-                                              bool,
-                                              method,
-                                              seqs(FieldChain, optPrio(ref)),
-                                              paren),
+    const old = seqs(optPrio(prefix), altPrios(Constant,
+                                               StringTemplate,
+                                               TextElement,
+                                               bool,
+                                               method,
+                                               seqs(FieldChain, optPrio(ref)),
+                                               paren),
                      optPrio(after));
 
     const corr = ver(Version.v740sp05, seqs("CORRESPONDING",
@@ -104,7 +104,7 @@ export class Source extends Expression {
                             rparen,
                             optPrio(after)));
 
-    const ret = altPrio(corr, conv, value, cond, reff, exact, swit, filter, reduce, old);
+    const ret = altPrios(corr, conv, value, cond, reff, exact, swit, filter, reduce, old);
 
     return ret;
   }

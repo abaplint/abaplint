@@ -1,10 +1,10 @@
-import {seqs, optPrio, alts, altPrio, str, Expression, opt} from "../combi";
+import {seqs, optPrio, alts, altPrios, str, Expression, opt} from "../combi";
 import {Default, FieldChain, TypeNameOrInfer} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class TypeParam extends Expression {
   public getRunnable(): IStatementRunnable {
-    const table = seqs(altPrio(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
+    const table = seqs(altPrios("STANDARD", "HASHED", "INDEX", "SORTED", "ANY"),
                        "TABLE");
 
     const foo = seqs(optPrio(seqs(table, "OF")), optPrio(str("REF TO")));

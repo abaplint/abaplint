@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opt, alts, per, altPrio} from "../combi";
+import {verNot, seqs, opt, alts, per, altPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -46,7 +46,7 @@ export class Describe implements IStatement {
 
     const list = seqs("LIST", per(lines, index, line, page, top, first, lineSize));
 
-    const ret = seqs("DESCRIBE", altPrio(table, field, distance, list));
+    const ret = seqs("DESCRIBE", altPrios(table, field, distance, list));
 
     return verNot(Version.Cloud, ret);
   }

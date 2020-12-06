@@ -1,4 +1,4 @@
-import {seqs, star, Expression, altPrio} from "../combi";
+import {seqs, star, Expression, altPrios} from "../combi";
 import {Constant, FieldChain, StringTemplate} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,6 +8,6 @@ export class BasicSource extends Expression {
     const concat = seqs("&&", StringTemplate);
     const template = seqs(StringTemplate, star(concat));
 
-    return altPrio(new Constant(), template, new FieldChain());
+    return altPrios(Constant, template, FieldChain);
   }
 }

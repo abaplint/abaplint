@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, optPrio, altPrio, per} from "../combi";
+import {seqs, optPrio, altPrios, per} from "../combi";
 import {Target, ParameterListS, ParameterListExceptions, Source, ClassName, Dynamic} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,12 +10,12 @@ export class CreateObject implements IStatement {
     const exceptions = seqs("EXCEPTIONS", ParameterListExceptions);
     const table = seqs("PARAMETER-TABLE", Source);
     const area = seqs("AREA HANDLE", Source);
-    const type = seqs("TYPE", altPrio(new ClassName(), new Dynamic()));
+    const type = seqs("TYPE", altPrios(ClassName, Dynamic));
 
     const ret = seqs("CREATE OBJECT",
                      Target,
                      optPrio(per(type, area)),
-                     optPrio(altPrio(exporting, table)),
+                     optPrio(altPrios(exporting, table)),
                      optPrio(exceptions));
 
     return ret;

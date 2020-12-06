@@ -1,6 +1,6 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
-import {str, seqs, alts, altPrio, ver, regex as reg, plusPrio, optPrio} from "../combi";
+import {str, seqs, alts, altPrios, ver, regex as reg, plusPrio, optPrio} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, NamespaceSimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,9 +10,9 @@ export class MethodDef implements IStatement {
 
     const exceptions = seqs("EXCEPTIONS", plusPrio(new NamespaceSimpleName()));
 
-    const def = ver(Version.v740sp08, seqs("DEFAULT", altPrio(str("FAIL"), str("IGNORE"))));
+    const def = ver(Version.v740sp08, seqs("DEFAULT", altPrios("FAIL", "IGNORE")));
 
-    const parameters = seqs(optPrio(altPrio(seqs(Abstract, optPrio(str("FOR TESTING"))), str("FINAL"), str("FOR TESTING"), def)),
+    const parameters = seqs(optPrio(altPrios(seqs(Abstract, optPrio(str("FOR TESTING"))), str("FINAL"), str("FOR TESTING"), def)),
                             optPrio(new MethodDefImporting()),
                             optPrio(new MethodDefExporting()),
                             optPrio(new MethodDefChanging()),
@@ -22,7 +22,7 @@ export class MethodDef implements IStatement {
 // todo, this is only from version something
     const tableFunction = seqs("FOR TABLE FUNCTION", reg(/^\w+?$/));
 
-    const ret = seqs(altPrio(str("CLASS-METHODS"), str("METHODS")),
+    const ret = seqs(altPrios("CLASS-METHODS", "METHODS"),
                      MethodName,
                      alts(seqs(optPrio(new Abstract()), EventHandler),
                           parameters,
