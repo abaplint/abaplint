@@ -1,14 +1,14 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt} from "../combi";
+import {seqs, opt} from "../combi";
 import {Cond, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class While implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const vary = seq(str("VARY"), new Target(), str("FROM"), new Source(), str("NEXT"), new Source());
+    const vary = seqs("VARY", Target, "FROM", Source, "NEXT", Source);
 
-    return seq(str("WHILE"), new Cond(), opt(vary));
+    return seqs("WHILE", Cond, opt(vary));
   }
 
 }

@@ -1,20 +1,20 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt} from "../combi";
+import {str, seqs, alt} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Translate implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const cas = seq(str("TO"),
-                    alt(str("UPPER"), str("LOWER")),
-                    str("CASE"));
+    const cas = seqs("TO",
+                     alt(str("UPPER"), str("LOWER")),
+                     "CASE");
 
-    const using = seq(str("USING"), new Source());
+    const using = seqs("USING", Source);
 
-    return seq(str("TRANSLATE"),
-               new Target(),
-               alt(cas, using));
+    return seqs("TRANSLATE",
+                Target,
+                alt(cas, using));
   }
 
 }
