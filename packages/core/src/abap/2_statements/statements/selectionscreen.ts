@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, regex as reg, tok} from "../combi";
+import {verNot, str, seqs, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
 import {Version} from "../../../version";
@@ -8,70 +8,70 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SelectionScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const beginBlock = seq(str("BEGIN OF BLOCK"),
-                           new BlockName(),
-                           opt(str("WITH FRAME")),
-                           opt(seq(str("TITLE"), alt(new InlineField(), new TextElement()))),
-                           opt(str("NO INTERVALS")));
-    const endBlock = seq(str("END OF BLOCK"), new BlockName());
+    const beginBlock = seqs("BEGIN OF BLOCK",
+                            BlockName,
+                            opt(str("WITH FRAME")),
+                            opt(seqs("TITLE", alt(new InlineField(), new TextElement()))),
+                            opt(str("NO INTERVALS")));
+    const endBlock = seqs("END OF BLOCK", BlockName);
 
-    const nesting = seq(str("NESTING LEVEL"), new Source());
+    const nesting = seqs("NESTING LEVEL", Source);
 
-    const scrOptions = per(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN"))),
-                           seq(str("TITLE"), alt(new InlineField(), new TextElement())),
+    const scrOptions = per(seqs("AS", alt(str("WINDOW"), str("SUBSCREEN"))),
+                           seqs("TITLE", alt(new InlineField(), new TextElement())),
                            str("NO INTERVALS"),
                            nesting);
 
-    const beginScreen = seq(str("BEGIN OF SCREEN"),
-                            new Integer(),
-                            opt(scrOptions));
+    const beginScreen = seqs("BEGIN OF SCREEN",
+                             Integer,
+                             opt(scrOptions));
 
-    const endScreen = seq(str("END OF SCREEN"), new Integer());
+    const endScreen = seqs("END OF SCREEN", Integer);
 
     const beginLine = str("BEGIN OF LINE");
     const endLine = str("END OF LINE");
 
-    const modif = seq(str("MODIF ID"), new Modif());
+    const modif = seqs("MODIF ID", Modif);
 
-    const visible = seq(str("VISIBLE LENGTH"), reg(/^\d+$/));
+    const visible = seqs("VISIBLE LENGTH", reg(/^\d+$/));
 
-    const commentOpt = per(seq(str("FOR FIELD"), new Field()),
+    const commentOpt = per(seqs("FOR FIELD", Field),
                            modif,
                            visible);
 
-    const position = seq(opt(reg(/^\/?[\d\w]+$/)),
-                         alt(tok(ParenLeft), tok(WParenLeft)),
-                         new Integer(),
-                         alt(tok(ParenRightW), tok(ParenRight)));
+    const position = seqs(opt(reg(/^\/?[\d\w]+$/)),
+                          alt(tok(ParenLeft), tok(WParenLeft)),
+                          Integer,
+                          alt(tok(ParenRightW), tok(ParenRight)));
 
-    const comment = seq(str("COMMENT"),
-                        position,
-                        opt(alt(new InlineField(), new TextElement())),
-                        opt(commentOpt));
+    const comment = seqs("COMMENT",
+                         position,
+                         opt(alt(new InlineField(), new TextElement())),
+                         opt(commentOpt));
 
-    const command = seq(str("USER-COMMAND"), alt(new Field(), new Constant()));
+    const command = seqs("USER-COMMAND", alt(new Field(), new Constant()));
 
-    const push = seq(str("PUSHBUTTON"),
-                     position,
+    const push = seqs("PUSHBUTTON",
+                      position,
+                      alt(new InlineField(), new TextElement()),
+                      command,
+                      opt(modif),
+                      opt(visible));
+
+    const def = seqs("DEFAULT SCREEN", Integer);
+
+    const tab = seqs("TAB",
+                     tok(WParenLeft),
+                     Integer,
+                     tok(ParenRightW),
                      alt(new InlineField(), new TextElement()),
                      command,
-                     opt(modif),
-                     opt(visible));
+                     opt(def),
+                     opt(modif));
 
-    const def = seq(str("DEFAULT SCREEN"), new Integer());
+    const func = seqs("FUNCTION KEY", Integer);
 
-    const tab = seq(str("TAB"),
-                    tok(WParenLeft),
-                    new Integer(),
-                    tok(ParenRightW),
-                    alt(new InlineField(), new TextElement()),
-                    command,
-                    opt(def),
-                    opt(modif));
-
-    const func = seq(str("FUNCTION KEY"), new Integer());
-
-    const skip = seq(str("SKIP"), opt(new Integer()));
+    const skip = seqs("SKIP", opt(new Integer()));
 
     const posSymbols = alt(str("POS_LOW"),
                            str("POS_HIGH"));
@@ -79,42 +79,42 @@ export class SelectionScreen implements IStatement {
     // number between 1 and 83
     const posIntegers = reg(/^(0?[1-9]|[1234567][0-9]|8[0-3])$/);
 
-    const pos = seq(str("POSITION"),
-                    alt(posIntegers,
-                        posSymbols));
+    const pos = seqs("POSITION",
+                     alt(posIntegers,
+                         posSymbols));
 
-    const incl = seq(str("INCLUDE BLOCKS"), new BlockName());
+    const incl = seqs("INCLUDE BLOCKS", BlockName);
 
-    const tabbed = seq(str("BEGIN OF TABBED BLOCK"),
-                       new InlineField(),
-                       str("FOR"),
-                       new Integer(),
-                       str("LINES"),
-                       opt(str("NO INTERVALS")));
+    const tabbed = seqs("BEGIN OF TABBED BLOCK",
+                        InlineField,
+                        "FOR",
+                        Integer,
+                        "LINES",
+                        opt(str("NO INTERVALS")));
 
-    const uline = seq(str("ULINE"), opt(position));
+    const uline = seqs("ULINE", opt(position));
 
-    const param = seq(str("INCLUDE PARAMETERS"), new Field());
-    const iso = seq(str("INCLUDE SELECT-OPTIONS"), new Field());
+    const param = seqs("INCLUDE PARAMETERS", Field);
+    const iso = seqs("INCLUDE SELECT-OPTIONS", Field);
 
-    const ret = seq(str("SELECTION-SCREEN"),
-                    alt(comment,
-                        func,
-                        skip,
-                        pos,
-                        incl,
-                        iso,
-                        push,
-                        tab,
-                        uline,
-                        beginBlock,
-                        tabbed,
-                        endBlock,
-                        beginLine,
-                        endLine,
-                        param,
-                        beginScreen,
-                        endScreen));
+    const ret = seqs("SELECTION-SCREEN",
+                     alt(comment,
+                         func,
+                         skip,
+                         pos,
+                         incl,
+                         iso,
+                         push,
+                         tab,
+                         uline,
+                         beginBlock,
+                         tabbed,
+                         endBlock,
+                         beginLine,
+                         endLine,
+                         param,
+                         beginScreen,
+                         endScreen));
 
     return verNot(Version.Cloud, ret);
   }

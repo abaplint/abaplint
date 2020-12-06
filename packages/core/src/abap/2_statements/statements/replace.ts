@@ -1,31 +1,31 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, per} from "../combi";
+import {str, seqs, alt, opt, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Replace implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const length = seq(str("LENGTH"), new Source());
-    const offset = seq(str("OFFSET"), new Source());
+    const length = seqs("LENGTH", Source);
+    const offset = seqs("OFFSET", Source);
 
-    const section = seq(opt(str("IN")),
-                        str("SECTION"),
-                        per(offset, length),
-                        str("OF"),
-                        new Source());
+    const section = seqs(opt(str("IN")),
+                         "SECTION",
+                         per(offset, length),
+                         "OF",
+                         Source);
 
-    const source = seq(opt(str("OF")),
-                       opt(alt(str("REGEX"), str("SUBSTRING"))),
-                       new Source());
+    const source = seqs(opt(str("OF")),
+                        opt(alt(str("REGEX"), str("SUBSTRING"))),
+                        Source);
 
     const cas = alt(str("IGNORING CASE"),
                     str("RESPECTING CASE"));
 
-    const repl = seq(str("REPLACEMENT COUNT"), new Target());
-    const replo = seq(str("REPLACEMENT OFFSET"), new Target());
-    const repll = seq(str("REPLACEMENT LENGTH"), new Target());
-    const repli = seq(str("REPLACEMENT LINE"), new Target());
+    const repl = seqs("REPLACEMENT COUNT", Target);
+    const replo = seqs("REPLACEMENT OFFSET", Target);
+    const repll = seqs("REPLACEMENT LENGTH", Target);
+    const repli = seqs("REPLACEMENT LINE", Target);
 
     const occ = alt(str("ALL OCCURRENCES"),
                     str("ALL OCCURENCES"),
@@ -35,13 +35,13 @@ export class Replace implements IStatement {
     const mode = alt(str("IN CHARACTER MODE"),
                      str("IN BYTE MODE"));
 
-    const wit = seq(str("WITH"), new Source());
-    const into = seq(str("INTO"), new Target());
+    const wit = seqs("WITH", Source);
+    const into = seqs("INTO", Target);
 
-    return seq(str("REPLACE"),
-               per(section, seq(opt(occ), source)),
-               opt(seq(str("IN"), opt(str("TABLE")), new Target())),
-               opt(per(wit, into, cas, mode, repl, replo, repll, repli, length)));
+    return seqs("REPLACE",
+                per(section, seqs(opt(occ), source)),
+                opt(seqs("IN", opt(str("TABLE")), Target)),
+                opt(per(wit, into, cas, mode, repl, replo, repll, repli, length)));
   }
 
 }
