@@ -1,4 +1,4 @@
-import {seq, opt, alt, vers, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
+import {seq, opt, alt, ver, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class TypeTable extends Expression {
 
     const uniqueness = alt("NON-UNIQUE", "UNIQUE");
     const defaultKey = "DEFAULT KEY";
-    const emptyKey = vers(Version.v740sp02, "EMPTY KEY");
+    const emptyKey = ver(Version.v740sp02, "EMPTY KEY");
 
     const key = seq("WITH",
                     opt(uniqueness),

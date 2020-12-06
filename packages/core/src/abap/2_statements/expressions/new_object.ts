@@ -1,4 +1,4 @@
-import {alt, tok, seq, Expression, vers, opt, plus} from "../combi";
+import {alt, tok, seq, Expression, ver, opt, plus} from "../combi";
 import {Version} from "../../../version";
 import {TypeNameOrInfer, Source, ParameterListS} from ".";
 import {ParenLeftW, WParenLeftW, WParenRightW, WParenRight} from "../../1_lexer/tokens";
@@ -16,6 +16,6 @@ export class NewObject extends Expression {
                      opt(alt(Source, ParameterListS, lines)),
                      rparen);
 
-    return vers(Version.v740sp02, neww);
+    return ver(Version.v740sp02, neww);
   }
 }

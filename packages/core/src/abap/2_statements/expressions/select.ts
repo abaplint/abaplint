@@ -1,4 +1,4 @@
-import {seq, per, opt, alt, tok, str, star, Expression, altPrio, optPrio, vers} from "../combi";
+import {seq, per, opt, alt, tok, str, star, Expression, altPrio, optPrio, ver} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLTarget, SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLTargetTable, SQLOrderBy, SQLHaving, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -20,7 +20,7 @@ export class Select extends Expression {
     const where = seq("WHERE", SQLCond);
 
     const up = seq("UP TO", SQLSource, "ROWS");
-    const offset = vers(Version.v751, seq("OFFSET", SQLSource));
+    const offset = ver(Version.v751, seq("OFFSET", SQLSource));
 
     const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");

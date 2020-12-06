@@ -950,7 +950,7 @@ export function plus(first: InputType): IStatementRunnable {
 export function plusPrio(first: InputType): IStatementRunnable {
   return new PlusPriority(map(first));
 }
-export function vers(version: Version, first: InputType): IStatementRunnable {
+export function ver(version: Version, first: InputType): IStatementRunnable {
   return new Vers(version, map(first));
 }
 export function verNot(version: Version, first: InputType): IStatementRunnable {

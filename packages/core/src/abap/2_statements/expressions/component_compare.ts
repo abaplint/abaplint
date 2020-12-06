@@ -1,4 +1,4 @@
-import {seq, opt, vers, tok, plus, alt, Expression} from "../combi";
+import {seq, opt, ver, tok, plus, alt, Expression} from "../combi";
 import {ComponentChainSimple, FieldSub, Constant, Source, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -19,7 +19,7 @@ export class ComponentCompare extends Expression {
                      opt("NOT"),
                      alt("SUPPLIED",
                          "BOUND",
-                         vers(Version.v750, seq("INSTANCE OF", Source)),
+                         ver(Version.v750, seq("INSTANCE OF", Source)),
                          "REQUESTED",
                          "ASSIGNED",
                          "INITIAL"));

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, altPrio, optPrio, plus, per, vers} from "../combi";
+import {seq, alt, opt, altPrio, optPrio, plus, per, ver} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -36,7 +36,7 @@ export class ReadTable implements IStatement {
                      "BINARY SEARCH");
 
     return seq("READ TABLE",
-               alt(vers(Version.v740sp02, Source), BasicSource),
+               alt(ver(Version.v740sp02, Source), BasicSource),
                opt(perm));
   }
 

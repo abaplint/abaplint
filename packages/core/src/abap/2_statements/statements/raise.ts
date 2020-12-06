@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, vers, optPrio, altPrio} from "../combi";
+import {seq, alt, opt, ver, optPrio, altPrio} from "../combi";
 import {Version} from "../../../version";
 import {Source, Field, ParameterListS, ClassName, MessageSource, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -26,12 +26,12 @@ export class Raise implements IStatement {
     const exporting = seq("EXPORTING", ParameterListS);
 
     const from = altPrio(seq("TYPE", ClassName),
-                         altPrio(vers(Version.v752, Source), BasicSource));
+                         altPrio(ver(Version.v752, Source), BasicSource));
 
     const clas = seq(optPrio("RESUMABLE"),
                      "EXCEPTION",
                      from,
-                     opt(alt(vers(Version.v750, alt(mess, messid)), vers(Version.v752, "USING MESSAGE"))),
+                     opt(alt(ver(Version.v750, alt(mess, messid)), ver(Version.v752, "USING MESSAGE"))),
                      optPrio(exporting));
 
     const ret = seq("RAISE", altPrio(clas, Field));

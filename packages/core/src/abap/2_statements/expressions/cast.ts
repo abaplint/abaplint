@@ -1,4 +1,4 @@
-import {altPrio, tok, seq, Expression, vers, optPrio} from "../combi";
+import {altPrio, tok, seq, Expression, ver, optPrio} from "../combi";
 import {Version} from "../../../version";
 import {TypeNameOrInfer, Source} from ".";
 import {ParenLeftW, WParenRightW, WParenRight} from "../../1_lexer/tokens";
@@ -11,6 +11,6 @@ export class Cast extends Expression {
 
     const cast = seq("CAST", TypeNameOrInfer, tok(ParenLeftW), optPrio(Let), Source, rparen);
 
-    return vers(Version.v740sp02, cast);
+    return ver(Version.v740sp02, cast);
   }
 }
