@@ -10,12 +10,7 @@ export class DeleteMemory implements IStatement {
     const memory = seqs("MEMORY ID", Source);
 
     const id = seqs("ID", Source);
-    const shared = seqs("SHARED MEMORY",
-                        Field,
-                        "(",
-                        Field,
-                        ")",
-                        id);
+    const shared = seqs("SHARED MEMORY", Field, "(", Field, ")", id);
 
     const ret = seqs("DELETE FROM", alts(memory, shared));
 

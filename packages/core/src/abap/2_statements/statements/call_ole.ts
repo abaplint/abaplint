@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, regex, pluss} from "../combi";
+import {verNot, seqs, opts, regex, pluss} from "../combi";
 import {Target, Source, Constant} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class CallOLE implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const fields = seqs(regex(/^#?\w+$/), str("="), Source);
+    const fields = seqs(regex(/^#?\w+$/), "=", Source);
 
     const exporting = seqs("EXPORTING", pluss(fields));
 

@@ -901,14 +901,6 @@ export function regex(r: RegExp): IStatementRunnable {
 export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
   return new Token(t.name);
 }
-/*
-export function ver(version: Version, first: IStatementRunnable): IStatementRunnable {
-  return new Vers(version, first);
-}
-*/
-export function verNot(version: Version, first: IStatementRunnable): IStatementRunnable {
-  return new VersNot(version, first);
-}
 
 const singletons: {[index: string]: Expression} = {};
 type InputType = (new () => Expression) | string | IStatementRunnable;
@@ -960,4 +952,7 @@ export function plusPrios(first: InputType): IStatementRunnable {
 }
 export function vers(version: Version, first: InputType): IStatementRunnable {
   return new Vers(version, map(first));
+}
+export function verNot(version: Version, first: InputType): IStatementRunnable {
+  return new VersNot(version, map(first));
 }

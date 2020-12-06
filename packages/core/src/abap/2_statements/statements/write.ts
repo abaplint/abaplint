@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, alts, pers, tok, regex as reg, altPrios} from "../combi";
+import {verNot, seqs, opts, alts, pers, tok, regex as reg, altPrios} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft, ParenRight} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -62,7 +62,7 @@ export class Write implements IStatement {
 
 // todo, move to expression?
     const complex = alts(wlength,
-                         seqs(alts(FieldChain, reg(/^\/?[\w\d]+$/), str("/")), opts(length)));
+                         seqs(alts(FieldChain, reg(/^\/?[\w\d]+$/), "/"), opts(length)));
 
     const at = seqs(opts("AT"), complex);
 

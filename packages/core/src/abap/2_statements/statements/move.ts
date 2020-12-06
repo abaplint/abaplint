@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, tok, vers, seqs, alts, altPrios, pluss} from "../combi";
+import {verNot, tok, vers, seqs, alts, altPrios, pluss} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
@@ -9,7 +9,7 @@ export class Move implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const mov = verNot(Version.Cloud, str("MOVE"));
+    const mov = verNot(Version.Cloud, "MOVE");
 
     const move = seqs(mov,
                       altPrios(

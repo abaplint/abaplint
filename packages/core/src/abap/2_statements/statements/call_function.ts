@@ -23,7 +23,7 @@ export class CallFunction implements IStatement {
                          opts(seqs("EXCEPTION-TABLE", Source)));
 
     const call = seqs("CALL",
-                      alts("FUNCTION", verNot(Version.Cloud, str("CUSTOMER-FUNCTION"))),
+                      alts("FUNCTION", verNot(Version.Cloud, "CUSTOMER-FUNCTION")),
                       FunctionName,
                       opts(options),
                       alts(FunctionParameters, dynamic));

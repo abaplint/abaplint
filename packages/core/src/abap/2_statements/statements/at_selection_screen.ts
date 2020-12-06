@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alts, opts, regex as reg} from "../combi";
+import {verNot, seqs, alts, opts, regex as reg} from "../combi";
 import {FieldSub, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,11 +7,11 @@ import {IStatementRunnable} from "../statement_runnable";
 export class AtSelectionScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const output = str("OUTPUT");
+    const output = "OUTPUT";
 
     const value = seqs("ON VALUE-REQUEST FOR", FieldSub);
 
-    const exit = str("ON EXIT-COMMAND");
+    const exit = "ON EXIT-COMMAND";
 
     const field = seqs("ON", FieldSub);
 
