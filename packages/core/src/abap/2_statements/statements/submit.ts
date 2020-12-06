@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, per, alts, plus, optPrios} from "../combi";
+import {verNot, str, seqs, opts, pers, alts, plus, optPrios} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -34,30 +34,30 @@ export class Submit implements IStatement {
     const dest = seqs("DESTINATION", Source);
     const language = seqs("LANGUAGE", Source);
 
-    const perm = per(plus(awith),
-                     selectionTable,
-                     spool,
-                     lineSize,
-                     lineCount,
-                     archive,
-                     user,
-                     sset,
-                     ssetp,
-                     keep,
-                     cover,
-                     imm,
-                     layout,
-                     dest,
-                     language,
-                     free,
-                     newList,
-                     uss,
-                     str("TO SAP-SPOOL"),
-                     str("WITHOUT SPOOL DYNPRO"),
-                     str("VIA SELECTION-SCREEN"),
-                     exporting,
-                     new AndReturn(),
-                     job);
+    const perm = pers(plus(awith),
+                      selectionTable,
+                      spool,
+                      lineSize,
+                      lineCount,
+                      archive,
+                      user,
+                      sset,
+                      ssetp,
+                      keep,
+                      cover,
+                      imm,
+                      layout,
+                      dest,
+                      language,
+                      free,
+                      newList,
+                      uss,
+                      "TO SAP-SPOOL",
+                      "WITHOUT SPOOL DYNPRO",
+                      "VIA SELECTION-SCREEN",
+                      exporting,
+                      AndReturn,
+                      job);
 
     const ret = seqs("SUBMIT", prog, opts(perm));
 

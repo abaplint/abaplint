@@ -1,4 +1,4 @@
-import {seqs, per, alts, ver, Expression} from "../combi";
+import {seqs, pers, alts, ver, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -60,28 +60,28 @@ export class StringTemplateFormatting extends Expression {
                               "ENGINEERING",
                               Source);
 
-    const width = seqs("WIDTH", "=", Source);
-    const align = seqs("ALIGN", "=", alignOptions);
-    const timezone = seqs("TIMEZONE", "=", Source);
-    const timestamp = seqs("TIMESTAMP", "=", timeStampOptions);
-    const pad = seqs("PAD", "=", Source);
-    const number = seqs("NUMBER", "=", numberOptions);
-    const sign = seqs("SIGN", "=", signOptions);
-    const decimals = seqs("DECIMALS", "=", Source);
-    const alpha = ver(Version.v740sp02, seqs("ALPHA", "=", alphaOptions));
-    const xsd = ver(Version.v740sp02, seqs("XSD", "=", zeroXSDOptions));
+    const width = seqs("WIDTH =", Source);
+    const align = seqs("ALIGN =", alignOptions);
+    const timezone = seqs("TIMEZONE =", Source);
+    const timestamp = seqs("TIMESTAMP =", timeStampOptions);
+    const pad = seqs("PAD =", Source);
+    const number = seqs("NUMBER =", numberOptions);
+    const sign = seqs("SIGN =", signOptions);
+    const decimals = seqs("DECIMALS =", Source);
+    const alpha = ver(Version.v740sp02, seqs("ALPHA =", alphaOptions));
+    const xsd = ver(Version.v740sp02, seqs("XSD =", zeroXSDOptions));
 
-    const formatting = alts(seqs("TIME", "=", dateTimeOptions),
-                            seqs("DATE", "=", dateTimeOptions),
-                            seqs("CASE", "=", caseOptions),
+    const formatting = alts(seqs("TIME =", dateTimeOptions),
+                            seqs("DATE =", dateTimeOptions),
+                            seqs("CASE =", caseOptions),
                             seqs("EXPONENT", Source),
-                            seqs("ZERO", "=", zeroXSDOptions),
+                            seqs("ZERO =", zeroXSDOptions),
                             xsd,
-                            seqs("STYLE", "=", styleOptions),
-                            seqs("CURRENCY", "=", Source),
-                            seqs("COUNTRY", "=", Source),
-                            per(sign, number, decimals, width, pad, alpha, align),
-                            per(timezone, timestamp));
+                            seqs("STYLE =", styleOptions),
+                            seqs("CURRENCY =", Source),
+                            seqs("COUNTRY =", Source),
+                            pers(sign, number, decimals, width, pad, alpha, align),
+                            pers(timezone, timestamp));
 
     return formatting;
   }

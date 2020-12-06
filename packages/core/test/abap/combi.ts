@@ -8,7 +8,7 @@ import {Result} from "../../src/abap/2_statements/result";
 import {MemoryFile} from "../../src/files/memory_file";
 
 const str  = Combi.str;
-const per  = Combi.per;
+const per  = Combi.pers;
 const seq  = Combi.seqs;
 const alt  = Combi.alts;
 const opt  = Combi.opts;

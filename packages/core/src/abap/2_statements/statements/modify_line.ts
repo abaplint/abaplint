@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alts, opts, per, plus, optPrios} from "../combi";
+import {verNot, str, seqs, alts, opts, pers, plus, optPrios} from "../combi";
 import {Source, Color} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -24,7 +24,7 @@ export class ModifyLine implements IStatement {
     const onOff = alts("ON", "OFF");
     const intensified = seqs("INTENSIFIED", onOff);
 
-    const options = per(index, value, format, page, lineFormat, lineValue, ocp, intensified, new Color());
+    const options = pers(index, value, format, page, lineFormat, lineValue, ocp, intensified, Color);
 
     const ret = seqs("MODIFY",
                      alts("CURRENT LINE",

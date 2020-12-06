@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, alts, per, tok, regex as reg, altPrios} from "../combi";
+import {verNot, str, seqs, opts, alts, pers, tok, regex as reg, altPrios} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft, ParenRight} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -24,37 +24,37 @@ export class Write implements IStatement {
                             "YYMMDD");
 
     const to = seqs("TO", Target);
-    const options = per(mask,
-                        to,
-                        seqs("EXPONENT", Source),
-                        str("NO-GROUPING"),
-                        str("NO-ZERO"),
-                        str("CENTERED"),
-                        seqs("INPUT", opts(onOff)),
-                        str("NO-GAP"),
-                        str("LEFT-JUSTIFIED"),
-                        str("AS LINE"),
-                        str("AS ICON"),
-                        seqs("FRAMES", onOff),
-                        seqs("HOTSPOT", opts(onOff)),
-                        str("AS CHECKBOX"),
-                        str("AS SYMBOL"),
-                        str("RIGHT-JUSTIFIED"),
-                        seqs("TIME ZONE", Source),
-                        seqs("UNDER", Source),
-                        seqs("STYLE", Source),
-                        seqs("ROUND", Source),
-                        seqs("QUICKINFO", Source),
-                        str("ENVIRONMENT TIME FORMAT"),
-                        dateFormat,
-                        seqs("UNIT", Source),
-                        seqs("INTENSIFIED", opts(onOff)),
-                        seqs("INDEX", Source),
-                        seqs("DECIMALS", Source),
-                        seqs("INVERSE", opts(onOff)),
-                        new Color(),
-                        seqs("CURRENCY", Source),
-                        str("NO-SIGN"));
+    const options = pers(mask,
+                         to,
+                         seqs("EXPONENT", Source),
+                         "NO-GROUPING",
+                         "NO-ZERO",
+                         "CENTERED",
+                         seqs("INPUT", opts(onOff)),
+                         "NO-GAP",
+                         "LEFT-JUSTIFIED",
+                         "AS LINE",
+                         "AS ICON",
+                         seqs("FRAMES", onOff),
+                         seqs("HOTSPOT", opts(onOff)),
+                         "AS CHECKBOX",
+                         "AS SYMBOL",
+                         "RIGHT-JUSTIFIED",
+                         seqs("TIME ZONE", Source),
+                         seqs("UNDER", Source),
+                         seqs("STYLE", Source),
+                         seqs("ROUND", Source),
+                         seqs("QUICKINFO", Source),
+                         "ENVIRONMENT TIME FORMAT",
+                         dateFormat,
+                         seqs("UNIT", Source),
+                         seqs("INTENSIFIED", opts(onOff)),
+                         seqs("INDEX", Source),
+                         seqs("DECIMALS", Source),
+                         seqs("INVERSE", opts(onOff)),
+                         Color,
+                         seqs("CURRENCY", Source),
+                         "NO-SIGN");
 
     const post = seqs(alts(FieldChain, reg(/^[\d]+$/), reg(/^\*$/)), alts(tok(ParenRightW), tok(ParenRight)));
     const wlength = seqs(tok(WParenLeft), post);

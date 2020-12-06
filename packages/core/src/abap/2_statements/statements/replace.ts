@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, opts, per} from "../combi";
+import {seqs, alts, opts, pers} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,7 +11,7 @@ export class Replace implements IStatement {
 
     const section = seqs(opts("IN"),
                          "SECTION",
-                         per(offset, length),
+                         pers(offset, length),
                          "OF",
                          Source);
 
@@ -38,9 +38,9 @@ export class Replace implements IStatement {
     const into = seqs("INTO", Target);
 
     return seqs("REPLACE",
-                per(section, seqs(opts(occ), source)),
+                pers(section, seqs(opts(occ), source)),
                 opts(seqs("IN", opts("TABLE"), Target)),
-                opts(per(wit, into, cas, mode, repl, replo, repll, repli, length)));
+                opts(pers(wit, into, cas, mode, repl, replo, repll, repli, length)));
   }
 
 }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, alts, regex, per, plus, tok} from "../combi";
+import {verNot, seqs, opts, alts, regex, pers, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {Version} from "../../../version";
@@ -21,8 +21,8 @@ export class Import implements IStatement {
     const buffer = seqs("DATA BUFFER", Source);
     const memory = seqs("MEMORY ID", Source);
     const table = seqs("INTERNAL TABLE", Source);
-    const shared = seqs(alts("SHARED MEMORY", "SHARED BUFFER"), cluster, per(dto, client, id));
-    const database = seqs("DATABASE", cluster, per(dto, client, id, using));
+    const shared = seqs(alts("SHARED MEMORY", "SHARED BUFFER"), cluster, pers(dto, client, id));
+    const database = seqs("DATABASE", cluster, pers(dto, client, id, using));
 
     const source = alts(buffer, memory, database, table, shared);
 
@@ -39,14 +39,14 @@ export class Import implements IStatement {
                         Dynamic,
                         plus(new Target()));
 
-    const options = per(str("ACCEPTING PADDING"),
-                        str("IGNORING CONVERSION ERRORS"),
-                        str("IN CHAR-TO-HEX MODE"),
-                        str("IGNORING STRUCTURE BOUNDARIES"),
-                        str("ACCEPTING TRUNCATION"),
-                        seqs("REPLACEMENT CHARACTER", Source),
-                        seqs("CODE PAGE INTO", Source),
-                        seqs("ENDIAN INTO", Source));
+    const options = pers("ACCEPTING PADDING",
+                         "IGNORING CONVERSION ERRORS",
+                         "IN CHAR-TO-HEX MODE",
+                         "IGNORING STRUCTURE BOUNDARIES",
+                         "ACCEPTING TRUNCATION",
+                         seqs("REPLACEMENT CHARACTER", Source),
+                         seqs("CODE PAGE INTO", Source),
+                         seqs("ENDIAN INTO", Source));
 
     const ret = seqs("IMPORT", target, "FROM", source, opts(options));
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, altPrios, per, regex as reg} from "../combi";
+import {verNot, str, seqs, opts, altPrios, pers, regex as reg} from "../combi";
 import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName, SimpleSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -20,22 +20,22 @@ export class Parameter implements IStatement {
     const match = seqs("MATCHCODE OBJECT", Field);
     const decimals = seqs("DECIMALS", Source);
 
-    const perm = per(type,
-                     def,
-                     str("OBLIGATORY"),
-                     match,
-                     cmd,
-                     length,
-                     decimals,
-                     radio,
-                     memory,
-                     modif,
-                     listbox,
-                     visible,
-                     str("VALUE CHECK"),
-                     str("NO-DISPLAY"),
-                     str("AS CHECKBOX"),
-                     str("LOWER CASE"));
+    const perm = pers(type,
+                      def,
+                      "OBLIGATORY",
+                      match,
+                      cmd,
+                      length,
+                      decimals,
+                      radio,
+                      memory,
+                      modif,
+                      listbox,
+                      visible,
+                      "VALUE CHECK",
+                      "NO-DISPLAY",
+                      "AS CHECKBOX",
+                      "LOWER CASE");
 
     const ret = seqs(para,
                      FieldSub,

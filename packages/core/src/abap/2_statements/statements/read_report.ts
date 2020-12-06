@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, per} from "../combi";
+import {verNot, seqs, pers} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class ReadReport implements IStatement {
 
     const ret = seqs("READ REPORT",
                      Source,
-                     per(state, into, maximum));
+                     pers(state, into, maximum));
 
     return verNot(Version.Cloud, ret);
   }

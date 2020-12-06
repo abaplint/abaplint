@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, per} from "../combi";
+import {verNot, str, seqs, opts, pers} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -21,7 +21,7 @@ export class GenerateReport implements IStatement {
     const shortdumpid = seqs("SHORTDUMP-ID", Target);
     const directory = seqs("DIRECTORY ENTRY", Target);
 
-    const options = per(without, message, include, trace, line, word, offset, headers, test, messageid, shortdumpid, directory);
+    const options = pers(without, message, include, trace, line, word, offset, headers, test, messageid, shortdumpid, directory);
 
     const ret = seqs("GENERATE REPORT",
                      Source,

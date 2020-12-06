@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts, alts, per, altPrios} from "../combi";
+import {verNot, seqs, opts, alts, pers, altPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,20 +13,20 @@ export class Describe implements IStatement {
 
     const table = seqs("TABLE",
                        Source,
-                       opts(per(tlines, kind, occurs)));
+                       opts(pers(tlines, kind, occurs)));
 
     const mode = seqs("IN", alts("BYTE", "CHARACTER"), "MODE");
 
     const field = seqs("FIELD",
                        Source,
-                       per(seqs("TYPE", Target),
-                           seqs("COMPONENTS", Target),
-                           seqs("LENGTH", Target, opts(mode)),
-                           seqs("DECIMALS", Target),
-                           seqs("HELP-ID", Target),
-                           seqs("OUTPUT-LENGTH", Target),
-                           seqs("EDIT MASK", Target),
-                           seqs("INTO", Target)));
+                       pers(seqs("TYPE", Target),
+                            seqs("COMPONENTS", Target),
+                            seqs("LENGTH", Target, opts(mode)),
+                            seqs("DECIMALS", Target),
+                            seqs("HELP-ID", Target),
+                            seqs("OUTPUT-LENGTH", Target),
+                            seqs("EDIT MASK", Target),
+                            seqs("INTO", Target)));
 
     const distance = seqs("DISTANCE BETWEEN",
                           Source,
@@ -44,7 +44,7 @@ export class Describe implements IStatement {
     const lineSize = seqs("LINE-SIZE", Target);
     const first = seqs("FIRST-LINE", Target);
 
-    const list = seqs("LIST", per(lines, index, line, page, top, first, lineSize));
+    const list = seqs("LIST", pers(lines, index, line, page, top, first, lineSize));
 
     const ret = seqs("DESCRIBE", altPrios(table, field, distance, list));
 

@@ -893,6 +893,15 @@ export function str(s: string): IStatementRunnable {
     return new Word(s);
   }
 }
+
+export function regex(r: RegExp): IStatementRunnable {
+  return new Regex(r);
+}
+
+export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
+  return new Token(t.name);
+}
+
 /*
 export function seq(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Sequence([first, second].concat(rest));
@@ -908,28 +917,26 @@ export function altPrio(first: IStatementRunnable, second: IStatementRunnable, .
   return new AlternativePriority([first, second].concat(rest));
 }
 */
+/*
 export function per(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Permutation([first, second].concat(rest));
 }
+*/
 /*
 export function opt(first: IStatementRunnable): IStatementRunnable {
   return new Optional(first);
 }
 */
+/*
 export function optPrio(first: IStatementRunnable): IStatementRunnable {
   return new OptionalPriority(first);
 }
-export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
-  return new Token(t.name);
-}
+*/
 export function star(first: IStatementRunnable): IStatementRunnable {
   return new Star(first);
 }
 export function starPrio(first: IStatementRunnable): IStatementRunnable {
   return new StarPrioroity(first);
-}
-export function regex(r: RegExp): IStatementRunnable {
-  return new Regex(r);
 }
 export function plus(first: IStatementRunnable): IStatementRunnable {
   return new Plus(first);
@@ -976,4 +983,7 @@ export function opts(first: input): IStatementRunnable {
 }
 export function optPrios(first: input): IStatementRunnable {
   return new OptionalPriority(map(first));
+}
+export function pers(first: input, second: input, ...rest: input[]): IStatementRunnable {
+  return new Permutation([map(first), map(second)].concat(rest.map(map)));
 }

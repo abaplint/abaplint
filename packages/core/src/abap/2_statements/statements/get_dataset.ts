@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts, per} from "../combi";
+import {verNot, seqs, opts, pers} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class GetDataset implements IStatement {
 
     const ret = seqs("GET DATASET",
                      Target,
-                     opts(per(position, attr)));
+                     opts(pers(position, attr)));
 
     return verNot(Version.Cloud, ret);
   }

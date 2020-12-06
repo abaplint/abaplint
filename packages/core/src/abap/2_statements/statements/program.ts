@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, per, optPrios} from "../combi";
+import {verNot, str, seqs, opts, pers, optPrios} from "../combi";
 import {Source, ReportName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class Program implements IStatement {
     const size = seqs("LINE-SIZE", Source);
     const heading = str("NO STANDARD PAGE HEADING");
     const line = seqs("LINE-COUNT", Source);
-    const options = per(message, size, heading, line);
+    const options = pers(message, size, heading, line);
 
     const ret = seqs("PROGRAM", optPrios(ReportName), opts(options));
 

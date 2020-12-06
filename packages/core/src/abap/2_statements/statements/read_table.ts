@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opts, altPrios, optPrios, plus, per, ver} from "../combi";
+import {seqs, alts, opts, altPrios, optPrios, plus, pers, ver} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -26,16 +26,14 @@ export class ReadTable implements IStatement {
 
     const from = seqs("FROM", Source);
 
-    const perm = per(alts(index,
-                          key,
-                          from),
-                     new ReadTableTarget(),
-                     using,
-                     comparing,
-                     str("CASTING"),
-                     str("TRANSPORTING ALL FIELDS"),
-                     seqs("TRANSPORTING", altPrios(Dynamic, plus(new Field()))),
-                     str("BINARY SEARCH"));
+    const perm = pers(alts(index, key, from),
+                      ReadTableTarget,
+                      using,
+                      comparing,
+                      "CASTING",
+                      "TRANSPORTING ALL FIELDS",
+                      seqs("TRANSPORTING", altPrios(Dynamic, plus(new Field()))),
+                      "BINARY SEARCH");
 
     return seqs("READ TABLE",
                 alts(ver(Version.v740sp02, new Source()), BasicSource),

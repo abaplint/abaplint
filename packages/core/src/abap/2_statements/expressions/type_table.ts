@@ -1,4 +1,4 @@
-import {seqs, opts, alts, str, ver, per, Expression, altPrios, plus, plusPrio, optPrios} from "../combi";
+import {seqs, opts, alts, str, ver, pers, Expression, altPrios, plus, plusPrio, optPrios} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -39,7 +39,7 @@ export class TypeTable extends Expression {
     const range = seqs("RANGE OF", TypeName);
 
     const typetable = seqs(alts(normal1, range),
-                           opts(per(header, initial, plusPrio(key))));
+                           opts(pers(header, initial, plusPrio(key))));
 
     const occurs = seqs("OCCURS", Integer);
 

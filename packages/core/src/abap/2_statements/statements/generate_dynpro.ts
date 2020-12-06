@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, per} from "../combi";
+import {verNot, seqs, pers} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -20,7 +20,7 @@ export class GenerateDynpro implements IStatement {
                      Source,
                      "MESSAGE",
                      Target,
-                     per(line, word));
+                     pers(line, word));
 
     return verNot(Version.Cloud, ret);
   }
