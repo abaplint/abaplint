@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, vers, altPrio, optPrios, tok, pers, pluss} from "../combi";
+import {seq, alt, opt, vers, altPrio, optPrio, tok, per, pluss} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName, ComponentName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
@@ -22,12 +22,12 @@ export class Loop implements IStatement {
     const group = vers(Version.v740sp08,
                        seq("GROUP BY",
                            alt(Source, components),
-                           optPrios("ASCENDING"),
-                           optPrios("WITHOUT MEMBERS"),
-                           optPrios(alt(into, assigning))));
+                           optPrio("ASCENDING"),
+                           optPrio("WITHOUT MEMBERS"),
+                           optPrio(alt(into, assigning))));
 
     const target = alt(seq(alt(into, assigning),
-                           optPrios("CASTING")),
+                           optPrio("CASTING")),
                        "TRANSPORTING NO FIELDS");
 
     const from = seq("FROM", Source);
@@ -36,7 +36,7 @@ export class Loop implements IStatement {
 
     const usingKey = seq("USING KEY", altPrio(SimpleName, Dynamic));
 
-    const options = pers(target, from, to, where, usingKey, group);
+    const options = per(target, from, to, where, usingKey, group);
 
     const at = seq("AT",
                    opt(vers(Version.v740sp08, "GROUP")),

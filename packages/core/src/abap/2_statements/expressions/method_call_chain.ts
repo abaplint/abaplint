@@ -1,4 +1,4 @@
-import {seq, tok, stars, Expression, optPrios, altPrio} from "../combi";
+import {seq, tok, stars, Expression, optPrio, altPrio} from "../combi";
 import {InstanceArrow, StaticArrow, Dash} from "../../1_lexer/tokens";
 import {ClassName, NewObject, ComponentName, FieldChain, MethodCall, Cast, AttributeName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -15,7 +15,7 @@ export class MethodCallChain extends Expression {
     const localVariable = seq(FieldChain, tok(InstanceArrow));
     const staticClass = seq(ClassName, tok(StaticArrow));
 
-    const ret = seq(altPrio(seq(optPrios(altPrio(localVariable, staticClass)), MethodCall),
+    const ret = seq(altPrio(seq(optPrio(altPrio(localVariable, staticClass)), MethodCall),
                             NewObject,
                             Cast),
                     after);

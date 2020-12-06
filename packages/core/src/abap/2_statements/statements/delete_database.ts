@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, optPrios, alt, opt} from "../combi";
+import {seq, optPrio, alt, opt} from "../combi";
 import {Dynamic, SQLCond, DatabaseTable, SQLSourceSimple, DatabaseConnection} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLClient} from "../expressions/sql_client";
@@ -10,10 +10,10 @@ export class DeleteDatabase implements IStatement {
     const where = seq("WHERE", alt(SQLCond, Dynamic));
     const source = alt(Dynamic, DatabaseTable);
 
-    const from = seq("FROM", source, optPrios(SQLClient), optPrios(DatabaseConnection), opt(where));
+    const from = seq("FROM", source, optPrio(SQLClient), optPrio(DatabaseConnection), opt(where));
 
     const table = seq(source,
-                      optPrios(SQLClient),
+                      optPrio(SQLClient),
                       opt(DatabaseConnection),
                       "FROM",
                       opt("TABLE"),

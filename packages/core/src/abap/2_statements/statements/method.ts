@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opt, optPrios, alt, pluss, altPrio, regex as reg} from "../combi";
+import {seq, opt, optPrio, alt, pluss, altPrio, regex as reg} from "../combi";
 import {MethodName, Language} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class Method implements IStatement {
 
     const kernel = seq("KERNEL MODULE",
                        pluss(name),
-                       optPrios(altPrio("FAIL", "IGNORE")));
+                       optPrio(altPrio("FAIL", "IGNORE")));
 
     const using = seq("USING", pluss(name));
 
@@ -21,7 +21,7 @@ export class Method implements IStatement {
 
     const by = seq("BY", alt(kernel, database));
 
-    return seq("METHOD", MethodName, optPrios(by));
+    return seq("METHOD", MethodName, optPrio(by));
   }
 
 }

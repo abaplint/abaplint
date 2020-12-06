@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, pers, optPrios, altPrio, vers} from "../combi";
+import {seq, opt, alt, per, optPrio, altPrio, vers} from "../combi";
 import {Target, Source, ExceptionName, MessageSource, ConstantOrFieldSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -11,7 +11,7 @@ export class Message implements IStatement {
     const into = seq("INTO", Target);
     const raising = seq("RAISING", ExceptionName);
 
-    const options = pers(like, into, raising);
+    const options = per(like, into, raising);
 
     const type = seq("TYPE", Source);
 
@@ -25,7 +25,7 @@ export class Message implements IStatement {
 
     const foo = seq(MessageSource, opt(options), opt(mwith));
     const s = alt(vers(Version.v740sp02, Source), ConstantOrFieldSource);
-    const text = seq(s, type, optPrios(like), optPrios(raising));
+    const text = seq(s, type, optPrio(like), optPrio(raising));
 
     const ret = seq("MESSAGE", altPrio(foo, text));
 

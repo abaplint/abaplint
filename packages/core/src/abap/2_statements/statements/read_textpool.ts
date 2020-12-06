@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, pers} from "../combi";
+import {verNot, seq, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class ReadTextpool implements IStatement {
 
     const ret = seq("READ TEXTPOOL",
                     Source,
-                    pers(into, language, state));
+                    per(into, language, state));
 
     return verNot(Version.Cloud, ret);
   }

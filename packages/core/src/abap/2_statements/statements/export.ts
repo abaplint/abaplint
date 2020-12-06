@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, opt, regex, pers, pluss, tok} from "../combi";
+import {seq, alt, altPrio, opt, regex, per, pluss, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -21,8 +21,8 @@ export class Export implements IStatement {
     const buffer = seq("DATA BUFFER", Target);
     const memory = seq("MEMORY ID", Source);
     const table = seq("INTERNAL TABLE", Target);
-    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, pers(from, client, id));
-    const database = seq("DATABASE", cluster, pers(from, client, id, using));
+    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(from, client, id));
+    const database = seq("DATABASE", cluster, per(from, client, id, using));
 
     const target = alt(buffer, memory, database, table, shared);
 

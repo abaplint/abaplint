@@ -8,7 +8,7 @@ import {Result} from "../../src/abap/2_statements/result";
 import {MemoryFile} from "../../src/files/memory_file";
 
 const str  = Combi.str;
-const per  = Combi.pers;
+const per  = Combi.per;
 const seq  = Combi.seq;
 const alt  = Combi.alt;
 const opt  = Combi.opt;
@@ -16,7 +16,7 @@ const plus = Combi.pluss;
 const star = Combi.stars;
 const reg  = Combi.regex;
 const tok  = Combi.tok;
-const optPrio = Combi.optPrios;
+const optPrio = Combi.optPrio;
 const starPrio = Combi.starPrios;
 
 function tokenize(s: string): readonly Token[] {

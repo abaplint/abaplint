@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, pers, alt, vers} from "../combi";
+import {verNot, seq, opt, per, alt, vers} from "../combi";
 import {Version} from "../../../version";
 import {Source, Cond} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class Wait implements IStatement {
     const push = vers(Version.v750, "PUSH CHANNELS");
     const tasks = "ASYNCHRONOUS TASKS";
 
-    const type = seq("FOR", pers(channels, push, tasks));
+    const type = seq("FOR", per(channels, push, tasks));
 
     const until = seq(opt(type), "UNTIL", Cond, opt(up));
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, pers, pluss, altPrio} from "../combi";
+import {seq, alt, opt, per, pluss, altPrio} from "../combi";
 import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -22,7 +22,7 @@ export class DeleteInternal implements IStatement {
 
     const table = seq(opt("TABLE"),
                       Target,
-                      alt(pers(index, using), fromTo, key), opt(where));
+                      alt(per(index, using), fromTo, key), opt(where));
 
     const adjacent = seq("ADJACENT DUPLICATES FROM",
                          Target,

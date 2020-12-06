@@ -1,4 +1,4 @@
-import {seq, stars, Expression, optPrios} from "../combi";
+import {seq, stars, Expression, optPrio} from "../combi";
 import {ComponentName, ArrowOrDash, FieldOffset, FieldLength} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,7 +8,7 @@ export class ComponentChainSimple extends Expression {
     const chain = seq(ComponentName,
                       stars(seq(ArrowOrDash, ComponentName)));
 
-    const ret = seq(chain, optPrios(FieldOffset), optPrios(FieldLength));
+    const ret = seq(chain, optPrio(FieldOffset), optPrio(FieldLength));
 
     return ret;
   }

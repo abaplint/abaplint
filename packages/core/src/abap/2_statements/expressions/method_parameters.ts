@@ -1,4 +1,4 @@
-import {seq, optPrios, Expression} from "../combi";
+import {seq, optPrio, Expression} from "../combi";
 import {ParameterListS, ParameterListT, ParameterListExceptions, ParameterT} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,11 +9,11 @@ export class MethodParameters extends Expression {
     const changing = seq("CHANGING", ParameterListT);
     const receiving = seq("RECEIVING", ParameterT);
     const exceptions = seq("EXCEPTIONS", ParameterListExceptions);
-    const long = seq(optPrios(exporting),
-                     optPrios(importing),
-                     optPrios(changing),
-                     optPrios(receiving),
-                     optPrios(exceptions));
+    const long = seq(optPrio(exporting),
+                     optPrio(importing),
+                     optPrio(changing),
+                     optPrio(receiving),
+                     optPrio(exceptions));
 
     return long;
   }

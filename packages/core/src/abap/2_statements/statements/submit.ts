@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, pers, alt, pluss, optPrios} from "../combi";
+import {verNot, str, seq, opt, per, alt, pluss, optPrio} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class Submit implements IStatement {
     const compare = seq(eq, Source);
     const between = seq("BETWEEN", Source, "AND", Source);
     const selectionTable = seq("WITH SELECTION-TABLE", Source);
-    const awith = seq("WITH", Field, alt(compare, between), optPrios(sign));
+    const awith = seq("WITH", Field, alt(compare, between), optPrio(sign));
     const prog = alt(NamespaceSimpleName, Dynamic);
     const job = seq("VIA JOB", Source, "NUMBER", Source);
     const exporting = str("EXPORTING LIST TO MEMORY");
@@ -34,30 +34,30 @@ export class Submit implements IStatement {
     const dest = seq("DESTINATION", Source);
     const language = seq("LANGUAGE", Source);
 
-    const perm = pers(pluss(awith),
-                      selectionTable,
-                      spool,
-                      lineSize,
-                      lineCount,
-                      archive,
-                      user,
-                      sset,
-                      ssetp,
-                      keep,
-                      cover,
-                      imm,
-                      layout,
-                      dest,
-                      language,
-                      free,
-                      newList,
-                      uss,
-                      "TO SAP-SPOOL",
-                      "WITHOUT SPOOL DYNPRO",
-                      "VIA SELECTION-SCREEN",
-                      exporting,
-                      AndReturn,
-                      job);
+    const perm = per(pluss(awith),
+                     selectionTable,
+                     spool,
+                     lineSize,
+                     lineCount,
+                     archive,
+                     user,
+                     sset,
+                     ssetp,
+                     keep,
+                     cover,
+                     imm,
+                     layout,
+                     dest,
+                     language,
+                     free,
+                     newList,
+                     uss,
+                     "TO SAP-SPOOL",
+                     "WITHOUT SPOOL DYNPRO",
+                     "VIA SELECTION-SCREEN",
+                     exporting,
+                     AndReturn,
+                     job);
 
     const ret = seq("SUBMIT", prog, opt(perm));
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, pers} from "../combi";
+import {verNot, seq, opt, alt, per} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -26,19 +26,19 @@ export class SelectOption implements IStatement {
 
     const visible = seq("VISIBLE LENGTH", Source);
 
-    const options = pers(def,
-                         option,
-                         sign,
-                         memory,
-                         match,
-                         visible,
-                         modif,
-                         "NO DATABASE SELECTION",
-                         "LOWER CASE",
-                         "NO-EXTENSION",
-                         "NO INTERVALS",
-                         "NO-DISPLAY",
-                         "OBLIGATORY");
+    const options = per(def,
+                        option,
+                        sign,
+                        memory,
+                        match,
+                        visible,
+                        modif,
+                        "NO DATABASE SELECTION",
+                        "LOWER CASE",
+                        "NO-EXTENSION",
+                        "NO INTERVALS",
+                        "NO-DISPLAY",
+                        "OBLIGATORY");
 
     const ret = seq("SELECT-OPTIONS",
                     Field,

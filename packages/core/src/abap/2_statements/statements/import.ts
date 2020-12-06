@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, regex, pers, pluss, tok} from "../combi";
+import {verNot, seq, opt, alt, regex, per, pluss, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {Version} from "../../../version";
@@ -21,8 +21,8 @@ export class Import implements IStatement {
     const buffer = seq("DATA BUFFER", Source);
     const memory = seq("MEMORY ID", Source);
     const table = seq("INTERNAL TABLE", Source);
-    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, pers(dto, client, id));
-    const database = seq("DATABASE", cluster, pers(dto, client, id, using));
+    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(dto, client, id));
+    const database = seq("DATABASE", cluster, per(dto, client, id, using));
 
     const source = alt(buffer, memory, database, table, shared);
 
@@ -35,14 +35,14 @@ export class Import implements IStatement {
                        Dynamic,
                        pluss(Target));
 
-    const options = pers("ACCEPTING PADDING",
-                         "IGNORING CONVERSION ERRORS",
-                         "IN CHAR-TO-HEX MODE",
-                         "IGNORING STRUCTURE BOUNDARIES",
-                         "ACCEPTING TRUNCATION",
-                         seq("REPLACEMENT CHARACTER", Source),
-                         seq("CODE PAGE INTO", Source),
-                         seq("ENDIAN INTO", Source));
+    const options = per("ACCEPTING PADDING",
+                        "IGNORING CONVERSION ERRORS",
+                        "IN CHAR-TO-HEX MODE",
+                        "IGNORING STRUCTURE BOUNDARIES",
+                        "ACCEPTING TRUNCATION",
+                        seq("REPLACEMENT CHARACTER", Source),
+                        seq("CODE PAGE INTO", Source),
+                        seq("ENDIAN INTO", Source));
 
     const ret = seq("IMPORT", target, "FROM", source, opt(options));
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, pers} from "../combi";
+import {verNot, seq, alt, per} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -17,10 +17,10 @@ export class ScrollList implements IStatement {
                        seq("PAGE", Source)));
 
     const ret = seq("SCROLL LIST",
-                    pers(index,
-                         alt(to, "BACKWARD", "FORWARD"),
-                         column,
-                         line));
+                    per(index,
+                        alt(to, "BACKWARD", "FORWARD"),
+                        column,
+                        line));
 
     return verNot(Version.Cloud, ret);
   }

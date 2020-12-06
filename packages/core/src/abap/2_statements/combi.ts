@@ -932,10 +932,10 @@ export function altPrio(first: InputType, second: InputType, ...rest: InputType[
 export function opt(first: InputType): IStatementRunnable {
   return new Optional(map(first));
 }
-export function optPrios(first: InputType): IStatementRunnable {
+export function optPrio(first: InputType): IStatementRunnable {
   return new OptionalPriority(map(first));
 }
-export function pers(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
+export function per(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new Permutation([map(first), map(second)].concat(rest.map(map)));
 }
 export function stars(first: InputType): IStatementRunnable {

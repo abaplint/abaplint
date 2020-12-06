@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, pers, pluss} from "../combi";
+import {seq, alt, per, pluss} from "../combi";
 import {Target, Field, Source, Dynamic, NamespaceSimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -20,7 +20,7 @@ export class CallTransformation implements IStatement {
 
     const call = seq("CALL TRANSFORMATION",
                      alt(NamespaceSimpleName, Dynamic),
-                     pers(options, parameters, objects, source, result));
+                     per(options, parameters, objects, source, result));
     return call;
   }
 

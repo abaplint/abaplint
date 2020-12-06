@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, tok, pers} from "../combi";
+import {seq, alt, opt, tok, per} from "../combi";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -27,7 +27,7 @@ export class Assign implements IStatement {
     const range = seq("RANGE", Source);
     const decimals = seq("DECIMALS", Source);
 
-    const casting = seq(opt("CASTING"), opt(alt(like, handle, pers(type, decimals))));
+    const casting = seq(opt("CASTING"), opt(alt(like, handle, per(type, decimals))));
 
     const ret = seq("ASSIGN",
                     opt(seq(Target, "INCREMENT")),

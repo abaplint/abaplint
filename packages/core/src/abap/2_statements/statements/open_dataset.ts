@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, pers, opt} from "../combi";
+import {verNot, str, seq, alt, per, opt} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -30,7 +30,7 @@ export class OpenDataset implements IStatement {
 
     const ret = seq("OPEN DATASET",
                     Target,
-                    pers(direction, type, mode, wbom, replacement, filter, encoding, pos, message, ignoring, bom, code, feed, windows));
+                    per(direction, type, mode, wbom, replacement, filter, encoding, pos, message, ignoring, bom, code, feed, windows));
 
     return verNot(Version.Cloud, ret);
   }

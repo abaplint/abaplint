@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, pers, altPrio} from "../combi";
+import {verNot, seq, opt, alt, per, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,20 +13,20 @@ export class Describe implements IStatement {
 
     const table = seq("TABLE",
                       Source,
-                      opt(pers(tlines, kind, occurs)));
+                      opt(per(tlines, kind, occurs)));
 
     const mode = seq("IN", alt("BYTE", "CHARACTER"), "MODE");
 
     const field = seq("FIELD",
                       Source,
-                      pers(seq("TYPE", Target),
-                           seq("COMPONENTS", Target),
-                           seq("LENGTH", Target, opt(mode)),
-                           seq("DECIMALS", Target),
-                           seq("HELP-ID", Target),
-                           seq("OUTPUT-LENGTH", Target),
-                           seq("EDIT MASK", Target),
-                           seq("INTO", Target)));
+                      per(seq("TYPE", Target),
+                          seq("COMPONENTS", Target),
+                          seq("LENGTH", Target, opt(mode)),
+                          seq("DECIMALS", Target),
+                          seq("HELP-ID", Target),
+                          seq("OUTPUT-LENGTH", Target),
+                          seq("EDIT MASK", Target),
+                          seq("INTO", Target)));
 
     const distance = seq("DISTANCE BETWEEN",
                          Source,
@@ -44,7 +44,7 @@ export class Describe implements IStatement {
     const lineSize = seq("LINE-SIZE", Target);
     const first = seq("FIRST-LINE", Target);
 
-    const list = seq("LIST", pers(lines, index, line, page, top, first, lineSize));
+    const list = seq("LIST", per(lines, index, line, page, top, first, lineSize));
 
     const ret = seq("DESCRIBE", altPrio(table, field, distance, list));
 

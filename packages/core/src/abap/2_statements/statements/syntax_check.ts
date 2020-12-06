@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, pers, pluss, optPrios} from "../combi";
+import {verNot, seq, alt, per, pluss, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -22,29 +22,29 @@ export class SyntaxCheck implements IStatement {
     const dump = seq("SHORTDUMP-ID", Source);
     const filter = seq("FILTER", Source);
 
-    const syntax = seq(optPrios("PROGRAM"),
+    const syntax = seq(optPrio("PROGRAM"),
                        Source,
-                       pers(message,
-                            line,
-                            word,
-                            offset,
-                            program,
-                            replacing,
-                            directory,
-                            frame,
-                            include,
-                            messageId,
-                            trace,
-                            dump,
-                            filter,
-                            pluss(id)));
+                       per(message,
+                           line,
+                           word,
+                           offset,
+                           program,
+                           replacing,
+                           directory,
+                           frame,
+                           include,
+                           messageId,
+                           trace,
+                           dump,
+                           filter,
+                           pluss(id)));
 
     const dynpro = seq("DYNPRO",
                        Source,
                        Source,
                        Source,
                        Source,
-                       pers(message, line, word, offset, messageId, trace));
+                       per(message, line, word, offset, messageId, trace));
 
     const ret = seq("SYNTAX-CHECK FOR", alt(syntax, dynpro));
 

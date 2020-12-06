@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, pers} from "../combi";
+import {verNot, str, seq, opt, alt, per} from "../combi";
 import {FormName, Source, FunctionParameters, FunctionName, Destination, MethodName, BasicSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -17,7 +17,7 @@ export class CallFunction implements IStatement {
     const separate = str("AS SEPARATE UNIT");
     const keeping = str("KEEPING LOGICAL UNIT OF WORK");
 
-    const options = pers(starting, update, background, Destination, calling, performing, separate, keeping);
+    const options = per(starting, update, background, Destination, calling, performing, separate, keeping);
 
     const dynamic = seq("PARAMETER-TABLE", Source,
                         opt(seq("EXCEPTION-TABLE", Source)));

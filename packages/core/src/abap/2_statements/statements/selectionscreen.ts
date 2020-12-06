@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, pers, regex as reg, tok} from "../combi";
+import {verNot, str, seq, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
 import {Version} from "../../../version";
@@ -17,10 +17,10 @@ export class SelectionScreen implements IStatement {
 
     const nesting = seq("NESTING LEVEL", Source);
 
-    const scrOptions = pers(seq("AS", alt("WINDOW", "SUBSCREEN")),
-                            seq("TITLE", alt(InlineField, TextElement)),
-                            "NO INTERVALS",
-                            nesting);
+    const scrOptions = per(seq("AS", alt("WINDOW", "SUBSCREEN")),
+                           seq("TITLE", alt(InlineField, TextElement)),
+                           "NO INTERVALS",
+                           nesting);
 
     const beginScreen = seq("BEGIN OF SCREEN",
                             Integer,
@@ -35,7 +35,7 @@ export class SelectionScreen implements IStatement {
 
     const visible = seq("VISIBLE LENGTH", reg(/^\d+$/));
 
-    const commentOpt = pers(seq("FOR FIELD", Field), modif, visible);
+    const commentOpt = per(seq("FOR FIELD", Field), modif, visible);
 
     const position = seq(opt(reg(/^\/?[\d\w]+$/)),
                          alt(tok(ParenLeft), tok(WParenLeft)),

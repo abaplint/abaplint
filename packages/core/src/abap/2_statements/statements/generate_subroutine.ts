@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, pers} from "../combi";
+import {verNot, seq, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -18,7 +18,7 @@ export class GenerateSubroutine implements IStatement {
 
     const ret = seq("GENERATE SUBROUTINE POOL",
                     Source,
-                    pers(name, message, line, word, include, offset, messageid, short));
+                    per(name, message, line, word, include, offset, messageid, short));
 
     return verNot(Version.Cloud, ret);
   }

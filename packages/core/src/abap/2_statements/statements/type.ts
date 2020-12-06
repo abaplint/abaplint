@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, pers, opt, vers} from "../combi";
+import {seq, alt, per, opt, vers} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Type implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const simple = pers(Expressions.Type, Expressions.Decimals, Expressions.Length);
+    const simple = per(Expressions.Type, Expressions.Decimals, Expressions.Length);
 
     const def = seq(Expressions.NamespaceSimpleName,
                     opt(Expressions.ConstantFieldLength),

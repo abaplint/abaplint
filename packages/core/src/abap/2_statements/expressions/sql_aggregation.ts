@@ -1,4 +1,4 @@
-import {alt, seq, tok, Expression, optPrios} from "../combi";
+import {alt, seq, tok, Expression, optPrio} from "../combi";
 import {ParenLeft, ParenLeftW} from "../../1_lexer/tokens";
 import {Field} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -6,7 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SQLAggregation extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const count = seq("COUNT", alt(tok(ParenLeft), tok(ParenLeftW)), optPrios("DISTINCT"), alt("*", Field), ")");
+    const count = seq("COUNT", alt(tok(ParenLeft), tok(ParenLeftW)), optPrio("DISTINCT"), alt("*", Field), ")");
     const max = seq("MAX", alt(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
     const min = seq("MIN", alt(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
     const sum = seq("SUM", alt(tok(ParenLeft), tok(ParenLeftW)), Field, ")");

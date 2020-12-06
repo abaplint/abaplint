@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, opt, pluss, optPrios} from "../combi";
+import {verNot, seq, alt, opt, pluss, optPrio} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class SortDataset implements IStatement {
 
     const sel = alt(FieldSub, SourceFieldSymbol, Dynamic);
 
-    const fields = pluss(seq(sel, optPrios(order)));
+    const fields = pluss(seq(sel, optPrio(order)));
 
     const by = seq("BY", fields);
 

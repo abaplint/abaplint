@@ -1,4 +1,4 @@
-import {seq, pers, opt, alt, tok, vers, stars, Expression, optPrios} from "../combi";
+import {seq, per, opt, alt, tok, vers, stars, Expression, optPrio} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -38,19 +38,19 @@ export class SelectLoop extends Expression {
 
     const tab = seq(SQLTargetTable, alt(pack, seq(from2, pack), seq(pack, from2)));
 
-    const perm = pers(SQLFrom,
-                      where,
-                      up,
-                      SQLOrderBy,
-                      SQLHaving,
-                      client,
-                      bypass,
-                      SQLGroupBy,
-                      SQLForAllEntries,
-                      alt(tab, into));
+    const perm = per(SQLFrom,
+                     where,
+                     up,
+                     SQLOrderBy,
+                     SQLHaving,
+                     client,
+                     bypass,
+                     SQLGroupBy,
+                     SQLForAllEntries,
+                     alt(tab, into));
 
     const ret = seq("SELECT",
-                    optPrios("DISTINCT"),
+                    optPrio("DISTINCT"),
                     fields,
                     perm);
 

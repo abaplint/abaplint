@@ -1,4 +1,4 @@
-import {seq, pers, opt, alt, tok, str, stars, Expression, altPrio, optPrios, vers} from "../combi";
+import {seq, per, opt, alt, tok, str, stars, Expression, altPrio, optPrio, vers} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLTarget, SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLTargetTable, SQLOrderBy, SQLHaving, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -27,11 +27,11 @@ export class Select extends Expression {
 
     const fields = seq("FIELDS", SQLFieldList);
 
-    const perm = pers(SQLFrom, into, SQLForAllEntries, where,
-                      SQLOrderBy, up, offset, client, SQLHaving, bypass, SQLGroupBy, fields, DatabaseConnection);
+    const perm = per(SQLFrom, into, SQLForAllEntries, where,
+                     SQLOrderBy, up, offset, client, SQLHaving, bypass, SQLGroupBy, fields, DatabaseConnection);
 
     const ret = seq("SELECT",
-                    altPrio("DISTINCT", optPrios(seq("SINGLE", optPrios("FOR UPDATE")))),
+                    altPrio("DISTINCT", optPrio(seq("SINGLE", optPrio("FOR UPDATE")))),
                     opt(SQLFieldList),
                     perm);
 

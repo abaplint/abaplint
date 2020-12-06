@@ -1,4 +1,4 @@
-import {Expression, seq, pers, optPrios} from "../combi";
+import {Expression, seq, per, optPrio} from "../combi";
 import {Source, SimpleName, ComponentCond} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,8 +8,8 @@ export class FilterBody extends Expression {
     const using = seq("USING KEY", SimpleName);
     return seq(
       Source,
-      optPrios("EXCEPT"),
-      optPrios(pers(inn, using)),
+      optPrio("EXCEPT"),
+      optPrio(per(inn, using)),
       seq("WHERE", ComponentCond));
   }
 }

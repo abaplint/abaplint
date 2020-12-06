@@ -1,4 +1,4 @@
-import {vers, seq, tok, altPrio, optPrios, regex, Expression} from "../combi";
+import {vers, seq, tok, altPrio, optPrio, regex, Expression} from "../combi";
 import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, InstanceArrow} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
@@ -17,7 +17,7 @@ export class Source extends Expression {
 
     const comp = seq(tok(Dash), ComponentChain);
     const attr = seq(Arrow, AttributeChain);
-    const method = seq(MethodCallChain, optPrios(altPrio(attr, comp)), optPrios(ref));
+    const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), optPrio(ref));
 
     const rparen = tok(WParenRightW);
 
@@ -36,14 +36,14 @@ export class Source extends Expression {
 
     const prefix = altPrio(tok(WDashW), tok(WPlus), tok(WPlusW), "BIT-NOT");
 
-    const old = seq(optPrios(prefix), altPrio(Constant,
-                                              StringTemplate,
-                                              TextElement,
-                                              bool,
-                                              method,
-                                              seq(FieldChain, optPrios(ref)),
-                                              paren),
-                    optPrios(after));
+    const old = seq(optPrio(prefix), altPrio(Constant,
+                                             StringTemplate,
+                                             TextElement,
+                                             bool,
+                                             method,
+                                             seq(FieldChain, optPrio(ref)),
+                                             paren),
+                    optPrio(after));
 
     const corr = vers(Version.v740sp05, seq("CORRESPONDING",
                                             TypeNameOrInfer,
@@ -55,7 +55,7 @@ export class Source extends Expression {
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             ConvBody,
-                                            rparen, optPrios(after)));
+                                            rparen, optPrio(after)));
 
     const swit = vers(Version.v740sp02, seq("SWITCH",
                                             TypeNameOrInfer,
@@ -74,13 +74,13 @@ export class Source extends Expression {
                                             tok(ParenLeftW),
                                             CondBody,
                                             rparen,
-                                            optPrios(after)));
+                                            optPrio(after)));
 
     const reff = vers(Version.v740sp02, seq("REF",
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             Source,
-                                            optPrios("OPTIONAL"),
+                                            optPrio("OPTIONAL"),
                                             rparen));
 
     const exact = vers(Version.v740sp02, seq("EXACT",
@@ -102,7 +102,7 @@ export class Source extends Expression {
                             tok(ParenLeftW),
                             ReduceBody,
                             rparen,
-                            optPrios(after)));
+                            optPrio(after)));
 
     const ret = altPrio(corr, conv, value, cond, reff, exact, swit, filter, reduce, old);
 

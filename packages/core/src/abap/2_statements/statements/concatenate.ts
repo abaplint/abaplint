@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, optPrios, seq, alt, pers, pluss, altPrio} from "../combi";
+import {str, optPrio, seq, alt, per, pluss, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class Concatenate implements IStatement {
     const blanks = str("RESPECTING BLANKS");
     const sep = seq("SEPARATED BY", Source);
 
-    const options = pers(mode, blanks, sep);
+    const options = per(mode, blanks, sep);
 
     const sourc = seq(Source, pluss(Source));
     const lines = seq("LINES OF", Source);
@@ -19,7 +19,7 @@ export class Concatenate implements IStatement {
                altPrio(lines, sourc),
                "INTO",
                Target,
-               optPrios(options));
+               optPrio(options));
   }
 
 }

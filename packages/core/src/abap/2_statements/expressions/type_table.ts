@@ -1,4 +1,4 @@
-import {seq, opt, alt, vers, pers, Expression, altPrio, pluss, plusPrios, optPrios} from "../combi";
+import {seq, opt, alt, vers, per, Expression, altPrio, pluss, plusPrios, optPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -29,7 +29,7 @@ export class TypeTable extends Expression {
 
     const likeType = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                          "TABLE OF",
-                         optPrios("REF TO"),
+                         optPrio("REF TO"),
                          opt(FieldChain),
                          opt(key),
                          opt(header));
@@ -37,7 +37,7 @@ export class TypeTable extends Expression {
     const range = seq("RANGE OF", TypeName);
 
     const typetable = seq(alt(normal1, range),
-                          opt(pers(header, initial, plusPrios(key))));
+                          opt(per(header, initial, plusPrios(key))));
 
     const occurs = seq("OCCURS", Integer);
 
