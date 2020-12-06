@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alts, opts} from "../combi";
+import {seq, alt, opts} from "../combi";
 import {FieldSymbol as Name, Type, TypeTable, TypeName, Field} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class FieldSymbol implements IStatement {
 
     return seq("FIELD-SYMBOLS",
                Name,
-               opts(alts(Type, TypeTable, stru)));
+               opts(alt(Type, TypeTable, stru)));
   }
 
 }

@@ -1,4 +1,4 @@
-import {seq, optPrios, alts, altPrios, Expression, opts} from "../combi";
+import {seq, optPrios, alt, altPrios, Expression, opts} from "../combi";
 import {Default, FieldChain, TypeNameOrInfer} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,12 +11,12 @@ export class TypeParam extends Expression {
 
     const typeLine = "LINE OF";
 
-    const ret = seq(alts(foo, typeLine),
+    const ret = seq(alt(foo, typeLine),
                     TypeNameOrInfer,
                     opts(Default));
 
     const like = seq("LIKE", opts("LINE OF"), FieldChain, optPrios(Default));
 
-    return alts(seq("TYPE", alts(table, ret)), like);
+    return alt(seq("TYPE", alt(table, ret)), like);
   }
 }

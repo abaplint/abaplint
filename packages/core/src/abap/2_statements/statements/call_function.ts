@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opts, alts, pers} from "../combi";
+import {verNot, str, seq, opts, alt, pers} from "../combi";
 import {FormName, Source, FunctionParameters, FunctionName, Destination, MethodName, BasicSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class CallFunction implements IStatement {
     const starting = seq("STARTING NEW TASK", BasicSource);
     const update = str("IN UPDATE TASK");
     const unit = seq("UNIT", Source);
-    const background = seq("IN BACKGROUND", alts("TASK", unit));
+    const background = seq("IN BACKGROUND", alt("TASK", unit));
     const calling = seq("CALLING", MethodName, "ON END OF TASK");
     const performing = seq("PERFORMING", FormName, "ON END OF TASK");
     const separate = str("AS SEPARATE UNIT");
@@ -23,10 +23,10 @@ export class CallFunction implements IStatement {
                         opts(seq("EXCEPTION-TABLE", Source)));
 
     const call = seq("CALL",
-                     alts("FUNCTION", verNot(Version.Cloud, "CUSTOMER-FUNCTION")),
+                     alt("FUNCTION", verNot(Version.Cloud, "CUSTOMER-FUNCTION")),
                      FunctionName,
                      opts(options),
-                     alts(FunctionParameters, dynamic));
+                     alt(FunctionParameters, dynamic));
 
     return call;
   }

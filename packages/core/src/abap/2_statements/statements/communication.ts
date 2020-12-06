@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alts, opts} from "../combi";
+import {verNot, seq, alt, opts} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -28,7 +28,7 @@ export class Communication implements IStatement {
                         Target);
 
     const ret = seq("COMMUNICATION",
-                    alts(init, allocate, send, deallocate, receive, accept));
+                    alt(init, allocate, send, deallocate, receive, accept));
 
     return verNot(Version.Cloud, ret);
   }

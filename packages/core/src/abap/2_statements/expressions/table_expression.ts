@@ -1,4 +1,4 @@
-import {seq, opts, tok, alts, altPrios, pluss, vers, Expression} from "../combi";
+import {seq, opts, tok, alt, altPrios, pluss, vers, Expression} from "../combi";
 import {BracketLeftW, WBracketRight, WBracketRightW} from "../../1_lexer/tokens";
 import {Dynamic, Source, SimpleName, ComponentChainSimple} from ".";
 import {Version} from "../../../version";
@@ -10,7 +10,7 @@ export class TableExpression extends Expression {
     const key = seq("KEY", SimpleName);
     const index = seq("INDEX", Source);
     const ret = seq(tok(BracketLeftW),
-                    alts(Source, seq(opts(key), opts("COMPONENTS"), alts(fields, index))),
+                    alt(Source, seq(opts(key), opts("COMPONENTS"), alt(fields, index))),
                     altPrios(tok(WBracketRight), tok(WBracketRightW)));
     return vers(Version.v740sp02, ret);
   }

@@ -1,4 +1,4 @@
-import {alts, seq, tok, Expression, optPrios} from "../combi";
+import {alt, seq, tok, Expression, optPrios} from "../combi";
 import {ParenLeft, ParenLeftW} from "../../1_lexer/tokens";
 import {Field} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -6,13 +6,13 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SQLAggregation extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const count = seq("COUNT", alts(tok(ParenLeft), tok(ParenLeftW)), optPrios("DISTINCT"), alts("*", Field), ")");
-    const max = seq("MAX", alts(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
-    const min = seq("MIN", alts(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
-    const sum = seq("SUM", alts(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
-    const avg = seq("AVG", alts(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
+    const count = seq("COUNT", alt(tok(ParenLeft), tok(ParenLeftW)), optPrios("DISTINCT"), alt("*", Field), ")");
+    const max = seq("MAX", alt(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
+    const min = seq("MIN", alt(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
+    const sum = seq("SUM", alt(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
+    const avg = seq("AVG", alt(tok(ParenLeft), tok(ParenLeftW)), Field, ")");
 
-    return alts(count, max, min, sum, avg);
+    return alt(count, max, min, sum, avg);
 
   }
 }

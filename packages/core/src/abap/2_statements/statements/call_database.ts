@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts, alts} from "../combi";
+import {verNot, seq, opts, alt} from "../combi";
 import {Dynamic, Source, ParameterListS, ParameterListT, DatabaseConnection} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -16,7 +16,7 @@ export class CallDatabase implements IStatement {
     const ret = seq("CALL DATABASE PROCEDURE",
                     Dynamic,
                     opts(DatabaseConnection),
-                    alts(expl, tab));
+                    alt(expl, tab));
 
     return verNot(Version.Cloud, ret);
   }

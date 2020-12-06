@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts, alts, regex, pers, pluss, tok} from "../combi";
+import {verNot, seq, opts, alt, regex, pers, pluss, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {Version} from "../../../version";
@@ -21,19 +21,19 @@ export class Import implements IStatement {
     const buffer = seq("DATA BUFFER", Source);
     const memory = seq("MEMORY ID", Source);
     const table = seq("INTERNAL TABLE", Source);
-    const shared = seq(alts("SHARED MEMORY", "SHARED BUFFER"), cluster, pers(dto, client, id));
+    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, pers(dto, client, id));
     const database = seq("DATABASE", cluster, pers(dto, client, id, using));
 
-    const source = alts(buffer, memory, database, table, shared);
+    const source = alt(buffer, memory, database, table, shared);
 
-    const to = pluss(seq(ComponentChainSimple, alts("TO", "INTO"), Target));
+    const to = pluss(seq(ComponentChainSimple, alt("TO", "INTO"), Target));
 
-    const toeq = pluss(seq(alts(ComponentChainSimple, FieldSymbol), "=", Target));
+    const toeq = pluss(seq(alt(ComponentChainSimple, FieldSymbol), "=", Target));
 
-    const target = alts(toeq,
-                        to,
-                        Dynamic,
-                        pluss(Target));
+    const target = alt(toeq,
+                       to,
+                       Dynamic,
+                       pluss(Target));
 
     const options = pers("ACCEPTING PADDING",
                          "IGNORING CONVERSION ERRORS",

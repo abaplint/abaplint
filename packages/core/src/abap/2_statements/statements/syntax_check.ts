@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alts, pers, pluss, optPrios} from "../combi";
+import {verNot, seq, alt, pers, pluss, optPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -46,7 +46,7 @@ export class SyntaxCheck implements IStatement {
                        Source,
                        pers(message, line, word, offset, messageId, trace));
 
-    const ret = seq("SYNTAX-CHECK FOR", alts(syntax, dynpro));
+    const ret = seq("SYNTAX-CHECK FOR", alt(syntax, dynpro));
 
     return verNot(Version.Cloud, ret);
   }

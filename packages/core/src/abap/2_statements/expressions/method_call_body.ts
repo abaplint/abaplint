@@ -1,4 +1,4 @@
-import {seq, alts, opts, Expression} from "../combi";
+import {seq, alt, opts, Expression} from "../combi";
 import {Source, MethodParameters} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {MethodCallParam} from "./method_call_param";
@@ -9,6 +9,6 @@ export class MethodCallBody extends Expression {
     const dynamicExc = seq("EXCEPTION-TABLE", Source);
     const dynamic = seq(dynamicPar, opts(dynamicExc));
 
-    return alts(MethodCallParam, MethodParameters, dynamic);
+    return alt(MethodCallParam, MethodParameters, dynamic);
   }
 }

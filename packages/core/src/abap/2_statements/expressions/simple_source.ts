@@ -1,4 +1,4 @@
-import {alts, seq, stars, Expression} from "../combi";
+import {alt, seq, stars, Expression} from "../combi";
 import {Constant, FieldChain, StringTemplate, MethodCallChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,6 +8,6 @@ export class SimpleSource extends Expression {
 
     const template = seq(StringTemplate, stars(concat));
 
-    return alts(Constant, MethodCallChain, template, FieldChain);
+    return alt(Constant, MethodCallChain, template, FieldChain);
   }
 }

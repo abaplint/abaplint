@@ -1,4 +1,4 @@
-import {alts, pluss, seq, opts, vers, tok, Expression, optPrios, altPrios} from "../combi";
+import {alt, pluss, seq, opts, vers, tok, Expression, optPrios, altPrios} from "../combi";
 import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation, SQLCase} from ".";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
@@ -15,14 +15,14 @@ export class SQLFieldList extends Expression {
 
     const as = seq("AS", Field);
 
-    return alts("*",
-                Dynamic,
-                pluss(seq(altPrios(SQLAggregation,
-                                   SQLCase,
-                                   SQLFunction,
-                                   SQLPath,
-                                   SQLFieldName,
-                                   abap,
-                                   Constant), optPrios(as), comma)));
+    return alt("*",
+               Dynamic,
+               pluss(seq(altPrios(SQLAggregation,
+                                  SQLCase,
+                                  SQLFunction,
+                                  SQLPath,
+                                  SQLFieldName,
+                                  abap,
+                                  Constant), optPrios(as), comma)));
   }
 }

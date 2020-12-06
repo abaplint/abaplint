@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alts, optPrios} from "../combi";
+import {seq, alt, optPrios} from "../combi";
 import {DefinitionName, ComponentName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,7 +9,7 @@ export class DataEnd implements IStatement {
     const common = seq("COMMON PART", optPrios(DefinitionName));
 
     const structure = seq("END OF",
-                          alts(common, DefinitionName));
+                          alt(common, DefinitionName));
 
     const valid = seq("VALID BETWEEN", ComponentName, "AND", ComponentName);
 

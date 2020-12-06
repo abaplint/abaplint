@@ -1,4 +1,4 @@
-import {seq, pers, alts, vers, Expression} from "../combi";
+import {seq, pers, alt, vers, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -7,58 +7,58 @@ export class StringTemplateFormatting extends Expression {
   public getRunnable(): IStatementRunnable {
 
     // https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapcompute_string_format_options.htm
-    const alphaOptions = alts("OUT",
-                              "RAW",
-                              "IN",
-                              Source);
+    const alphaOptions = alt("OUT",
+                             "RAW",
+                             "IN",
+                             Source);
 
-    const alignOptions = alts("LEFT",
-                              "RIGHT",
-                              "CENTER",
-                              Source);
+    const alignOptions = alt("LEFT",
+                             "RIGHT",
+                             "CENTER",
+                             Source);
 
-    const dateTimeOptions = alts("RAW",
+    const dateTimeOptions = alt("RAW",
+                                "ISO",
+                                "USER",
+                                "ENVIRONMENT",
+                                Source);
+
+    const timeStampOptions = alt("SPACE",
                                  "ISO",
                                  "USER",
                                  "ENVIRONMENT",
                                  Source);
 
-    const timeStampOptions = alts("SPACE",
-                                  "ISO",
-                                  "USER",
-                                  "ENVIRONMENT",
-                                  Source);
+    const numberOptions = alt("RAW",
+                              "USER",
+                              "ENVIRONMENT",
+                              Source);
 
-    const numberOptions = alts("RAW",
-                               "USER",
-                               "ENVIRONMENT",
+    const signOptions = alt("LEFT",
+                            "LEFTPLUS",
+                            "LEFTSPACE",
+                            "RIGHT",
+                            "RIGHTPLUS",
+                            "RIGHTSPACE",
+                            Source);
+
+    const caseOptions = alt("RAW",
+                            "UPPER",
+                            "LOWER",
+                            Source);
+
+    const zeroXSDOptions = alt("YES",
+                               "NO",
                                Source);
 
-    const signOptions = alts("LEFT",
-                             "LEFTPLUS",
-                             "LEFTSPACE",
-                             "RIGHT",
-                             "RIGHTPLUS",
-                             "RIGHTSPACE",
+    const styleOptions = alt("SIMPLE",
+                             "SIGN_AS_POSTFIX",
+                             "SCALE_PRESERVING",
+                             "SCIENTIFIC",
+                             "SCIENTIFIC_WITH_LEADING_ZERO",
+                             "SCALE_PRESERVING_SCIENTIFIC",
+                             "ENGINEERING",
                              Source);
-
-    const caseOptions = alts("RAW",
-                             "UPPER",
-                             "LOWER",
-                             Source);
-
-    const zeroXSDOptions = alts("YES",
-                                "NO",
-                                Source);
-
-    const styleOptions = alts("SIMPLE",
-                              "SIGN_AS_POSTFIX",
-                              "SCALE_PRESERVING",
-                              "SCIENTIFIC",
-                              "SCIENTIFIC_WITH_LEADING_ZERO",
-                              "SCALE_PRESERVING_SCIENTIFIC",
-                              "ENGINEERING",
-                              Source);
 
     const width = seq("WIDTH =", Source);
     const align = seq("ALIGN =", alignOptions);
@@ -71,17 +71,17 @@ export class StringTemplateFormatting extends Expression {
     const alpha = vers(Version.v740sp02, seq("ALPHA =", alphaOptions));
     const xsd = vers(Version.v740sp02, seq("XSD =", zeroXSDOptions));
 
-    const formatting = alts(seq("TIME =", dateTimeOptions),
-                            seq("DATE =", dateTimeOptions),
-                            seq("CASE =", caseOptions),
-                            seq("EXPONENT", Source),
-                            seq("ZERO =", zeroXSDOptions),
-                            xsd,
-                            seq("STYLE =", styleOptions),
-                            seq("CURRENCY =", Source),
-                            seq("COUNTRY =", Source),
-                            pers(sign, number, decimals, width, pad, alpha, align),
-                            pers(timezone, timestamp));
+    const formatting = alt(seq("TIME =", dateTimeOptions),
+                           seq("DATE =", dateTimeOptions),
+                           seq("CASE =", caseOptions),
+                           seq("EXPONENT", Source),
+                           seq("ZERO =", zeroXSDOptions),
+                           xsd,
+                           seq("STYLE =", styleOptions),
+                           seq("CURRENCY =", Source),
+                           seq("COUNTRY =", Source),
+                           pers(sign, number, decimals, width, pad, alpha, align),
+                           pers(timezone, timestamp));
 
     return formatting;
   }

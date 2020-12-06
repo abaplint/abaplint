@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alts, opts, pers, pluss, optPrios} from "../combi";
+import {verNot, str, seq, alt, opts, pers, pluss, optPrios} from "../combi";
 import {Source, Color} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,7 +8,7 @@ export class ModifyLine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const form = seq(alts("INVERSE", "INPUT"),
+    const form = seq(alt("INVERSE", "INPUT"),
                      "=",
                      Source);
 
@@ -20,15 +20,15 @@ export class ModifyLine implements IStatement {
     const page = seq("OF PAGE", Source);
     const ocp = str("OF CURRENT PAGE");
     const lineFormat = seq("LINE FORMAT",
-                           alts("INPUT OFF", "RESET", "INTENSIFIED"));
-    const onOff = alts("ON", "OFF");
+                           alt("INPUT OFF", "RESET", "INTENSIFIED"));
+    const onOff = alt("ON", "OFF");
     const intensified = seq("INTENSIFIED", onOff);
 
     const options = pers(index, value, format, page, lineFormat, lineValue, ocp, intensified, Color);
 
     const ret = seq("MODIFY",
-                    alts("CURRENT LINE",
-                         seq("LINE", Source)),
+                    alt("CURRENT LINE",
+                        seq("LINE", Source)),
                     opts(options));
 
     return verNot(Version.Cloud, ret);

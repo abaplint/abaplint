@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alts, opts, altPrios, optPrios, pluss, pers, vers} from "../combi";
+import {seq, alt, opts, altPrios, optPrios, pluss, pers, vers} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -7,7 +7,7 @@ import {Version} from "../../../version";
 export class ReadTable implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const comparing = seq("COMPARING", alts(pluss(FieldSub), Dynamic));
+    const comparing = seq("COMPARING", alt(pluss(FieldSub), Dynamic));
 
     const index = seq("INDEX", Source);
 
@@ -15,18 +15,18 @@ export class ReadTable implements IStatement {
                         "=",
                         Source);
 
-    const components = seq(alts(Field, Dynamic), "COMPONENTS", pluss(compare));
+    const components = seq(alt(Field, Dynamic), "COMPONENTS", pluss(compare));
 
     const key = seq(altPrios("WITH KEY", "WITH TABLE KEY"),
-                    alts(pluss(compare),
-                         components,
-                         seq(optPrios("="), Source)));
+                    alt(pluss(compare),
+                        components,
+                        seq(optPrios("="), Source)));
 
-    const using = seq("USING KEY", alts(Field, Dynamic));
+    const using = seq("USING KEY", alt(Field, Dynamic));
 
     const from = seq("FROM", Source);
 
-    const perm = pers(alts(index, key, from),
+    const perm = pers(alt(index, key, from),
                       ReadTableTarget,
                       using,
                       comparing,
@@ -36,7 +36,7 @@ export class ReadTable implements IStatement {
                       "BINARY SEARCH");
 
     return seq("READ TABLE",
-               alts(vers(Version.v740sp02, Source), BasicSource),
+               alt(vers(Version.v740sp02, Source), BasicSource),
                opts(perm));
   }
 

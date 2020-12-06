@@ -1,4 +1,4 @@
-import {seq, pluss, tok, alts, Expression} from "../combi";
+import {seq, pluss, tok, alt, Expression} from "../combi";
 import {ClassName} from ".";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,7 +10,7 @@ export class FormRaising extends Expression {
                        ClassName,
                        tok(ParenRightW));
 
-    const raising = seq("RAISING", pluss(alts(ClassName, resume)));
+    const raising = seq("RAISING", pluss(alt(ClassName, resume)));
 
     return raising;
   }
