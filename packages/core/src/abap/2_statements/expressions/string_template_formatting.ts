@@ -1,4 +1,4 @@
-import {seqs, pers, alts, ver, Expression} from "../combi";
+import {seqs, pers, alts, vers, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -68,8 +68,8 @@ export class StringTemplateFormatting extends Expression {
     const number = seqs("NUMBER =", numberOptions);
     const sign = seqs("SIGN =", signOptions);
     const decimals = seqs("DECIMALS =", Source);
-    const alpha = ver(Version.v740sp02, seqs("ALPHA =", alphaOptions));
-    const xsd = ver(Version.v740sp02, seqs("XSD =", zeroXSDOptions));
+    const alpha = vers(Version.v740sp02, seqs("ALPHA =", alphaOptions));
+    const xsd = vers(Version.v740sp02, seqs("XSD =", zeroXSDOptions));
 
     const formatting = alts(seqs("TIME =", dateTimeOptions),
                             seqs("DATE =", dateTimeOptions),

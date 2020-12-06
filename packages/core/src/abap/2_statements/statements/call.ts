@@ -10,7 +10,7 @@ export class Call implements IStatement {
 
     const call = seqs("CALL METHOD", MethodSource, MethodCallBody);
 
-    return altPrios(call, new MethodCallChain());
+    return altPrios(call, MethodCallChain);
   }
 
 }

@@ -1,4 +1,4 @@
-import {ver, seqs, opts, tok, stars, alts, optPrios, str, Expression} from "../combi";
+import {vers, seqs, opts, tok, stars, alts, optPrios, Expression} from "../combi";
 import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from ".";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -20,13 +20,13 @@ export class SQLCompare extends Expression {
 
     const like = seqs(opts("NOT"), "LIKE", SQLSource, optPrios(seqs("ESCAPE", SQLSource)));
 
-    const nul = seqs("IS", opts("NOT"), alts("NULL", ver(Version.v753, str("INITIAL"))));
+    const nul = seqs("IS", opts("NOT"), alts("NULL", vers(Version.v753, "INITIAL")));
 
     const source = new SQLSource();
 
     const sub = seqs(opts(alts("ALL", "ANY", "SOME")), subSelect);
 
-    const builtin = ver(Version.v751, seqs(alts("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
+    const builtin = vers(Version.v751, seqs(alts("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
     const rett = seqs(alts(SQLFieldName, builtin),
                       alts(seqs(SQLCompareOperator, alts(source, sub)),

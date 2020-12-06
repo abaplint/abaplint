@@ -1,4 +1,4 @@
-import {seqs, tok, Expression, optPrios, altPrios, plusPrios, ver} from "../combi";
+import {seqs, tok, Expression, optPrios, altPrios, plusPrios, vers} from "../combi";
 import {ParenRightW, WParenLeft, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {FieldSub, Source, Let, For} from ".";
 import {Version} from "../../../version";
@@ -17,7 +17,7 @@ export class ValueBody extends Expression {
 
     const strucOrTab = seqs(optPrios(Let), optPrios(base), optPrios(For), plusPrios(altPrios(fieldList, foo)));
 
-    const tabdef = ver(Version.v740sp08, altPrios("OPTIONAL", seqs("DEFAULT", Source)));
+    const tabdef = vers(Version.v740sp08, altPrios("OPTIONAL", seqs("DEFAULT", Source)));
 
     return optPrios(altPrios(strucOrTab, seqs(Source, optPrios(tabdef))));
   }

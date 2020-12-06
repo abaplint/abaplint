@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {Version} from "../../../version";
-import {str, seqs, opts, alts, ver, pluss} from "../combi";
+import {seqs, opts, alts, vers, pluss} from "../combi";
 import {Source, InterfaceName, AttributeName, AbstractMethods, FinalMethods} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -15,7 +15,7 @@ export class InterfaceDef implements IStatement {
                          FinalMethods,
                          "ALL METHODS ABSTRACT",
                          "ALL METHODS FINAL",
-                         ver(Version.v740sp02, str("PARTIALLY IMPLEMENTED")));
+                         vers(Version.v740sp02, "PARTIALLY IMPLEMENTED"));
 
     return seqs("INTERFACES",
                 InterfaceName,

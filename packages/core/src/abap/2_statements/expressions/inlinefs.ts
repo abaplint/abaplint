@@ -1,4 +1,4 @@
-import {seqs, tok, ver, Expression} from "../combi";
+import {seqs, tok, vers, Expression} from "../combi";
 import {ParenRightW, ParenLeft} from "../../1_lexer/tokens";
 import {TargetFieldSymbol} from ".";
 import {Version} from "../../../version";
@@ -10,6 +10,6 @@ export class InlineFS extends Expression {
     const left = tok(ParenLeft);
     const fs = seqs("FIELD-SYMBOL", left, TargetFieldSymbol, right);
 
-    return ver(Version.v740sp02, fs);
+    return vers(Version.v740sp02, fs);
   }
 }

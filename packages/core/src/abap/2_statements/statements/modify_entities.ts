@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, ver} from "../combi";
+import {seqs, vers} from "../combi";
 import {SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -12,7 +12,7 @@ export class ModifyEntities implements IStatement {
                    "UPDATE SET FIELDS WITH", Source,
                    "FAILED", Target,
                    "REPORTED", Target);
-    return ver(Version.v754, s);
+    return vers(Version.v754, s);
   }
 
 }

@@ -1,4 +1,4 @@
-import {seqs, tok, ver, Expression} from "../combi";
+import {seqs, tok, vers, Expression} from "../combi";
 import {ParenRightW, ParenLeft} from "../../1_lexer/tokens";
 import {TargetField} from ".";
 import {Version} from "../../../version";
@@ -10,6 +10,6 @@ export class InlineData extends Expression {
     const left = tok(ParenLeft);
     const data = seqs("DATA", left, TargetField, right);
 
-    return ver(Version.v740sp02, data);
+    return vers(Version.v740sp02, data);
   }
 }

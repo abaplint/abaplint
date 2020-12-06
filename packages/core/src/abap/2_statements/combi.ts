@@ -901,60 +901,11 @@ export function regex(r: RegExp): IStatementRunnable {
 export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
   return new Token(t.name);
 }
-
 /*
-export function seq(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Sequence([first, second].concat(rest));
-}
-*/
-/*
-export function alt(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Alternative([first, second].concat(rest));
-}
-*/
-/*
-export function altPrio(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new AlternativePriority([first, second].concat(rest));
-}
-*/
-/*
-export function per(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Permutation([first, second].concat(rest));
-}
-*/
-/*
-export function opt(first: IStatementRunnable): IStatementRunnable {
-  return new Optional(first);
-}
-*/
-/*
-export function optPrio(first: IStatementRunnable): IStatementRunnable {
-  return new OptionalPriority(first);
-}
-*/
-/*
-export function star(first: IStatementRunnable): IStatementRunnable {
-  return new Star(first);
-}
-*/
-/*
-export function starPrio(first: IStatementRunnable): IStatementRunnable {
-  return new StarPrioroity(first);
-}
-*/
-/*
-export function plus(first: IStatementRunnable): IStatementRunnable {
-  return new Plus(first);
-}
-*/
-/*
-export function plusPrio(first: IStatementRunnable): IStatementRunnable {
-  return new PlusPriority(first);
-}
-*/
 export function ver(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new Vers(version, first);
 }
+*/
 export function verNot(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new VersNot(version, first);
 }
@@ -1006,4 +957,7 @@ export function pluss(first: InputType): IStatementRunnable {
 }
 export function plusPrios(first: InputType): IStatementRunnable {
   return new PlusPriority(map(first));
+}
+export function vers(version: Version, first: InputType): IStatementRunnable {
+  return new Vers(version, map(first));
 }

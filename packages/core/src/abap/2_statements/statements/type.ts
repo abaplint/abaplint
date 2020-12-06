@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, pers, opts, ver} from "../combi";
+import {seqs, alts, pers, opts, vers} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -14,7 +14,7 @@ export class Type implements IStatement {
                      opts(alts(simple, Expressions.TypeTable)));
 
 // todo, BOXED is only allowed with structures inside structures?
-    const boxed = ver(Version.v702, str("BOXED"));
+    const boxed = vers(Version.v702, "BOXED");
 
     const ret = seqs("TYPES", def, opts(boxed));
 

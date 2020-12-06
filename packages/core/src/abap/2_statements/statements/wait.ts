@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, pers, alts, ver} from "../combi";
+import {verNot, seqs, opts, pers, alts, vers} from "../combi";
 import {Version} from "../../../version";
 import {Source, Cond} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,7 +10,7 @@ export class Wait implements IStatement {
     const up = seqs("UP TO", Source, "SECONDS");
 
     const channels = "MESSAGING CHANNELS";
-    const push = ver(Version.v750, str("PUSH CHANNELS"));
+    const push = vers(Version.v750, "PUSH CHANNELS");
     const tasks = "ASYNCHRONOUS TASKS";
 
     const type = seqs("FOR", pers(channels, push, tasks));

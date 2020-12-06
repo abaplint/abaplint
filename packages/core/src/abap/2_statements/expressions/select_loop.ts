@@ -1,4 +1,4 @@
-import {seqs, pers, opts, alts, tok, str, ver, stars, Expression, optPrios} from "../combi";
+import {seqs, pers, opts, alts, tok, vers, stars, Expression, optPrios} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -20,7 +20,7 @@ export class SelectLoop extends Expression {
 
     const where = seqs("WHERE", SQLCond);
 
-    const comma = opts(ver(Version.v740sp05, str(",")));
+    const comma = opts(vers(Version.v740sp05, ","));
     const someField = seqs(alts(SQLFieldName, SQLAggregation), comma);
     const fieldList = seqs(stars(someField), SQLFieldName, comma, stars(someField));
 

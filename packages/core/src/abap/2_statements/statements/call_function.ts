@@ -7,13 +7,12 @@ import {IStatementRunnable} from "../statement_runnable";
 export class CallFunction implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const method = new MethodName();
 
     const starting = seqs("STARTING NEW TASK", BasicSource);
     const update = str("IN UPDATE TASK");
     const unit = seqs("UNIT", Source);
     const background = seqs("IN BACKGROUND", alts("TASK", unit));
-    const calling = seqs("CALLING", method, "ON END OF TASK");
+    const calling = seqs("CALLING", MethodName, "ON END OF TASK");
     const performing = seqs("PERFORMING", FormName, "ON END OF TASK");
     const separate = str("AS SEPARATE UNIT");
     const keeping = str("KEEPING LOGICAL UNIT OF WORK");

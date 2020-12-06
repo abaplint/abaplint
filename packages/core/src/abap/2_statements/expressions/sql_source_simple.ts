@@ -1,4 +1,4 @@
-import {alts, seqs, ver, tok, Expression} from "../combi";
+import {alts, seqs, vers, tok, Expression} from "../combi";
 import {Version} from "../../../version";
 import {WAt, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Source, FieldChain} from ".";
@@ -9,7 +9,7 @@ export class SQLSourceSimple extends Expression {
   public getRunnable(): IStatementRunnable {
     const paren = seqs(tok(ParenLeftW), Source, tok(WParenRightW));
 
-    const at = ver(Version.v740sp05, seqs(tok(WAt), alts(FieldChain, paren)));
+    const at = vers(Version.v740sp05, seqs(tok(WAt), alts(FieldChain, paren)));
 
     return alts(FieldChain, at, ConstantString);
   }

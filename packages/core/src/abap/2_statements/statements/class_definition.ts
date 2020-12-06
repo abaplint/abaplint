@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, opts, alts, pers, ver} from "../combi";
+import {seqs, opts, alts, pers, vers} from "../combi";
 import {ClassName, SuperClassName, ClassGlobal, ClassFinal, SimpleName, ClassFriends} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -24,7 +24,7 @@ export class ClassDefinition implements IStatement {
                       risk,
                       "SHARED MEMORY ENABLED",
                       duration,
-                      ver(Version.v754, seqs("FOR BEHAVIOR OF", SimpleName)),
+                      vers(Version.v754, seqs("FOR BEHAVIOR OF", SimpleName)),
                       ClassFriends);
 
     const def = seqs("DEFINITION", opts(blah));

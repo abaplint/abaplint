@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, opts, pers, ver, altPrios} from "../combi";
+import {str, seqs, alts, opts, pers, vers, altPrios} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Source, Dynamic, SimpleSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -26,7 +26,7 @@ export class InsertInternal implements IStatement {
                        target,
                        opts(from));
 
-    const src = alts(ver(Version.v740sp02, new Source()), SimpleSource);
+    const src = alts(vers(Version.v740sp02, Source), SimpleSource);
 
     const tab = seqs("TABLE", Source);
 

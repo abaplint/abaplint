@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, ver, optPrios} from "../combi";
+import {seqs, vers, optPrios} from "../combi";
 import {InlineData, ClassName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class WhenType implements IStatement {
 
     const type = seqs(ClassName, optPrios(into));
 
-    return ver(Version.v750, seqs("WHEN TYPE", type));
+    return vers(Version.v750, seqs("WHEN TYPE", type));
   }
 
 }
