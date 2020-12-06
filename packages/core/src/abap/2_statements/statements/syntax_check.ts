@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, per, plus, optPrio} from "../combi";
+import {verNot, str, seqs, alt, per, plus, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,46 +7,46 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SyntaxCheck implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const program = seq(str("PROGRAM"), new Source());
-    const offset = seq(str("OFFSET"), new Target());
-    const frame = seq(str("FRAME ENTRY"), new Target());
-    const include = seq(str("INCLUDE"), new Target());
-    const trace = seq(str("TRACE-TABLE"), new Target());
-    const line = seq(str("LINE"), new Target());
-    const word = seq(str("WORD"), new Target());
-    const messageId = seq(str("MESSAGE-ID"), new Target());
-    const message = seq(str("MESSAGE"), new Target());
-    const id = seq(str("ID"), new Source(), str("TABLE"), new Target());
-    const replacing = seq(str("REPLACING"), new Target());
-    const directory = seq(str("DIRECTORY ENTRY"), new Source());
-    const dump = seq(str("SHORTDUMP-ID"), new Source());
-    const filter = seq(str("FILTER"), new Source());
+    const program = seqs("PROGRAM", Source);
+    const offset = seqs("OFFSET", Target);
+    const frame = seqs("FRAME ENTRY", Target);
+    const include = seqs("INCLUDE", Target);
+    const trace = seqs("TRACE-TABLE", Target);
+    const line = seqs("LINE", Target);
+    const word = seqs("WORD", Target);
+    const messageId = seqs("MESSAGE-ID", Target);
+    const message = seqs("MESSAGE", Target);
+    const id = seqs("ID", Source, "TABLE", Target);
+    const replacing = seqs("REPLACING", Target);
+    const directory = seqs("DIRECTORY ENTRY", Source);
+    const dump = seqs("SHORTDUMP-ID", Source);
+    const filter = seqs("FILTER", Source);
 
-    const syntax = seq(optPrio(str("PROGRAM")),
-                       new Source(),
-                       per(message,
-                           line,
-                           word,
-                           offset,
-                           program,
-                           replacing,
-                           directory,
-                           frame,
-                           include,
-                           messageId,
-                           trace,
-                           dump,
-                           filter,
-                           plus(id)));
+    const syntax = seqs(optPrio(str("PROGRAM")),
+                        Source,
+                        per(message,
+                            line,
+                            word,
+                            offset,
+                            program,
+                            replacing,
+                            directory,
+                            frame,
+                            include,
+                            messageId,
+                            trace,
+                            dump,
+                            filter,
+                            plus(id)));
 
-    const dynpro = seq(str("DYNPRO"),
-                       new Source(),
-                       new Source(),
-                       new Source(),
-                       new Source(),
-                       per(message, line, word, offset, messageId, trace));
+    const dynpro = seqs("DYNPRO",
+                        Source,
+                        Source,
+                        Source,
+                        Source,
+                        per(message, line, word, offset, messageId, trace));
 
-    const ret = seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));
+    const ret = seqs("SYNTAX-CHECK FOR", alt(syntax, dynpro));
 
     return verNot(Version.Cloud, ret);
   }
