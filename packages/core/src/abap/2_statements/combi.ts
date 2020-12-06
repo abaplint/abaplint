@@ -937,9 +937,11 @@ export function star(first: IStatementRunnable): IStatementRunnable {
   return new Star(first);
 }
 */
+/*
 export function starPrio(first: IStatementRunnable): IStatementRunnable {
   return new StarPrioroity(first);
 }
+*/
 export function plus(first: IStatementRunnable): IStatementRunnable {
   return new Plus(first);
 }

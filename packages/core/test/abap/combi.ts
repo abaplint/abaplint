@@ -17,7 +17,7 @@ const star = Combi.stars;
 const reg  = Combi.regex;
 const tok  = Combi.tok;
 const optPrio = Combi.optPrios;
-const starPrio = Combi.starPrio;
+const starPrio = Combi.starPrios;
 
 function tokenize(s: string): readonly Token[] {
   return Lexer.run(new MemoryFile("foo.abap", s)).tokens;
