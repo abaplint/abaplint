@@ -1,4 +1,4 @@
-import {tok, vers, seq, starPrios, altPrio, Expression, optPrio} from "../combi";
+import {tok, vers, seq, starPrio, altPrio, Expression, optPrio} from "../combi";
 import * as Tokens from "../../1_lexer/tokens";
 import {Version} from "../../../version";
 import {Source, StringTemplateFormatting} from ".";
@@ -10,7 +10,7 @@ export class StringTemplate extends Expression {
     const nest = seq(tok(Tokens.StringTemplateBegin),
                      Source,
                      optPrio(StringTemplateFormatting),
-                     starPrios(seq(tok(Tokens.StringTemplateMiddle), Source, optPrio(StringTemplateFormatting))),
+                     starPrio(seq(tok(Tokens.StringTemplateMiddle), Source, optPrio(StringTemplateFormatting))),
                      tok(Tokens.StringTemplateEnd));
 
     return vers(Version.v702, altPrio(nest, tok(Tokens.StringTemplate)));

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, starPrios, tok} from "../combi";
+import {verNot, seq, opt, starPrio, tok} from "../combi";
 import {Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,7 +9,7 @@ export class EnhancementSection implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq("ENHANCEMENT-SECTION",
-                    seq(Field, starPrios(seq(tok(Dash), Field))),
+                    seq(Field, starPrio(seq(tok(Dash), Field))),
                     "SPOTS",
                     Field,
                     opt("STATIC"));

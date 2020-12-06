@@ -1,4 +1,4 @@
-import {seq, opt, stars, tok, Expression} from "../combi";
+import {seq, opt, star, tok, Expression} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {SQLJoin, SQLFromSource} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -6,10 +6,10 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SQLFrom extends Expression {
   public getRunnable(): IStatementRunnable {
     const from = seq("FROM",
-                     stars(tok(WParenLeftW)),
+                     star(tok(WParenLeftW)),
                      SQLFromSource);
 
-    const source = seq(from, stars(seq(opt(tok(WParenRightW)), SQLJoin, opt(tok(WParenRightW)))));
+    const source = seq(from, star(seq(opt(tok(WParenRightW)), SQLJoin, opt(tok(WParenRightW)))));
 
     return source;
   }

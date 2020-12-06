@@ -13,11 +13,11 @@ const seq  = Combi.seq;
 const alt  = Combi.alt;
 const opt  = Combi.opt;
 const plus = Combi.pluss;
-const star = Combi.stars;
+const star = Combi.star;
 const reg  = Combi.regex;
 const tok  = Combi.tok;
 const optPrio = Combi.optPrio;
-const starPrio = Combi.starPrios;
+const starPrio = Combi.starPrio;
 
 function tokenize(s: string): readonly Token[] {
   return Lexer.run(new MemoryFile("foo.abap", s)).tokens;
