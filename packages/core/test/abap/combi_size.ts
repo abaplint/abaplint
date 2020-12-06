@@ -10,7 +10,7 @@ import {Result} from "../../src/abap/2_statements/result";
 const str  = Combi.str;
 const seq  = Combi.seqs;
 const opt  = Combi.opts;
-const star = Combi.star;
+const star = Combi.stars;
 
 function tok(s: string): Token[] {
   const split = s.split(" ");

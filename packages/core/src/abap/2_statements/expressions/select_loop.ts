@@ -1,4 +1,4 @@
-import {seqs, pers, opts, alts, tok, str, ver, star, Expression, optPrios} from "../combi";
+import {seqs, pers, opts, alts, tok, str, ver, stars, Expression, optPrios} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -11,7 +11,7 @@ export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const intoList = seqs(alts(tok(WParenLeft), tok(WParenLeftW)),
-                          star(seqs(SQLTarget, ",")),
+                          stars(seqs(SQLTarget, ",")),
                           SQLTarget,
                           ")");
     const intoSimple = seqs(opts("CORRESPONDING FIELDS OF"), SQLTarget);
@@ -22,7 +22,7 @@ export class SelectLoop extends Expression {
 
     const comma = opts(ver(Version.v740sp05, str(",")));
     const someField = seqs(alts(SQLFieldName, SQLAggregation), comma);
-    const fieldList = seqs(star(someField), SQLFieldName, comma, star(someField));
+    const fieldList = seqs(stars(someField), SQLFieldName, comma, stars(someField));
 
 // todo, use SQLFieldList instead?
     const fields = alts("*", Dynamic, fieldList);

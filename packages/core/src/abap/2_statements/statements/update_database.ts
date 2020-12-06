@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, opts, alts, star} from "../combi";
+import {seqs, opts, alts, stars} from "../combi";
 import {SQLSource, DatabaseTable, Dynamic, SQLFieldName, SQLCond, DatabaseConnection, SQLClient} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,7 +9,7 @@ export class UpdateDatabase implements IStatement {
     const target = alts(DatabaseTable, Dynamic);
 
     const param = seqs(SQLFieldName, "=", SQLSource);
-    const parameters = seqs(param, star(seqs(opts(","), param)));
+    const parameters = seqs(param, stars(seqs(opts(","), param)));
 
     const set = seqs("SET",
                      alts(parameters, Dynamic),

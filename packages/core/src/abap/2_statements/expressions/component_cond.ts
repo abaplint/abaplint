@@ -1,4 +1,4 @@
-import {seqs, opts, tok, alts, star, Expression} from "../combi";
+import {seqs, opts, tok, alts, stars, Expression} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {ComponentCompare} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -14,7 +14,7 @@ export class ComponentCond extends Expression {
 
     const cnd = alts(ComponentCompare, another);
 
-    const ret = seqs(cnd, star(seqs(operator, cnd)));
+    const ret = seqs(cnd, stars(seqs(operator, cnd)));
 
     return ret;
   }

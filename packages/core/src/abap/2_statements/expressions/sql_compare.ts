@@ -1,4 +1,4 @@
-import {ver, seqs, opts, tok, star, alts, optPrios, str, Expression} from "../combi";
+import {ver, seqs, opts, tok, stars, alts, optPrios, str, Expression} from "../combi";
 import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from ".";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -8,10 +8,7 @@ export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = new SQLSource();
 
-    const list = seqs(alts(tok(WParenLeft), tok(WParenLeftW)),
-                      val,
-                      star(seqs(",", val)),
-                      ")");
+    const list = seqs(alts(tok(WParenLeft), tok(WParenLeftW)), val, stars(seqs(",", val)), ")");
 
     const subSelect = seqs("(", Select, ")");
 

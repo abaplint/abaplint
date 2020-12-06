@@ -1,4 +1,4 @@
-import {alts, seqs, optPrios, star, tok, Expression} from "../combi";
+import {alts, seqs, optPrios, stars, tok, Expression} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {SQLCompare} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class SQLCond extends Expression {
 
     const cnd = seqs(optPrios("NOT"), alts(SQLCompare, paren));
 
-    const ret = seqs(cnd, star(seqs(operator, cnd)));
+    const ret = seqs(cnd, stars(seqs(operator, cnd)));
 
     return ret;
   }

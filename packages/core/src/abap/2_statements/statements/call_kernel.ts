@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, alts, star} from "../combi";
+import {verNot, seqs, alts, stars} from "../combi";
 import {Source, Constant, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class CallKernel implements IStatement {
 
     const ret = seqs("CALL",
                      alts(Constant, Field),
-                     star(field));
+                     stars(field));
 
     return verNot(Version.Cloud, ret);
   }

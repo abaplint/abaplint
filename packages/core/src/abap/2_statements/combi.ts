@@ -932,9 +932,11 @@ export function optPrio(first: IStatementRunnable): IStatementRunnable {
   return new OptionalPriority(first);
 }
 */
+/*
 export function star(first: IStatementRunnable): IStatementRunnable {
   return new Star(first);
 }
+*/
 export function starPrio(first: IStatementRunnable): IStatementRunnable {
   return new StarPrioroity(first);
 }
@@ -986,4 +988,10 @@ export function optPrios(first: input): IStatementRunnable {
 }
 export function pers(first: input, second: input, ...rest: input[]): IStatementRunnable {
   return new Permutation([map(first), map(second)].concat(rest.map(map)));
+}
+export function stars(first: input): IStatementRunnable {
+  return new Star(map(first));
+}
+export function starPrios(first: input): IStatementRunnable {
+  return new StarPrioroity(map(first));
 }
