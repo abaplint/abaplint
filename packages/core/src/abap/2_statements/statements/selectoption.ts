@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts, alt, pers} from "../combi";
+import {verNot, seq, opt, alt, pers} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class SelectOption implements IStatement {
 
     const def = seq("DEFAULT",
                     sourc,
-                    opts(to));
+                    opt(to));
 
     const option = seq("OPTION", Field);
     const sign = seq("SIGN", Field);
@@ -44,7 +44,7 @@ export class SelectOption implements IStatement {
                     Field,
                     "FOR",
                     alt(FieldChain, Dynamic),
-                    opts(options));
+                    opt(options));
 
     return verNot(Version.Cloud, ret);
   }

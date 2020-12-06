@@ -1,4 +1,4 @@
-import {alt, tok, seq, Expression, vers, opts, pluss} from "../combi";
+import {alt, tok, seq, Expression, vers, opt, pluss} from "../combi";
 import {Version} from "../../../version";
 import {TypeNameOrInfer, Source, ParameterListS} from ".";
 import {ParenLeftW, WParenLeftW, WParenRightW, WParenRight} from "../../1_lexer/tokens";
@@ -13,7 +13,7 @@ export class NewObject extends Expression {
     const neww = seq("NEW",
                      TypeNameOrInfer,
                      tok(ParenLeftW),
-                     opts(alt(Source, ParameterListS, lines)),
+                     opt(alt(Source, ParameterListS, lines)),
                      rparen);
 
     return vers(Version.v740sp02, neww);

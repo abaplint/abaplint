@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opts, pluss, vers} from "../combi";
+import {seq, alt, opt, pluss, vers} from "../combi";
 import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -34,20 +34,20 @@ export class CreateData implements IStatement {
     const decimals = seq("DECIMALS", Source);
     const uniq = alt("UNIQUE", "NON-UNIQUE");
     const emptyKey = vers(Version.v740sp02, "EMPTY KEY");
-    const def = seq(opts(uniq), alt("DEFAULT KEY", emptyKey));
+    const def = seq(opt(uniq), alt("DEFAULT KEY", emptyKey));
 
-    const kdef = seq(opts(uniq), "KEY", alt(pluss(Field), Dynamic));
+    const kdef = seq(opt(uniq), "KEY", alt(pluss(Field), Dynamic));
 
     const key = seq("WITH", alt(def, kdef));
 
     const ret = seq("CREATE DATA",
                     Target,
-                    opts(area),
-                    opts(alt(type, like)),
-                    opts(key),
-                    opts(initial),
-                    opts(length),
-                    opts(decimals));
+                    opt(area),
+                    opt(alt(type, like)),
+                    opt(key),
+                    opt(initial),
+                    opt(length),
+                    opt(decimals));
 
     return ret;
   }

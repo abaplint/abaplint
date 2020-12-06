@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opts, alt} from "../combi";
+import {seq, opt, alt} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -13,8 +13,8 @@ export class Clear implements IStatement {
 
     return seq("CLEAR",
                Target,
-               opts(wit),
-               opts(mode));
+               opt(wit),
+               opt(mode));
   }
 
 }

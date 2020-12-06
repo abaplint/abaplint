@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {opts, seq, pluss, optPrios} from "../combi";
+import {opt, seq, pluss, optPrios} from "../combi";
 import {Target, ClassName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,7 +9,7 @@ export class Catch implements IStatement {
     return seq("CATCH",
                optPrios("BEFORE UNWIND"),
                pluss(ClassName),
-               opts(seq("INTO", Target)));
+               opt(seq("INTO", Target)));
   }
 
 }

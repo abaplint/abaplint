@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opts, tok, pers} from "../combi";
+import {seq, alt, opt, tok, pers} from "../combi";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -16,10 +16,10 @@ export class Assign implements IStatement {
 
     const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
 
-    const source = alt(seq(Source, opts(seq(arrow, Dynamic))),
+    const source = alt(seq(Source, opt(seq(arrow, Dynamic))),
                        component,
                        tableField,
-                       seq(Dynamic, opts(seq(arrow, alt(Field, Dynamic)))));
+                       seq(Dynamic, opt(seq(arrow, alt(Field, Dynamic)))));
 
     const type = seq("TYPE", alt(Dynamic, Source));
     const like = seq("LIKE", alt(Dynamic, Source));
@@ -27,15 +27,15 @@ export class Assign implements IStatement {
     const range = seq("RANGE", Source);
     const decimals = seq("DECIMALS", Source);
 
-    const casting = seq(opts("CASTING"), opts(alt(like, handle, pers(type, decimals))));
+    const casting = seq(opt("CASTING"), opt(alt(like, handle, pers(type, decimals))));
 
     const ret = seq("ASSIGN",
-                    opts(seq(Target, "INCREMENT")),
+                    opt(seq(Target, "INCREMENT")),
                     source,
                     "TO",
                     FSTarget,
                     casting,
-                    opts(range));
+                    opt(range));
 
     return ret;
   }

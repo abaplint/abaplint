@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, pers, opts} from "../combi";
+import {verNot, str, seq, alt, pers, opt} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,7 +8,7 @@ export class OpenDataset implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const mode = seq("IN",
-                     opts("LEGACY"),
+                     opt("LEGACY"),
                      alt("BINARY MODE",
                          "TEXT MODE"));
 

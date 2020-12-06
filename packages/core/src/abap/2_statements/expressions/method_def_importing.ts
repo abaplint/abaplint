@@ -1,4 +1,4 @@
-import {seq, opts, regex as reg, pluss, Expression} from "../combi";
+import {seq, opt, regex as reg, pluss, Expression} from "../combi";
 import {MethodParamOptional} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,6 +8,6 @@ export class MethodDefImporting extends Expression {
 
     return seq("IMPORTING",
                pluss(MethodParamOptional),
-               opts(seq("PREFERRED PARAMETER", field)));
+               opt(seq("PREFERRED PARAMETER", field)));
   }
 }

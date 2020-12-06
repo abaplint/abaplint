@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts} from "../combi";
+import {verNot, seq, opt} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,8 +13,8 @@ export class SetLocale implements IStatement {
 
     const ret = seq("SET LOCALE LANGUAGE",
                     Source,
-                    opts(country),
-                    opts(modifier));
+                    opt(country),
+                    opt(modifier));
 
     return verNot(Version.Cloud, ret);
   }

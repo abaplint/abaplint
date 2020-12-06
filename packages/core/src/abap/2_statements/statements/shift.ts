@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opts, altPrio, optPrios, pers} from "../combi";
+import {seq, opt, altPrio, optPrios, pers} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -16,7 +16,7 @@ export class Shift implements IStatement {
 
     return seq("SHIFT",
                Target,
-               opts(options));
+               opt(options));
   }
 
 }

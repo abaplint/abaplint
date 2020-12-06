@@ -929,7 +929,7 @@ export function alt(first: InputType, second: InputType, ...rest: InputType[]): 
 export function altPrio(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new AlternativePriority([map(first), map(second)].concat(rest.map(map)));
 }
-export function opts(first: InputType): IStatementRunnable {
+export function opt(first: InputType): IStatementRunnable {
   return new Optional(map(first));
 }
 export function optPrios(first: InputType): IStatementRunnable {

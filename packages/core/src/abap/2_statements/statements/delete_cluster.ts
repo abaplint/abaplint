@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, tok, opts} from "../combi";
+import {verNot, seq, tok, opt} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Source, SimpleName, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
@@ -15,7 +15,7 @@ export class DeleteCluster implements IStatement {
                     tok(ParenLeft),
                     SimpleName,
                     tok(ParenRightW),
-                    opts(client),
+                    opt(client),
                     "ID",
                     Source);
 

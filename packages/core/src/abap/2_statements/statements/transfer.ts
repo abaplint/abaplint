@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts} from "../combi";
+import {verNot, seq, opt} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,8 +13,8 @@ export class Transfer implements IStatement {
                     Source,
                     "TO",
                     Target,
-                    opts(length),
-                    opts("NO END OF LINE"));
+                    opt(length),
+                    opt("NO END OF LINE"));
 
     return verNot(Version.Cloud, ret);
   }

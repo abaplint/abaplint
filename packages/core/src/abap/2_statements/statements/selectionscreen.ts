@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opts, pers, regex as reg, tok} from "../combi";
+import {verNot, str, seq, alt, opt, pers, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
 import {Version} from "../../../version";
@@ -10,9 +10,9 @@ export class SelectionScreen implements IStatement {
   public getMatcher(): IStatementRunnable {
     const beginBlock = seq("BEGIN OF BLOCK",
                            BlockName,
-                           opts("WITH FRAME"),
-                           opts(seq("TITLE", alt(InlineField, TextElement))),
-                           opts("NO INTERVALS"));
+                           opt("WITH FRAME"),
+                           opt(seq("TITLE", alt(InlineField, TextElement))),
+                           opt("NO INTERVALS"));
     const endBlock = seq("END OF BLOCK", BlockName);
 
     const nesting = seq("NESTING LEVEL", Source);
@@ -24,7 +24,7 @@ export class SelectionScreen implements IStatement {
 
     const beginScreen = seq("BEGIN OF SCREEN",
                             Integer,
-                            opts(scrOptions));
+                            opt(scrOptions));
 
     const endScreen = seq("END OF SCREEN", Integer);
 
@@ -37,15 +37,15 @@ export class SelectionScreen implements IStatement {
 
     const commentOpt = pers(seq("FOR FIELD", Field), modif, visible);
 
-    const position = seq(opts(reg(/^\/?[\d\w]+$/)),
+    const position = seq(opt(reg(/^\/?[\d\w]+$/)),
                          alt(tok(ParenLeft), tok(WParenLeft)),
                          Integer,
                          alt(tok(ParenRightW), tok(ParenRight)));
 
     const comment = seq("COMMENT",
                         position,
-                        opts(alt(InlineField, TextElement)),
-                        opts(commentOpt));
+                        opt(alt(InlineField, TextElement)),
+                        opt(commentOpt));
 
     const command = seq("USER-COMMAND", alt(Field, Constant));
 
@@ -53,8 +53,8 @@ export class SelectionScreen implements IStatement {
                      position,
                      alt(InlineField, TextElement),
                      command,
-                     opts(modif),
-                     opts(visible));
+                     opt(modif),
+                     opt(visible));
 
     const def = seq("DEFAULT SCREEN", Integer);
 
@@ -64,12 +64,12 @@ export class SelectionScreen implements IStatement {
                     tok(ParenRightW),
                     alt(InlineField, TextElement),
                     command,
-                    opts(def),
-                    opts(modif));
+                    opt(def),
+                    opt(modif));
 
     const func = seq("FUNCTION KEY", Integer);
 
-    const skip = seq("SKIP", opts(Integer));
+    const skip = seq("SKIP", opt(Integer));
 
     const posSymbols = alt("POS_LOW", "POS_HIGH");
 
@@ -86,9 +86,9 @@ export class SelectionScreen implements IStatement {
                        "FOR",
                        Integer,
                        "LINES",
-                       opts("NO INTERVALS"));
+                       opt("NO INTERVALS"));
 
-    const uline = seq("ULINE", opts(position));
+    const uline = seq("ULINE", opt(position));
 
     const param = seq("INCLUDE PARAMETERS", Field);
     const iso = seq("INCLUDE SELECT-OPTIONS", Field);

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, opts} from "../combi";
+import {verNot, seq, alt, opt} from "../combi";
 import {SQLTarget, SQLSource, SQLTargetTable} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,13 +10,13 @@ export class FetchNextCursor implements IStatement {
     const size = seq("PACKAGE SIZE", SQLSource);
 
     const record = seq("INTO",
-                       opts("CORRESPONDING FIELDS OF"),
+                       opt("CORRESPONDING FIELDS OF"),
                        SQLTarget);
 
     const ret = seq("FETCH NEXT CURSOR",
                     SQLSource,
                     alt(record, SQLTargetTable),
-                    opts(size));
+                    opt(size));
 
     return verNot(Version.Cloud, ret);
   }

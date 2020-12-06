@@ -1,12 +1,12 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opts, regex, altPrio} from "../combi";
+import {seq, alt, opt, regex, altPrio} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class At implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const field = alt(seq(FieldSub, opts(FieldOffset), opts(FieldLength)),
+    const field = alt(seq(FieldSub, opt(FieldOffset), opt(FieldLength)),
                       Dynamic,
                       SourceFieldSymbol);
 

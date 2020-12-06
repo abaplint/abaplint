@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts, alt, pers, tok, regex as reg, altPrio} from "../combi";
+import {verNot, seq, opt, alt, pers, tok, regex as reg, altPrio} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft, ParenRight} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -30,13 +30,13 @@ export class Write implements IStatement {
                          "NO-GROUPING",
                          "NO-ZERO",
                          "CENTERED",
-                         seq("INPUT", opts(onOff)),
+                         seq("INPUT", opt(onOff)),
                          "NO-GAP",
                          "LEFT-JUSTIFIED",
                          "AS LINE",
                          "AS ICON",
                          seq("FRAMES", onOff),
-                         seq("HOTSPOT", opts(onOff)),
+                         seq("HOTSPOT", opt(onOff)),
                          "AS CHECKBOX",
                          "AS SYMBOL",
                          "RIGHT-JUSTIFIED",
@@ -48,10 +48,10 @@ export class Write implements IStatement {
                          "ENVIRONMENT TIME FORMAT",
                          dateFormat,
                          seq("UNIT", Source),
-                         seq("INTENSIFIED", opts(onOff)),
+                         seq("INTENSIFIED", opt(onOff)),
                          seq("INDEX", Source),
                          seq("DECIMALS", Source),
-                         seq("INVERSE", opts(onOff)),
+                         seq("INVERSE", opt(onOff)),
                          Color,
                          seq("CURRENCY", Source),
                          "NO-SIGN");
@@ -62,14 +62,14 @@ export class Write implements IStatement {
 
 // todo, move to expression?
     const complex = alt(wlength,
-                        seq(alt(FieldChain, reg(/^\/?[\w\d]+$/), "/"), opts(length)));
+                        seq(alt(FieldChain, reg(/^\/?[\w\d]+$/), "/"), opt(length)));
 
-    const at = seq(opts("AT"), complex);
+    const at = seq(opt("AT"), complex);
 
     const ret = seq("WRITE",
-                    opts(at),
+                    opt(at),
                     altPrio(Source, Dynamic, "/"),
-                    opts(options));
+                    opt(options));
 
     return verNot(Version.Cloud, ret);
   }

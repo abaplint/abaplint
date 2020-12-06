@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts} from "../combi";
+import {verNot, seq, opt} from "../combi";
 import {Field, FieldSub} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,8 +11,8 @@ export class EnhancementPoint implements IStatement {
                     FieldSub,
                     "SPOTS",
                     Field,
-                    opts("STATIC"),
-                    opts("INCLUDE BOUND"));
+                    opt("STATIC"),
+                    opt("INCLUDE BOUND"));
 
     return verNot(Version.Cloud, ret);
   }

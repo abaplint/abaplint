@@ -1,4 +1,4 @@
-import {alt, Expression, seq, altPrio, opts} from "../combi";
+import {alt, Expression, seq, altPrio, opt} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {Source} from "./source";
 
@@ -17,6 +17,6 @@ export class Color extends Expression {
     const value = alt(eq, altPrio("ON", "OFF", alt(integers, texts)));
     const toggle = alt("ON", "OFF");
 
-    return seq("COLOR", value, opts(toggle));
+    return seq("COLOR", value, opt(toggle));
   }
 }

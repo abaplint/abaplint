@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts, alt, regex, pers, pluss, tok} from "../combi";
+import {verNot, seq, opt, alt, regex, pers, pluss, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {Version} from "../../../version";
@@ -44,7 +44,7 @@ export class Import implements IStatement {
                          seq("CODE PAGE INTO", Source),
                          seq("ENDIAN INTO", Source));
 
-    const ret = seq("IMPORT", target, "FROM", source, opts(options));
+    const ret = seq("IMPORT", target, "FROM", source, opt(options));
 
     return verNot(Version.Cloud, ret);
   }

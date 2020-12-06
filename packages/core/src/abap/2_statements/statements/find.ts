@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opts, alt, pers, pluss, optPrios} from "../combi";
+import {seq, opt, alt, pers, pluss, optPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -27,12 +27,12 @@ export class Find implements IStatement {
                        Source);
 
     const ret = seq("FIND",
-                    opts(alt("FIRST OCCURRENCE OF", "ALL OCCURRENCES OF")),
-                    opts(alt("REGEX", "SUBSTRING")),
+                    opt(alt("FIRST OCCURRENCE OF", "ALL OCCURRENCES OF")),
+                    opt(alt("REGEX", "SUBSTRING")),
                     Source,
                     "IN",
                     before,
-                    opts(options));
+                    opt(options));
 
     return ret;
   }

@@ -1,4 +1,4 @@
-import {Expression, seq, opts, pluss} from "../combi";
+import {Expression, seq, opt, pluss} from "../combi";
 import {Let, For, Field, Source, InlineFieldDefinition} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,7 +8,7 @@ export class ReduceBody extends Expression {
 
     const init = seq("INIT", pluss(InlineFieldDefinition));
 
-    return seq(opts(Let),
+    return seq(opt(Let),
                init,
                For,
                "NEXT",

@@ -1,4 +1,4 @@
-import {seq, opts, altPrio, Expression} from "../combi";
+import {seq, opt, altPrio, Expression} from "../combi";
 import {ParameterName, SimpleName, Target} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,6 +8,6 @@ export class ParameterException extends Expression {
     return seq(name,
                "=",
                SimpleName,
-               opts(seq("MESSAGE", Target)));
+               opt(seq("MESSAGE", Target)));
   }
 }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts} from "../combi";
+import {verNot, seq, opt} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class Overlay implements IStatement {
                     Target,
                     "WITH",
                     Source,
-                    opts(only));
+                    opt(only));
 
     return verNot(Version.Cloud, ret);
   }

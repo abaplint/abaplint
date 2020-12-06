@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opts, alt, pers} from "../combi";
+import {verNot, str, seq, opt, alt, pers} from "../combi";
 import {FormName, Source, FunctionParameters, FunctionName, Destination, MethodName, BasicSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -20,12 +20,12 @@ export class CallFunction implements IStatement {
     const options = pers(starting, update, background, Destination, calling, performing, separate, keeping);
 
     const dynamic = seq("PARAMETER-TABLE", Source,
-                        opts(seq("EXCEPTION-TABLE", Source)));
+                        opt(seq("EXCEPTION-TABLE", Source)));
 
     const call = seq("CALL",
                      alt("FUNCTION", verNot(Version.Cloud, "CUSTOMER-FUNCTION")),
                      FunctionName,
-                     opts(options),
+                     opt(options),
                      alt(FunctionParameters, dynamic));
 
     return call;

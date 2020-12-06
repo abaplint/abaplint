@@ -1,4 +1,4 @@
-import {seq, opts, alt, vers, pluss, Expression} from "../combi";
+import {seq, opt, alt, vers, pluss, Expression} from "../combi";
 import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, InlineLoopDefinition, Target} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,17 +9,17 @@ export class For extends Expression {
     const where = seq("WHERE", ComponentCond);
     const from = seq("FROM", Source);
     const to = seq("TO", Source);
-    const inn = seq(InlineLoopDefinition, opts(from), opts(to), opts(where));
+    const inn = seq(InlineLoopDefinition, opt(from), opt(to), opt(where));
     const then = seq("THEN", Source);
     const whil = seq(alt("UNTIL", "WHILE"), Cond);
-    const itera = seq(InlineFieldDefinition, opts(then), whil);
+    const itera = seq(InlineFieldDefinition, opt(then), whil);
 
     const groupBy = seq("GROUP BY", FieldChain);
 
-    const groups = vers(Version.v740sp08, seq("GROUPS", FieldChain, "OF", Target, "IN", Source, opts(groupBy)));
+    const groups = vers(Version.v740sp08, seq("GROUPS", FieldChain, "OF", Target, "IN", Source, opt(groupBy)));
 
     const f = seq("FOR", alt(itera, inn, groups));
 
-    return vers(Version.v740sp05, pluss(seq(f, opts(Let))));
+    return vers(Version.v740sp05, pluss(seq(f, opt(Let))));
   }
 }

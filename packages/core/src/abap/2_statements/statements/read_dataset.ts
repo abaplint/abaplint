@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts} from "../combi";
+import {verNot, seq, opt} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,9 +11,9 @@ export class ReadDataset implements IStatement {
                     Source,
                     "INTO",
                     Target,
-                    opts(seq("MAXIMUM LENGTH", Source)),
-                    opts(seq("ACTUAL LENGTH", Target)),
-                    opts(seq("LENGTH", Target)));
+                    opt(seq("MAXIMUM LENGTH", Source)),
+                    opt(seq("ACTUAL LENGTH", Target)),
+                    opt(seq("LENGTH", Target)));
 
     return verNot(Version.Cloud, ret);
   }

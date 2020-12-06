@@ -1,4 +1,4 @@
-import {seq, Expression, alt, opts, pluss} from "../combi";
+import {seq, Expression, alt, opt, pluss} from "../combi";
 import {Cond, Source, Throw, Let} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,8 +8,8 @@ export class CondBody extends Expression {
 
     const elsee = seq("ELSE", alt(Source, Throw));
 
-    return seq(opts(Let),
+    return seq(opt(Let),
                pluss(when),
-               opts(elsee));
+               opt(elsee));
   }
 }

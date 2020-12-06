@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts} from "../combi";
+import {verNot, seq, opt} from "../combi";
 import {Source, ParameterListS, FieldSub} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -14,8 +14,8 @@ export class GetProperty implements IStatement {
                     Source,
                     "=",
                     Source,
-                    opts("NO FLUSH"),
-                    opts(exporting));
+                    opt("NO FLUSH"),
+                    opt(exporting));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, pers, opts} from "../combi";
+import {verNot, seq, alt, pers, opt} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -24,25 +24,25 @@ export class NewPage implements IStatement {
     const newList = seq("NEW LIST IDENTIFICATION", Source);
 
     const ret = seq("NEW-PAGE",
-                    opts(pers(print,
-                              alt("NO-TITLE", "WITH-TITLE"),
-                              alt("NO-HEADING", "WITH-HEADING"),
-                              "NO DIALOG",
-                              parameters,
-                              listAuth,
-                              immediately,
-                              dataset,
-                              coverPage,
-                              newList,
-                              keep,
-                              name,
-                              layout,
-                              destination,
-                              coverText,
-                              archive,
-                              "NEW-SECTION",
-                              lineCount,
-                              line)));
+                    opt(pers(print,
+                             alt("NO-TITLE", "WITH-TITLE"),
+                             alt("NO-HEADING", "WITH-HEADING"),
+                             "NO DIALOG",
+                             parameters,
+                             listAuth,
+                             immediately,
+                             dataset,
+                             coverPage,
+                             newList,
+                             keep,
+                             name,
+                             layout,
+                             destination,
+                             coverText,
+                             archive,
+                             "NEW-SECTION",
+                             lineCount,
+                             line)));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opts} from "../combi";
+import {seq, opt} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class SetBit implements IStatement {
                     Source,
                     "OF",
                     Target,
-                    opts(seq("TO", Source)));
+                    opt(seq("TO", Source)));
 
     return ret;
   }

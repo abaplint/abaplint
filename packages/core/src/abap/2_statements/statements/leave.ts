@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, opts} from "../combi";
+import {verNot, seq, alt, opt} from "../combi";
 import {Source, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,16 +11,16 @@ export class Leave implements IStatement {
 
     const transaction = seq("TO TRANSACTION",
                             Source,
-                            opts("AND SKIP FIRST SCREEN"));
+                            opt("AND SKIP FIRST SCREEN"));
 
     const ret = seq("LEAVE",
-                    opts(alt("TO CURRENT TRANSACTION",
-                             seq(opts("TO"), "LIST-PROCESSING", opts(retu)),
-                             "LIST-PROCESSING",
-                             "SCREEN",
-                             transaction,
-                             "PROGRAM",
-                             seq("TO SCREEN", Source))));
+                    opt(alt("TO CURRENT TRANSACTION",
+                            seq(opt("TO"), "LIST-PROCESSING", opt(retu)),
+                            "LIST-PROCESSING",
+                            "SCREEN",
+                            transaction,
+                            "PROGRAM",
+                            seq("TO SCREEN", Source))));
 
     return verNot(Version.Cloud, ret);
   }

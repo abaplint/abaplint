@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts, pluss, optPrios} from "../combi";
+import {verNot, seq, opt, pluss, optPrios} from "../combi";
 import {Field, FieldSub, Constant, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -15,8 +15,8 @@ export class CallDialog implements IStatement {
 
     const ret = seq("CALL DIALOG",
                     Constant,
-                    opts(exporting),
-                    opts(importing));
+                    opt(exporting),
+                    opt(importing));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,4 +1,4 @@
-import {alt, pluss, seq, opts, vers, tok, Expression, optPrios, altPrio} from "../combi";
+import {alt, pluss, seq, opt, vers, tok, Expression, optPrios, altPrio} from "../combi";
 import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation, SQLCase} from ".";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
@@ -9,7 +9,7 @@ import {SQLPath} from "./sql_path";
 
 export class SQLFieldList extends Expression {
   public getRunnable(): IStatementRunnable {
-    const comma = opts(vers(Version.v740sp05, ","));
+    const comma = opt(vers(Version.v740sp05, ","));
 
     const abap = vers(Version.v740sp05, seq(tok(WAt), SimpleFieldChain));
 

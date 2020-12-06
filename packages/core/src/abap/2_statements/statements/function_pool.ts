@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, opts, pers} from "../combi";
+import {str, seq, opt, pers} from "../combi";
 import {Field, MessageClass, Integer} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -12,7 +12,7 @@ export class FunctionPool implements IStatement {
 
     return seq("FUNCTION-POOL",
                Field,
-               opts(pers(message, line, no)));
+               opt(pers(message, line, no)));
   }
 
 }

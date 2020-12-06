@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opts, pluss} from "../combi";
+import {verNot, seq, opt, pluss} from "../combi";
 import {Source, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,8 +13,8 @@ export class LogPoint implements IStatement {
 
     const ret = seq("LOG-POINT ID",
                     NamespaceSimpleName,
-                    opts(subkey),
-                    opts(fields));
+                    opt(subkey),
+                    opt(fields));
 
     return verNot(Version.Cloud, ret);
   }
