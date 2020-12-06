@@ -1,4 +1,4 @@
-import {seq, vers, tok, pluss, opt, optPrio, altPrio, Expression} from "../combi";
+import {seq, vers, tok, plus, opt, optPrio, altPrio, Expression} from "../combi";
 import {FieldSub, ClassName, Constant, Source, MethodCallChain, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -10,7 +10,7 @@ export class Compare extends Expression {
 
     const list = seq(tok(WParenLeft),
                      val,
-                     pluss(seq(",", val)),
+                     plus(seq(",", val)),
                      tok(ParenRightW));
 
     const inn = seq(optPrio("NOT"), "IN", altPrio(Source, list));

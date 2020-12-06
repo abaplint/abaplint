@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, pluss} from "../combi";
+import {verNot, seq, opt, plus} from "../combi";
 import {Source, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,7 +9,7 @@ export class LogPoint implements IStatement {
   public getMatcher(): IStatementRunnable {
     const subkey = seq("SUBKEY", Source);
 
-    const fields = seq("FIELDS", pluss(Source));
+    const fields = seq("FIELDS", plus(Source));
 
     const ret = seq("LOG-POINT ID",
                     NamespaceSimpleName,

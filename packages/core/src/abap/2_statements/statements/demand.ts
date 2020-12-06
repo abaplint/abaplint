@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, pluss} from "../combi";
+import {verNot, seq, opt, plus} from "../combi";
 import {Target, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class Demand implements IStatement {
     const messages = seq("MESSAGES INTO", Target);
 
     const ret = seq("DEMAND",
-                    pluss(field),
+                    plus(field),
                     "FROM CONTEXT",
                     Field,
                     opt(messages));

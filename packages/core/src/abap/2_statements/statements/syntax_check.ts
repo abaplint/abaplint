@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, per, pluss, optPrio} from "../combi";
+import {verNot, seq, alt, per, plus, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -37,7 +37,7 @@ export class SyntaxCheck implements IStatement {
                            trace,
                            dump,
                            filter,
-                           pluss(id)));
+                           plus(id)));
 
     const dynpro = seq("DYNPRO",
                        Source,

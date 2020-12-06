@@ -1,4 +1,4 @@
-import {seq, opt, tok, alt, altPrio, pluss, vers, Expression} from "../combi";
+import {seq, opt, tok, alt, altPrio, plus, vers, Expression} from "../combi";
 import {BracketLeftW, WBracketRight, WBracketRightW} from "../../1_lexer/tokens";
 import {Dynamic, Source, SimpleName, ComponentChainSimple} from ".";
 import {Version} from "../../../version";
@@ -6,7 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class TableExpression extends Expression {
   public getRunnable(): IStatementRunnable {
-    const fields = pluss(seq(altPrio(ComponentChainSimple, Dynamic), "=", Source));
+    const fields = plus(seq(altPrio(ComponentChainSimple, Dynamic), "=", Source));
     const key = seq("KEY", SimpleName);
     const index = seq("INDEX", Source);
     const ret = seq(tok(BracketLeftW),

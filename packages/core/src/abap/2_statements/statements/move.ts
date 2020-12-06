@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, tok, vers, seq, alt, altPrio, pluss} from "../combi";
+import {verNot, tok, vers, seq, alt, altPrio, plus} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
@@ -27,7 +27,7 @@ export class Move implements IStatement {
     const equals = altPrio(altPrio("=", "?="), calcAssign);
 
 // todo, move "?=" to CAST?
-    const eq = seq(pluss(seq(Target, equals)), Source);
+    const eq = seq(plus(seq(Target, equals)), Source);
 
     return altPrio(move, eq);
   }

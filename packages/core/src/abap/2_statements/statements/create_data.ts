@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, pluss, vers} from "../combi";
+import {seq, alt, opt, plus, vers} from "../combi";
 import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -36,7 +36,7 @@ export class CreateData implements IStatement {
     const emptyKey = vers(Version.v740sp02, "EMPTY KEY");
     const def = seq(opt(uniq), alt("DEFAULT KEY", emptyKey));
 
-    const kdef = seq(opt(uniq), "KEY", alt(pluss(Field), Dynamic));
+    const kdef = seq(opt(uniq), "KEY", alt(plus(Field), Dynamic));
 
     const key = seq("WITH", alt(def, kdef));
 

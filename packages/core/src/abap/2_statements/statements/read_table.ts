@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, altPrio, optPrio, pluss, per, vers} from "../combi";
+import {seq, alt, opt, altPrio, optPrio, plus, per, vers} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -7,7 +7,7 @@ import {Version} from "../../../version";
 export class ReadTable implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const comparing = seq("COMPARING", alt(pluss(FieldSub), Dynamic));
+    const comparing = seq("COMPARING", alt(plus(FieldSub), Dynamic));
 
     const index = seq("INDEX", Source);
 
@@ -15,10 +15,10 @@ export class ReadTable implements IStatement {
                         "=",
                         Source);
 
-    const components = seq(alt(Field, Dynamic), "COMPONENTS", pluss(compare));
+    const components = seq(alt(Field, Dynamic), "COMPONENTS", plus(compare));
 
     const key = seq(altPrio("WITH KEY", "WITH TABLE KEY"),
-                    alt(pluss(compare),
+                    alt(plus(compare),
                         components,
                         seq(optPrio("="), Source)));
 
@@ -32,7 +32,7 @@ export class ReadTable implements IStatement {
                      comparing,
                      "CASTING",
                      "TRANSPORTING ALL FIELDS",
-                     seq("TRANSPORTING", altPrio(Dynamic, pluss(Field))),
+                     seq("TRANSPORTING", altPrio(Dynamic, plus(Field))),
                      "BINARY SEARCH");
 
     return seq("READ TABLE",

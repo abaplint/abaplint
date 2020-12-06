@@ -944,10 +944,10 @@ export function star(first: InputType): IStatementRunnable {
 export function starPrio(first: InputType): IStatementRunnable {
   return new StarPrioroity(map(first));
 }
-export function pluss(first: InputType): IStatementRunnable {
+export function plus(first: InputType): IStatementRunnable {
   return new Plus(map(first));
 }
-export function plusPrios(first: InputType): IStatementRunnable {
+export function plusPrio(first: InputType): IStatementRunnable {
   return new PlusPriority(map(first));
 }
 export function vers(version: Version, first: InputType): IStatementRunnable {

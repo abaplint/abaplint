@@ -1,4 +1,4 @@
-import {seq, opt, pluss, Expression} from "../combi";
+import {seq, opt, plus, Expression} from "../combi";
 import {ClassName, Field, MethodParamName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,7 +8,7 @@ export class EventHandler extends Expression {
                       Field,
                       "OF",
                       ClassName,
-                      opt(seq("IMPORTING", pluss(MethodParamName))));
+                      opt(seq("IMPORTING", plus(MethodParamName))));
 
     return event;
   }

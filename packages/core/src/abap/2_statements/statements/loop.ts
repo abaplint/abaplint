@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, vers, altPrio, optPrio, tok, per, pluss} from "../combi";
+import {seq, alt, opt, vers, altPrio, optPrio, tok, per, plus} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName, ComponentName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
@@ -13,7 +13,7 @@ export class Loop implements IStatement {
 
     const groupSize = seq(ComponentName, "=", "GROUP SIZE");
 
-    const components = seq(tok(WParenLeftW), pluss(alt(ComponentCompare, groupSize)), tok(WParenRightW));
+    const components = seq(tok(WParenLeftW), plus(alt(ComponentCompare, groupSize)), tok(WParenRightW));
 
     const into = seq(opt("REFERENCE"), "INTO", Target);
 

@@ -1,4 +1,4 @@
-import {seq, opt, alt, vers, pluss, Expression} from "../combi";
+import {seq, opt, alt, vers, plus, Expression} from "../combi";
 import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, InlineLoopDefinition, Target} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -20,6 +20,6 @@ export class For extends Expression {
 
     const f = seq("FOR", alt(itera, inn, groups));
 
-    return vers(Version.v740sp05, pluss(seq(f, opt(Let))));
+    return vers(Version.v740sp05, plus(seq(f, opt(Let))));
   }
 }

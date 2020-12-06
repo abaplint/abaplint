@@ -1,4 +1,4 @@
-import {seq, opt, alt, vers, per, Expression, altPrio, pluss, plusPrios, optPrio} from "../combi";
+import {seq, opt, alt, vers, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -18,8 +18,8 @@ export class TypeTable extends Expression {
                     altPrio(defaultKey, emptyKey,
                             seq(opt(alt("SORTED", "HASHED")),
                                 "KEY",
-                                alt(seq(Field, "COMPONENTS", pluss(FieldSub)),
-                                    pluss(FieldSub)))));
+                                alt(seq(Field, "COMPONENTS", plus(FieldSub)),
+                                    plus(FieldSub)))));
 
     const normal1 = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                         "TABLE",
@@ -37,7 +37,7 @@ export class TypeTable extends Expression {
     const range = seq("RANGE OF", TypeName);
 
     const typetable = seq(alt(normal1, range),
-                          opt(per(header, initial, plusPrios(key))));
+                          opt(per(header, initial, plusPrio(key))));
 
     const occurs = seq("OCCURS", Integer);
 

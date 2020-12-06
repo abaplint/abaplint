@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, pluss, optPrio} from "../combi";
+import {verNot, str, seq, alt, opt, per, plus, optPrio} from "../combi";
 import {Source, Color} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class ModifyLine implements IStatement {
                      Source);
 
     const from = seq("FROM", Source);
-    const value = seq("FIELD VALUE", pluss(seq(Source, optPrio(from))));
+    const value = seq("FIELD VALUE", plus(seq(Source, optPrio(from))));
     const format = seq("FIELD FORMAT", Source, opt(form));
     const lineValue = seq("LINE VALUE FROM", Source);
     const index = seq("INDEX", Source);

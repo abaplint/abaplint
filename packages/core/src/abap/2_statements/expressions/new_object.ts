@@ -1,4 +1,4 @@
-import {alt, tok, seq, Expression, vers, opt, pluss} from "../combi";
+import {alt, tok, seq, Expression, vers, opt, plus} from "../combi";
 import {Version} from "../../../version";
 import {TypeNameOrInfer, Source, ParameterListS} from ".";
 import {ParenLeftW, WParenLeftW, WParenRightW, WParenRight} from "../../1_lexer/tokens";
@@ -6,7 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class NewObject extends Expression {
   public getRunnable(): IStatementRunnable {
-    const lines = pluss(seq(tok(WParenLeftW), Source, tok(WParenRightW)));
+    const lines = plus(seq(tok(WParenLeftW), Source, tok(WParenRightW)));
 
     const rparen = alt(tok(WParenRightW), tok(WParenRight));
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, pluss} from "../combi";
+import {verNot, seq, plus} from "../combi";
 import {Source, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,7 +10,7 @@ export class Supply implements IStatement {
     const field = seq(Field, "=", Source);
 
     const ret = seq("SUPPLY",
-                    pluss(field),
+                    plus(field),
                     "TO CONTEXT",
                     Field);
 
