@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, altPrios} from "../combi";
+import {seq, altPrio} from "../combi";
 import {MethodCallChain, MethodSource, MethodCallBody} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class Call implements IStatement {
 
     const call = seq("CALL METHOD", MethodSource, MethodCallBody);
 
-    return altPrios(call, MethodCallChain);
+    return altPrio(call, MethodCallChain);
   }
 
 }

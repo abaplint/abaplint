@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, optPrios, seq, alt, pers, pluss, altPrios} from "../combi";
+import {str, optPrios, seq, alt, pers, pluss, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -16,7 +16,7 @@ export class Concatenate implements IStatement {
     const lines = seq("LINES OF", Source);
 
     return seq("CONCATENATE",
-               altPrios(lines, sourc),
+               altPrio(lines, sourc),
                "INTO",
                Target,
                optPrios(options));

@@ -1,4 +1,4 @@
-import {seq, altPrios, starPrios, tok, Expression} from "../combi";
+import {seq, altPrio, starPrios, tok, Expression} from "../combi";
 import {ClassName, Field, ComponentName} from ".";
 import {StaticArrow, Dash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,7 +9,7 @@ export class SimpleFieldChain extends Expression {
     const chain = starPrios(seq(tok(Dash), ComponentName));
 
     const clas = seq(ClassName, tok(StaticArrow), AttributeName);
-    const start = altPrios(clas, Field);
+    const start = altPrio(clas, Field);
 
     const ret = seq(start, chain);
 

@@ -1,4 +1,4 @@
-import {seq, altPrios, optPrios, Expression} from "../combi";
+import {seq, altPrio, optPrios, Expression} from "../combi";
 import {PassByValue, FormParamType, FormParamName, NamespaceSimpleName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,7 +8,7 @@ export class FormParam extends Expression {
     const val = seq(PassByValue, optPrios(FormParamType));
     const field = seq(FormParamName, optPrios(FormParamType));
 
-    const ret = altPrios(stru, val, field);
+    const ret = altPrio(stru, val, field);
 
     return ret;
   }

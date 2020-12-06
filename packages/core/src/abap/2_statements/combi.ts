@@ -926,7 +926,7 @@ export function seq(first: InputType, second: InputType, ...rest: InputType[]): 
 export function alt(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new Alternative([map(first), map(second)].concat(rest.map(map)));
 }
-export function altPrios(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
+export function altPrio(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new AlternativePriority([map(first), map(second)].concat(rest.map(map)));
 }
 export function opts(first: InputType): IStatementRunnable {

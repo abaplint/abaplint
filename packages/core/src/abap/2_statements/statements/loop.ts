@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opts, vers, altPrios, optPrios, tok, pers, pluss} from "../combi";
+import {seq, alt, opts, vers, altPrio, optPrios, tok, pers, pluss} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName, ComponentName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
@@ -34,7 +34,7 @@ export class Loop implements IStatement {
 
     const to = seq("TO", Source);
 
-    const usingKey = seq("USING KEY", altPrios(SimpleName, Dynamic));
+    const usingKey = seq("USING KEY", altPrio(SimpleName, Dynamic));
 
     const options = pers(target, from, to, where, usingKey, group);
 

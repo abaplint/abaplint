@@ -1,4 +1,4 @@
-import {altPrios, tok, seq, Expression, vers, optPrios} from "../combi";
+import {altPrio, tok, seq, Expression, vers, optPrios} from "../combi";
 import {Version} from "../../../version";
 import {TypeNameOrInfer, Source} from ".";
 import {ParenLeftW, WParenRightW, WParenRight} from "../../1_lexer/tokens";
@@ -7,7 +7,7 @@ import {Let} from "./let";
 
 export class Cast extends Expression {
   public getRunnable(): IStatementRunnable {
-    const rparen = altPrios(tok(WParenRightW), tok(WParenRight));
+    const rparen = altPrio(tok(WParenRightW), tok(WParenRight));
 
     const cast = seq("CAST", TypeNameOrInfer, tok(ParenLeftW), optPrios(Let), Source, rparen);
 

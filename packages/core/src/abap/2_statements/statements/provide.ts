@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, pluss, altPrios} from "../combi";
+import {verNot, seq, pluss, altPrio} from "../combi";
 import {Field, Source, Target, ConstantOrFieldSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,7 +8,7 @@ export class Provide implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const list = pluss(altPrios("*", Field));
+    const list = pluss(altPrio("*", Field));
 
     const fields = seq("FIELDS",
                        list,
@@ -23,10 +23,10 @@ export class Provide implements IStatement {
                        "AND",
                        Field);
 
-    const fieldList = altPrios(seq(list, "FROM", Source), list);
+    const fieldList = altPrio(seq(list, "FROM", Source), list);
 
     const ret = seq("PROVIDE",
-                    altPrios(pluss(fields), pluss(fieldList)),
+                    altPrio(pluss(fields), pluss(fieldList)),
                     "BETWEEN",
                     ConstantOrFieldSource,
                     "AND",

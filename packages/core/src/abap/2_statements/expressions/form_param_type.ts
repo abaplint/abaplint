@@ -1,4 +1,4 @@
-import {seq, opts, optPrios, altPrios, alt, Expression} from "../combi";
+import {seq, opts, optPrios, altPrio, alt, Expression} from "../combi";
 import {Constant, FieldChain, TypeName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -18,6 +18,6 @@ export class FormParamType extends Expression {
     const like = seq("LIKE", optPrios(alt("REF TO", "LINE OF")),
                      FieldChain);
 
-    return alt(seq("TYPE", altPrios(tabseq, ret)), like);
+    return alt(seq("TYPE", altPrio(tabseq, ret)), like);
   }
 }
