@@ -558,7 +558,6 @@ class WordSequence implements IStatementRunnable {
   }
 
   public listKeywords(): string[] {
-// todo, will this work?
     return [this.stri.toString()];
   }
 
@@ -584,11 +583,17 @@ class WordSequence implements IStatementRunnable {
 }
 
 export abstract class Expression implements IStatementRunnable {
+  private runnable: IStatementRunnable | undefined = undefined;
+
   public run(r: Result[]): Result[] {
     let results: Result[] = [];
 
+    if (this.runnable === undefined) {
+      this.runnable = this.getRunnable();
+    }
+
     for (const input of r) {
-      const temp = this.getRunnable().run([input]);
+      const temp = this.runnable.run([input]);
 
       const moo: Result[] = [];
       for (const t of temp) {
@@ -670,13 +675,14 @@ class Permutation implements IStatementRunnable {
   public run(r: Result[]): Result[] {
     let result: Result[] = [];
 
+    const copy = this.list.slice();
     for (let index = 0; index < this.list.length; index++) {
       const temp = this.list[index].run(r);
       if (temp.length !== 0) {
 // match
         result = result.concat(temp);
 
-        const left = this.list;
+        const left = copy;
         left.splice(index, 1);
         if (left.length === 1) {
           result = result.concat(left[0].run(temp));
@@ -930,7 +936,6 @@ export function ver(version: Version, first: IStatementRunnable): IStatementRunn
 export function verNot(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new VersNot(version, first);
 }
-
 
 const singletons: {[index: string]: Expression} = {};
 type input = (new () => Expression) | string | IStatementRunnable;

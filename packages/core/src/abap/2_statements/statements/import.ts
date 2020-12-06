@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, regex, per, plus, tok} from "../combi";
+import {verNot, str, seqs, opt, alt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {Version} from "../../../version";
@@ -8,31 +8,31 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Import implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const dto = seq(str("TO"), new Target());
-    const client = seq(str("CLIENT"), new Source());
-    const id = seq(str("ID"), new Source());
-    const using = seq(str("USING"), new Source());
+    const dto = seqs("TO", Target);
+    const client = seqs("CLIENT", Source);
+    const id = seqs("ID", Source);
+    const using = seqs("USING", Source);
 
-    const cluster = seq(new NamespaceSimpleName(),
-                        tok(ParenLeft),
-                        regex(/^[\w$%\^]{2}$/),
-                        tok(ParenRightW));
+    const cluster = seqs(NamespaceSimpleName,
+                         tok(ParenLeft),
+                         regex(/^[\w$%\^]{2}$/),
+                         tok(ParenRightW));
 
-    const buffer = seq(str("DATA BUFFER"), new Source());
-    const memory = seq(str("MEMORY ID"), new Source());
-    const table = seq(str("INTERNAL TABLE"), new Source());
-    const shared = seq(alt(str("SHARED MEMORY"), str("SHARED BUFFER")), cluster, per(dto, client, id));
-    const database = seq(str("DATABASE"), cluster, per(dto, client, id, using));
+    const buffer = seqs("DATA BUFFER", Source);
+    const memory = seqs("MEMORY ID", Source);
+    const table = seqs("INTERNAL TABLE", Source);
+    const shared = seqs(alt(str("SHARED MEMORY"), str("SHARED BUFFER")), cluster, per(dto, client, id));
+    const database = seqs("DATABASE", cluster, per(dto, client, id, using));
 
     const source = alt(buffer, memory, database, table, shared);
 
-    const to = plus(seq(new ComponentChainSimple(),
-                        alt(str("TO"), str("INTO")),
-                        new Target()));
+    const to = plus(seqs(ComponentChainSimple,
+                         alt(str("TO"), str("INTO")),
+                         Target));
 
-    const toeq = plus(seq(alt(new ComponentChainSimple(), new FieldSymbol()),
-                          str("="),
-                          new Target()));
+    const toeq = plus(seqs(alt(new ComponentChainSimple(), new FieldSymbol()),
+                           "=",
+                           Target));
 
     const target = alt(toeq,
                        to,
@@ -44,11 +44,11 @@ export class Import implements IStatement {
                         str("IN CHAR-TO-HEX MODE"),
                         str("IGNORING STRUCTURE BOUNDARIES"),
                         str("ACCEPTING TRUNCATION"),
-                        seq(str("REPLACEMENT CHARACTER"), new Source()),
-                        seq(str("CODE PAGE INTO"), new Source()),
-                        seq(str("ENDIAN INTO"), new Source()));
+                        seqs("REPLACEMENT CHARACTER", Source),
+                        seqs("CODE PAGE INTO", Source),
+                        seqs("ENDIAN INTO", Source));
 
-    const ret = seq(str("IMPORT"), target, str("FROM"), source, opt(options));
+    const ret = seqs("IMPORT", target, "FROM", source, opt(options));
 
     return verNot(Version.Cloud, ret);
   }
