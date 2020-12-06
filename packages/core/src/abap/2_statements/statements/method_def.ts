@@ -1,6 +1,6 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
-import {str, seq, alt, altPrio, ver, regex as reg, plusPrio, optPrio} from "../combi";
+import {str, seqs, alt, altPrio, ver, regex as reg, plusPrio, optPrio} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, NamespaceSimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,27 +8,27 @@ export class MethodDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const exceptions = seq(str("EXCEPTIONS"), plusPrio(new NamespaceSimpleName()));
+    const exceptions = seqs("EXCEPTIONS", plusPrio(new NamespaceSimpleName()));
 
-    const def = ver(Version.v740sp08, seq(str("DEFAULT"), altPrio(str("FAIL"), str("IGNORE"))));
+    const def = ver(Version.v740sp08, seqs("DEFAULT", altPrio(str("FAIL"), str("IGNORE"))));
 
-    const parameters = seq(optPrio(altPrio(seq(new Abstract(), optPrio(str("FOR TESTING"))), str("FINAL"), str("FOR TESTING"), def)),
-                           optPrio(new MethodDefImporting()),
-                           optPrio(new MethodDefExporting()),
-                           optPrio(new MethodDefChanging()),
-                           optPrio(new MethodDefReturning()),
-                           optPrio(alt(new MethodDefRaising(), exceptions)));
+    const parameters = seqs(optPrio(altPrio(seqs(Abstract, optPrio(str("FOR TESTING"))), str("FINAL"), str("FOR TESTING"), def)),
+                            optPrio(new MethodDefImporting()),
+                            optPrio(new MethodDefExporting()),
+                            optPrio(new MethodDefChanging()),
+                            optPrio(new MethodDefReturning()),
+                            optPrio(alt(new MethodDefRaising(), exceptions)));
 
 // todo, this is only from version something
-    const tableFunction = seq(str("FOR TABLE FUNCTION"), reg(/^\w+?$/));
+    const tableFunction = seqs("FOR TABLE FUNCTION", reg(/^\w+?$/));
 
-    const ret = seq(altPrio(str("CLASS-METHODS"), str("METHODS")),
-                    new MethodName(),
-                    alt(seq(optPrio(new Abstract()), new EventHandler()),
-                        parameters,
-                        tableFunction,
-                        str("NOT AT END OF MODE"),
-                        optPrio(new Redefinition())));
+    const ret = seqs(altPrio(str("CLASS-METHODS"), str("METHODS")),
+                     MethodName,
+                     alt(seqs(optPrio(new Abstract()), EventHandler),
+                         parameters,
+                         tableFunction,
+                         str("NOT AT END OF MODE"),
+                         optPrio(new Redefinition())));
 
     return ret;
   }

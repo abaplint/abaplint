@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, per, optPrio, altPrio, ver} from "../combi";
+import {seqs, opt, alt, per, optPrio, altPrio, ver} from "../combi";
 import {Target, Source, ExceptionName, MessageSource, ConstantOrFieldSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -7,27 +7,27 @@ import {Version} from "../../../version";
 export class Message implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const like = seq(str("DISPLAY LIKE"), new Source());
-    const into = seq(str("INTO"), new Target());
-    const raising = seq(str("RAISING"), new ExceptionName());
+    const like = seqs("DISPLAY LIKE", Source);
+    const into = seqs("INTO", Target);
+    const raising = seqs("RAISING", ExceptionName);
 
     const options = per(like, into, raising);
 
-    const type = seq(str("TYPE"), new Source());
+    const type = seqs("TYPE", Source);
 
     const sou = altPrio(options, new Source());
     const sourc = alt(sou,
-                      seq(new Source(), sou),
-                      seq(new Source(), new Source(), sou),
-                      seq(new Source(), new Source(), new Source(), options));
+                      seqs(Source, sou),
+                      seqs(Source, Source, sou),
+                      seqs(Source, Source, Source, options));
 
-    const mwith = seq(str("WITH"), new Source(), opt(sourc));
+    const mwith = seqs("WITH", Source, opt(sourc));
 
-    const foo = seq(new MessageSource(), opt(options), opt(mwith));
+    const foo = seqs(MessageSource, opt(options), opt(mwith));
     const s = alt(ver(Version.v740sp02, new Source()), new ConstantOrFieldSource());
-    const text = seq(s, type, optPrio(like), optPrio(raising));
+    const text = seqs(s, type, optPrio(like), optPrio(raising));
 
-    const ret = seq(str("MESSAGE"), altPrio(foo, text));
+    const ret = seqs("MESSAGE", altPrio(foo, text));
 
     return ret;
   }

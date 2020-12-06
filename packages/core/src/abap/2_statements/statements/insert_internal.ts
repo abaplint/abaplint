@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, per, ver, altPrio} from "../combi";
+import {str, seqs, alt, opt, per, ver, altPrio} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Source, Dynamic, SimpleSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,33 +8,33 @@ export class InsertInternal implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const target = alt(new Source(), new Dynamic());
-    const assigning = seq(str("ASSIGNING"), new FSTarget());
-    const ref = seq(str("REFERENCE INTO"), new Target());
-    const index = seq(str("INDEX"), new Source());
+    const assigning = seqs("ASSIGNING", FSTarget);
+    const ref = seqs("REFERENCE INTO", Target);
+    const index = seqs("INDEX", Source);
     const initial = str("INITIAL LINE");
-    const into = seq(str("INTO"), opt(str("TABLE")), new Target());
+    const into = seqs("INTO", opt(str("TABLE")), Target);
 
-    const to = seq(str("TO"), new Source());
+    const to = seqs("TO", Source);
 
-    const from = seq(str("FROM"),
-                     new Source(),
-                     opt(to));
+    const from = seqs("FROM",
+                      Source,
+                      opt(to));
 
     const foo = per(into,
                     ref,
                     index,
                     assigning);
 
-    const lines = seq(str("LINES OF"),
-                      target,
-                      opt(from));
+    const lines = seqs("LINES OF",
+                       target,
+                       opt(from));
 
     const src = alt(ver(Version.v740sp02, new Source()), new SimpleSource());
 
-    const tab = seq(str("TABLE"), new Source());
+    const tab = seqs("TABLE", Source);
 
-    const ret = seq(str("INSERT"),
-                    altPrio(tab, seq(altPrio(initial, lines, src), foo)));
+    const ret = seqs("INSERT",
+                     altPrio(tab, seqs(altPrio(initial, lines, src), foo)));
 
     return ret;
   }
