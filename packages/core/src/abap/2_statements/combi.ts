@@ -942,9 +942,11 @@ export function starPrio(first: IStatementRunnable): IStatementRunnable {
   return new StarPrioroity(first);
 }
 */
+/*
 export function plus(first: IStatementRunnable): IStatementRunnable {
   return new Plus(first);
 }
+*/
 export function plusPrio(first: IStatementRunnable): IStatementRunnable {
   return new PlusPriority(first);
 }
@@ -996,4 +998,7 @@ export function stars(first: input): IStatementRunnable {
 }
 export function starPrios(first: input): IStatementRunnable {
   return new StarPrioroity(map(first));
+}
+export function pluss(first: input): IStatementRunnable {
+  return new Plus(map(first));
 }

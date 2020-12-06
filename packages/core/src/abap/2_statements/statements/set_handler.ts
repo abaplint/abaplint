@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, optPrios, altPrios, plus} from "../combi";
+import {seqs, optPrios, altPrios, pluss} from "../combi";
 import {Source, MethodSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,7 +11,7 @@ export class SetHandler implements IStatement {
     const fo = seqs("FOR", altPrios("ALL INSTANCES", Source));
 
     const ret = seqs("SET HANDLER",
-                     plus(new MethodSource()),
+                     pluss(MethodSource),
                      optPrios(fo),
                      optPrios(activation));
 

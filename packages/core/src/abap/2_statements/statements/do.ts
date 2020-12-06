@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {opts, seqs, pers, plus} from "../combi";
+import {opts, seqs, pers, pluss} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -18,7 +18,7 @@ export class Do implements IStatement {
 
     const times = seqs(Source, "TIMES");
 
-    return seqs("DO", opts(pers(plus(vary), times)));
+    return seqs("DO", opts(pers(pluss(vary), times)));
   }
 
 }

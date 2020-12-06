@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opts, pers, alts, plus, optPrios} from "../combi";
+import {verNot, str, seqs, opts, pers, alts, pluss, optPrios} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -34,7 +34,7 @@ export class Submit implements IStatement {
     const dest = seqs("DESTINATION", Source);
     const language = seqs("LANGUAGE", Source);
 
-    const perm = pers(plus(awith),
+    const perm = pers(pluss(awith),
                       selectionTable,
                       spool,
                       lineSize,

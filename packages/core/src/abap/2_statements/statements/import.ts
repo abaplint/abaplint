@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, opts, alts, regex, pers, plus, tok} from "../combi";
+import {verNot, seqs, opts, alts, regex, pers, pluss, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {Version} from "../../../version";
@@ -26,18 +26,14 @@ export class Import implements IStatement {
 
     const source = alts(buffer, memory, database, table, shared);
 
-    const to = plus(seqs(ComponentChainSimple,
-                         alts("TO", "INTO"),
-                         Target));
+    const to = pluss(seqs(ComponentChainSimple, alts("TO", "INTO"), Target));
 
-    const toeq = plus(seqs(alts(ComponentChainSimple, FieldSymbol),
-                           "=",
-                           Target));
+    const toeq = pluss(seqs(alts(ComponentChainSimple, FieldSymbol), "=", Target));
 
     const target = alts(toeq,
                         to,
                         Dynamic,
-                        plus(new Target()));
+                        pluss(Target));
 
     const options = pers("ACCEPTING PADDING",
                          "IGNORING CONVERSION ERRORS",

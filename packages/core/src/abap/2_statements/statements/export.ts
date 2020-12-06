@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alts, altPrios, opts, regex, pers, plus, tok} from "../combi";
+import {seqs, alts, altPrios, opts, regex, pers, pluss, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -28,7 +28,7 @@ export class Export implements IStatement {
 
     const left = alts(FieldSub, FieldSymbol);
 
-    const source = alts(plus(altPrios(ParameterS, seqs(left, from), left)),
+    const source = alts(pluss(altPrios(ParameterS, seqs(left, from), left)),
                         Dynamic);
 
     const compression = seqs("COMPRESSION", alts("ON", "OFF"));

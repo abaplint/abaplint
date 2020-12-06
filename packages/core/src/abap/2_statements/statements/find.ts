@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, opts, alts, pers, plus, optPrios} from "../combi";
+import {seqs, opts, alts, pers, pluss, optPrios} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -19,7 +19,7 @@ export class Find implements IStatement {
                          seqs("MATCH LENGTH", Target),
                          seqs("LENGTH", Source),
                          seqs("RESULTS", Target),
-                         seqs("SUBMATCHES", plus(new Target())));
+                         seqs("SUBMATCHES", pluss(Target)));
 
     const sectionLength = seqs("SECTION LENGTH", Source, "OF");
 

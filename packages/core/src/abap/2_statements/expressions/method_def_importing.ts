@@ -1,4 +1,4 @@
-import {seqs, opts, regex as reg, plus, Expression} from "../combi";
+import {seqs, opts, regex as reg, pluss, Expression} from "../combi";
 import {MethodParamOptional} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -7,7 +7,7 @@ export class MethodDefImporting extends Expression {
     const field = reg(/^!?(\/\w+\/)?\w+$/);
 
     return seqs("IMPORTING",
-                plus(new MethodParamOptional()),
+                pluss(MethodParamOptional),
                 opts(seqs("PREFERRED PARAMETER", field)));
   }
 }

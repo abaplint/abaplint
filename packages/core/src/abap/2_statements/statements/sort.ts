@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alts, pers, altPrios, opts, plus, optPrios} from "../combi";
+import {seqs, alts, pers, altPrios, opts, pluss, optPrios} from "../combi";
 import {Target, Dynamic, ComponentChain, SourceFieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,9 +10,9 @@ export class Sort implements IStatement {
 
     const sel = alts(ComponentChain, Dynamic, SourceFieldSymbol);
 
-    const text = str("AS TEXT");
+    const text = "AS TEXT";
 
-    const fields = plus(seqs(sel, optPrios(text), optPrios(order), optPrios(text)));
+    const fields = pluss(seqs(sel, optPrios(text), optPrios(order), optPrios(text)));
 
     const by = seqs("BY", fields);
 

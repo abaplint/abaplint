@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, regex as reg, plus, altPrios} from "../combi";
+import {verNot, seqs, regex as reg, pluss, altPrios} from "../combi";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {Source} from "../expressions/source";
@@ -12,7 +12,7 @@ export class SystemCall implements IStatement {
 
     const objmgr = seqs("OBJMGR CLONE", Source, "TO", Target);
 
-    const ret = seqs("SYSTEM-CALL", altPrios(objmgr, plus(anyy)));
+    const ret = seqs("SYSTEM-CALL", altPrios(objmgr, pluss(anyy)));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, pers, opts, plus} from "../combi";
+import {verNot, seqs, pers, opts, pluss} from "../combi";
 import {Target, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Get implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const fields = seqs("FIELDS", plus(new Field()));
+    const fields = seqs("FIELDS", pluss(Field));
 
     const options = pers("LATE", fields);
 

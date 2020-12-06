@@ -1,4 +1,4 @@
-import {seqs, tok, Expression, str, plus, ver, optPrios, alts} from "../combi";
+import {seqs, tok, Expression, str, pluss, ver, optPrios, alts} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {ComponentName, Source, Field} from ".";
 import {Version} from "../../../version";
@@ -7,7 +7,7 @@ import {ComponentChain} from "./component_chain";
 
 export class CorrespondingBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const mapping = seqs("MAPPING", plus(seqs(ComponentName, "=", ComponentChain)));
+    const mapping = seqs("MAPPING", pluss(seqs(ComponentName, "=", ComponentChain)));
 
     const baseParen = seqs("BASE", tok(WParenLeftW), Source, tok(WParenRightW));
 
@@ -19,7 +19,7 @@ export class CorrespondingBody extends Expression {
       Source,
       optPrios(discarding),
       optPrios(mapping),
-      optPrios(seqs("EXCEPT", alts(plus(new Field()), "*"))),
+      optPrios(seqs("EXCEPT", alts(pluss(Field), "*"))),
     );
   }
 }
