@@ -1,4 +1,4 @@
-import {seqs, opts, alts, str, ver, pers, Expression, altPrios, pluss, plusPrio, optPrios} from "../combi";
+import {seqs, opts, alts, str, ver, pers, Expression, altPrios, pluss, plusPrios, optPrios} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -6,14 +6,12 @@ import {FieldChain} from "./field_chain";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
-    const header = str("WITH HEADER LINE");
+    const header = "WITH HEADER LINE";
     const initial = seqs("INITIAL SIZE", Constant);
 
     const uniqueness = alts("NON-UNIQUE", "UNIQUE");
-    const defaultKey = str("DEFAULT KEY");
+    const defaultKey = "DEFAULT KEY";
     const emptyKey = ver(Version.v740sp02, str("EMPTY KEY"));
-//    const components = seq(str("COMPONENTS"), plus(new FieldSub()));
-//    const named = seq(new Field(), opt(components));
 
     const key = seqs("WITH",
                      opts(uniqueness),
@@ -39,7 +37,7 @@ export class TypeTable extends Expression {
     const range = seqs("RANGE OF", TypeName);
 
     const typetable = seqs(alts(normal1, range),
-                           opts(pers(header, initial, plusPrio(key))));
+                           opts(pers(header, initial, plusPrios(key))));
 
     const occurs = seqs("OCCURS", Integer);
 

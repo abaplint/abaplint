@@ -1,4 +1,4 @@
-import {seqs, optPrios, altPrios, str, tok, regex as reg, Expression, starPrios} from "../combi";
+import {seqs, optPrios, altPrios, tok, regex as reg, Expression, starPrios} from "../combi";
 import {ParenLeft, ParenRightW, Plus} from "../../1_lexer/tokens";
 import {SourceFieldSymbol, ComponentName, ArrowOrDash, SourceField} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class FieldLength extends Expression {
                         altPrios(reg(/^\d+$/), named));
 
     const length = seqs(tok(ParenLeft),
-                        altPrios(normal, str("*")),
+                        altPrios(normal, "*"),
                         tok(ParenRightW));
 
     return length;

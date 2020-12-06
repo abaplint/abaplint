@@ -11,6 +11,6 @@ export class SQLSourceSimple extends Expression {
 
     const at = ver(Version.v740sp05, seqs(tok(WAt), alts(FieldChain, paren)));
 
-    return alts(FieldChain, at, new ConstantString());
+    return alts(FieldChain, at, ConstantString);
   }
 }

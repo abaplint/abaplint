@@ -27,8 +27,8 @@ export class SelectLoop extends Expression {
 // todo, use SQLFieldList instead?
     const fields = alts("*", Dynamic, fieldList);
 
-    const client = str("CLIENT SPECIFIED");
-    const bypass = str("BYPASSING BUFFER");
+    const client = "CLIENT SPECIFIED";
+    const bypass = "BYPASSING BUFFER";
 
     const up = seqs("UP TO", SQLSource, "ROWS");
 

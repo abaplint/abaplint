@@ -947,9 +947,11 @@ export function plus(first: IStatementRunnable): IStatementRunnable {
   return new Plus(first);
 }
 */
+/*
 export function plusPrio(first: IStatementRunnable): IStatementRunnable {
   return new PlusPriority(first);
 }
+*/
 export function ver(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new Vers(version, first);
 }
@@ -958,8 +960,8 @@ export function verNot(version: Version, first: IStatementRunnable): IStatementR
 }
 
 const singletons: {[index: string]: Expression} = {};
-type input = (new () => Expression) | string | IStatementRunnable;
-function map(s: input): IStatementRunnable {
+type InputType = (new () => Expression) | string | IStatementRunnable;
+function map(s: InputType): IStatementRunnable {
   const type = typeof s;
   if (type === "string") {
     return str(s as string);
@@ -975,30 +977,33 @@ function map(s: input): IStatementRunnable {
     return s as IStatementRunnable;
   }
 }
-export function seqs(first: input, second: input, ...rest: input[]): IStatementRunnable {
+export function seqs(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new Sequence([map(first), map(second)].concat(rest.map(map)));
 }
-export function alts(first: input, second: input, ...rest: input[]): IStatementRunnable {
+export function alts(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new Alternative([map(first), map(second)].concat(rest.map(map)));
 }
-export function altPrios(first: input, second: input, ...rest: input[]): IStatementRunnable {
+export function altPrios(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new AlternativePriority([map(first), map(second)].concat(rest.map(map)));
 }
-export function opts(first: input): IStatementRunnable {
+export function opts(first: InputType): IStatementRunnable {
   return new Optional(map(first));
 }
-export function optPrios(first: input): IStatementRunnable {
+export function optPrios(first: InputType): IStatementRunnable {
   return new OptionalPriority(map(first));
 }
-export function pers(first: input, second: input, ...rest: input[]): IStatementRunnable {
+export function pers(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
   return new Permutation([map(first), map(second)].concat(rest.map(map)));
 }
-export function stars(first: input): IStatementRunnable {
+export function stars(first: InputType): IStatementRunnable {
   return new Star(map(first));
 }
-export function starPrios(first: input): IStatementRunnable {
+export function starPrios(first: InputType): IStatementRunnable {
   return new StarPrioroity(map(first));
 }
-export function pluss(first: input): IStatementRunnable {
+export function pluss(first: InputType): IStatementRunnable {
   return new Plus(map(first));
+}
+export function plusPrios(first: InputType): IStatementRunnable {
+  return new PlusPriority(map(first));
 }
