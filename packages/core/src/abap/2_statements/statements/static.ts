@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, opt, per, alt} from "../combi";
+import {seqs, opt, per, alts} from "../combi";
 import * as Expressions from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,9 +10,9 @@ export class Static implements IStatement {
 
     const type = seqs(opt(new Expressions.ConstantFieldLength()), p);
 
-    const ret = seqs(alt(str("STATIC"), str("STATICS")),
+    const ret = seqs(alts("STATIC", "STATICS"),
                      Expressions.DefinitionName,
-                     alt(type, new Expressions.TypeTable()));
+                     alts(type, Expressions.TypeTable));
 
     return ret;
   }

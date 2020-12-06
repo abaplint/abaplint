@@ -1,16 +1,16 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alt} from "../combi";
+import {verNot, seqs, alts} from "../combi";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SetRunTime implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const clock = seqs("CLOCK RESOLUTION", alt(str("LOW"), str("HIGH")));
+    const clock = seqs("CLOCK RESOLUTION", alts("LOW", "HIGH"));
 
-    const analyzer = seqs("ANALYZER", alt(str("ON"), str("OFF")));
+    const analyzer = seqs("ANALYZER", alts("ON", "OFF"));
 
-    const ret = seqs("SET RUN TIME", alt(clock, analyzer));
+    const ret = seqs("SET RUN TIME", alts(clock, analyzer));
 
     return verNot(Version.Cloud, ret);
   }

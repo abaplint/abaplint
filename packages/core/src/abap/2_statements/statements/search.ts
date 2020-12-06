@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, alt, per} from "../combi";
+import {verNot, str, seqs, opt, alts, per} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,7 +11,7 @@ export class Search implements IStatement {
     const ending = seqs("ENDING AT", Source);
     const mark = str("AND MARK");
 
-    const mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
+    const mode = alts("IN BYTE MODE", "IN CHARACTER MODE");
 
     const ret = seqs("SEARCH",
                      Source,

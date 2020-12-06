@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alt, per, opt} from "../combi";
+import {verNot, str, seqs, alts, per, opt} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,7 +8,7 @@ export class NewPage implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const line = seqs("LINE-SIZE", Source);
-    const print = seqs("PRINT", alt(str("OFF"), str("ON")));
+    const print = seqs("PRINT", alts("OFF", "ON"));
     const parameters = seqs("PARAMETERS", Source);
     const destination = seqs("DESTINATION", Source);
     const archive = seqs("ARCHIVE PARAMETERS", Source);
@@ -25,8 +25,8 @@ export class NewPage implements IStatement {
 
     const ret = seqs("NEW-PAGE",
                      opt(per(print,
-                             alt(str("NO-TITLE"), str("WITH-TITLE")),
-                             alt(str("NO-HEADING"), str("WITH-HEADING")),
+                             alts("NO-TITLE", "WITH-TITLE"),
+                             alts("NO-HEADING", "WITH-HEADING"),
                              str("NO DIALOG"),
                              parameters,
                              listAuth,

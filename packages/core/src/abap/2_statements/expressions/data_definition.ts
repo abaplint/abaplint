@@ -1,4 +1,4 @@
-import {str, seqs, alt, opt, per, Expression} from "../combi";
+import {str, seqs, alts, opt, per, Expression} from "../combi";
 import * as Expressions from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -23,7 +23,7 @@ export class DataDefinition extends Expression {
 
     return seqs(Expressions.DefinitionName,
                 opt(new Expressions.ConstantFieldLength()),
-                alt(simple, table));
+                alts(simple, table));
 
   }
 }

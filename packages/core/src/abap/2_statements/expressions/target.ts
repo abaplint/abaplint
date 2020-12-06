@@ -1,4 +1,4 @@
-import {seqs, opt, tok, star, alt, altPrio, Expression} from "../combi";
+import {seqs, opt, tok, star, alts, altPrio, Expression} from "../combi";
 import {TargetField, TargetFieldSymbol, NewObject, InlineData, InlineFS, Arrow, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody, ClassName, Cast, ComponentName} from ".";
 import {InstanceArrow, StaticArrow, Dash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -11,16 +11,16 @@ export class Target extends Expression {
 
     const something = star(altPrio(attr, comp, new TableExpression()));
 
-    const cast = seqs(alt(new Cast(), new NewObject()), Arrow, FieldAll);
+    const cast = seqs(alts(Cast, NewObject), Arrow, FieldAll);
 
     const clas = seqs(ClassName, tok(StaticArrow), AttributeName);
-    const start = alt(clas, new TargetField(), new TargetFieldSymbol(), cast);
+    const start = alts(clas, TargetField, TargetFieldSymbol, cast);
 
     const fields = seqs(opt(new FieldOffset()), opt(new FieldLength()));
 
     const ref = seqs(tok(InstanceArrow), "*");
 
-    const optional = alt(new TableBody(), fields, ref);
+    const optional = alts(TableBody, fields, ref);
 
     return altPrio(new InlineData(), new InlineFS(), seqs(start, something, optional));
   }

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seqs, alt} from "../combi";
+import {verNot, seqs, alts} from "../combi";
 import {Source, Field} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -17,7 +17,7 @@ export class DeleteMemory implements IStatement {
                         ")",
                         id);
 
-    const ret = seqs("DELETE FROM", alt(memory, shared));
+    const ret = seqs("DELETE FROM", alts(memory, shared));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,4 +1,4 @@
-import {seqs, opt, alt, str, ver, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
+import {seqs, opt, alts, str, ver, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,7 +9,7 @@ export class TypeTable extends Expression {
     const header = str("WITH HEADER LINE");
     const initial = seqs("INITIAL SIZE", Constant);
 
-    const uniqueness = alt(str("NON-UNIQUE"), str("UNIQUE"));
+    const uniqueness = alts("NON-UNIQUE", "UNIQUE");
     const defaultKey = str("DEFAULT KEY");
     const emptyKey = ver(Version.v740sp02, str("EMPTY KEY"));
 //    const components = seq(str("COMPONENTS"), plus(new FieldSub()));
@@ -18,18 +18,18 @@ export class TypeTable extends Expression {
     const key = seqs("WITH",
                      opt(uniqueness),
                      altPrio(defaultKey, emptyKey,
-                             seqs(opt(alt(str("SORTED"), str("HASHED"))),
+                             seqs(opt(alts("SORTED", "HASHED")),
                                   "KEY",
-                                  alt(seqs(Field, "COMPONENTS", plus(new FieldSub())),
-                                      plus(new FieldSub())))));
+                                  alts(seqs(Field, "COMPONENTS", plus(new FieldSub())),
+                                       plus(new FieldSub())))));
 
-    const normal1 = seqs(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
+    const normal1 = seqs(opt(alts("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                          "TABLE",
                          opt(str("OF")),
                          opt(str("REF TO")),
                          opt(new TypeName()));
 
-    const likeType = seqs(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
+    const likeType = seqs(opt(alts("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                           "TABLE OF",
                           optPrio(str("REF TO")),
                           opt(new FieldChain()),
@@ -38,18 +38,17 @@ export class TypeTable extends Expression {
 
     const range = seqs("RANGE OF", TypeName);
 
-    const typetable = seqs(alt(normal1, range),
+    const typetable = seqs(alts(normal1, range),
                            opt(per(header, initial, plusPrio(key))));
 
     const occurs = seqs("OCCURS", Integer);
 
     const old = seqs(TypeName,
-                     alt(seqs(occurs, opt(header)),
-                         header));
+                     alts(seqs(occurs, opt(header)), header));
 
     const ret = altPrio(
-      seqs("LIKE", alt(likeType, range)),
-      seqs("TYPE", alt(old, typetable)));
+      seqs("LIKE", alts(likeType, range)),
+      seqs("TYPE", alts(old, typetable)));
 
     return ret;
   }

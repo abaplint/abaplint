@@ -1,4 +1,4 @@
-import {str, seqs, per, alt, ver, Expression} from "../combi";
+import {seqs, per, alts, ver, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -7,58 +7,58 @@ export class StringTemplateFormatting extends Expression {
   public getRunnable(): IStatementRunnable {
 
     // https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapcompute_string_format_options.htm
-    const alphaOptions = alt(str("OUT"),
-                             str("RAW"),
-                             str("IN"),
-                             new Source());
+    const alphaOptions = alts("OUT",
+                              "RAW",
+                              "IN",
+                              Source);
 
-    const alignOptions = alt(str("LEFT"),
-                             str("RIGHT"),
-                             str("CENTER"),
-                             new Source());
+    const alignOptions = alts("LEFT",
+                              "RIGHT",
+                              "CENTER",
+                              Source);
 
-    const dateTimeOptions = alt(str("RAW"),
-                                str("ISO"),
-                                str("USER"),
-                                str("ENVIRONMENT"),
-                                new Source());
+    const dateTimeOptions = alts("RAW",
+                                 "ISO",
+                                 "USER",
+                                 "ENVIRONMENT",
+                                 Source);
 
-    const timeStampOptions = alt(str("SPACE"),
-                                 str("ISO"),
-                                 str("USER"),
-                                 str("ENVIRONMENT"),
-                                 new Source());
+    const timeStampOptions = alts("SPACE",
+                                  "ISO",
+                                  "USER",
+                                  "ENVIRONMENT",
+                                  Source);
 
-    const numberOptions = alt(str("RAW"),
-                              str("USER"),
-                              str("ENVIRONMENT"),
-                              new Source());
+    const numberOptions = alts("RAW",
+                               "USER",
+                               "ENVIRONMENT",
+                               Source);
 
-    const signOptions = alt(str("LEFT"),
-                            str("LEFTPLUS"),
-                            str("LEFTSPACE"),
-                            str("RIGHT"),
-                            str("RIGHTPLUS"),
-                            str("RIGHTSPACE"),
-                            new Source());
+    const signOptions = alts("LEFT",
+                             "LEFTPLUS",
+                             "LEFTSPACE",
+                             "RIGHT",
+                             "RIGHTPLUS",
+                             "RIGHTSPACE",
+                             Source);
 
-    const caseOptions = alt(str("RAW"),
-                            str("UPPER"),
-                            str("LOWER"),
-                            new Source());
+    const caseOptions = alts("RAW",
+                             "UPPER",
+                             "LOWER",
+                             Source);
 
-    const zeroXSDOptions = alt(str("YES"),
-                               str("NO"),
-                               new Source());
+    const zeroXSDOptions = alts("YES",
+                                "NO",
+                                Source);
 
-    const styleOptions = alt(str("SIMPLE"),
-                             str("SIGN_AS_POSTFIX"),
-                             str("SCALE_PRESERVING"),
-                             str("SCIENTIFIC"),
-                             str("SCIENTIFIC_WITH_LEADING_ZERO"),
-                             str("SCALE_PRESERVING_SCIENTIFIC"),
-                             str("ENGINEERING "),
-                             new Source());
+    const styleOptions = alts("SIMPLE",
+                              "SIGN_AS_POSTFIX",
+                              "SCALE_PRESERVING",
+                              "SCIENTIFIC",
+                              "SCIENTIFIC_WITH_LEADING_ZERO",
+                              "SCALE_PRESERVING_SCIENTIFIC",
+                              "ENGINEERING",
+                              Source);
 
     const width = seqs("WIDTH", "=", Source);
     const align = seqs("ALIGN", "=", alignOptions);
@@ -71,17 +71,17 @@ export class StringTemplateFormatting extends Expression {
     const alpha = ver(Version.v740sp02, seqs("ALPHA", "=", alphaOptions));
     const xsd = ver(Version.v740sp02, seqs("XSD", "=", zeroXSDOptions));
 
-    const formatting = alt(seqs("TIME", "=", dateTimeOptions),
-                           seqs("DATE", "=", dateTimeOptions),
-                           seqs("CASE", "=", caseOptions),
-                           seqs("EXPONENT", Source),
-                           seqs("ZERO", "=", zeroXSDOptions),
-                           xsd,
-                           seqs("STYLE", "=", styleOptions),
-                           seqs("CURRENCY", "=", Source),
-                           seqs("COUNTRY", "=", Source),
-                           per(sign, number, decimals, width, pad, alpha, align),
-                           per(timezone, timestamp));
+    const formatting = alts(seqs("TIME", "=", dateTimeOptions),
+                            seqs("DATE", "=", dateTimeOptions),
+                            seqs("CASE", "=", caseOptions),
+                            seqs("EXPONENT", Source),
+                            seqs("ZERO", "=", zeroXSDOptions),
+                            xsd,
+                            seqs("STYLE", "=", styleOptions),
+                            seqs("CURRENCY", "=", Source),
+                            seqs("COUNTRY", "=", Source),
+                            per(sign, number, decimals, width, pad, alpha, align),
+                            per(timezone, timestamp));
 
     return formatting;
   }

@@ -1,11 +1,11 @@
-import {alt, str, seqs, Expression} from "../combi";
+import {alts, seqs, Expression} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLSourceSimple} from "./sql_source_simple";
 
 export class SQLClient extends Expression {
   public getRunnable(): IStatementRunnable {
 // todo, client specified and connection not possible in Cloud
-    const client = alt(str("CLIENT SPECIFIED"), seqs("USING CLIENT", SQLSourceSimple));
+    const client = alts("CLIENT SPECIFIED", seqs("USING CLIENT", SQLSourceSimple));
     return client;
   }
 }

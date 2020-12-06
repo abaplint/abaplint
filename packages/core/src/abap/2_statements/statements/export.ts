@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alt, altPrio, opt, regex, per, plus, tok} from "../combi";
+import {seqs, alts, altPrio, opt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -21,17 +21,17 @@ export class Export implements IStatement {
     const buffer = seqs("DATA BUFFER", Target);
     const memory = seqs("MEMORY ID", Source);
     const table = seqs("INTERNAL TABLE", Target);
-    const shared = seqs(alt(str("SHARED MEMORY"), str("SHARED BUFFER")), cluster, per(from, client, id));
+    const shared = seqs(alts("SHARED MEMORY", "SHARED BUFFER"), cluster, per(from, client, id));
     const database = seqs("DATABASE", cluster, per(from, client, id, using));
 
-    const target = alt(buffer, memory, database, table, shared);
+    const target = alts(buffer, memory, database, table, shared);
 
-    const left = alt(new FieldSub(), new FieldSymbol());
+    const left = alts(FieldSub, FieldSymbol);
 
-    const source = alt(plus(altPrio(new ParameterS(), seqs(left, from), left)),
-                       new Dynamic());
+    const source = alts(plus(altPrio(new ParameterS(), seqs(left, from), left)),
+                        Dynamic);
 
-    const compression = seqs("COMPRESSION", alt(str("ON"), str("OFF")));
+    const compression = seqs("COMPRESSION", alts("ON", "OFF"));
     const hint = seqs("CODE PAGE HINT", Source);
 
     return seqs("EXPORT", source, "TO", target, opt(compression), opt(hint));

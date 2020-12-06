@@ -1,4 +1,4 @@
-import {seqs, per, opt, alt, tok, str, star, Expression, altPrio, optPrio, ver} from "../combi";
+import {seqs, per, opt, alts, tok, str, star, Expression, altPrio, optPrio, ver} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLTarget, SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLTargetTable, SQLOrderBy, SQLHaving, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -8,14 +8,14 @@ import {SQLGroupBy} from "./sql_group_by";
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const intoList = seqs(alt(tok(WParenLeft), tok(WParenLeftW)),
+    const intoList = seqs(alts(tok(WParenLeft), tok(WParenLeftW)),
                           star(seqs(SQLTarget, ",")),
                           SQLTarget,
                           ")");
     const intoSimple = seqs(opt(str("CORRESPONDING FIELDS OF")),
                             SQLTarget);
 
-    const into = alt(seqs("INTO", alt(intoList, intoSimple)), new SQLTargetTable());
+    const into = alts(seqs("INTO", alts(intoList, intoSimple)), SQLTargetTable);
 
     const where = seqs("WHERE", SQLCond);
 

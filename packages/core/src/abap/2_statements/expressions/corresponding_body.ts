@@ -1,4 +1,4 @@
-import {seqs, tok, Expression, str, plus, ver, optPrio, alt} from "../combi";
+import {seqs, tok, Expression, str, plus, ver, optPrio, alts} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {ComponentName, Source, Field} from ".";
 import {Version} from "../../../version";
@@ -19,7 +19,7 @@ export class CorrespondingBody extends Expression {
       Source,
       optPrio(discarding),
       optPrio(mapping),
-      optPrio(seqs("EXCEPT", alt(plus(new Field()), str("*")))),
+      optPrio(seqs("EXCEPT", alts(plus(new Field()), "*"))),
     );
   }
 }

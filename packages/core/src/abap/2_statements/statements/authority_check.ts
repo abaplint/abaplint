@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, alt, plus} from "../combi";
+import {verNot, seqs, opt, alts, plus} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class AuthorityCheck implements IStatement {
 
     const id = seqs("ID",
                     Source,
-                    alt(field, str("DUMMY")));
+                    alts(field, "DUMMY"));
 
     const ret = seqs("AUTHORITY-CHECK OBJECT",
                      Source,

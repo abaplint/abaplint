@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alt, opt, altPrio, optPrio, plus, per, ver} from "../combi";
+import {str, seqs, alts, opt, altPrio, optPrio, plus, per, ver} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -7,7 +7,7 @@ import {Version} from "../../../version";
 export class ReadTable implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const comparing = seqs("COMPARING", alt(plus(new FieldSub()), new Dynamic()));
+    const comparing = seqs("COMPARING", alts(plus(new FieldSub()), Dynamic));
 
     const index = seqs("INDEX", Source);
 
@@ -15,20 +15,20 @@ export class ReadTable implements IStatement {
                          "=",
                          Source);
 
-    const components = seqs(alt(new Field(), new Dynamic()), "COMPONENTS", plus(compare));
+    const components = seqs(alts(Field, Dynamic), "COMPONENTS", plus(compare));
 
     const key = seqs(altPrio(str("WITH KEY"), str("WITH TABLE KEY")),
-                     alt(plus(compare),
-                         components,
-                         seqs(optPrio(str("=")), Source)));
+                     alts(plus(compare),
+                          components,
+                          seqs(optPrio(str("=")), Source)));
 
-    const using = seqs("USING KEY", alt(new Field(), new Dynamic()));
+    const using = seqs("USING KEY", alts(Field, Dynamic));
 
     const from = seqs("FROM", Source);
 
-    const perm = per(alt(index,
-                         key,
-                         from),
+    const perm = per(alts(index,
+                          key,
+                          from),
                      new ReadTableTarget(),
                      using,
                      comparing,
@@ -38,7 +38,7 @@ export class ReadTable implements IStatement {
                      str("BINARY SEARCH"));
 
     return seqs("READ TABLE",
-                alt(ver(Version.v740sp02, new Source()), new BasicSource()),
+                alts(ver(Version.v740sp02, new Source()), BasicSource),
                 opt(perm));
   }
 

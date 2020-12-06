@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, opt, alt, per} from "../combi";
+import {str, seqs, opt, alts, per} from "../combi";
 import {Dynamic, DatabaseTable, SQLSource, DatabaseConnection} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,7 +11,7 @@ export class ModifyDatabase implements IStatement {
 
     const client = str("CLIENT SPECIFIED");
 
-    const target = alt(new DatabaseTable(), new Dynamic());
+    const target = alts(DatabaseTable, Dynamic);
 
     const options = per(new DatabaseConnection(), from, client);
 

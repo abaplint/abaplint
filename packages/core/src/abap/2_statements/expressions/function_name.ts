@@ -1,9 +1,9 @@
-import {alt, Expression} from "../combi";
+import {alts, Expression} from "../combi";
 import {Constant, FieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class FunctionName extends Expression {
   public getRunnable(): IStatementRunnable {
-    return alt(new Constant(), new FieldChain());
+    return alts(Constant, FieldChain);
   }
 }

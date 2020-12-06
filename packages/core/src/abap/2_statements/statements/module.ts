@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alt, opt} from "../combi";
+import {verNot, seqs, alts, opt} from "../combi";
 import {FormName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,7 +9,7 @@ export class Module implements IStatement {
   public getMatcher(): IStatementRunnable {
     const ret = seqs("MODULE",
                      FormName,
-                     opt(alt(str("INPUT"), str("OUTPUT"))));
+                     opt(alts("INPUT", "OUTPUT")));
 
     return verNot(Version.Cloud, ret);
   }

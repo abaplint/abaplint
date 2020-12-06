@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seqs, alt, per} from "../combi";
+import {seqs, alts, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -28,7 +28,7 @@ export class Convert implements IStatement {
 
     const inv = seqs("INVERTED-DATE", Source, "INTO DATE", Target);
 
-    return seqs("CONVERT", alt(time, date, inv));
+    return seqs("CONVERT", alts(time, date, inv));
   }
 
 }

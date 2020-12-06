@@ -1,4 +1,4 @@
-import {seqs, alt, Expression, tok} from "../combi";
+import {seqs, alts, Expression, tok} from "../combi";
 import * as Expressions from ".";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -15,9 +15,7 @@ export class MethodParam extends Expression {
                        Expressions.MethodParamName,
                        tok(ParenRightW));
 
-    const fieldsOrValue = seqs(alt(value,
-                                   ref,
-                                   new Expressions.MethodParamName()),
+    const fieldsOrValue = seqs(alts(value, ref, Expressions.MethodParamName),
                                Expressions.TypeParam);
 
     return fieldsOrValue;

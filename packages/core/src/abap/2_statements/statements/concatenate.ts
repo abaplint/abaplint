@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, optPrio, seqs, alt, per, plus, altPrio} from "../combi";
+import {str, optPrio, seqs, alts, per, plus, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -7,7 +7,7 @@ export class Concatenate implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const mode = seqs("IN",
-                      alt(str("BYTE"), str("CHARACTER")),
+                      alts("BYTE", "CHARACTER"),
                       "MODE");
     const blanks = str("RESPECTING BLANKS");
     const sep = seqs("SEPARATED BY", Source);

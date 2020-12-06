@@ -1,4 +1,4 @@
-import {seqs, per, opt, alt, tok, str, ver, star, Expression, optPrio} from "../combi";
+import {seqs, per, opt, alts, tok, str, ver, star, Expression, optPrio} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
@@ -10,24 +10,22 @@ import {SQLTarget} from "./sql_target";
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const intoList = seqs(alt(tok(WParenLeft), tok(WParenLeftW)),
+    const intoList = seqs(alts(tok(WParenLeft), tok(WParenLeftW)),
                           star(seqs(SQLTarget, ",")),
                           SQLTarget,
                           ")");
     const intoSimple = seqs(opt(str("CORRESPONDING FIELDS OF")), SQLTarget);
 
-    const into = seqs("INTO", alt(intoList, intoSimple));
+    const into = seqs("INTO", alts(intoList, intoSimple));
 
     const where = seqs("WHERE", SQLCond);
 
     const comma = opt(ver(Version.v740sp05, str(",")));
-    const someField = seqs(alt(new SQLFieldName(), new SQLAggregation()), comma);
+    const someField = seqs(alts(SQLFieldName, SQLAggregation), comma);
     const fieldList = seqs(star(someField), SQLFieldName, comma, star(someField));
 
 // todo, use SQLFieldList instead?
-    const fields = alt(str("*"),
-                       new Dynamic(),
-                       fieldList);
+    const fields = alts("*", Dynamic, fieldList);
 
     const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");
@@ -38,7 +36,7 @@ export class SelectLoop extends Expression {
 
     const from2 = seqs("FROM", DatabaseTable);
 
-    const tab = seqs(SQLTargetTable, alt(pack, seqs(from2, pack), seqs(pack, from2)));
+    const tab = seqs(SQLTargetTable, alts(pack, seqs(from2, pack), seqs(pack, from2)));
 
     const perm = per(new SQLFrom(),
                      where,
@@ -49,7 +47,7 @@ export class SelectLoop extends Expression {
                      bypass,
                      new SQLGroupBy(),
                      new SQLForAllEntries(),
-                     alt(tab, into));
+                     alts(tab, into));
 
     const ret = seqs("SELECT",
                      optPrio(str("DISTINCT")),

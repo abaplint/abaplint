@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, per, alt, plus, optPrio} from "../combi";
+import {verNot, str, seqs, opt, per, alts, plus, optPrio} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,12 +8,12 @@ export class Submit implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const sign = seqs("SIGN", Source);
-    const eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("GE"), str("LE"), str("INCL"));
+    const eq = alts("=", "EQ", "IN", "NE", "CP", "GE", "LE", "INCL");
     const compare = seqs(eq, Source);
     const between = seqs("BETWEEN", Source, "AND", Source);
     const selectionTable = seqs("WITH SELECTION-TABLE", Source);
-    const awith = seqs("WITH", Field, alt(compare, between), optPrio(sign));
-    const prog = alt(new NamespaceSimpleName(), new Dynamic());
+    const awith = seqs("WITH", Field, alts(compare, between), optPrio(sign));
+    const prog = alts(NamespaceSimpleName, Dynamic);
     const job = seqs("VIA JOB", Source, "NUMBER", Source);
     const exporting = str("EXPORTING LIST TO MEMORY");
     const spool = seqs("SPOOL PARAMETERS", Source);

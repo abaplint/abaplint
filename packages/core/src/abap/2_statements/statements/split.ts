@@ -1,12 +1,12 @@
 import {IStatement} from "./_statement";
-import {str, seqs, altPrio, plus, alt, opt} from "../combi";
+import {seqs, altPrio, plus, alts, opt} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Split implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const mode = seqs("IN", alt(str("CHARACTER"), str("BYTE")), str("MODE"));
+    const mode = seqs("IN", alts("CHARACTER", "BYTE"), "MODE");
 
     const into = altPrio(seqs("TABLE", Target, opt(mode)),
                          plus(new Target()));

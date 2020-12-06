@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, alt} from "../combi";
+import {verNot, str, seqs, opt, alts} from "../combi";
 import {TargetFieldSymbol, Source, Dynamic} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,7 +10,7 @@ export class AssignLocalCopy implements IStatement {
 
     const ret = seqs(str("ASSIGN LOCAL COPY OF"),
                      opt(seqs("INITIAL", opt(str("LINE OF")))),
-                     alt(new Source(), new Dynamic()),
+                     alts(Source, Dynamic),
                      "TO",
                      TargetFieldSymbol);
 

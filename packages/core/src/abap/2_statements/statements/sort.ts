@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alt, per, altPrio, opt, plus, optPrio} from "../combi";
+import {str, seqs, alts, per, altPrio, opt, plus, optPrio} from "../combi";
 import {Target, Dynamic, ComponentChain, SourceFieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,7 +8,7 @@ export class Sort implements IStatement {
   public getMatcher(): IStatementRunnable {
     const order = altPrio(str("ASCENDING"), str("DESCENDING"));
 
-    const sel = alt(new ComponentChain(), new Dynamic(), new SourceFieldSymbol());
+    const sel = alts(ComponentChain, Dynamic, SourceFieldSymbol);
 
     const text = str("AS TEXT");
 
@@ -18,7 +18,7 @@ export class Sort implements IStatement {
 
     const normal = seqs(Target, opt(per(order, by, str("STABLE"), text)));
 
-    const target = alt(normal, text);
+    const target = alts(normal, text);
 
     return seqs("SORT", target);
   }

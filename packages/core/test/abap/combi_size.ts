@@ -8,7 +8,7 @@ import {Token} from "../../src/abap/1_lexer/tokens/_token";
 import {Result} from "../../src/abap/2_statements/result";
 
 const str  = Combi.str;
-const seq  = Combi.seq;
+const seq  = Combi.seqs;
 const opt  = Combi.opt;
 const star = Combi.star;
 

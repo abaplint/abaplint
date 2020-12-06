@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, alt, opt, per, regex as reg, tok} from "../combi";
+import {verNot, str, seqs, alts, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
 import {Version} from "../../../version";
@@ -11,14 +11,14 @@ export class SelectionScreen implements IStatement {
     const beginBlock = seqs("BEGIN OF BLOCK",
                             BlockName,
                             opt(str("WITH FRAME")),
-                            opt(seqs("TITLE", alt(new InlineField(), new TextElement()))),
+                            opt(seqs("TITLE", alts(InlineField, TextElement))),
                             opt(str("NO INTERVALS")));
     const endBlock = seqs("END OF BLOCK", BlockName);
 
     const nesting = seqs("NESTING LEVEL", Source);
 
-    const scrOptions = per(seqs("AS", alt(str("WINDOW"), str("SUBSCREEN"))),
-                           seqs("TITLE", alt(new InlineField(), new TextElement())),
+    const scrOptions = per(seqs("AS", alts("WINDOW", "SUBSCREEN")),
+                           seqs("TITLE", alts(InlineField, TextElement)),
                            str("NO INTERVALS"),
                            nesting);
 
@@ -40,20 +40,20 @@ export class SelectionScreen implements IStatement {
                            visible);
 
     const position = seqs(opt(reg(/^\/?[\d\w]+$/)),
-                          alt(tok(ParenLeft), tok(WParenLeft)),
+                          alts(tok(ParenLeft), tok(WParenLeft)),
                           Integer,
-                          alt(tok(ParenRightW), tok(ParenRight)));
+                          alts(tok(ParenRightW), tok(ParenRight)));
 
     const comment = seqs("COMMENT",
                          position,
-                         opt(alt(new InlineField(), new TextElement())),
+                         opt(alts(InlineField, TextElement)),
                          opt(commentOpt));
 
-    const command = seqs("USER-COMMAND", alt(new Field(), new Constant()));
+    const command = seqs("USER-COMMAND", alts(Field, Constant));
 
     const push = seqs("PUSHBUTTON",
                       position,
-                      alt(new InlineField(), new TextElement()),
+                      alts(InlineField, TextElement),
                       command,
                       opt(modif),
                       opt(visible));
@@ -64,7 +64,7 @@ export class SelectionScreen implements IStatement {
                      tok(WParenLeft),
                      Integer,
                      tok(ParenRightW),
-                     alt(new InlineField(), new TextElement()),
+                     alts(InlineField, TextElement),
                      command,
                      opt(def),
                      opt(modif));
@@ -73,15 +73,13 @@ export class SelectionScreen implements IStatement {
 
     const skip = seqs("SKIP", opt(new Integer()));
 
-    const posSymbols = alt(str("POS_LOW"),
-                           str("POS_HIGH"));
+    const posSymbols = alts("POS_LOW", "POS_HIGH");
 
     // number between 1 and 83
     const posIntegers = reg(/^(0?[1-9]|[1234567][0-9]|8[0-3])$/);
 
     const pos = seqs("POSITION",
-                     alt(posIntegers,
-                         posSymbols));
+                     alts(posIntegers, posSymbols));
 
     const incl = seqs("INCLUDE BLOCKS", BlockName);
 
@@ -98,23 +96,23 @@ export class SelectionScreen implements IStatement {
     const iso = seqs("INCLUDE SELECT-OPTIONS", Field);
 
     const ret = seqs("SELECTION-SCREEN",
-                     alt(comment,
-                         func,
-                         skip,
-                         pos,
-                         incl,
-                         iso,
-                         push,
-                         tab,
-                         uline,
-                         beginBlock,
-                         tabbed,
-                         endBlock,
-                         beginLine,
-                         endLine,
-                         param,
-                         beginScreen,
-                         endScreen));
+                     alts(comment,
+                          func,
+                          skip,
+                          pos,
+                          incl,
+                          iso,
+                          push,
+                          tab,
+                          uline,
+                          beginBlock,
+                          tabbed,
+                          endBlock,
+                          beginLine,
+                          endLine,
+                          param,
+                          beginScreen,
+                          endScreen));
 
     return verNot(Version.Cloud, ret);
   }

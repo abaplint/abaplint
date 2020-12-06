@@ -1,4 +1,4 @@
-import {seqs, tok, Expression, opt, alt} from "../combi";
+import {seqs, tok, Expression, opt, alts} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {MessageTypeAndNumber, MessageClass, Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,6 +10,6 @@ export class MessageSource extends Expression {
 
     const mess1 = seqs("ID", Source, "TYPE", Source, "NUMBER", Source);
 
-    return alt(simple, mess1);
+    return alts(simple, mess1);
   }
 }

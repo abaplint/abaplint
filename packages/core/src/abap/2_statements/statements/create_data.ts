@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alt, opt, plus, ver} from "../combi";
+import {str, seqs, alts, opt, plus, ver} from "../combi";
 import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -10,40 +10,40 @@ export class CreateData implements IStatement {
 // todo, similar to DATA or TYPES?
     const area = seqs("AREA HANDLE", Source);
 
-    const type = seqs(alt(str("TYPE"),
-                          str("TYPE REF TO"),
-                          str("TYPE TABLE OF"),
-                          str("TYPE TABLE OF REF TO"),
-                          str("TYPE SORTED TABLE OF"),
-                          str("TYPE HASHED TABLE OF"),
-                          str("TYPE STANDARD TABLE OF"),
-                          str("TYPE LINE OF")),
-                      alt(new TypeName(), new Dynamic()));
+    const type = seqs(alts("TYPE",
+                           "TYPE REF TO",
+                           "TYPE TABLE OF",
+                           "TYPE TABLE OF REF TO",
+                           "TYPE SORTED TABLE OF",
+                           "TYPE HASHED TABLE OF",
+                           "TYPE STANDARD TABLE OF",
+                           "TYPE LINE OF"),
+                      alts(TypeName, Dynamic));
 
-    const like = seqs(alt(str("LIKE"),
-                          str("LIKE HASHED TABLE OF"),
-                          str("LIKE LINE OF"),
-                          str("LIKE STANDARD TABLE OF"),
-                          str("LIKE SORTED TABLE OF"),
-                          str("LIKE TABLE OF"),
-                          str("TYPE HANDLE")),
-                      alt(new Source(), new Dynamic()));
+    const like = seqs(alts("LIKE",
+                           "LIKE HASHED TABLE OF",
+                           "LIKE LINE OF",
+                           "LIKE STANDARD TABLE OF",
+                           "LIKE SORTED TABLE OF",
+                           "LIKE TABLE OF",
+                           "TYPE HANDLE"),
+                      alts(Source, Dynamic));
 
     const length = seqs("LENGTH", Source);
     const initial = seqs("INITIAL SIZE", Source);
     const decimals = seqs("DECIMALS", Source);
-    const uniq = alt(str("UNIQUE"), str("NON-UNIQUE"));
+    const uniq = alts("UNIQUE", "NON-UNIQUE");
     const emptyKey = ver(Version.v740sp02, str("EMPTY KEY"));
-    const def = seqs(opt(uniq), alt(str("DEFAULT KEY"), emptyKey));
+    const def = seqs(opt(uniq), alts("DEFAULT KEY", emptyKey));
 
-    const kdef = seqs(opt(uniq), "KEY", alt(plus(new Field()), new Dynamic()));
+    const kdef = seqs(opt(uniq), "KEY", alts(plus(new Field()), Dynamic));
 
-    const key = seqs("WITH", alt(def, kdef));
+    const key = seqs("WITH", alts(def, kdef));
 
     const ret = seqs("CREATE DATA",
                      Target,
                      opt(area),
-                     opt(alt(type, like)),
+                     opt(alts(type, like)),
                      opt(key),
                      opt(initial),
                      opt(length),

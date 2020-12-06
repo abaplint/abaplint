@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, alt, per, altPrio} from "../combi";
+import {verNot, seqs, opt, alts, per, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -15,7 +15,7 @@ export class Describe implements IStatement {
                        Source,
                        opt(per(tlines, kind, occurs)));
 
-    const mode = seqs("IN", alt(str("BYTE"), str("CHARACTER")), "MODE");
+    const mode = seqs("IN", alts("BYTE", "CHARACTER"), "MODE");
 
     const field = seqs("FIELD",
                        Source,

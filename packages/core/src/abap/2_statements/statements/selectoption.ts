@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, alt, per} from "../combi";
+import {verNot, str, seqs, opt, alts, per} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SelectOption implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const sourc = alt(new Constant(), new FieldChain());
+    const sourc = alts(Constant, FieldChain);
 
     const to = seqs("TO", sourc);
 
@@ -43,7 +43,7 @@ export class SelectOption implements IStatement {
     const ret = seqs("SELECT-OPTIONS",
                      Field,
                      "FOR",
-                     alt(new FieldChain(), new Dynamic()),
+                     alts(FieldChain, Dynamic),
                      opt(options));
 
     return verNot(Version.Cloud, ret);

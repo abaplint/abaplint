@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alt, opt, per, optPrio} from "../combi";
+import {str, seqs, alts, opt, per, optPrio} from "../combi";
 import {Type, Value, Length, Decimals, ConstantFieldLength, DefinitionName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class Constant implements IStatement {
                      opt(new ConstantFieldLength()),
                      per(new Type(), new Value(), new Decimals(), new Length()));
 
-    const ret = seqs(alt(str("CONSTANT"), str("CONSTANTS")), def, optPrio(str("%_PREDEFINED")));
+    const ret = seqs(alts("CONSTANT", "CONSTANTS"), def, optPrio(str("%_PREDEFINED")));
 
     return ret;
   }

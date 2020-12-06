@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alt, opt, ver, altPrio, optPrio, tok, per, plus} from "../combi";
+import {str, seqs, alts, opt, ver, altPrio, optPrio, tok, per, plus} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName, ComponentName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
@@ -9,11 +9,11 @@ import {BasicSource} from "../expressions/basic_source";
 export class Loop implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const where = seqs("WHERE", alt(new ComponentCond(), new Dynamic()));
+    const where = seqs("WHERE", alts(ComponentCond, Dynamic));
 
     const groupSize = seqs(ComponentName, "=", "GROUP SIZE");
 
-    const components = seqs(tok(WParenLeftW), plus(alt(new ComponentCompare(), groupSize)), tok(WParenRightW));
+    const components = seqs(tok(WParenLeftW), plus(alts(ComponentCompare, groupSize)), tok(WParenRightW));
 
     const into = seqs(opt(str("REFERENCE")), "INTO", Target);
 
@@ -21,14 +21,14 @@ export class Loop implements IStatement {
 
     const group = ver(Version.v740sp08,
                       seqs("GROUP BY",
-                           alt(new Source(), components),
+                           alts(Source, components),
                            optPrio(str("ASCENDING")),
                            optPrio(str("WITHOUT MEMBERS")),
-                           optPrio(alt(into, assigning))));
+                           optPrio(alts(into, assigning))));
 
-    const target = alt(seqs(alt(into, assigning),
-                            optPrio(str("CASTING"))),
-                       str("TRANSPORTING NO FIELDS"));
+    const target = alts(seqs(alts(into, assigning),
+                             optPrio(str("CASTING"))),
+                        "TRANSPORTING NO FIELDS");
 
     const from = seqs("FROM", Source);
 
@@ -40,7 +40,7 @@ export class Loop implements IStatement {
 
     const at = seqs("AT",
                     opt(ver(Version.v740sp08, str("GROUP"))),
-                    alt(new BasicSource(), ver(Version.v740sp02, new Source())),
+                    alts(BasicSource, ver(Version.v740sp02, new Source())),
                     opt(options));
 
     return seqs("LOOP", opt(at));

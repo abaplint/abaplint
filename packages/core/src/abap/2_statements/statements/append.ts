@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, opt, alt, seqs, altPrio, optPrio, ver} from "../combi";
+import {str, opt, alts, seqs, altPrio, optPrio, ver} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Field, Source, SimpleSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -14,7 +14,7 @@ export class Append implements IStatement {
     const range = seqs(optPrio(seqs("FROM", Source)),
                        optPrio(seqs("TO", Source)));
 
-    const src = alt(ver(Version.v740sp02, new Source()), new SimpleSource());
+    const src = alts(ver(Version.v740sp02, new Source()), SimpleSource);
 
     return seqs("APPEND",
                 altPrio(str("INITIAL LINE"), seqs(optPrio(str("LINES OF")), src)),

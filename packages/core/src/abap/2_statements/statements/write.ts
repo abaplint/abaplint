@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seqs, opt, alt, per, tok, regex as reg, altPrio} from "../combi";
+import {verNot, str, seqs, opt, alts, per, tok, regex as reg, altPrio} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft, ParenRight} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -10,18 +10,18 @@ export class Write implements IStatement {
   public getMatcher(): IStatementRunnable {
 
     const mask = seqs("USING",
-                      alt(str("NO EDIT MASK"),
-                          seqs("EDIT MASK", Source)));
+                      alts("NO EDIT MASK",
+                           seqs("EDIT MASK", Source)));
 
-    const onOff = alt(alt(str("ON"), str("OFF")), seqs("=", FieldSub));
+    const onOff = alts(alts("ON", "OFF"), seqs("=", FieldSub));
 
-    const dateFormat = alt(str("DD/MM/YY"),
-                           str("MM/DD/YY"),
-                           str("DD/MM/YYYY"),
-                           str("MM/DD/YYYY"),
-                           str("DDMMYY"),
-                           str("MMDDYY"),
-                           str("YYMMDD"));
+    const dateFormat = alts("DD/MM/YY",
+                            "MM/DD/YY",
+                            "DD/MM/YYYY",
+                            "MM/DD/YYYY",
+                            "DDMMYY",
+                            "MMDDYY",
+                            "YYMMDD");
 
     const to = seqs("TO", Target);
     const options = per(mask,
@@ -56,13 +56,13 @@ export class Write implements IStatement {
                         seqs("CURRENCY", Source),
                         str("NO-SIGN"));
 
-    const post = seqs(alt(new FieldChain(), reg(/^[\d]+$/), reg(/^\*$/)), alt(tok(ParenRightW), tok(ParenRight)));
+    const post = seqs(alts(FieldChain, reg(/^[\d]+$/), reg(/^\*$/)), alts(tok(ParenRightW), tok(ParenRight)));
     const wlength = seqs(tok(WParenLeft), post);
     const length = seqs(tok(ParenLeft), post);
 
 // todo, move to expression?
-    const complex = alt(wlength,
-                        seqs(alt(new FieldChain(), reg(/^\/?[\w\d]+$/), str("/")), opt(length)));
+    const complex = alts(wlength,
+                         seqs(alts(FieldChain, reg(/^\/?[\w\d]+$/), str("/")), opt(length)));
 
     const at = seqs(opt(str("AT")), complex);
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seqs, alt, opt, tok} from "../combi";
+import {str, seqs, alts, opt, tok} from "../combi";
 import {DatabaseTable, Dynamic, SQLSource, Select, DatabaseConnection} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class InsertDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const target = alt(new DatabaseTable(), new Dynamic());
+    const target = alts(DatabaseTable, Dynamic);
 
     const client = str("CLIENT SPECIFIED");
 
@@ -17,11 +17,11 @@ export class InsertDatabase implements IStatement {
                    opt(new DatabaseConnection()),
                    "FROM",
                    opt(str("TABLE")),
-                   alt(new SQLSource(), sub),
+                   alts(SQLSource, sub),
                    opt(str("ACCEPTING DUPLICATE KEYS")));
 
     const from = seqs(target,
-                      opt(alt(f, client, new DatabaseConnection())));
+                      opt(alts(f, client, DatabaseConnection)));
 
     const into = seqs("INTO",
                       target,
@@ -30,7 +30,7 @@ export class InsertDatabase implements IStatement {
                       "VALUES",
                       SQLSource);
 
-    return seqs("INSERT", alt(from, into));
+    return seqs("INSERT", alts(from, into));
   }
 
 }

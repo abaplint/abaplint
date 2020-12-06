@@ -893,13 +893,16 @@ export function str(s: string): IStatementRunnable {
     return new Word(s);
   }
 }
-
+/*
 export function seq(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Sequence([first, second].concat(rest));
 }
+*/
+/*
 export function alt(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Alternative([first, second].concat(rest));
 }
+*/
 export function altPrio(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new AlternativePriority([first, second].concat(rest));
 }
@@ -957,4 +960,7 @@ function map(s: input): IStatementRunnable {
 }
 export function seqs(first: input, second: input, ...rest: input[]): IStatementRunnable {
   return new Sequence([map(first), map(second)].concat(rest.map(map)));
+}
+export function alts(first: input, second: input, ...rest: input[]): IStatementRunnable {
+  return new Alternative([map(first), map(second)].concat(rest.map(map)));
 }
