@@ -19,6 +19,7 @@ export * from "./compare";
 export * from "./component_chain_simple";
 export * from "./component_chain";
 export * from "./component_compare";
+export * from "./component_compare_simple";
 export * from "./component_cond";
 export * from "./component_name";
 export * from "./concatenated_constant";
