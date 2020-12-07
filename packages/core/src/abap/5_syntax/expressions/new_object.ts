@@ -63,7 +63,8 @@ export class NewObject {
 
   private parameters(node: ExpressionNode, obj: ObjectReferenceType, scope: CurrentScope, filename: string) {
 
-    const def = scope.findObjectDefinition(obj.getIdentifier().getName());
+    const name = obj.getIdentifier().getName();
+    const def = scope.findObjectDefinition(name);
     const helper = new ObjectOriented(scope);
     // eslint-disable-next-line prefer-const
     let {method} = helper.searchMethodName(def, "CONSTRUCTOR");
@@ -74,13 +75,13 @@ export class NewObject {
       // single unnamed parameter
       const type = this.defaultImportingType(method);
       if (type === undefined) {
-        throw new Error("NewObject, no default importing parameter found");
+        throw new Error("NewObject, no default importing parameter found for constructor, " + name);
       }
       new Source().runSyntax(source, scope, filename, type);
     } else if (parameters) {
       // parameters with names
       if (method === undefined) {
-        throw new Error("NewObject, no parameters for constructor found");
+        throw new Error("NewObject, no parameters for constructor found, " + name);
       }
       new MethodParameters().checkExporting(parameters, scope, method, filename);
     }
