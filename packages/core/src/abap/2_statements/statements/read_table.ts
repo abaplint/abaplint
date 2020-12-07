@@ -11,10 +11,10 @@ export class ReadTable implements IStatement {
 
     const index = seq("INDEX", Source);
 
-    const components = seq(alt(Field, Dynamic), "COMPONENTS", plus(ComponentCompareSimple));
+    const components = seq(alt(Field, Dynamic), "COMPONENTS", ComponentCompareSimple);
 
     const key = seq(altPrio("WITH KEY", "WITH TABLE KEY"),
-                    alt(plus(ComponentCompareSimple),
+                    alt(ComponentCompareSimple,
                         components,
                         seq(optPrio("="), Source)));
 
