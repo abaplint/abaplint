@@ -4,6 +4,6 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class ParameterListExceptions extends Expression {
   public getRunnable(): IStatementRunnable {
-    return plus(new ParameterException());
+    return plus(ParameterException);
   }
 }

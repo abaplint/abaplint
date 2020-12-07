@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per} from "../combi";
+import {verNot, seq, opt, alt, per} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,24 +7,24 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SelectOption implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const sourc = alt(new Constant(), new FieldChain());
+    const sourc = alt(Constant, FieldChain);
 
-    const to = seq(str("TO"), sourc);
+    const to = seq("TO", sourc);
 
-    const def = seq(str("DEFAULT"),
+    const def = seq("DEFAULT",
                     sourc,
                     opt(to));
 
-    const option = seq(str("OPTION"), new Field());
-    const sign = seq(str("SIGN"), new Field());
+    const option = seq("OPTION", Field);
+    const sign = seq("SIGN", Field);
 
-    const memory = seq(str("MEMORY ID"), new SimpleSource());
+    const memory = seq("MEMORY ID", SimpleSource);
 
-    const match = seq(str("MATCHCODE OBJECT"), new Field());
+    const match = seq("MATCHCODE OBJECT", Field);
 
-    const modif = seq(str("MODIF ID"), new Modif());
+    const modif = seq("MODIF ID", Modif);
 
-    const visible = seq(str("VISIBLE LENGTH"), new Source());
+    const visible = seq("VISIBLE LENGTH", Source);
 
     const options = per(def,
                         option,
@@ -33,17 +33,17 @@ export class SelectOption implements IStatement {
                         match,
                         visible,
                         modif,
-                        str("NO DATABASE SELECTION"),
-                        str("LOWER CASE"),
-                        str("NO-EXTENSION"),
-                        str("NO INTERVALS"),
-                        str("NO-DISPLAY"),
-                        str("OBLIGATORY"));
+                        "NO DATABASE SELECTION",
+                        "LOWER CASE",
+                        "NO-EXTENSION",
+                        "NO INTERVALS",
+                        "NO-DISPLAY",
+                        "OBLIGATORY");
 
-    const ret = seq(str("SELECT-OPTIONS"),
-                    new Field(),
-                    str("FOR"),
-                    alt(new FieldChain(), new Dynamic()),
+    const ret = seq("SELECT-OPTIONS",
+                    Field,
+                    "FOR",
+                    alt(FieldChain, Dynamic),
                     opt(options));
 
     return verNot(Version.Cloud, ret);

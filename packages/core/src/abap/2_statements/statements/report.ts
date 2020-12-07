@@ -8,15 +8,15 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Report implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const more = seq(tok(ParenLeft), new Integer(), tok(ParenRightW));
+    const more = seq(tok(ParenLeft), Integer, tok(ParenRightW));
     const heading = str("NO STANDARD PAGE HEADING");
-    const size = seq(str("LINE-SIZE"), new Integer());
-    const count = seq(str("LINE-COUNT"), new Integer(), opt(more));
-    const message = seq(str("MESSAGE-ID"), new MessageClass());
-    const database = seq(str("USING DATABASE"), new Field());
+    const size = seq("LINE-SIZE", Integer);
+    const count = seq("LINE-COUNT", Integer, opt(more));
+    const message = seq("MESSAGE-ID", MessageClass);
+    const database = seq("USING DATABASE", Field);
 
-    const ret = seq(str("REPORT"),
-                    opt(new ReportName()),
+    const ret = seq("REPORT",
+                    opt(ReportName),
                     opt(per(heading, size, count, database, message)));
 
     return verNot(Version.Cloud, ret);

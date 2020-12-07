@@ -6,8 +6,8 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLTarget extends Expression {
   public getRunnable(): IStatementRunnable {
-    const at = ver(Version.v740sp05, seq(alt(tok(WAt), tok(At)), new Target()));
+    const at = ver(Version.v740sp05, seq(alt(tok(WAt), tok(At)), Target));
 
-    return alt(new Target(), at);
+    return alt(Target, at);
   }
 }

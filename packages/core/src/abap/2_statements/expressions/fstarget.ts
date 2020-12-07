@@ -4,6 +4,6 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class FSTarget extends Expression {
   public getRunnable(): IStatementRunnable {
-    return alt(new InlineFS(), new TargetFieldSymbol());
+    return alt(InlineFS, TargetFieldSymbol);
   }
 }

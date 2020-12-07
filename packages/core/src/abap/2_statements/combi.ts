@@ -558,7 +558,6 @@ class WordSequence implements IStatementRunnable {
   }
 
   public listKeywords(): string[] {
-// todo, will this work?
     return [this.stri.toString()];
   }
 
@@ -584,11 +583,17 @@ class WordSequence implements IStatementRunnable {
 }
 
 export abstract class Expression implements IStatementRunnable {
+  private runnable: IStatementRunnable | undefined = undefined;
+
   public run(r: Result[]): Result[] {
     let results: Result[] = [];
 
+    if (this.runnable === undefined) {
+      this.runnable = this.getRunnable();
+    }
+
     for (const input of r) {
-      const temp = this.getRunnable().run([input]);
+      const temp = this.runnable.run([input]);
 
       const moo: Result[] = [];
       for (const t of temp) {
@@ -670,13 +675,14 @@ class Permutation implements IStatementRunnable {
   public run(r: Result[]): Result[] {
     let result: Result[] = [];
 
+    const copy = this.list.slice();
     for (let index = 0; index < this.list.length; index++) {
       const temp = this.list[index].run(r);
       if (temp.length !== 0) {
 // match
         result = result.concat(temp);
 
-        const left = this.list;
+        const left = copy;
         left.splice(index, 1);
         if (left.length === 1) {
           result = result.concat(left[0].run(temp));
@@ -887,45 +893,66 @@ export function str(s: string): IStatementRunnable {
     return new Word(s);
   }
 }
-export function seq(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Sequence([first, second].concat(rest));
-}
-export function alt(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Alternative([first, second].concat(rest));
-}
-export function altPrio(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new AlternativePriority([first, second].concat(rest));
-}
-export function per(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Permutation([first, second].concat(rest));
-}
-export function opt(first: IStatementRunnable): IStatementRunnable {
-  return new Optional(first);
-}
-export function optPrio(first: IStatementRunnable): IStatementRunnable {
-  return new OptionalPriority(first);
-}
-export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
-  return new Token(t.name);
-}
-export function star(first: IStatementRunnable): IStatementRunnable {
-  return new Star(first);
-}
-export function starPrio(first: IStatementRunnable): IStatementRunnable {
-  return new StarPrioroity(first);
-}
+
 export function regex(r: RegExp): IStatementRunnable {
   return new Regex(r);
 }
-export function plus(first: IStatementRunnable): IStatementRunnable {
-  return new Plus(first);
+
+export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
+  return new Token(t.name);
 }
-export function plusPrio(first: IStatementRunnable): IStatementRunnable {
-  return new PlusPriority(first);
+
+const singletons: {[index: string]: Expression} = {};
+type InputType = (new () => Expression) | string | IStatementRunnable;
+function map(s: InputType): IStatementRunnable {
+  const type = typeof s;
+  if (type === "string") {
+    return str(s as string);
+  } else if (type === "function") {
+    // @ts-ignore
+    const name = s.name;
+    if (singletons[name] === undefined) {
+      // @ts-ignore
+      singletons[name] = new s();
+    }
+    return singletons[name];
+  } else {
+    return s as IStatementRunnable;
+  }
 }
-export function ver(version: Version, first: IStatementRunnable): IStatementRunnable {
-  return new Vers(version, first);
+export function seq(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
+  return new Sequence([map(first), map(second)].concat(rest.map(map)));
 }
-export function verNot(version: Version, first: IStatementRunnable): IStatementRunnable {
-  return new VersNot(version, first);
+export function alt(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
+  return new Alternative([map(first), map(second)].concat(rest.map(map)));
+}
+export function altPrio(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
+  return new AlternativePriority([map(first), map(second)].concat(rest.map(map)));
+}
+export function opt(first: InputType): IStatementRunnable {
+  return new Optional(map(first));
+}
+export function optPrio(first: InputType): IStatementRunnable {
+  return new OptionalPriority(map(first));
+}
+export function per(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
+  return new Permutation([map(first), map(second)].concat(rest.map(map)));
+}
+export function star(first: InputType): IStatementRunnable {
+  return new Star(map(first));
+}
+export function starPrio(first: InputType): IStatementRunnable {
+  return new StarPrioroity(map(first));
+}
+export function plus(first: InputType): IStatementRunnable {
+  return new Plus(map(first));
+}
+export function plusPrio(first: InputType): IStatementRunnable {
+  return new PlusPriority(map(first));
+}
+export function ver(version: Version, first: InputType): IStatementRunnable {
+  return new Vers(version, map(first));
+}
+export function verNot(version: Version, first: InputType): IStatementRunnable {
+  return new VersNot(version, map(first));
 }

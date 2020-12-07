@@ -1,28 +1,28 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, star} from "../combi";
+import {seq, opt, alt, star} from "../combi";
 import {SQLSource, DatabaseTable, Dynamic, SQLFieldName, SQLCond, DatabaseConnection, SQLClient} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class UpdateDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const target = alt(new DatabaseTable(), new Dynamic());
+    const target = alt(DatabaseTable, Dynamic);
 
-    const param = seq(new SQLFieldName(), str("="), new SQLSource());
-    const parameters = seq(param, star(seq(opt(str(",")), param)));
+    const param = seq(SQLFieldName, "=", SQLSource);
+    const parameters = seq(param, star(seq(opt(","), param)));
 
-    const set = seq(str("SET"),
-                    alt(parameters, new Dynamic()),
-                    opt(seq(str("WHERE"), new SQLCond())));
+    const set = seq("SET",
+                    alt(parameters, Dynamic),
+                    opt(seq("WHERE", SQLCond)));
 
-    const fromTable = seq(str("FROM"),
-                          opt(str("TABLE")),
-                          new SQLSource());
+    const fromTable = seq("FROM",
+                          opt("TABLE"),
+                          SQLSource);
 
-    const ret = seq(str("UPDATE"),
+    const ret = seq("UPDATE",
                     target,
-                    opt(new SQLClient()),
-                    opt(new DatabaseConnection()),
+                    opt(SQLClient),
+                    opt(DatabaseConnection),
                     opt(alt(fromTable, set)));
 
     return ret;

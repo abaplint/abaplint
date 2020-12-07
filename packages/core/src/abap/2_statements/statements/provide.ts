@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, verNot, seq, plus, altPrio} from "../combi";
+import {verNot, seq, plus, altPrio} from "../combi";
 import {Field, Source, Target, ConstantOrFieldSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,29 +8,29 @@ export class Provide implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const list = plus(altPrio(str("*"), new Field()));
+    const list = plus(altPrio("*", Field));
 
-    const fields = seq(str("FIELDS"),
+    const fields = seq("FIELDS",
                        list,
-                       str("FROM"),
-                       new Source(),
-                       str("INTO"),
-                       new Target(),
-                       str("VALID"),
-                       new Field(),
-                       str("BOUNDS"),
-                       new Field(),
-                       str("AND"),
-                       new Field());
+                       "FROM",
+                       Source,
+                       "INTO",
+                       Target,
+                       "VALID",
+                       Field,
+                       "BOUNDS",
+                       Field,
+                       "AND",
+                       Field);
 
-    const fieldList = altPrio(seq(list, str("FROM"), new Source()), list);
+    const fieldList = altPrio(seq(list, "FROM", Source), list);
 
-    const ret = seq(str("PROVIDE"),
+    const ret = seq("PROVIDE",
                     altPrio(plus(fields), plus(fieldList)),
-                    str("BETWEEN"),
-                    new ConstantOrFieldSource(),
-                    str("AND"),
-                    new ConstantOrFieldSource());
+                    "BETWEEN",
+                    ConstantOrFieldSource,
+                    "AND",
+                    ConstantOrFieldSource);
 
     return verNot(Version.Cloud, ret);
   }

@@ -7,27 +7,26 @@ import {IStatementRunnable} from "../statement_runnable";
 export class CallFunction implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const method = new MethodName();
 
-    const starting = seq(str("STARTING NEW TASK"), new BasicSource());
+    const starting = seq("STARTING NEW TASK", BasicSource);
     const update = str("IN UPDATE TASK");
-    const unit = seq(str("UNIT"), new Source());
-    const background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));
-    const calling = seq(str("CALLING"), method, str("ON END OF TASK"));
-    const performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
+    const unit = seq("UNIT", Source);
+    const background = seq("IN BACKGROUND", alt("TASK", unit));
+    const calling = seq("CALLING", MethodName, "ON END OF TASK");
+    const performing = seq("PERFORMING", FormName, "ON END OF TASK");
     const separate = str("AS SEPARATE UNIT");
     const keeping = str("KEEPING LOGICAL UNIT OF WORK");
 
-    const options = per(starting, update, background, new Destination(), calling, performing, separate, keeping);
+    const options = per(starting, update, background, Destination, calling, performing, separate, keeping);
 
-    const dynamic = seq(str("PARAMETER-TABLE"), new Source(),
-                        opt(seq(str("EXCEPTION-TABLE"), new Source())));
+    const dynamic = seq("PARAMETER-TABLE", Source,
+                        opt(seq("EXCEPTION-TABLE", Source)));
 
-    const call = seq(str("CALL"),
-                     alt(str("FUNCTION"), verNot(Version.Cloud, str("CUSTOMER-FUNCTION"))),
-                     new FunctionName(),
+    const call = seq("CALL",
+                     alt("FUNCTION", verNot(Version.Cloud, "CUSTOMER-FUNCTION")),
+                     FunctionName,
                      opt(options),
-                     alt(new FunctionParameters(), dynamic));
+                     alt(FunctionParameters, dynamic));
 
     return call;
   }

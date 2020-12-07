@@ -6,7 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Dynamic extends Expression {
   public getRunnable(): IStatementRunnable {
     const ret = seq(alt(tok(WParenLeft), tok(ParenLeft)),
-                    alt(new FieldChain(), new Constant()),
+                    alt(FieldChain, Constant),
                     alt(tok(ParenRightW), tok(ParenRight)));
 
     return ret;

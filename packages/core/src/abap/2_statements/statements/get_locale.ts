@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt} from "../combi";
+import {verNot, seq, opt} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,12 +7,12 @@ import {IStatementRunnable} from "../statement_runnable";
 export class GetLocale implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const country = seq(str("COUNTRY"), new Target());
+    const country = seq("COUNTRY", Target);
 
-    const modifier = seq(str("MODIFIER"), new Target());
+    const modifier = seq("MODIFIER", Target);
 
-    const ret = seq(str("GET LOCALE LANGUAGE"),
-                    new Target(),
+    const ret = seq("GET LOCALE LANGUAGE",
+                    Target,
                     country,
                     opt(modifier));
 

@@ -6,10 +6,10 @@ import {AttributeName} from "./attribute_name";
 
 export class SimpleFieldChain extends Expression {
   public getRunnable(): IStatementRunnable {
-    const chain = starPrio(seq(tok(Dash), new ComponentName()));
+    const chain = starPrio(seq(tok(Dash), ComponentName));
 
-    const clas = seq(new ClassName(), tok(StaticArrow), new AttributeName());
-    const start = altPrio(clas, new Field());
+    const clas = seq(ClassName, tok(StaticArrow), AttributeName);
+    const start = altPrio(clas, Field);
 
     const ret = seq(start, chain);
 

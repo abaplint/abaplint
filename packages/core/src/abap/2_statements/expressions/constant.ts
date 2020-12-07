@@ -4,9 +4,9 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class Constant extends Expression {
   public getRunnable(): IStatementRunnable {
-    return altPrio(new TextElementString(),
-                   new ConcatenatedConstant(),
-                   new ConstantString(),
-                   new Integer());
+    return altPrio(TextElementString,
+                   ConcatenatedConstant,
+                   ConstantString,
+                   Integer);
   }
 }

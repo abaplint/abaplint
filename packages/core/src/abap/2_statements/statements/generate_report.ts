@@ -9,22 +9,22 @@ export class GenerateReport implements IStatement {
   public getMatcher(): IStatementRunnable {
 
     const without = str("WITHOUT SELECTION-SCREEN");
-    const message = seq(str("MESSAGE"), new Target());
-    const include = seq(str("INCLUDE"), new Target());
-    const line = seq(str("LINE"), new Target());
-    const word = seq(str("WORD"), new Target());
-    const offset = seq(str("OFFSET"), new Target());
+    const message = seq("MESSAGE", Target);
+    const include = seq("INCLUDE", Target);
+    const line = seq("LINE", Target);
+    const word = seq("WORD", Target);
+    const offset = seq("OFFSET", Target);
     const headers = str("WITH PRECOMPILED HEADERS");
     const test = str("WITH TEST CODE");
-    const messageid = seq(str("MESSAGE-ID"), new Target());
-    const trace = seq(str("TRACE-FILE"), new Target());
-    const shortdumpid = seq(str("SHORTDUMP-ID"), new Target());
-    const directory = seq(str("DIRECTORY ENTRY"), new Target());
+    const messageid = seq("MESSAGE-ID", Target);
+    const trace = seq("TRACE-FILE", Target);
+    const shortdumpid = seq("SHORTDUMP-ID", Target);
+    const directory = seq("DIRECTORY ENTRY", Target);
 
     const options = per(without, message, include, trace, line, word, offset, headers, test, messageid, shortdumpid, directory);
 
-    const ret = seq(str("GENERATE REPORT"),
-                    new Source(),
+    const ret = seq("GENERATE REPORT",
+                    Source,
                     opt(options));
 
     return verNot(Version.Cloud, ret);

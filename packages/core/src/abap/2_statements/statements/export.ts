@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, altPrio, opt, regex, per, plus, tok} from "../combi";
+import {seq, alt, altPrio, opt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,33 +8,33 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Export implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const from = seq(str("FROM"), new Source());
-    const client = seq(str("CLIENT"), new Source());
-    const id = seq(str("ID"), new Source());
-    const using = seq(str("USING"), new Source());
+    const from = seq("FROM", Source);
+    const client = seq("CLIENT", Source);
+    const id = seq("ID", Source);
+    const using = seq("USING", Source);
 
-    const cluster = seq(new NamespaceSimpleName(),
+    const cluster = seq(NamespaceSimpleName,
                         tok(ParenLeft),
                         regex(/^[\w$%\^]{2}$/),
                         tok(ParenRightW));
 
-    const buffer = seq(str("DATA BUFFER"), new Target());
-    const memory = seq(str("MEMORY ID"), new Source());
-    const table = seq(str("INTERNAL TABLE"), new Target());
-    const shared = seq(alt(str("SHARED MEMORY"), str("SHARED BUFFER")), cluster, per(from, client, id));
-    const database = seq(str("DATABASE"), cluster, per(from, client, id, using));
+    const buffer = seq("DATA BUFFER", Target);
+    const memory = seq("MEMORY ID", Source);
+    const table = seq("INTERNAL TABLE", Target);
+    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(from, client, id));
+    const database = seq("DATABASE", cluster, per(from, client, id, using));
 
     const target = alt(buffer, memory, database, table, shared);
 
-    const left = alt(new FieldSub(), new FieldSymbol());
+    const left = alt(FieldSub, FieldSymbol);
 
-    const source = alt(plus(altPrio(new ParameterS(), seq(left, from), left)),
-                       new Dynamic());
+    const source = alt(plus(altPrio(ParameterS, seq(left, from), left)),
+                       Dynamic);
 
-    const compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));
-    const hint = seq(str("CODE PAGE HINT"), new Source());
+    const compression = seq("COMPRESSION", alt("ON", "OFF"));
+    const hint = seq("CODE PAGE HINT", Source);
 
-    return seq(str("EXPORT"), source, str("TO"), target, opt(compression), opt(hint));
+    return seq("EXPORT", source, "TO", target, opt(compression), opt(hint));
   }
 
 }

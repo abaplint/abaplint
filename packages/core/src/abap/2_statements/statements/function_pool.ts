@@ -6,12 +6,12 @@ import {IStatementRunnable} from "../statement_runnable";
 export class FunctionPool implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const message = seq(str("MESSAGE-ID"), new MessageClass());
-    const line = seq(str("LINE-SIZE"), new Integer());
+    const message = seq("MESSAGE-ID", MessageClass);
+    const line = seq("LINE-SIZE", Integer);
     const no = str("NO STANDARD PAGE HEADING");
 
-    return seq(str("FUNCTION-POOL"),
-               new Field(),
+    return seq("FUNCTION-POOL",
+               Field,
                opt(per(message, line, no)));
   }
 

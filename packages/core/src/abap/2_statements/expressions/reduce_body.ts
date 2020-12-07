@@ -1,17 +1,17 @@
-import {Expression, seq, opt, str, plus} from "../combi";
+import {Expression, seq, opt, plus} from "../combi";
 import {Let, For, Field, Source, InlineFieldDefinition} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ReduceBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const fields = seq(new Field(), str("="), new Source());
+    const fields = seq(Field, "=", Source);
 
-    const init = seq(str("INIT"), plus(new InlineFieldDefinition()));
+    const init = seq("INIT", plus(InlineFieldDefinition));
 
-    return seq(opt(new Let()),
+    return seq(opt(Let),
                init,
-               new For(),
-               str("NEXT"),
+               For,
+               "NEXT",
                plus(fields));
   }
 }

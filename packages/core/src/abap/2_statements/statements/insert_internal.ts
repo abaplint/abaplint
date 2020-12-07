@@ -7,33 +7,30 @@ import {IStatementRunnable} from "../statement_runnable";
 export class InsertInternal implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const target = alt(new Source(), new Dynamic());
-    const assigning = seq(str("ASSIGNING"), new FSTarget());
-    const ref = seq(str("REFERENCE INTO"), new Target());
-    const index = seq(str("INDEX"), new Source());
+    const target = alt(Source, Dynamic);
+    const assigning = seq("ASSIGNING", FSTarget);
+    const ref = seq("REFERENCE INTO", Target);
+    const index = seq("INDEX", Source);
     const initial = str("INITIAL LINE");
-    const into = seq(str("INTO"), opt(str("TABLE")), new Target());
+    const into = seq("INTO", opt("TABLE"), Target);
 
-    const to = seq(str("TO"), new Source());
+    const to = seq("TO", Source);
 
-    const from = seq(str("FROM"),
-                     new Source(),
+    const from = seq("FROM",
+                     Source,
                      opt(to));
 
-    const foo = per(into,
-                    ref,
-                    index,
-                    assigning);
+    const foo = per(into, ref, index, assigning);
 
-    const lines = seq(str("LINES OF"),
+    const lines = seq("LINES OF",
                       target,
                       opt(from));
 
-    const src = alt(ver(Version.v740sp02, new Source()), new SimpleSource());
+    const src = alt(ver(Version.v740sp02, Source), SimpleSource);
 
-    const tab = seq(str("TABLE"), new Source());
+    const tab = seq("TABLE", Source);
 
-    const ret = seq(str("INSERT"),
+    const ret = seq("INSERT",
                     altPrio(tab, seq(altPrio(initial, lines, src), foo)));
 
     return ret;

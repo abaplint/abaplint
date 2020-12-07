@@ -1,39 +1,36 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, per, plus, optPrio} from "../combi";
+import {seq, opt, alt, per, plus, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Find implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const options = per(str("IGNORING CASE"),
-                        str("RESPECTING CASE"),
-                        str("IN BYTE MODE"),
-                        str("IN CHARACTER MODE"),
-                        seq(str("OF"), new Source()),
-                        seq(str("FROM"), new Source()),
-                        seq(str("TO"), new Source()),
-                        seq(str("MATCH OFFSET"), new Target()),
-                        seq(str("MATCH LINE"), new Target()),
-                        seq(str("MATCH COUNT"), new Target()),
-                        seq(str("MATCH LENGTH"), new Target()),
-                        seq(str("LENGTH"), new Source()),
-                        seq(str("RESULTS"), new Target()),
-                        seq(str("SUBMATCHES"), plus(new Target())));
+    const options = per("IGNORING CASE",
+                        "RESPECTING CASE",
+                        "IN BYTE MODE",
+                        "IN CHARACTER MODE",
+                        seq("OF", Source),
+                        seq("FROM", Source),
+                        seq("TO", Source),
+                        seq("MATCH OFFSET", Target),
+                        seq("MATCH LINE", Target),
+                        seq("MATCH COUNT", Target),
+                        seq("MATCH LENGTH", Target),
+                        seq("LENGTH", Source),
+                        seq("RESULTS", Target),
+                        seq("SUBMATCHES", plus(Target)));
 
-    const sectionLength = seq(str("SECTION LENGTH"), new Source(), str("OF"));
+    const sectionLength = seq("SECTION LENGTH", Source, "OF");
 
-    const before = seq(optPrio(alt(str("TABLE"),
-                                   str("SECTION OFFSET"),
-                                   sectionLength)),
-                       new Source());
+    const before = seq(optPrio(alt("TABLE", "SECTION OFFSET", sectionLength)),
+                       Source);
 
-    const ret = seq(str("FIND"),
-                    opt(alt(str("FIRST OCCURRENCE OF"),
-                            str("ALL OCCURRENCES OF"))),
-                    opt(alt(str("REGEX"), str("SUBSTRING"))),
-                    new Source(),
-                    str("IN"),
+    const ret = seq("FIND",
+                    opt(alt("FIRST OCCURRENCE OF", "ALL OCCURRENCES OF")),
+                    opt(alt("REGEX", "SUBSTRING")),
+                    Source,
+                    "IN",
                     before,
                     opt(options));
 

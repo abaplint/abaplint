@@ -1,4 +1,4 @@
-import {ver, seq, opt, tok, star, alt, optPrio, str, Expression} from "../combi";
+import {ver, seq, opt, tok, star, alt, optPrio, Expression} from "../combi";
 import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from ".";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -8,31 +8,28 @@ export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = new SQLSource();
 
-    const list = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
-                     val,
-                     star(seq(str(","), val)),
-                     str(")"));
+    const list = seq(alt(tok(WParenLeft), tok(WParenLeftW)), val, star(seq(",", val)), ")");
 
-    const subSelect = seq(str("("), new Select(), str(")"));
+    const subSelect = seq("(", Select, ")");
 
-    const inn = seq(opt(str("NOT")),
-                    str("IN"),
-                    alt(new SQLSource(), list, subSelect));
+    const inn = seq(opt("NOT"),
+                    "IN",
+                    alt(SQLSource, list, subSelect));
 
-    const between = seq(str("BETWEEN"), new SQLSource(), str("AND"), new SQLSource());
+    const between = seq("BETWEEN", SQLSource, "AND", SQLSource);
 
-    const like = seq(opt(str("NOT")), str("LIKE"), new SQLSource(), optPrio(seq(str("ESCAPE"), new SQLSource())));
+    const like = seq(opt("NOT"), "LIKE", SQLSource, optPrio(seq("ESCAPE", SQLSource)));
 
-    const nul = seq(str("IS"), opt(str("NOT")), alt(str("NULL"), ver(Version.v753, str("INITIAL"))));
+    const nul = seq("IS", opt("NOT"), alt("NULL", ver(Version.v753, "INITIAL")));
 
     const source = new SQLSource();
 
-    const sub = seq(opt(alt(str("ALL"), str("ANY"), str("SOME"))), subSelect);
+    const sub = seq(opt(alt("ALL", "ANY", "SOME")), subSelect);
 
-    const builtin = ver(Version.v751, seq(alt(str("lower"), str("upper")), tok(ParenLeftW), new SQLFieldName(), tok(WParenRightW)));
+    const builtin = ver(Version.v751, seq(alt("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
-    const rett = seq(alt(new SQLFieldName(), builtin),
-                     alt(seq(new SQLCompareOperator(), alt(source, sub)),
+    const rett = seq(alt(SQLFieldName, builtin),
+                     alt(seq(SQLCompareOperator, alt(source, sub)),
                          inn,
                          like,
                          between,
@@ -40,8 +37,8 @@ export class SQLCompare extends Expression {
 
     const ret = rett;
 
-    const exists = seq(str("EXISTS"), subSelect);
+    const exists = seq("EXISTS", subSelect);
 
-    return alt(ret, new Dynamic(), exists);
+    return alt(ret, Dynamic, exists);
   }
 }

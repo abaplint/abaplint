@@ -7,16 +7,16 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Search implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const starting = seq(str("STARTING AT"), new Source());
-    const ending = seq(str("ENDING AT"), new Source());
+    const starting = seq("STARTING AT", Source);
+    const ending = seq("ENDING AT", Source);
     const mark = str("AND MARK");
 
-    const mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
+    const mode = alt("IN BYTE MODE", "IN CHARACTER MODE");
 
-    const ret = seq(str("SEARCH"),
-                    new Source(),
-                    str("FOR"),
-                    new Source(),
+    const ret = seq("SEARCH",
+                    Source,
+                    "FOR",
+                    Source,
                     opt(per(mode, starting, ending, mark)));
 
     return verNot(Version.Cloud, ret);

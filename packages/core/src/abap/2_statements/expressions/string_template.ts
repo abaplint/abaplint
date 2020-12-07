@@ -8,9 +8,9 @@ export class StringTemplate extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const nest = seq(tok(Tokens.StringTemplateBegin),
-                     new Source(),
-                     optPrio(new StringTemplateFormatting()),
-                     starPrio(seq(tok(Tokens.StringTemplateMiddle), new Source(), optPrio(new StringTemplateFormatting()))),
+                     Source,
+                     optPrio(StringTemplateFormatting),
+                     starPrio(seq(tok(Tokens.StringTemplateMiddle), Source, optPrio(StringTemplateFormatting))),
                      tok(Tokens.StringTemplateEnd));
 
     return ver(Version.v702, altPrio(nest, tok(Tokens.StringTemplate)));

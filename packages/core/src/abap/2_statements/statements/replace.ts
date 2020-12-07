@@ -1,46 +1,45 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, per} from "../combi";
+import {seq, alt, opt, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Replace implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const length = seq(str("LENGTH"), new Source());
-    const offset = seq(str("OFFSET"), new Source());
+    const length = seq("LENGTH", Source);
+    const offset = seq("OFFSET", Source);
 
-    const section = seq(opt(str("IN")),
-                        str("SECTION"),
+    const section = seq(opt("IN"),
+                        "SECTION",
                         per(offset, length),
-                        str("OF"),
-                        new Source());
+                        "OF",
+                        Source);
 
-    const source = seq(opt(str("OF")),
-                       opt(alt(str("REGEX"), str("SUBSTRING"))),
-                       new Source());
+    const source = seq(opt("OF"),
+                       opt(alt("REGEX", "SUBSTRING")),
+                       Source);
 
-    const cas = alt(str("IGNORING CASE"),
-                    str("RESPECTING CASE"));
+    const cas = alt("IGNORING CASE", "RESPECTING CASE");
 
-    const repl = seq(str("REPLACEMENT COUNT"), new Target());
-    const replo = seq(str("REPLACEMENT OFFSET"), new Target());
-    const repll = seq(str("REPLACEMENT LENGTH"), new Target());
-    const repli = seq(str("REPLACEMENT LINE"), new Target());
+    const repl = seq("REPLACEMENT COUNT", Target);
+    const replo = seq("REPLACEMENT OFFSET", Target);
+    const repll = seq("REPLACEMENT LENGTH", Target);
+    const repli = seq("REPLACEMENT LINE", Target);
 
-    const occ = alt(str("ALL OCCURRENCES"),
-                    str("ALL OCCURENCES"),
-                    str("FIRST OCCURENCE"),
-                    str("FIRST OCCURRENCE"));
+    const occ = alt("ALL OCCURRENCES",
+                    "ALL OCCURENCES",
+                    "FIRST OCCURENCE",
+                    "FIRST OCCURRENCE");
 
-    const mode = alt(str("IN CHARACTER MODE"),
-                     str("IN BYTE MODE"));
+    const mode = alt("IN CHARACTER MODE",
+                     "IN BYTE MODE");
 
-    const wit = seq(str("WITH"), new Source());
-    const into = seq(str("INTO"), new Target());
+    const wit = seq("WITH", Source);
+    const into = seq("INTO", Target);
 
-    return seq(str("REPLACE"),
+    return seq("REPLACE",
                per(section, seq(opt(occ), source)),
-               opt(seq(str("IN"), opt(str("TABLE")), new Target())),
+               opt(seq("IN", opt("TABLE"), Target)),
                opt(per(wit, into, cas, mode, repl, replo, repll, repli, length)));
   }
 

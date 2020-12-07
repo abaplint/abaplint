@@ -5,7 +5,7 @@ import {MethodCallParam} from "./method_call_param";
 
 export class MethodCall extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ret = seq(new MethodName(), new MethodCallParam());
+    const ret = seq(MethodName, MethodCallParam);
     return ret;
   }
 }

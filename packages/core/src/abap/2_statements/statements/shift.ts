@@ -1,21 +1,21 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, altPrio, optPrio, per} from "../combi";
+import {seq, opt, altPrio, optPrio, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Shift implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const deleting = seq(str("DELETING"), altPrio(str("LEADING"), str("TRAILING")), new Source());
-    const up = seq(str("UP TO"), new Source());
-    const mode = seq(str("IN"), altPrio(str("CHARACTER"), str("BYTE")), str("MODE"));
-    const dir = altPrio(str("LEFT"), str("RIGHT"));
-    const by = seq(str("BY"), new Source(), optPrio(str("PLACES")));
+    const deleting = seq("DELETING", altPrio("LEADING", "TRAILING"), Source);
+    const up = seq("UP TO", Source);
+    const mode = seq("IN", altPrio("CHARACTER", "BYTE"), "MODE");
+    const dir = altPrio("LEFT", "RIGHT");
+    const by = seq("BY", Source, optPrio("PLACES"));
 
-    const options = per(deleting, up, mode, dir, by, str("CIRCULAR"));
+    const options = per(deleting, up, mode, dir, by, "CIRCULAR");
 
-    return seq(str("SHIFT"),
-               new Target(),
+    return seq("SHIFT",
+               Target,
                opt(options));
   }
 

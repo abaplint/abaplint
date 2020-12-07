@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, ver, altPrio, optPrio, tok, per, plus} from "../combi";
+import {seq, alt, opt, ver, altPrio, optPrio, tok, per, plus} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName, ComponentName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
@@ -9,41 +9,41 @@ import {BasicSource} from "../expressions/basic_source";
 export class Loop implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const where = seq(str("WHERE"), alt(new ComponentCond(), new Dynamic()));
+    const where = seq("WHERE", alt(ComponentCond, Dynamic));
 
-    const groupSize = seq(new ComponentName(), str("="), str("GROUP SIZE"));
+    const groupSize = seq(ComponentName, "=", "GROUP SIZE");
 
-    const components = seq(tok(WParenLeftW), plus(alt(new ComponentCompare(), groupSize)), tok(WParenRightW));
+    const components = seq(tok(WParenLeftW), plus(alt(ComponentCompare, groupSize)), tok(WParenRightW));
 
-    const into = seq(opt(str("REFERENCE")), str("INTO"), new Target());
+    const into = seq(opt("REFERENCE"), "INTO", Target);
 
-    const assigning = seq(str("ASSIGNING"), new FSTarget());
+    const assigning = seq("ASSIGNING", FSTarget);
 
     const group = ver(Version.v740sp08,
-                      seq(str("GROUP BY"),
-                          alt(new Source(), components),
-                          optPrio(str("ASCENDING")),
-                          optPrio(str("WITHOUT MEMBERS")),
+                      seq("GROUP BY",
+                          alt(Source, components),
+                          optPrio("ASCENDING"),
+                          optPrio("WITHOUT MEMBERS"),
                           optPrio(alt(into, assigning))));
 
     const target = alt(seq(alt(into, assigning),
-                           optPrio(str("CASTING"))),
-                       str("TRANSPORTING NO FIELDS"));
+                           optPrio("CASTING")),
+                       "TRANSPORTING NO FIELDS");
 
-    const from = seq(str("FROM"), new Source());
+    const from = seq("FROM", Source);
 
-    const to = seq(str("TO"), new Source());
+    const to = seq("TO", Source);
 
-    const usingKey = seq(str("USING KEY"), altPrio(new SimpleName(), new Dynamic()));
+    const usingKey = seq("USING KEY", altPrio(SimpleName, Dynamic));
 
     const options = per(target, from, to, where, usingKey, group);
 
-    const at = seq(str("AT"),
-                   opt(ver(Version.v740sp08, str("GROUP"))),
-                   alt(new BasicSource(), ver(Version.v740sp02, new Source())),
+    const at = seq("AT",
+                   opt(ver(Version.v740sp08, "GROUP")),
+                   alt(BasicSource, ver(Version.v740sp02, Source)),
                    opt(options));
 
-    return seq(str("LOOP"), opt(at));
+    return seq("LOOP", opt(at));
   }
 
 }

@@ -17,7 +17,7 @@ export class DataReference extends AbstractType {
   }
 
   public toABAP(): string {
-    return "REF TO " + this.type;
+    return "REF TO " + this.type.toABAP();
   }
 
   public isGeneric() {

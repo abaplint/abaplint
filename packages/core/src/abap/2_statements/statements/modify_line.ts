@@ -8,27 +8,27 @@ export class ModifyLine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const form = seq(alt(str("INVERSE"), str("INPUT")),
-                     str("="),
-                     new Source());
+    const form = seq(alt("INVERSE", "INPUT"),
+                     "=",
+                     Source);
 
-    const from = seq(str("FROM"), new Source());
-    const value = seq(str("FIELD VALUE"), plus(seq(new Source(), optPrio(from))));
-    const format = seq(str("FIELD FORMAT"), new Source(), opt(form));
-    const lineValue = seq(str("LINE VALUE FROM"), new Source());
-    const index = seq(str("INDEX"), new Source());
-    const page = seq(str("OF PAGE"), new Source());
+    const from = seq("FROM", Source);
+    const value = seq("FIELD VALUE", plus(seq(Source, optPrio(from))));
+    const format = seq("FIELD FORMAT", Source, opt(form));
+    const lineValue = seq("LINE VALUE FROM", Source);
+    const index = seq("INDEX", Source);
+    const page = seq("OF PAGE", Source);
     const ocp = str("OF CURRENT PAGE");
-    const lineFormat = seq(str("LINE FORMAT"),
-                           alt(str("INPUT OFF"), str("RESET"), str("INTENSIFIED")));
-    const onOff = alt(str("ON"), str("OFF"));
-    const intensified = seq(str("INTENSIFIED"), onOff);
+    const lineFormat = seq("LINE FORMAT",
+                           alt("INPUT OFF", "RESET", "INTENSIFIED"));
+    const onOff = alt("ON", "OFF");
+    const intensified = seq("INTENSIFIED", onOff);
 
-    const options = per(index, value, format, page, lineFormat, lineValue, ocp, intensified, new Color());
+    const options = per(index, value, format, page, lineFormat, lineValue, ocp, intensified, Color);
 
-    const ret = seq(str("MODIFY"),
-                    alt(str("CURRENT LINE"),
-                        seq(str("LINE"), new Source())),
+    const ret = seq("MODIFY",
+                    alt("CURRENT LINE",
+                        seq("LINE", Source)),
                     opt(options));
 
     return verNot(Version.Cloud, ret);

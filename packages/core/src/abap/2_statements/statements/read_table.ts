@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, altPrio, optPrio, plus, per, ver} from "../combi";
+import {seq, alt, opt, altPrio, optPrio, plus, per, ver} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentChain, ReadTableTarget, BasicSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -7,38 +7,36 @@ import {Version} from "../../../version";
 export class ReadTable implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const comparing = seq(str("COMPARING"), alt(plus(new FieldSub()), new Dynamic()));
+    const comparing = seq("COMPARING", alt(plus(FieldSub), Dynamic));
 
-    const index = seq(str("INDEX"), new Source());
+    const index = seq("INDEX", Source);
 
-    const compare = seq(altPrio(new ComponentChain(), new Dynamic()),
-                        str("="),
-                        new Source());
+    const compare = seq(altPrio(ComponentChain, Dynamic),
+                        "=",
+                        Source);
 
-    const components = seq(alt(new Field(), new Dynamic()), str("COMPONENTS"), plus(compare));
+    const components = seq(alt(Field, Dynamic), "COMPONENTS", plus(compare));
 
-    const key = seq(altPrio(str("WITH KEY"), str("WITH TABLE KEY")),
+    const key = seq(altPrio("WITH KEY", "WITH TABLE KEY"),
                     alt(plus(compare),
                         components,
-                        seq(optPrio(str("=")), new Source())));
+                        seq(optPrio("="), Source)));
 
-    const using = seq(str("USING KEY"), alt(new Field(), new Dynamic()));
+    const using = seq("USING KEY", alt(Field, Dynamic));
 
-    const from = seq(str("FROM"), new Source());
+    const from = seq("FROM", Source);
 
-    const perm = per(alt(index,
-                         key,
-                         from),
-                     new ReadTableTarget(),
+    const perm = per(alt(index, key, from),
+                     ReadTableTarget,
                      using,
                      comparing,
-                     str("CASTING"),
-                     str("TRANSPORTING ALL FIELDS"),
-                     seq(str("TRANSPORTING"), altPrio(new Dynamic(), plus(new Field()))),
-                     str("BINARY SEARCH"));
+                     "CASTING",
+                     "TRANSPORTING ALL FIELDS",
+                     seq("TRANSPORTING", altPrio(Dynamic, plus(Field))),
+                     "BINARY SEARCH");
 
-    return seq(str("READ TABLE"),
-               alt(ver(Version.v740sp02, new Source()), new BasicSource()),
+    return seq("READ TABLE",
+               alt(ver(Version.v740sp02, Source), BasicSource),
                opt(perm));
   }
 

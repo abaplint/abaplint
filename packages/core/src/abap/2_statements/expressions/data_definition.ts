@@ -1,29 +1,28 @@
-import {str, seq, alt, opt, per, Expression} from "../combi";
+import {seq, alt, opt, per, Expression} from "../combi";
 import * as Expressions from ".";
-import {Integer} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class DataDefinition extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const occurs = seq(str("OCCURS"), new Integer());
-    const initial = seq(str("INITIAL SIZE"), new Expressions.Integer());
+    const occurs = seq("OCCURS", Expressions.Integer);
+    const initial = seq("INITIAL SIZE", Expressions.Integer);
 
-    const simple = opt(per(str("READ-ONLY"),
+    const simple = opt(per("READ-ONLY",
                            occurs,
                            initial,
-                           str("WITH HEADER LINE"),
-                           new Expressions.Type(),
-                           new Expressions.Length(),
-                           new Expressions.Decimals(),
-                           new Expressions.Value()));
+                           "WITH HEADER LINE",
+                           Expressions.Type,
+                           Expressions.Length,
+                           Expressions.Decimals,
+                           Expressions.Value));
 
-    const table = seq(new Expressions.TypeTable(),
-                      opt(str("READ-ONLY")),
+    const table = seq(Expressions.TypeTable,
+                      opt("READ-ONLY"),
                       opt(initial));
 
-    return seq(new Expressions.DefinitionName(),
-               opt(new Expressions.ConstantFieldLength()),
+    return seq(Expressions.DefinitionName,
+               opt(Expressions.ConstantFieldLength),
                alt(simple, table));
 
   }

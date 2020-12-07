@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, ver, tok} from "../combi";
+import {seq, ver, tok} from "../combi";
 import {SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -8,12 +8,12 @@ import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 export class ReadEntities implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const s = seq(str("READ ENTITIES OF"), new SimpleName(),
-                  str("IN LOCAL MODE"),
-                  str("ENTITY"), new SimpleName(),
-                  str("FIELDS"), tok(WParenLeftW), new SimpleName(), tok(WParenRightW),
-                  str("WITH"), new Source(),
-                  str("RESULT"), new Target());
+    const s = seq("READ ENTITIES OF", SimpleName,
+                  "IN LOCAL MODE",
+                  "ENTITY", SimpleName,
+                  "FIELDS", tok(WParenLeftW), SimpleName, tok(WParenRightW),
+                  "WITH", Source,
+                  "RESULT", Target);
     return ver(Version.v754, s);
   }
 

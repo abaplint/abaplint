@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, regex, per, plus, tok} from "../combi";
+import {verNot, seq, opt, alt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {Version} from "../../../version";
@@ -8,47 +8,43 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Import implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const dto = seq(str("TO"), new Target());
-    const client = seq(str("CLIENT"), new Source());
-    const id = seq(str("ID"), new Source());
-    const using = seq(str("USING"), new Source());
+    const dto = seq("TO", Target);
+    const client = seq("CLIENT", Source);
+    const id = seq("ID", Source);
+    const using = seq("USING", Source);
 
-    const cluster = seq(new NamespaceSimpleName(),
+    const cluster = seq(NamespaceSimpleName,
                         tok(ParenLeft),
                         regex(/^[\w$%\^]{2}$/),
                         tok(ParenRightW));
 
-    const buffer = seq(str("DATA BUFFER"), new Source());
-    const memory = seq(str("MEMORY ID"), new Source());
-    const table = seq(str("INTERNAL TABLE"), new Source());
-    const shared = seq(alt(str("SHARED MEMORY"), str("SHARED BUFFER")), cluster, per(dto, client, id));
-    const database = seq(str("DATABASE"), cluster, per(dto, client, id, using));
+    const buffer = seq("DATA BUFFER", Source);
+    const memory = seq("MEMORY ID", Source);
+    const table = seq("INTERNAL TABLE", Source);
+    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(dto, client, id));
+    const database = seq("DATABASE", cluster, per(dto, client, id, using));
 
     const source = alt(buffer, memory, database, table, shared);
 
-    const to = plus(seq(new ComponentChainSimple(),
-                        alt(str("TO"), str("INTO")),
-                        new Target()));
+    const to = plus(seq(ComponentChainSimple, alt("TO", "INTO"), Target));
 
-    const toeq = plus(seq(alt(new ComponentChainSimple(), new FieldSymbol()),
-                          str("="),
-                          new Target()));
+    const toeq = plus(seq(alt(ComponentChainSimple, FieldSymbol), "=", Target));
 
     const target = alt(toeq,
                        to,
-                       new Dynamic(),
-                       plus(new Target()));
+                       Dynamic,
+                       plus(Target));
 
-    const options = per(str("ACCEPTING PADDING"),
-                        str("IGNORING CONVERSION ERRORS"),
-                        str("IN CHAR-TO-HEX MODE"),
-                        str("IGNORING STRUCTURE BOUNDARIES"),
-                        str("ACCEPTING TRUNCATION"),
-                        seq(str("REPLACEMENT CHARACTER"), new Source()),
-                        seq(str("CODE PAGE INTO"), new Source()),
-                        seq(str("ENDIAN INTO"), new Source()));
+    const options = per("ACCEPTING PADDING",
+                        "IGNORING CONVERSION ERRORS",
+                        "IN CHAR-TO-HEX MODE",
+                        "IGNORING STRUCTURE BOUNDARIES",
+                        "ACCEPTING TRUNCATION",
+                        seq("REPLACEMENT CHARACTER", Source),
+                        seq("CODE PAGE INTO", Source),
+                        seq("ENDIAN INTO", Source));
 
-    const ret = seq(str("IMPORT"), target, str("FROM"), source, opt(options));
+    const ret = seq("IMPORT", target, "FROM", source, opt(options));
 
     return verNot(Version.Cloud, ret);
   }

@@ -7,15 +7,15 @@ export class ModifyDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const from = seq(str("FROM"), opt(str("TABLE")), new SQLSource());
+    const from = seq("FROM", opt("TABLE"), SQLSource);
 
     const client = str("CLIENT SPECIFIED");
 
-    const target = alt(new DatabaseTable(), new Dynamic());
+    const target = alt(DatabaseTable, Dynamic);
 
-    const options = per(new DatabaseConnection(), from, client);
+    const options = per(DatabaseConnection, from, client);
 
-    return seq(str("MODIFY"), target, options);
+    return seq("MODIFY", target, options);
   }
 
 }

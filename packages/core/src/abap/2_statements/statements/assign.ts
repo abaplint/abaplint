@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, tok, per} from "../combi";
+import {seq, alt, opt, tok, per} from "../combi";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,33 +7,33 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Assign implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const component = seq(str("COMPONENT"),
-                          new Source(),
-                          str("OF STRUCTURE"),
-                          new Source());
+    const component = seq("COMPONENT",
+                          Source,
+                          "OF STRUCTURE",
+                          Source);
 
-    const tableField = seq(str("TABLE FIELD"), alt(new Source(), new Dynamic()));
+    const tableField = seq("TABLE FIELD", alt(Source, Dynamic));
 
     const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
 
-    const source = alt(seq(new Source(), opt(seq(arrow, new Dynamic()))),
+    const source = alt(seq(Source, opt(seq(arrow, Dynamic))),
                        component,
                        tableField,
-                       seq(new Dynamic(), opt(seq(arrow, alt(new Field(), new Dynamic())))));
+                       seq(Dynamic, opt(seq(arrow, alt(Field, Dynamic)))));
 
-    const type = seq(str("TYPE"), alt(new Dynamic(), new Source()));
-    const like = seq(str("LIKE"), alt(new Dynamic(), new Source()));
-    const handle = seq(str("TYPE HANDLE"), new Source());
-    const range = seq(str("RANGE"), new Source());
-    const decimals = seq(str("DECIMALS"), new Source());
+    const type = seq("TYPE", alt(Dynamic, Source));
+    const like = seq("LIKE", alt(Dynamic, Source));
+    const handle = seq("TYPE HANDLE", Source);
+    const range = seq("RANGE", Source);
+    const decimals = seq("DECIMALS", Source);
 
-    const casting = seq(opt(str("CASTING")), opt(alt(like, handle, per(type, decimals))));
+    const casting = seq(opt("CASTING"), opt(alt(like, handle, per(type, decimals))));
 
-    const ret = seq(str("ASSIGN"),
-                    opt(seq(new Target(), str("INCREMENT"))),
+    const ret = seq("ASSIGN",
+                    opt(seq(Target, "INCREMENT")),
                     source,
-                    str("TO"),
-                    new FSTarget(),
+                    "TO",
+                    FSTarget,
                     casting,
                     opt(range));
 

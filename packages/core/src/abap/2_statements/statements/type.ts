@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, per, opt, ver} from "../combi";
+import {seq, alt, per, opt, ver} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,16 +7,16 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Type implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const simple = per(new Expressions.Type(), new Expressions.Decimals(), new Expressions.Length());
+    const simple = per(Expressions.Type, Expressions.Decimals, Expressions.Length);
 
-    const def = seq(new Expressions.NamespaceSimpleName(),
-                    opt(new Expressions.ConstantFieldLength()),
-                    opt(alt(simple, new Expressions.TypeTable())));
+    const def = seq(Expressions.NamespaceSimpleName,
+                    opt(Expressions.ConstantFieldLength),
+                    opt(alt(simple, Expressions.TypeTable)));
 
 // todo, BOXED is only allowed with structures inside structures?
-    const boxed = ver(Version.v702, str("BOXED"));
+    const boxed = ver(Version.v702, "BOXED");
 
-    const ret = seq(str("TYPES"), def, opt(boxed));
+    const ret = seq("TYPES", def, opt(boxed));
 
     return ret;
   }

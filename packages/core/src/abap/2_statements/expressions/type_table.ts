@@ -1,4 +1,4 @@
-import {seq, opt, alt, str, ver, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
+import {seq, opt, alt, ver, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -6,50 +6,47 @@ import {FieldChain} from "./field_chain";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
-    const header = str("WITH HEADER LINE");
-    const initial = seq(str("INITIAL SIZE"), new Constant());
+    const header = "WITH HEADER LINE";
+    const initial = seq("INITIAL SIZE", Constant);
 
-    const uniqueness = alt(str("NON-UNIQUE"), str("UNIQUE"));
-    const defaultKey = str("DEFAULT KEY");
-    const emptyKey = ver(Version.v740sp02, str("EMPTY KEY"));
-//    const components = seq(str("COMPONENTS"), plus(new FieldSub()));
-//    const named = seq(new Field(), opt(components));
+    const uniqueness = alt("NON-UNIQUE", "UNIQUE");
+    const defaultKey = "DEFAULT KEY";
+    const emptyKey = ver(Version.v740sp02, "EMPTY KEY");
 
-    const key = seq(str("WITH"),
+    const key = seq("WITH",
                     opt(uniqueness),
                     altPrio(defaultKey, emptyKey,
-                            seq(opt(alt(str("SORTED"), str("HASHED"))),
-                                str("KEY"),
-                                alt(seq(new Field(), str("COMPONENTS"), plus(new FieldSub())),
-                                    plus(new FieldSub())))));
+                            seq(opt(alt("SORTED", "HASHED")),
+                                "KEY",
+                                alt(seq(Field, "COMPONENTS", plus(FieldSub)),
+                                    plus(FieldSub)))));
 
-    const normal1 = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
-                        str("TABLE"),
-                        opt(str("OF")),
-                        opt(str("REF TO")),
-                        opt(new TypeName()));
+    const normal1 = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
+                        "TABLE",
+                        opt("OF"),
+                        opt("REF TO"),
+                        opt(TypeName));
 
-    const likeType = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
-                         str("TABLE OF"),
-                         optPrio(str("REF TO")),
-                         opt(new FieldChain()),
+    const likeType = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
+                         "TABLE OF",
+                         optPrio("REF TO"),
+                         opt(FieldChain),
                          opt(key),
                          opt(header));
 
-    const range = seq(str("RANGE OF"), new TypeName());
+    const range = seq("RANGE OF", TypeName);
 
     const typetable = seq(alt(normal1, range),
                           opt(per(header, initial, plusPrio(key))));
 
-    const occurs = seq(str("OCCURS"), new Integer());
+    const occurs = seq("OCCURS", Integer);
 
-    const old = seq(new TypeName(),
-                    alt(seq(occurs, opt(header)),
-                        header));
+    const old = seq(TypeName,
+                    alt(seq(occurs, opt(header)), header));
 
     const ret = altPrio(
-      seq(str("LIKE"), alt(likeType, range)),
-      seq(str("TYPE"), alt(old, typetable)));
+      seq("LIKE", alt(likeType, range)),
+      seq("TYPE", alt(old, typetable)));
 
     return ret;
   }

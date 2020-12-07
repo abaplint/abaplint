@@ -5,8 +5,8 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class FieldOffset extends Expression {
   public getRunnable(): IStatementRunnable {
-    const named = seq(altPrio(new SourceField(), new SourceFieldSymbol()),
-                      starPrio(seq(new ArrowOrDash(), new ComponentName())));
+    const named = seq(altPrio(SourceField, SourceFieldSymbol),
+                      starPrio(seq(ArrowOrDash, ComponentName)));
 
     const offset = seq(tok(Plus),
                        altPrio(reg(/^\d+$/), named));

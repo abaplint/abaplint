@@ -7,29 +7,29 @@ import {IStatementRunnable} from "../statement_runnable";
 export class OpenDataset implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const mode = seq(str("IN"),
-                     opt(str("LEGACY")),
-                     alt(str("BINARY MODE"),
-                         str("TEXT MODE")));
+    const mode = seq("IN",
+                     opt("LEGACY"),
+                     alt("BINARY MODE",
+                         "TEXT MODE"));
 
-    const code = seq(str("CODE PAGE"), new Source());
+    const code = seq("CODE PAGE", Source);
 
-    const direction = seq(str("FOR"), alt(str("OUTPUT"), str("INPUT"), str("UPDATE"), str("APPENDING")));
-    const encoding = seq(str("ENCODING"), alt(str("DEFAULT"), str("UTF-8"), str("NON-UNICODE")));
-    const pos = seq(str("AT POSITION"), new Source());
-    const message = seq(str("MESSAGE"), new Target());
+    const direction = seq("FOR", alt("OUTPUT", "INPUT", "UPDATE", "APPENDING"));
+    const encoding = seq("ENCODING", alt("DEFAULT", "UTF-8", "NON-UNICODE"));
+    const pos = seq("AT POSITION", Source);
+    const message = seq("MESSAGE", Target);
     const ignoring = str("IGNORING CONVERSION ERRORS");
-    const replacement = seq(str("REPLACEMENT CHARACTER"), new Source());
+    const replacement = seq("REPLACEMENT CHARACTER", Source);
     const bom = str("SKIPPING BYTE-ORDER MARK");
     const wbom = str("WITH BYTE-ORDER MARK");
-    const type = seq(str("TYPE"), new Source());
-    const filter = seq(str("FILTER"), new Source());
-    const linetype = alt(str("SMART"), str("NATIVE"), str("UNIX"));
-    const feed = seq(str("WITH"), linetype, str("LINEFEED"));
+    const type = seq("TYPE", Source);
+    const filter = seq("FILTER", Source);
+    const linetype = alt("SMART", "NATIVE", "UNIX");
+    const feed = seq("WITH", linetype, "LINEFEED");
     const windows = str("WITH WINDOWS LINEFEED");
 
-    const ret = seq(str("OPEN DATASET"),
-                    new Target(),
+    const ret = seq("OPEN DATASET",
+                    Target,
                     per(direction, type, mode, wbom, replacement, filter, encoding, pos, message, ignoring, bom, code, feed, windows));
 
     return verNot(Version.Cloud, ret);

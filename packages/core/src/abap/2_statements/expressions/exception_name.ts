@@ -6,6 +6,6 @@ import {Field} from "./field";
 /** non class based exception name */
 export class ExceptionName extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(new Field(), starPrio(seq(tok(Dash), new Field())));
+    return seq(Field, starPrio(seq(tok(Dash), Field)));
   }
 }

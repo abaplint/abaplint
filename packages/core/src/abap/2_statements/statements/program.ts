@@ -7,13 +7,13 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Program implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const message = seq(str("MESSAGE-ID"), new Source());
-    const size = seq(str("LINE-SIZE"), new Source());
+    const message = seq("MESSAGE-ID", Source);
+    const size = seq("LINE-SIZE", Source);
     const heading = str("NO STANDARD PAGE HEADING");
-    const line = seq(str("LINE-COUNT"), new Source());
+    const line = seq("LINE-COUNT", Source);
     const options = per(message, size, heading, line);
 
-    const ret = seq(str("PROGRAM"), optPrio(new ReportName()), opt(options));
+    const ret = seq("PROGRAM", optPrio(ReportName), opt(options));
 
     return verNot(Version.Cloud, ret);
   }

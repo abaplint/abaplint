@@ -6,11 +6,11 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLSource extends Expression {
   public getRunnable(): IStatementRunnable {
-    const paren = seq(tok(ParenLeftW), new Source(), tok(WParenRightW));
+    const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
 
 // todo, this Source must be a simple field?
-    const at = ver(Version.v740sp05, seq(tok(WAt), alt(new Source(), paren)));
+    const at = ver(Version.v740sp05, seq(tok(WAt), alt(Source, paren)));
 
-    return altPrio(new SQLAliasField(), new Source(), at);
+    return altPrio(SQLAliasField, Source, at);
   }
 }

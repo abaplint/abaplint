@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, tok, opt} from "../combi";
+import {verNot, seq, tok, opt} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Source, SimpleName, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
@@ -8,16 +8,16 @@ import {IStatementRunnable} from "../statement_runnable";
 export class DeleteCluster implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const client = seq(str("CLIENT"), new Source());
+    const client = seq("CLIENT", Source);
 
-    const ret = seq(str("DELETE FROM DATABASE"),
-                    new NamespaceSimpleName(),
+    const ret = seq("DELETE FROM DATABASE",
+                    NamespaceSimpleName,
                     tok(ParenLeft),
-                    new SimpleName(),
+                    SimpleName,
                     tok(ParenRightW),
                     opt(client),
-                    str("ID"),
-                    new Source());
+                    "ID",
+                    Source);
 
     return verNot(Version.Cloud, ret);
   }

@@ -4,6 +4,6 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class ConstantOrFieldSource extends Expression {
   public getRunnable(): IStatementRunnable {
-    return alt(new Constant(), new FieldChain());
+    return alt(Constant, FieldChain);
   }
 }

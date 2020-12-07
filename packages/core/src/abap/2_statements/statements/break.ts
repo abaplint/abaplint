@@ -8,10 +8,9 @@ export class Break implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const next = str("AT NEXT APPLICATION STATEMENT");
-    const log = new Source();
 
-    const ret = alt(seq(str("BREAK-POINT"), opt(alt(next, log))),
-                    seq(str("BREAK"), new Field()));
+    const ret = alt(seq("BREAK-POINT", opt(alt(next, Source))),
+                    seq("BREAK", Field));
 
     return verNot(Version.Cloud, ret);
   }

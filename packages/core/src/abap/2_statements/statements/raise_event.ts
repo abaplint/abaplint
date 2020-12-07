@@ -1,14 +1,14 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt} from "../combi";
+import {seq, opt} from "../combi";
 import {ParameterListS, Field} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class RaiseEvent implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const exporting = seq(str("EXPORTING"), new ParameterListS());
+    const exporting = seq("EXPORTING", ParameterListS);
 
-    return seq(str("RAISE EVENT"), new Field(), opt(exporting));
+    return seq("RAISE EVENT", Field, opt(exporting));
   }
 
 }

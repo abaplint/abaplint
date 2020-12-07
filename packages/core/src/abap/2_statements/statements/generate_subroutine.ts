@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, per} from "../combi";
+import {verNot, seq, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,17 +7,17 @@ import {IStatementRunnable} from "../statement_runnable";
 export class GenerateSubroutine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const name = seq(str("NAME"), new Source());
-    const message = seq(str("MESSAGE"), new Target());
-    const messageid = seq(str("MESSAGE-ID"), new Target());
-    const line = seq(str("LINE"), new Target());
-    const word = seq(str("WORD"), new Target());
-    const offset = seq(str("OFFSET"), new Target());
-    const short = seq(str("SHORTDUMP-ID"), new Target());
-    const include = seq(str("INCLUDE"), new Target());
+    const name = seq("NAME", Source);
+    const message = seq("MESSAGE", Target);
+    const messageid = seq("MESSAGE-ID", Target);
+    const line = seq("LINE", Target);
+    const word = seq("WORD", Target);
+    const offset = seq("OFFSET", Target);
+    const short = seq("SHORTDUMP-ID", Target);
+    const include = seq("INCLUDE", Target);
 
-    const ret = seq(str("GENERATE SUBROUTINE POOL"),
-                    new Source(),
+    const ret = seq("GENERATE SUBROUTINE POOL",
+                    Source,
                     per(name, message, line, word, include, offset, messageid, short));
 
     return verNot(Version.Cloud, ret);

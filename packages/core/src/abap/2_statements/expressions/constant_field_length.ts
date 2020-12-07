@@ -6,7 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class ConstantFieldLength extends Expression {
   public getRunnable(): IStatementRunnable {
     const length = seq(tok(ParenLeft),
-                       alt(new Integer(), new SimpleFieldChain()),
+                       alt(Integer, SimpleFieldChain),
                        tok(ParenRightW));
 
     return length;

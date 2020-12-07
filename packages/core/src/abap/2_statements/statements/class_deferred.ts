@@ -7,9 +7,9 @@ export class ClassDeferred implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const def = seq(str("DEFERRED"), opt(str("PUBLIC")));
+    const def = seq("DEFERRED", opt("PUBLIC"));
 
-    return seq(str("CLASS"), new ClassName(), str("DEFINITION"), def);
+    return seq("CLASS", ClassName, str("DEFINITION"), def);
   }
 
 }

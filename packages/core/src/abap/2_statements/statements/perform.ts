@@ -9,28 +9,28 @@ import {PerformTables, PerformUsing, PerformChanging} from "../expressions";
 export class Perform implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const level = seq(str("LEVEL"), new Expressions.Source());
-    const commit = alt(seq(str("ON COMMIT"), opt(level)),
-                       str("ON ROLLBACK"));
+    const level = seq("LEVEL", Expressions.Source);
+    const commit = alt(seq("ON COMMIT", opt(level)),
+                       "ON ROLLBACK");
 
-    const short = verNot(Version.Cloud, seq(new Expressions.FormName(),
+    const short = verNot(Version.Cloud, seq(Expressions.FormName,
                                             tok(ParenLeft),
-                                            new Expressions.IncludeName(),
+                                            Expressions.IncludeName,
                                             tok(ParenRightW)));
 
-    const program = seq(str("IN PROGRAM"), opt(alt(new Expressions.Dynamic(), new Expressions.IncludeName())));
+    const program = seq("IN PROGRAM", opt(alt(Expressions.Dynamic, Expressions.IncludeName)));
 
     const found = str("IF FOUND");
 
-    const full = seq(alt(new Expressions.FormName(), new Expressions.Dynamic()),
+    const full = seq(alt(Expressions.FormName, Expressions.Dynamic),
                      opt(verNot(Version.Cloud, program)));
 
-    const ret = seq(str("PERFORM"),
+    const ret = seq("PERFORM",
                     alt(short, full),
                     opt(found),
-                    opt(new PerformTables()),
-                    opt(new PerformUsing()),
-                    opt(new PerformChanging()),
+                    opt(PerformTables),
+                    opt(PerformUsing),
+                    opt(PerformChanging),
                     opt(found),
                     opt(commit));
 

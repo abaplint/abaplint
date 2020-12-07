@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt} from "../combi";
+import {verNot, seq, opt, alt} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,13 +7,13 @@ import {IStatementRunnable} from "../statement_runnable";
 export class IncludeType implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const tas = seq(str("AS"), new Expressions.Field());
+    const tas = seq("AS", Expressions.Field);
 
-    const renaming = seq(str("RENAMING WITH SUFFIX"), new Expressions.Source());
+    const renaming = seq("RENAMING WITH SUFFIX", Expressions.Source);
 
-    const ret = seq(str("INCLUDE"),
-                    alt(str("TYPE"), str("STRUCTURE")),
-                    new Expressions.TypeName(),
+    const ret = seq("INCLUDE",
+                    alt("TYPE", "STRUCTURE"),
+                    Expressions.TypeName,
                     opt(tas),
                     opt(renaming));
 

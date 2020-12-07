@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, plus, optPrio} from "../combi";
+import {verNot, seq, opt, plus, optPrio} from "../combi";
 import {Field, FieldSub, Constant, Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,14 +7,14 @@ import {IStatementRunnable} from "../statement_runnable";
 export class CallDialog implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const from = seq(new FieldSub(), optPrio(seq(str("FROM"), new Source())));
-    const exporting = seq(str("EXPORTING"), plus(from));
+    const from = seq(FieldSub, optPrio(seq("FROM", Source)));
+    const exporting = seq("EXPORTING", plus(from));
 
-    const to = seq(new Field(), optPrio(seq(str("TO"), new Field())));
-    const importing = seq(str("IMPORTING"), plus(to));
+    const to = seq(Field, optPrio(seq("TO", Field)));
+    const importing = seq("IMPORTING", plus(to));
 
-    const ret = seq(str("CALL DIALOG"),
-                    new Constant(),
+    const ret = seq("CALL DIALOG",
+                    Constant,
                     opt(exporting),
                     opt(importing));
 

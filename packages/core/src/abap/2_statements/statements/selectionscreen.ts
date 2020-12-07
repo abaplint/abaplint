@@ -8,96 +8,92 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SelectionScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const beginBlock = seq(str("BEGIN OF BLOCK"),
-                           new BlockName(),
-                           opt(str("WITH FRAME")),
-                           opt(seq(str("TITLE"), alt(new InlineField(), new TextElement()))),
-                           opt(str("NO INTERVALS")));
-    const endBlock = seq(str("END OF BLOCK"), new BlockName());
+    const beginBlock = seq("BEGIN OF BLOCK",
+                           BlockName,
+                           opt("WITH FRAME"),
+                           opt(seq("TITLE", alt(InlineField, TextElement))),
+                           opt("NO INTERVALS"));
+    const endBlock = seq("END OF BLOCK", BlockName);
 
-    const nesting = seq(str("NESTING LEVEL"), new Source());
+    const nesting = seq("NESTING LEVEL", Source);
 
-    const scrOptions = per(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN"))),
-                           seq(str("TITLE"), alt(new InlineField(), new TextElement())),
-                           str("NO INTERVALS"),
+    const scrOptions = per(seq("AS", alt("WINDOW", "SUBSCREEN")),
+                           seq("TITLE", alt(InlineField, TextElement)),
+                           "NO INTERVALS",
                            nesting);
 
-    const beginScreen = seq(str("BEGIN OF SCREEN"),
-                            new Integer(),
+    const beginScreen = seq("BEGIN OF SCREEN",
+                            Integer,
                             opt(scrOptions));
 
-    const endScreen = seq(str("END OF SCREEN"), new Integer());
+    const endScreen = seq("END OF SCREEN", Integer);
 
     const beginLine = str("BEGIN OF LINE");
     const endLine = str("END OF LINE");
 
-    const modif = seq(str("MODIF ID"), new Modif());
+    const modif = seq("MODIF ID", Modif);
 
-    const visible = seq(str("VISIBLE LENGTH"), reg(/^\d+$/));
+    const visible = seq("VISIBLE LENGTH", reg(/^\d+$/));
 
-    const commentOpt = per(seq(str("FOR FIELD"), new Field()),
-                           modif,
-                           visible);
+    const commentOpt = per(seq("FOR FIELD", Field), modif, visible);
 
     const position = seq(opt(reg(/^\/?[\d\w]+$/)),
                          alt(tok(ParenLeft), tok(WParenLeft)),
-                         new Integer(),
+                         Integer,
                          alt(tok(ParenRightW), tok(ParenRight)));
 
-    const comment = seq(str("COMMENT"),
+    const comment = seq("COMMENT",
                         position,
-                        opt(alt(new InlineField(), new TextElement())),
+                        opt(alt(InlineField, TextElement)),
                         opt(commentOpt));
 
-    const command = seq(str("USER-COMMAND"), alt(new Field(), new Constant()));
+    const command = seq("USER-COMMAND", alt(Field, Constant));
 
-    const push = seq(str("PUSHBUTTON"),
+    const push = seq("PUSHBUTTON",
                      position,
-                     alt(new InlineField(), new TextElement()),
+                     alt(InlineField, TextElement),
                      command,
                      opt(modif),
                      opt(visible));
 
-    const def = seq(str("DEFAULT SCREEN"), new Integer());
+    const def = seq("DEFAULT SCREEN", Integer);
 
-    const tab = seq(str("TAB"),
+    const tab = seq("TAB",
                     tok(WParenLeft),
-                    new Integer(),
+                    Integer,
                     tok(ParenRightW),
-                    alt(new InlineField(), new TextElement()),
+                    alt(InlineField, TextElement),
                     command,
                     opt(def),
                     opt(modif));
 
-    const func = seq(str("FUNCTION KEY"), new Integer());
+    const func = seq("FUNCTION KEY", Integer);
 
-    const skip = seq(str("SKIP"), opt(new Integer()));
+    const skip = seq("SKIP", opt(Integer));
 
-    const posSymbols = alt(str("POS_LOW"),
-                           str("POS_HIGH"));
+    const posSymbols = alt("POS_LOW", "POS_HIGH");
 
     // number between 1 and 83
     const posIntegers = reg(/^(0?[1-9]|[1234567][0-9]|8[0-3])$/);
 
-    const pos = seq(str("POSITION"),
-                    alt(posIntegers,
-                        posSymbols));
+    const pos = seq("POSITION",
+                    alt(posIntegers, posSymbols));
 
-    const incl = seq(str("INCLUDE BLOCKS"), new BlockName());
+    const incl = seq("INCLUDE BLOCKS", BlockName);
 
-    const tabbed = seq(str("BEGIN OF TABBED BLOCK"),
-                       new InlineField(),
-                       str("FOR"),
-                       new Integer(),
-                       str("LINES"),
-                       opt(str("NO INTERVALS")));
+    const tabbed = seq("BEGIN OF TABBED BLOCK",
+                       InlineField,
+                       "FOR",
+                       Integer,
+                       "LINES",
+                       opt("NO INTERVALS"));
 
-    const uline = seq(str("ULINE"), opt(position));
+    const uline = seq("ULINE", opt(position));
 
-    const param = seq(str("INCLUDE PARAMETERS"), new Field());
-    const iso = seq(str("INCLUDE SELECT-OPTIONS"), new Field());
+    const param = seq("INCLUDE PARAMETERS", Field);
+    const iso = seq("INCLUDE SELECT-OPTIONS", Field);
 
-    const ret = seq(str("SELECTION-SCREEN"),
+    const ret = seq("SELECTION-SCREEN",
                     alt(comment,
                         func,
                         skip,
