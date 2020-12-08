@@ -258,7 +258,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       let concat = "";
       for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
         concat += b.concatTokens() + " ";
-        if (b.get() instanceof Expressions.Source) {
+        if (b.get() instanceof Expressions.FieldAssignment) {
           body += uniqueName + "-" + concat.trim() + ".\n";
           concat = "";
         }

@@ -5,6 +5,7 @@ import {For} from "./for";
 import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
+import {FieldAssignment} from "./field_assignment";
 
 export class ValueBody {
   public runSyntax(
@@ -25,6 +26,10 @@ export class ValueBody {
     const forNode = node.findDirectExpression(Expressions.For);
     if (forNode) {
       new For().runSyntax(forNode, scope, filename);
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
+      new FieldAssignment().runSyntax(s, scope, filename);
     }
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
