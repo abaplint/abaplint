@@ -3083,6 +3083,28 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it.skip("NEW in structured data", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+
+  FORM moo.
+    TYPES: BEGIN OF ty_dict,
+             rollname TYPE string,
+             obj      TYPE REF TO lcl_bar,
+           END OF ty_dict.
+
+    DATA(ls_blah) = VALUE ty_dict(
+        rollname = 'bar'
+        obj      = NEW #( ) ).
+  ENDFORM.`;
+    const issues = runProgram(abap);
+    console.dir(issues);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

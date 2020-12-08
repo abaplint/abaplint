@@ -7,7 +7,12 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 
 export class ValueBody {
-  public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string): AbstractType | undefined {
+  public runSyntax(
+    node: ExpressionNode | undefined,
+    scope: CurrentScope,
+    filename: string,
+    targetType: AbstractType | undefined): AbstractType | undefined {
+
     if (node === undefined) {
       return;
     }
@@ -27,6 +32,6 @@ export class ValueBody {
       type = new Source().runSyntax(s, scope, filename);
     }
 
-    return type;
+    return targetType ? targetType : type;
   }
 }
