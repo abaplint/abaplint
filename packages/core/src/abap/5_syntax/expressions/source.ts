@@ -93,7 +93,6 @@ export class Source {
         case "CORRESPONDING":
         case "EXACT":
           return this.determineType(node, scope, filename, targetType);
-//          return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
