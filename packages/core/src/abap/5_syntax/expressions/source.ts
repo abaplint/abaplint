@@ -71,8 +71,7 @@ export class Source {
         case "COND":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename);
-          return foundType;
+          return new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename, foundType);
         }
         case "CONV":
         {
@@ -173,49 +172,5 @@ export class Source {
 
     return targetType;
   }
-
-// TODO, delete this method?
-/*
-  private value(node: ExpressionNode,
-                scope: CurrentScope,
-                filename: string,
-                targetType: AbstractType | undefined,
-                bodyType: AbstractType | undefined): AbstractType | undefined {
-
-    const basic = new BasicTypes(filename, scope);
-
-    const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
-    const typeToken = typeExpression?.getFirstToken();
-    const typeName = typeToken?.getStr();
-    if (typeName === undefined) {
-      throw new Error("VALUE, child TypeNameOrInfer not found");
-    } else if (typeName === "#" && targetType) {
-      const found = basic.lookupQualifiedName(targetType.getQualifiedName());
-      if (found) {
-        scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
-      }
-      return targetType;
-    } else if (typeName === "#" && bodyType) {
-      return bodyType;
-    } else if (typeName === "#") {
-      return new VoidType("VALUE_todo");
-    } else if (!(typeExpression instanceof ExpressionNode)) {
-      throw new Error("VALUE, expression node expected");
-    }
-
-    const found = basic.parseType(typeExpression);
-    if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
-      return new VoidType(typeName);
-    } else if (found === undefined) {
-      throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
-    }
-
-    if (found instanceof TypedIdentifier) {
-      return found.getType();
-    } else {
-      return found;
-    }
-  }
-*/
 
 }
