@@ -36,6 +36,8 @@ export class MethodCallParam {
             targetType = i.getType();
           }
         }
+      } else {
+        targetType = method;
       }
       const type = new Source().runSyntax(child, scope, filename, targetType);
 

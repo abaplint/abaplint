@@ -3091,6 +3091,12 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("void method, value with row", () => {
+    const abap = `cl_void=>method( VALUE #( ( row = 2 ) ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it.skip("NEW in structured data", () => {
     const abap = `
   CLASS lcl_bar DEFINITION.

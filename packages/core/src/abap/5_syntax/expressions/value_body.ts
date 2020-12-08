@@ -29,7 +29,7 @@ export class ValueBody {
     }
 
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
-      new FieldAssignment().runSyntax(s, scope, filename);
+      new FieldAssignment().runSyntax(s, scope, filename, targetType);
     }
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
