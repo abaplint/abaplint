@@ -14,7 +14,7 @@ export class ValueBody {
     targetType: AbstractType | undefined): AbstractType | undefined {
 
     if (node === undefined) {
-      return;
+      return targetType;
     }
 
     const letNode = node.findDirectExpression(Expressions.Let);

@@ -3083,6 +3083,14 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("VALUE #, empty string", () => {
+    const abap = `
+    DATA result TYPE string.
+    result = VALUE #( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it.skip("NEW in structured data", () => {
     const abap = `
   CLASS lcl_bar DEFINITION.
