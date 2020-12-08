@@ -17,8 +17,8 @@ import {ReferenceType} from "../_reference";
 import {SwitchBody} from "./switch_body";
 import {CondBody} from "./cond_body";
 import {ConvBody} from "./conv_body";
-import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AttributeName} from "./attribute_name";
+import {FilterBody} from "./filter_body";
 
 /*
 * Type interference, valid scenarios:
@@ -86,10 +86,15 @@ export class Source {
           new Source().runSyntax(node.findDirectExpression(Expressions.Source), scope, filename);
           return foundType;
         }
-        case "CORRESPONDING":
         case "FILTER":
+        {
+          const foundType = this.determineType(node, scope, filename, targetType);
+          return new FilterBody().runSyntax(node.findDirectExpression(Expressions.FilterBody), scope, filename, foundType);
+        }
+        case "CORRESPONDING":
         case "EXACT":
-          return this.value(node, scope, filename, targetType, undefined);
+          return this.determineType(node, scope, filename, targetType);
+//          return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
@@ -170,6 +175,7 @@ export class Source {
   }
 
 // TODO, delete this method?
+/*
   private value(node: ExpressionNode,
                 scope: CurrentScope,
                 filename: string,
@@ -210,6 +216,6 @@ export class Source {
       return found;
     }
   }
-
+*/
 
 }
