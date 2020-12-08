@@ -3097,7 +3097,7 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("NEW in structured data", () => {
+  it("NEW in structured data", () => {
     const abap = `
   CLASS lcl_bar DEFINITION.
   ENDCLASS.
@@ -3115,7 +3115,6 @@ START-OF-SELECTION.
         obj      = NEW #( ) ).
   ENDFORM.`;
     const issues = runProgram(abap);
-    console.dir(issues);
     expect(issues.length).to.equals(0);
   });
 

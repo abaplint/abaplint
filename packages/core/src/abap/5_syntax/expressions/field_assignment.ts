@@ -1,5 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
+import {StructureType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "./source";
@@ -10,7 +11,7 @@ export class FieldAssignment {
     node: ExpressionNode | StatementNode,
     scope: CurrentScope,
     filename: string,
-    _targetType: AbstractType | undefined): void {
+    targetType: AbstractType | undefined): void {
 
     const name = node.findDirectExpression(Expressions.FieldSub)?.concatTokens();
     if (name === undefined) {
@@ -22,7 +23,12 @@ export class FieldAssignment {
       throw new Error("FieldAssignment, Source node not found");
     }
 
-    new Source().runSyntax(s, scope, filename);
+    let type: AbstractType | undefined = undefined;
+    if (targetType instanceof StructureType) {
+      type = targetType.getComponentByName(name);
+    }
+
+    new Source().runSyntax(s, scope, filename, type);
   }
 
 }
