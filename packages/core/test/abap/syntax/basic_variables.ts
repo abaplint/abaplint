@@ -1628,4 +1628,23 @@ DATA(sdf) = ref->*-int.`;
     expect(type?.getType()).to.be.instanceof(Basic.VoidType);
   });
 
+  it("FIND REGEX inline", () => {
+    const abap = `FIND REGEX 'sdf' IN 'sdf' MATCH OFFSET DATA(lv_offset) MATCH LENGTH DATA(lv_length) SUBMATCHES DATA(lv_bar).`;
+    {
+      const identifier = resolveVariable(abap, "lv_offset");
+      expect(identifier).to.not.equal(undefined);
+      expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+    }
+    {
+      const identifier = resolveVariable(abap, "lv_length");
+      expect(identifier).to.not.equal(undefined);
+      expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+    }
+    {
+      const identifier = resolveVariable(abap, "lv_bar");
+      expect(identifier).to.not.equal(undefined);
+      expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+    }
+  });
+
 });
