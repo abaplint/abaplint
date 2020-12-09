@@ -34,19 +34,20 @@ export class TypeTable extends Expression {
                          opt(key),
                          opt(header));
 
-    const range = seq("RANGE OF", TypeName);
+    const rangeType = seq("RANGE OF", TypeName, opt(header), opt(initial));
+    const rangeLike = seq("RANGE OF", FieldSub, opt(header), opt(initial));
 
-    const typetable = seq(alt(normal1, range),
+    const typetable = seq(normal1,
                           opt(per(header, initial, plusPrio(key))));
 
     const occurs = seq("OCCURS", Integer);
 
-    const old = seq(TypeName,
-                    alt(seq(occurs, opt(header)), header));
+    const oldType = seq(TypeName, alt(seq(occurs, opt(header)), header));
+    const oldLike = seq(FieldSub, alt(seq(occurs, opt(header)), header));
 
     const ret = altPrio(
-      seq("LIKE", alt(likeType, range)),
-      seq("TYPE", alt(old, typetable)));
+      seq("LIKE", alt(oldLike, likeType, rangeLike)),
+      seq("TYPE", alt(oldType, typetable, rangeType)));
 
     return ret;
   }
