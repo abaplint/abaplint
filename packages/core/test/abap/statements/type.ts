@@ -21,6 +21,7 @@ const tests = [
   "  WITH UNIQUE HASHED KEY object_type_and_name COMPONENTS obj_type obj_name.",
   "TYPES tty_log_out TYPE STANDARD TABLE OF ty_log_out WITH NON-UNIQUE DEFAULT KEY.",
   "TYPES foo TYPE moo BOXED.",
+  "TYPES ty_streenode_2 LIKE streenode OCCURS 10.",
 ];
 
 statementType(tests, "TYPE", Statements.Type);

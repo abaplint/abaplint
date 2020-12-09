@@ -1180,6 +1180,13 @@ DATA(fsdf) = EXACT ty_bar( |sdfs| ).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
   });
 
+  it("COND 2", () => {
+    const abap = `DATA(cond) = COND #( WHEN 1 = 2 THEN |foo| WHEN 2 = 2 THEN |bar| ).`;
+    const identifier = resolveVariable(abap, "cond");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
   it("SWITCH", () => {
     const abap = `DATA(sdf) = SWITCH string( sy-index WHEN 1 THEN 'sdfsdf' ).`;
     const identifier = resolveVariable(abap, "sdf");

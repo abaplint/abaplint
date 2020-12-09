@@ -17,8 +17,18 @@ import {ReferenceType} from "../_reference";
 import {SwitchBody} from "./switch_body";
 import {CondBody} from "./cond_body";
 import {ConvBody} from "./conv_body";
-import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AttributeName} from "./attribute_name";
+import {FilterBody} from "./filter_body";
+
+/*
+* Type interference, valid scenarios:
+* typed = VALUE #( ... ).         right hand side must follow left hand type
+* DATA(bar) = VALUE type( ... ).  left gets the type of rigthand
+* typed = VALUE type( ... ).      types must match and be compatible???
+************* ERRORS *********
+* VALUE #( ... ).                 syntax error
+* DATA(bar) = VALUE #( ... ).     give error, no type can be derived
+*/
 
 export class Source {
   public runSyntax(
@@ -48,30 +58,45 @@ export class Source {
           return new CharacterType(1);
         case "REDUCE":
         {
+          const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename);
-          return this.value(node, scope, filename, targetType, bodyType);
+          return foundType ? foundType : bodyType;
         }
         case "SWITCH":
+        {
+          const foundType = this.determineType(node, scope, filename, targetType);
           new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), scope, filename);
-          return this.value(node, scope, filename, targetType, undefined);
+          return foundType;
+        }
         case "COND":
-          new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename);
-          return this.value(node, scope, filename, targetType, undefined);
+        {
+          const foundType = this.determineType(node, scope, filename, targetType);
+          return new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename, foundType);
+        }
         case "CONV":
+        {
+          const foundType = this.determineType(node, scope, filename, targetType);
           new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
-          return this.value(node, scope, filename, targetType, undefined);
+          return foundType;
+        }
         case "REF":
+        {
+          const foundType = this.determineType(node, scope, filename, targetType);
           new Source().runSyntax(node.findDirectExpression(Expressions.Source), scope, filename);
-          return this.value(node, scope, filename, targetType, undefined);
-        case "CORRESPONDING":
+          return foundType;
+        }
         case "FILTER":
+        {
+          const foundType = this.determineType(node, scope, filename, targetType);
+          return new FilterBody().runSyntax(node.findDirectExpression(Expressions.FilterBody), scope, filename, foundType);
+        }
+        case "CORRESPONDING":
         case "EXACT":
-          return this.value(node, scope, filename, targetType, undefined);
+          return this.determineType(node, scope, filename, targetType);
         case "VALUE":
         {
-          const b = node.findDirectExpression(Expressions.ValueBody);
-          const bodyType = new ValueBody().runSyntax(b, scope, filename);
-          return this.value(node, scope, filename, targetType, bodyType);
+          const foundType = this.determineType(node, scope, filename, targetType);
+          return new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename, foundType);
         }
         default:
           return new UnknownType("todo, Source type " + tok);
@@ -112,45 +137,39 @@ export class Source {
 
 ////////////////////////////////
 
-  private value(node: ExpressionNode,
-                scope: CurrentScope,
-                filename: string,
-                targetType: AbstractType | undefined,
-                bodyType: AbstractType | undefined): AbstractType | undefined {
+  private determineType(
+    node: ExpressionNode,
+    scope: CurrentScope,
+    filename: string,
+    targetType: AbstractType | undefined): AbstractType | undefined {
 
     const basic = new BasicTypes(filename, scope);
 
     const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();
-    if (typeName === undefined) {
-      throw new Error("VALUE, child TypeNameOrInfer not found");
+
+    if (typeExpression === undefined) {
+      throw new Error("determineType, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
       const found = basic.lookupQualifiedName(targetType.getQualifiedName());
       if (found) {
         scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
       }
       return targetType;
-    } else if (typeName === "#" && bodyType) {
-      return bodyType;
-    } else if (typeName === "#") {
-      return new VoidType("VALUE_todo");
-    } else if (!(typeExpression instanceof ExpressionNode)) {
-      throw new Error("VALUE, expression node expected");
     }
 
-    const found = basic.parseType(typeExpression);
-    if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
-      return new VoidType(typeName);
-    } else if (found === undefined) {
-      throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
-    }
-
-    if (found instanceof TypedIdentifier) {
-      return found.getType();
-    } else {
+    if (typeName !== "#") {
+      const found = basic.parseType(typeExpression);
+      if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
+        return new VoidType(typeName);
+      } else if (found === undefined) {
+        throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
+      }
       return found;
     }
+
+    return targetType;
   }
 
 }
