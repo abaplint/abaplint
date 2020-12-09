@@ -51,6 +51,9 @@ const tests = [
   `SELECT DISTINCT * FROM (db_table_name) INTO @tree WHERE (t_where_clause_blah).`,
   `SELECT DISTINCT blah FROM (db_table_name) INTO @tree WHERE (t_where_clause_blah).`,
   `SELECT DISTINCT blah, blah_blah FROM (db_table_name) INTO @tree WHERE (t_where_clause_blah).`,
+  `SELECT key_property, \\_path-expression FROM cds_view INTO @DATA(result).`,
+  `SELECT key_property, \\_path-expression AS path FROM cds_view INTO @DATA(result).`,
+  `SELECT aaa, \\_association-shortText AS ShortText FROM cds_view INTO @DATA(var).`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
