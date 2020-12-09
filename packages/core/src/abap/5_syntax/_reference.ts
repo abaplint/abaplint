@@ -7,6 +7,7 @@ export enum ReferenceType {
 
   MethodReference = "MethodReference",
   BuiltinMethodReference = "BuiltinMethodReference",
+  MethodImplementationReference = "MethodImplementationReference",
 
   TypeReference = "TypeReference",
   BuiltinTypeReference = "BuiltinTypeReference",

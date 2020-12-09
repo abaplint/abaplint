@@ -25,6 +25,8 @@ export class MethodImplementation {
       throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
+    scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, filename);
+
     scope.addList(methodDefinition.getParameters().getAll());
 
     for (const i of helper.findInterfaces(classDefinition)) {
