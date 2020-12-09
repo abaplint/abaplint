@@ -531,4 +531,12 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("GET BADI", async () => {
+    const abap = `
+  DATA lr_badi TYPE REF TO cl_blah.
+  GET BADI lr_badi.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

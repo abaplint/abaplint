@@ -109,6 +109,7 @@ import {ABAPFile} from "../abap_file";
 import {Assert} from "./statements/assert";
 import {SetParameter} from "./statements/set_parameter";
 import {ClassLocalFriends} from "./statements/class_local_friends";
+import {GetBadi} from "./statements/get_badi";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -295,6 +296,8 @@ export class SyntaxLogic {
       new MethodImplementation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Move) {
       new Move().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.GetBadi) {
+      new GetBadi().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Replace) {
       new Replace().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Assert) {
