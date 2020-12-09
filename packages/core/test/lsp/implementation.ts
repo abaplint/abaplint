@@ -28,4 +28,22 @@ describe("LSP, implementation", () => {
     expect(def[0].uri).to.equal(prog2.getFilename());
   });
 
+  it("goto method implementations", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS name.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+
+    const def = new Implementation(reg).find({uri: file.getFilename()}, LServer.Position.create(2, 15));
+
+    expect(def.length).to.equal(1);
+    expect(def[0].range.start.line).to.equal(5);
+  });
+
 });

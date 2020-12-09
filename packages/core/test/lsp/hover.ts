@@ -797,4 +797,20 @@ ENDFORM.`;
     expect(hover?.value).to.contain(`ObjectOrientedReference`);
   });
 
+  it("hover, MethodImplementationReference", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS name.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 5, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`MethodImplementationReference`);
+  });
+
 });
