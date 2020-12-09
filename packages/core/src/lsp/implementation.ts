@@ -6,8 +6,8 @@ import {LSPLookup} from "./_lookup";
 import {MethodDefinition} from "../abap/types";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
-import {Token} from "../abap/1_lexer/tokens/_token";
 import {ReferenceType} from "../abap/5_syntax/_reference";
+import {Identifier} from "../abap/4_file_information/_identifier";
 
 // note: finding implementations might be slow, ie finding method implementations currently searches the full registry
 
@@ -56,25 +56,27 @@ export class Implementation {
       if (this.reg.isDependency(obj) || !(obj instanceof ABAPObject)) {
         continue;
       }
-      const found = this.searchReferences(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop(), def.getToken());
+      const found = this.searchReferences(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop(), def);
       ret = ret.concat(found);
     }
 
     return ret;
   }
 
-  private searchReferences(scope: ISpaghettiScopeNode, token: Token): LServer.Location[] {
+  private searchReferences(scope: ISpaghettiScopeNode, id: Identifier): LServer.Location[] {
     let ret: LServer.Location[] = [];
 
     for (const r of scope.getData().references) {
       if (r.referenceType === ReferenceType.MethodImplementationReference
-          && r.resolved?.getStart().equals(token.getStart())) {
+          && r.resolved
+          && r.resolved.getFilename() === id.getFilename()
+          && r.resolved.getStart().equals(id.getStart())) {
         ret.push(LSPUtils.identiferToLocation(r.position));
       }
     }
 
     for (const c of scope.getChildren()) {
-      ret = ret.concat(this.searchReferences(c, token));
+      ret = ret.concat(this.searchReferences(c, id));
     }
 
     return ret;
