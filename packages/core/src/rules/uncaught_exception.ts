@@ -106,10 +106,7 @@ export class UncaughtException extends ABAPRule {
         name = n.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr().toUpperCase();
       }
 
-      if (this.isSinked(name) === false) {
-        const issue = Issue.atStatement(file, n, "Uncaught exception " + name, this.getMetadata().key, this.getConfig().severity);
-        this.issues.push(issue);
-      }
+      this.check(name, n, file);
     } else if (n instanceof StatementNode && n.get() instanceof Statements.Perform) {
       // todo, PERFORM, or is this not statically checked?
     } else if (n instanceof StatementNode) {
@@ -125,6 +122,13 @@ export class UncaughtException extends ABAPRule {
 
 ////////////////////////////////
 
+  private check(name: string | undefined, n: StatementNode, file: ABAPFile) {
+    if (this.isSinked(name) === false) {
+      const issue = Issue.atStatement(file, n, "Uncaught exception " + name, this.getMetadata().key, this.getConfig().severity);
+      this.issues.push(issue);
+    }
+  }
+
   private checkForMethodCalls(n: StatementNode, file: ABAPFile) {
     const start = n.getFirstToken().getStart();
     const end = n.getLastToken().getEnd();
@@ -137,10 +141,7 @@ export class UncaughtException extends ABAPRule {
           && r.resolved instanceof MethodDefinition) {
 
         for (const name of r.resolved.getRaising()) {
-          if (this.isSinked(name) === false) {
-            const issue = Issue.atStatement(file, n, "Uncaught exception " + name, this.getMetadata().key, this.getConfig().severity);
-            this.issues.push(issue);
-          }
+          this.check(name, n, file);
         }
       }
     }
@@ -206,7 +207,6 @@ export class UncaughtException extends ABAPRule {
 
       this.globalExceptions.push({name: o.getName(), super: def.superClassName});
     }
-
   }
 
 }
