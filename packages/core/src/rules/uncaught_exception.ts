@@ -23,7 +23,7 @@ export class UncaughtException extends ABAPRule {
 
   private conf = new UncaughtExceptionConf();
 
-  private readonly globalExceptions: {name: string, super: string | undefined}[] = [];
+  private globalExceptions: {[index: string]: string | undefined};
   private issues: Issue[] = [];
   private sinked: string[] | undefined;
   private syntax: ISyntaxResult;
@@ -190,11 +190,18 @@ export class UncaughtException extends ABAPRule {
       return true;
     }
 
-    // todo, check hierarchy, both this.globalExceptions and local classes
-    return this.sinked.some(a => a.toUpperCase() === name.toUpperCase());
+    const sup = this.globalExceptions[name.toUpperCase()];
+    if (sup === "CX_DYNAMIC_CHECK" || sup === "CX_NO_CHECK") {
+      return true;
+    }
+
+    // todo, check local class hierarchy
+    return this.sinked.some(a => a.toUpperCase() === name.toUpperCase())
+      || ( sup !== undefined && this.isSinked(sup) === true );
   }
 
   private findGlobalExceptions() {
+    this.globalExceptions = {};
     const ddic = new DDIC(this.reg);
     for (const o of this.reg.getObjects()) {
       if (!(o instanceof Class)) {
@@ -205,7 +212,7 @@ export class UncaughtException extends ABAPRule {
         continue;
       }
 
-      this.globalExceptions.push({name: o.getName(), super: def.superClassName});
+      this.globalExceptions[o.getName().toUpperCase()] = def.superClassName?.toUpperCase();
     }
   }
 

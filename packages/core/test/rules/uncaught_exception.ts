@@ -174,4 +174,29 @@ describe("Rule: uncaught_exception", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it.skip("no error, super classed, local exceptions", async () => {
+    const abap = `
+  CLASS lcx_error DEFINITION INHERITING FROM cx_static_check.
+  ENDCLASS.
+  CLASS lcx_error IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcx_sub DEFINITION INHERITING FROM lcx_error.
+  ENDCLASS.
+  CLASS lcx_sub IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl_class DEFINITION.
+    PUBLIC SECTION.
+      METHODS foobar RAISING lcx_error.
+  ENDCLASS.
+  CLASS lcl_class IMPLEMENTATION.
+    METHOD foobar.
+      RAISE EXCEPTION TYPE lcx_sub.
+    ENDMETHOD.
+  ENDCLASS.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });
