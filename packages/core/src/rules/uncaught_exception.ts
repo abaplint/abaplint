@@ -7,6 +7,9 @@ import * as Structures from "../abap/3_structures/structures";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {StatementNode, StructureNode} from "../abap/nodes";
+import {IRegistry} from "../_iregistry";
+import {Class} from "../objects";
+import {DDIC} from "../ddic";
 
 export class UncaughtExceptionConf extends BasicRuleConfig {
 }
@@ -15,6 +18,7 @@ export class UncaughtException extends ABAPRule {
 
   private conf = new UncaughtExceptionConf();
 
+  private readonly globalExceptions: {name: string, super: string | undefined}[] = [];
   private issues: Issue[] = [];
   private sinked: string[] | undefined;
 
@@ -31,12 +35,17 @@ export class UncaughtException extends ABAPRule {
     return this.conf;
   }
 
+  public initialize(reg: IRegistry) {
+    super.initialize(reg);
+    this.findGlobalExceptions();
+    return this;
+  }
+
   public setConfig(conf: UncaughtExceptionConf) {
     this.conf = conf;
   }
 
   public runParsed(file: ABAPFile) {
-
     const stru = file.getStructure();
     if (stru === undefined) {
       return [];
@@ -103,8 +112,24 @@ export class UncaughtException extends ABAPRule {
       return true;
     }
 
-    // todo, check hierarchy
+    // todo, check hierarchy, both this.globalExceptions and local classes
     return this.sinked.some(a => a === name);
+  }
+
+  private findGlobalExceptions() {
+    const ddic = new DDIC(this.reg);
+    for (const o of this.reg.getObjects()) {
+      if (!(o instanceof Class)) {
+        continue;
+      }
+      const def = o.getMainABAPFile()?.getInfo().getClassDefinitionByName(o.getName());
+      if (def === undefined || ddic.isException(def, o) === false) {
+        continue;
+      }
+
+      this.globalExceptions.push({name: o.getName(), super: def.superClassName});
+    }
+
   }
 
 }
