@@ -6,7 +6,7 @@ import {Issue} from "../../src/issue";
 
 const cx_root = `CLASS cx_root DEFINITION PUBLIC.
 ENDCLASS.
-CLASS lcx_error IMPLEMENTATION.
+CLASS cx_root IMPLEMENTATION.
 ENDCLASS.`;
 
 const cx_static_check = `CLASS cx_static_check DEFINITION PUBLIC INHERITING FROM cx_root.
@@ -115,4 +115,63 @@ describe("Rule: uncaught_exception", () => {
     const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
+
+  it("TRY without CATCH, no effect", async () => {
+    const abap = `
+    CLASS lcx_error DEFINITION INHERITING FROM cx_static_check.
+    ENDCLASS.
+    CLASS lcx_error IMPLEMENTATION.
+    ENDCLASS.
+
+    FORM bar.
+      TRY.
+        RAISE EXCEPTION TYPE lcx_error.
+      ENDTRY.
+    ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("fixed via TRY CATCH", async () => {
+    const abap = `
+    CLASS lcx_error DEFINITION INHERITING FROM cx_static_check.
+    ENDCLASS.
+    CLASS lcx_error IMPLEMENTATION.
+    ENDCLASS.
+
+    FORM bar.
+      TRY.
+        RAISE EXCEPTION TYPE lcx_error.
+      CATCH lcx_error.
+        RETURN.
+      ENDTRY.
+    ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("error derived method call, in method 'moo'", async () => {
+    const abap = `
+  CLASS lcx_error DEFINITION INHERITING FROM cx_static_check.
+  ENDCLASS.
+  CLASS lcx_error IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl_class DEFINITION.
+    PUBLIC SECTION.
+      METHODS moo.
+      METHODS foobar RAISING lcx_error.
+  ENDCLASS.
+  CLASS lcl_class IMPLEMENTATION.
+    METHOD moo.
+      foobar( ).
+    ENDMETHOD.
+    METHOD foobar.
+      RAISE EXCEPTION TYPE lcx_error.
+    ENDMETHOD.
+  ENDCLASS.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
 });

@@ -16,8 +16,6 @@ import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types";
 
-// todo: ignore dynamic and no_check exceptions
-
 export class UncaughtExceptionConf extends BasicRuleConfig {
 }
 
@@ -79,8 +77,15 @@ export class UncaughtException extends ABAPRule {
     if (n.get() instanceof Structures.ClassDefinition
         || n.get() instanceof Structures.Interface) {
       return; // to optimize performance
-    } else if (n.get() instanceof Structures.Try) {
-// todo todo todo
+    } else if (n instanceof StructureNode && n.get() instanceof Structures.Try) {
+      // note that TRY-CATCH might be arbitrarily nested
+      const previous = this.sinked ? this.sinked.slice() : undefined;
+      this.addFromTryStructure(n);
+      for (const c of n.getChildren()) {
+        this.traverse(c, file);
+      }
+      this.sinked = previous;
+      return;
     } else if (n instanceof StatementNode && n.get() instanceof Statements.Method) {
       this.setSinkedFromMethod(n, file);
     } else if (n instanceof StatementNode && n.get() instanceof Statements.EndMethod) {
@@ -102,13 +107,13 @@ export class UncaughtException extends ABAPRule {
       }
 
       if (this.isSinked(name) === false) {
-        const issue = Issue.atStatement(file, n, "Uncaught exception", this.getMetadata().key, );
+        const issue = Issue.atStatement(file, n, "Uncaught exception " + name, this.getMetadata().key, this.getConfig().severity);
         this.issues.push(issue);
       }
     } else if (n instanceof StatementNode && n.get() instanceof Statements.Perform) {
       // todo, PERFORM, or is this not statically checked?
     } else if (n instanceof StatementNode) {
-      // todo, search for method call references
+      this.checkForMethodCalls(n, file);
     }
 
     if (n instanceof StructureNode) {
@@ -119,6 +124,42 @@ export class UncaughtException extends ABAPRule {
   }
 
 ////////////////////////////////
+
+  private checkForMethodCalls(n: StatementNode, file: ABAPFile) {
+    const start = n.getFirstToken().getStart();
+    const end = n.getLastToken().getEnd();
+
+    const scope = this.syntax.spaghetti.lookupPosition(start, file.getFilename());
+    for (const r of scope?.getData().references || []) {
+      if (r.referenceType === ReferenceType.MethodReference
+          && r.position.getStart().isAfter(start)
+          && r.position.getEnd().isBefore(end)
+          && r.resolved instanceof MethodDefinition) {
+
+        for (const name of r.resolved.getRaising()) {
+          if (this.isSinked(name) === false) {
+            const issue = Issue.atStatement(file, n, "Uncaught exception " + name, this.getMetadata().key, this.getConfig().severity);
+            this.issues.push(issue);
+          }
+        }
+      }
+    }
+  }
+
+  private addFromTryStructure(s: StructureNode) {
+    if (this.sinked === undefined) {
+      return;
+    }
+    for (const structure of s.findDirectStructures(Structures.Catch)) {
+      const c = structure.findDirectStatement(Statements.Catch);
+      if (c === undefined) {
+        continue;
+      }
+      for (const cn of c.findDirectExpressions(Expressions.ClassName)) {
+        this.sinked.push(cn.concatTokens());
+      }
+    }
+  }
 
   private setSinkedFromMethod(s: StatementNode, file: ABAPFile) {
     this.sinked = [];
@@ -142,6 +183,8 @@ export class UncaughtException extends ABAPRule {
   }
 
   private isSinked(name: string | undefined): boolean {
+    // todo: ignore dynamic and no_check exceptions
+
     if (this.sinked === undefined || name === undefined) {
       return true;
     }
