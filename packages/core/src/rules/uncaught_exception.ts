@@ -10,6 +10,13 @@ import {StatementNode, StructureNode} from "../abap/nodes";
 import {IRegistry} from "../_iregistry";
 import {Class} from "../objects";
 import {DDIC} from "../ddic";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ABAPObject} from "../objects/_abap_object";
+import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
+import {ReferenceType} from "../abap/5_syntax/_reference";
+import {MethodDefinition} from "../abap/types";
+
+// todo: ignore dynamic and no_check exceptions
 
 export class UncaughtExceptionConf extends BasicRuleConfig {
 }
@@ -21,12 +28,15 @@ export class UncaughtException extends ABAPRule {
   private readonly globalExceptions: {name: string, super: string | undefined}[] = [];
   private issues: Issue[] = [];
   private sinked: string[] | undefined;
+  private syntax: ISyntaxResult;
 
   public getMetadata(): IRuleMetadata {
     return {
       key: "uncaught_exception",
       title: "Uncaught Exception",
-      shortDescription: `Uncaught Exception`,
+      shortDescription: `Uncaught Exception
+
+      Does not report any issues if the code contains syntax errors`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -45,9 +55,14 @@ export class UncaughtException extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const stru = file.getStructure();
     if (stru === undefined) {
+      return [];
+    }
+
+    this.syntax = new SyntaxLogic(this.reg, obj).run();
+    if (this.syntax.issues.length > 0) {
       return [];
     }
 
@@ -65,13 +80,11 @@ export class UncaughtException extends ABAPRule {
         || n.get() instanceof Structures.Interface) {
       return; // to optimize performance
     } else if (n.get() instanceof Structures.Try) {
-//      console.dir("todo, try structure");
-
+// todo todo todo
     } else if (n instanceof StatementNode && n.get() instanceof Statements.Method) {
-//      console.dir("todo, method structure");
+      this.setSinkedFromMethod(n, file);
     } else if (n instanceof StatementNode && n.get() instanceof Statements.EndMethod) {
       this.sinked = undefined; // back to top level
-
     } else if (n instanceof StatementNode && n.get() instanceof Statements.Form) {
       this.sinked = [];
       const raising = n.findDirectExpression(Expressions.FormRaising);
@@ -80,7 +93,6 @@ export class UncaughtException extends ABAPRule {
       }
     } else if (n instanceof StatementNode && n.get() instanceof Statements.EndForm) {
       this.sinked = undefined; // back to top level
-
     } else if (n instanceof StatementNode && n.get() instanceof Statements.Raise) {
       let name: string | undefined = undefined;
 
@@ -94,7 +106,7 @@ export class UncaughtException extends ABAPRule {
         this.issues.push(issue);
       }
     } else if (n instanceof StatementNode && n.get() instanceof Statements.Perform) {
-      // todo, PERFORM
+      // todo, PERFORM, or is this not statically checked?
     } else if (n instanceof StatementNode) {
       // todo, search for method call references
     }
@@ -104,7 +116,29 @@ export class UncaughtException extends ABAPRule {
         this.traverse(c, file);
       }
     }
+  }
 
+////////////////////////////////
+
+  private setSinkedFromMethod(s: StatementNode, file: ABAPFile) {
+    this.sinked = [];
+
+    const scope = this.syntax.spaghetti.lookupPosition(s.getLastToken().getEnd(), file.getFilename());
+
+    let def: MethodDefinition | undefined = undefined;
+    for (const r of scope?.getData().references || []) {
+      // there should be only one, so the first is okay
+      if (r.referenceType === ReferenceType.MethodImplementationReference
+          && r.resolved instanceof MethodDefinition) {
+        def = r.resolved;
+        break;
+      }
+    }
+    if (def === undefined) {
+      return; // this should not occur, so just report everything as errors
+    }
+
+    def.getRaising().forEach(r => this.sinked?.push(r));
   }
 
   private isSinked(name: string | undefined): boolean {
@@ -113,7 +147,7 @@ export class UncaughtException extends ABAPRule {
     }
 
     // todo, check hierarchy, both this.globalExceptions and local classes
-    return this.sinked.some(a => a === name);
+    return this.sinked.some(a => a.toUpperCase() === name.toUpperCase());
   }
 
   private findGlobalExceptions() {
