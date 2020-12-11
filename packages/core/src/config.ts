@@ -37,7 +37,7 @@ export class Config implements IConfiguration {
       dependencies: [{
         url: "https://github.com/abaplint/deps",
         folder: "/deps",
-        files: "/src/**/*.*",
+        files: "/**/*.*",
       }],
       syntax: {
         version,
