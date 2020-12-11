@@ -2285,7 +2285,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Uncaught Exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+              "description": "Uncaught Exception\n\n      Does not report any issues if the code contains syntax errors\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
             },
             "unknown_types": {
               "anyOf": [
