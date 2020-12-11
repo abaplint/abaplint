@@ -218,7 +218,7 @@ export class LSPLookup {
     if (mdef.getRaising().length > 0) {
       ret += "RAISING\n";
       for (const p of mdef.getRaising()) {
-        ret += "* " + p;
+        ret += "* " + p + "\n";
       }
     }
 

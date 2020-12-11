@@ -2276,6 +2276,17 @@
               ],
               "description": "Allows you to enforce a pattern for TYPES definitions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/types_naming"
             },
+            "uncaught_exception": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UncaughtExceptionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Uncaught Exception\n\n      Does not report any issues if the code contains syntax errors\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
             "unknown_types": {
               "anyOf": [
                 {
@@ -4214,6 +4225,23 @@
       "required": [
         "pattern"
       ],
+      "type": "object"
+    },
+    "UncaughtExceptionConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "UnknownTypesConf": {

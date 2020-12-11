@@ -104,6 +104,7 @@ export * from "./tabl_enhancement_category";
 export * from "./try_without_catch";
 export * from "./type_form_parameters";
 export * from "./types_naming";
+export * from "./uncaught_exception";
 export * from "./unknown_types";
 export * from "./unreachable_code";
 export * from "./unused_methods";
