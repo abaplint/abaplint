@@ -1034,7 +1034,7 @@
           "type": "array"
         },
         "recommendations": {
-          "description": "Tuple of Function Module Name to be replaced, the recommended alternative and\r the version from which the recommendation is valid.",
+          "description": "Tuple of Function Module Name to be replaced, the recommended alternative and the version from which the recommendation is valid.",
           "items": {
             "$ref": "#/definitions/Recommendations"
           },
@@ -3324,7 +3324,7 @@
         },
         "logic": {
           "$ref": "#/definitions/NewlineLogic",
-          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\r \r Less: the required number of newlines has to be less than \"newlineAmount\""
+          "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\n\nLess: the required number of newlines has to be less than \"newlineAmount\""
         },
         "severity": {
           "$ref": "#/definitions/Severity",
@@ -3986,7 +3986,7 @@
           "type": "array"
         },
         "lines": {
-          "description": "An equal or higher number of sequential blank lines will trigger a violation.\r Example: if lines = 3, a maximum of 2 is allowed.",
+          "description": "An equal or higher number of sequential blank lines will trigger a violation. Example: if lines = 3, a maximum of 2 is allowed.",
           "type": "number"
         },
         "severity": {
@@ -4042,7 +4042,7 @@
           "type": "array"
         },
         "length": {
-          "description": "The smallest number of WHEN branches which will trigger a violation.\r Example: if length = 1, at least 2 branches are required",
+          "description": "The smallest number of WHEN branches which will trigger a violation. Example: if length = 1, at least 2 branches are required",
           "type": "number"
         },
         "severity": {
