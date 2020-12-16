@@ -546,4 +546,38 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("inline copy of table", async () => {
+    const abap = `
+    DATA txt_table TYPE STANDARD TABLE OF string.
+    DATA(inline_txt_table) = txt_table.`;
+
+    const expected = `
+    DATA txt_table TYPE STANDARD TABLE OF string.
+    DATA inline_txt_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    inline_txt_table = txt_table.`;
+
+    testFix(abap, expected);
+  });
+
+  it("inline copy of table, structured", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_struct,
+  num TYPE i,
+  txt TYPE string,
+END OF ty_struct.
+DATA struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
+DATA(inline_struct_table) = struct_table.`;
+
+    const expected = `
+TYPES: BEGIN OF ty_struct,
+  num TYPE i,
+  txt TYPE string,
+END OF ty_struct.
+DATA struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
+DATA inline_struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
+inline_struct_table = struct_table.`;
+
+    testFix(abap, expected);
+  });
+
 });

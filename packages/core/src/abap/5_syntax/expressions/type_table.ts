@@ -18,10 +18,13 @@ export class TypeTable {
     }
     const name = nameExpr.getFirstToken();
 
-    let qualifiedName = name.getStr();
-    if (scope.getType() === ScopeType.ClassDefinition
-        || scope.getType() === ScopeType.Interface) {
-      qualifiedName = scope.getName() + "=>" + qualifiedName;
+    let qualifiedName = "";
+    if (node.getFirstToken().getStr().toUpperCase() === "TYPES") {
+      qualifiedName = name.getStr();
+      if (scope.getType() === ScopeType.ClassDefinition
+          || scope.getType() === ScopeType.Interface) {
+        qualifiedName = scope.getName() + "=>" + qualifiedName;
+      }
     }
 
     const type = new BasicTypes(filename, scope).parseType(node, qualifiedName);

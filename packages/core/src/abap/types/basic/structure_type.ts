@@ -51,6 +51,10 @@ export class StructureType extends AbstractType {
   }
 
   public toABAP(): string {
+    const ret = this.getQualifiedName();
+    if (ret) {
+      return ret;
+    }
     return "StructureTypetoABAPtodo";
   }
 
