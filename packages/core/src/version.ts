@@ -13,7 +13,7 @@ export enum Version {
   Cloud = "Cloud",
 }
 
-export const defaultVersion = Version.v754;
+export const defaultVersion = Version.v755;
 
 export function getPreviousVersion(v: Version): Version {
   const all = Object.values(Version);
