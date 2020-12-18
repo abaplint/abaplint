@@ -6,11 +6,17 @@ import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
+import {ComponentCompareSimple} from "../expressions/component_compare_simple";
 
 export class ReadTable {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const sources = node.findDirectExpressions(Expressions.Source);
+
+    const components = node.findDirectExpression(Expressions.ComponentCompareSimple);
+    if (components !== undefined) {
+      new ComponentCompareSimple().runSyntax(components, scope, filename);
+    }
 
     let firstSource = node.findDirectExpression(Expressions.BasicSource);
     if (firstSource === undefined) {
