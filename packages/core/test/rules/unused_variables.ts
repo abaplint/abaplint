@@ -539,4 +539,17 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("READ TABLE", async () => {
+    const abap = `
+  DATA lv_test TYPE string.
+  DATA lv_result TYPE string.
+  DATA lt_test TYPE STANDARD TABLE OF string.
+  READ TABLE lt_test INTO lv_result WITH KEY table_line = lv_test. "<<< used
+  IF sy-subrc = 0.
+    WRITE lv_result.
+  ENDIF.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
