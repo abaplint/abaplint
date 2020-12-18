@@ -2558,7 +2558,6 @@
         }
       },
       "required": [
-        "version",
         "errorNamespace"
       ],
       "type": "object"
