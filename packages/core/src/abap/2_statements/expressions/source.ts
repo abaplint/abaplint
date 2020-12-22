@@ -109,7 +109,7 @@ export class Source extends Expression {
                            rparen,
                            optPrio(after)));
 
-    const ret = altPrio(corr, conv, value, cond, reff, exact, swit, filter, reduce, old);
+    const ret = altPrio( filter, reff, corr, conv, value, cond, exact, swit, reduce, old);
 
     return ret;
   }
