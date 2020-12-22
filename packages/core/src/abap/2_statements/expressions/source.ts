@@ -55,13 +55,15 @@ export class Source extends Expression {
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            ConvBody,
-                                           rparen, optPrio(after)));
+                                           rparen,
+                                           optPrio(after)));
 
     const swit = ver(Version.v740sp02, seq("SWITCH",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            SwitchBody,
-                                           rparen));
+                                           rparen,
+                                           optPrio(after)));
 
     const value = ver(Version.v740sp02, seq("VALUE",
                                             TypeNameOrInfer,

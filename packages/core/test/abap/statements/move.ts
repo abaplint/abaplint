@@ -165,6 +165,7 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   "result = xsdbool( FILTER #( messages USING KEY type IN message_error_types WHERE type = table_line ) IS NOT INITIAL ).",
   "reported = CORRESPONDING #( DEEP update_reported ).",
   "DATA(sdfs) = EXACT i( 5 ) + 3.",
+  "DATA(sdfs) = SWITCH i( val WHEN 2 THEN 2 ) + 2.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
