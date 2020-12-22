@@ -190,6 +190,7 @@ export class Help {
       let extra = "";
       switch (node.constructor.name) {
         case "TokenNode":
+        case "TokenNodeRegex":
           extra = node.get().constructor.name + ", \"" + node.get().getStr() + "\"";
           break;
         case "ExpressionNode":
