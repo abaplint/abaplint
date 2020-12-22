@@ -49,7 +49,8 @@ export class Source extends Expression {
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            CorrespondingBody,
-                                           rparen));
+                                           rparen,
+                                           optPrio(after)));
 
     const conv = ver(Version.v740sp02, seq("CONV",
                                            TypeNameOrInfer,
@@ -69,7 +70,8 @@ export class Source extends Expression {
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             ValueBody,
-                                            rparen));
+                                            rparen,
+                                            optPrio(after)));
 
     const cond = ver(Version.v740sp02, seq("COND",
                                            TypeNameOrInfer,
