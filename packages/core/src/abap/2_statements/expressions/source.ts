@@ -87,7 +87,8 @@ export class Source extends Expression {
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             Source,
-                                            rparen));
+                                            rparen,
+                                            optPrio(after)));
 
     const filter = ver(Version.v740sp08,
                        seq("FILTER",
