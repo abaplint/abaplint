@@ -164,6 +164,10 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   "rv_inbound_fm = 'CONVERSION_EXIT_' && get_field_ref( iv_table = iv_table iv_field = iv_field )->edit_mask+2 && '_INPUT'.",
   "result = xsdbool( FILTER #( messages USING KEY type IN message_error_types WHERE type = table_line ) IS NOT INITIAL ).",
   "reported = CORRESPONDING #( DEEP update_reported ).",
+  "DATA(sdfs) = EXACT i( 5 ) + 3.",
+  "DATA(sdfs) = SWITCH i( val WHEN 2 THEN 2 ) + 2.",
+  "DATA(sdfs) = VALUE syst( mandt = '22' ) + 2.", // note that this is not a syntax error on 751, but a runtime error
+  "DATA(sdfs) = CORRESPONDING syst( val ) + 2.",  // note that this is not a syntax error on 751, but a runtime error
 ];
 
 statementType(tests, "MOVE", Statements.Move);

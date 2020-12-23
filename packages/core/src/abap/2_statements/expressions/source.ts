@@ -49,25 +49,29 @@ export class Source extends Expression {
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            CorrespondingBody,
-                                           rparen));
+                                           rparen,
+                                           optPrio(after)));
 
     const conv = ver(Version.v740sp02, seq("CONV",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            ConvBody,
-                                           rparen, optPrio(after)));
+                                           rparen,
+                                           optPrio(after)));
 
     const swit = ver(Version.v740sp02, seq("SWITCH",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            SwitchBody,
-                                           rparen));
+                                           rparen,
+                                           optPrio(after)));
 
     const value = ver(Version.v740sp02, seq("VALUE",
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             ValueBody,
-                                            rparen));
+                                            rparen,
+                                            optPrio(after)));
 
     const cond = ver(Version.v740sp02, seq("COND",
                                            TypeNameOrInfer,
@@ -87,7 +91,8 @@ export class Source extends Expression {
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             Source,
-                                            rparen));
+                                            rparen,
+                                            optPrio(after)));
 
     const filter = ver(Version.v740sp08,
                        seq("FILTER",
@@ -104,7 +109,7 @@ export class Source extends Expression {
                            rparen,
                            optPrio(after)));
 
-    const ret = altPrio(corr, conv, value, cond, reff, exact, swit, filter, reduce, old);
+    const ret = altPrio( filter, reff, corr, conv, value, cond, exact, swit, reduce, old);
 
     return ret;
   }

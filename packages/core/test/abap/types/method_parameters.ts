@@ -36,5 +36,7 @@ ENDCLASS.`;
     expect(defs.length).to.equal(1);
     const parameters = defs[0].getParameters();
     expect(parameters.getDefaultImporting()).to.equal("IV_URL");
+    expect(parameters.getParameterDefault("IV_VALIDATE")).to.equal("abap_false");
+    expect(parameters.getParameterDefault("SDFDSDFS")).to.equal(undefined);
   });
 });
