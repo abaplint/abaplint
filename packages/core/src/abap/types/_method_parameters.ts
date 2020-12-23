@@ -8,4 +8,5 @@ export interface IMethodParameters {
   getReturning(): TypedIdentifier | undefined;
   getExceptions(): readonly string[];
   getDefaultImporting(): string | undefined;
+  getParameterDefault(parameter: string): string | undefined;
 }
