@@ -23,7 +23,7 @@ export class MethodParameters implements IMethodParameters {
   private preferred: string | undefined;
   private returning: TypedIdentifier | undefined;
   private readonly exceptions: string[]; // todo, not filled
-  private readonly defaults: {[index: string]: string};
+  private readonly defaults: {[index: string]: ExpressionNode};
   private readonly filename: string;
 
   public constructor(node: StatementNode, filename: string, scope: CurrentScope) {
@@ -94,7 +94,7 @@ export class MethodParameters implements IMethodParameters {
     return this.exceptions;
   }
 
-  public getParameterDefault(parameter: string): string | undefined {
+  public getParameterDefault(parameter: string) {
     return this.defaults[parameter.toUpperCase()];
   }
 
@@ -168,9 +168,9 @@ export class MethodParameters implements IMethodParameters {
         const name = target[target.length - 1].getName().toUpperCase();
         this.optional.push(name);
 
-        const val = opt.findFirstExpression(Expressions.Default);
-        if (val) {
-          this.defaults[name] = val.concatTokens().substr(8);
+        const val = opt.findFirstExpression(Expressions.Default)?.getLastChild();
+        if (val && val instanceof ExpressionNode) {
+          this.defaults[name] = val;
         }
       }
     }

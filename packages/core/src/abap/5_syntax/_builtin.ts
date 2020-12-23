@@ -95,7 +95,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     return this;
   }
 
-  public getParameterDefault(_parameter: string): string | undefined {
+  public getParameterDefault(_parameter: string) {
     return undefined;
   }
 }
