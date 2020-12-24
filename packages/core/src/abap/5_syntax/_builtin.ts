@@ -47,7 +47,13 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
   }
 
   public getDefaultImporting(): string | undefined {
-    // todo
+    if (this.method.mandatory === undefined) {
+      return undefined;
+    }
+    const keys = Object.keys(this.method.mandatory);
+    if (keys.length === 1) {
+      return keys[0];
+    }
     return undefined;
   }
 
@@ -71,6 +77,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
   public getExceptions(): readonly string[] {
     return [];
   }
+
   public getVisibility(): Visibility {
     return Visibility.Public;
   }
