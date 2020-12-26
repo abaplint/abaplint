@@ -813,4 +813,28 @@ ENDCLASS.`;
     expect(hover?.value).to.contain(`MethodImplementationReference`);
   });
 
+  it("hover, method reference via CALL METHOD", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS name IMPORTING foo TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD name.
+    WRITE / foo.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  PERFORM bar.
+FORM bar.
+  DATA bar TYPE REF TO lcl_bar.
+  CREATE OBJECT bar.
+  CALL METHOD bar->name( 1 ).
+ENDFORM.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 14, 22));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`MethodReference`);
+  });
+
 });
