@@ -19,6 +19,7 @@ export class Call {
       throw new Error("Call, child MethodSource not found");
     }
     new MethodSource().runSyntax(methodSource, scope, filename);
+
     const body = node.findDirectExpression(Expressions.MethodCallBody);
     if (body) {
       // todo, resove the method definition above and pass, if possible, in case of dynamic pass void
