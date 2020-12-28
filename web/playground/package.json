@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode development --env development",
     "dev": "webpack serve --mode development --env development",
     "test": "ls",
     "clean": "rimraf build"
@@ -25,8 +25,8 @@
     "css-loader": "^5.0.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
-    "less": "=3.13.0",
-    "less-loader": "=7.1.0",
+    "less": "4.0.0",
+    "less-loader": "7.2.1",
     "rimraf": "^3.0.2",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.0.12",
