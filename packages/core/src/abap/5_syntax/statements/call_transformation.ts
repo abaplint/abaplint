@@ -5,12 +5,17 @@ import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {XStringType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
+import {Dynamic} from "../expressions/dynamic";
 
 export class CallTransformation {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
+    }
+
+    for (const d of node.findDirectExpressions(Expressions.Dynamic)) {
+      new Dynamic().runSyntax(d, scope, filename);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
