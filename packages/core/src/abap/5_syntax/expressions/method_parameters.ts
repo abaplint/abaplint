@@ -116,7 +116,6 @@ export class MethodParameters {
 
       if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
-        new Target().runSyntax(item.target, scope, filename);
         if (0) {
           console.log(parameterType); // todo
         }
