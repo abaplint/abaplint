@@ -3118,6 +3118,12 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("raise exception type not found", () => {
+    const abap = `RAISE EXCEPTION TYPE zcx_sdfdsfdsfdsdsf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
