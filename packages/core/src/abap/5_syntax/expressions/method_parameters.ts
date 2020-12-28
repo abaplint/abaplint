@@ -97,7 +97,6 @@ export class MethodParameters {
         throw new Error("Could not determine target type");
       } else if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
-        new Target().runSyntax(item.target, scope, filename);
       }
     }
   }

@@ -837,4 +837,29 @@ ENDFORM.`;
     expect(hover?.value).to.contain(`MethodReference`);
   });
 
+  it("hover, expect one write reference", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar EXPORTING int TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+FORM run.
+  DATA lo_bar TYPE REF TO lcl_bar.
+  DATA lv_int TYPE i.
+  CREATE OBJECT lo_bar.
+  lo_bar->bar( IMPORTING int = lv_int ).
+ENDFORM.
+START-OF-SELECTION.
+  PERFORM run.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 12, 33));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`DataWriteReference`);
+    expect(hover?.value.split("DataWriteReference").length).to.equal(2);
+  });
+
 });

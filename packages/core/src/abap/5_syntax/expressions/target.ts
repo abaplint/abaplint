@@ -14,9 +14,10 @@ import {ReferenceType} from "../_reference";
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
 
-    if (node.concatTokens().includes("-")) {
+    const concat = node.concatTokens();
+    if (concat.includes("-")) {
       // workaround for names with dashes
-      const found = scope.findVariable(node.concatTokens());
+      const found = scope.findVariable(concat);
       if (found) {
         scope.addReference(node.getFirstToken(), found, ReferenceType.DataWriteReference, filename);
         return found.getType();
