@@ -3118,6 +3118,26 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("raise exception type not found", () => {
+    const abap = `RAISE EXCEPTION TYPE zcx_sdfdsfdsfdsdsf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("raise exception type not found, but voided", () => {
+    const abap = `RAISE EXCEPTION TYPE cx_foobar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("raise exception", () => {
+    const abap = `
+    DATA lx_error TYPE REF TO cx_foobar.
+    RAISE EXCEPTION lx_error.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
