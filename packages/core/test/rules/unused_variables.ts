@@ -552,4 +552,17 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("APPEND CORRESPONDING", async () => {
+    const abap = `
+TYPES:
+  BEGIN OF ty_result,
+    ci_has_errors TYPE abap_bool,
+  END OF ty_result.
+DATA ls_tadir TYPE ty_result.
+DATA rt_list TYPE STANDARD TABLE OF ty_result WITH EMPTY KEY.
+APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

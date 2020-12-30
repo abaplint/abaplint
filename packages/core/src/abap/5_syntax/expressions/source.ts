@@ -19,6 +19,7 @@ import {CondBody} from "./cond_body";
 import {ConvBody} from "./conv_body";
 import {AttributeName} from "./attribute_name";
 import {FilterBody} from "./filter_body";
+import {CorrespondingBody} from "./corresponding_body";
 
 /*
 * Type interference, valid scenarios:
@@ -91,6 +92,10 @@ export class Source {
           return new FilterBody().runSyntax(node.findDirectExpression(Expressions.FilterBody), scope, filename, foundType);
         }
         case "CORRESPONDING":
+        {
+          const foundType = this.determineType(node, scope, filename, targetType);
+          return new CorrespondingBody().runSyntax(node.findDirectExpression(Expressions.CorrespondingBody), scope, filename, foundType);
+        }
         case "EXACT":
           return this.determineType(node, scope, filename, targetType);
         case "VALUE":
