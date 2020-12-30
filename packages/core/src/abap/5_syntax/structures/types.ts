@@ -1,5 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
+import * as Structures from "../../3_structures/structures";
 import {StructureNode, StatementNode} from "../../nodes";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {IStructureComponent, VoidType} from "../../types/basic";
@@ -27,8 +28,12 @@ export class Types {
           return new TypedIdentifier(name, filename, found);
         }
         components = components.concat(found);
+      } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {
+        const found = new Types().runSyntax(c, scope, filename);
+        if (found) {
+          components.push({name: found.getName(), type: found.getType()});
+        }
       }
-      // todo, nested structures
     }
 
     if (components.length === 0) { // todo, remove this check
