@@ -30,7 +30,7 @@ jobs:
 
     - name: run
       env:
-        REPOS: '["abapGit/abapGit", "larshp/abapOpenChecks", "abapGit/CI", "abapGit/background_modes", "abapGit/ADT_Backend", "sbcgua/text2tab", "open-abap/open-abap", "FreHu/abap-turtle-graphics", "sbcgua/mockup_loader", "SAP/code-pal-for-abap", "abaplint/deps", "larshp/abapGitServer", "larshp/abapPGP", "Sumu-Ning/AES", "abaplint/abaplint-sci-client", "Microsoft/ABAP-SDK-for-Azure", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx", "sbcgua/abap-string-map", "sbcgua/ajson", "larshp/abap-wasm"]'
+        REPOS: '["abapGit/abapGit", "larshp/abapOpenChecks", "abapGit/CI", "abapGit/ci_tools", "abapGit/background_modes", "abapGit/ADT_Backend", "sbcgua/text2tab", "open-abap/open-abap", "FreHu/abap-turtle-graphics", "sbcgua/mockup_loader", "SAP/code-pal-for-abap", "abaplint/deps", "larshp/abapGitServer", "larshp/abapPGP", "Sumu-Ning/AES", "abaplint/abaplint-sci-client", "Microsoft/ABAP-SDK-for-Azure", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx", "sbcgua/abap-string-map", "sbcgua/ajson", "larshp/abap-wasm"]'
       run: |
         cd .. && cd ..
         ls -salh
