@@ -3138,6 +3138,23 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("nested TYPES definition", () => {
+    const abap = `
+TYPES:
+  BEGIN OF ty_result,
+    ci_has_errors TYPE abap_bool,
+    BEGIN OF statistics,
+      duration_in_seconds TYPE i,
+    END OF statistics,
+  END OF ty_result.
+
+DATA result TYPE ty_result.
+
+WRITE result-statistics-duration_in_seconds.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

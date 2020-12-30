@@ -71,6 +71,7 @@ export class UnusedMethods implements IRule {
 Skips:
 * methods FOR TESTING
 * methods SETUP + TEARDOWN + CLASS_SETUP + CLASS_TEARDOWN in testclasses
+* class_constructor + constructor methods
 * event handlers
 * methods that are redefined
 * INCLUDEs
@@ -121,6 +122,9 @@ Skips:
               || method.name.toUpperCase() === "CLASS_SETUP"
               || method.name.toUpperCase() === "TEARDOWN"
               || method.name.toUpperCase() === "CLASS_TEARDOWN")) {
+            continue;
+          } else if (method.name.toUpperCase() === "CONSTRUCTOR"
+              || method.name.toUpperCase() === "CLASS_CONSTRUCTOR") {
             continue;
           }
 

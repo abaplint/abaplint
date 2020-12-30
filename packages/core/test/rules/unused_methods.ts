@@ -162,4 +162,19 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("skip private constructor", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    METHODS: constructor.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
