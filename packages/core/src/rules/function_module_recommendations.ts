@@ -31,7 +31,7 @@ export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
     {name: "POPUP_TO_DECIDE", replace: "use POPUP_TO_CONFIRM"},
     {name: "REUSE_ALV_GRID_DISPLAY", replace: "use CL_SALV_TABLE=>FACTORY or CL_GUI_ALV_GRID"},
     {name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC"},
-    {name: "FUNCTION_EXISTS", replace: "surround with try-catch CX_SY_DYN_ILLEGAL_METHOD instead"},
+    {name: "FUNCTION_EXISTS", replace: "surround with try-catch CX_SY_DYN_CALL_ILLEGAL_METHOD instead"},
 
   ];
 }
