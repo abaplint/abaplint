@@ -43,6 +43,7 @@ import {MemoryFile} from "./files/memory_file";
 import {Renamer} from "./objects/rename/renamer";
 import * as Info from "./abap/4_file_information/_abap_file_information";
 import {Visibility} from "./abap/4_file_information/visibility";
+import {Identifier} from "./abap/4_file_information/_identifier";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -51,7 +52,7 @@ import {Visibility} from "./abap/4_file_information/visibility";
 export {MemoryFile, Issue, Config, Version, ReferenceType,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
   Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
-  Structures, Statements, Expressions, Types, Nodes, IConfig,
+  Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment,
   IClassDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
