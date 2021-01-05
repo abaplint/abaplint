@@ -168,3 +168,4 @@ export * from "./type_table";
 export * from "./type";
 export * from "./value_body";
 export * from "./value";
+export * from "./with_name";

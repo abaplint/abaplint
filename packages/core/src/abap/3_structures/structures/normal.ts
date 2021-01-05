@@ -220,6 +220,7 @@ export class Normal implements IStructure {
                sub(Structures.Data),
                sub(Structures.TypeEnum),
                sub(Structures.While),
+               sub(Structures.With),
                sub(Structures.Do),
                sub(Structures.ExecSQL));
   }
