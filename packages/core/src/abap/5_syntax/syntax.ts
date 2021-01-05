@@ -110,6 +110,8 @@ import {Assert} from "./statements/assert";
 import {SetParameter} from "./statements/set_parameter";
 import {ClassLocalFriends} from "./statements/class_local_friends";
 import {GetBadi} from "./statements/get_badi";
+import {With} from "./statements/with";
+import {WithLoop} from "./statements/with_loop";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -384,6 +386,10 @@ export class SyntaxLogic {
       new LogPoint().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.While) {
       new While().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.With) {
+      new With().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.WithLoop) {
+      new WithLoop().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CallTransformation) {
       new CallTransformation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetLocale) {
