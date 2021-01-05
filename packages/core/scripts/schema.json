@@ -2065,7 +2065,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Configure undesired operator variants\nTags: SingleFile\nhttps://rules.abaplint.org/preferred_compare_operator"
+              "description": "Configure undesired operator variants\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/preferred_compare_operator"
             },
             "prefix_is_current_class": {
               "anyOf": [
