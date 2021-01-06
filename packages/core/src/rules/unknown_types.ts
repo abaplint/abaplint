@@ -75,8 +75,8 @@ export class UnknownTypes implements IRule {
     for (const v of node.getData().idefs) {
       const found = this.checkInterface(v);
       if (found) {
-        const message = "Contains unknown";
-        ret.push(Issue.atIdentifier(found, message, this.getMetadata().key, this.conf.severity));
+        const message = "Contains unknown, " + found.found;
+        ret.push(Issue.atIdentifier(found.id, message, this.getMetadata().key, this.conf.severity));
       }
     }
 
@@ -87,12 +87,12 @@ export class UnknownTypes implements IRule {
     return ret;
   }
 
-  private checkInterface(idef: IInterfaceDefinition): Identifier | undefined {
+  private checkInterface(idef: IInterfaceDefinition): {id: Identifier, found: string} | undefined {
     for (const m of idef.getMethodDefinitions()?.getAll() || []) {
       for (const p of m.getParameters().getAll()) {
         const found = this.containsUnknown(p.getType());
         if (found) {
-          return p;
+          return {id: p, found};
         }
       }
     }
