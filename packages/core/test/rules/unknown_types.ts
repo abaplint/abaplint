@@ -1099,4 +1099,13 @@ ENDCLASS.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("interface with TYPE data", () => {
+    const abap = `INTERFACE zif_foobar PUBLIC.
+      METHODS bar EXPORTING ref TYPE data.
+    ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zif_foobar.intf.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });
