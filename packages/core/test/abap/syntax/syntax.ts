@@ -46,13 +46,13 @@ function runClass(abap: string): Issue[] {
   const reg = new Registry().addFile(file);
   return run(reg);
 }
-
+/*
 function runInterface(abap: string): Issue[] {
   const file = new MemoryFile("zif_foobar.intf.abap", abap);
   const reg = new Registry().addFile(file);
   return run(reg);
 }
-
+*/
 function runProgram(abap: string, globalConstants?: string[], version?: Version): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
@@ -3159,15 +3159,6 @@ DATA result TYPE ty_result.
 WRITE result-statistics-duration_in_seconds.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
-  });
-
-  it.only("interface with unknown reference", () => {
-    const abap = `INTERFACE zif_foobar PUBLIC.
-      METHODS bar RETURNING VALUE(ref) TYPE REF TO zcl_not_found.
-    ENDINTERFACE.`;
-    const issues = runInterface(abap);
-    console.dir(issues);
-    expect(issues.length).to.equals(1);
   });
 
 // todo, static method cannot access instance attributes

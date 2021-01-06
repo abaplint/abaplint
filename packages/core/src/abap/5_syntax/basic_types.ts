@@ -522,6 +522,7 @@ export class BasicTypes {
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
+      this.scope.addReference(chain.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       return new Types.VoidType(name);
     }
 

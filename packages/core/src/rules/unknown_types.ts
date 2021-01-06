@@ -9,6 +9,8 @@ import {IRuleMetadata, RuleTag, IRule} from "./_irule";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {IInterfaceDefinition} from "../abap/types/_interface_definition";
+import {Identifier} from "../abap/4_file_information/_identifier";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -70,11 +72,31 @@ export class UnknownTypes implements IRule {
       }
     }
 
+    for (const v of node.getData().idefs) {
+      const found = this.checkInterface(v);
+      if (found) {
+        const message = "Contains unknown";
+        ret.push(Issue.atIdentifier(found, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
+
     for (const n of node.getChildren()) {
       ret = ret.concat(this.traverse(n));
     }
 
     return ret;
+  }
+
+  private checkInterface(idef: IInterfaceDefinition): Identifier | undefined {
+    for (const m of idef.getMethodDefinitions()?.getAll() || []) {
+      for (const p of m.getParameters().getAll()) {
+        const found = this.containsUnknown(p.getType());
+        if (found) {
+          return p;
+        }
+      }
+    }
+    return undefined;
   }
 
   private containsUnknown(type: AbstractType): string | undefined {

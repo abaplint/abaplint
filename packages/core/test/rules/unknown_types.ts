@@ -1076,4 +1076,27 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("interface with unknown method parameter reference", () => {
+    const abap = `INTERFACE zif_foobar PUBLIC.
+      METHODS bar RETURNING VALUE(ref) TYPE REF TO zcl_not_found.
+    ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zif_foobar.intf.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("clas with unknown method parameter reference", () => {
+    const abap = `CLASS zcl_foobar DEFINITION PUBLIC.
+      PUBLIC SECTION.
+        METHODS bar RETURNING VALUE(ref) TYPE REF TO zcl_not_found.
+    ENDCLASS.
+    CLASS zcl_foobar IMPLEMENTATION.
+      METHOD bar.
+      ENDMETHOD.
+    ENDCLASS.`;
+    let issues = runMulti([{filename: "zcl_foobar.clas.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(1);
+  });
+
 });
