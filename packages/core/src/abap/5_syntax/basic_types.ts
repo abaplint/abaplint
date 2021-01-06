@@ -150,6 +150,8 @@ export class BasicTypes {
       return new Types.CLikeType();
     } else if (chainText === "ANY") {
       return new Types.AnyType();
+    } else if (chainText === "DATA") {
+      return new Types.AnyType();
     } else if (chainText === "NUMERIC") {
       return new Types.NumericGenericType();
     } else if (chainText === "UTCLONG") { // todo, take version into account

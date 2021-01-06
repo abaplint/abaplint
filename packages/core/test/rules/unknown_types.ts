@@ -1101,7 +1101,7 @@ ENDCLASS.`;
 
   it("interface with TYPE data", () => {
     const abap = `INTERFACE zif_foobar PUBLIC.
-      METHODS bar EXPORTING data TYPE data.
+      METHODS bar EXPORTING data TYPE DATA.
       METHODS get_body_data
       IMPORTING
         content_handler TYPE REF TO object
