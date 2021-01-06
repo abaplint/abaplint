@@ -23,7 +23,7 @@ export class PreferredCompareOperator extends ABAPRule {
       key: "preferred_compare_operator",
       title: "Preferred compare operator",
       shortDescription: `Configure undesired operator variants`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
 
