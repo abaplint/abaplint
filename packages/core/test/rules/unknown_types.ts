@@ -1101,7 +1101,12 @@ ENDCLASS.`;
 
   it("interface with TYPE data", () => {
     const abap = `INTERFACE zif_foobar PUBLIC.
-      METHODS bar EXPORTING ref TYPE data.
+      METHODS bar EXPORTING data TYPE data.
+      METHODS get_body_data
+      IMPORTING
+        content_handler TYPE REF TO object
+      EXPORTING
+        data            TYPE data.
     ENDINTERFACE.`;
     let issues = runMulti([{filename: "zif_foobar.intf.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
