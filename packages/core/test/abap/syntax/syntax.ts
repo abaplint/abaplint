@@ -46,7 +46,13 @@ function runClass(abap: string): Issue[] {
   const reg = new Registry().addFile(file);
   return run(reg);
 }
-
+/*
+function runInterface(abap: string): Issue[] {
+  const file = new MemoryFile("zif_foobar.intf.abap", abap);
+  const reg = new Registry().addFile(file);
+  return run(reg);
+}
+*/
 function runProgram(abap: string, globalConstants?: string[], version?: Version): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);

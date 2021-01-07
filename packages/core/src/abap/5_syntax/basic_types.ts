@@ -150,6 +150,8 @@ export class BasicTypes {
       return new Types.CLikeType();
     } else if (chainText === "ANY") {
       return new Types.AnyType();
+    } else if (chainText === "DATA") {
+      return new Types.AnyType();
     } else if (chainText === "NUMERIC") {
       return new Types.NumericGenericType();
     } else if (chainText === "UTCLONG") { // todo, take version into account
@@ -522,6 +524,7 @@ export class BasicTypes {
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
+      this.scope.addReference(chain.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       return new Types.VoidType(name);
     }
 
