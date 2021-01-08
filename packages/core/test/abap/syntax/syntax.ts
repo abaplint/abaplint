@@ -3161,6 +3161,14 @@ WRITE result-statistics-duration_in_seconds.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("voided method call, should not give any error", () => {
+    const abap = `
+    DATA pv_error TYPE string.
+    cl_document_bcs=>create_document( i_text = VALUE #( ( line = pv_error ) ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

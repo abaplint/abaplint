@@ -180,10 +180,14 @@ export class MethodParameters {
           }
         }
       }
-      const sourceType = new Source().runSyntax(source, scope, filename, targetType);
+      let sourceType = new Source().runSyntax(source, scope, filename, targetType);
 
       if (sourceType === undefined) {
-        throw new Error("No source type determined for parameter " + name + " input");
+        if (method instanceof VoidType) {
+          sourceType = method;
+        } else {
+          throw new Error("No source type determined for parameter " + name + " input");
+        }
       }
 
       ret.push({name, source, sourceType});
