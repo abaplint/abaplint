@@ -3217,6 +3217,29 @@ ENDFORM.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("test something", () => {
+    const abap = `
+INTERFACE lif_html.
+  METHODS render.
+ENDINTERFACE.
+
+CLASS lcl_viewer DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS to_html RETURNING VALUE(ref) TYPE REF TO lif_html.
+ENDCLASS.
+
+CLASS lcl_viewer IMPLEMENTATION.
+  METHOD to_html.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  lcl_viewer=>to_html( )->render( ).
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
