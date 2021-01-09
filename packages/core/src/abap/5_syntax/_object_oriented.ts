@@ -121,7 +121,7 @@ export class ObjectOriented {
       return found;
     }
 
-    for (const a of def.getAliases().getAll()) {
+    for (const a of def.getAliases()?.getAll() || []) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {
         const comp = a.getComponent();
         const res = this.searchEvent(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
