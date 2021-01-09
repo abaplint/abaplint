@@ -3192,6 +3192,31 @@ WRITE result-statistics-duration_in_seconds.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("aliased method", () => {
+    const abap = `
+INTERFACE lif_ajson.
+  METHODS method.
+ENDINTERFACE.
+
+CLASS lcl_ajson DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_ajson.
+    ALIASES method FOR lif_ajson~method.
+ENDCLASS.
+
+CLASS lcl_ajson IMPLEMENTATION.
+  METHOD lif_ajson~method.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA ajson TYPE REF TO lcl_ajson.
+  ajson->method( ).
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
