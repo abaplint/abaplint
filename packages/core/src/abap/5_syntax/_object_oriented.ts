@@ -121,7 +121,7 @@ export class ObjectOriented {
       return found;
     }
 
-    for (const a of def.getAliases().getAll()) {
+    for (const a of def.getAliases()?.getAll() || []) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {
         const comp = a.getComponent();
         const res = this.searchEvent(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
@@ -151,6 +151,16 @@ export class ObjectOriented {
     for (const a of def.getAttributes().getAll()) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {
         return a;
+      }
+    }
+
+    for (const a of def.getAliases()?.getAll() || []) {
+      if (a.getName().toUpperCase() === name.toUpperCase()) {
+        const comp = a.getComponent();
+        const res = this.searchAttributeName(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
+        if (res) {
+          return res;
+        }
       }
     }
 
