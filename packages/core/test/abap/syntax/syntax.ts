@@ -46,13 +46,13 @@ function runClass(abap: string): Issue[] {
   const reg = new Registry().addFile(file);
   return run(reg);
 }
-/*
+
 function runInterface(abap: string): Issue[] {
   const file = new MemoryFile("zif_foobar.intf.abap", abap);
   const reg = new Registry().addFile(file);
   return run(reg);
 }
-*/
+
 function runProgram(abap: string, globalConstants?: string[], version?: Version): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
@@ -3238,6 +3238,22 @@ FORM bar.
 ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("interface implementing voided interface", () => {
+    const abap = `INTERFACE zif_foobar PUBLIC.
+      INTERFACES if_voided.
+    ENDINTERFACE.`;
+    const issues = runInterface(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("interface implementing non-existing interface, expect error", () => {
+    const abap = `INTERFACE zif_foobar PUBLIC.
+      INTERFACES zif_error.
+    ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
   });
 
 // todo, static method cannot access instance attributes

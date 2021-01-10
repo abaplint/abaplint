@@ -862,4 +862,28 @@ START-OF-SELECTION.
     expect(hover?.value.split("DataWriteReference").length).to.equal(2);
   });
 
+  it("hover interfaced interface", () => {
+    const abap = `INTERFACE top.
+  ENDINTERFACE.
+  INTERFACE sub.
+    INTERFACES top.
+  ENDINTERFACE.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 16));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`ObjectOrientedReference`);
+  });
+
+  it("hover voided interfaced interface", () => {
+    const abap = `INTERFACE sub.
+    INTERFACES voided.
+  ENDINTERFACE.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 16));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`Void`);
+  });
+
 });
