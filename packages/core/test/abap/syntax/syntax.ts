@@ -3256,6 +3256,14 @@ ENDFORM.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("dynamic call, no syntax error expected", () => {
+    const abap = `
+  DATA lv_lock TYPE string.
+  CALL METHOD (lv_lock)=>enqueue.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
