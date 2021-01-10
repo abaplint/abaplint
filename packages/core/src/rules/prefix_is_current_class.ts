@@ -56,13 +56,18 @@ export class PrefixIsCurrentClass extends ABAPRule {
       }
 
       for (const e of s.findAllExpressions(TypeName)) {
-        if (e.concatTokens().toUpperCase().startsWith(name + "=>")) {
+        const stat = e.findDirectTokenByText("=>");
+        if (stat) {
+          const start = new Position(stat.getRow(), stat.getCol() - name.length);
+          const end = new Position(stat.getRow(), stat.getCol() + 2);
+          const fix = EditHelper.deleteRange(file, start, end);
           issues.push(Issue.atToken(
             file,
             e.getFirstToken(),
             "Reference to current interface can be omitted",
             this.getMetadata().key,
-            this.conf.severity));
+            this.conf.severity,
+            fix));
         }
       }
 
