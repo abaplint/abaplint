@@ -45,6 +45,10 @@ UPDATE zabaplint_pack
   WHERE devclass = iv_devclass.
 ASSERT sy-dbcnt = 1.`, cnt: 0},
 
+  {abap: "FIND 'foo' IN TABLE tab FROM cline MATCH LINE cline.", cnt: 0},
+  {abap: "FIND FIRST OCCURRENCE OF SUBSTRING 'BLAH' IN SECTION LENGTH 20 OF lv_foo MATCH COUNT l_count.", cnt: 0},
+  {abap: "FIND REGEX 'blah' IN lv_statement SUBMATCHES lv_name.", cnt: 0},
+  {abap: "FIND 'blah' IN TABLE t_source IGNORING CASE.", cnt: 1},
 ];
 
 testRule(tests, CheckSubrc);
