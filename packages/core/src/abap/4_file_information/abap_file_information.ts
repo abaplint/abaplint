@@ -109,6 +109,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       const interfaceName = found.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
       const methods = this.parseMethodDefinition(found, Visibility.Public);
       const attributes = this.parseAttributes(found, Visibility.Public);
+      const aliases = this.parseAliases(found, Visibility.Public);
 
       this.interfaces.push({
         name: interfaceName.getStr(),
@@ -116,6 +117,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         isLocal: found.findFirstExpression(Expressions.ClassGlobal) === undefined,
         isGlobal: found.findFirstExpression(Expressions.ClassGlobal) !== undefined,
         interfaces: this.getImplementing(found),
+        aliases,
         methods,
         attributes,
       });

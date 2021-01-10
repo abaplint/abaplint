@@ -151,7 +151,7 @@ describe("Rules, implement_methods", () => {
     const issues = await runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("implement methods from interface, implemented", async () => {
