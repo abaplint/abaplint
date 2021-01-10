@@ -345,6 +345,16 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE")) {
       found = this.resolveTypeName(typename, this.findLength(node));
 
+      if (found && node.findDirectTokenByText("OCCURS")) {
+        found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
+      } else if (found && node.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
+        if (!(found instanceof Types.TableType)) {
+          throw new Error("WITH HEADER LINE can only be used with internal table");
+        } else {
+          found = new Types.TableType(found.getRowType(), true);
+        }
+      }
+
       if (found === undefined && typename === undefined) {
         let length = 1;
 
@@ -359,9 +369,6 @@ export class BasicTypes {
         found = new Types.CharacterType(length, name); // fallback
       }
 
-      if (found && node.findDirectTokenByText("OCCURS")) {
-        found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
-      }
     }
 
     return found;

@@ -3264,6 +3264,27 @@ ENDFORM.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("refer table type WITH HEADER LINE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo,
+         field TYPE string,
+       END OF ty_foo.
+TYPES ttyp TYPE STANDARD TABLE OF ty_foo.
+DATA moo TYPE ttyp WITH HEADER LINE.
+
+LOOP AT moo.
+  WRITE moo-field.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("invalid type with WITH HEADER LINE", () => {
+    const abap = `DATA moo TYPE i WITH HEADER LINE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
