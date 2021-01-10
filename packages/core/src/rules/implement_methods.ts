@@ -112,6 +112,18 @@ export class ImplementMethods extends ABAPRule {
   }
 
   private findInterface(identifier: Identifier, name: string): InfoInterfaceDefinition | Issue | undefined {
+    const idef = this.findInterfaceByName(name);
+
+    if (idef === undefined) {
+      const message = "Implemented interface \"" + name + "\" not found";
+      const issue = Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity);
+      return issue;
+    }
+
+    return idef;
+  }
+
+  private findInterfaceByName(name: string): InfoInterfaceDefinition | undefined {
     let idef: InfoInterfaceDefinition | undefined = undefined;
 
     const intf = this.reg.getObject("INTF", name) as Interface | undefined;
@@ -123,11 +135,6 @@ export class ImplementMethods extends ABAPRule {
           idef = found;
           break;
         }
-      }
-      if (idef === undefined) {
-        const message = "Implemented interface \"" + name + "\" not found";
-        const issue = Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity);
-        return issue;
       }
     } else {
       idef = intf.getMainABAPFile()?.getInfo().listInterfaceDefinitions()[0];
@@ -171,30 +178,6 @@ export class ImplementMethods extends ABAPRule {
     return undefined;
   }
 
-  private isImplemented(m: IMethod, def: InfoClassDefinition, impl: InfoClassImplementation): boolean {
-    const name = m.objectName + "~" + m.method.name;
-    let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
-
-    if (found === undefined) {
-      // try looking for ALIASes
-      for (const alias of def.aliases) {
-        if (alias.component.toUpperCase() === name.toUpperCase()) {
-          found = impl.methods.find(m => m.getName().toUpperCase() === alias.name.toUpperCase());
-          break;
-        }
-      }
-    }
-
-    if (found === undefined && def.superClassName !== undefined) {
-      const clas = this.findClass(def.superClassName);
-      if (clas) {
-        return this.isImplemented(m, clas?.def, clas?.impl);
-      }
-    }
-
-    return found !== undefined;
-  }
-
   private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation): Issue[] {
     const ret: Issue[] = [];
 
@@ -222,4 +205,56 @@ export class ImplementMethods extends ABAPRule {
 
     return ret;
   }
+
+  private isImplemented(m: IMethod, def: InfoClassDefinition, impl: InfoClassImplementation): boolean {
+    const name = m.objectName + "~" + m.method.name;
+    let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
+
+    if (found === undefined) {
+      // try looking for ALIASes
+      for (const alias of def.aliases) {
+        if (alias.component.toUpperCase() === name.toUpperCase()) {
+          found = impl.methods.find(m => m.getName().toUpperCase() === alias.name.toUpperCase());
+          break;
+        }
+      }
+    }
+
+    if (found === undefined && def.superClassName !== undefined) {
+      const clas = this.findClass(def.superClassName);
+      if (clas) {
+        return this.isImplemented(m, clas?.def, clas?.impl);
+      }
+    }
+
+    if (found === undefined) {
+      for (const i of def.interfaces) {
+        const idef = this.findInterfaceByName(i.name);
+        if (idef === undefined) {
+          continue;
+        }
+        const ali = this.viaAliasInInterface(m, idef, impl);
+        if (ali) {
+          return ali;
+        }
+      }
+    }
+
+    return found !== undefined;
+  }
+
+  private viaAliasInInterface(m: IMethod, intf: InfoInterfaceDefinition, impl: InfoClassImplementation): boolean {
+    for (const a of intf.aliases) {
+      if (a.component === m.objectName + "~" + m.method.name) {
+        const name = intf.name + "~" + a.name;
+        const found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
+        if (found) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
 }

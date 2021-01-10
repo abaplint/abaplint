@@ -151,7 +151,7 @@ describe("Rules, implement_methods", () => {
     const issues = await runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("implement methods from interface, implemented", async () => {
@@ -358,6 +358,31 @@ CLASS lcl_foo DEFINITION ABSTRACT.
 ENDCLASS.
 
 CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ALIASed in interface", async () => {
+    const prog = `
+INTERFACE lif_writer.
+  METHODS stringify.
+ENDINTERFACE.
+
+INTERFACE lif_json.
+  INTERFACES lif_writer.
+  ALIASES stringify FOR lif_writer~stringify.
+ENDINTERFACE.
+
+CLASS lcl_json DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_json.
+ENDCLASS.
+
+CLASS lcl_json IMPLEMENTATION.
+  METHOD lif_json~stringify.
+  ENDMETHOD.
 ENDCLASS.`;
     const issues = await runMulti([
       {filename: "zfoobar.prog.abap", contents: prog}]);

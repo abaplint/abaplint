@@ -50,6 +50,7 @@ export interface InfoInterfaceDefinition {
   isGlobal: boolean;
   interfaces: readonly InfoImplementing[];
   methods: readonly InfoMethodDefinition[];
+  aliases: readonly InfoAlias[],
 // todo, constants
 // todo, types
   attributes: readonly InfoAttribute[];
@@ -76,7 +77,6 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   isFinal: boolean;
   interfaces: readonly InfoImplementing[];
   isForTesting: boolean;
-  aliases: readonly InfoAlias[],
 }
 
 export interface InfoClassImplementation {
