@@ -6,8 +6,8 @@ export class TableType extends AbstractType {
   private readonly rowType: AbstractType;
   private readonly withHeader: boolean;
 
-  public constructor(rowType: AbstractType, withHeader: boolean, name?: string) {
-    super(name);
+  public constructor(rowType: AbstractType, withHeader: boolean, qualifiedName?: string) {
+    super(qualifiedName);
     this.rowType = rowType;
     this.withHeader = withHeader;
   }

@@ -17,6 +17,7 @@ import {IMethodDefinitions} from "./_method_definitions";
 import {MethodDefinitions} from "./method_definitions";
 import {IAliases} from "./_aliases";
 import {Aliases} from "./aliases";
+import {ReferenceType} from "../5_syntax/_reference";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
@@ -96,9 +97,19 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     }
 
     for (const i of this.node.findAllStatements(Statements.InterfaceDef)) {
-      const name = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken().getStr();
+      const token = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken();
+      const name = token?.getStr();
       if (name) {
         this.implementing.push({name, partial: false});
+
+        const idef = scope.findInterfaceDefinition(name);
+        if (idef) {
+          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename);
+        } else if (scope.getDDIC().inErrorNamespace(name) === false) {
+          scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
+        } else {
+          throw new Error("Interface " + name + " unknown");
+        }
       }
     }
 

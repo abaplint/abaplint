@@ -14,7 +14,10 @@ export class MethodSource {
     const context = new MethodCallChain().runSyntax(node, scope, filename);
 
     const last = node.getLastChild();
-    if (last instanceof ExpressionNode && last.get() instanceof Expressions.MethodName) {
+    const first = node.getFirstChild();
+    if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dynamic) {
+      new Dynamic().runSyntax(first!, scope, filename);
+    } else if (last instanceof ExpressionNode && last.get() instanceof Expressions.MethodName) {
       if (context instanceof ObjectReferenceType) {
         const id = context.getIdentifier();
         if (id instanceof ClassDefinition) {

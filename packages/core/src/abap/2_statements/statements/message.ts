@@ -7,6 +7,7 @@ import {Version} from "../../../version";
 export class Message implements IStatement {
 
   public getMatcher(): IStatementRunnable {
+    const s = alt(ver(Version.v740sp02, Source), ConstantOrFieldSource);
     const like = seq("DISPLAY LIKE", Source);
     const into = seq("INTO", Target);
     const raising = seq("RAISING", ExceptionName);
@@ -17,14 +18,13 @@ export class Message implements IStatement {
 
     const sou = altPrio(options, Source);
     const sourc = alt(sou,
-                      seq(Source, sou),
-                      seq(Source, Source, sou),
-                      seq(Source, Source, Source, options));
+                      seq(s, sou),
+                      seq(s, s, sou),
+                      seq(s, s, s, options));
 
-    const mwith = seq("WITH", Source, opt(sourc));
+    const mwith = seq("WITH", s, opt(sourc));
 
     const foo = seq(MessageSource, opt(options), opt(mwith));
-    const s = alt(ver(Version.v740sp02, Source), ConstantOrFieldSource);
     const text = seq(s, type, optPrio(like), optPrio(raising));
 
     const ret = seq("MESSAGE", altPrio(foo, text));

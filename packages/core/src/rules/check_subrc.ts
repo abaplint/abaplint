@@ -30,7 +30,15 @@ export class CheckSubrc extends ABAPRule {
       shortDescription: `Check sy-subrc`,
       extendedInformation: `Pseudo comment "#EC CI_SUBRC can be added to suppress findings
 
-If sy-dbcnt is checked after database statements, it is considered okay.`,
+If sy-dbcnt is checked after database statements, it is considered okay.
+
+Following FIND statements are considered okay if subrc is not checked,
+FIND with MATCH COUNT
+FIND with MATCH LENGTH
+FIND with RESULTS
+FIND with SUBMATCHES
+FIND with MATCH OFFSET
+FIND with MATCH LINE`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -93,6 +101,7 @@ If sy-dbcnt is checked after database statements, it is considered okay.`,
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.find === true
           && statement.get() instanceof Statements.Find
+          && this.isExemptedFind(statement) === false
           && this.isChecked(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       }
@@ -102,6 +111,10 @@ If sy-dbcnt is checked after database statements, it is considered okay.`,
   }
 
 ////////////////
+
+  private isExemptedFind(s: StatementNode): boolean {
+    return s.findDirectExpression(Expressions.Target) !== undefined;
+  }
 
   private checksDbcnt(index: number, statements: readonly StatementNode[]): boolean {
     for (let i = index + 1; i < statements.length; i++) {

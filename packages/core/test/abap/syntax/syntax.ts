@@ -46,13 +46,13 @@ function runClass(abap: string): Issue[] {
   const reg = new Registry().addFile(file);
   return run(reg);
 }
-/*
+
 function runInterface(abap: string): Issue[] {
   const file = new MemoryFile("zif_foobar.intf.abap", abap);
   const reg = new Registry().addFile(file);
   return run(reg);
 }
-*/
+
 function runProgram(abap: string, globalConstants?: string[], version?: Version): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
@@ -3238,6 +3238,51 @@ FORM bar.
 ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("interface implementing voided interface", () => {
+    const abap = `INTERFACE zif_foobar PUBLIC.
+      INTERFACES if_voided.
+    ENDINTERFACE.`;
+    const issues = runInterface(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("interface implementing non-existing interface, expect error", () => {
+    const abap = `INTERFACE zif_foobar PUBLIC.
+      INTERFACES zif_error.
+    ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("dynamic call, no syntax error expected", () => {
+    const abap = `
+  DATA lv_lock TYPE string.
+  CALL METHOD (lv_lock)=>enqueue.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("refer table type WITH HEADER LINE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo,
+         field TYPE string,
+       END OF ty_foo.
+TYPES ttyp TYPE STANDARD TABLE OF ty_foo.
+DATA moo TYPE ttyp WITH HEADER LINE.
+
+LOOP AT moo.
+  WRITE moo-field.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("invalid type with WITH HEADER LINE", () => {
+    const abap = `DATA moo TYPE i WITH HEADER LINE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
   });
 
 // todo, static method cannot access instance attributes

@@ -45,6 +45,7 @@ statementVersionOk(testsVersionOk, "MESSAGE", Statements.Message);
 
 const testsVersionFail = [
   {abap: `MESSAGE |sdf| TYPE 'S'.`, ver: Version.v702},
+  {abap: `message e101(00) with io_cx_excel->if_message~get_text( ) into lv_dummy.`, ver: Version.v702},
 ];
 
 statementVersionFail(testsVersionFail, "MESSAGE");
