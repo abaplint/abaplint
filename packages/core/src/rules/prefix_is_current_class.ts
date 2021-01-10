@@ -54,10 +54,12 @@ export class PrefixIsCurrentClass extends ABAPRule {
       if (name === undefined) {
         continue;
       }
+      const staticAccess = name + "=>";
 
       for (const e of s.findAllExpressions(TypeName)) {
+        const concat = e.concatTokens().toUpperCase();
         const stat = e.findDirectTokenByText("=>");
-        if (stat) {
+        if (stat && concat.includes(staticAccess)) {
           const start = new Position(stat.getRow(), stat.getCol() - name.length);
           const end = new Position(stat.getRow(), stat.getCol() + 2);
           const fix = EditHelper.deleteRange(file, start, end);

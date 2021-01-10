@@ -152,6 +152,27 @@ describe("prefix is current class, default Config", () => {
     expect(issues).to.equal(0);
   });
 
+  it("interface prefix, ok", async () => {
+    const abap = `INTERFACE lif_foo.
+    TYPES: foo TYPE i.
+    TYPES boo TYPE foo.
+  ENDINTERFACE.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(0);
+  });
+
+  it("interface prefix, ok", async () => {
+    const abap = `
+INTERFACE lif_bar.
+  TYPES boo TYPE i.
+ENDINTERFACE.
+INTERFACE lif_foo.
+  TYPES boo TYPE lif_bar=>boo.
+ENDINTERFACE.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(0);
+  });
+
 });
 
 
