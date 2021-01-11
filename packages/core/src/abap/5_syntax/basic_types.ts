@@ -367,6 +367,9 @@ export class BasicTypes {
         }
 
         found = new Types.CharacterType(length, name); // fallback
+        if (node.findDirectTokenByText("OCCURS")) {
+          found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
+        }
       }
 
     }

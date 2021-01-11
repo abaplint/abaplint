@@ -3291,6 +3291,16 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("MESSAGE WITH TEXT, on 702", () => {
+    const abap = `
+  DATA list(250) OCCURS 0 WITH HEADER LINE.
+  LOOP AT list.
+    WRITE / list.
+  ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
