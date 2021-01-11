@@ -3301,6 +3301,14 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("TYPES with OCCURS", () => {
+    const abap = `
+    TYPES tab TYPE i OCCURS 150.
+    DATA fieldtab TYPE tab WITH HEADER LINE.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

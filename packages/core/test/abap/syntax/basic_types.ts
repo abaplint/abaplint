@@ -129,4 +129,11 @@ describe("Syntax - Basic Types", () => {
     expect(tab.getRowType()).to.be.instanceof(Basic.HexType);
   });
 
+  it("TYPES with OCCURS", () => {
+    const abap = `TYPES tab TYPE i OCCURS 150.`;
+    const type = resolveType(abap, "tab");
+    const row = expectTable(type);
+    expect(row).to.be.instanceOf(Basic.IntegerType);
+  });
+
 });
