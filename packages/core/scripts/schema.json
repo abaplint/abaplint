@@ -2353,6 +2353,17 @@
               ],
               "description": "Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up\nTags: Upport, Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/use_bool_expression"
             },
+            "use_class_based_exceptions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseClassBasedExceptionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use class based exceptions, checks interface and class definitions\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/use_class_based_exceptions"
+            },
             "use_line_exists": {
               "anyOf": [
                 {
@@ -4349,6 +4360,23 @@
       "type": "object"
     },
     "UseBoolExpressionConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UseClassBasedExceptionsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
