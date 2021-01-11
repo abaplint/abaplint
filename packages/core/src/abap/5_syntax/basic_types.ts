@@ -345,7 +345,7 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE")) {
       found = this.resolveTypeName(typename, this.findLength(node));
 
-      if (found && node.findDirectTokenByText("OCCURS")) {
+      if (found && node.concatTokens().toUpperCase().includes(" OCCURS ")) {
         found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
       } else if (found && node.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
         if (!(found instanceof Types.TableType)) {
