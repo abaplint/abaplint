@@ -14,7 +14,7 @@ export class Append implements IStatement {
     const range = seq(optPrio(seq("FROM", Source)),
                       optPrio(seq("TO", Source)));
 
-    const src = alt(ver(Version.v740sp02, Source), ConstantOrFieldSource, MethodCallChain);
+    const src = alt(ConstantOrFieldSource, MethodCallChain, ver(Version.v740sp02, Source));
 
     return seq("APPEND",
                altPrio("INITIAL LINE", seq(optPrio("LINES OF"), src)),

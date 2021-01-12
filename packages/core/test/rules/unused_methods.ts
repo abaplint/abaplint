@@ -177,4 +177,23 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("method2 is used in APPEND statement", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS: constructor,
+      method2 RETURNING VALUE(str) TYPE string.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    DATA lt_strings TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    APPEND method2( ) TO lt_strings.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
