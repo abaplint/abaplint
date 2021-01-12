@@ -44,6 +44,7 @@ import {Renamer} from "./objects/rename/renamer";
 import * as Info from "./abap/4_file_information/_abap_file_information";
 import {Visibility} from "./abap/4_file_information/visibility";
 import {Identifier} from "./abap/4_file_information/_identifier";
+import {Severity} from "./severity";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -59,4 +60,4 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
-  IRenameSettings, Info, Visibility};
+  IRenameSettings, Info, Visibility, Severity};

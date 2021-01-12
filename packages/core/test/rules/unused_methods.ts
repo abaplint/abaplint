@@ -177,4 +177,45 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("method2 is used in APPEND statement", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      constructor,
+      method2 RETURNING VALUE(str) TYPE string.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    DATA lt_strings TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    APPEND method2( ) TO lt_strings.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("APPEND LINES OF", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    METHODS:
+      constructor,
+      method2 importing int type i RETURNING VALUE(rt_str) TYPE ty_table.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    DATA lt_strings TYPE ty_table.
+    APPEND LINES OF method2( 2 ) TO lt_strings.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

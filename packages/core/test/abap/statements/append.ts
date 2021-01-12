@@ -26,6 +26,8 @@ const tests = [
   "APPEND lo_commit->get_pretty( 1 + 1 ) TO rt_commits.",
   "APPEND LINES OF explode( ii_object = lo_parent iv_deepen = iv_deepen - 1 ) TO rt_objects.",
   "APPEND lo_foo->call( )->chain( ) TO rt_commits.",
+  "APPEND |foo| && |bar| TO mt_code.",
+  "APPEND |MANDT = '{ sy-mandt }'| TO ls_config-where.",
   "APPEND lo_branch->get_data( )-sha1 TO lt_visit.",
   "APPEND LINES OF foobar FROM 2 TO 3 TO result.",
   "APPEND INITIAL LINE TO lt_tab ASSIGNING <fs> CASTING.",
@@ -53,8 +55,15 @@ statementVersion(versions, "APPEND", Statements.Append);
 
 const versionsOk = [
   {abap: "APPEND <ls_comp>-name TO mt_meta_fields.", ver: Version.v702},
-  {abap: "APPEND |foo| && |bar| TO mt_code.", ver: Version.v702},
   {abap: "APPEND cl_oo_classname_service=>get_ccmac_name( lv_class_name ) TO rt_includes.", ver: Version.v702},
 ];
 
 statementVersionOk(versionsOk, "APPEND", Statements.Append);
+/*
+const versionsFail = [
+  {abap: "APPEND |foo| && |bar| TO mt_code.", ver: Version.v702},
+  {abap: "APPEND |MANDT = '{ sy-mandt }'| TO ls_config-where.", ver: Version.v702},
+];
+
+statementVersionFail(versionsFail, "APPEND");
+*/
