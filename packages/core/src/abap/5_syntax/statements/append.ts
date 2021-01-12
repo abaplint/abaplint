@@ -30,10 +30,7 @@ export class Append {
 
     let source = node.findDirectExpression(Expressions.Source);
     if (source === undefined) {
-      source = node.findDirectExpression(Expressions.ConstantOrFieldSource);
-    }
-    if (source === undefined) {
-      source = node.findDirectExpression(Expressions.MethodCallChain);
+      source = node.findDirectExpression(Expressions.SimpleSource);
     }
     if (source) {
       if (targetType !== undefined
