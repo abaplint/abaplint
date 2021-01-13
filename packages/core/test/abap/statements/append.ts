@@ -1,4 +1,4 @@
-import {statementType, statementVersion, statementVersionOk} from "../_utils";
+import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -59,11 +59,10 @@ const versionsOk = [
 ];
 
 statementVersionOk(versionsOk, "APPEND", Statements.Append);
-/*
+
 const versionsFail = [
   {abap: "APPEND |foo| && |bar| TO mt_code.", ver: Version.v702},
   {abap: "APPEND |MANDT = '{ sy-mandt }'| TO ls_config-where.", ver: Version.v702},
 ];
 
 statementVersionFail(versionsFail, "APPEND");
-*/
