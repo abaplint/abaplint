@@ -23,7 +23,7 @@ export class Raise {
       }
     }
 
-    for (const s of node.findAllExpressions(Expressions.SimpleSource)) {
+    for (const s of node.findAllExpressions(Expressions.SimpleSource1)) {
       new Source().runSyntax(s, scope, filename);
     }
 

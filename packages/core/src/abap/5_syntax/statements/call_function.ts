@@ -23,7 +23,7 @@ export class CallFunction {
     for (const t of node.findAllExpressions(Expressions.Target)) {
       new Target().runSyntax(t, scope, filename);
     }
-    for (const s of node.findDirectExpressions(Expressions.BasicSource)) {
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
       new Source().runSyntax(s, scope, filename);
     }
   }

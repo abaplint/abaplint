@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, seq, plus, altPrio} from "../combi";
-import {Field, Source, Target, ConstantOrFieldSource} from "../expressions";
+import {Field, Source, Target, SimpleSource3} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -28,9 +28,9 @@ export class Provide implements IStatement {
     const ret = seq("PROVIDE",
                     altPrio(plus(fields), plus(fieldList)),
                     "BETWEEN",
-                    ConstantOrFieldSource,
+                    SimpleSource3,
                     "AND",
-                    ConstantOrFieldSource);
+                    SimpleSource3);
 
     return verNot(Version.Cloud, ret);
   }
