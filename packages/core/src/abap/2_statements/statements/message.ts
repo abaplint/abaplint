@@ -1,13 +1,13 @@
 import {IStatement} from "./_statement";
 import {seq, opt, alt, per, optPrio, altPrio, ver} from "../combi";
-import {Target, Source, ExceptionName, MessageSource, ConstantOrFieldSource} from "../expressions";
+import {Target, Source, ExceptionName, MessageSource, SimpleSource3} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 
 export class Message implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const s = alt(ver(Version.v740sp02, Source), ConstantOrFieldSource);
+    const s = alt(ver(Version.v740sp02, Source), SimpleSource3);
     const like = seq("DISPLAY LIKE", Source);
     const into = seq("INTO", Target);
     const raising = seq("RAISING", ExceptionName);

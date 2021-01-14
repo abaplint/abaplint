@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, seq, opt, alt, per} from "../combi";
-import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource} from "../expressions";
+import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource1} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -18,7 +18,7 @@ export class SelectOption implements IStatement {
     const option = seq("OPTION", Field);
     const sign = seq("SIGN", Field);
 
-    const memory = seq("MEMORY ID", SimpleSource);
+    const memory = seq("MEMORY ID", SimpleSource1);
 
     const match = seq("MATCHCODE OBJECT", Field);
 

@@ -11,7 +11,7 @@ export class InsertInternal {
 
     const afterAssigning = node.findExpressionAfterToken("ASSIGNING");
     if (afterAssigning?.get() instanceof Expressions.FSTarget) {
-      let source = node.findDirectExpression(Expressions.BasicSource);
+      let source = node.findDirectExpression(Expressions.SimpleSource2);
       if (source === undefined) {
         source = node.findDirectExpression(Expressions.Source);
       }
@@ -29,7 +29,7 @@ export class InsertInternal {
       new Source().runSyntax(s, scope, filename);
     }
 
-    for (const s of node.findDirectExpressions(Expressions.SimpleSource)) {
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource1)) {
       new Source().runSyntax(s, scope, filename);
     }
 

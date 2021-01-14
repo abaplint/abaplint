@@ -218,7 +218,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
     if (!(node.get() instanceof Statements.Loop)) {
       return undefined;
-    } else if (node.findDirectExpression(Expressions.BasicSource)) {
+    } else if (node.findDirectExpression(Expressions.SimpleSource2)) {
       return undefined;
     }
 

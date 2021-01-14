@@ -40,6 +40,11 @@ IF <left_operand> IS ASSIGNED.
 ENDIF.`, cnt: 0},
 
   {abap: `
+READ TABLE ct_failed_objects ASSIGNING <lfs_failed_objects> INDEX 1.
+IF <lfs_failed_objects> IS ASSIGNED.
+ENDIF.`, cnt: 0},
+
+  {abap: `
 UPDATE zabaplint_pack
   SET json = iv_json
   WHERE devclass = iv_devclass.

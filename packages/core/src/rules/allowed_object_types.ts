@@ -19,7 +19,7 @@ export class AllowedObjectTypes implements IRule {
       key: "allowed_object_types",
       title: "Check allowed object types",
       shortDescription: `Restricts the set of allowed object types.`,
-      extendedInformation: `allowed is a list of 4 character object types, example: ["CLAS", "INTF"]`,
+      extendedInformation: `"allowed" is a list of 4 character R3TR object types, example: ["CLAS", "INTF"]`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -29,7 +29,7 @@ export class AllowedObjectTypes implements IRule {
   }
 
   private getDescription(objectType: string): string {
-    return "Object type " + objectType + " not allowed.";
+    return "Object type " + objectType + " not allowed";
   }
 
   public getConfig() {

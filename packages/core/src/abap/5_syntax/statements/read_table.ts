@@ -18,7 +18,7 @@ export class ReadTable {
       new ComponentCompareSimple().runSyntax(components, scope, filename);
     }
 
-    let firstSource = node.findDirectExpression(Expressions.BasicSource);
+    let firstSource = node.findDirectExpression(Expressions.SimpleSource2);
     if (firstSource === undefined) {
       firstSource = sources[0];
     }

@@ -19,7 +19,7 @@ export class Message {
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
-    for (const s of node.findDirectExpressions(Expressions.ConstantOrFieldSource)) {
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
       new Source().runSyntax(s, scope, filename);
     }
 

@@ -2,9 +2,7 @@ import {alt, seq, star, Expression} from "../combi";
 import {Constant, FieldChain, StringTemplate, MethodCallChain, TextElement} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
-// BasicSource vs SimpleSource vs ConstantOrFieldSource is a mess...
-
-export class SimpleSource extends Expression {
+export class SimpleSource1 extends Expression {
   public getRunnable(): IStatementRunnable {
     const concat = seq("&&", StringTemplate);
 

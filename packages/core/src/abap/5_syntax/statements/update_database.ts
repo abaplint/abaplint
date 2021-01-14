@@ -5,7 +5,6 @@ import {Source} from "../expressions/source";
 import {ScopeType} from "../_scope_type";
 import {StructureType} from "../../types/basic";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {Position} from "../../../position";
 import {Identifier} from "../../1_lexer/tokens/identifier";
 
 export class UpdateDatabase {
@@ -19,7 +18,7 @@ export class UpdateDatabase {
       if (found instanceof StructureType) {
         scope.push(ScopeType.OpenSQL, "UPDATE", tokenName.getStart(), filename);
         for (const field of found.getComponents()) {
-          const fieldToken = new Identifier(new Position(1, 1), field.name);
+          const fieldToken = new Identifier(node.getFirstToken().getStart(), field.name);
           const id = new TypedIdentifier(fieldToken, filename, field.type);
           scope.addIdentifier(id);
         }
