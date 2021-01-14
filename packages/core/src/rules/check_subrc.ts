@@ -32,6 +32,8 @@ export class CheckSubrc extends ABAPRule {
 
 If sy-dbcnt is checked after database statements, it is considered okay.
 
+If IS ASSIGNED is checked after assigning, it is considered okay.
+
 Following FIND statements are considered okay if subrc is not checked,
 FIND with MATCH COUNT
 FIND with MATCH LENGTH
@@ -133,8 +135,10 @@ FIND with MATCH LINE`,
 
   private isChecked(index: number, statements: readonly StatementNode[]): boolean {
     let assigned: string | undefined = undefined;
-    if (statements[index].get() instanceof Statements.Assign) {
-      const fs = statements[index].findDirectExpression(Expressions.FSTarget
+
+    if (statements[index].get() instanceof Statements.Assign
+        || statements[index].get() instanceof Statements.ReadTable) {
+      const fs = statements[index].findFirstExpression(Expressions.FSTarget
       )?.findFirstExpression(Expressions.FieldSymbol)?.getFirstToken().getStr();
       assigned = fs?.toUpperCase() + " IS ASSIGNED";
     }
@@ -149,10 +153,7 @@ FIND with MATCH LINE`,
       } else if (statement.get() instanceof Statements.EndIf) {
         continue;
       } else {
-        let a = false;
-        if (assigned) {
-          a = concat.includes(assigned);
-        }
+        const a = assigned ? concat.includes(assigned) : false;
         return concat.includes("SY-SUBRC")
           || a
           || concat.includes("CL_ABAP_UNIT_ASSERT=>ASSERT_SUBRC");
