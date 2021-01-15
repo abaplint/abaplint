@@ -40,10 +40,8 @@ export class NewObject {
       const basic = new BasicTypes(filename, scope);
       const type = basic.resolveTypeName(typeExpr);
       if (type && !(type instanceof VoidType)) {
-        // todo: scope.addReference
         ret = new DataReference(type);
       } else if (type instanceof VoidType) {
-        scope.addReference(typeToken, undefined, ReferenceType.VoidType, filename);
         ret = type;
       } else {
         throw new Error("Type \"" + typeName + "\" not found in scope, NewObject");

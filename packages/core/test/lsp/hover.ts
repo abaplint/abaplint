@@ -886,4 +886,13 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain(`Void`);
   });
 
+  it("hover voided TYPE", () => {
+    const abap = `DATA foo TYPE sfdsfdsdsfds.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 20));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`Void`);
+  });
+
 });
