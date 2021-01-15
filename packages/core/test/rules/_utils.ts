@@ -15,7 +15,7 @@ export function runMulti(files: {filename: string, contents: string}[]): readonl
   return reg.parse().findIssues();
 }
 
-export type TestRuleType = {abap: string, cnt: number, only?: boolean}[];
+export type TestRuleType = {abap: string, cnt: number, only?: boolean, fix?:boolean}[];
 
 export function testRule(tests: TestRuleType, rule: new () => IRule, config?: any, testTitle?: string) {
   const nrule = new rule();
@@ -32,6 +32,17 @@ export function testRule(tests: TestRuleType, rule: new () => IRule, config?: an
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
         const issues = nrule.initialize(reg).run(reg.getFirstObject()!);
         expect(issues.length).to.equals(test.cnt);
+
+        if (test.fix !== undefined) {
+          issues.forEach((issue) => {
+            if (test.fix === true) {
+              expect(issue.getFix()).to.not.equals(undefined, "Expected fix to exist");
+            }
+            else {
+              expect(issue.getFix()).to.equals(undefined, "Expected fix not to exist");
+            }
+          });
+        }
       };
 
       if (test.only === true) {
