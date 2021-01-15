@@ -9,7 +9,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {TableType} from "../types/basic";
+import {TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
 
@@ -208,6 +208,8 @@ export class BasicTypes {
     if (ddic) {
       if (ddic instanceof TypedIdentifier) {
         this.scope.addReference(typeName.getFirstToken(), ddic, ReferenceType.TypeReference, this.filename);
+      } else if (ddic instanceof VoidType) {
+        this.scope.addReference(typeName.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       }
       return ddic;
     }

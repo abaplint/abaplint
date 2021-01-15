@@ -9,12 +9,12 @@ const tests1 = [
 testRule(tests1, ForbiddenVoidType);
 
 const tests2: TestRuleType = [
-  {abap: "DATA forbidden_foo TYPE datum.", cnt: 1},
-  {abap: "TYPES forbidden_foo TYPE datum.", cnt: 1},
+  {abap: "DATA forbidden_foo TYPE datum.", cnt: 2},
+  {abap: "TYPES forbidden_foo TYPE datum.", cnt: 2},
   {abap: "DATA forbidden_foo TYPE d.", cnt: 0},
   {abap: `TYPES: BEGIN OF foo,
          component TYPE datum,
-       END OF foo.`, cnt: 1},
+       END OF foo.`, cnt: 2},
   {abap: `NEW cl_abapgit_2fa_github_auth( ).`, cnt: 1},
   {abap: `cl_abapgit_2fa_github_auth=>bar( ).`, cnt: 1},
 ];

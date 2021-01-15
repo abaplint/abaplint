@@ -11,6 +11,8 @@ import {Interface} from "../objects";
 import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
 import {EditHelper, IEdit} from "../edit_helper";
+import {StatementNode} from "../abap/nodes/statement_node";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
@@ -32,6 +34,8 @@ export class UnusedVariables implements IRule {
 
       Note that this currently does not work if the source code uses macros.`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
+      pragma: "##NEEDED",
+      pseudoComment: "EC NEEDED",
     };
   }
 
@@ -121,6 +125,14 @@ export class UnusedVariables implements IRule {
             || node.getIdentifier().stype === ScopeType.Form)
           && this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
+
+        const statement = this.findStatement(v, obj);
+        if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
+          continue;
+        } else if (this.suppressedbyPseudo(statement, v, obj)) {
+          continue;
+        }
+
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, this.conf.severity, fix));
       }
@@ -129,9 +141,42 @@ export class UnusedVariables implements IRule {
     return ret;
   }
 
+  private suppressedbyPseudo(statement: StatementNode | undefined, v: IScopeVariable, obj: ABAPObject): boolean {
+    if (statement === undefined) {
+      return false;
+    }
+
+    const file = obj.getABAPFileByName(v.identifier.getFilename());
+    if (file === undefined) {
+      return false;
+    }
+
+    let next = false;
+    for (const s of file.getStatements()) {
+      if (next === true && s.get() instanceof Comment) {
+        return s.concatTokens().includes(this.getMetadata().pseudoComment + "");
+      }
+      if (s === statement) {
+        next = true;
+      }
+    }
+
+    return false;
+  }
+
   private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
     const found = new References(this.reg).search(id, node);
     return found.length > 1;
+  }
+
+  private findStatement(v: IScopeVariable, obj: ABAPObject): StatementNode | undefined {
+    const file = obj.getABAPFileByName(v.identifier.getFilename());
+    if (file === undefined) {
+      return undefined;
+    }
+
+    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    return statement;
   }
 
   private buildFix(v: IScopeVariable, obj: ABAPObject): IEdit | undefined {
