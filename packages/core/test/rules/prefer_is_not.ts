@@ -9,8 +9,8 @@ const tests = [
   {abap: "IF variable NP 'TODO*'. ENDIF.", cnt: 0, fix: false},
   {abap: "IF variable <> 42. ENDIF.", cnt: 0, fix: false},
 
-  {abap: "IF NOT variable IS INITIAL. ENDIF.", cnt: 1, fix: false},
-  {abap: "IF NOT variable CP 'TODO*'. ENDIF.", cnt: 1, fix: true},
+  {abap: "IF NOT variable IS INITIAL. ENDIF.", cnt: 1, fix: true},
+  {abap: "IF NOT variable CP 'TODO*'. ENDIF.", cnt: 1, fix: false},
   {abap: "IF NOT variable = 42. ENDIF.", cnt: 1, fix: false},
   {abap: "IF foo = bar AND NOT variable = 42. ENDIF.", cnt: 1, fix: false},
   {abap: "WHILE NOT variable IS INITIAL. ENDWHILE.", cnt: 1, fix: true},
