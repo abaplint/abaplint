@@ -11,6 +11,7 @@ import {Interface} from "../objects";
 import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
 import {EditHelper, IEdit} from "../edit_helper";
+import {StatementNode} from "../abap/nodes/statement_node";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
@@ -32,6 +33,7 @@ export class UnusedVariables implements IRule {
 
       Note that this currently does not work if the source code uses macros.`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
+      pragma: "##NEEDED",
     };
   }
 
@@ -121,6 +123,11 @@ export class UnusedVariables implements IRule {
             || node.getIdentifier().stype === ScopeType.Form)
           && this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
+
+        if (this.findStatement(v, obj)?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
+          continue;
+        }
+
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, this.conf.severity, fix));
       }
@@ -132,6 +139,16 @@ export class UnusedVariables implements IRule {
   private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
     const found = new References(this.reg).search(id, node);
     return found.length > 1;
+  }
+
+  private findStatement(v: IScopeVariable, obj: ABAPObject): StatementNode | undefined {
+    const file = obj.getABAPFileByName(v.identifier.getFilename());
+    if (file === undefined) {
+      return undefined;
+    }
+
+    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    return statement;
   }
 
   private buildFix(v: IScopeVariable, obj: ABAPObject): IEdit | undefined {

@@ -42,6 +42,7 @@ FIND with SUBMATCHES
 FIND with MATCH OFFSET
 FIND with MATCH LINE`,
       tags: [RuleTag.SingleFile],
+      pseudoComment: "EC CI_SUBRC",
     };
   }
 
@@ -147,7 +148,7 @@ FIND with MATCH LINE`,
       const statement = statements[i];
       const concat = statement.concatTokens().toUpperCase();
       if (statement.get() instanceof Comment) {
-        if (concat.includes("EC CI_SUBRC")) {
+        if (concat.includes("" + this.getMetadata().pseudoComment)) {
           return true;
         }
       } else if (statement.get() instanceof Statements.EndIf) {
