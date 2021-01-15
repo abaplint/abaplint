@@ -58,6 +58,12 @@ describe("Rule: unused_variables, single file", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("pseudo comment should suppress issue", async () => {
+    const abap = "DATA foo. \"#EC NEEDED";
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("test5", async () => {
     const abap = "DATA foo.\nWRITE foo.";
     const issues = await runSingle(abap);

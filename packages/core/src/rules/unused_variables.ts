@@ -12,6 +12,7 @@ import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_s
 import {References} from "../lsp/references";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes/statement_node";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
@@ -34,6 +35,7 @@ export class UnusedVariables implements IRule {
       Note that this currently does not work if the source code uses macros.`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
       pragma: "##NEEDED",
+      pseudoComment: "EC NEEDED",
     };
   }
 
@@ -124,7 +126,10 @@ export class UnusedVariables implements IRule {
           && this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
 
-        if (this.findStatement(v, obj)?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
+        const statement = this.findStatement(v, obj);
+        if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
+          continue;
+        } else if (this.suppressedbyPseudo(statement, v, obj)) {
           continue;
         }
 
@@ -134,6 +139,29 @@ export class UnusedVariables implements IRule {
     }
 
     return ret;
+  }
+
+  private suppressedbyPseudo(statement: StatementNode | undefined, v: IScopeVariable, obj: ABAPObject): boolean {
+    if (statement === undefined) {
+      return false;
+    }
+
+    const file = obj.getABAPFileByName(v.identifier.getFilename());
+    if (file === undefined) {
+      return false;
+    }
+
+    let next = false;
+    for (const s of file.getStatements()) {
+      if (next === true && s.get() instanceof Comment) {
+        return s.concatTokens().includes(this.getMetadata().pseudoComment + "");
+      }
+      if (s === statement) {
+        next = true;
+      }
+    }
+
+    return false;
   }
 
   private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
