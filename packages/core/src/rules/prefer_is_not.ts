@@ -5,7 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper, IEdit} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import { Position } from "..";
+import {Position} from "..";
 
 export class PreferIsNotConf extends BasicRuleConfig {
 }
@@ -53,8 +53,8 @@ IF NOT variable = 42.`,
         }
 
         const message = "Prefer IS NOT to NOT IS";
-        
-        let insertFix:IEdit;
+
+        let insertFix: IEdit;
         const lengthOfNOT = 3;
 
         if (c.getChildren()[2].getFirstToken().getStr() === "IS")
@@ -79,8 +79,8 @@ IF NOT variable = 42.`,
         const endPosition = new Position(c.getChildren()[0].getFirstToken().getEnd().getRow(), endCol);
         const deleteFix = EditHelper.deleteRange(file, c.getChildren()[0].getFirstToken().getStart(), endPosition);
         const finalFix = EditHelper.merge(deleteFix, insertFix);
-        
-        issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, finalFix));                
+
+        issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, finalFix));
       }
     }
 

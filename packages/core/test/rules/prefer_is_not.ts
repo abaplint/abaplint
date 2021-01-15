@@ -25,7 +25,7 @@ const fixes = [
   {input: "IF NOT variable IS INITIAL. ENDIF.", output: "IF variable IS NOT INITIAL. ENDIF."},
   {input: "WHILE NOT variable IS INITIAL. ENDWHILE.", output: "WHILE variable IS NOT INITIAL. ENDWHILE."},
   {input: "IF NOT variable BETWEEN 42 AND 42. ENDIF.", output: "IF variable NOT BETWEEN 42 AND 42. ENDIF."},
-  {input: "IF NOT variable IN range. ENDIF.", output: "IF variable NOT IN range. ENDIF."},  
+  {input: "IF NOT variable IN range. ENDIF.", output: "IF variable NOT IN range. ENDIF."},
 ];
 
 testRuleFix(fixes, PreferIsNot);

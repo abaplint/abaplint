@@ -15,7 +15,7 @@ export function runMulti(files: {filename: string, contents: string}[]): readonl
   return reg.parse().findIssues();
 }
 
-export type TestRuleType = {abap: string, cnt: number, only?: boolean, fix?:boolean}[];
+export type TestRuleType = {abap: string, cnt: number, only?: boolean, fix?: boolean}[];
 
 export function testRule(tests: TestRuleType, rule: new () => IRule, config?: any, testTitle?: string) {
   const nrule = new rule();
