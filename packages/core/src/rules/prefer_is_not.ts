@@ -53,7 +53,7 @@ IF NOT variable = 42.`,
           continue;
         }
 
-        const message = "Prefer expresion NOT to NOT expresion";
+        const message = "Prefer IS NOT to NOT IS";
 
         const fix = this.getFix(file, c);
         if (fix === undefined) {
