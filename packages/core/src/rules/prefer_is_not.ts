@@ -5,7 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper, IEdit} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Position} from "..";
+import {Position} from "../position";
 
 export class PreferIsNotConf extends BasicRuleConfig {
 }
@@ -88,4 +88,3 @@ IF NOT variable = 42.`,
   }
 
 }
-
