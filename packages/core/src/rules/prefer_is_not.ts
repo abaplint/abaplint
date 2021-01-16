@@ -56,12 +56,7 @@ IF NOT variable = 42.`,
         const message = "Prefer expresion NOT to NOT expresion";
 
         const fix = this.getFix(file, c);
-        if (fix === undefined) {
-          issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
-        }
-        else {
-          issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix));
-        }
+        issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix));
       }
     }
 
