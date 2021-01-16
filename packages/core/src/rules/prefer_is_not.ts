@@ -6,6 +6,7 @@ import {EditHelper, IEdit} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Position} from "..";
+import { ExpressionNode } from "../abap/nodes";
 
 export class PreferIsNotConf extends BasicRuleConfig {
 }
@@ -54,37 +55,46 @@ IF NOT variable = 42.`,
 
         const message = "Prefer expresion NOT to NOT expresion";
 
-        let insertFix: IEdit;
-        const lengthOfNOT = 3;
-
-        if (c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IS")
-        {
-          const tokenPositionBeforeDelete = c.getChildren()[2].getLastToken().getEnd();
-          const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
-          insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
-        }
-        else if(c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IN" || c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "BETWEEN")
-        {
-          const tokenPositionBeforeDelete = c.getChildren()[1].getLastToken().getEnd();
-          const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
-          insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
-        }
-        else
-        {
+        const fix = this.getFix(file, c);
+        if (fix === undefined) {
           issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
-          continue;
         }
-
-        const endCol = c.getChildren()[0].getFirstToken().getEnd().getCol() + 1;
-        const endPosition = new Position(c.getChildren()[0].getFirstToken().getEnd().getRow(), endCol);
-        const deleteFix = EditHelper.deleteRange(file, c.getChildren()[0].getFirstToken().getStart(), endPosition);
-        const finalFix = EditHelper.merge(deleteFix, insertFix);
-
-        issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, finalFix));
+        else {
+          issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix));
+        }        
       }
     }
 
     return issues;
+  }
+
+  private getFix(file: ABAPFile, c: ExpressionNode): IEdit|undefined {
+    let insertFix: IEdit;
+    const lengthOfNOT = 3;
+
+    if (c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IS")
+    {
+      const tokenPositionBeforeDelete = c.getChildren()[2].getLastToken().getEnd();
+      const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
+      insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
+    }
+    else if(c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IN" || c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "BETWEEN")
+    {
+      const tokenPositionBeforeDelete = c.getChildren()[1].getLastToken().getEnd();
+      const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
+      insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
+    }
+    else
+    {      
+      return;
+    }
+
+    const endCol = c.getChildren()[0].getFirstToken().getEnd().getCol() + 1;
+    const endPosition = new Position(c.getChildren()[0].getFirstToken().getEnd().getRow(), endCol);
+    const deleteFix = EditHelper.deleteRange(file, c.getChildren()[0].getFirstToken().getStart(), endPosition);
+    const finalFix = EditHelper.merge(deleteFix, insertFix);
+
+    return finalFix;
   }
 
 }
