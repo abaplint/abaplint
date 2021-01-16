@@ -61,7 +61,7 @@ IF NOT variable = 42.`,
         }
         else {
           issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix));
-        }        
+        }
       }
     }
 
@@ -85,7 +85,7 @@ IF NOT variable = 42.`,
       insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
     }
     else
-    {      
+    {
       return;
     }
 
