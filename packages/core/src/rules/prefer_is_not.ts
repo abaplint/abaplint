@@ -52,18 +52,18 @@ IF NOT variable = 42.`,
           continue;
         }
 
-        const message = "Prefer IS NOT to NOT IS";
+        const message = "Prefer expresion NOT to NOT expresion";
 
         let insertFix: IEdit;
         const lengthOfNOT = 3;
 
-        if (c.getChildren()[2].getFirstToken().getStr() === "IS")
+        if (c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IS")
         {
           const tokenPositionBeforeDelete = c.getChildren()[2].getLastToken().getEnd();
           const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
           insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
         }
-        else if(c.getChildren()[2].getFirstToken().getStr() === "IN" || c.getChildren()[2].getFirstToken().getStr() === "BETWEEN")
+        else if(c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IN" || c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "BETWEEN")
         {
           const tokenPositionBeforeDelete = c.getChildren()[1].getLastToken().getEnd();
           const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
