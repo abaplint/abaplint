@@ -1654,4 +1654,13 @@ DATA(sdf) = ref->*-int.`;
     }
   });
 
+  it("Infer REF type", () => {
+    const abap = `
+    DATA lv_xyz TYPE abap_bool.
+    DATA(lr_data) = REF #( lv_xyz ).`;
+    const identifier = resolveVariable(abap, "lr_data");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
 });
