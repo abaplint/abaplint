@@ -34,6 +34,8 @@ const tests = [
   {abap: `IF NOT line_exists( structure-sub[ foo = bar
       boo = moo ] ).
       ENDIF.`, cnt: 0},
+  {abap: `DATA(lv_xyz) = get_something( VALUE #( field1 = 'X'
+                                                 field2 = 'Y' ) ).`, cnt: 0},
 ];
 
 testRule(tests, KeepSingleParameterCallsOnOneLine);
