@@ -48,7 +48,8 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
           || this.calcStatementLength(s) > this.getConfig().length
           || this.containsNewLineValue(s)
           || this.containsNewLineTableExpression(s)
-          || this.containsNewlineTemplate(s)) {
+          || this.containsFieldAssigments(s)
+          || this.containsNewLineTemplate(s)) {
         continue;
       }
       for (const c of s.findAllExpressions(Expressions.MethodCallParam)) {
@@ -60,6 +61,11 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   }
 
 ///////////////////////////////////////
+
+  private containsFieldAssigments(s: StatementNode): boolean {
+    const fs = s.findAllExpressions(Expressions.FieldAssignment);
+    return fs.length > 1;
+  }
 
   private containsNewLineTableExpression(s: StatementNode): boolean {
     for (const st of s.findAllExpressions(Expressions.TableExpression)) {
@@ -80,7 +86,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     return false;
   }
 
-  private containsNewlineTemplate(s: StatementNode): boolean {
+  private containsNewLineTemplate(s: StatementNode): boolean {
     for (const st of s.findAllExpressions(Expressions.StringTemplate)) {
       for (const t of st.getAllTokens()) {
         if (t.getStr().includes("\\n")) {
