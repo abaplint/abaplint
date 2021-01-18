@@ -2032,7 +2032,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer IS NOT to NOT IS\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_is_not"
+              "description": "Prefer IS NOT to NOT IS\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_is_not"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
