@@ -11,10 +11,10 @@ const tests = [
 
   {abap: "IF NOT variable IS INITIAL. ENDIF.", cnt: 1, fix: true},
   {abap: "IF NOT variable CP 'TODO*'. ENDIF.", cnt: 1, fix: false},
-  {abap: "IF NOT variable = 42. ENDIF.", cnt: 1, fix: false},
-  {abap: "IF foo = bar AND NOT variable = 42. ENDIF.", cnt: 1, fix: false},
+  {abap: "IF NOT variable = 42. ENDIF.", cnt: 1, fix: true},
+  {abap: "IF foo = bar AND NOT variable = 42. ENDIF.", cnt: 1, fix: true},
   {abap: "WHILE NOT variable IS INITIAL. ENDWHILE.", cnt: 1, fix: true},
-  {abap: "foo = boolc( NOT variable = 42 ).", cnt: 1, fix: false},
+  {abap: "foo = boolc( NOT variable = 42 ).", cnt: 1, fix: true},
 
   {abap: `if not is_valid( ). endif.`, cnt: 0, fix: false},
 ];
@@ -22,6 +22,14 @@ const tests = [
 testRule(tests, PreferIsNot);
 
 const fixes = [
+  {input: "foo = boolc( NOT variable = 42 ).", output: "foo = boolc( variable <> 42 )."},
+  {input: "IF foo = bar AND NOT variable = 42. ENDIF.", output: "IF foo = bar AND variable <> 42. ENDIF."},
+  {input: "IF NOT variable = 42. ENDIF.", output: "IF variable <> 42. ENDIF."},
+  {input: "IF NOT variable <> 42. ENDIF.", output: "IF variable = 42. ENDIF."},
+  {input: "IF NOT variable < 42. ENDIF.", output: "IF variable > 42. ENDIF."},
+  {input: "IF NOT variable > 42. ENDIF.", output: "IF variable < 42. ENDIF."},
+  {input: "IF NOT variable <= 42. ENDIF.", output: "IF variable >= 42. ENDIF."},
+  {input: "IF NOT variable >= 42. ENDIF.", output: "IF variable <= 42. ENDIF."},
   {input: "IF NOT variable IS INITIAL. ENDIF.", output: "IF variable IS NOT INITIAL. ENDIF."},
   {input: "WHILE NOT variable IS INITIAL. ENDWHILE.", output: "WHILE variable IS NOT INITIAL. ENDWHILE."},
   {input: "IF NOT variable BETWEEN 42 AND 42. ENDIF.", output: "IF variable NOT BETWEEN 42 AND 42. ENDIF."},

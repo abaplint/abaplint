@@ -66,20 +66,35 @@ IF NOT variable = 42.`,
   private getFix(file: ABAPFile, c: ExpressionNode): IEdit|undefined {
     let insertFix: IEdit;
 
-    if (c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IS")
-    {
+    if (c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IS") {
       const tokenPositionBeforeDelete = c.getChildren()[2].getLastToken().getEnd();
       const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() + 1);
       insertFix = EditHelper.insertAt(file, tokenPosition, "NOT ");
     }
-    else if(c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IN" || c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "BETWEEN")
-    {
+    else if(c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IN" || c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "BETWEEN") {
       const tokenPositionBeforeDelete = c.getChildren()[1].getLastToken().getEnd();
       const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() + 1);
       insertFix = EditHelper.insertAt(file, tokenPosition, "NOT ");
     }
-    else
-    {
+    else if(c.getChildren()[2].getFirstToken().getStr() === "=") {
+      insertFix = EditHelper.replaceToken(file, c.getChildren()[2].getLastToken(), "<>");
+    }
+    else if(c.getChildren()[2].getFirstToken().getStr() === "<>") {
+      insertFix = EditHelper.replaceToken(file, c.getChildren()[2].getLastToken(), "=");
+    }
+    else if(c.getChildren()[2].getFirstToken().getStr() === "<") {
+      insertFix = EditHelper.replaceToken(file, c.getChildren()[2].getLastToken(), ">");
+    }
+    else if(c.getChildren()[2].getFirstToken().getStr() === ">") {
+      insertFix = EditHelper.replaceToken(file, c.getChildren()[2].getLastToken(), "<");
+    }
+    else if(c.getChildren()[2].getFirstToken().getStr() === "<=") {
+      insertFix = EditHelper.replaceToken(file, c.getChildren()[2].getLastToken(), ">=");
+    }
+    else if(c.getChildren()[2].getFirstToken().getStr() === ">=") {
+      insertFix = EditHelper.replaceToken(file, c.getChildren()[2].getLastToken(), "<=");
+    }
+    else {
       return;
     }
 
