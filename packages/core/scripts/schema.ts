@@ -83,6 +83,7 @@ import {ParserErrorConf} from "../src/rules/parser_error";
 import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
+import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
@@ -210,6 +211,7 @@ export interface IConfig {
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
+    "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,

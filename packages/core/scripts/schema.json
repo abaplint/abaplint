@@ -2034,6 +2034,17 @@
               ],
               "description": "Prefer IS NOT to NOT IS\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_is_not"
             },
+            "prefer_raise_exception_new": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseExceptionNewConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+            },
             "prefer_returning_to_exporting": {
               "anyOf": [
                 {
@@ -3705,6 +3716,23 @@
       "type": "object"
     },
     "PreferIsNotConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferRaiseExceptionNewConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
