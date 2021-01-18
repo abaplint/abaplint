@@ -65,19 +65,18 @@ IF NOT variable = 42.`,
 
   private getFix(file: ABAPFile, c: ExpressionNode): IEdit|undefined {
     let insertFix: IEdit;
-    const lengthOfNOT = 3;
 
     if (c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IS")
     {
       const tokenPositionBeforeDelete = c.getChildren()[2].getLastToken().getEnd();
-      const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
-      insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
+      const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() + 1);
+      insertFix = EditHelper.insertAt(file, tokenPosition, "NOT ");
     }
     else if(c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "IN" || c.getChildren()[2].getFirstToken().getStr().toUpperCase() === "BETWEEN")
     {
       const tokenPositionBeforeDelete = c.getChildren()[1].getLastToken().getEnd();
-      const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() - lengthOfNOT);
-      insertFix = EditHelper.insertAt(file, tokenPosition, "NOT " );
+      const tokenPosition = new Position(tokenPositionBeforeDelete.getRow(), tokenPositionBeforeDelete.getCol() + 1);
+      insertFix = EditHelper.insertAt(file, tokenPosition, "NOT ");
     }
     else
     {
@@ -87,7 +86,7 @@ IF NOT variable = 42.`,
     const endCol = c.getChildren()[0].getFirstToken().getEnd().getCol() + 1;
     const endPosition = new Position(c.getChildren()[0].getFirstToken().getEnd().getRow(), endCol);
     const deleteFix = EditHelper.deleteRange(file, c.getChildren()[0].getFirstToken().getStart(), endPosition);
-    const finalFix = EditHelper.merge(deleteFix, insertFix);
+    const finalFix = EditHelper.merge(insertFix, deleteFix);
 
     return finalFix;
   }
