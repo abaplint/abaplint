@@ -450,8 +450,10 @@ export class BasicTypes {
         this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
       }
       if (foundType === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
+        this.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
         return new Types.VoidType(subs[0]);
       } else if (foundType instanceof Types.VoidType) {
+        this.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
         return foundType;
       } else if (foundType === undefined) {
         return new Types.UnknownType("Unknown type " + subs[0]);

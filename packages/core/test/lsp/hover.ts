@@ -886,11 +886,32 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain(`Void`);
   });
 
-  it("hover voided TYPE", () => {
+  it("hover voided TYPE sfdsfdsdsfds", () => {
     const abap = `DATA foo TYPE sfdsfdsdsfds.`;
     const file = new MemoryFile("zprog.prog.abap", abap);
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 20));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`Void`);
+  });
+
+  it("hover voided TYPE arch_usr", () => {
+    const abap = `DATA sdf TYPE arch_usr-arch_comit.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 15));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`Void`);
+  });
+
+  it("hover voided structured TYPE", () => {
+    const abap = `TYPES: BEGIN OF ty,
+    obj  TYPE tadir-object,
+    name TYPE tadir-obj_name,
+  END OF ty.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 16));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain(`Void`);
   });

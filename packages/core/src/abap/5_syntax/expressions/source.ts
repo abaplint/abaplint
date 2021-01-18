@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -83,8 +83,12 @@ export class Source {
         case "REF":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          new Source().runSyntax(node.findDirectExpression(Expressions.Source), scope, filename);
-          return foundType;
+          const s = new Source().runSyntax(node.findDirectExpression(Expressions.Source), scope, filename);
+          if (foundType === undefined && s) {
+            return new DataReference(s);
+          } else {
+            return foundType;
+          }
         }
         case "FILTER":
         {
