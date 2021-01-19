@@ -16,7 +16,7 @@ testRule(tests, AvoidDescribeLines);
 const fixes = [
   {input: "DESCRIBE TABLE foo LINES bar.", output: "bar = lines( foo )."},
   {input: "DESCRIBE TABLE foo-bar LINES bar.", output: "bar = lines( foo-bar )."},
-  {input: "describe table foo-bar lines bar.", output: "bar = lines( foo-bar )."}
+  {input: "describe table foo-bar lines bar.", output: "bar = lines( foo-bar )."},
 ];
 
 testRuleFix(fixes, AvoidDescribeLines);
