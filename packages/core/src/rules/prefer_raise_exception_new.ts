@@ -3,6 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import { Statements } from "..";
 
 export class PreferRaiseExceptionNewConf extends BasicRuleConfig {
 }
@@ -38,10 +39,12 @@ export class PreferRaiseExceptionNew extends ABAPRule {
     const issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
-      if (statement.concatTokens().toString().toUpperCase().startsWith("RAISE EXCEPTION TYPE ")) {
-        const message = "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE";
+      if (statement.get() instanceof Statements.Raise) {
+        if (statement.concatTokens().toString().toUpperCase().startsWith("RAISE EXCEPTION TYPE ")) {
+          const message = "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE";
 
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+          issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        }
       }
     }
 
