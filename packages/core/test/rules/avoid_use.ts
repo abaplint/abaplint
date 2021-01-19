@@ -1,5 +1,5 @@
 import {AvoidUse} from "../../src/rules/avoid_use";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "WRITE: / 'abc'.", cnt: 0},
@@ -35,10 +35,18 @@ const tests = [
   ENDSELECT.`, cnt: 0},
 
   // DESCRIBE LINES
-  {abap: `DESCRIBE TABLE foo LINES bar.`, cnt: 1},
-  {abap: `DESCRIBE TABLE foo-bar LINES bar.`, cnt: 1},
-  {abap: `describe table foo-bar lines bar.`, cnt: 1},
-  {abap: `bar = lines( foo ).`, cnt: 0},
+  {abap: "DESCRIBE TABLE foo LINES bar.", cnt: 1, fix: true},
+  {abap: "DESCRIBE TABLE foo-bar LINES bar.", cnt: 1, fix: true},
+  {abap: "describe table foo-bar lines bar.", cnt: 1, fix: true},
+  {abap: "bar = lines( foo ).", cnt: 0, fix: false},
 ];
 
 testRule(tests, AvoidUse);
+
+const fixes = [
+  {input: "DESCRIBE TABLE foo LINES bar.", output: "bar = lines( foo )."},
+  {input: "DESCRIBE TABLE foo-bar LINES bar.", output: "bar = lines( foo-bar )."},
+  {input: "describe table foo-bar lines bar.", output: "bar = lines( foo-bar )."},
+];
+
+testRuleFix(fixes, AvoidUse);

@@ -87,23 +87,6 @@
       },
       "type": "object"
     },
-    "AvoidDescribeLinesConf": {
-      "additionalProperties": false,
-      "properties": {
-        "exclude": {
-          "description": "List of file regex filename patterns to exclude, case insensitive",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "severity": {
-          "$ref": "#/definitions/Severity",
-          "description": "Problem severity"
-        }
-      },
-      "type": "object"
-    },
     "AvoidUseConf": {
       "additionalProperties": false,
       "properties": {
@@ -1181,17 +1164,6 @@
                 }
               ],
               "description": "Checks for ambiguity between deleting or modifying from internal and database table\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\nTags: SingleFile\nhttps://rules.abaplint.org/ambiguous_statement"
-            },
-            "avoid_describe_lines": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/AvoidDescribeLinesConf"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "description": "Avoid use of DESCRIBE LINES, use lines() instead.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/avoid_describe_lines"
             },
             "avoid_use": {
               "anyOf": [
