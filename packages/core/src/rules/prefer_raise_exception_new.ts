@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import { Statements } from "..";
+import {Statements, Version} from "..";
 
 export class PreferRaiseExceptionNewConf extends BasicRuleConfig {
 }
@@ -36,6 +36,10 @@ export class PreferRaiseExceptionNew extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile): Issue[] {
+    if (this.reg.getConfig().getVersion() < Version.v752) {
+      return[];
+    }
+
     const issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
