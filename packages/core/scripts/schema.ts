@@ -4,6 +4,7 @@ import {AbapdocConf} from "../src/rules/abapdoc";
 import {AllowedObjectNamingConf} from "../src/rules/allowed_object_naming";
 import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
+import {AvoidDescribeLinesConf} from "../src/rules/avoid_describe_lines";
 import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
@@ -131,6 +132,7 @@ export interface IConfig {
     "allowed_object_naming"?: AllowedObjectNamingConf | boolean,
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
+    "avoid_describe_lines"?: AvoidDescribeLinesConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,

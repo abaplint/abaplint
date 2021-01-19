@@ -3,6 +3,7 @@ export * from "./abapdoc";
 export * from "./allowed_object_naming";
 export * from "./allowed_object_types";
 export * from "./ambiguous_statement";
+export * from "./avoid_describe_lines";
 export * from "./avoid_use";
 export * from "./begin_end_names";
 export * from "./begin_single_include";
