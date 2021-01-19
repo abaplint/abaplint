@@ -26,11 +26,14 @@ describe("Rule: prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE", () => {
       previous = exception.`, Version.v751);
     expect(issues2.length).to.equal(0);
 
-    const issues3 = await findIssues("parser error");
+    const issues3 = await findIssues("RAISE EXCEPTION NEW cx_generation_error( previous = exception ).");
     expect(issues3.length).to.equal(0);
 
-    const issues4 = await findIssues("CREATE OBJECT foobar.");
+    const issues4 = await findIssues("parser error");
     expect(issues4.length).to.equal(0);
+
+    const issues5 = await findIssues("CREATE OBJECT foobar.");
+    expect(issues5.length).to.equal(0);
   });
 
   it("issue", async () => {
