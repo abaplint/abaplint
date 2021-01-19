@@ -83,6 +83,7 @@ export * from "./parser_error";
 export * from "./parser_missing_space";
 export * from "./prefer_inline";
 export * from "./prefer_is_not";
+export * from "./prefer_raise_exception_new";
 export * from "./prefer_returning_to_exporting";
 export * from "./prefer_xsdbool";
 export * from "./preferred_compare_operator";
