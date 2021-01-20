@@ -577,4 +577,14 @@ APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("RAISE EXCEPTION EXPORTING", async () => {
+    const abap = `
+    DATA bar TYPE string.
+    RAISE EXCEPTION TYPE cx_ags_error
+      EXPORTING
+        textid = bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

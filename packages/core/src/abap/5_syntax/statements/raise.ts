@@ -39,5 +39,13 @@ export class Raise {
       prev = c.concatTokens().toUpperCase();
     }
 
+    // todo, check parameters vs constructor
+    const param = node.findDirectExpression(Expressions.ParameterListS);
+    if (param) {
+      for (const s of param.findAllExpressions(Expressions.Source)) {
+        new Source().runSyntax(s, scope, filename);
+      }
+    }
+
   }
 }
