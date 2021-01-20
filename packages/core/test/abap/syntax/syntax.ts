@@ -3309,6 +3309,29 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("RAISE EXCEPTION must be a object reference", () => {
+    const abap = `RAISE EXCEPTION 'A'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("RAISE EXCEPTION, ok, voided", () => {
+    const abap = `
+    DATA lx_root TYPE REF TO cx_root.
+    RAISE EXCEPTION lx_root.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("RAISE EXCEPTION, error, generic", () => {
+    const abap = `
+FORM bar USING foo TYPE any.
+  RAISE EXCEPTION foo.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

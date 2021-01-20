@@ -5,12 +5,17 @@ import {InlineData} from "../expressions/inline_data";
 import {CharacterType, IntegerType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
+import {FieldChain} from "../expressions/field_chain";
+import {ReferenceType} from "../_reference";
 
 export class Describe {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
+    }
+    for (const s of node.findAllExpressions(Expressions.FieldChain)) {
+      new FieldChain().runSyntax(s, scope, filename, ReferenceType.DataReadReference);
     }
 
     const linesTarget = node.findExpressionAfterToken("LINES");

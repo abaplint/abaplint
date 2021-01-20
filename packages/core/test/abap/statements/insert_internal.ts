@@ -16,6 +16,11 @@ const tests = [
   "INSERT LINES OF lt_table FROM lv_from INTO TABLE et_merge_table.",
   "INSERT node_tmp INTO TABLE mt_json_tree REFERENCE INTO node_ref.",
   "INSERT TABLE lt_foobar.",
+  `INSERT VALUE #(
+    tabname        = <ls_f4_group>-tabname
+    fieldname      = <ls_f4_group>-fieldname
+    f4_definitions = VALUE zdbbr_f4_data_itab( FOR f4 IN GROUP <ls_f4_group> ( f4 ) )
+    ) INTO TABLE mt_custom_f4_map.`,
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);

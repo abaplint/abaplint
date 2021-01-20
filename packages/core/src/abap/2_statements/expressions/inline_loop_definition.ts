@@ -5,6 +5,6 @@ import {IStatementRunnable} from "../statement_runnable";
 export class InlineLoopDefinition extends Expression {
   public getRunnable(): IStatementRunnable {
     const index = seq("INDEX INTO", TargetField);
-    return seq(alt(TargetFieldSymbol, TargetField), "IN", Source, opt(index));
+    return seq(alt(TargetFieldSymbol, TargetField), "IN", opt("GROUP"), Source, opt(index));
   }
 }
