@@ -1,8 +1,9 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {IReferenceExtras, ReferenceType} from "../_reference";
+import {ObjectReferenceType, VoidType} from "../../types/basic";
 
 export class Raise {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -23,11 +24,19 @@ export class Raise {
       }
     }
 
-    for (const s of node.findAllExpressions(Expressions.SimpleSource2)) {
-      new Source().runSyntax(s, scope, filename);
-    }
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+    let prev = "";
+    for (const c of node.getChildren()) {
+      if (c instanceof ExpressionNode
+          && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
+        const type = new Source().runSyntax(c, scope, filename);
+        if (prev === "EXCEPTION"
+            && type
+            && !(type instanceof VoidType)
+            && !(type instanceof ObjectReferenceType)) {
+          throw new Error("RAISE EXCEPTION, must be object reference, got " + type.constructor.name);
+        }
+      }
+      prev = c.concatTokens().toUpperCase();
     }
 
   }
