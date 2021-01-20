@@ -3332,6 +3332,31 @@ ENDFORM.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("setting data from interfaced interface", () => {
+    const abap = `
+INTERFACE if_node.
+  DATA type TYPE i.
+ENDINTERFACE.
+
+INTERFACE if_open.
+  INTERFACES if_node.
+ENDINTERFACE.
+
+CLASS lcl_open_node DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_open.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_open_node IMPLEMENTATION.
+  METHOD constructor.
+    if_node~type = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
