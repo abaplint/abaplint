@@ -23,10 +23,9 @@ export class Raise {
       }
     }
 
-    for (const s of node.findAllExpressions(Expressions.SimpleSource1)) {
+    for (const s of node.findAllExpressions(Expressions.SimpleSource2)) {
       new Source().runSyntax(s, scope, filename);
     }
-
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
