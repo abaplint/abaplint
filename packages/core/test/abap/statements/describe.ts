@@ -1,4 +1,4 @@
-import {statementType} from "../_utils";
+import {statementExpectFail, statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -30,3 +30,9 @@ const tests = [
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);
+
+const fails = [
+  "DESCRIBE TABLE moo( ) LINES bar.",
+];
+
+statementExpectFail(fails, "DESCRIBE");

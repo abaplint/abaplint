@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, seq, opt, alt, per, altPrio} from "../combi";
-import {Target, Source} from "../expressions";
+import {Target, Source, FieldChain} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -12,7 +12,7 @@ export class Describe implements IStatement {
     const occurs = seq("OCCURS", Target);
 
     const table = seq("TABLE",
-                      Source,
+                      FieldChain,
                       opt(per(tlines, kind, occurs)));
 
     const mode = seq("IN", alt("BYTE", "CHARACTER"), "MODE");

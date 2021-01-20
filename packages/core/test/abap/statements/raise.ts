@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementExpectFail, statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -31,3 +31,9 @@ const versions = [
 ];
 
 statementVersion(versions, "RAISE", Statements.Raise);
+
+const fails: string[] = [
+//  "RAISE EXCEPTION 'A'.",
+];
+
+statementExpectFail(fails, "RAISE");

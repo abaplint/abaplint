@@ -105,6 +105,16 @@ export function statementType(tests: any, description: string, type: any) {
   });
 }
 
+export function statementExpectFail(tests: string[], description: string) {
+  describe(description + " statement version should fail,", function() {
+// note that timeout() only works inside function()
+    this.timeout(200);
+    tests.forEach(test => {
+      runExpectFail(test, "\"" + test + "\" should not be recognized");
+    });
+  });
+}
+
 export function statementVersion(tests: any, description: string, type: any) {
   describe(description + " statement version,", function() {
 // note that timeout() only works inside function()
