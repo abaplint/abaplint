@@ -21,19 +21,27 @@ export class ObjectOriented {
 
   public fromInterfaces(classDefinition: IClassDefinition): void {
     for (const i of classDefinition.getImplementing()) {
-      const idef = this.scope.findInterfaceDefinition(i.name);
-      if (idef === undefined) {
-        continue;
-      }
+      this.fromInterfaceByName(i.name);
+    }
+  }
 
-      for (const t of idef.getTypeDefinitions().getAll()) {
-        const name = i.name + "~" + t.getName();
-        this.scope.addTypeNamed(name, t);
-      }
+  private fromInterfaceByName(name: string) {
+    const idef = this.scope.findInterfaceDefinition(name);
+    if (idef === undefined) {
+      return;
+    }
 
-      this.scope.addListPrefix(idef.getAttributes().getConstants(), i.name + "~");
-      this.scope.addListPrefix(idef.getAttributes().getStatic(), i.name + "~");
-      this.scope.addListPrefix(idef.getAttributes().getInstance(), i.name + "~");
+    for (const t of idef.getTypeDefinitions().getAll()) {
+      const n = name + "~" + t.getName();
+      this.scope.addTypeNamed(n, t);
+    }
+
+    this.scope.addListPrefix(idef.getAttributes().getConstants(), name + "~");
+    this.scope.addListPrefix(idef.getAttributes().getStatic(), name + "~");
+    this.scope.addListPrefix(idef.getAttributes().getInstance(), name + "~");
+
+    for (const i of idef.getImplementing()) {
+      this.fromInterfaceByName(i.name);
     }
   }
 
