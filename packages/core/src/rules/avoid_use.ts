@@ -7,6 +7,8 @@ import {TypeTable} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Version} from "../version";
+import {StatementNode} from "../abap/nodes/statement_node";
+import {EditHelper, IEdit} from "../edit_helper";
 
 export class AvoidUseConf extends BasicRuleConfig {
   /** Detects DEFINE (macro definitions) */
@@ -47,7 +49,7 @@ Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_gu
 
 ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
 
-DESRIBE TABLE LINES: use lines() instead`,
+DESRIBE TABLE LINES: use lines() instead (quickfix exists)`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
@@ -71,6 +73,7 @@ DESRIBE TABLE LINES: use lines() instead`,
     for (const statementNode of file.getStatements()) {
       const statement = statementNode.get();
       let message: string | undefined = undefined;
+      let fix: IEdit | undefined = undefined;
       if (this.conf.define && statement instanceof Statements.Define) {
         message = "DEFINE";
       } else if (this.conf.execSQL && statement instanceof Statements.ExecSQL) {
@@ -81,6 +84,7 @@ DESRIBE TABLE LINES: use lines() instead`,
         const children = statementNode.getChildren();
         if (children.length === 6 && children[3].getFirstToken().getStr().toUpperCase() === "LINES") {
           message = "DESCRIBE LINES, use lines() instead";
+          fix = this.getDescribeLinesFix(file, statementNode);
         }
       } else if (this.conf.systemCall && statement instanceof Statements.SystemCall) {
         message = "SYSTEM-CALL";
@@ -96,9 +100,9 @@ DESRIBE TABLE LINES: use lines() instead`,
       } else if (this.conf.break && statement instanceof Statements.Break) {
         message = "BREAK/BREAK-POINT";
       }
+
       if (message) {
-        const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+        issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity, fix));
       }
 
       if (this.conf.defaultKey
@@ -110,8 +114,7 @@ DESRIBE TABLE LINES: use lines() instead`,
         if (tt && token) {
           tt.concatTokensWithoutStringsAndComments().toUpperCase().endsWith("DEFAULT KEY");
           message = "DEFAULT KEY";
-          const issue = Issue.atToken(file, token, this.getDescription(message), this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
+          issues.push(Issue.atToken(file, token, this.getDescription(message), this.getMetadata().key, this.conf.severity));
         }
       }
     }
@@ -122,11 +125,26 @@ DESRIBE TABLE LINES: use lines() instead`,
         if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
           continue;
         }
-        const issue = Issue.atStatement(file, select, this.getDescription("ENDSELECT"), this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+        issues.push(Issue.atStatement(file, select, this.getDescription("ENDSELECT"), this.getMetadata().key, this.conf.severity));
       }
     }
 
     return issues;
+  }
+
+  private getDescribeLinesFix(file: ABAPFile, statementNode: StatementNode): IEdit|undefined {
+    const children = statementNode.getChildren();
+    const target = children[4].concatTokens();
+    const source = children[2].concatTokens();
+
+    const startPosition = children[0].getFirstToken().getStart();
+    const insertText = target + " = lines( " + source + " ).";
+
+    const deleteFix = EditHelper.deleteStatement(file, statementNode);
+    const insertFix = EditHelper.insertAt(file, startPosition, insertText);
+
+    const finalFix = EditHelper.merge(deleteFix, insertFix);
+
+    return finalFix;
   }
 }
