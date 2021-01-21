@@ -94,7 +94,7 @@ export function buildRule(meta: IRuleMetadata) {
     html += "<br>Pragma: " + meta.pragma + "<br>"
   }
   if (meta.pseudoComment) {
-    html += "<br>Pseudo comment: " + meta.pragma + "<br>"
+    html += "<br>Pseudo comment: " + meta.pseudoComment + "<br>"
   }
 
   html = html + "<h2>Description</h2>\n" + meta.shortDescription + "<br><br>";
