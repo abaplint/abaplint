@@ -112,6 +112,7 @@ import {ClassLocalFriends} from "./statements/class_local_friends";
 import {GetBadi} from "./statements/get_badi";
 import {With} from "./statements/with";
 import {WithLoop} from "./statements/with_loop";
+import {SystemCall} from "./statements/system_call";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -374,6 +375,8 @@ export class SyntaxLogic {
       new Find().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Message) {
       new Message().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SystemCall) {
+      new SystemCall().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetTime) {
       new GetTime().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetParameter) {
