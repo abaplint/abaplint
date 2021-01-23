@@ -11,8 +11,9 @@ export class SystemCall implements IStatement {
     const anyy = reg(/^.+$/);
 
     const objmgr = seq("OBJMGR CLONE", Source, "TO", Target);
+    const did = seq(anyy, "DID", Source, "PARAMETERS", Source, Source, Source);
 
-    const ret = seq("SYSTEM-CALL", altPrio(objmgr, plus(anyy)));
+    const ret = seq("SYSTEM-CALL", altPrio(objmgr, did, plus(anyy)));
 
     return verNot(Version.Cloud, ret);
   }

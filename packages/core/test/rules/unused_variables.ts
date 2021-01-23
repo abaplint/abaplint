@@ -587,4 +587,22 @@ APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SYSTEM-CALL DID", async () => {
+    const abap = `
+    DATA c_last_error TYPE i.
+    DATA blah TYPE i VALUE 87.
+    DATA tmp_s TYPE string.
+    DATA lv_string TYPE string.
+
+    SYSTEM-CALL ict
+      DID
+        blah
+      PARAMETERS
+        tmp_s
+        lv_string
+        c_last_error.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
