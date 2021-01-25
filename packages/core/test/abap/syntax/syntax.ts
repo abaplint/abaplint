@@ -3357,6 +3357,20 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("dereference and assignment of data ref", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA row LIKE LINE OF tab.
+  DATA ref TYPE REF TO i.
+  APPEND INITIAL LINE TO tab REFERENCE INTO ref.
+  ref->* = 2.
+  LOOP AT tab INTO row.
+    WRITE row.
+  ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
