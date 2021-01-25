@@ -605,4 +605,13 @@ APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SELECT FROM dynamic", async () => {
+    const abap = `
+  CONSTANTS lc_tabname TYPE tabname VALUE 'ZTEST'.
+  DATA lv_test TYPE i.
+  SELECT SINGLE * INTO @lv_test FROM (lc_tabname).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
