@@ -270,7 +270,12 @@ export class BasicTypes {
         return new Types.UnknownType("Type error, not a table type " + name);
       }
     } else if (text.startsWith("LIKE REF TO ")) {
-      return undefined; // todo
+      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
+      if (type === undefined) {
+        return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
+      }
+      return new Types.DataReference(type);
     } else if (text.startsWith("TYPE TABLE OF REF TO ")
         || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
         || text.startsWith("TYPE SORTED TABLE OF REF TO ")

@@ -51,12 +51,12 @@ export class AttributeName {
       ret = found.getType();
     } else if (context instanceof DataReference) {
       const sub = context.getType();
-      if (!(sub instanceof StructureType)) {
-        throw new Error("Data reference not structured");
-      }
       const name = node.getFirstToken().getStr();
       if (name === "*") {
         return sub;
+      }
+      if (!(sub instanceof StructureType)) {
+        throw new Error("Data reference not structured");
       }
       ret = sub.getComponentByName(name);
       if (ret === undefined) {

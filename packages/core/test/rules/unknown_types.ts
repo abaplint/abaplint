@@ -1113,4 +1113,21 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("data reference LIKE REF TO", () => {
+    const abap = `
+TYPES: BEGIN OF ty_struc,
+         name TYPE string,
+       END OF ty_struc.
+DATA tab TYPE STANDARD TABLE OF ty_struc WITH DEFAULT KEY.
+DATA row LIKE LINE OF tab.
+DATA ref LIKE REF TO row.
+row-name = 'bar'.
+APPEND row TO tab.
+READ TABLE tab REFERENCE INTO ref WITH KEY name = 'bar'.
+WRITE ref->name.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });
