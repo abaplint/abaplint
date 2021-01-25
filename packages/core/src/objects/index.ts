@@ -1,3 +1,4 @@
+export * from "./activation_variant";
 export * from "./assignment_service_to_authorization_group";
 export * from "./authorization_check_field";
 export * from "./authorization_group";
@@ -53,6 +54,7 @@ export * from "./maintenance_and_transport_object";
 export * from "./message_class";
 export * from "./messaging_channel";
 export * from "./mime_object";
+export * from "./namespace";
 export * from "./number_range";
 export * from "./object_characteristic";
 export * from "./package_interface";

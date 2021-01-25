@@ -481,10 +481,12 @@ export class BasicTypes {
 
     const first = expr.getFirstChild()!;
     if (first.get() instanceof Expressions.Field) {
-      const name = first.getFirstToken().getStr();
+      const token = first.getFirstToken();
+      const name = token.getStr();
       const found = this.scope.findVariable(name);
       const val = found?.getValue();
       if (typeof val === "string") {
+        this.scope.addReference(token, found, ReferenceType.DataReadReference, this.filename);
         return val;
       }
       return undefined;
