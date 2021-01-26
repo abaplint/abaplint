@@ -3,7 +3,7 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Dynamic} from "./dynamic";
 import {MethodCallChain} from "./method_call_chain";
-import {ObjectReferenceType} from "../../types/basic";
+import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 
@@ -27,6 +27,8 @@ export class MethodSource {
             ooType: "CLAS"};
           scope.addReference(last.getFirstToken(), method, ReferenceType.MethodReference, filename, extra);
         }
+      } else if (context instanceof VoidType) {
+        return;
       } else {
         throw new Error("MethodSource, not a object reference, " + node.concatTokens());
       }
