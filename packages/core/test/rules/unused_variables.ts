@@ -622,4 +622,13 @@ APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("basic COLLECT", async () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA var TYPE i.
+  COLLECT var INTO tab.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

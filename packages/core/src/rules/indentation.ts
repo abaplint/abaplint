@@ -16,6 +16,7 @@ import {ABAPFile} from "../abap/abap_file";
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
+  /** Align TRY CATCH, TRY and CATCH should have the same indentation */
   public alignTryCatch: boolean = false;
   public globalClassSkipFirst: boolean = false;
   public ignoreGlobalClassDefinition: boolean = false;

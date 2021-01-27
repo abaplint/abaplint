@@ -916,4 +916,15 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain(`Void`);
   });
 
+  it("hover, expect one void", () => {
+    // note that in this case abaplint does not know if its a class or a ddic object
+    const abap = `DATA foo TYPE REF TO cl_sdfsd.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 22));
+    expect(hover).to.not.equal(undefined);
+    const count = (hover?.value.match(/VoidType/g) || []).length;
+    expect(count).to.equal(1);
+  });
+
 });
