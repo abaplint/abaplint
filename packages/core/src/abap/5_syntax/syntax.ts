@@ -114,6 +114,7 @@ import {With} from "./statements/with";
 import {WithLoop} from "./statements/with_loop";
 import {SystemCall} from "./statements/system_call";
 import {Collect} from "./statements/collect";
+import {Transfer} from "./statements/transfer";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -324,6 +325,8 @@ export class SyntaxLogic {
       new Export().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Scan) {
       new Scan().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Transfer) {
+      new Transfer().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Split) {
       new Split().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CallFunction) {
