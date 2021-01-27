@@ -6,6 +6,7 @@ import {RemoveSequentialBlanks} from "./remove_sequential_blanks";
 import {IConfiguration} from "../_config";
 import {VirtualPosition} from "../position";
 import {ABAPFile} from "../abap/abap_file";
+import {Indentation, IndentationConf} from "../rules/indentation";
 
 export class PrettyPrinter {
   private result: string;
@@ -13,11 +14,17 @@ export class PrettyPrinter {
   private readonly options: IIndentationOptions;
   private readonly config: IConfiguration;
 
-  public constructor(file: ABAPFile, config: IConfiguration, options?: IIndentationOptions) {
+  public constructor(file: ABAPFile, config: IConfiguration) {
     this.result = file.getRaw();
     this.file = file;
-    this.options = options || {};
     this.config = config;
+
+    const indentationConf: IndentationConf = config.readByRule(new Indentation().getMetadata().key);
+
+    this.options = {
+      alignTryCatch: indentationConf.alignTryCatch,
+      globalClassSkipFirst: indentationConf.globalClassSkipFirst,
+    };
   }
 
   public run(): string {
