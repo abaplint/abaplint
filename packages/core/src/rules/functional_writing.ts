@@ -29,13 +29,29 @@ export class FunctionalWriting extends ABAPRule {
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
 https://docs.abapopenchecks.org/checks/07/`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
-      badExample: `CALL METHOD zcl_class=>method( ).`,
-      goodExample: `zcl_class=>method( ).`,
+      badExample: `CALL METHOD zcl_class=>method( ).
+CALL METHOD cl_abap_typedescr=>describe_by_name
+  EXPORTING
+    p_name         = 'NAME'
+  RECEIVING
+    p_descr_ref    = lr_typedescr
+  EXCEPTIONS
+    type_not_found = 1
+    OTHERS         = 2.`,
+      goodExample: `zcl_class=>method( ).
+cl_abap_typedescr=>describe_by_name(
+  EXPORTING
+    p_name         = 'NAME'
+  RECEIVING
+    p_descr_ref    = lr_typedescr
+  EXCEPTIONS
+    type_not_found = 1
+    OTHERS         = 2 ).`,
     };
   }
 
   private getMessage(): string {
-    return "Use functional writing style for method calls.";
+    return "Use functional writing style for method calls";
   }
 
   public getConfig() {

@@ -3371,6 +3371,12 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CALL METHOD voided", () => {
+    const abap = `CALL METHOD cl_sdfdsf=>method.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
