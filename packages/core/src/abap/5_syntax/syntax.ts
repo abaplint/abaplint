@@ -113,6 +113,7 @@ import {GetBadi} from "./statements/get_badi";
 import {With} from "./statements/with";
 import {WithLoop} from "./statements/with_loop";
 import {SystemCall} from "./statements/system_call";
+import {Collect} from "./statements/collect";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -317,6 +318,8 @@ export class SyntaxLogic {
       new SyntaxCheck().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Import) {
       new Import().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Collect) {
+      new Collect().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Export) {
       new Export().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Scan) {
