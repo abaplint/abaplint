@@ -78,50 +78,58 @@ export class UncaughtException extends ABAPRule {
   }
 
   private traverse(n: StructureNode | StatementNode, file: ABAPFile) {
-    if (n.get() instanceof Structures.ClassDefinition
-        || n.get() instanceof Structures.Interface) {
+    const get = n.get();
+    if (get instanceof Structures.ClassDefinition
+        || get instanceof Structures.Interface) {
       return; // to optimize performance
-    } else if (n instanceof StructureNode && n.get() instanceof Structures.Try) {
-      // note that TRY-CATCH might be arbitrarily nested
-      const previous = this.sinked ? this.sinked.slice() : undefined;
-      this.addFromTryStructure(n);
-      for (const c of n.getChildren()) {
-        this.traverse(c, file);
-      }
-      this.sinked = previous;
-      return;
-    } else if (n instanceof StatementNode && n.get() instanceof Statements.Method) {
-      this.setSinkedFromMethod(n, file);
-    } else if (n instanceof StatementNode && n.get() instanceof Statements.EndMethod) {
-      this.sinked = undefined; // back to top level
-    } else if (n instanceof StatementNode && n.get() instanceof Statements.Form) {
-      this.sinked = [];
-      const raising = n.findDirectExpression(Expressions.FormRaising);
-      for (const c of raising?.findAllExpressions(Expressions.ClassName) || []) {
-        this.sinked.push(c.concatTokens().toUpperCase());
-      }
-    } else if (n instanceof StatementNode && n.get() instanceof Statements.EndForm) {
-      this.sinked = undefined; // back to top level
-    } else if (n instanceof StatementNode && n.get() instanceof Statements.Raise) {
-      let name: string | undefined = undefined;
-
-      const concat = n.concatTokens().toUpperCase();
-      if (concat.startsWith("RAISE EXCEPTION TYPE ")) {
-        name = n.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr().toUpperCase();
-      }
-
-      this.check(name, n, file);
-    } else if (n instanceof StatementNode && n.get() instanceof Statements.Perform) {
-      // todo, PERFORM, or is this not statically checked?
-    } else if (n instanceof StatementNode) {
-      this.checkForMethodCalls(n, file);
     }
 
     if (n instanceof StructureNode) {
-      for (const c of n.getChildren()) {
-        this.traverse(c, file);
+      if (get instanceof Structures.Try) {
+        // note that TRY-CATCH might be arbitrarily nested
+        const previous = this.sinked ? this.sinked.slice() : undefined;
+        this.addFromTryStructure(n);
+        for (const c of n.getChildren()) {
+          this.traverse(c, file);
+        }
+        this.sinked = previous;
+        return;
+      } else {
+        if (n instanceof StructureNode) {
+          for (const c of n.getChildren()) {
+            this.traverse(c, file);
+          }
+        }
+      }
+    } else if (n instanceof StatementNode) {
+      if (get instanceof Statements.Method) {
+        this.setSinkedFromMethod(n, file);
+      } else if (get instanceof Statements.EndMethod) {
+        this.sinked = undefined; // back to top level
+      } else if (get instanceof Statements.Form) {
+        this.sinked = [];
+        const raising = n.findDirectExpression(Expressions.FormRaising);
+        for (const c of raising?.findAllExpressions(Expressions.ClassName) || []) {
+          this.sinked.push(c.concatTokens().toUpperCase());
+        }
+      } else if (get instanceof Statements.EndForm) {
+        this.sinked = undefined; // back to top level
+      } else if (get instanceof Statements.Raise) {
+        let name: string | undefined = undefined;
+
+        const concat = n.concatTokens().toUpperCase();
+        if (concat.startsWith("RAISE EXCEPTION TYPE ")) {
+          name = n.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr().toUpperCase();
+        }
+
+        this.check(name, n, file);
+      } else if (get instanceof Statements.Perform) {
+        // todo, PERFORM, or is this not statically checked?
+      } else {
+        this.checkForMethodCalls(n, file);
       }
     }
+
   }
 
 ////////////////////////////////
