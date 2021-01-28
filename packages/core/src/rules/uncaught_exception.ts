@@ -54,6 +54,10 @@ export class UncaughtException extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
+    if (obj.getType() === "INTF") { // nothing can be raised in interfaces
+      return [];
+    }
+
     const stru = file.getStructure();
     if (stru === undefined) {
       return [];
