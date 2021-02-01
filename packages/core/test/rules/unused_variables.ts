@@ -631,4 +631,22 @@ APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("dynamic ASSIGN", async () => {
+    const abap = `
+  DATA(lv_sel_opt_name) = |sdfdsfds|.
+  ASSIGN (lv_sel_opt_name) TO FIELD-SYMBOL(<fs>).
+  WRITE <fs>.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("TRANSFER", async () => {
+    const abap = `
+  DATA foo TYPE c.
+  DATA bar TYPE c.
+  TRANSFER foo TO bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
