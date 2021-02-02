@@ -66,6 +66,10 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
 
   public run(obj: IObject): readonly Issue[] {
 
+    if (obj.getType() === "INTF") {
+      return [];
+    }
+
     if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];
     } else if (!(obj instanceof ABAPObject)) {

@@ -6,6 +6,7 @@ import {MethodParameters, MethodCallBody, MethodCall} from "../abap/2_statements
 import {ExpressionNode} from "../abap/nodes";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class ExportingConf extends BasicRuleConfig {
 }
@@ -32,8 +33,12 @@ https://docs.abapopenchecks.org/checks/30/`,
     return "The EXPORTING keyword can be omitted";
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     let issues: Issue[] = [];
+
+    if (obj.getType() === "INTF") {
+      return [];
+    }
 
     for (const statement of file.getStatements()) {
       const expressions = statement.findAllExpressionsMulti([MethodCallBody, MethodCall]);

@@ -5,6 +5,7 @@ import {ExpressionNode, StatementNode} from "../abap/nodes";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
   /** Max line length, in characters */
@@ -34,8 +35,12 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile): Issue[] {
+  public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
     let issues: Issue[] = [];
+
+    if (obj.getType() === "INTF") {
+      return [];
+    }
 
     const stru = file.getStructure();
     if (stru === undefined) {
