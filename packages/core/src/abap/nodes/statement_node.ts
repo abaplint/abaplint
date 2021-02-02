@@ -140,7 +140,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     for (const child of this.getChildren()) {
       return child.getFirstToken();
     }
-    throw new Error("StatementNode, getFirstToken, no children");
+    throw new Error("StatementNode, getFirstToken, no children, " + this.get().constructor.name);
   }
 
   public getLastToken(): Token {

@@ -1,7 +1,7 @@
 import {IStructure} from "./_structure";
 import {StructureNode, StatementNode} from "../../nodes";
 import {INode} from "../../nodes/_inode";
-import {IStatement} from "../../2_statements/statements/_statement";
+import {IStatement, MacroCall} from "../../2_statements/statements/_statement";
 import {IStructureRunnable} from "./_structure_runnable";
 import {IMatch} from "./_match";
 
@@ -22,6 +22,10 @@ class Sequence implements IStructureRunnable {
 
   public getUsing(): string[] {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
+  }
+
+  public first() {
+    return this.list[0].first();
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
@@ -51,14 +55,36 @@ class Sequence implements IStructureRunnable {
   }
 }
 
+// Note that the Alternative does not nessesarily return the first in the alternative
+// as a map is used for better performance
 class Alternative implements IStructureRunnable {
   private readonly list: IStructureRunnable[];
+  private map: {[index: string]: IStructureRunnable[]};
 
   public constructor(list: IStructureRunnable[]) {
     if (list.length < 2) {
       throw new Error("Alternative, length error");
     }
     this.list = list;
+  }
+
+  private setupMap() {
+    // dont call from constructor, it will cause infinite loop
+    if (this.map === undefined) {
+      this.map = {};
+      for (const i of this.list) {
+        const first = i.first();
+        if (this.map[first]) {
+          this.map[first].push(i);
+        } else {
+          this.map[first] = [i];
+        }
+      }
+    }
+  }
+
+  public first() {
+    return "";
   }
 
   public toRailroad() {
@@ -71,9 +97,12 @@ class Alternative implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
+    this.setupMap();
     let count = 0;
     let countError = "";
-    for (const i of this.list) {
+
+    const token = statements[0].getFirstToken().getStr().toUpperCase();
+    for (const i of this.map[token] || []) {
       const match = i.run(statements, parent);
       if (match.error === false) {
         return match;
@@ -83,13 +112,24 @@ class Alternative implements IStructureRunnable {
         count = match.errorMatched;
       }
     }
+
+    for (const i of this.map[""] || []) {
+      const match = i.run(statements, parent);
+      if (match.error === false) {
+        return match;
+      }
+      if (match.errorMatched > count) {
+        countError = match.errorDescription;
+        count = match.errorMatched;
+      }
+    }
+
     if (count === 0) {
-      const children = this.list.map((e) => { return e.constructor.name.toUpperCase(); });
       return {
         matched: [],
         unmatched: statements,
         error: true,
-        errorDescription: "Expected " + children.join(" or "),
+        errorDescription: "Unexpected code structure",
         errorMatched: count,
       };
     } else {
@@ -123,6 +163,10 @@ class Optional implements IStructureRunnable {
     const ret = this.obj.run(statements, parent);
     ret.error = false;
     return ret;
+  }
+
+  public first() {
+    return "";
   }
 }
 
@@ -180,11 +224,15 @@ class Star implements IStructureRunnable {
       inn = match.unmatched;
     }
   }
+
+  public first() {
+    return "";
+  }
 }
 
 class SubStructure implements IStructureRunnable {
   private readonly s: IStructure;
-  private matcher: IStructureRunnable | undefined;
+  private matcher: IStructureRunnable;
 
   public constructor(s: IStructure) {
     this.s = s;
@@ -198,12 +246,22 @@ class SubStructure implements IStructureRunnable {
     return ["structure/" + this.s.constructor.name];
   }
 
-  public run(statements: StatementNode[], parent: INode): IMatch {
-    const nparent = new StructureNode(this.s);
+  public first() {
+    this.setupMatcher();
+    return this.matcher.first();
+  }
+
+  private setupMatcher() {
     if (this.matcher === undefined) {
       // SubStructures are singletons, so the getMatcher can be saved, its expensive to create
+      // dont move this to the constructor, as it might trigger infinite recursion
       this.matcher = this.s.getMatcher();
     }
+  }
+
+  public run(statements: StatementNode[], parent: INode): IMatch {
+    const nparent = new StructureNode(this.s);
+    this.setupMatcher();
     const ret = this.matcher.run(statements, nparent);
     if (ret.matched.length === 0) {
       ret.error = true;
@@ -219,6 +277,19 @@ class SubStatement implements IStructureRunnable {
 
   public constructor(obj: new () => IStatement) {
     this.obj = obj;
+  }
+
+  public first() {
+    const o = new this.obj();
+    if (o instanceof MacroCall) {
+      return "";
+    }
+    const arr = o.getMatcher().first();
+    if (arr.length === 1) {
+      return arr[0];
+    } else {
+      return "";
+    }
   }
 
   public toRailroad() {

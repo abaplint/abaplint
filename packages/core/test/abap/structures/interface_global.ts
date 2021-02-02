@@ -7,7 +7,10 @@ const cases = [
   ENDINTERFACE.`},
   {abap: `INTERFACE zif_bar PUBLIC.
   TYPES: BEGIN OF bar,
-  foo TYPE i,
+  foo1 TYPE i,
+  foo2 TYPE i,
+  foo3 TYPE i,
+  foo4 TYPE i,
   END OF bar.
   ENDINTERFACE.`},
 ];

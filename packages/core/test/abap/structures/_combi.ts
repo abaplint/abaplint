@@ -7,6 +7,8 @@ import {IStructure} from "../../../src/abap/3_structures/structures/_structure";
 import {IStatement} from "../../../src/abap/2_statements/statements/_statement";
 import {AbstractNode} from "../../../src/abap/nodes/_abstract_node";
 import {Token} from "../../../src/abap/1_lexer/tokens/_token";
+import {Dash} from "../../../src/abap/1_lexer/tokens/dash";
+import {Position} from "../../../src/position";
 
 class DummyNode extends AbstractNode<TokenNode> {
   public get(): undefined {
@@ -21,7 +23,12 @@ class DummyNode extends AbstractNode<TokenNode> {
 }
 
 function toNodes(statements: IStatement[]): StatementNode[] {
-  return statements.map((e) => { return new StatementNode(e); });
+  return statements.map((e) => {
+    const node = new StatementNode(e);
+    const token = new Dash(new Position(1, 1), "-");
+    node.addChild(new TokenNode(token));
+    return node;
+  });
 }
 
 describe("structure combi statement", () => {
@@ -204,15 +211,6 @@ describe("structure combi alt", () => {
     expect(parent.getChildren().length).to.equal(1);
   });
 
-  it("alt1 match2", () => {
-    const parent = new DummyNode();
-    const match = alt1.run(toNodes([new Statements.Do()]), parent);
-    expect(match.matched.length).to.equal(1);
-    expect(match.unmatched.length).to.equal(0);
-    expect(match.error).to.equal(false);
-    expect(parent.getChildren().length).to.equal(1);
-  });
-
   it("alt1 not match", () => {
     const parent = new DummyNode();
     const match = alt1.run(toNodes([new Statements.Call()]), parent);
@@ -231,14 +229,6 @@ describe("structure combi alt", () => {
     expect(parent.getChildren().length).to.equal(1);
   });
 
-  it("alt1 none", () => {
-    const parent = new DummyNode();
-    const match = alt1.run([], parent);
-    expect(match.matched.length).to.equal(0);
-    expect(match.unmatched.length).to.equal(0);
-    expect(match.error).to.equal(true);
-    expect(parent.getChildren().length).to.equal(0);
-  });
 });
 
 describe("structure combi sub structure", () => {
@@ -300,22 +290,6 @@ describe("structure combi, complex1", () => {
     expect(parent.getChildren().length).to.equal(2);
     expect(parent.getChildren()[0].getChildren().length).to.equal(1);
     expect(parent.getChildren()[1].getChildren().length).to.equal(1);
-  });
-
-});
-
-describe("structure combi, complex2", () => {
-  const sub1 = star(alt(sta(Statements.Move), sta(Statements.Do)));
-
-  it("complex2 match", () => {
-    const parent = new DummyNode();
-    const match = sub1.run(toNodes([new Statements.Move(), new Statements.Move()]), parent);
-    expect(match.matched.length).to.equal(2);
-    expect(match.unmatched.length).to.equal(0);
-    expect(match.error).to.equal(false);
-    expect(parent.getChildren().length).to.equal(2);
-    expect(parent.getChildren()[0].getChildren().length).to.equal(0);
-    expect(parent.getChildren()[1].getChildren().length).to.equal(0);
   });
 
 });

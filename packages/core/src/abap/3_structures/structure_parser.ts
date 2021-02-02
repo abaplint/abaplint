@@ -8,16 +8,24 @@ import {IStructureResult} from "./structure_result";
 import {IStatementResult} from "../2_statements/statement_result";
 import {IFile} from "../../files/_ifile";
 import {Severity} from "../../severity";
+import {IStructureRunnable} from "./structures/_structure_runnable";
 
 export class StructureParser {
+  private static readonly singletons: {[index: string]: IStructureRunnable} = {};
 
   public static run(input: IStatementResult): IStructureResult {
     const structure = this.findStructureForFile(input.file.getFilename());
-    const statements = input.statements.slice().filter((s) => {
+
+    const filtered: StatementNode[] = [];
+    for (const s of input.statements) {
       const get = s.get();
-      return !(get instanceof StatementComment || get instanceof Empty || get instanceof Unknown);
-    });
-    return this.runFile(structure, input.file, statements);
+      if (get instanceof StatementComment || get instanceof Empty || get instanceof Unknown) {
+        continue;
+      }
+      filtered.push(s);
+    }
+
+    return this.runFile(structure, input.file, filtered);
   }
 
 //////////////////
@@ -36,7 +44,10 @@ export class StructureParser {
 
   private static runFile(structure: IStructure, file: IFile, statements: StatementNode[]): {issues: Issue[], node?: StructureNode} {
     const parent = new StructureNode(structure);
-    const result = structure.getMatcher().run(statements, parent);
+    if (this.singletons[structure.constructor.name] === undefined) {
+      this.singletons[structure.constructor.name] = structure.getMatcher();
+    }
+    const result = this.singletons[structure.constructor.name].run(statements, parent);
 
     if (result.error) {
       const issue = Issue.atPosition(file, new Position(1, 1), result.errorDescription, "structure", Severity.Error);
