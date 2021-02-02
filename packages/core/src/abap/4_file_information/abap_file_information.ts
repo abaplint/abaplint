@@ -105,17 +105,23 @@ export class ABAPFileInformation implements IABAPFileInformation {
   }
 
   private parseInterfaces(structure: StructureNode) {
-    for (const found of structure.findAllStructures(Structures.Interface)) {
-      const interfaceName = found.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
+    for (const found of structure.findDirectStructures(Structures.Interface)) {
+      const i = found.findFirstStatement(Statements.Interface);
+      if (i === undefined) {
+        throw new Error("Interface expected, parseInterfaces");
+      }
+      const interfaceName = i.findDirectExpression(Expressions.InterfaceName)!.getFirstToken();
       const methods = this.parseMethodDefinition(found, Visibility.Public);
       const attributes = this.parseAttributes(found, Visibility.Public);
       const aliases = this.parseAliases(found, Visibility.Public);
 
+      const g = i.findDirectExpression(Expressions.ClassGlobal);
+
       this.interfaces.push({
         name: interfaceName.getStr(),
         identifier: new Identifier(interfaceName, this.filename),
-        isLocal: found.findFirstExpression(Expressions.ClassGlobal) === undefined,
-        isGlobal: found.findFirstExpression(Expressions.ClassGlobal) !== undefined,
+        isLocal: g === undefined,
+        isGlobal: g !== undefined,
         interfaces: this.getImplementing(found),
         aliases,
         methods,
@@ -268,7 +274,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
 
     const methods: InfoMethodDefinition[] = [];
     for (const def of node.findAllStatements(Statements.MethodDef)) {
-      const methodName = def.findFirstExpression(Expressions.MethodName)?.getFirstToken();
+      const methodName = def.findDirectExpression(Expressions.MethodName)?.getFirstToken();
       if (methodName === undefined) {
         continue;
       }
@@ -278,10 +284,10 @@ export class ABAPFileInformation implements IABAPFileInformation {
       methods.push({
         name: methodName.getStr(),
         identifier: new Identifier(methodName, this.filename),
-        isRedefinition: def.findFirstExpression(Expressions.Redefinition) !== undefined,
+        isRedefinition: def.findDirectExpression(Expressions.Redefinition) !== undefined,
         isForTesting: def.concatTokens().toUpperCase().includes(" FOR TESTING"),
-        isAbstract: def.findFirstExpression(Expressions.Abstract) !== undefined,
-        isEventHandler: node.findFirstExpression(Expressions.EventHandler) !== undefined,
+        isAbstract: def.findDirectExpression(Expressions.Abstract) !== undefined,
+        isEventHandler: def.findDirectExpression(Expressions.EventHandler) !== undefined,
         visibility,
         parameters,
         exceptions: [], // todo
