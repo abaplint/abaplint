@@ -73,18 +73,19 @@ class Alternative implements IStructureRunnable {
     if (this.map === undefined) {
       this.map = {};
       for (const i of this.list) {
-        const first = i.first();
-        if (this.map[first]) {
-          this.map[first].push(i);
-        } else {
-          this.map[first] = [i];
+        for (const first of i.first()) {
+          if (this.map[first]) {
+            this.map[first].push(i);
+          } else {
+            this.map[first] = [i];
+          }
         }
       }
     }
   }
 
   public first() {
-    return "";
+    return [""];
   }
 
   public toRailroad() {
@@ -166,7 +167,7 @@ class Optional implements IStructureRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -226,7 +227,7 @@ class Star implements IStructureRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -282,14 +283,9 @@ class SubStatement implements IStructureRunnable {
   public first() {
     const o = new this.obj();
     if (o instanceof MacroCall) {
-      return "";
+      return [""];
     }
-    const arr = o.getMatcher().first();
-    if (arr.length === 1) {
-      return arr[0];
-    } else {
-      return "";
-    }
+    return o.getMatcher().first();
   }
 
   public toRailroad() {

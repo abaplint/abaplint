@@ -12,6 +12,7 @@ const cases = [
   foo3 TYPE i,
   foo4 TYPE i,
   END OF bar.
+  METHODS bar.
   ENDINTERFACE.`},
 ];
 
