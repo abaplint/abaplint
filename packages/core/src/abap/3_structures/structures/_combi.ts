@@ -145,7 +145,6 @@ class Star implements IStructureRunnable {
     let inn = statements;
     const out: StatementNode[] = [];
     while (true) {
-      const match = this.obj.run(inn, parent);
       if (inn.length === 0) {
         return {
           matched: out,
@@ -154,7 +153,11 @@ class Star implements IStructureRunnable {
           errorDescription: "",
           errorMatched: 0,
         };
-      } else if (match.error === true) {
+      }
+
+      const match = this.obj.run(inn, parent);
+
+      if (match.error === true) {
         if (match.errorMatched > 0) {
           return {
             matched: out,
