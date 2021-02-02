@@ -11,7 +11,6 @@ import {Data} from "./data";
 export class SectionContents implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-// todo, start should be plus instead?
     return star(alt(sta(Statements.MethodDef),
                     sta(Statements.InterfaceDef),
                     sta(Statements.Data),

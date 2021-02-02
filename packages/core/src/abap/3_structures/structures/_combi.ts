@@ -26,7 +26,7 @@ class Sequence implements IStructureRunnable {
 
   public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
-    let out: StatementNode[] = [];
+    const out: StatementNode[] = [];
     for (const i of this.list) {
       const match = i.run(inn, parent);
       if (match.error) {
@@ -38,7 +38,7 @@ class Sequence implements IStructureRunnable {
           errorMatched: out.length,
         };
       }
-      out = out.concat(match.matched);
+      out.push(...match.matched);
       inn = match.unmatched;
     }
     return {
@@ -83,8 +83,8 @@ class Alternative implements IStructureRunnable {
         count = match.errorMatched;
       }
     }
-    const children = this.list.map((e) => { return e.constructor.name.toUpperCase(); });
     if (count === 0) {
+      const children = this.list.map((e) => { return e.constructor.name.toUpperCase(); });
       return {
         matched: [],
         unmatched: statements,
@@ -143,7 +143,7 @@ class Star implements IStructureRunnable {
 
   public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
-    let out: StatementNode[] = [];
+    const out: StatementNode[] = [];
     while (true) {
       const match = this.obj.run(inn, parent);
       if (inn.length === 0) {
@@ -173,7 +173,7 @@ class Star implements IStructureRunnable {
           };
         }
       }
-      out = out.concat(match.matched);
+      out.push(...match.matched);
       inn = match.unmatched;
     }
   }
