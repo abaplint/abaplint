@@ -14,7 +14,8 @@ export class StructureParser {
   public static run(input: IStatementResult): IStructureResult {
     const structure = this.findStructureForFile(input.file.getFilename());
     const statements = input.statements.slice().filter((s) => {
-      return !(s.get() instanceof StatementComment || s.get() instanceof Empty || s.get() instanceof Unknown);
+      const get = s.get();
+      return !(get instanceof StatementComment || get instanceof Empty || get instanceof Unknown);
     });
     return this.runFile(structure, input.file, statements);
   }
@@ -23,9 +24,9 @@ export class StructureParser {
 
   private static findStructureForFile(filename: string): IStructure {
 // todo, not sure this is the right place for this logic
-    if (filename.match(/\.clas\.abap$/)) {
+    if (filename.endsWith(".clas.abap")) {
       return new Structures.ClassGlobal();
-    } else if (filename.match(/\.intf\.abap$/)) {
+    } else if (filename.endsWith(".intf.abap")) {
       return new Structures.InterfaceGlobal();
     } else {
 // todo
