@@ -51,10 +51,9 @@ export class Indentation extends ABAPRule {
       return []; // syntax error in file
     }
 
-    const ddic = new DDIC(this.reg);
-
     if (obj instanceof Class) {
       const definition = obj.getClassDefinition();
+      const ddic = new DDIC(this.reg);
       if (definition === undefined) {
         return [];
       } else if (this.conf.ignoreExceptions && ddic.isException(definition, obj)) {

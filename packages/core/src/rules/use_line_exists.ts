@@ -8,6 +8,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {StatementNode} from "../abap/nodes";
 import {Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class UseLineExistsConf extends BasicRuleConfig {
 }
@@ -36,8 +37,12 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-li
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
+
+    if (obj.getType() === "INTF") {
+      return [];
+    }
 
     if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];

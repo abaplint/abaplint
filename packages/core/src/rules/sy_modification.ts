@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class SyModificationConf extends BasicRuleConfig {
 }
@@ -33,8 +34,12 @@ sy = sy.`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
+
+    if (obj.getType() === "INTF") {
+      return [];
+    }
 
     for (const t of file.getStructure()?.findAllExpressions(Expressions.Target) || []) {
       const firstChild = t.getChildren()[0];

@@ -4,6 +4,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import * as Statements from "../abap/2_statements/statements";
 import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class CallTransactionAuthorityCheckConf extends BasicRuleConfig {
 }
@@ -35,8 +36,12 @@ export class CallTransactionAuthorityCheck extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
+
+    if (obj.getType() === "INTF") {
+      return [];
+    }
 
     for (const statNode of file.getStatements()) {
       const statement = statNode.get();

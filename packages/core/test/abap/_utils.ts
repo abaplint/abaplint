@@ -75,7 +75,7 @@ export function structureType(cases: {abap: string, only?: boolean}[], expected:
   describe("Structure type", () => {
     cases.forEach(c => {
       const callback = () => {
-        const file = parse(c.abap);
+        const file = parse(c.abap); // note that parsing will also trigger the structure matches
         const statements = file.getStatements();
         const length = statements.length;
         const match = expected.getMatcher().run(statements.slice(), new StructureNode(expected));

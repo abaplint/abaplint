@@ -828,7 +828,22 @@ class AlternativePriority implements IStatementRunnable {
   }
 
   public first() {
-    return [""];
+    if (this.list.length !== 2) {
+      return [""];
+    }
+    const f1 = this.list[0].first();
+    const f2 = this.list[1].first();
+    if (f1.length === 1 && f1[0] === "") {
+      return f1;
+    }
+    if (f2.length === 1 && f2[0] === "") {
+      return f2;
+    }
+    if (f1.length === 1 && f2.length === 1 && f1[0] === f2[0]) {
+      return f1;
+    }
+    const result = f1.concat(f2);
+    return result;
   }
 }
 

@@ -9,6 +9,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class UseNewConf extends BasicRuleConfig {
 }
@@ -42,8 +43,12 @@ If the target variable is referenced in the CREATE OBJECT statement, no errors a
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
+
+    if (obj.getType() === "INTF") {
+      return [];
+    }
 
     if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];

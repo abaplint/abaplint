@@ -44,7 +44,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
 
   public run(obj: IObject): Issue[] {
     const issues: Issue[] = [];
-    if (!(obj instanceof ABAPObject)) {
+    if (!(obj instanceof ABAPObject) || obj.getType() === "INTF") {
       return [];
     }
 

@@ -1,7 +1,7 @@
 import {IStructure} from "./_structure";
 import * as Statements from "../../2_statements/statements";
 import {seq, sta, sub, opt} from "./_combi";
-import {SectionContents} from "./class_section";
+import {SectionContents} from "./section_section";
 import {IStructureRunnable} from "./_structure_runnable";
 
 export class ProtectedSection implements IStructure {

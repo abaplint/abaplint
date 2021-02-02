@@ -9,7 +9,7 @@ export * from "./class_data";
 export * from "./class_definition";
 export * from "./class_global";
 export * from "./class_implementation";
-export * from "./class_section";
+export * from "./section_section";
 export * from "./constants";
 export * from "./data";
 export * from "./define";

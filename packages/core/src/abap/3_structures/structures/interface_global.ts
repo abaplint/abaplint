@@ -8,6 +8,7 @@ export class InterfaceGlobal implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return seq(star(sta(Statements.TypePools)),
+               star(sta(Statements.InterfaceLoad)),
                sub(Structures.Interface));
   }
 

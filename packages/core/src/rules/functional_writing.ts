@@ -66,6 +66,10 @@ cl_abap_typedescr=>describe_by_name(
     const issues: Issue[] = [];
     let exception = false;
 
+    if (obj.getType() === "INTF") {
+      return [];
+    }
+
     let definition: InfoClassDefinition | undefined = undefined;
     if (obj instanceof Class) {
       definition = obj.getClassDefinition();
