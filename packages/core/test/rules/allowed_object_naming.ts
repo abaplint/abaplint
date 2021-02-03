@@ -68,4 +68,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("NSPC, okay", async () => {
+    const issues = await findIssues("#foobar#.nspc.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });

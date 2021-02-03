@@ -649,4 +649,17 @@ APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("constant in class", async () => {
+    const abap = `
+CLASS lcl_test DEFINITION FINAL.
+  PUBLIC SECTION.
+    CONSTANTS c_name_length TYPE i VALUE 90 ##NO_TEXT.
+    TYPES ty_name TYPE c LENGTH c_name_length.
+ENDCLASS.
+CLASS lcl_test IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
