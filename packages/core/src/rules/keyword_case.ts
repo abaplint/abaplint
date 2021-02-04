@@ -222,16 +222,17 @@ export class KeywordCase extends ABAPRule {
           continue;
         }
         const str = child.get().getStr();
+        const upper = str.toUpperCase();
         // todo, this is a hack, the parser should recongize OTHERS/TEXT as a keyword
-        if (str.toUpperCase() === "OTHERS" || str.toUpperCase() === "TEXT") {
+        if (upper === "OTHERS" || upper === "TEXT") {
           continue;
         }
         if (this.conf.ignoreFunctionModuleName === true
-          && parent instanceof Statements.FunctionModule && str.toUpperCase() !== "FUNCTION") {
+          && parent instanceof Statements.FunctionModule && upper !== "FUNCTION") {
           continue;
         }
         // todo, this is a hack, the parser should recigize SCREEN as a keyword
-        if (str.toUpperCase() === "SCREEN"
+        if (upper === "SCREEN"
             && (parent instanceof Statements.ModifyDatabase
               || parent instanceof Statements.ModifyInternal
               || parent instanceof Statements.Loop)) {
