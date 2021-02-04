@@ -234,14 +234,8 @@ export class KeywordCase extends ABAPRule {
           && parent instanceof Statements.FunctionModule && str.toUpperCase() !== "FUNCTION") {
           continue;
         }
-        if (parent instanceof Statements.ModifyDatabase && str.toUpperCase() === "SCREEN") {
-          continue;
-        }
-        if (parent instanceof Statements.ModifyInternal && str.toUpperCase() === "SCREEN") {
-          continue;
-        }
-        // todo
-        if (parent instanceof Statements.FieldSymbol || parent instanceof Statements.Type) {
+        if (str.toUpperCase() === "SCREEN"
+            && (parent instanceof Statements.ModifyDatabase || parent instanceof Statements.ModifyInternal)) {
           continue;
         }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {

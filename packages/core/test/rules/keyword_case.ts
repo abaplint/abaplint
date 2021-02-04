@@ -16,8 +16,8 @@ const tests: TestRuleType = [
     OTHERS      = 2.`, cnt: 0},
   {abap: "LOOP AT SCREEN.", cnt: 0},
   {abap: "MODIFY SCREEN.", cnt: 0},
-  {abap: "FIELD-SYMBOLS <lv_dst> TYPE ANY.", cnt: 0}, // todo, "ANY" should be lower case
-  {abap: "FIELD-SYMBOLS <ls_auth> LIKE LINE OF gt_auth.", cnt: 0}, // todo
+  {abap: "FIELD-SYMBOLS <lv_dst> TYPE any.", cnt: 0},
+  {abap: "FIELD-SYMBOLS <ls_auth> LIKE LINE OF gt_auth.", cnt: 0},
   {abap: "SELECT SINGLE ccnocliind FROM t000 INTO lv_ind WHERE mandt = sy-mandt.", cnt: 0},
   {abap: "SORT mt_items BY txt ASCENDING AS TEXT.", cnt: 0},
   {abap: "DELETE ADJACENT DUPLICATES FROM mt_requirements COMPARING ALL FIELDS.", cnt: 0},
@@ -115,8 +115,8 @@ const tests4 = [
     others      = 2.`, cnt: 0},
   {abap: "LOOP AT SCREEN.", cnt: 1},
   {abap: "MODIFY SCREEN.", cnt: 1},
-  {abap: "field-symbols <lv_dst> type ANY.", cnt: 0}, // todo, "ANY" should be lower case
-  {abap: "field-symbols <ls_auth> like line of gt_auth.", cnt: 0}, // todo
+  {abap: "field-symbols <lv_dst> type any.", cnt: 0},
+  {abap: "field-symbols <ls_auth> like line of gt_auth.", cnt: 0},
   {abap: "select single ccnocliind from t000 into lv_ind where mandt = sy-mandt.", cnt: 0},
   {abap: "sort mt_items by txt ascending as text.", cnt: 0},
   {abap: "delete adjacent duplicates from mt_requirements comparing all fields.", cnt: 0},
