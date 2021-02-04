@@ -355,7 +355,9 @@ export class BasicTypes {
       if (found && node.concatTokens().toUpperCase().includes(" OCCURS ")) {
         found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
       } else if (found && node.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
-        if (!(found instanceof Types.TableType)) {
+        if (found instanceof Types.VoidType) {
+          found = new Types.TableType(found, true);
+        } else if (!(found instanceof Types.TableType)) {
           throw new Error("WITH HEADER LINE can only be used with internal table");
         } else {
           found = new Types.TableType(found.getRowType(), true);

@@ -14,11 +14,16 @@ import {Data as DataStructure} from "../5_syntax/structures/data";
 import {TypeEnum} from "../5_syntax/structures/type_enum";
 import {Constants} from "../5_syntax/structures/constants";
 import {IAttributes} from "./_class_attributes";
+import {TypeDefinitions} from "./type_definitions";
+import {Types} from "../5_syntax/structures/types";
+import {Type} from "../5_syntax/statements/type";
 
 export class Attributes implements IAttributes {
   private readonly static: ClassAttribute[];
   private readonly instance: ClassAttribute[];
   private readonly constants: ClassConstant[];
+  private readonly types: TypeDefinitions;
+  private readonly tlist: TypedIdentifier[];
   private readonly filename: string;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -26,7 +31,13 @@ export class Attributes implements IAttributes {
     this.instance = [];
     this.constants = [];
     this.filename = filename;
+    this.tlist = [];
     this.parse(node, scope);
+    this.types = new TypeDefinitions(this.tlist);
+  }
+
+  public getTypes(): TypeDefinitions {
+    return this.types;
   }
 
   public getStatic(): ClassAttribute[] {
@@ -104,8 +115,8 @@ export class Attributes implements IAttributes {
     const cdef = node.findDirectStructure(Structures.ClassDefinition);
     if (cdef) {
       this.parseSection(cdef.findDirectStructure(Structures.PublicSection), Visibility.Public, scope);
-      this.parseSection(cdef.findDirectStructure(Structures.PrivateSection), Visibility.Private, scope);
       this.parseSection(cdef.findDirectStructure(Structures.ProtectedSection), Visibility.Protected, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.PrivateSection), Visibility.Private, scope);
       return;
     }
 
@@ -153,6 +164,12 @@ export class Attributes implements IAttributes {
           // for now add ENUM values as constants
             this.constants.push(new ClassConstant(e, visibility, "novalueClassAttributeEnum"));
           }
+        } else if (ctyp instanceof Structures.Types) {
+          const res = new Types().runSyntax(c, scope, this.filename);
+          if (res) {
+            scope.addType(res);
+            this.tlist.push(res);
+          }
         } else {
           // begin recursion
           this.parseSection(c, visibility, scope);
@@ -168,6 +185,12 @@ export class Attributes implements IAttributes {
             const attr = new ClassConstant(found, visibility, found.getValue() || "todo, constant value fallback");
             this.constants.push(attr);
             scope.addIdentifier(attr);
+          }
+        } else if (ctyp instanceof Statements.Type) {
+          const res = new Type().runSyntax(c, scope, this.filename);
+          if (res) {
+            scope.addType(res);
+            this.tlist.push(res);
           }
         }
       }

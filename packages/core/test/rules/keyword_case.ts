@@ -1,7 +1,7 @@
 import {KeywordCase, KeywordCaseConf, KeywordCaseStyle} from "../../src/rules/keyword_case";
-import {testRule, testRuleFix} from "./_utils";
+import {testRule, testRuleFix, TestRuleType} from "./_utils";
 
-const tests = [
+const tests: TestRuleType = [
   {abap: "if a = b.", cnt: 1},
   {abap: "foo = |sdf|.", cnt: 0},
   {abap: "foo = boolc( 1 = 2 ).", cnt: 0},
@@ -57,6 +57,14 @@ _bar.`, cnt: 0},
 
   {abap: `SYSTEM-CALL OBJMGR CLONE me TO result.`, cnt: 0},
   {abap: `write BAR.`, cnt: 1},
+  {abap: `
+LOOP AT SCREEN INTO DATA(wa).
+  MODIFY screen FROM wa.
+ENDLOOP.`, cnt: 0},
+  {abap: `
+LOOP AT SCREEN INTO DATA(wa).
+  MODIFY SCREEN FROM wa.
+ENDLOOP.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);

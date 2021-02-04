@@ -8,7 +8,6 @@ import {IInterfaceDefinition, IImplementing} from "./_interface_definition";
 import {IAttributes} from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
 import {Attributes} from "./class_attributes";
-import {TypeDefinitions} from "./type_definitions";
 import {Visibility} from "../4_file_information/visibility";
 import {ScopeType} from "../5_syntax/_scope_type";
 import {IEventDefinition} from "./_event_definition";
@@ -85,9 +84,8 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 /////////////////
 
   private parse(scope: CurrentScope) {
-    this.typeDefinitions = new TypeDefinitions(this.node, this.filename, scope);
-
     this.attributes = new Attributes(this.node, this.filename, scope);
+    this.typeDefinitions = this.attributes.getTypes();
 
     this.methodDefinitions = new MethodDefinitions(this.node, this.filename, scope);
 
