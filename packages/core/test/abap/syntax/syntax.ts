@@ -3377,6 +3377,12 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("voided with header line", () => {
+    const abap = `DATA fieldtab TYPE voidedvoid WITH HEADER LINE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
