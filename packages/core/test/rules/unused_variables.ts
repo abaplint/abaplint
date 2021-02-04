@@ -649,7 +649,7 @@ APPEND CORRESPONDING #( ls_tadir ) TO rt_list.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("constant in class", async () => {
+  it("constant in class", async () => {
     const abap = `
 CLASS lcl_test DEFINITION FINAL.
   PUBLIC SECTION.
