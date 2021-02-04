@@ -226,16 +226,15 @@ export class KeywordCase extends ABAPRule {
         if (str.toUpperCase() === "OTHERS" || str.toUpperCase() === "TEXT") {
           continue;
         }
-        // todo, this is a hack, the parser should recigize SCREEN as a keyword
-        if (parent instanceof Statements.Loop && str.toUpperCase() === "SCREEN") {
-          continue;
-        }
         if (this.conf.ignoreFunctionModuleName === true
           && parent instanceof Statements.FunctionModule && str.toUpperCase() !== "FUNCTION") {
           continue;
         }
+        // todo, this is a hack, the parser should recigize SCREEN as a keyword
         if (str.toUpperCase() === "SCREEN"
-            && (parent instanceof Statements.ModifyDatabase || parent instanceof Statements.ModifyInternal)) {
+            && (parent instanceof Statements.ModifyDatabase
+              || parent instanceof Statements.ModifyInternal
+              || parent instanceof Statements.Loop)) {
           continue;
         }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
