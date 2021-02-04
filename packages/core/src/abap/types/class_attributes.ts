@@ -14,11 +14,13 @@ import {Data as DataStructure} from "../5_syntax/structures/data";
 import {TypeEnum} from "../5_syntax/structures/type_enum";
 import {Constants} from "../5_syntax/structures/constants";
 import {IAttributes} from "./_class_attributes";
+import {TypeDefinitions} from "./type_definitions";
 
 export class Attributes implements IAttributes {
   private readonly static: ClassAttribute[];
   private readonly instance: ClassAttribute[];
   private readonly constants: ClassConstant[];
+  private readonly types: TypeDefinitions;
   private readonly filename: string;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -26,7 +28,12 @@ export class Attributes implements IAttributes {
     this.instance = [];
     this.constants = [];
     this.filename = filename;
+    this.types = new TypeDefinitions(node, this.filename, scope);
     this.parse(node, scope);
+  }
+
+  public getTypes(): TypeDefinitions {
+    return this.types;
   }
 
   public getStatic(): ClassAttribute[] {
