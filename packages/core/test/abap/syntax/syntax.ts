@@ -3383,6 +3383,28 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FIND with stuff after SUBMATCHES", () => {
+    const abap = `
+  DATA sdummy TYPE string.
+  DATA lv_ticks TYPE string.
+  DATA lv_offset TYPE string.
+  FIND FIRST OCCURRENCE OF REGEX 'sdf' IN sdummy SUBMATCHES lv_ticks lv_offset IGNORING CASE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FIND with stuff after SUBMATCHES, 2", () => {
+    const abap = `
+  DATA lv_line TYPE string.
+  DATA lv_color TYPE string.
+  FIND REGEX 'SDFDSFS' IN lv_line
+            SUBMATCHES DATA(lv_count) lv_color
+            MATCH OFFSET DATA(lv_offset)
+            MATCH LENGTH DATA(lv_length).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

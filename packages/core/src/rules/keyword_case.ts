@@ -222,26 +222,20 @@ export class KeywordCase extends ABAPRule {
           continue;
         }
         const str = child.get().getStr();
+        const upper = str.toUpperCase();
         // todo, this is a hack, the parser should recongize OTHERS/TEXT as a keyword
-        if (str.toUpperCase() === "OTHERS" || str.toUpperCase() === "TEXT") {
-          continue;
-        }
-        // todo, this is a hack, the parser should recigize SCREEN as a keyword
-        if (parent instanceof Statements.Loop && str.toUpperCase() === "SCREEN") {
+        if (upper === "OTHERS" || upper === "TEXT") {
           continue;
         }
         if (this.conf.ignoreFunctionModuleName === true
-          && parent instanceof Statements.FunctionModule && str.toUpperCase() !== "FUNCTION") {
+          && parent instanceof Statements.FunctionModule && upper !== "FUNCTION") {
           continue;
         }
-        if (parent instanceof Statements.ModifyDatabase && str.toUpperCase() === "SCREEN") {
-          continue;
-        }
-        if (parent instanceof Statements.ModifyInternal && str.toUpperCase() === "SCREEN") {
-          continue;
-        }
-        // todo
-        if (parent instanceof Statements.FieldSymbol || parent instanceof Statements.Type) {
+        // todo, this is a hack, the parser should recigize SCREEN as a keyword
+        if (upper === "SCREEN"
+            && (parent instanceof Statements.ModifyDatabase
+              || parent instanceof Statements.ModifyInternal
+              || parent instanceof Statements.Loop)) {
           continue;
         }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {

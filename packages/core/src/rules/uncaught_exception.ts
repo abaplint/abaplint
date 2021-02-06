@@ -95,10 +95,8 @@ export class UncaughtException extends ABAPRule {
         this.sinked = previous;
         return;
       } else {
-        if (n instanceof StructureNode) {
-          for (const c of n.getChildren()) {
-            this.traverse(c, file);
-          }
+        for (const c of n.getChildren()) {
+          this.traverse(c, file);
         }
       }
     } else if (n instanceof StatementNode) {
