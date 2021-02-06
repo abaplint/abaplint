@@ -15,19 +15,23 @@ export class Types {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
 
     let components: IStructureComponent[] = [];
+    let voidd: VoidType | undefined = undefined;
     for (const c of node.getChildren()) {
       const ctyp = c.get();
-      if (c instanceof StatementNode && ctyp instanceof Statements.Type) {
-        const found = new Type().runSyntax(c, scope, filename);
-        if (found) {
-          components.push({name: found.getName(), type: found.getType()});
+      if (c instanceof StatementNode) {
+        if (ctyp instanceof Statements.Type) {
+          const found = new Type().runSyntax(c, scope, filename);
+          if (found) {
+            components.push({name: found.getName(), type: found.getType()});
+          }
+        } else if (ctyp instanceof Statements.IncludeType) {
+          const found = new IncludeType().runSyntax(c, scope, filename);
+          if (found instanceof VoidType) {
+            voidd = found;
+          } else {
+            components = components.concat(found);
+          }
         }
-      } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
-        const found = new IncludeType().runSyntax(c, scope, filename);
-        if (found instanceof VoidType) {
-          return new TypedIdentifier(name, filename, found);
-        }
-        components = components.concat(found);
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {
         const found = new Types().runSyntax(c, scope, filename);
         if (found) {
@@ -36,7 +40,9 @@ export class Types {
       }
     }
 
-    if (components.length === 0) { // todo, remove this check
+    if (voidd) {
+      return new TypedIdentifier(name, filename, voidd);
+    } else if (components.length === 0) { // todo, remove this check
       return undefined;
     }
 

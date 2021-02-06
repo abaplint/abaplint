@@ -213,4 +213,28 @@ ENDCLASS.`;
     expect(issues[0].getFix()).to.equal(undefined);
   });
 
+  it("INCLUDE TYPE 1", async () => {
+    const abap = `
+    TYPES ty_test TYPE i.
+    TYPES: BEGIN OF ty_msg.
+    TYPES: test TYPE ty_test.
+        INCLUDE TYPE symsg.
+    TYPES END OF ty_msg.
+    DATA foo TYPE ty_msg.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INCLUDE TYPE 2, after", async () => {
+    const abap = `
+    TYPES ty_test TYPE i.
+    TYPES: BEGIN OF ty_msg.
+    INCLUDE TYPE symsg.
+    TYPES: test TYPE ty_test.
+    TYPES END OF ty_msg.
+    DATA foo TYPE ty_msg.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
