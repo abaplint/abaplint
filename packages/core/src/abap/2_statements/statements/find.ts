@@ -6,6 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Find implements IStatement {
 
   public getMatcher(): IStatementRunnable {
+// SUBMATCHES handling is a workaround
     const options = per("IGNORING CASE",
                         "RESPECTING CASE",
                         "IN BYTE MODE",
@@ -19,6 +20,8 @@ export class Find implements IStatement {
                         seq("MATCH LENGTH", Target),
                         seq("LENGTH", Source),
                         seq("RESULTS", Target),
+                        seq("SUBMATCHES", Target),
+                        seq("SUBMATCHES", Target, Target),
                         seq("SUBMATCHES", plus(Target)));
 
     const sectionLength = seq("SECTION LENGTH", Source, "OF");
