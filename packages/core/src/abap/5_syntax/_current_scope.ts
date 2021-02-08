@@ -264,9 +264,10 @@ export class CurrentScope {
   }
 
   public push(stype: ScopeType, sname: string, start: Position, filename: string): void {
-    const identifier: IScopeIdentifier = {stype, sname, start, filename};
+    const identifier: IScopeIdentifier = {stype, sname, start, filename, end: undefined};
 
     if (this.current === undefined) {
+      // the top node
       this.current = new SpaghettiScopeNode(identifier, undefined);
     } else {
       const parent = this.current;
@@ -275,10 +276,11 @@ export class CurrentScope {
     }
   }
 
-  public pop(): SpaghettiScope {
+  public pop(end: Position): SpaghettiScope {
     if (this.current === undefined) {
       throw new Error("something wrong, top scope popped");
     }
+    this.current.setEnd(end);
 
     const current = this.current;
     this.current = this.current.getParent();

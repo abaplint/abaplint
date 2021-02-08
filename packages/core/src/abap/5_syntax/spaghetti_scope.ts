@@ -59,7 +59,8 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return this.identifier;
   }
 
-  public getNextSibling(): SpaghettiScopeNode | undefined {
+  /*
+  private getNextSibling(): SpaghettiScopeNode | undefined {
     const parent = this.getParent();
     if (parent === undefined) {
       return undefined;
@@ -77,8 +78,10 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
 
     return undefined;
   }
+  */
 
   public calcCoverage(): {start: Position, end: Position} {
+    /*
     let end: Position | undefined;
 
     // assumption: children start positions in ascending order
@@ -88,8 +91,16 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     } else {
       end = new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
     }
+    */
 
-    return {start: this.identifier.start, end};
+    if (this.identifier.end === undefined) {
+      throw new Error("internal error, caclCoverage");
+    }
+    return {start: this.identifier.start, end: this.identifier.end};
+  }
+
+  public setEnd(end: Position): void {
+    this.identifier.end = end;
   }
 
   public findDeferred(name: string): Identifier | undefined {
@@ -299,6 +310,7 @@ export class SpaghettiScope implements ISpaghettiScope {
       return undefined;
     }
 
+    // possible optimization: binary search the nodes
     for (const c of node.getChildren()) {
       const result = this.lookupPositionTraverse(p, filename, c);
       if (result !== undefined) {
@@ -306,10 +318,9 @@ export class SpaghettiScope implements ISpaghettiScope {
       }
     }
 
-    if (node.getIdentifier().filename === filename) {
-      if (p.isBetween(coverage.start, coverage.end)) {
-        return node;
-      }
+    if (node.getIdentifier().filename === filename
+        && p.isBetween(coverage.start, coverage.end)) {
+      return node;
     }
 
     return undefined;

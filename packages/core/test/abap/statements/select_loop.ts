@@ -54,6 +54,15 @@ const tests = [
   `SELECT key_property, \\_path-expression FROM cds_view INTO @DATA(result).`,
   `SELECT key_property, \\_path-expression AS path FROM cds_view INTO @DATA(result).`,
   `SELECT aaa, \\_association-shortText AS ShortText FROM cds_view INTO @DATA(var).`,
+
+  `SELECT vbeln, vbtyp,
+  CASE
+    WHEN auart = 'ZAMA' THEN @lc_name1
+    WHEN auart = 'ZACR' THEN @lc_name2
+   ELSE @lc_name3
+ END AS ernam
+ FROM vbak
+  INTO @DATA(ls_vbak2).`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

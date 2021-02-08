@@ -31,7 +31,7 @@ export class UpdateDatabase {
     }
 
     if (scope.getType() === ScopeType.OpenSQL) {
-      scope.pop();
+      scope.pop(node.getLastToken().getEnd());
     }
 
   }

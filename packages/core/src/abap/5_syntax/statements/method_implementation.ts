@@ -16,12 +16,13 @@ export class MethodImplementation {
 
     const classDefinition = scope.findClassDefinition(className);
     if (classDefinition === undefined) {
+      scope.pop(node.getLastToken().getEnd());
       throw new Error("Class definition for \"" + className + "\" not found");
     }
 
     const {method: methodDefinition} = helper.searchMethodName(classDefinition, methodName);
     if (methodDefinition === undefined) {
-      scope.pop();
+      scope.pop(node.getLastToken().getEnd());
       throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
