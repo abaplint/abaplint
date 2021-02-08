@@ -72,9 +72,9 @@ class ParsingPerformance {
 }
 
 export class Registry implements IRegistry {
-  private readonly objects: { [index: string]: { [index: string]: IObject } } = {};
+  private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
   /** object containing filenames of dependencies */
-  private readonly dependencies: { [index: string]: boolean } = {};
+  private readonly dependencies: { [filename: string]: boolean } = {};
   private conf: IConfiguration;
   private issues: Issue[] = [];
 

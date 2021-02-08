@@ -310,6 +310,7 @@ export class SpaghettiScope implements ISpaghettiScope {
       return undefined;
     }
 
+    // possible optimization: binary search the nodes
     for (const c of node.getChildren()) {
       const result = this.lookupPositionTraverse(p, filename, c);
       if (result !== undefined) {
@@ -317,10 +318,9 @@ export class SpaghettiScope implements ISpaghettiScope {
       }
     }
 
-    if (node.getIdentifier().filename === filename) {
-      if (p.isBetween(coverage.start, coverage.end)) {
-        return node;
-      }
+    if (node.getIdentifier().filename === filename
+        && p.isBetween(coverage.start, coverage.end)) {
+      return node;
     }
 
     return undefined;
