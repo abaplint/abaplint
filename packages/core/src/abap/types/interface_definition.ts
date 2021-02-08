@@ -40,9 +40,9 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     this.events = [];
     this.implementing = [];
 
-    scope.push(ScopeType.Interface, name.getStr(), name.getStart(), filename);
+    scope.push(ScopeType.Interface, name.getStr(), node.getFirstToken().getStart(), filename);
     this.parse(scope);
-    scope.pop();
+    scope.pop(node.getLastToken().getEnd());
   }
 
   public getSuperClass(): undefined {

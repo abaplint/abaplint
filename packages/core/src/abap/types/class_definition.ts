@@ -66,7 +66,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope)); // todo, all these are not Public
     }
 
-    scope.pop();
+    scope.pop(node.getLastToken().getEnd());
   }
 
   public getFriends() {

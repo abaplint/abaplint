@@ -152,13 +152,13 @@ export class SyntaxLogic {
 
     if (this.object instanceof Program && this.object.isInclude()) {
 // todo, show some kind of error?
-      return {issues: [], spaghetti: this.scope.pop()};
+      return {issues: [], spaghetti: this.scope.pop(new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER))};
     }
 
     this.traverseObject();
 
     for (;;) {
-      const spaghetti = this.scope.pop(); // pop built-in scopes
+      const spaghetti = this.scope.pop(new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)); // pop built-in scopes
       if (spaghetti.getTop().getIdentifier().stype === ScopeType.BuiltIn) {
         const result: ISyntaxResult = {issues: this.issues, spaghetti};
         this.object.syntaxResult = result;
@@ -180,11 +180,11 @@ export class SyntaxLogic {
         // add FORM defintions to the _global object scope
         this.helpers.proc.addAllFormDefinitions(main, this.object);
 
-        if (this.object instanceof Program) {
-          this.scope.push(ScopeType.Program, this.object.getName(), new Position(1, 1), main.getFilename());
-        } else if (this.object instanceof FunctionGroup) {
-          this.scope.push(ScopeType.FunctionGroup, this.object.getName(), new Position(1, 1), main.getFilename());
+        let stype = ScopeType.Program;
+        if (this.object instanceof FunctionGroup) {
+          stype = ScopeType.FunctionGroup;
         }
+        this.scope.push(stype, this.object.getName(), new Position(1, 1), main.getFilename());
       }
     }
 
@@ -464,7 +464,7 @@ export class SyntaxLogic {
         || s instanceof Statements.EndMethod
         || s instanceof Statements.EndClass
         || s instanceof Statements.EndInterface) {
-      this.scope.pop();
+      this.scope.pop(node.getLastToken().getEnd());
     }
   }
 
