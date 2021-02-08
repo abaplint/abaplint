@@ -163,11 +163,12 @@ export class DoubleSpace extends ABAPRule {
         continue;
       }
 
+      const upper = prev.get().getStr().toUpperCase();
       if (prev instanceof TokenNodeRegex
-          || prev.get().getStr() === "("
-          || prev.get().getStr().toUpperCase() === "CHANGING"
-          || prev.get().getStr().toUpperCase() === "EXPORTING"
-          || prev.get().getStr().toUpperCase() === "OTHERS") {
+          || upper === "("
+          || upper === "CHANGING"
+          || upper === "EXPORTING"
+          || upper === "OTHERS") {
         // not a keyword, continue
         prev = n;
         continue;
