@@ -73,6 +73,7 @@ class ParsingPerformance {
 
 export class Registry implements IRegistry {
   private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
+  private readonly objectsByType: { [type: string]: { [name: string]: IObject } } = {};
   /** object containing filenames of dependencies */
   private readonly dependencies: { [filename: string]: boolean } = {};
   private conf: IConfiguration;
@@ -92,6 +93,12 @@ export class Registry implements IRegistry {
       for (const type in this.objects[name]) {
         yield this.objects[name][type];
       }
+    }
+  }
+
+  public* getObjectsByType(type: string): Generator<IObject, void, undefined> {
+    for (const name in this.objectsByType[type] || []) {
+      yield this.objectsByType[type][name];
     }
   }
 
@@ -410,6 +417,11 @@ export class Registry implements IRegistry {
       }
       this.objects[newName][newType] = add;
 
+      if (this.objectsByType[newType] === undefined) {
+        this.objectsByType[newType] = {};
+      }
+      this.objectsByType[newType][newName] = add;
+
       return add;
     }
   }
@@ -427,6 +439,12 @@ export class Registry implements IRegistry {
       delete this.objects[remove.getName()];
     } else {
       delete this.objects[remove.getName()][remove.getType()];
+    }
+
+    if (Object.keys(this.objectsByType[remove.getType()]).length === 1) {
+      delete this.objectsByType[remove.getType()];
+    } else {
+      delete this.objectsByType[remove.getType()][remove.getName()];
     }
 
   }
