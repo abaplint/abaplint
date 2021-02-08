@@ -8,6 +8,7 @@ import {SQLHaving} from "./sql_having";
 import {SQLTarget} from "./sql_target";
 import {SQLPath} from "./sql_path";
 import {SQLAsName} from "./sql_as_name";
+import {SQLCase} from "./sql_case";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -24,7 +25,7 @@ export class SelectLoop extends Expression {
 
     const comma = opt(ver(Version.v740sp05, ","));
     const as = seq("AS", SQLAsName);
-    const someField = seq(alt(SQLFieldName, SQLPath, SQLAggregation), optPrio(as), comma);
+    const someField = seq(alt(SQLFieldName, SQLPath, SQLAggregation, SQLCase), optPrio(as), comma);
     const fieldList = seq(star(someField), alt(SQLFieldName, SQLPath), optPrio(as), comma, star(someField));
 
 // todo, use SQLFieldList instead?
