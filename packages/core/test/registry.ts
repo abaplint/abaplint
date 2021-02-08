@@ -408,6 +408,8 @@ describe("exclude list", () => {
       ret = ret + a.getName();
     }
     expect(ret).to.equal("FILE2");
+
+    expect(Array.from(registry.getObjectsByType("SDFDSFD")).length).to.equal(0);
   });
 
 });
