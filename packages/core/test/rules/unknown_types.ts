@@ -1130,4 +1130,31 @@ WRITE ref->name.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("badi reference", () => {
+    const enhs = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_ENHS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TOOL>BADI_DEF</TOOL>
+   <SHORTTEXT>test</SHORTTEXT>
+   <BADI_DATA>
+    <ENH_BADI_DATA>
+     <BADI_NAME>ZBADIDEF</BADI_NAME>
+     <CONTEXT_MODE>N</CONTEXT_MODE>
+     <BADI_SHORTTEXT>def</BADI_SHORTTEXT>
+     <BADI_SHORTTEXT_ID>0242AC1100021EDB9A8FC1D1BA8CD772</BADI_SHORTTEXT_ID>
+    </ENH_BADI_DATA>
+   </BADI_DATA>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const abap = `DATA foo TYPE REF TO zbadidef.`;
+    let issues = runMulti([
+      {filename: "zbadiname.enhs.xml", contents: enhs},
+      {filename: "zprog.prog.abap", contents: abap},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });

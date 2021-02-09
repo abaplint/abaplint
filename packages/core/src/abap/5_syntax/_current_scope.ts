@@ -15,6 +15,7 @@ import {Interface} from "../../objects/interface";
 import {IScopeIdentifier} from "./_spaghetti_scope";
 import {ReferenceType, IReferenceExtras} from "./_reference";
 import {IObject} from "../../objects/_iobject";
+import {EnhancementSpot} from "../../objects";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -141,6 +142,17 @@ export class CurrentScope {
       return intf;
     }
     return undefined;
+  }
+
+  public isBadiDef(name: string): boolean {
+    for (const enhs of this.reg.getObjectsByType("ENHS")) {
+      for (const def of (enhs as EnhancementSpot).listBadiDefinitions()) {
+        if (def.name.toUpperCase() === name.toUpperCase()) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   // todo, found + type can be removed from method output?
