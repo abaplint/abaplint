@@ -62,7 +62,7 @@ export class Indentation extends ABAPRule {
     }
 
     const indentOpts: IIndentationOptions = {
-      alignTryCatch: this.conf.alignTryCatch,
+      alignTryCatch: this.conf?.alignTryCatch,
       globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };
 
