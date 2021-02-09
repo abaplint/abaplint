@@ -27,6 +27,8 @@ export interface IRegistry {
   // object operations
   /** Get all objects, including dependencies */
   getObjects(): Generator<IObject, void, undefined>;
+  /** Get objects by type, including dependencies */
+  getObjectsByType(type: string): Generator<IObject, void, undefined>;
   /** Get number of objects in the registry, default is skipping dependencies */
   getObjectCount(skipDependencies?: boolean): number;
   getFirstObject(): IObject | undefined;

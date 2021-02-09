@@ -379,7 +379,6 @@ describe("exclude list", () => {
   });
 
   it("will not exclude issues which are not ignored", () => {
-
     const config = getConfig({
       "space_before_dot": true,
     });
@@ -388,7 +387,29 @@ describe("exclude list", () => {
 
     const registry = new Registry(config).addFile(file);
     expect(registry.findIssues().length).to.equal(1);
+  });
 
+  it("getObjectsByType", async () => {
+    const file1 = new MemoryFile("file1.w3mi.data.png", "moo");
+    const file2 = new MemoryFile("file2.w3mi.data.png", "moo");
+    const registry = new Registry().addFile(file1).addFile(file2);
+
+    expect(registry.getObjectCount()).to.equal(2);
+
+    let ret = "";
+    for (const a of registry.getObjectsByType("W3MI")) {
+      ret = ret + a.getName();
+    }
+    expect(ret).to.equal("FILE1FILE2");
+
+    ret = "";
+    registry.removeFile(file1);
+    for (const a of registry.getObjectsByType("W3MI")) {
+      ret = ret + a.getName();
+    }
+    expect(ret).to.equal("FILE2");
+
+    expect(Array.from(registry.getObjectsByType("SDFDSFD")).length).to.equal(0);
   });
 
 });

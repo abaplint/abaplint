@@ -2554,7 +2554,7 @@ SELECT column FROM table INTO TABLE @DATA(lt_results)
 
 DELETE TABLE lt_results FROM 10.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(0, issues[0]?.getMessage());
   });
 
   it("APPEND INITIAL LINE ASSSIGNING something", () => {
@@ -2666,7 +2666,7 @@ DELETE TABLE lt_results FROM 10.`;
       FOR ALL ENTRIES IN lt_sha1
       WHERE sha1 = lt_sha1-table_line.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(0, issues[0]?.getMessage());
   });
 
   it("CONTROLS w_tabstrip TYPE TABSTRIP", () => {
@@ -3403,6 +3403,31 @@ ENDCLASS.`;
             MATCH LENGTH DATA(lv_length).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("SELECT, FOR ALL ENTRIES with @me->", () => {
+    const abap = `
+CLASS ycl_test_linter DEFINITION.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF output_dict,
+             trkorr TYPE c LENGTH 4,
+           END OF output_dict.
+    DATA list TYPE STANDARD TABLE OF output_dict WITH EMPTY KEY.
+    METHODS select.
+ENDCLASS.
+
+CLASS ycl_test_linter IMPLEMENTATION.
+  METHOD select.
+    SELECT field1, field2
+      FROM voided
+      FOR ALL ENTRIES IN @me->list
+      WHERE ztest_lint_e070~trkorr = @me->list-trkorr
+      INTO TABLE @DATA(master).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0, issues[0]?.getMessage());
   });
 
 // todo, static method cannot access instance attributes

@@ -15,10 +15,12 @@ import {Interface} from "../../objects/interface";
 import {IScopeIdentifier} from "./_spaghetti_scope";
 import {ReferenceType, IReferenceExtras} from "./_reference";
 import {IObject} from "../../objects/_iobject";
+import {EnhancementSpot} from "../../objects";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
+  protected allowHeaderUse: string | undefined;
 
   public static buildDefault(reg: IRegistry, obj?: IObject): CurrentScope {
     const s = new CurrentScope(reg);
@@ -141,6 +143,17 @@ export class CurrentScope {
       return intf;
     }
     return undefined;
+  }
+
+  public isBadiDef(name: string): boolean {
+    for (const enhs of this.reg.getObjectsByType("ENHS")) {
+      for (const def of (enhs as EnhancementSpot).listBadiDefinitions()) {
+        if (def.name.toUpperCase() === name.toUpperCase()) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   // todo, found + type can be removed from method output?
@@ -276,7 +289,17 @@ export class CurrentScope {
     }
   }
 
+  public setAllowHeaderUse(name: string) {
+// workaround for SELECT FOR ALL ENTRIES
+    this.allowHeaderUse = name;
+  }
+
+  public isAllowHeaderUse(name: string) {
+    return name.toUpperCase() === this.allowHeaderUse?.toUpperCase();
+  }
+
   public pop(end: Position): SpaghettiScope {
+    this.allowHeaderUse = undefined;
     if (this.current === undefined) {
       throw new Error("something wrong, top scope popped");
     }

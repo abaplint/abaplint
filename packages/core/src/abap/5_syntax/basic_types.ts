@@ -546,6 +546,10 @@ export class BasicTypes {
       return new Types.DataReference(new Types.AnyType());
     }
 
+    if (this.scope.isBadiDef(name) === true) {
+      return new Types.VoidType(name);
+    }
+
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
 //      this.scope.addReference(chain.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       return new Types.VoidType(name);

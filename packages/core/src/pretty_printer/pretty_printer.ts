@@ -22,8 +22,8 @@ export class PrettyPrinter {
     const indentationConf: IndentationConf = config.readByRule(new Indentation().getMetadata().key);
 
     this.options = {
-      alignTryCatch: indentationConf.alignTryCatch,
-      globalClassSkipFirst: indentationConf.globalClassSkipFirst,
+      alignTryCatch: indentationConf?.alignTryCatch,
+      globalClassSkipFirst: indentationConf?.globalClassSkipFirst,
     };
   }
 
