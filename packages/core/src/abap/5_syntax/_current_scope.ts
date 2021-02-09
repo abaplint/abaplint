@@ -20,6 +20,7 @@ import {EnhancementSpot} from "../../objects";
 export class CurrentScope {
   protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
+  protected allowHeaderUse: string | undefined;
 
   public static buildDefault(reg: IRegistry, obj?: IObject): CurrentScope {
     const s = new CurrentScope(reg);
@@ -288,7 +289,17 @@ export class CurrentScope {
     }
   }
 
+  public setAllowHeaderUse(name: string) {
+// workaround for SELECT FOR ALL ENTRIES
+    this.allowHeaderUse = name;
+  }
+
+  public isAllowHeaderUse(name: string) {
+    return name.toUpperCase() === this.allowHeaderUse?.toUpperCase();
+  }
+
   public pop(end: Position): SpaghettiScope {
+    this.allowHeaderUse = undefined;
     if (this.current === undefined) {
       throw new Error("something wrong, top scope popped");
     }
