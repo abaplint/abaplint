@@ -60,6 +60,9 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
       }
 
       for (const c of stru.findAllExpressions(Expressions.MethodCall)) {
+        if (c.findFirstExpression(Expressions.MethodParameters)) {
+          continue;
+        }
         // hmm, this will break for nested method calls?
         const parameters = c.findAllExpressions(Expressions.ParameterS);
         if (parameters.length > 1 || parameters.length === 0) {
