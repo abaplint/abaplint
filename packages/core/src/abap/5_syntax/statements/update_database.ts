@@ -6,9 +6,16 @@ import {ScopeType} from "../_scope_type";
 import {StructureType} from "../../types/basic";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {Identifier} from "../../1_lexer/tokens/identifier";
+import {DatabaseTable} from "../expressions/database_table";
+import {Dynamic} from "../expressions/dynamic";
 
 export class UpdateDatabase {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+
+    const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
+    if (dbtab !== undefined) {
+      new DatabaseTable().runSyntax(dbtab, scope, filename);
+    }
 
     const tableName = node.findDirectExpression(Expressions.DatabaseTable);
     const tokenName = tableName?.getFirstToken();
@@ -25,9 +32,12 @@ export class UpdateDatabase {
       }
     }
 
-    // todo, should findDirect
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
+    }
+
+    for (const d of node.findAllExpressions(Expressions.Dynamic)) {
+      new Dynamic().runSyntax(d, scope, filename);
     }
 
     if (scope.getType() === ScopeType.OpenSQL) {

@@ -3430,6 +3430,40 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0, issues[0]?.getMessage());
   });
 
+  it("MODIFY, expect database table not found", () => {
+    const abap = `
+  FIELD-SYMBOLS <bar> TYPE any.
+  MODIFY ztab FROM @<bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("ztab");
+  });
+
+  it("DELETE, expect database table not found", () => {
+    const abap = `
+  DELETE FROM ztab WHERE value1 = 'abc'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("ztab");
+  });
+
+  it("INSERT, expect database table not found", () => {
+    const abap = `
+  FIELD-SYMBOLS <bar> TYPE any.
+  INSERT INTO ztab VALUES <bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("ztab");
+  });
+
+  it("UPDATE, expect database table not found", () => {
+    const abap = `
+  UPDATE ztab SET value1 = 'abc' WHERE field1 = 'sdfs'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("ztab");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
