@@ -25,7 +25,9 @@ export class OmitParameterName implements IRule {
       title: "Omit parameter name",
       shortDescription: `Omit the parameter name in single parameter calls`,
       extendedInformation: `
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-parameter-name-in-single-parameter-calls`,
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-parameter-name-in-single-parameter-calls
+
+EXPORTING must already be omitted for this rule to take effect, https://rules.abaplint.org/exporting/`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix],
       badExample: `method( param = 2 ).`,
       goodExample: `method( 2 ).`,
