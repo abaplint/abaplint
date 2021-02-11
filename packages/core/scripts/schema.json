@@ -1185,7 +1185,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check BEGIN OF and END OF names match\nTags: Syntax, Quickfix, SingleFile\nhttps://rules.abaplint.org/begin_end_names"
+              "description": "Check BEGIN OF and END OF names match, plus there must be statements between BEGIN and END\nTags: Syntax, Quickfix, SingleFile\nhttps://rules.abaplint.org/begin_end_names"
             },
             "begin_single_include": {
               "anyOf": [
