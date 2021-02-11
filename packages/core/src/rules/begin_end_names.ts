@@ -21,7 +21,7 @@ export class BeginEndNames extends ABAPRule {
     return {
       key: "begin_end_names",
       title: "Check BEGIN END names",
-      shortDescription: `Check BEGIN OF and END OF names match`,
+      shortDescription: `Check BEGIN OF and END OF names match, plus there must be statements between BEGIN and END`,
       tags: [RuleTag.Syntax, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `DATA: BEGIN OF stru,
       field TYPE i,
@@ -30,10 +30,6 @@ export class BeginEndNames extends ABAPRule {
       field TYPE i,
     END OF stru.`,
     };
-  }
-
-  private getMessage(): string {
-    return "BEGIN END names must match";
   }
 
   public getConfig() {
@@ -63,9 +59,9 @@ export class BeginEndNames extends ABAPRule {
   }
 
   private test(stru: StructureNode, type: new() => IStructure, b: new() => IStatement, e: new() => IStatement, file: ABAPFile): Issue[] {
-    let output: Issue[] = [];
+    const output: Issue[] = [];
 
-    for (const sub of stru.findAllStructures(type)) {
+    for (const sub of stru.findAllStructuresRecursive(type)) {
       let begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.NamespaceSimpleName);
       if (begin === undefined) {
         begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.DefinitionName);
@@ -86,13 +82,15 @@ export class BeginEndNames extends ABAPRule {
 
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
         const fix = EditHelper.replaceRange(file, last.getStart(), last.getEnd(), first.getStr());
-        const issue = Issue.atToken(file, first, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
+        const message = "BEGIN END names must match";
+        const issue = Issue.atToken(file, first, message, this.getMetadata().key, this.conf.severity, fix);
         output.push(issue);
       }
 
-      // begin recursion
-      for (const c of sub.findDirectStructures(type)) {
-        output = output.concat(this.test(c, type, b, e, file));
+      if (sub.getChildren().length === 2) {
+        const message = "There must be statements between BEGIN and END";
+        const issue = Issue.atToken(file, first, message, this.getMetadata().key, this.conf.severity);
+        output.push(issue);
       }
     }
 

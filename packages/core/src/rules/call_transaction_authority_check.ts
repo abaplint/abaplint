@@ -18,7 +18,7 @@ export class CallTransactionAuthorityCheck extends ABAPRule {
       title: "Call Transaction Authority-Check",
       shortDescription: `Checks that usages of CALL TRANSACTION contain an authority-check.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/54/`,
-      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Security],
       badExample: `CALL TRANSACTION 'FOO'.`,
       goodExample: `CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.`,
     };

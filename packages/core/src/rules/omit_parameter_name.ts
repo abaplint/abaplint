@@ -10,6 +10,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types/method_definition";
+import {EditHelper, IEdit} from "../edit_helper";
 
 export class OmitParameterNameConf extends BasicRuleConfig {
 }
@@ -24,8 +25,12 @@ export class OmitParameterName implements IRule {
       title: "Omit parameter name",
       shortDescription: `Omit the parameter name in single parameter calls`,
       extendedInformation: `
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-parameter-name-in-single-parameter-calls`,
-      tags: [RuleTag.Styleguide],
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-parameter-name-in-single-parameter-calls
+
+EXPORTING must already be omitted for this rule to take effect, https://rules.abaplint.org/exporting/`,
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      badExample: `method( param = 2 ).`,
+      goodExample: `method( 2 ).`,
     };
   }
 
@@ -57,14 +62,20 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
       }
 
       for (const c of stru.findAllExpressions(Expressions.MethodCall)) {
-        const count = c.findAllExpressions(Expressions.ParameterS);
-        if (count.length > 1) {
+        if (c.findFirstExpression(Expressions.MethodParameters)) {
+          continue;
+        }
+        // hmm, this will break for nested method calls?
+        const parameters = c.findAllExpressions(Expressions.ParameterS);
+        if (parameters.length > 1 || parameters.length === 0) {
           continue;
         }
         const name = c.findDirectExpression(Expressions.MethodName);
+        if (name === undefined) {
+          continue;
+        }
         const param = c.findDirectExpression(Expressions.MethodCallParam);
-        if (name === undefined
-            || param === undefined) {
+        if (param === undefined) {
           continue;
         }
 
@@ -74,11 +85,19 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-
         }
 
         const i = ref.getParameters().getDefaultImporting();
-        const p = param.concatTokens().toUpperCase();
+        if (i === undefined) {
+          continue;
+        }
+        const p = parameters[0].findDirectExpression(Expressions.ParameterName)?.getFirstToken();
 
-        if (p.startsWith("( " + i + " = ")) {
+        if (p?.getStr().toUpperCase() === i.toUpperCase()) {
           const message = "Omit default parameter name \"" + i + "\"";
-          issues.push(Issue.atToken(file, name.getFirstToken(), message, this.getMetadata().key, this.getConfig().severity));
+          let fix: IEdit | undefined = undefined;
+          const end = parameters[0].findDirectExpression(Expressions.Source)?.getFirstToken().getStart();
+          if (end) {
+            fix = EditHelper.deleteRange(file, p.getStart(), end);
+          }
+          issues.push(Issue.atToken(file, name.getFirstToken(), message, this.getMetadata().key, this.getConfig().severity, fix));
         }
       }
     }
