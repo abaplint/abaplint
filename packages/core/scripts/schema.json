@@ -1174,7 +1174,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
+              "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/avoid_use"
             },
             "begin_end_names": {
               "anyOf": [
@@ -1207,7 +1207,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/call_transaction_authority_check"
+              "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -1966,7 +1966,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Omit the parameter name in single parameter calls\nTags: Styleguide\nhttps://rules.abaplint.org/omit_parameter_name"
+              "description": "Omit the parameter name in single parameter calls\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/omit_parameter_name"
             },
             "omit_receiving": {
               "anyOf": [

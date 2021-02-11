@@ -50,7 +50,7 @@ Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_gu
 ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
 
 DESRIBE TABLE LINES: use lines() instead (quickfix exists)`,
-      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Security],
     };
   }
 

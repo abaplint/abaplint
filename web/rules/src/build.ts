@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
-import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon} from "./common";
+import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon} from "./common";
 import {buildRule} from "./rule_page";
 import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
@@ -23,6 +23,9 @@ function buildChips(json: any) {
         break;
       case RuleTag.Whitespace:
         icon = whitespaceIcon;
+        break;
+      case RuleTag.Security:
+        icon = securityIcon;
         break;
       case RuleTag.Naming:
         icon = namingIcon;
