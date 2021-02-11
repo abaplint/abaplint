@@ -24,7 +24,7 @@ export class UnknownTypes implements IRule {
       key: "unknown_types",
       title: "Unknown types",
       shortDescription: `Enables check for unknown data types, respects errorNamespace`,
-      tags: [RuleTag.Experimental, RuleTag.Syntax],
+      tags: [RuleTag.Syntax],
     };
   }
 
