@@ -18,7 +18,7 @@ export class CheckSyntax implements IRule {
       key: "check_syntax",
       title: "Check syntax",
       shortDescription: `Enables syntax check and variable resolution`,
-      tags: [RuleTag.Experimental, RuleTag.Syntax],
+      tags: [RuleTag.Syntax],
     };
   }
 
