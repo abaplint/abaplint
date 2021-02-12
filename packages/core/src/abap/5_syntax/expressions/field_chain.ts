@@ -52,7 +52,7 @@ export class FieldChain {
             if (scope.isAllowHeaderUse(contextName.substring(0, contextName.length - 1))) {
               // FOR ALL ENTRIES workaround
               context = context.getRowType();
-              if (!(context instanceof StructureType)) {
+              if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
                 context = new StructureType([{name: "TABLE_LINE", type: context}]);
               }
             } else {

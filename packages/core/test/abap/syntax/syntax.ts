@@ -3464,6 +3464,18 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("ztab");
   });
 
+  it("UPDATE, expect database table not found", () => {
+    const abap = `
+  DATA lt_sort TYPE TABLE OF dd03l.
+  SELECT tabname
+  INTO TABLE @DATA(lt_dd02l)
+  FROM dd02l
+  FOR ALL ENTRIES IN @lt_sort
+  WHERE tabname = @lt_sort-tabname.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
