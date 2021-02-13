@@ -35,5 +35,15 @@ export class Convert {
       }
     }
 
+    const stampTarget = node.findExpressionAfterToken("STAMP");
+    if (stampTarget?.get() instanceof Expressions.Target) {
+      const inline = stampTarget?.findDirectExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(inline, scope, filename, new DateType());
+      } else {
+        new Target().runSyntax(stampTarget, scope, filename);
+      }
+    }
+
   }
 }
