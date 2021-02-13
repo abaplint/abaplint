@@ -16,7 +16,8 @@ export class TABLEnhancementCategory implements IRule {
     return {
       key: "tabl_enhancement_category",
       title: "TABL enhancement category must be set",
-      shortDescription: `Checks that tables do not have the enhancement category 'not classified'`,
+      shortDescription: `Checks that tables do not have the enhancement category 'not classified'. 
+You may use standard report RS_DDIC_CLASSIFICATION_FINAL for adjustment.`,
     };
   }
 
