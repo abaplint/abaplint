@@ -37,6 +37,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public typePools: boolean = true;
   /** Checks for addition LOAD */
   public load: boolean = true;
+  /** Checks for PARAMETER */
+  public parameter: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -64,7 +66,9 @@ FIELD-SYMBOLS STRUCTURE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en
 
 TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
 
-LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm`,
+LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
+
+PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparameter.htm`,
     };
   }
 
@@ -107,6 +111,11 @@ LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en
 
       if (this.conf.setExtended && sta instanceof Statements.SetExtendedCheck) {
         const issue = Issue.atStatement(file, staNode, "SET EXTENDED CHECK is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.setExtended && sta instanceof Statements.Parameter && staNode.getFirstToken().getStr().toUpperCase() === "PARAMETER") {
+        const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of PARAMETER", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 
