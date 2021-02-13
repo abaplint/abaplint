@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -12,11 +12,12 @@ export class IdenticalFormNames implements IRule {
 
   private conf = new IdenticalFormNamesConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "identical_form_names",
       title: "Identical FORM names",
       shortDescription: `Detects identically named FORMs`,
+      tags: [RuleTag.Syntax],
     };
   }
 

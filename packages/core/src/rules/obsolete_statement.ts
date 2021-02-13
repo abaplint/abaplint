@@ -48,9 +48,11 @@ export class ObsoleteStatement extends ABAPRule {
       key: "obsolete_statement",
       title: "Obsolete statements",
       shortDescription: `Checks for usages of certain obsolete statements`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       extendedInformation: `
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs
+
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-obsolete-language-elements
 
 SET EXTENDED CHECK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm
 
