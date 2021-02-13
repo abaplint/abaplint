@@ -2252,7 +2252,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that tables do not have the enhancement category 'not classified'\nhttps://rules.abaplint.org/tabl_enhancement_category"
+              "description": "Checks that tables do not have the enhancement category 'not classified'. \nYou may use standard report RS_DDIC_CLASSIFICATION_FINAL for adjustment.\nhttps://rules.abaplint.org/tabl_enhancement_category"
             },
             "try_without_catch": {
               "anyOf": [
