@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {InlineData} from "../expressions/inline_data";
-import {TimeType, DateType} from "../../types/basic";
+import {TimeType, DateType, PackedType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 
@@ -39,7 +39,7 @@ export class Convert {
     if (stampTarget?.get() instanceof Expressions.Target) {
       const inline = stampTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, new DateType());
+        new InlineData().runSyntax(inline, scope, filename, new PackedType(8, 4));
       } else {
         new Target().runSyntax(stampTarget, scope, filename);
       }

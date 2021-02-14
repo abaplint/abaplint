@@ -21,10 +21,10 @@
     "vscode-languageserver-types": "^3.16.0"
   },
   "devDependencies": {
-    "@abaplint/monaco": "^2.66.11",
+    "@abaplint/monaco": "^2.67.0",
     "css-loader": "^5.0.2",
     "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.0.0",
+    "html-webpack-plugin": "^5.1.0",
     "less": "4.1.1",
     "less-loader": "8.0.0",
     "rimraf": "^3.0.2",

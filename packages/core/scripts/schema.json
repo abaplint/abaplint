@@ -3588,6 +3588,10 @@
           "description": "Checks for usages of OCCURS",
           "type": "boolean"
         },
+        "parameter": {
+          "description": "Checks for PARAMETER",
+          "type": "boolean"
+        },
         "refresh": {
           "description": "Check for REFRESH statement",
           "type": "boolean"
@@ -3631,7 +3635,8 @@
         "withHeaderLine",
         "fieldSymbolStructure",
         "typePools",
-        "load"
+        "load",
+        "parameter"
       ],
       "type": "object"
     },
