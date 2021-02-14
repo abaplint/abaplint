@@ -23,6 +23,10 @@ export class AmbiguousStatement extends ABAPRule {
       shortDescription: `Checks for ambiguity between deleting or modifying from internal and database table
 Add "TABLE" keyword or "@" for escaping SQL variables`,
       tags: [RuleTag.SingleFile],
+      badExample: `DELETE foo FROM bar.
+MODIFY foo FROM bar.`,
+      goodExample: `DELETE foo FROM @bar.
+MODIFY TABLE foo FROM bar.`,
     };
   }
 

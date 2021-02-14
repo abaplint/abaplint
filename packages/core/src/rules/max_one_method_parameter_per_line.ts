@@ -51,7 +51,7 @@ METHODS apps_scope_token
         }
 
         if (prev.getFirstToken().getStart().getRow() === p.getFirstToken().getStart().getRow()) {
-          const issue = Issue.atStatement(file, statement, this.getMetadata().title, this.getMetadata().key, this.conf.severity);
+          const issue = Issue.atToken(file, prev.getFirstToken(), this.getMetadata().title, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
 

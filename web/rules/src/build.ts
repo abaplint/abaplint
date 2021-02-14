@@ -66,7 +66,7 @@ function buildChips(json: any) {
 function buildIndex(json: any) {
 
   let html = `<h1>abaplint rules documentation</h1>
-abaplint can be configured by placing a <tt>abaplint.json</tt> file in the root of the git repository.
+<a href="https://abaplint.org">abaplint</a> can be configured by placing a <tt>abaplint.json</tt> file in the root of the git repository.
 If no configuration file is found, the default configuration will be used, which contains have all rules enabled.
 <br><br>
 Get default configuration by running <tt>abaplint -d > abaplint.json</tt>
