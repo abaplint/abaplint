@@ -3,7 +3,7 @@ name: Regression
 on:
   push:
     branches-ignore:
-    - master
+      - 'master'
 
 jobs:
   regression:
