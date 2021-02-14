@@ -62,6 +62,7 @@ import {LocalTestclassLocationConf} from "../src/rules/local_testclass_location"
 import {LocalVariableNamesConf} from "../src/rules/local_variable_names";
 import {MainFileContentsConf} from "../src/rules/main_file_contents";
 import {ManyParenthesisConf} from "../src/rules/many_parenthesis";
+import {MaxOneMethodParameterPerLineConf} from "../src/rules/max_one_method_parameter_per_line";
 import {MaxOneStatementConf} from "../src/rules/max_one_statement";
 import {MessageExistsConf} from "../src/rules/message_exists";
 import {MethodImplementedTwiceConf} from "../src/rules/method_implemented_twice";
@@ -190,6 +191,7 @@ export interface IConfig {
     "local_variable_names"?: LocalVariableNamesConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parenthesis"?: ManyParenthesisConf | boolean,
+    "max_one_method_parameter_per_line"?: MaxOneMethodParameterPerLineConf | boolean,
     "max_one_statement"?: MaxOneStatementConf | boolean,
     "message_exists"?: MessageExistsConf | boolean,
     "method_implemented_twice"?: MethodImplementedTwiceConf | boolean,

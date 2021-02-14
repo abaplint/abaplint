@@ -30,8 +30,12 @@ export class UseBoolExpression extends ABAPRule {
   has_entries = abap_false.
 ELSE.
   has_entries = abap_true.
-ENDIF.`,
-      goodExample: `DATA(has_entries) = xsdbool( line IS NOT INITIAL ).`,
+ENDIF.
+
+DATA(fsdf) = COND #( WHEN foo <> bar THEN abap_true ELSE abap_false ).`,
+      goodExample: `DATA(has_entries) = xsdbool( line IS NOT INITIAL ).
+
+DATA(fsdf) = xsdbool( foo <> bar ).`,
     };
   }
 
@@ -47,7 +51,8 @@ ENDIF.`,
     const issues: Issue[] = [];
     const stru = file.getStructure();
 
-    if (stru === undefined || (this.reg.getConfig().getVersion() < Version.v702 && this.reg.getConfig().getVersion() !== Version.Cloud)) {
+    const version = this.reg.getConfig().getVersion();
+    if (stru === undefined || (version < Version.v702 && version !== Version.Cloud)) {
       return [];
     }
 
@@ -98,6 +103,19 @@ ENDIF.`,
           " ).";
         const fix = EditHelper.replaceRange(file, start, end, statement);
         issues.push(Issue.atRange(file, start, end, message, this.getMetadata().key, this.conf.severity, fix));
+      }
+    }
+
+
+    if (version >= Version.v740sp08 || version === Version.Cloud) {
+      for (const b of stru.findAllExpressions(Expressions.CondBody)) {
+        const concat = b.concatTokens().toUpperCase();
+        if (concat.endsWith("THEN ABAP_TRUE ELSE ABAP_FALSE")
+            || concat.endsWith("THEN ABAP_FALSE ELSE ABAP_TRUE")) {
+          const message = "Use xsdbool";
+          // eslint-disable-next-line max-len
+          issues.push(Issue.atRange(file, b.getFirstToken().getStart(), b.getLastToken().getEnd(), message, this.getMetadata().key, this.conf.severity));
+        }
       }
     }
 

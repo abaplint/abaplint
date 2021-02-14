@@ -23,6 +23,7 @@ export * from "./colon_missing_space";
 export * from "./commented_code";
 export * from "./constructor_visibility_public";
 export * from "./contains_tab";
+export * from "./max_one_method_parameter_per_line";
 export * from "./cyclomatic_complexity";
 export * from "./definitions_top";
 export * from "./description_empty";

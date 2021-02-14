@@ -1614,7 +1614,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects identically named FORMs\nhttps://rules.abaplint.org/identical_form_names"
+              "description": "Detects identically named FORMs\nTags: Syntax\nhttps://rules.abaplint.org/identical_form_names"
             },
             "if_in_if": {
               "anyOf": [
@@ -1803,6 +1803,17 @@
               ],
               "description": "Searches for expressions where extra parenthesis can safely be removed\nTags: SingleFile\nhttps://rules.abaplint.org/many_parenthesis"
             },
+            "max_one_method_parameter_per_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MaxOneMethodParameterPerLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
+            },
             "max_one_statement": {
               "anyOf": [
                 {
@@ -1955,7 +1966,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usages of certain obsolete statements\nTags: SingleFile\nhttps://rules.abaplint.org/obsolete_statement"
+              "description": "Checks for usages of certain obsolete statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/obsolete_statement"
             },
             "omit_parameter_name": {
               "anyOf": [
@@ -2252,7 +2263,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that tables do not have the enhancement category 'not classified'\nhttps://rules.abaplint.org/tabl_enhancement_category"
+              "description": "Checks that tables do not have the enhancement category 'not classified'. \nYou may use standard report RS_DDIC_CLASSIFICATION_FINAL for adjustment.\nhttps://rules.abaplint.org/tabl_enhancement_category"
             },
             "try_without_catch": {
               "anyOf": [
@@ -3109,6 +3120,23 @@
       },
       "type": "object"
     },
+    "MaxOneMethodParameterPerLineConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "MaxOneStatementConf": {
       "additionalProperties": false,
       "properties": {
@@ -3560,6 +3588,10 @@
           "description": "Checks for usages of OCCURS",
           "type": "boolean"
         },
+        "parameter": {
+          "description": "Checks for PARAMETER",
+          "type": "boolean"
+        },
         "refresh": {
           "description": "Check for REFRESH statement",
           "type": "boolean"
@@ -3603,7 +3635,8 @@
         "withHeaderLine",
         "fieldSymbolStructure",
         "typePools",
-        "load"
+        "load",
+        "parameter"
       ],
       "type": "object"
     },
