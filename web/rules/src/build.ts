@@ -75,6 +75,13 @@ Get default configuration by running <tt>abaplint -d > abaplint.json</tt>
 documentation as well as abaplint.json definitions which attempt to align abaplint with the official
 <a href="https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md">Clean ABAP styleguide</a>.
 
+<br><br>
+<div id="searchBox">
+<form role="search">
+  <input type="search" placeholder="Search..." id="input" />
+</form>
+</div>
+
 <h2>${json.length} Rules</h2>
 ${buildChips(json)}
 <br>
@@ -90,7 +97,16 @@ ${buildChips(json)}
   }
   html += `</div>\n<script src="/index.js"></script>`;
 
-  fs.writeFileSync("build/index.html", preamble() + html + postamble);
+  const search = `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript"> docsearch({
+apiKey: 'ceddaf16317926533c691e2ccb17bbe1',
+indexName: 'abaplint',
+inputSelector: '#input',
+debug: false
+});
+</script>`;
+
+  fs.writeFileSync("build/index.html", preamble() + html + search + postamble);
 }
 
 const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
