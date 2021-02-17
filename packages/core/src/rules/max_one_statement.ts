@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {Comment} from "../abap/2_statements/statements/_statement";
+import {Comment, NativeSQL} from "../abap/2_statements/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
@@ -49,7 +49,9 @@ https://docs.abapopenchecks.org/checks/11/`,
     let reported: number = 0;
     for (const statement of file.getStatements()) {
       const term = statement.getTerminator();
-      if (statement.get() instanceof Comment || term === ",") {
+      if (statement.get() instanceof Comment
+          || statement.get() instanceof NativeSQL
+          || term === ",") {
         continue;
       }
 
