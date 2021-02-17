@@ -1,7 +1,7 @@
 import {IStructure} from "./_structure";
 import {StructureNode, StatementNode} from "../../nodes";
 import {INode} from "../../nodes/_inode";
-import {IStatement, MacroCall} from "../../2_statements/statements/_statement";
+import {IStatement, MacroCall, NativeSQL} from "../../2_statements/statements/_statement";
 import {IStructureRunnable} from "./_structure_runnable";
 import {IMatch} from "./_match";
 
@@ -282,7 +282,7 @@ class SubStatement implements IStructureRunnable {
 
   public first() {
     const o = new this.obj();
-    if (o instanceof MacroCall) {
+    if (o instanceof MacroCall || o instanceof NativeSQL) {
       return [""];
     }
     return o.getMatcher().first();

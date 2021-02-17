@@ -39,6 +39,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public load: boolean = true;
   /** Checks for PARAMETER */
   public parameter: boolean = true;
+  /** Checks for RANGES */
+  public ranges: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -68,7 +70,9 @@ TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US
 
 LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
 
-PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparameter.htm`,
+PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparameter.htm
+
+RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.htm`,
     };
   }
 
@@ -114,8 +118,13 @@ PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparame
         issues.push(issue);
       }
 
-      if (this.conf.setExtended && sta instanceof Statements.Parameter && staNode.getFirstToken().getStr().toUpperCase() === "PARAMETER") {
+      if (this.conf.parameter && sta instanceof Statements.Parameter && staNode.getFirstToken().getStr().toUpperCase() === "PARAMETER") {
         const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of PARAMETER", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.ranges && sta instanceof Statements.Ranges) {
+        const issue = Issue.atStatement(file, staNode, "Use TYPE RANGE OF instead of RANGES", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

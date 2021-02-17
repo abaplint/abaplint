@@ -19,7 +19,7 @@ const tests = [
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
   {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1},
   {abap: "DATA tab LIKE foobar OCCURS 2.", cnt: 1},
-  {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 1},
+  {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 2},
   {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
   {abap: "SET EXTENDED CHECK ON.", cnt: 1},
@@ -31,6 +31,8 @@ const tests = [
   {abap: "FIELD-SYMBOLS <bar> STRUCTURE usr02 DEFAULT usr02.", cnt: 1},
   {abap: "PARAMETER foo TYPE c.", cnt: 1},
   {abap: "PARAMETERS foo TYPE c.", cnt: 0},
+  {abap: "RANGES werks FOR sdfsdsd-werks.", cnt: 1},
+  {abap: "DATA foo TYPE RANGE OF bar.", cnt: 0},
 ];
 
 testRule(tests, ObsoleteStatement);
