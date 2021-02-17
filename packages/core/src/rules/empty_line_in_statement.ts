@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Punctuation, Comment as CommentToken} from "../abap/1_lexer/tokens";
-import {Unknown} from "../abap/2_statements/statements/_statement";
+import {NativeSQL, Unknown} from "../abap/2_statements/statements/_statement";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Position} from "../position";
@@ -48,8 +48,9 @@ export class EmptyLineinStatement extends ABAPRule {
     }
 
     for (const s of file.getStatements()) {
-      if (s.get() instanceof Unknown) {
-        return []; // skip the file if there are parser errors
+      if (s.get() instanceof Unknown
+          || s.get() instanceof NativeSQL) {
+        return []; // skip the file if there are parser errors or native/sqlscript
       }
     }
 

@@ -31,7 +31,23 @@ const tests = [
         unexpected_error      = 5
         intern_err            = 6
         OTHERS                = 7 ).`, cnt: 0},
+  {abap: `CLASS zcl_abap_spatial_amdp DEFINITION PUBLIC FINAL CREATE PUBLIC.
+PUBLIC SECTION.
+  CLASS-METHODS get_nearest
+    IMPORTING VALUE(i_latitude)  TYPE geolat
+              VALUE(i_longitude) TYPE geolon
+    EXPORTING VALUE(e_nearest)   TYPE tt_nearest.
+ENDCLASS.
+CLASS zcl_abap_spatial_amdp IMPLEMENTATION.
+METHOD get_nearest BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY USING zchargingpoints.
+  e_nearest = SELECT TOP 10
+                geo.ST_AsGeoJSON() as geojson,
+                NEW ST_POINT(i_longitude, i_latitude).ST_SRID(4326).ST_Distance(geo, 'kilometer') AS distance
+                FROM zchargingpoints
+                ORDER BY distance;
 
+ENDMETHOD.
+ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, EmptyLineinStatement);
