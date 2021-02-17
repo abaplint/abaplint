@@ -97,10 +97,10 @@ export function buildRule(meta: IRuleMetadata) {
     html += "<br>Pseudo comment: <tt>" + meta.pseudoComment + "</tt><br>";
   }
 
-  html = html + "<h2>Description</h2>\n" + meta.shortDescription + "<br><br>";
+  html = html + "<h2>Description</h2>\n<p>" + meta.shortDescription + "</p>";
 
   if (meta.extendedInformation !== undefined && meta.extendedInformation !== "") {
-    html = html + "<h2>Extended Information</h2>\n" + renderExtended(meta.extendedInformation) + "<br><br>";
+    html = html + "<h2>Extended Information</h2>\n<p>" + renderExtended(meta.extendedInformation) + "</p>";
   }
 
   html = html + "<h2>Default Configuration</h2>\n";
