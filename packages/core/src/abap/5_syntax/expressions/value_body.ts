@@ -6,6 +6,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
+import {ScopeType} from "../_scope_type";
 
 export class ValueBody {
   public runSyntax(
@@ -35,6 +36,10 @@ export class ValueBody {
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       type = new Source().runSyntax(s, scope, filename);
+    }
+
+    if (scope.getType() === ScopeType.For) {
+      scope.pop(node.getLastToken().getEnd());
     }
 
     return targetType ? targetType : type;

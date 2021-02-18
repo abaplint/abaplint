@@ -11,5 +11,6 @@ export enum ScopeType {
   Form = "form",
   FunctionModule = "function",
   Method = "method",
+  For = "for",
   OpenSQL = "open_sql",
 }

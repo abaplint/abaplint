@@ -3487,6 +3487,16 @@ WRITE / timestamp.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("multiple inline field symbols, okay", () => {
+    const abap = `
+  TYPES ty_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+  DATA turtles TYPE ty_tab.
+  DATA(new1) = VALUE ty_tab( FOR <x> IN turtles ( <x> ) ).
+  DATA(new2) = VALUE ty_tab( FOR <x> IN turtles ( <x> ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("multiple identical named data definitions", () => {
     const abap = `
 DATA date TYPE d.
