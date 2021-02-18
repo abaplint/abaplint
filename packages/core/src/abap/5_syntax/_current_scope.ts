@@ -58,7 +58,7 @@ export class CurrentScope {
     if (type === undefined) {
       return;
     }
-    this.current?.getData().types.push({name: type.getName(), identifier: type});
+    this.addTypeNamed(type.getName(), type);
   }
 
   public addTypeNamed(name: string, type: TypedIdentifier | undefined) {
