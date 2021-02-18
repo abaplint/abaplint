@@ -3532,8 +3532,19 @@ DATA date TYPE d.`;
     expect(issues.length).to.equals(1);
   });
 
-// todo, identical named TYPES
-// todo, identical named methods
+  it("interface multiple identical named TYPE definitions", () => {
+    const abap = `
+    interface bar.
+  TYPES: BEGIN OF bodyorgs_update_webhook_config,
+           url TYPE string,
+         END OF bodyorgs_update_webhook_config.
+  TYPES: BEGIN OF bodyorgs_update_webhook_config,
+           url TYPE string,
+         END OF bodyorgs_update_webhook_config.
+         endinterface.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
 
 
 // todo, static method cannot access instance attributes
