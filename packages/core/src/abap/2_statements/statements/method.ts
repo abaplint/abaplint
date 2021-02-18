@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {seq, opt, optPrio, alt, plus, altPrio, regex as reg} from "../combi";
-import {MethodName, Language} from "../expressions";
+import {MethodName, Language, SimpleFieldChain} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Method implements IStatement {
@@ -12,9 +12,9 @@ export class Method implements IStatement {
                        plus(name),
                        optPrio(altPrio("FAIL", "IGNORE")));
 
-    const using = seq("USING", plus(name));
+    const using = seq("USING", plus(SimpleFieldChain));
 
-    const database = seq("DATABASE", alt("PROCEDURE", "FUNCTION"), "FOR HDB",
+    const database = seq("DATABASE", alt("PROCEDURE", "FUNCTION", "GRAPH WORKSPACE"), "FOR HDB",
                          Language,
                          opt("OPTIONS READ-ONLY"),
                          opt(using));

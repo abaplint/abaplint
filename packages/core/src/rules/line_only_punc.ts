@@ -32,7 +32,7 @@ https://docs.abapopenchecks.org/checks/16/`,
   }
 
   private getMessage(): string {
-    return "A line cannot contain only \".\" or \").\"";
+    return "A line should not contain only \".\" or \").\"";
   }
 
   public getConfig() {
