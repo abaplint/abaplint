@@ -60,18 +60,20 @@ export class DumpScope {
       ret = ret + "<br>";
     }
 
-    if (node.getData().vars.length === 0) {
+    const vars = node.getData().vars;
+    if (Object.keys(vars).length === 0) {
       ret = ret + sident + "0 data definitions<br>";
     } else {
       ret = ret + sident + "Data:<br>";
     }
 
-    for (const v of node.getData().vars) {
-      ret = ret + sident + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
-      const pos = v.identifier.getStart();
+    for (const name in vars) {
+      const identifier = vars[name];
+      ret = ret + sident + "<tt>" + this.escape(name.toLowerCase()) + "</tt>";
+      const pos = identifier.getStart();
       ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-      ret = ret + v.identifier.getType().toText(0);
-      const meta = v.identifier.getMeta();
+      ret = ret + identifier.getType().toText(0);
+      const meta = identifier.getMeta();
       if (meta) {
         ret = ret + ", " + meta;
       }

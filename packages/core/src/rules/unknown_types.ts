@@ -56,11 +56,13 @@ export class UnknownTypes implements IRule {
   private traverse(node: ISpaghettiScopeNode): Issue[] {
     let ret: Issue[] = [];
 
-    for (const v of node.getData().vars) {
-      const found = this.containsUnknown(v.identifier.getType());
+    const vars = node.getData().vars;
+    for (const name in vars) {
+      const identifier = vars[name];
+      const found = this.containsUnknown(identifier.getType());
       if (found) {
-        const message = "Type of \"" + v.name + "\" contains unknown: " + found;
-        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, this.conf.severity));
+        const message = "Type of \"" + name + "\" contains unknown: " + found;
+        ret.push(Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity));
       }
     }
 

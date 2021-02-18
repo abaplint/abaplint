@@ -84,14 +84,20 @@ export class CurrentScope {
   }
 
   public addNamedIdentifier(name: string, identifier: TypedIdentifier) {
-    this.current?.getData().vars.push({name, identifier});
+    if (this.current === undefined) {
+      return;
+    }
+    this.current.getData().vars[name.toUpperCase()] = identifier;
   }
 
   public addIdentifier(identifier: TypedIdentifier | undefined) {
     if (identifier === undefined) {
       return;
     }
-    this.current?.getData().vars.push({name: identifier.getName(), identifier});
+    if (this.current === undefined) {
+      return;
+    }
+    this.current.getData().vars[identifier.getName().toUpperCase()] = identifier;
   }
 
   public addDeferred(token: Token | undefined) {

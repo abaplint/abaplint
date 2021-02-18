@@ -80,9 +80,11 @@ export class References {
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       // this is for finding the definitions
-      for (const v of node.getData().vars) {
-        if (v.identifier.equals(identifier)) {
-          ret.push(v.identifier);
+      const vars = node.getData().vars;
+      for (const name in vars) {
+        const vid = vars[name];
+        if (vid.equals(identifier)) {
+          ret.push(vid);
         }
       }
 

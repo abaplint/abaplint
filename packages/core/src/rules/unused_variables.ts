@@ -8,7 +8,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
-import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes/statement_node";
@@ -110,43 +110,44 @@ export class UnusedVariables implements IRule {
   private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
 
-    for (const v of node.getData().vars) {
+    const vars = node.getData().vars;
+    for (const name in vars) {
       if (this.conf.skipNames?.length > 0
-          && this.conf.skipNames.some((a) => a.toUpperCase() === v.name.toUpperCase())) {
+          && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
         continue;
       }
-      if (v.name === "me"
-          || v.name === "super"
-          || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
+      if (name === "ME"
+          || name === "SUPER"
+          || vars[name].getMeta().includes(IdentifierMeta.EventParameter)) {
         // todo, workaround for "me" and "super", these should somehow be typed to built-in
         continue;
-      } else if ((obj.containsFile(v.identifier.getFilename())
+      } else if ((obj.containsFile(vars[name].getFilename())
             || node.getIdentifier().stype === ScopeType.Program
             || node.getIdentifier().stype === ScopeType.Form)
-          && this.isUsed(v.identifier, node) === false) {
-        const message = "Variable \"" + v.identifier.getName() + "\" not used";
+          && this.isUsed(vars[name], node) === false) {
+        const message = "Variable \"" + vars[name].getName() + "\" not used";
 
-        const statement = this.findStatement(v, obj);
+        const statement = this.findStatement(vars[name], obj);
         if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
           continue;
-        } else if (this.suppressedbyPseudo(statement, v, obj)) {
+        } else if (this.suppressedbyPseudo(statement, vars[name], obj)) {
           continue;
         }
 
-        const fix = this.buildFix(v, obj);
-        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, this.conf.severity, fix));
+        const fix = this.buildFix(vars[name], obj);
+        ret.push(Issue.atIdentifier(vars[name], message, this.getMetadata().key, this.conf.severity, fix));
       }
     }
 
     return ret;
   }
 
-  private suppressedbyPseudo(statement: StatementNode | undefined, v: IScopeVariable, obj: ABAPObject): boolean {
+  private suppressedbyPseudo(statement: StatementNode | undefined, v: TypedIdentifier, obj: ABAPObject): boolean {
     if (statement === undefined) {
       return false;
     }
 
-    const file = obj.getABAPFileByName(v.identifier.getFilename());
+    const file = obj.getABAPFileByName(v.getFilename());
     if (file === undefined) {
       return false;
     }
@@ -169,23 +170,23 @@ export class UnusedVariables implements IRule {
     return found.length > 1;
   }
 
-  private findStatement(v: IScopeVariable, obj: ABAPObject): StatementNode | undefined {
-    const file = obj.getABAPFileByName(v.identifier.getFilename());
+  private findStatement(v: TypedIdentifier, obj: ABAPObject): StatementNode | undefined {
+    const file = obj.getABAPFileByName(v.getFilename());
     if (file === undefined) {
       return undefined;
     }
 
-    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    const statement = EditHelper.findStatement(v.getToken(), file);
     return statement;
   }
 
-  private buildFix(v: IScopeVariable, obj: ABAPObject): IEdit | undefined {
-    const file = obj.getABAPFileByName(v.identifier.getFilename());
+  private buildFix(v: TypedIdentifier, obj: ABAPObject): IEdit | undefined {
+    const file = obj.getABAPFileByName(v.getFilename());
     if (file === undefined) {
       return undefined;
     }
 
-    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    const statement = EditHelper.findStatement(v.getToken(), file);
     if (statement) {
       return EditHelper.deleteStatement(file, statement);
     }
