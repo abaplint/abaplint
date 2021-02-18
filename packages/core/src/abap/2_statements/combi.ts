@@ -244,16 +244,16 @@ class OptionalPriority implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result: Result[] = [];
+    const result: Result[] = [];
 
     for (const input of r) {
       const res = this.optional.run([input]);
       if (res.length > 1) {
-        result = result.concat(res);
+        result.push(...res);
       } else if (res.length === 0) {
         result.push(input);
       } else if (res[0].length() < input.length()) {
-        result = result.concat(res);
+        result.push(...res);
       } else {
         result.push(input);
       }
@@ -292,12 +292,12 @@ class Optional implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result: Result[] = [];
+    const result: Result[] = [];
 
     for (const input of r) {
       result.push(input);
       const res = this.optional.run([input]);
-      result = result.concat(res);
+      result.push(...res);
     }
 
     return result;
@@ -333,7 +333,7 @@ class Star implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result = r;
+    const result = r;
 
     let res = r;
     let input: Result[] = [];
@@ -345,7 +345,7 @@ class Star implements IStatementRunnable {
         break;
       }
 
-      result = result.concat(res);
+      result.push(...res);
     }
 //    console.dir(result);
     return result;
@@ -505,7 +505,7 @@ class Sequence implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result: Result[] = [];
+    const result: Result[] = [];
 
     for (const input of r) {
       let temp = [input];
@@ -516,7 +516,7 @@ class Sequence implements IStatementRunnable {
         }
       }
 
-      result = result.concat(temp);
+      result.push(...temp);
     }
 
     return result;
@@ -586,7 +586,7 @@ export abstract class Expression implements IStatementRunnable {
   private runnable: IStatementRunnable | undefined = undefined;
 
   public run(r: Result[]): Result[] {
-    let results: Result[] = [];
+    const results: Result[] = [];
 
     if (this.runnable === undefined) {
       this.runnable = this.getRunnable();
@@ -616,7 +616,7 @@ export abstract class Expression implements IStatementRunnable {
         moo.push(t);
       }
 
-      results = results.concat(moo);
+      results.push(...moo);
     }
 //    console.dir(results);
     return results;
@@ -673,21 +673,21 @@ class Permutation implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result: Result[] = [];
+    const result: Result[] = [];
 
     const copy = this.list.slice();
     for (let index = 0; index < this.list.length; index++) {
       const temp = this.list[index].run(r);
       if (temp.length !== 0) {
 // match
-        result = result.concat(temp);
+        result.push(...temp);
 
         const left = copy;
         left.splice(index, 1);
         if (left.length === 1) {
-          result = result.concat(left[0].run(temp));
+          result.push(...left[0].run(temp));
         } else {
-          result = result.concat(new Permutation(left).run(temp));
+          result.push(...new Permutation(left).run(temp));
         }
       }
     }
@@ -732,11 +732,11 @@ class Alternative implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result: Result[] = [];
+    const result: Result[] = [];
 
     for (const sequ of this.list) {
       const temp = sequ.run(r);
-      result = result.concat(temp);
+      result.push(...temp);
     }
 
     return result;

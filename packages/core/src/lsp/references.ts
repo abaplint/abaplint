@@ -76,7 +76,7 @@ export class References {
   }
 
   private findReferences(node: ISpaghettiScopeNode, identifier: Identifier): Identifier[] {
-    let ret: Identifier[] = [];
+    const ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
 
@@ -118,7 +118,7 @@ export class References {
     }
 
     for (const c of node.getChildren()) {
-      ret = ret.concat(this.findReferences(c, identifier));
+      ret.push(...this.findReferences(c, identifier));
     }
 
     return ret;
