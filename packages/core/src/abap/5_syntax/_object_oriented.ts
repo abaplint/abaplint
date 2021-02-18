@@ -332,11 +332,16 @@ export class ObjectOriented {
       for (const a of cdef.getAttributes().getAll()) {
         if (a.getVisibility() !== Visibility.Private) {
           this.scope.addIdentifier(a);
-//          this.scope.addList(cdef.getAttributes().getAll()); // todo, handle scope and instance vs static
+// todo, handle scope and instance vs static
         }
       }
-      this.scope.addList(cdef.getAttributes().getConstants());
+      for (const c of cdef.getAttributes().getConstants()) {
+        if (c.getVisibility() !== Visibility.Private) {
+          this.scope.addIdentifier(c);
+        }
+      }
       for (const t of cdef.getTypeDefinitions().getAll()) {
+        // todo, dont add private types from superclass to scope
         this.scope.addType(t);
       }
       this.fromInterfaces(cdef);
