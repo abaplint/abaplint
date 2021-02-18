@@ -16,7 +16,7 @@ abstract class ScopeData {
       cdefs: [],
       idefs: [],
       forms: [],
-      types: [],
+      types: {},
       deferred: [],
       references: [],
     };
@@ -182,9 +182,9 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {
-      for (const local of search.getData().types) {
-        if (local.name.toUpperCase() === name.toUpperCase()) {
-          return local.identifier;
+      for (const lname in search.getData().types) {
+        if (lname.toUpperCase() === name.toUpperCase()) {
+          return search.getData().types[lname];
         }
       }
       search = search.getParent();

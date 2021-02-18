@@ -65,7 +65,14 @@ export class CurrentScope {
     if (type === undefined) {
       return;
     }
-    this.current?.getData().types.push({name, identifier: type});
+    if (this.current === undefined) {
+      return;
+    }
+    const upper = name.toUpperCase();
+    if (this.current.getData().types[upper] !== undefined) {
+      throw new Error(`Type name "${name}" already defined`);
+    }
+    this.current.getData().types[upper] = type;
   }
 
   public addClassDefinition(c: IClassDefinition) {
@@ -89,7 +96,7 @@ export class CurrentScope {
     }
     const upper = name.toUpperCase();
     if (this.current.getData().vars[upper] !== undefined) {
-      throw new Error(`Variable "${name}" already defined`);
+      throw new Error(`Variable name "${name}" already defined`);
     }
     this.current.getData().vars[upper] = identifier;
   }

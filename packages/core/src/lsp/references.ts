@@ -89,9 +89,11 @@ export class References {
       }
 
       // this is for finding the definitions
-      for (const v of node.getData().types) {
-        if (v.identifier.equals(identifier)) {
-          ret.push(v.identifier);
+      const types = node.getData().types;
+      for (const name in types) {
+        const vid = types[name];
+        if (vid.equals(identifier)) {
+          ret.push(vid);
         }
       }
 

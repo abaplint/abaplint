@@ -3516,10 +3516,18 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
-  it("multiple identical named data definitions", () => {
+  it("multiple identical named DATA definitions", () => {
     const abap = `
 DATA date TYPE d.
 DATA date TYPE d.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("multiple identical named TYPE definitions", () => {
+    const abap = `
+  TYPES ty TYPE i.
+  TYPES ty TYPE i.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
