@@ -3497,6 +3497,25 @@ WRITE / timestamp.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("superclass with same private variable name", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    DATA bar TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_foo DEFINITION INHERITING FROM lcl_bar.
+  PRIVATE SECTION.
+    DATA bar TYPE i.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("multiple identical named data definitions", () => {
     const abap = `
 DATA date TYPE d.

@@ -9,6 +9,7 @@ import {ClassAttribute} from "../types/class_attribute";
 import {ClassConstant} from "../types/class_constant";
 import {IEventDefinition} from "../types/_event_definition";
 import {TypedIdentifier} from "../types/_typed_identifier";
+import {Visibility} from "../4_file_information/visibility";
 
 // todo, think some of the public methods can be made private
 
@@ -328,7 +329,12 @@ export class ObjectOriented {
     let sup = child.getSuperClass();
     while (sup !== undefined) {
       const cdef = this.findSuperDefinition(sup);
-      this.scope.addList(cdef.getAttributes().getAll()); // todo, handle scope and instance vs static
+      for (const a of cdef.getAttributes().getAll()) {
+        if (a.getVisibility() !== Visibility.Private) {
+          this.scope.addIdentifier(a);
+//          this.scope.addList(cdef.getAttributes().getAll()); // todo, handle scope and instance vs static
+        }
+      }
       this.scope.addList(cdef.getAttributes().getConstants());
       for (const t of cdef.getTypeDefinitions().getAll()) {
         this.scope.addType(t);
