@@ -20,7 +20,6 @@ for (let r of repos) {
 
   map[r].after_start = new Date();
   childProcess.execSync("node ./abaplint_after " + folder + "/abaplint.json -f json > output.json || true");
-  childProcess.execSync("cat output.json");
   map[r].after_end = new Date();
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 

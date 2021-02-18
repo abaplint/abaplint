@@ -110,7 +110,7 @@ export class Target {
         scope.addReference(token, found, ReferenceType.ObjectOrientedReference, filename);
         return new ObjectReferenceType(found);
       } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name, ooType: "CLAS"});
         return new VoidType(name);
       } else {
         return new UnknownType(name + " unknown, Target");

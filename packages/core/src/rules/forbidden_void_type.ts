@@ -63,6 +63,7 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
     const message = "Forbidden void type: ";
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+      /*
       for (const t of node.getData().types) {
         const typ = t.identifier.getType();
         if (this.isForbiddenType(typ)) {
@@ -77,15 +78,16 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
           ret.push(Issue.atIdentifier(identifier, message + typ.toText(0), this.getMetadata().key, this.conf.severity));
         }
       }
+      */
       for (const r of node.getData().references) {
         if (r.referenceType === ReferenceType.ObjectOrientedVoidReference
-            && r.extra?.ooName
+            && r.extra?.ooName !== undefined
             && this.isForbiddenName(r.extra?.ooName)) {
           ret.push(Issue.atIdentifier(r.position, message + r.extra?.ooName, this.getMetadata().key, this.conf.severity));
         }
         if (r.referenceType === ReferenceType.VoidType
-           && this.isForbiddenName(r.position.getName())) {
-          ret.push(Issue.atIdentifier(r.position, message + r.extra?.ooName, this.getMetadata().key, this.conf.severity));
+            && this.isForbiddenName(r.position.getName())) {
+          ret.push(Issue.atIdentifier(r.position, message, this.getMetadata().key, this.conf.severity));
         }
       }
     }
