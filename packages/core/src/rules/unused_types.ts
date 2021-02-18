@@ -153,15 +153,18 @@ export class UnusedTypes implements IRule {
     const ret: Issue[] = [];
 
     if (add === true) {
-      for (const t of node.getData().types) {
-        if (obj.containsFile(t.identifier.getFilename()) === false) {
+      const types = node.getData().types;
+      for (const name in types) {
+        const identifier = types[name];
+        if (obj.containsFile(identifier.getFilename()) === false) {
           continue;
-        } else if (this.conf.skipNames?.length > 0 && this.conf.skipNames.some((a) => a.toUpperCase() === t.name.toUpperCase())) {
+        } else if (this.conf.skipNames?.length > 0
+            && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
           continue;
-        } else if (t.name.toUpperCase() !== t.identifier.getName().toUpperCase()) {
+        } else if (name !== identifier.getName().toUpperCase()) {
           continue; // may have aliases via interfaces
         }
-        this.workarea.push(t.identifier);
+        this.workarea.push(identifier);
       }
     }
 

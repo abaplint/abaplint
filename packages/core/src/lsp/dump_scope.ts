@@ -46,32 +46,36 @@ export class DumpScope {
     let ret = "";
     const sident = "&nbsp;".repeat(indent * 2);
 
-    if (node.getData().types.length === 0) {
+    const types = node.getData().types;
+    if (Object.keys(types).length === 0) {
       ret = ret + sident + "0 type definitions<br>";
     } else {
       ret = ret + sident + "Types:<br>";
     }
 
-    for (const t of node.getData().types) {
-      ret = ret + sident + "<tt>" + this.escape(t.name) + "</tt>";
-      const pos = t.identifier.getStart();
+    for (const name in types) {
+      const identifier = types[name];
+      ret = ret + sident + "<tt>" + this.escape(name) + "</tt>";
+      const pos = identifier.getStart();
       ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-      ret = ret + t.identifier.getType().toText(0);
+      ret = ret + identifier.getType().toText(0);
       ret = ret + "<br>";
     }
 
-    if (node.getData().vars.length === 0) {
+    const vars = node.getData().vars;
+    if (Object.keys(vars).length === 0) {
       ret = ret + sident + "0 data definitions<br>";
     } else {
       ret = ret + sident + "Data:<br>";
     }
 
-    for (const v of node.getData().vars) {
-      ret = ret + sident + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
-      const pos = v.identifier.getStart();
+    for (const name in vars) {
+      const identifier = vars[name];
+      ret = ret + sident + "<tt>" + this.escape(name.toLowerCase()) + "</tt>";
+      const pos = identifier.getStart();
       ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-      ret = ret + v.identifier.getType().toText(0);
-      const meta = v.identifier.getMeta();
+      ret = ret + identifier.getType().toText(0);
+      const meta = identifier.getMeta();
       if (meta) {
         ret = ret + ", " + meta;
       }

@@ -3487,6 +3487,66 @@ WRITE / timestamp.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("multiple inline field symbols, okay", () => {
+    const abap = `
+  TYPES ty_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+  DATA turtles TYPE ty_tab.
+  DATA(new1) = VALUE ty_tab( FOR <x> IN turtles ( <x> ) ).
+  DATA(new2) = VALUE ty_tab( FOR <x> IN turtles ( <x> ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("superclass with same private variable name", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    DATA bar TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_foo DEFINITION INHERITING FROM lcl_bar.
+  PRIVATE SECTION.
+    DATA bar TYPE i.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("multiple identical named DATA definitions", () => {
+    const abap = `
+DATA date TYPE d.
+DATA date TYPE d.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("multiple identical named TYPE definitions", () => {
+    const abap = `
+  TYPES ty TYPE i.
+  TYPES ty TYPE i.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("interface multiple identical named TYPE definitions", () => {
+    const abap = `
+    interface bar.
+  TYPES: BEGIN OF bodyorgs_update_webhook_config,
+           url TYPE string,
+         END OF bodyorgs_update_webhook_config.
+  TYPES: BEGIN OF bodyorgs_update_webhook_config,
+           url TYPE string,
+         END OF bodyorgs_update_webhook_config.
+         endinterface.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

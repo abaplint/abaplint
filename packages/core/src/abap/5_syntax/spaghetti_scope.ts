@@ -12,11 +12,11 @@ abstract class ScopeData {
 
   public constructor() {
     this.data = {
-      vars: [],
+      vars: {},
       cdefs: [],
       idefs: [],
       forms: [],
-      types: [],
+      types: {},
       deferred: [],
       references: [],
     };
@@ -182,9 +182,9 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {
-      for (const local of search.getData().types) {
-        if (local.name.toUpperCase() === name.toUpperCase()) {
-          return local.identifier;
+      for (const lname in search.getData().types) {
+        if (lname.toUpperCase() === name.toUpperCase()) {
+          return search.getData().types[lname];
         }
       }
       search = search.getParent();
@@ -197,9 +197,9 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {
-      for (const local of search.getData().vars) {
-        if (local.name.toUpperCase() === name.toUpperCase()) {
-          return local.identifier;
+      for (const local in search.getData().vars) {
+        if (local === name.toUpperCase()) {
+          return search.getData().vars[local];
         }
       }
       search = search.getParent();
@@ -212,8 +212,8 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {
-      for (const local of search.getData().vars) {
-        if (local.name.toUpperCase() === name.toUpperCase()) {
+      for (const local in search.getData().vars) {
+        if (local === name.toUpperCase()) {
           return search.getIdentifier();
         }
       }
@@ -238,9 +238,10 @@ export class SpaghettiScope implements ISpaghettiScope {
 
     for (const n of this.allNodes()) {
       if (n.getIdentifier().filename === filename) {
-        for (const v of n.getData().vars) {
-          if (v.identifier.getFilename() === filename) {
-            ret.push(v);
+        const vars = n.getData().vars;
+        for (const v in vars) {
+          if (vars[v].getFilename() === filename) {
+            ret.push({name: v, identifier: vars[v]});
           }
         }
       }

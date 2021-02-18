@@ -19,7 +19,7 @@ export class CreateObject {
       if (found) {
         scope.addReference(token, found, ReferenceType.ObjectOrientedReference, filename);
       } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name, ooType: "CLAS"});
       } else {
         throw new Error("TYPE \"" + name + "\" not found");
       }

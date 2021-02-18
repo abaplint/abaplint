@@ -23,8 +23,8 @@ export interface IScopeVariable {
 }
 
 export interface IScopeData {
-  vars: IScopeVariable[];
-  types: IScopeVariable[];
+  vars: {[name: string]: TypedIdentifier};
+  types: {[name: string]: TypedIdentifier};
 
   deferred: Token[];
 

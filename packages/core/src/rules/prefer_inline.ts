@@ -7,8 +7,8 @@ import {Version} from "../version";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {IScopeVariable, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
-import {IdentifierMeta} from "../abap/types/_typed_identifier";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {ReferenceType} from "../abap/5_syntax/_reference";
@@ -91,18 +91,20 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
   private analyzeScope(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
 
-    for (const d of node.getData().vars) {
-      if (this.isLocalDefinition(node, d) === false
-          || d.identifier.getMeta().includes(IdentifierMeta.InlineDefinition)
-          || d.identifier.getMeta().includes(IdentifierMeta.FormParameter)) {
+    const vars = node.getData().vars;
+    for (const name in vars) {
+      const identifier = vars[name];
+      if (this.isLocalDefinition(node, identifier) === false
+          || identifier.getMeta().includes(IdentifierMeta.InlineDefinition)
+          || identifier.getMeta().includes(IdentifierMeta.FormParameter)) {
         continue;
-      } else if (d.identifier.getType().isGeneric() === true) {
+      } else if (identifier.getType().isGeneric() === true) {
         continue;
-      } else if (d.identifier.getType().containsVoid() === true) {
+      } else if (identifier.getType().containsVoid() === true) {
         continue;
       }
 
-      const write = this.firstUseIsWrite(node, d);
+      const write = this.firstUseIsWrite(node, identifier);
       if (write === undefined) {
         continue;
       }
@@ -114,7 +116,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
       } else if (next?.getStart().equals(write.position.getEnd()) && next.getStr() !== "." && next.getStr() !== ",") {
         continue;
       }
-      const file = obj.getABAPFileByName(d.identifier.getFilename());
+      const file = obj.getABAPFileByName(identifier.getFilename());
       const writeStatement = EditHelper.findStatement(next, file);
       const statementType = writeStatement?.get();
       if (statementType === undefined) {
@@ -130,7 +132,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
         continue;
       }
 
-      const statement = EditHelper.findStatement(d.identifier.getToken(), file);
+      const statement = EditHelper.findStatement(identifier.getToken(), file);
       const concat = statement?.concatTokens().toUpperCase();
       if (concat?.includes("BEGIN OF")) {
         continue;
@@ -138,13 +140,13 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
       let fix: IEdit | undefined = undefined;
       if (file && statement) {
         const fix1 = EditHelper.deleteStatement(file, statement);
-        const name = d.identifier.getName();
+        const name = identifier.getName();
         const replace = name.startsWith("<") ? "FIELD-SYMBOL(" + name + ")" : "DATA(" + name + ")";
         const fix2 = EditHelper.replaceRange(file, write.position.getStart(), write.position.getEnd(), replace);
         fix = EditHelper.merge(fix1, fix2);
       }
-      const message = this.getMetadata().title + ", " + d.name;
-      ret.push(Issue.atIdentifier(d.identifier, message, this.getMetadata().key, this.conf.severity, fix));
+      const message = this.getMetadata().title + ", " + name;
+      ret.push(Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
     return ret;
@@ -168,12 +170,12 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
     return undefined;
   }
 
-  private firstUseIsWrite(node: ISpaghettiScopeNode, v: IScopeVariable): IVariableReference | undefined {
+  private firstUseIsWrite(node: ISpaghettiScopeNode, identifier: TypedIdentifier): IVariableReference | undefined {
 // assumption: variables are local, so only the current scope must be searched
 
     for (const r of node.getData().references) {
       if (r.referenceType === ReferenceType.TypeReference
-          && r.resolved?.getStart().equals(v.identifier.getStart()) === true) {
+          && r.resolved?.getStart().equals(identifier.getStart()) === true) {
         return undefined;
       }
     }
@@ -181,7 +183,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
     let firstRead: IVariableReference | undefined = undefined;
     for (const r of node.getData().references) {
       if (r.referenceType !== ReferenceType.DataReadReference
-          || r.resolved?.getStart().equals(v.identifier.getStart()) === false) {
+          || r.resolved?.getStart().equals(identifier.getStart()) === false) {
         continue;
       }
       if (r.resolved) {
@@ -193,7 +195,7 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
     let firstWrite: IVariableReference | undefined = undefined;
     for (const w of node.getData().references) {
       if (w.referenceType !== ReferenceType.DataWriteReference
-          || w.resolved?.getStart().equals(v.identifier.getStart()) === false) {
+          || w.resolved?.getStart().equals(identifier.getStart()) === false) {
         continue;
       }
       if (w.resolved) {
@@ -216,10 +218,10 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
     return undefined;
   }
 
-  private isLocalDefinition(node: ISpaghettiScopeNode, v: IScopeVariable): boolean {
+  private isLocalDefinition(node: ISpaghettiScopeNode, identifier: TypedIdentifier): boolean {
     const {start, end} = node.calcCoverage();
 
-    if (v.identifier.getStart().isAfter(start) && v.identifier.getStart().isBefore(end)) {
+    if (identifier.getStart().isAfter(start) && identifier.getStart().isBefore(end)) {
       return true;
     } else {
       return false;
