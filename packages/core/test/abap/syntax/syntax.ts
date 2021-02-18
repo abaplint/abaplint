@@ -3487,7 +3487,7 @@ WRITE / timestamp.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("multiple identical named data definitions", () => {
+  it("multiple identical named data definitions", () => {
     const abap = `
 DATA date TYPE d.
 DATA date TYPE d.`;

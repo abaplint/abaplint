@@ -87,17 +87,18 @@ export class CurrentScope {
     if (this.current === undefined) {
       return;
     }
-    this.current.getData().vars[name.toUpperCase()] = identifier;
+    const upper = name.toUpperCase();
+    if (this.current.getData().vars[upper] !== undefined) {
+      throw new Error(`Variable ${name} already defined`);
+    }
+    this.current.getData().vars[upper] = identifier;
   }
 
   public addIdentifier(identifier: TypedIdentifier | undefined) {
     if (identifier === undefined) {
       return;
     }
-    if (this.current === undefined) {
-      return;
-    }
-    this.current.getData().vars[identifier.getName().toUpperCase()] = identifier;
+    this.addNamedIdentifier(identifier.getName(), identifier);
   }
 
   public addDeferred(token: Token | undefined) {
