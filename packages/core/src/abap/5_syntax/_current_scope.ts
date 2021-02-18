@@ -89,7 +89,7 @@ export class CurrentScope {
     }
     const upper = name.toUpperCase();
     if (this.current.getData().vars[upper] !== undefined) {
-      throw new Error(`Variable ${name} already defined`);
+      throw new Error(`Variable "${name}" already defined`);
     }
     this.current.getData().vars[upper] = identifier;
   }
