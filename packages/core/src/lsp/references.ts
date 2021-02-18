@@ -79,23 +79,36 @@ export class References {
     let ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+
       // this is for finding the definitions
       const vars = node.getData().vars;
+      const vid = vars[identifier.getName().toUpperCase()];
+      if (vid?.equals(identifier)) {
+        ret.push(vid);
+      }
+      /*
       for (const name in vars) {
         const vid = vars[name];
         if (vid.equals(identifier)) {
           ret.push(vid);
         }
       }
+      */
 
       // this is for finding the definitions
       const types = node.getData().types;
+      const tid = types[identifier.getName().toUpperCase()];
+      if (tid?.equals(identifier)) {
+        ret.push(tid);
+      }
+      /*
       for (const name in types) {
         const vid = types[name];
         if (vid.equals(identifier)) {
           ret.push(vid);
         }
       }
+      */
 
       for (const r of node.getData().references) {
         if (r.resolved?.equals(identifier)) {
