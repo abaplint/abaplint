@@ -86,6 +86,10 @@ const tests = [
       value     TYPE string.`,
   "class-methods bar exceptions /space/cx_error.",
   "METHODS test1 ABSTRACT FOR TESTING RAISING cx_static_check.",
+  `CLASS-METHODS connection_graph
+    FOR DDL OBJECT
+    OPTIONS CDS SESSION CLIENT REQUIRED.`,
+  `CLASS-METHODS get_shortest_path AMDP OPTIONS CDS SESSION CLIENT current.`,
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

@@ -21,12 +21,18 @@ export class MethodDef implements IStatement {
 
 // todo, this is only from version something
     const tableFunction = seq("FOR TABLE FUNCTION", reg(/^\w+?$/));
+// todo, this is only from version something
+    const ddl = "FOR DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED";
+// todo, this is only from version something
+    const amdp = "AMDP OPTIONS CDS SESSION CLIENT current";
 
     const ret = seq(altPrio("CLASS-METHODS", "METHODS"),
                     MethodName,
                     alt(seq(optPrio(Abstract), EventHandler),
                         parameters,
                         tableFunction,
+                        ddl,
+                        amdp,
                         "NOT AT END OF MODE",
                         optPrio(Redefinition)));
 
