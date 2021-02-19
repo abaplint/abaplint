@@ -10,6 +10,7 @@ const tests = [
   "insert report lv_name from tab state 'A' extension type 'CM' KEEPING DIRECTORY ENTRY.",
   "INSERT REPORT name FROM prog UNICODE ENABLING 'X'.",
   "INSERT REPORT name FROM prog FIXED-POINT ARITHMETIC 'X'.",
+  "INSERT REPORT lv_prog FROM lt_tab VERSION 'X'.",
 ];
 
 statementType(tests, "INSERT REPORT", Statements.InsertReport);

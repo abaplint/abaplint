@@ -12,6 +12,7 @@ export class InsertReport implements IStatement {
                         seq("DIRECTORY ENTRY", Source),
                         seq("UNICODE ENABLING", Source),
                         seq("PROGRAM TYPE", Source),
+                        seq("VERSION", Source),
                         seq("FIXED-POINT ARITHMETIC", Source),
                         "KEEPING DIRECTORY ENTRY");
 

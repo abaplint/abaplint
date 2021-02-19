@@ -12,7 +12,8 @@ export class EnhancementSection implements IStatement {
                     seq(Field, starPrio(seq(tok(Dash), Field))),
                     "SPOTS",
                     Field,
-                    opt("STATIC"));
+                    opt("STATIC"),
+                    opt("INCLUDE BOUND"));
 
     return verNot(Version.Cloud, ret);
   }
