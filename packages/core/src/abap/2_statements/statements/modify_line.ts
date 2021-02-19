@@ -20,7 +20,7 @@ export class ModifyLine implements IStatement {
     const page = seq("OF PAGE", Source);
     const ocp = str("OF CURRENT PAGE");
     const lineFormat = seq("LINE FORMAT",
-                           alt("INPUT OFF", "RESET", "INTENSIFIED"));
+                           alt("INPUT OFF", "INVERSE", "RESET", "INTENSIFIED"));
     const onOff = alt("ON", "OFF");
     const intensified = seq("INTENSIFIED", onOff);
 
