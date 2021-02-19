@@ -8,7 +8,8 @@ export class SQLAggregation extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const f = alt(Field, Dynamic);
-    const count = seq("COUNT", alt(tok(ParenLeft), tok(ParenLeftW)), optPrio("DISTINCT"), alt("*", Field), ")");
+    const fparen = seq("(", Field, ")");
+    const count = seq("COUNT", alt(tok(ParenLeft), tok(ParenLeftW)), optPrio("DISTINCT"), alt("*", Field, fparen), ")");
     const max = seq("MAX", alt(tok(ParenLeft), tok(ParenLeftW)), f, ")");
     const min = seq("MIN", alt(tok(ParenLeft), tok(ParenLeftW)), f, ")");
     const sum = seq("SUM", alt(tok(ParenLeft), tok(ParenLeftW)), f, ")");
