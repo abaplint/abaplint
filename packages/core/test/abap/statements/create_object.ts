@@ -10,6 +10,9 @@ const tests = [
   "CREATE OBJECT lo_ref TYPE (lv_classname) PARAMETER-TABLE lt_otab.",
   "CREATE OBJECT lo_root AREA HANDLE lo_area.",
   "CREATE OBJECT lo_root AREA HANDLE io_handle TYPE (lv_name) EXPORTING iv_name = lv_name.",
+  `CREATE OBJECT lo_object TYPE (l_imp)
+  PARAMETER-TABLE l_tab_parmbind
+  EXCEPTION-TABLE l_tab_excpbind.`,
 ];
 
 statementType(tests, "CREATE OBJECT", Statements.CreateObject);

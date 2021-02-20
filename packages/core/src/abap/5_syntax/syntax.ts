@@ -116,6 +116,7 @@ import {SystemCall} from "./statements/system_call";
 import {Collect} from "./statements/collect";
 import {Transfer} from "./statements/transfer";
 import {ModifyDatabase} from "./statements/modify_database";
+import {TruncateDataset} from "./statements/truncate_dataset";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -306,6 +307,8 @@ export class SyntaxLogic {
       new GetBadi().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Replace) {
       new Replace().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.TruncateDataset) {
+      new TruncateDataset().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Assert) {
       new Assert().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Catch) {
