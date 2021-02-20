@@ -116,7 +116,7 @@ import {SystemCall} from "./statements/system_call";
 import {Collect} from "./statements/collect";
 import {Transfer} from "./statements/transfer";
 import {ModifyDatabase} from "./statements/modify_database";
-import { TruncateDataset } from "./statements/truncate_dataset";
+import {TruncateDataset} from "./statements/truncate_dataset";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
