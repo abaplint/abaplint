@@ -81,21 +81,23 @@ function findPath(ruleKey: string) {
 }
 
 export function buildRule(meta: IRuleMetadata) {
-  let html = "<h1>" + meta.key + " - " + meta.title + "</h1>\n";
+  let html = `<h1>${meta.title}</h1>\n`;
 
-  html = html + home();
-  html = html + renderIcons(meta.tags);
+  html += home();
+  html += renderIcons(meta.tags);
   const link = findPath(meta.key);
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
   html = html + `&nbsp;<a href="${link}"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>edit</title><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></a>`;
 
+  html += `<p><tt>${meta.key}</tt><br>`;
   if (meta.pragma) {
-    html += "<br>Pragma: <tt>" + meta.pragma + "</tt><br>";
+    html += "Pragma: <tt>" + meta.pragma + "</tt><br>";
   }
   if (meta.pseudoComment) {
-    html += "<br>Pseudo comment: <tt>" + meta.pseudoComment + "</tt><br>";
+    html += "<br>Pseudo comment: <tt>" + meta.pseudoComment + "</tt>";
   }
+  html += "</p>";
 
   html = html + "<h2>Description</h2>\n<p>" + meta.shortDescription + "</p>";
 
