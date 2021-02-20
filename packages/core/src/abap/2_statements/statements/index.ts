@@ -102,6 +102,7 @@ export * from "./get_property";
 export * from "./scroll_list";
 export * from "./load_of_program";
 export * from "./top_of_page";
+export * from "./truncate_dataset";
 export * from "./set_update_task";
 export * from "./set_user_command";
 export * from "./rollback";
