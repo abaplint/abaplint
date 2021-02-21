@@ -78,17 +78,17 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public getTokens(): readonly Token[] {
-    let tokens: Token[] = [];
+    const tokens: Token[] = [];
 
     for (const c of this.getChildren()) {
-      tokens = tokens.concat(this.toTokens(c));
+      tokens.push(...this.toTokens(c));
     }
 
     return tokens;
   }
 
   private toTokens(b: INode): readonly Token[] {
-    let tokens: Token[] = [];
+    const tokens: Token[] = [];
 
     if (b instanceof TokenNode) {
       tokens.push(b.get());
@@ -99,7 +99,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
       if (c instanceof TokenNode) {
         tokens.push(c.get());
       } else {
-        tokens = tokens.concat(this.toTokens(c));
+        tokens.push(...this.toTokens(c));
       }
     }
 
@@ -117,13 +117,13 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public getAllTokens(): Token[] {
-    let ret: Token[] = [];
+    const ret: Token[] = [];
 
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         ret.push(child.get());
       } else {
-        ret = ret.concat(child.getAllTokens());
+        ret.push(...child.getAllTokens());
       }
     }
 
@@ -187,21 +187,21 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
-    let ret: ExpressionNode[] = [];
+    const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         continue;
       } else if (child.get() instanceof type) {
         ret.push(child);
       } else {
-        ret = ret.concat(child.findAllExpressions(type));
+        ret.push(...child.findAllExpressions(type));
       }
     }
     return ret;
   }
 
   public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
-    let ret: ExpressionNode[] = [];
+    const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         continue;
@@ -213,7 +213,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
         }
       }
       if (before === ret.length) {
-        ret = ret.concat(child.findAllExpressionsMulti(type));
+        ret.push(...child.findAllExpressionsMulti(type));
       }
     }
     return ret;
