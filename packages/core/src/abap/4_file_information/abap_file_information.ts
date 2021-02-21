@@ -134,17 +134,17 @@ export class ABAPFileInformation implements IABAPFileInformation {
     for (const found of structure.findAllStructures(Structures.ClassDefinition)) {
       const className = found.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
 
-      let methods = this.parseMethodDefinition(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
-      methods = methods.concat(this.parseMethodDefinition(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
-      methods = methods.concat(this.parseMethodDefinition(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
+      const methods = this.parseMethodDefinition(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      methods.push(...this.parseMethodDefinition(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      methods.push(...this.parseMethodDefinition(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
-      let attributes = this.parseAttributes(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
-      attributes = attributes.concat(this.parseAttributes(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
-      attributes = attributes.concat(this.parseAttributes(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
+      const attributes = this.parseAttributes(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      attributes.push(...this.parseAttributes(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      attributes.push(...this.parseAttributes(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
-      let aliases = this.parseAliases(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
-      aliases = aliases.concat(this.parseAliases(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
-      aliases = aliases.concat(this.parseAliases(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
+      const aliases = this.parseAliases(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      aliases.push(...this.parseAliases(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      aliases.push(...this.parseAliases(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
 

@@ -83,7 +83,7 @@ export class CurrentScope {
     if (this.current === undefined) {
       return;
     }
-    this.current.getData().forms = this.current.getData().forms.concat(f);
+    this.current.getData().forms.push(...f);
   }
 
   public addInterfaceDefinition(i: IInterfaceDefinition) {
