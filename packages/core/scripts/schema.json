@@ -94,10 +94,6 @@
           "description": "Detects BREAK and BREAK-POINTS",
           "type": "boolean"
         },
-        "communication": {
-          "description": "Detects communication",
-          "type": "boolean"
-        },
         "defaultKey": {
           "description": "Detects DEFAULT KEY definitions, from version v740sp02 and up",
           "type": "boolean"
@@ -121,14 +117,6 @@
           },
           "type": "array"
         },
-        "execSQL": {
-          "description": "Detects execSQL (dynamic SQL)",
-          "type": "boolean"
-        },
-        "kernelCall": {
-          "description": "Detects kernel calls",
-          "type": "boolean"
-        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
@@ -136,20 +124,12 @@
         "statics": {
           "description": "Detects statics",
           "type": "boolean"
-        },
-        "systemCall": {
-          "description": "Detects SYSTEM-CALL",
-          "type": "boolean"
         }
       },
       "required": [
         "define",
         "endselect",
-        "execSQL",
-        "kernelCall",
-        "communication",
         "statics",
-        "systemCall",
         "defaultKey",
         "break",
         "describeLines"
@@ -660,6 +640,73 @@
       },
       "required": [
         "max"
+      ],
+      "type": "object"
+    },
+    "DangerousStatementConf": {
+      "additionalProperties": false,
+      "properties": {
+        "deleteDynpro": {
+          "type": "boolean"
+        },
+        "deleteReport": {
+          "type": "boolean"
+        },
+        "deleteTextpool": {
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "execSQL": {
+          "description": "Detects execSQL (dynamic SQL)",
+          "type": "boolean"
+        },
+        "generateDynpro": {
+          "type": "boolean"
+        },
+        "generateReport": {
+          "type": "boolean"
+        },
+        "generateSubroutine": {
+          "type": "boolean"
+        },
+        "importDynpro": {
+          "type": "boolean"
+        },
+        "insertReport": {
+          "description": "Detects INSERT REPORT",
+          "type": "boolean"
+        },
+        "kernelCall": {
+          "description": "Detects kernel calls",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "systemCall": {
+          "description": "Detects SYSTEM-CALL",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "execSQL",
+        "kernelCall",
+        "systemCall",
+        "insertReport",
+        "generateDynpro",
+        "generateReport",
+        "generateSubroutine",
+        "deleteReport",
+        "deleteTextpool",
+        "deleteDynpro",
+        "importDynpro"
       ],
       "type": "object"
     },
@@ -1174,7 +1221,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/avoid_use"
+              "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
             },
             "begin_end_names": {
               "anyOf": [
@@ -1395,6 +1442,17 @@
                 }
               ],
               "description": "Cyclomatic complexity, only reported for methods\nTags: SingleFile\nhttps://rules.abaplint.org/cyclomatic_complexity"
+            },
+            "dangerous_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DangerousStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects potentially dangerous statements\nTags: SingleFile, Security\nhttps://rules.abaplint.org/dangerous_statement"
             },
             "definitions_top": {
               "anyOf": [
@@ -3553,6 +3611,10 @@
           "description": "Check for ADD statement",
           "type": "boolean"
         },
+        "communication": {
+          "description": "Checks for COMMUNICATION",
+          "type": "boolean"
+        },
         "compute": {
           "description": "Check for COMPUTE statement",
           "type": "boolean"
@@ -3641,7 +3703,8 @@
         "typePools",
         "load",
         "parameter",
-        "ranges"
+        "ranges",
+        "communication"
       ],
       "type": "object"
     },

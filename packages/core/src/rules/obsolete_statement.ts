@@ -41,6 +41,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public parameter: boolean = true;
   /** Checks for RANGES */
   public ranges: boolean = true;
+  /** Checks for COMMUNICATION */
+  public communication: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -69,6 +71,8 @@ FIELD-SYMBOLS STRUCTURE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en
 TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
 
 LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
+
+COMMUICATION: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapcommunication.htm
 
 PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparameter.htm
 
@@ -115,6 +119,11 @@ RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.ht
 
       if (this.conf.setExtended && sta instanceof Statements.SetExtendedCheck) {
         const issue = Issue.atStatement(file, staNode, "SET EXTENDED CHECK is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.communication && sta instanceof Statements.Communication) {
+        const issue = Issue.atStatement(file, staNode, "COMMUNICATION is obsolete", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

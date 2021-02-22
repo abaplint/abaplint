@@ -129,26 +129,26 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
   }
 
   public findAllExpressions(type: new () => IStatementRunnable): ExpressionNode[] {
-    let ret: ExpressionNode[] = [];
+    const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
-      ret = ret.concat(child.findAllExpressions(type));
+      ret.push(...child.findAllExpressions(type));
     }
     return ret;
   }
 
   public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
-    let ret: ExpressionNode[] = [];
+    const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
-      ret = ret.concat(child.findAllExpressionsMulti(type));
+      ret.push(...child.findAllExpressionsMulti(type));
     }
     return ret;
   }
 
   public findAllStatements(type: new () => IStatement): StatementNode[] {
-    let ret: StatementNode[] = [];
+    const ret: StatementNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof StructureNode) {
-        ret = ret.concat(child.findAllStatements(type));
+        ret.push(...child.findAllStatements(type));
       } else if (child.get() instanceof type) {
         ret.push(child);
       }
@@ -157,19 +157,19 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
   }
 
   public findAllStatementNodes(): StatementNode[] {
-    let ret: StatementNode[] = [];
+    const ret: StatementNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof StatementNode) {
         ret.push(child);
       } else {
-        ret = ret.concat(child.findAllStatementNodes());
+        ret.push(...child.findAllStatementNodes());
       }
     }
     return ret;
   }
 
   public findAllStructuresRecursive(type: new () => IStructure): StructureNode[] {
-    let ret: StructureNode[] = [];
+    const ret: StructureNode[] = [];
 
     for (const child of this.getChildren()) {
       if (child instanceof StatementNode) {
@@ -177,13 +177,13 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
       } else if (child.get() instanceof type) {
         ret.push(child);
       }
-      ret = ret.concat(child.findAllStructuresRecursive(type));
+      ret.push(...child.findAllStructuresRecursive(type));
     }
     return ret;
   }
 
   public findAllStructures(type: new () => IStructure): StructureNode[] {
-    let ret: StructureNode[] = [];
+    const ret: StructureNode[] = [];
     if (this.get() instanceof type) {
       return [this];
     }
@@ -193,7 +193,7 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
       } else if (child.get() instanceof type) {
         ret.push(child);
       } else {
-        ret = ret.concat(child.findAllStructures(type));
+        ret.push(...child.findAllStructures(type));
       }
     }
     return ret;

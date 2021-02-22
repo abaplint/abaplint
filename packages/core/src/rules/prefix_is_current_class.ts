@@ -58,8 +58,11 @@ export class PrefixIsCurrentClass extends ABAPRule {
 
       for (const e of s.findAllExpressions(TypeName)) {
         const concat = e.concatTokens().toUpperCase();
-        const stat = e.findDirectTokenByText("=>");
-        if (stat && concat.includes(staticAccess)) {
+        if (concat.startsWith(staticAccess)) {
+          const stat = e.findDirectTokenByText("=>");
+          if (stat === undefined) {
+            continue;
+          }
           const start = new Position(stat.getRow(), stat.getCol() - name.length);
           const end = new Position(stat.getRow(), stat.getCol() + 2);
           const fix = EditHelper.deleteRange(file, start, end);
@@ -85,8 +88,8 @@ export class PrefixIsCurrentClass extends ABAPRule {
     }
 
     const issues: Issue[] = [];
-    let classStructures = struc.findDirectStructures(Structures.ClassImplementation);
-    classStructures = classStructures.concat(struc.findDirectStructures(Structures.ClassDefinition));
+    const classStructures = struc.findDirectStructures(Structures.ClassImplementation);
+    classStructures.push(...struc.findDirectStructures(Structures.ClassDefinition));
     const meAccess = "ME->";
 
     for (const c of classStructures) {
