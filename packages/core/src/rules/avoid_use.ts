@@ -15,14 +15,8 @@ export class AvoidUseConf extends BasicRuleConfig {
   public define: boolean = true;
   /** Detects ENDSELECT */
   public endselect: boolean = true;
-  /** Detects execSQL (dynamic SQL) */
-  public execSQL: boolean = true;
-  /** Detects kernel calls */
-  public kernelCall: boolean = true;
   /** Detects statics */
   public statics: boolean = true;
-  /** Detects SYSTEM-CALL */
-  public systemCall: boolean = true;
   /** Detects DEFAULT KEY definitions, from version v740sp02 and up */
   public defaultKey: boolean = true;
   /** Detects BREAK and BREAK-POINTS */
@@ -48,7 +42,7 @@ Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_gu
 ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
 
 DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
-      tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Security],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
 
@@ -74,18 +68,12 @@ DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
       let fix: IEdit | undefined = undefined;
       if (this.conf.define && statement instanceof Statements.Define) {
         message = "DEFINE";
-      } else if (this.conf.execSQL && statement instanceof Statements.ExecSQL) {
-        message = "EXEC SQL";
-      } else if (this.conf.kernelCall && statement instanceof Statements.CallKernel) {
-        message = "KERNEL CALL";
       } else if (this.conf.describeLines && statement instanceof Statements.Describe) {
         const children = statementNode.getChildren();
         if (children.length === 6 && children[3].getFirstToken().getStr().toUpperCase() === "LINES") {
           message = "DESCRIBE LINES, use lines() instead";
           fix = this.getDescribeLinesFix(file, statementNode);
         }
-      } else if (this.conf.systemCall && statement instanceof Statements.SystemCall) {
-        message = "SYSTEM-CALL";
       } else if (this.conf.statics && statement instanceof Statements.StaticBegin) {
         isStaticsBlock = true;
         message = "STATICS";

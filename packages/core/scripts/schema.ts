@@ -25,6 +25,7 @@ import {CommentedCodeConf} from "../src/rules/commented_code";
 import {ConstructorVisibilityPublicConf} from "../src/rules/constructor_visibility_public";
 import {ContainsTabConf} from "../src/rules/contains_tab";
 import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
+import {DangerousStatementConf} from "../src/rules/dangerous_statement";
 import {DefinitionsTopConf} from "../src/rules/definitions_top";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
 import {DoubleSpaceConf} from "../src/rules/double_space";
@@ -154,6 +155,7 @@ export interface IConfig {
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
+    "dangerous_statement"?: DangerousStatementConf | boolean,
     "definitions_top"?: DefinitionsTopConf | boolean,
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
