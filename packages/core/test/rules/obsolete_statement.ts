@@ -33,6 +33,7 @@ const tests = [
   {abap: "PARAMETERS foo TYPE c.", cnt: 0},
   {abap: "RANGES werks FOR sdfsdsd-werks.", cnt: 1},
   {abap: "DATA foo TYPE RANGE OF bar.", cnt: 0},
+  {abap: "COMMUNICATION ACCEPT ID c.", cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);

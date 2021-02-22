@@ -19,8 +19,6 @@ export class AvoidUseConf extends BasicRuleConfig {
   public execSQL: boolean = true;
   /** Detects kernel calls */
   public kernelCall: boolean = true;
-  /** Detects communication */
-  public communication: boolean = true;
   /** Detects statics */
   public statics: boolean = true;
   /** Detects SYSTEM-CALL */
@@ -88,8 +86,6 @@ DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
         }
       } else if (this.conf.systemCall && statement instanceof Statements.SystemCall) {
         message = "SYSTEM-CALL";
-      } else if (this.conf.communication && statement instanceof Statements.Communication) {
-        message = "COMMUNICATION";
       } else if (this.conf.statics && statement instanceof Statements.StaticBegin) {
         isStaticsBlock = true;
         message = "STATICS";

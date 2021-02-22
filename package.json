@@ -36,7 +36,7 @@
         "typescript": "^4.1.5",
         "chai": "^4.3.0",
         "xml-js": "^1.6.11",
-        "@aduh95/viz.js": "^3.3.2",
+        "@aduh95/viz.js": "^3.3.3",
         "vscode-languageserver-types": "^3.16.0"
     }
 }
