@@ -60,11 +60,25 @@ DATA ls_tadir TYPE ztadir.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("SELECT-OPTIONS", () => {
+  it("SELECT-OPTIONS, this becomes a void reference", () => {
     const abap = `SELECT-OPTIONS foo FOR structure-field.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("LIKE ddic allowed in PROGs", () => {
+    const abap = `DATA foo LIKE voided-rcode.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LIKE ddic allowed in PROGs", () => {
+    const abap = `DATA foo LIKE voided.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
   });
 
   it("TABL, minimal example", () => {
