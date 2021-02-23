@@ -81,6 +81,19 @@ DATA ls_tadir TYPE ztadir.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("LIKE ddic should give error in a class", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    DATA bar LIKE usr02.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(1);
+  });
+
   it("TABL, minimal example", () => {
     const tabl = `
 <?xml version="1.0" encoding="utf-8"?>
@@ -211,7 +224,7 @@ CLASS zcl_abapgit_xml IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([{filename: "zcl_abapgit_xml.clas.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    expect(issues.length).to.equal(2);  // todo, this should really give one error?
+    expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.not.contain("fallback");
   });
 

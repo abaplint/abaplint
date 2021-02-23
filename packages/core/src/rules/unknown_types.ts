@@ -11,6 +11,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {Identifier} from "../abap/4_file_information/_identifier";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -56,23 +57,25 @@ export class UnknownTypes implements IRule {
   private traverse(node: ISpaghettiScopeNode): Issue[] {
     let ret: Issue[] = [];
 
-    const vars = node.getData().vars;
-    for (const name in vars) {
-      const identifier = vars[name];
-      const found = this.containsUnknown(identifier.getType());
-      if (found) {
-        const message = "Type of \"" + name + "\" contains unknown: " + found;
-        ret.push(Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity));
+    if (node.getIdentifier().stype !== ScopeType.ClassImplementation) {
+      const vars = node.getData().vars;
+      for (const name in vars) {
+        const identifier = vars[name];
+        const found = this.containsUnknown(identifier.getType());
+        if (found) {
+          const message = "Variable \"" + name + "\" contains unknown: " + found;
+          ret.push(Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity));
+        }
       }
-    }
 
-    const types = node.getData().types;
-    for (const name in types) {
-      const identifier = types[name];
-      const found = this.containsUnknown(identifier.getType());
-      if (found) {
-        const message = "Type of \"" + name + "\" contains unknown: " + found;
-        ret.push(Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity));
+      const types = node.getData().types;
+      for (const name in types) {
+        const identifier = types[name];
+        const found = this.containsUnknown(identifier.getType());
+        if (found) {
+          const message = "Type \"" + name + "\" contains unknown: " + found;
+          ret.push(Issue.atIdentifier(identifier, message, this.getMetadata().key, this.conf.severity));
+        }
       }
     }
 

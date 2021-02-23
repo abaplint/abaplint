@@ -303,6 +303,20 @@ export class CurrentScope {
     }
   }
 
+  public isOO(): boolean {
+    let curr = this.current;
+    while (curr !== undefined) {
+      const stype = curr.getIdentifier().stype;
+      if (stype === ScopeType.ClassDefinition
+          || stype === ScopeType.ClassImplementation
+          || stype === ScopeType.Interface) {
+        return true;
+      }
+      curr = curr.getParent();
+    }
+    return false;
+  }
+
   public setAllowHeaderUse(name: string) {
 // workaround for SELECT FOR ALL ENTRIES
     this.allowHeaderUse = name;

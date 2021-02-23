@@ -113,7 +113,7 @@ export class BasicTypes {
           }
           return new Types.UnknownType("Type error, field not part of structure " + fullName);
         } else {
-          if (this.filename.endsWith(".prog.abap") && this.scope.getDDIC().inErrorNamespace(name) === false) {
+          if (this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(name) === false) {
             this.scope.addReference(children[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
             return new Types.VoidType(name);
           }
@@ -123,7 +123,7 @@ export class BasicTypes {
     }
 
     if (!type) {
-      if (this.filename.endsWith(".prog.abap") && this.scope.getDDIC().inErrorNamespace(fullName) === false) {
+      if (this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(fullName) === false) {
         this.scope.addReference(children[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
         return new Types.VoidType(fullName);
       }
