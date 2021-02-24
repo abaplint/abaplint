@@ -60,11 +60,38 @@ DATA ls_tadir TYPE ztadir.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("SELECT-OPTIONS", () => {
+  it("SELECT-OPTIONS, this becomes a void reference", () => {
     const abap = `SELECT-OPTIONS foo FOR structure-field.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("LIKE ddic allowed in PROGs", () => {
+    const abap = `DATA foo LIKE voided-rcode.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LIKE ddic allowed in PROGs", () => {
+    const abap = `DATA foo LIKE voided.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LIKE ddic should give error in a class", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    DATA bar LIKE usr02.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(1);
   });
 
   it("TABL, minimal example", () => {
@@ -197,7 +224,7 @@ CLASS zcl_abapgit_xml IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([{filename: "zcl_abapgit_xml.clas.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    expect(issues.length).to.equal(2);  // todo, this should really give one error?
+    expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.not.contain("fallback");
   });
 

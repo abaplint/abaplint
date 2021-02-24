@@ -113,12 +113,20 @@ export class BasicTypes {
           }
           return new Types.UnknownType("Type error, field not part of structure " + fullName);
         } else {
-          return new Types.UnknownType("Type error, not a structure type " + fullName);
+          if (this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(name) === false) {
+            this.scope.addReference(children[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
+            return new Types.VoidType(name);
+          }
+          return new Types.UnknownType("Type error, not a structure type " + name);
         }
       }
     }
 
     if (!type) {
+      if (this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(fullName) === false) {
+        this.scope.addReference(children[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
+        return new Types.VoidType(fullName);
+      }
       return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName2");
     }
 

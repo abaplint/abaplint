@@ -410,10 +410,10 @@ DATA: lv_i TYPE i,
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
-  it("LIKE, error", () => {
-    const abap = `DATA: lv_foo LIKE lv_sdfsdsdfsdf.`;
+  it("LIKE, becomes void in a PROG", () => {
+    const abap = `DATA lv_foo LIKE sdfsdsdfsdf.`;
     const identifier = resolveVariable(abap, "lv_foo");
-    expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
   });
 
   it("basic field symbol", () => {

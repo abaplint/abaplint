@@ -36,7 +36,7 @@ export class Issue {
   }
 
   public static atStatement(file: IFile, statement: StatementNode, message: string, key: string, severity?: Severity, fix?: IEdit) {
-    return this.atPosition(file, statement.getStart(), message, key, severity, fix);
+    return this.atRange(file, statement.getStart(), statement.getEnd(), message, key, severity, fix);
   }
 
   public static atPosition(file: IFile, start: Position, message: string, key: string, severity?: Severity, fix?: IEdit) {
