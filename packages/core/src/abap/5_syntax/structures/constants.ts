@@ -9,7 +9,9 @@ import * as Basic from "../../types/basic";
 import {Constant} from "../statements/constant";
 
 export class Constants {
-  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): {type: TypedIdentifier | undefined, values: object} {
+  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string):
+  {type: TypedIdentifier | undefined, values: {[index: string]: string} } {
+
     const name = node.findFirstExpression(Expressions.DefinitionName)?.getFirstToken();
     if (name === undefined) {
       throw new Error("Constants, structure, unexpected node");

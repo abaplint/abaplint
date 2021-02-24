@@ -6,6 +6,9 @@ const cases = [
   {abap: `EXEC sql.
     select PROGNAME into :l_progname from REPOLOAD where PROGNAME = :p_prehdr
     ENDEXEC.`},
+  {abap: `EXEC SQL.
+  COMMIT WORK.
+ENDEXEC.`},
 ];
 
 structureType(cases, new ExecSQL());

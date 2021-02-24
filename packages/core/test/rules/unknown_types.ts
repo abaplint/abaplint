@@ -1184,4 +1184,22 @@ WRITE ref->name.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("constant referenced via chain", () => {
+    const abap = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS:
+      BEGIN OF gc_struct,
+        val_a TYPE c LENGTH 1 VALUE 'A',
+      END OF gc_struct.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+ENDCLASS.
+CONSTANTS:
+  gc_2 TYPE c LENGTH 1 VALUE lcl_class=>gc_struct-val_a.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });

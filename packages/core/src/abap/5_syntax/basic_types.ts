@@ -513,12 +513,19 @@ export class BasicTypes {
       }
       const children = expr.getChildren();
 
-      const attr = children[2]?.getFirstToken().getStr();
+      const token = children[2]?.getFirstToken();
+      const attr = token.getStr();
       const c = new ObjectOriented(this.scope).searchConstantName(obj, attr);
       if (c instanceof ClassConstant) {
+        this.scope.addReference(token, c, ReferenceType.DataReadReference, this.filename);
         const val = c.getValue();
         if (typeof val === "string") {
           return val;
+        } else if (typeof val === "object" && children[4]) {
+          const name = children[4].getFirstToken().getStr();
+          if (val[name] !== undefined) {
+            return val[name];
+          }
         }
         return undefined;
       }

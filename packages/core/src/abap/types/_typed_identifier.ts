@@ -21,14 +21,14 @@ export const enum IdentifierMeta {
 export class TypedIdentifier extends Identifier {
   private readonly type: AbstractType;
   private readonly meta: readonly IdentifierMeta[];
-  private readonly value: string | object | undefined;
+  private readonly value: string | {[index: string]: string} | undefined;
 
   public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: readonly IdentifierMeta[]): TypedIdentifier {
     return new TypedIdentifier(id.getToken(), id.getFilename(), type, meta);
   }
 
   public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType,
-                     meta?: readonly IdentifierMeta[], value?: string | object) {
+                     meta?: readonly IdentifierMeta[], value?: string | {[index: string]: string}) {
     super(token, filename);
 
     if (type instanceof TypedIdentifier) {
