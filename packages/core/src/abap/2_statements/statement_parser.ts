@@ -102,8 +102,8 @@ export class StatementParser {
       w.statements = res.statements;
       if (res.containsUnknown === true) {
         this.lazyUnknown(w);
-        this.nativeSQL(w);
       }
+      this.nativeSQL(w);
     }
 
     return wa.map(w => w.toResult());
