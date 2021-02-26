@@ -90,18 +90,18 @@ export class UnusedVariables implements IRule {
   }
 
   private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
-    let ret: Issue[] = [];
+    const ret: Issue[] = [];
 
     if (node.getIdentifier().stype === ScopeType.OpenSQL) {
       return [];
     }
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
-      ret = ret.concat(this.checkNode(node, obj));
+      ret.push(...this.checkNode(node, obj));
     }
 
     for (const c of node.getChildren()) {
-      ret = ret.concat(this.traverse(c, obj));
+      ret.push(...this.traverse(c, obj));
     }
 
     return ret;

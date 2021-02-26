@@ -78,9 +78,9 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-in
 
     const scopes = this.findScopeCandidates(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
 
-    let ret: Issue[] = [];
+    const ret: Issue[] = [];
     for (const s of scopes) {
-      ret = ret.concat(this.analyzeScope(s, obj));
+      ret.push(...this.analyzeScope(s, obj));
     }
 
     return ret;

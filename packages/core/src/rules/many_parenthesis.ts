@@ -43,7 +43,7 @@ ENDIF.
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Issue[] = [];
+    const issues: Issue[] = [];
 
     const structure = file.getStructure();
     if (structure === undefined) {
@@ -51,7 +51,7 @@ ENDIF.
     }
 
     for (const cond of structure.findAllExpressions(Expressions.Cond)) {
-      issues = issues.concat(this.analyze(file, cond));
+      issues.push(...this.analyze(file, cond));
     }
 
     for (const sub of structure.findAllExpressions(Expressions.CondSub)) {
