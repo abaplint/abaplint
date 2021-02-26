@@ -1202,4 +1202,11 @@ CONSTANTS:
     expect(issues.length).to.equals(0);
   });
 
+  it("dynamic should become void", () => {
+    const abap = `ASSIGN ('BLAH') TO FIELD-SYMBOL(<lv_fval>).`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });

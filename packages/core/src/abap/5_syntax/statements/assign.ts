@@ -4,12 +4,13 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
 import {Dynamic} from "../expressions/dynamic";
+import {VoidType} from "../../types/basic";
 
 export class Assign {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const sources = node.findDirectExpressions(Expressions.Source);
     const firstSource = sources[0];
-    const sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : undefined;
+    const sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : new VoidType("DynamicAssign");
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, scope, filename);
