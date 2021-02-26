@@ -49,7 +49,7 @@ Regexes are case-insensitive.`,
   }
 
   public runParsed(file: ABAPFile): Issue[] {
-    let ret: Issue[] = [];
+    const ret: Issue[] = [];
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
     }
@@ -61,13 +61,13 @@ Regexes are case-insensitive.`,
 
     // inside METHOD, FORM, FUNCTION MODULE
     for (const node of stru.findAllStructures(Structures.Form)) {
-      ret = ret.concat(this.checkLocals(node, file));
+      ret.push(...this.checkLocals(node, file));
     }
     for (const node of stru.findAllStructures(Structures.Method)) {
-      ret = ret.concat(this.checkLocals(node, file));
+      ret.push(...this.checkLocals(node, file));
     }
     for (const node of stru.findAllStructures(Structures.FunctionModule)) {
-      ret = ret.concat(this.checkLocals(node, file));
+      ret.push(...this.checkLocals(node, file));
     }
 
     return ret;

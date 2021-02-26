@@ -45,14 +45,14 @@ export class MethodParameters implements IMethodParameters {
   }
 
   public getAll(): TypedIdentifier[] {
-    let ret: TypedIdentifier[] = [];
+    const ret: TypedIdentifier[] = [];
     const returning = this.getReturning();
     if (returning) {
       ret.push(returning);
     }
-    ret = ret.concat(this.getImporting());
-    ret = ret.concat(this.getExporting());
-    ret = ret.concat(this.getChanging());
+    ret.push(...this.getImporting());
+    ret.push(...this.getExporting());
+    ret.push(...this.getChanging());
     return ret;
   }
 

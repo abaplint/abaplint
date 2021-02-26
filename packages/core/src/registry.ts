@@ -269,7 +269,7 @@ export class Registry implements IRegistry {
     this.issues = [];
     for (const o of this.getObjects()) {
       this.parsePrivate(o);
-      this.issues = this.issues.concat(o.getParsingIssues());
+      this.issues.push(...o.getParsingIssues());
     }
     new FindGlobalDefinitions(this).run();
 
@@ -288,7 +288,7 @@ export class Registry implements IRegistry {
     for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
-      this.issues = this.issues.concat(o.getParsingIssues());
+      this.issues.push(...o.getParsingIssues());
     }
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
