@@ -321,7 +321,7 @@ export class Registry implements IRegistry {
 
   private runRules(input?: IRunInput, iobj?: IObject): readonly Issue[] {
     const rulePerformance: {[index: string]: number} = {};
-    let issues = this.issues.slice(0);
+    const issues = this.issues.slice(0);
 
     const objects = iobj ? [iobj] : this.getObjects();
     const rules = this.conf.getEnabledRules();
@@ -355,7 +355,7 @@ export class Registry implements IRegistry {
       input?.progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
       for (const rule of rules) {
         const before = Date.now();
-        issues = issues.concat(rule.run(obj));
+        issues.push(...rule.run(obj));
         const runtime = Date.now() - before;
         rulePerformance[rule.getMetadata().key] = rulePerformance[rule.getMetadata().key] + runtime;
       }
