@@ -3708,6 +3708,22 @@ INCLUDE lzfugr1f01.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FORM name with dashes not found", () => {
+    const abap = `PERFORM foo-bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("foo-bar");
+  });
+
+  it("FORM name with dashes found", () => {
+    const abap = `
+    FORM foo-bar.
+    ENDFORM.
+    PERFORM foo-bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
