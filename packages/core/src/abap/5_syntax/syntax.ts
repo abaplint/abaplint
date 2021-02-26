@@ -177,11 +177,14 @@ export class SyntaxLogic {
 
     if (this.object instanceof Program
         || this.object instanceof FunctionGroup) {
+
+      for (const f of this.object.getSequencedFiles()) {
+        // add FORM defintions to the _global object scope
+        this.helpers.proc.addAllFormDefinitions(f, this.object);
+      }
+
       const main = this.object.getMainABAPFile();
       if (main !== undefined) {
-        // add FORM defintions to the _global object scope
-        this.helpers.proc.addAllFormDefinitions(main, this.object);
-
         let stype = ScopeType.Program;
         if (this.object instanceof FunctionGroup) {
           stype = ScopeType.FunctionGroup;

@@ -3546,6 +3546,78 @@ DATA date TYPE d.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("function group with local FORM", () => {
+    const topabap = `FUNCTION-POOL ZFUGR1.`;
+    const topxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>LZFUGR1TOP</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>I</SUBC>
+        <APPL>S</APPL>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const saplabap = `INCLUDE LZFUGR1TOP.
+    INCLUDE LZFUGR1UXX.`;
+    const saplxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>SAPLZFUGR1</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>F</SUBC>
+        <APPL>S</APPL>
+        <RLOAD>E</RLOAD>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const fugrxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <AREAT>test</AREAT>
+       <INCLUDES>
+        <SOBJ_NAME>LZFUGR1TOP</SOBJ_NAME>
+        <SOBJ_NAME>SAPLZFUGR1</SOBJ_NAME>
+       </INCLUDES>
+       <FUNCTIONS>
+        <item>
+         <FUNCNAME>ZFUGR1_FM</FUNCNAME>
+         <SHORT_TEXT>test</SHORT_TEXT>
+        </item>
+       </FUNCTIONS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const functionabap = `FUNCTION zfugr1_fm.
+      PERFORM local_form.
+    ENDFUNCTION.
+    FORM local_form.
+    ENDFORM.`;
+    const issues = runMulti([
+      {filename: "zfugr1.fugr.lzfugr1top.abap", contents: topabap},
+      {filename: "zfugr1.fugr.lzfugr1top.xml", contents: topxml},
+      {filename: "zfugr1.fugr.saplzfugr1.abap", contents: saplabap},
+      {filename: "zfugr1.fugr.saplzfugr1.xml", contents: saplxml},
+      {filename: "zfugr1.fugr.xml", contents: fugrxml},
+      {filename: "zfugr1.fugr.zfugr1_fm.abap", contents: functionabap}]);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
