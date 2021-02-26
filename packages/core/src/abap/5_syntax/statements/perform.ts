@@ -46,7 +46,7 @@ export class Perform {
       return; // it might be a dynamic call
     }
 
-    const name = expr.getFirstToken().getStr();
+    const name = expr.concatTokens();
 
     const found = scope.findFormDefinition(name);
     if (found === undefined) {

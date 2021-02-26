@@ -55,7 +55,7 @@ export class MessageClass extends AbstractObject {
       return;
     }
     for (const msg of xmlToArray(t100.T100)) {
-      this.parsedMessages.push(new Message(msg.MSGNR?._text, msg.TEXT ? msg.TEXT._text : ""));
+      this.parsedMessages.push(new Message(msg.MSGNR?._text, msg.TEXT?._text));
     }
   }
 

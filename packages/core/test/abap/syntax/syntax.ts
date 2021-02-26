@@ -3618,6 +3618,112 @@ DATA date TYPE d.`;
     expect(issues.length).to.equals(0);
   });
 
+  it.skip("FUGR include INCLUDEd in PROG", () => {
+    const topabap = `FUNCTION-POOL ZFUGR1.`;
+    const topxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>LZFUGR1TOP</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>I</SUBC>
+        <APPL>S</APPL>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const saplabap = `  INCLUDE lzfugr1top.
+  INCLUDE lzfugr1uxx.
+INCLUDE lzfugr1f01.`;
+    const saplxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>SAPLZFUGR1</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>F</SUBC>
+        <APPL>S</APPL>
+        <RLOAD>E</RLOAD>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const fugrxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <AREAT>test</AREAT>
+       <INCLUDES>
+        <SOBJ_NAME>LZFUGR1F01</SOBJ_NAME>
+        <SOBJ_NAME>LZFUGR1TOP</SOBJ_NAME>
+        <SOBJ_NAME>SAPLZFUGR1</SOBJ_NAME>
+       </INCLUDES>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const f01abap = `FORM moo. ENDFORM.`;
+    const f01xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>LZFUGR1F01</NAME>
+        <SUBC>I</SUBC>
+        <APPL>S</APPL>
+        <RLOAD>E</RLOAD>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+       <TPOOL>
+        <item>
+         <ID>R</ID>
+         <ENTRY>Include LZFUGR1F01</ENTRY>
+         <LENGTH>18</LENGTH>
+        </item>
+       </TPOOL>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const progabap = `REPORT zprog.
+PERFORM moo.
+INCLUDE lzfugr1f01.`;
+    const issues = runMulti([
+      {filename: "zfugr1.fugr.lzfugr1top.abap", contents: topabap},
+      {filename: "zfugr1.fugr.lzfugr1top.xml", contents: topxml},
+      {filename: "zfugr1.fugr.saplzfugr1.abap", contents: saplabap},
+      {filename: "zfugr1.fugr.saplzfugr1.xml", contents: saplxml},
+      {filename: "zfugr1.fugr.xml", contents: fugrxml},
+      {filename: "zfugr1.fugr.lzfugr1f01.abap", contents: f01abap},
+      {filename: "zfugr1.fugr.lzfugr1f01.xml", contents: f01xml},
+      {filename: "zprog.prog.abap", contents: progabap}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FORM name with dashes not found", () => {
+    const abap = `PERFORM foo-bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("foo-bar");
+  });
+
+  it("FORM name with dashes found", () => {
+    const abap = `
+    FORM foo-bar.
+    ENDFORM.
+    PERFORM foo-bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

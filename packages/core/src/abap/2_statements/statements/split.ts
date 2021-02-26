@@ -8,7 +8,7 @@ export class Split implements IStatement {
   public getMatcher(): IStatementRunnable {
     const mode = seq("IN", alt("CHARACTER", "BYTE"), "MODE");
 
-    const into = altPrio(seq("TABLE", Target, opt(mode)), plus(Target));
+    const into = altPrio(seq("TABLE", Target, opt(mode)), seq(plus(Target), opt(mode)));
 
     const ret = seq("SPLIT", Source, "AT", Source, "INTO", into);
 
