@@ -4,7 +4,13 @@ export class Message {
 
   public constructor(num: string, msg: string) {
     this.num = num;
+    if (this.num === undefined) {
+      this.num = "";
+    }
     this.msg = msg;
+    if (this.msg === undefined) {
+      this.msg = "";
+    }
   }
 
   public getNumber(): string {

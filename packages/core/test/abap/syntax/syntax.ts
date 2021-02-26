@@ -3618,7 +3618,7 @@ DATA date TYPE d.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("FUGR include INCLUDEd in PROG", () => {
+  it.skip("FUGR include INCLUDEd in PROG", () => {
     const topabap = `FUNCTION-POOL ZFUGR1.`;
     const topxml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0">
