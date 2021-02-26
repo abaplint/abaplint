@@ -65,6 +65,11 @@ ENDLOOP.`, cnt: 0},
 LOOP AT SCREEN INTO DATA(wa).
   MODIFY SCREEN FROM wa.
 ENDLOOP.`, cnt: 0},
+  {abap: `
+DATA foo TYPE string.
+DATA bar1 TYPE string.
+DATA bar2 TYPE string.
+SPLIT foo AT 'i' INTO bar1 bar2 IN CHARACTER MODE.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
