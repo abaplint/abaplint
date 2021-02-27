@@ -27,7 +27,7 @@ export class ABAPParser {
 
   // files is input for a single object
   public parse(files: readonly IFile[]): IABAPParserResult {
-    let issues: Issue[] = [];
+    const issues: Issue[] = [];
     const output: ABAPFile[] = [];
 
     const start = Date.now();
@@ -51,7 +51,7 @@ export class ABAPParser {
       const info = new ABAPFileInformation(result.node, f.file.getFilename());
 
       output.push(new ABAPFile(f.file, f.tokens, f.statements, result.node, info));
-      issues = issues.concat(result.issues);
+      issues.push(...result.issues);
     }
     const structuresRuntime = Date.now() - b3;
 

@@ -269,7 +269,7 @@ export class Registry implements IRegistry {
     this.issues = [];
     for (const o of this.getObjects()) {
       this.parsePrivate(o);
-      this.issues = this.issues.concat(o.getParsingIssues());
+      this.issues.push(...o.getParsingIssues());
     }
     new FindGlobalDefinitions(this).run();
 
@@ -288,7 +288,7 @@ export class Registry implements IRegistry {
     for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
-      this.issues = this.issues.concat(o.getParsingIssues());
+      this.issues.push(...o.getParsingIssues());
     }
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
@@ -321,7 +321,7 @@ export class Registry implements IRegistry {
 
   private runRules(input?: IRunInput, iobj?: IObject): readonly Issue[] {
     const rulePerformance: {[index: string]: number} = {};
-    let issues = this.issues.slice(0);
+    const issues = this.issues.slice(0);
 
     const objects = iobj ? [iobj] : this.getObjects();
     const rules = this.conf.getEnabledRules();
@@ -355,7 +355,7 @@ export class Registry implements IRegistry {
       input?.progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
       for (const rule of rules) {
         const before = Date.now();
-        issues = issues.concat(rule.run(obj));
+        issues.push(...rule.run(obj));
         const runtime = Date.now() - before;
         rulePerformance[rule.getMetadata().key] = rulePerformance[rule.getMetadata().key] + runtime;
       }

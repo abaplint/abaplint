@@ -41,19 +41,19 @@ export class BeginEndNames extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let output: Issue[] = [];
+    const output: Issue[] = [];
 
     const struc = file.getStructure();
     if (struc === undefined) {
       return [];
     }
 
-    output = output.concat(this.test(struc, Structures.Data, Statements.DataBegin, Statements.DataEnd, file));
-    output = output.concat(this.test(struc, Structures.ClassData, Statements.ClassDataBegin, Statements.ClassDataEnd, file));
-    output = output.concat(this.test(struc, Structures.Constants, Statements.ConstantBegin, Statements.ConstantEnd, file));
-    output = output.concat(this.test(struc, Structures.Statics, Statements.StaticBegin, Statements.StaticEnd, file));
-    output = output.concat(this.test(struc, Structures.TypeEnum, Statements.TypeEnumBegin, Statements.TypeEnumEnd, file));
-    output = output.concat(this.test(struc, Structures.Types, Statements.TypeBegin, Statements.TypeEnd, file));
+    output.push(...this.test(struc, Structures.Data, Statements.DataBegin, Statements.DataEnd, file));
+    output.push(...this.test(struc, Structures.ClassData, Statements.ClassDataBegin, Statements.ClassDataEnd, file));
+    output.push(...this.test(struc, Structures.Constants, Statements.ConstantBegin, Statements.ConstantEnd, file));
+    output.push(...this.test(struc, Structures.Statics, Statements.StaticBegin, Statements.StaticEnd, file));
+    output.push(...this.test(struc, Structures.TypeEnum, Statements.TypeEnumBegin, Statements.TypeEnumEnd, file));
+    output.push(...this.test(struc, Structures.Types, Statements.TypeBegin, Statements.TypeEnd, file));
 
     return output;
   }

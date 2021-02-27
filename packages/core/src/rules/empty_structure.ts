@@ -60,24 +60,24 @@ export class EmptyStructure extends ABAPRule {
       return [];
     }
 
-    let candidates: StructureNode[] = [];
+    const candidates: StructureNode[] = [];
     if (this.getConfig().loop === true) {
-      candidates = candidates.concat(stru.findAllStructures(Structures.Loop));
+      candidates.push(...stru.findAllStructures(Structures.Loop));
     }
     if (this.getConfig().while === true) {
-      candidates = candidates.concat(stru.findAllStructures(Structures.While));
+      candidates.push(...stru.findAllStructures(Structures.While));
     }
     if (this.getConfig().case === true) {
-      candidates = candidates.concat(stru.findAllStructures(Structures.Case));
+      candidates.push(...stru.findAllStructures(Structures.Case));
     }
     if (this.getConfig().select === true) {
-      candidates = candidates.concat(stru.findAllStructures(Structures.Select));
+      candidates.push(...stru.findAllStructures(Structures.Select));
     }
     if (this.getConfig().do === true) {
-      candidates = candidates.concat(stru.findAllStructures(Structures.Do));
+      candidates.push(...stru.findAllStructures(Structures.Do));
     }
     if (this.getConfig().at === true) {
-      candidates = candidates.concat(stru.findAllStructures(Structures.At));
+      candidates.push(...stru.findAllStructures(Structures.At));
     }
 
     for (const l of candidates) {

@@ -65,10 +65,10 @@ class Graph {
   }
 
   public findTop(filename: string): IVertex[] {
-    let ret: IVertex[] = [];
+    const ret: IVertex[] = [];
     for (const e of this.edges) {
       if (e.from === filename) {
-        ret = ret.concat(this.findTop(e.to));
+        ret.push(...this.findTop(e.to));
       }
     }
     if (ret.length === 0) {
