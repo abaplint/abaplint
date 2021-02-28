@@ -55,7 +55,7 @@ export class UnknownTypes implements IRule {
 /////////////////////
 
   private traverse(node: ISpaghettiScopeNode): Issue[] {
-    let ret: Issue[] = [];
+    const ret: Issue[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.ClassImplementation) {
       const vars = node.getData().vars;
@@ -88,7 +88,7 @@ export class UnknownTypes implements IRule {
     }
 
     for (const n of node.getChildren()) {
-      ret = ret.concat(this.traverse(n));
+      ret.push(...this.traverse(n));
     }
 
     return ret;

@@ -56,7 +56,7 @@ export class CheckDDIC implements IRule {
   }
 
   private check(found: AbstractType | undefined, obj: IObject): Issue[] {
-    let ret: Issue[] = [];
+    const ret: Issue[] = [];
 
     if (found instanceof UnknownType) {
       const position = new Position(1, 1);
@@ -65,10 +65,10 @@ export class CheckDDIC implements IRule {
     } else if (found instanceof StructureType) {
 // assumption: no circular types
       for (const c of found.getComponents()) {
-        ret = ret.concat(this.check(c.type instanceof TypedIdentifier ? c.type.getType() : c.type, obj));
+        ret.push(...this.check(c.type instanceof TypedIdentifier ? c.type.getType() : c.type, obj));
       }
     } else if (found instanceof TableType) {
-      ret = ret.concat(this.check(found.getRowType(), obj));
+      ret.push(...this.check(found.getRowType(), obj));
     }
 // todo, reference types?
 
