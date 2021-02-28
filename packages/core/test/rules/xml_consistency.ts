@@ -135,6 +135,12 @@ describe("xml consistency", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("parser error, DTEL", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", `parser error`));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(1);
+  });
+
   it("parser error, xml ok, abap not", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml)).addFile(new MemoryFile("zcl_klaus.clas.abap", "parser error"));
     const issues = await run(reg);
