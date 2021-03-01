@@ -3,12 +3,12 @@ name: Regression
 on:
   push:
     branches-ignore:
-      - 'master'
+      - 'main'
 
 jobs:
   regression:
     # Check if the event is not triggered by a fork, this is stupid but its github
-    if: github.ref != 'refs/heads/master'
+    if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
         cp .github/regression/run.js ../../run.js
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
         rm -rf packages/cli/build/ && rm -rf packages/core/build/
-        git checkout -f master
+        git checkout -f main
         git reset --hard
         git status
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before

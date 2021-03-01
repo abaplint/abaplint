@@ -21,7 +21,7 @@ jobs:
     - name: npm run web.rules
       run: npm run web.rules
     - name: deploy schema.abaplint.org
-      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
       env:
         MY_TOKEN: ${{ secrets.MY_TOKEN }}
       run: |
@@ -40,7 +40,7 @@ jobs:
         git diff-index --quiet HEAD || git commit -m "Automatic update"
         git push -q https://$MY_TOKEN@github.com/abaplint/schema.abaplint.org.git > /dev/null 2>&1
     - name: deploy rules.abaplint.org
-      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
       env:
         MY_TOKEN: ${{ secrets.MY_TOKEN }}
       run: |

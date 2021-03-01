@@ -19,7 +19,7 @@ jobs:
     - name: npm run web.playground
       run: npm run web.playground
     - name: deploy playground.abaplint.org
-      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
       env:
         MY_TOKEN: ${{ secrets.MY_TOKEN }}
       run: |

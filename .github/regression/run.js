@@ -60,7 +60,7 @@ for (let name in map) {
       continue;
     }
     let urlFile = i.file.split("/").splice(1).join("/");
-    let url = "https://github.com/" + name + "/blob/master/" + urlFile + "#L" + i.start.row;
+    let url = "https://github.com/" + name + "/blob/main/" + urlFile + "#L" + i.start.row;
     issues += "[`" + i.file + ":" + i.start.row + "`](" + url + "): " + i.description + "(" + i.key + ")\n"
   }
 }
