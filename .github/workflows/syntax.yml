@@ -19,7 +19,7 @@ jobs:
     - name: npm run web.syntax
       run: npm run web.syntax
     - name: deploy syntax.abaplint.org
-      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
       env:
         MY_TOKEN: ${{ secrets.MY_TOKEN }}
       run: |
