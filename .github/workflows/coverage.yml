@@ -19,7 +19,7 @@ jobs:
         cd core
         npm run coverage
     - uses: codecov/codecov-action@v1
-      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./packages/core/coverage/coverage-final.json
