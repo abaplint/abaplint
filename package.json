@@ -28,13 +28,13 @@
     "license": "MIT",
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^4.15.2",
-        "@typescript-eslint/parser": "^4.15.2",
+        "@typescript-eslint/eslint-plugin": "^4.16.1",
+        "@typescript-eslint/parser": "^4.16.1",
         "eslint": "^7.21.0",
         "eslint-plugin-import": "^2.22.1",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "typescript": "^4.2.2",
-        "chai": "^4.3.0",
+        "chai": "^4.3.1",
         "xml-js": "^1.6.11",
         "@aduh95/viz.js": "^3.3.3",
         "vscode-languageserver-types": "^3.16.0"

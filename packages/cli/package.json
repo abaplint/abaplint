@@ -45,7 +45,7 @@
         "@types/mocha": "^8.2.1",
         "@types/node": "^14.14.31",
         "@types/progress": "^2.0.3",
-        "chai": "^4.3.0",
+        "chai": "^4.3.1",
         "eslint": "^7.21.0",
         "glob": "^7.1.6",
         "json5": "^2.2.0",
