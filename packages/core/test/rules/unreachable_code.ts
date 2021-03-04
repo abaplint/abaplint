@@ -12,6 +12,12 @@ const tests = [
           ENDIF.
           WRITE 'hello'.`, cnt: 0},
 
+  {abap: `FORM bar.
+  RETURN.
+  WRITE 2.
+  WRITE 2.
+ENDFORM.`, cnt: 1},
+
   {abap: `IF foo = bar.
             RETURN. " comment
           ENDIF.
