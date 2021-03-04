@@ -30,10 +30,6 @@ export class MethodOverwritesBuiltIn extends ABAPRule {
     this.conf = conf;
   }
 
-  private getDescription(): string {
-    return `Method name overwrites built-in SAP function name`;
-  }
-
   public runParsed(file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
     let methods: InfoMethodDefinition[] = [];
@@ -48,7 +44,8 @@ export class MethodOverwritesBuiltIn extends ABAPRule {
     const builtIn = new BuiltIn();
     for (const method of methods) {
       if (builtIn.searchBuiltin(method.name.toUpperCase())) {
-        issues.push(Issue.atIdentifier(method.identifier, this.getDescription(), this.getMetadata().key));
+        const message = `Method name "${method.name}" overwrites built-in SAP function name`;
+        issues.push(Issue.atIdentifier(method.identifier, message, this.getMetadata().key));
       }
     }
 
