@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
+import {ObjectReferenceType, VoidType, DataReference, UnknownType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
@@ -39,7 +39,9 @@ export class NewObject {
     if (ret === undefined) {
       const basic = new BasicTypes(filename, scope);
       const type = basic.resolveTypeName(typeExpr);
-      if (type && !(type instanceof VoidType)) {
+      if (type instanceof UnknownType) {
+        ret = type;
+      } else if (type && !(type instanceof VoidType)) {
         ret = new DataReference(type);
       } else if (type instanceof VoidType) {
         ret = type;
@@ -54,6 +56,10 @@ export class NewObject {
       for (const s of node.findAllExpressions(Expressions.Source)) {
         new Source().runSyntax(s, scope, filename, ret);
       }
+    }
+
+    if (ret instanceof UnknownType && scope.getDDIC().inErrorNamespace(typeName) === true) {
+      throw new Error("Class or type \"" + typeName + "\" not found");
     }
 
     return ret;
