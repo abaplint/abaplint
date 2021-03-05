@@ -48,7 +48,8 @@ SELECT * FROM tab INTO TABLE @res WHERE field = @val.`,
     }
 
     for (const s of file.getStatements()) {
-      if (s.get() instanceof Statements.Select) {
+      if (s.get() instanceof Statements.Select
+          || s.get() instanceof Statements.SelectLoop) {
         const str = s.concatTokens().toUpperCase();
 // this is not completely correct and does not catch all, but okay for now
 // todo: replace with logic from "else if" branch below, when/if it proves to work
@@ -76,6 +77,7 @@ SELECT * FROM tab INTO TABLE @res WHERE field = @val.`,
             const message = "Escape SQL host variables";
             const issue = Issue.atToken(file, first.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
             issues.push(issue);
+            break;
           }
         }
       }

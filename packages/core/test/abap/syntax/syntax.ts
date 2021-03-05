@@ -3724,6 +3724,31 @@ INCLUDE lzfugr1f01.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("NEW class not found", () => {
+    const abap = `NEW zcl_bar( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("NEW class not found, method call", () => {
+    const abap = `NEW zcl_bar( )->method( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("zcl_bar");
+  });
+
+  it("NEW, voided", () => {
+    const abap = `NEW cl_bar( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("NEW, voided, method call", () => {
+    const abap = `NEW cl_bar( )->moo( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
