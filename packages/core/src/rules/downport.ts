@@ -18,6 +18,7 @@ import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {VoidType} from "../abap/types/basic";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -329,6 +330,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       const found = spag.findVariable(name);
       if (found === undefined) {
         continue;
+      } else if (found.getType() instanceof VoidType) {
+        return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
 
@@ -359,6 +362,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       const found = spag.findVariable(name);
       if (found === undefined) {
         continue;
+      } else if (found.getType() instanceof VoidType) {
+        return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
 

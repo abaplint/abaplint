@@ -38,6 +38,20 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("try downport voided value", async () => {
+    const issues = await findIssues("DATA(bar) = VALUE asdf( ).");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("try downporting voided LOOP", async () => {
+    const abap = `
+  DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  LOOP AT lt_rows ASSIGNING FIELD-SYMBOL(<lv_row>).
+  ENDLOOP.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
   it("Use CREATE OBJECT instead of NEW", async () => {
     const issues = await findIssues("foo = NEW #( ).");
     expect(issues.length).to.equal(1);
