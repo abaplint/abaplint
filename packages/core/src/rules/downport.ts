@@ -255,20 +255,20 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
 
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
       let concat = "";
       for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
         concat += b.concatTokens() + " ";
         if (b.get() instanceof Expressions.FieldAssignment) {
-          body += uniqueName + "-" + concat.trim() + ".\n";
+          body += indentation + uniqueName + "-" + concat.trim() + ".\n";
           concat = "";
         }
       }
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1) +
-        `${body.trim()}\n` +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+        body +
+        indentation;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
