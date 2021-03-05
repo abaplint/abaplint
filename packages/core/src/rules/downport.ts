@@ -34,8 +34,7 @@ export class Downport implements IRule {
       key: "downport",
       title: "Downport statement",
       shortDescription: `Experimental downport functionality`,
-      extendedInformation: `
-Much like the 'commented_code' rule this rule loops through unknown statements and tries parsing with
+      extendedInformation: `Much like the 'commented_code' rule this rule loops through unknown statements and tries parsing with
 a higher level language version. If successful, various rules are applied to downport the statement.
 Target downport version is always v702, thus rule is only enabled if target version is v702.
 
