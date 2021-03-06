@@ -20,8 +20,8 @@ export class NamesNoDash extends ABAPRule {
     return {
       key: "names_no_dash",
       title: "No dashes in FORM and DATA names",
-      shortDescription: `Checks for a "-" in FORM and DATA names`,
-      tags: [RuleTag.SingleFile],
+      shortDescription: `Checks for a "-" in FORM, DATA, PARAMETER and SELECT-OPTION names`,
+      tags: [RuleTag.SingleFile, RuleTag.Naming],
     };
   }
 
@@ -47,6 +47,28 @@ export class NamesNoDash extends ABAPRule {
 
     for (const form of struc.findAllStatements(Statements.Form)) {
       const expr = form.findFirstExpression(FormName);
+      for (const token of expr!.getTokens()) {
+        if (token instanceof Dash || token instanceof DashW) {
+          const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+          break;
+        }
+      }
+    }
+
+    for (const form of struc.findAllStatements(Statements.Parameter)) {
+      const expr = form.findFirstExpression(Expressions.FieldSub);
+      for (const token of expr!.getTokens()) {
+        if (token instanceof Dash || token instanceof DashW) {
+          const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+          break;
+        }
+      }
+    }
+
+    for (const form of struc.findAllStatements(Statements.SelectOption)) {
+      const expr = form.findFirstExpression(Expressions.FieldSub);
       for (const token of expr!.getTokens()) {
         if (token instanceof Dash || token instanceof DashW) {
           const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
