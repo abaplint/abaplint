@@ -27,6 +27,7 @@ const tests = [
   "SELECT-OPTIONS s_field FOR table-field DEFAULT 'A' OPTION EQ SIGN E.",
   "select-options date for <fs_booking>-date.",
   "SELECT-OPTIONS s_ghi FOR gs_dummy-ghi MODIF ID rt*.",
+  "SELECT-OPTIONS foo-bar FOR foobar-asdf.",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);

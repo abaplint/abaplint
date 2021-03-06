@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, seq, opt, alt, per} from "../combi";
-import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource1} from "../expressions";
+import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource1, FieldSub} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -41,7 +41,7 @@ export class SelectOption implements IStatement {
                         "OBLIGATORY");
 
     const ret = seq("SELECT-OPTIONS",
-                    Field,
+                    FieldSub,
                     "FOR",
                     alt(FieldChain, Dynamic),
                     opt(options));

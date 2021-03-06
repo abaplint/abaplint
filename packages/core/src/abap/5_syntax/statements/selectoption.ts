@@ -8,7 +8,7 @@ import {Dynamic} from "../expressions/dynamic";
 
 export class SelectOption {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
-    const nameToken = node.findFirstExpression(Expressions.Field)?.getFirstToken();
+    const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
 
     for(const d of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, scope, filename);
