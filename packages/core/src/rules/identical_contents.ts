@@ -16,12 +16,25 @@ export class IdenticalContents extends ABAPRule {
     return {
       key: "identical_contents",
       title: "Identical contents",
-      shortDescription: `Find identical contents in IFs
+      shortDescription: `Find identical contents in blocks inside IFs, both in the beginning and in the end.
 
 Prerequsites: code is pretty printed with identical cAsE
 
 Chained statments are ignored`,
       tags: [RuleTag.SingleFile],
+      badExample: `IF foo = bar.
+  WRITE 'bar'.
+  WRITE 'world'.
+ELSE.
+  WRITE 'foo'.
+  WRITE 'world'.
+ENDIF.`,
+      goodExample: `IF foo = bar.
+  WRITE 'bar'.
+ELSE.
+  WRITE 'foo'.
+ENDIF.
+WRITE 'world'.`,
     };
   }
 
