@@ -22,6 +22,8 @@ export class NamesNoDash extends ABAPRule {
       title: "No dashes in FORM and DATA names",
       shortDescription: `Checks for a "-" in FORM, DATA, PARAMETER and SELECT-OPTION names`,
       tags: [RuleTag.SingleFile, RuleTag.Naming],
+      badExample: "DATA foo-bar TYPE i.",
+      goodExample: "DATA foobar TYPE i.",
     };
   }
 
