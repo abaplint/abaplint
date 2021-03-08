@@ -1661,7 +1661,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find identical contents in IFs\n\nPrerequsites: code is pretty printed with identical cAsE\n\nChained statments are ignored\nTags: SingleFile\nhttps://rules.abaplint.org/identical_contents"
+              "description": "Find identical contents in blocks inside IFs, both in the beginning and in the end.\n\nPrerequsites: code is pretty printed with identical cAsE\n\nChained statments are ignored\nTags: SingleFile\nhttps://rules.abaplint.org/identical_contents"
             },
             "identical_form_names": {
               "anyOf": [
@@ -1969,7 +1969,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for a \"-\" in FORM and DATA names\nTags: SingleFile\nhttps://rules.abaplint.org/names_no_dash"
+              "description": "Checks for a \"-\" in FORM, DATA, PARAMETER and SELECT-OPTION names\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/names_no_dash"
             },
             "nesting": {
               "anyOf": [

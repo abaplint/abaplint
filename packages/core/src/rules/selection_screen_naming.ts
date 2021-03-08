@@ -4,7 +4,7 @@ import {NamingRuleConfig} from "./_naming_rule_config";
 import {Parameter, SelectOption} from "../abap/2_statements/statements";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {NameValidator} from "../utils/name_validator";
-import {FieldSub, Field} from "../abap/2_statements/expressions";
+import {FieldSub} from "../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
@@ -88,7 +88,7 @@ export class SelectionScreenNaming extends ABAPRule {
     if (statNode.get() instanceof Parameter) {
       return statNode.findFirstExpression(FieldSub);
     } else if (statNode.get() instanceof SelectOption) {
-      return statNode.findFirstExpression(Field);
+      return statNode.findFirstExpression(FieldSub);
     } else {
       return undefined;
     }

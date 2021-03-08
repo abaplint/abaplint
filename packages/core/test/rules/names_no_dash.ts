@@ -9,6 +9,8 @@ const tests = [
   {abap: "jasdhasdf", cnt: 0},
   {abap: "DATA foobar TYPE c LENGTH 1.", cnt: 0},
   {abap: "DATA foo-bar TYPE c LENGTH 1.", cnt: 1},
+  {abap: "SELECT-OPTIONS foo-bar FOR foobar-asdf.", cnt: 1},
+  {abap: "PARAMETERS moo-boo LIKE foo-bar.", cnt: 1},
 ];
 
 testRule(tests, NamesNoDash);

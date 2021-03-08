@@ -927,4 +927,20 @@ START-OF-SELECTION.
     expect(count).to.equal(1);
   });
 
+  it("hover, static modifier", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA: BEGIN OF bar,
+                  field TYPE string,
+                END OF bar.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 26));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("static");
+  });
+
 });

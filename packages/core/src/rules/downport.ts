@@ -34,8 +34,7 @@ export class Downport implements IRule {
       key: "downport",
       title: "Downport statement",
       shortDescription: `Experimental downport functionality`,
-      extendedInformation: `
-Much like the 'commented_code' rule this rule loops through unknown statements and tries parsing with
+      extendedInformation: `Much like the 'commented_code' rule this rule loops through unknown statements and tries parsing with
 a higher level language version. If successful, various rules are applied to downport the statement.
 Target downport version is always v702, thus rule is only enabled if target version is v702.
 
@@ -255,20 +254,20 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
 
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
       let concat = "";
       for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
         concat += b.concatTokens() + " ";
         if (b.get() instanceof Expressions.FieldAssignment) {
-          body += uniqueName + "-" + concat.trim() + ".\n";
+          body += indentation + uniqueName + "-" + concat.trim() + ".\n";
           concat = "";
         }
       }
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1) +
-        `${body.trim()}\n` +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+        body +
+        indentation;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
