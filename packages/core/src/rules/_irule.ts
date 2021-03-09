@@ -10,6 +10,7 @@ export enum RuleTag {
   Whitespace = "Whitespace",
   Naming = "Naming",
   Quickfix = "Quickfix",
+  Performance = "Performance",
   Syntax = "Syntax",
   Security = "Security",
   /** Relevant wrt the official SAP ABAP style guide*/

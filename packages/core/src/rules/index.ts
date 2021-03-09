@@ -93,6 +93,7 @@ export * from "./reduce_string_templates";
 export * from "./release_idoc";
 export * from "./remove_descriptions";
 export * from "./rfc_error_handling";
+export * from "./select_performance";
 export * from "./selection_screen_naming";
 export * from "./sequential_blank";
 export * from "./short_case";
