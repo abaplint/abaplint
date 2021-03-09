@@ -58,6 +58,9 @@ export class DbOperationInLoop extends ABAPRule {
         found = l.findFirstStatement(Statements.DeleteDatabase);
       }
       if (found === undefined) {
+        found = l.findFirstStatement(Statements.UpdateDatabase);
+      }
+      if (found === undefined) {
         found = l.findFirstStatement(Statements.ModifyDatabase);
       }
 
