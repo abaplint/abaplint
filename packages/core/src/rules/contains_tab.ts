@@ -22,7 +22,7 @@ export class ContainsTab extends ABAPRule {
       shortDescription: `Checks for usage of tabs (enable to enforce spaces)`,
       extendedInformation: `
 https://docs.abapopenchecks.org/checks/09/
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
       tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }

@@ -19,7 +19,7 @@ export class IfInIf extends ABAPRule {
       title: "IF in IF",
       shortDescription: `Detects nested ifs which can be refactored to a single condition using AND.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/01/
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-the-nesting-depth-low`,
       badExample: `IF condition1.
   IF condition2.
     ...

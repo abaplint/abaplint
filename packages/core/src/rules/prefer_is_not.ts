@@ -21,7 +21,7 @@ export class PreferIsNot extends ABAPRule {
       title: "Prefer IS NOT to NOT IS",
       shortDescription: `Prefer IS NOT to NOT IS`,
       extendedInformation: `
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-is-not-to-not-is
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-is-not-to-not-is
 
 "if not is_valid( )." examples are skipped`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],

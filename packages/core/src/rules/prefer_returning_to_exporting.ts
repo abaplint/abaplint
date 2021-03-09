@@ -18,7 +18,7 @@ export class PreferReturningToExporting extends ABAPRule {
       key: "prefer_returning_to_exporting",
       title: "Prefer RETURNING to EXPORTING",
       shortDescription: `Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-returning-to-exporting
 https://docs.abapopenchecks.org/checks/44/`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };

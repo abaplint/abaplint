@@ -32,7 +32,7 @@ export class AvoidUse extends ABAPRule {
       title: "Avoid use of certain statements",
       shortDescription: `Detects usage of certain statements.`,
       extendedInformation: `
-DEFAULT KEY: https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-default-key
+DEFAULT KEY: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-default-key
 
 Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
 

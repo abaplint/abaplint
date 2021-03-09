@@ -25,7 +25,7 @@ export class NoPublicAttributes extends ABAPRule {
       shortDescription: `Checks that classes and interfaces don't contain any public attributes.
 Exceptions are excluded from this rule.`,
       extendedInformation:
-        `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#members-private-by-default-protected-only-if-needed`,
+        `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#members-private-by-default-protected-only-if-needed`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }

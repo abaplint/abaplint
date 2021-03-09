@@ -20,7 +20,7 @@ export class LineBreakMultipleParameters extends ABAPRule {
       key: "line_break_multiple_parameters",
       title: "Line break multiple parameters",
       shortDescription: `Line break multiple parameters`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#line-break-multiple-parameters`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#line-break-multiple-parameters`,
       badExample: `method( parameter1 = value parameter2 = value ).`,
       goodExample: `method( parameter1 = value\n        parameter2 = value ).`,
       tags: [RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],

@@ -22,7 +22,7 @@ export class PreferXsdbool extends ABAPRule {
       extendedInformation: `
 Activates if language version is v740sp08 or above.
 
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-xsdbool-to-set-boolean-variables`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-xsdbool-to-set-boolean-variables`,
       tags: [RuleTag.Styleguide, RuleTag.Upport, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }

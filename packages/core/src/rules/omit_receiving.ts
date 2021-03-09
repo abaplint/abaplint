@@ -16,7 +16,7 @@ export class OmitReceiving extends ABAPRule {
       key: "omit_receiving",
       title: "Omit RECEIVING",
       shortDescription: `Omit RECEIVING`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-receiving`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#omit-receiving`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: `
       upload_pack(

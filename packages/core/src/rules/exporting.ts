@@ -23,7 +23,7 @@ export class Exporting extends ABAPRule {
       badExample: `call_method( EXPORTING foo = bar ).`,
       goodExample: `call_method( foo = bar ).`,
       extendedInformation:
-`https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
+`https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
 https://docs.abapopenchecks.org/checks/30/`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
     };
