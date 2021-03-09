@@ -11,6 +11,7 @@ const tests = [
 
   // select star
   {abap: `SELECT * from mara INTO table @data(foobar).`, cnt: 1},
+  {abap: `SELECT * FROM mara. ENDSELECT.`, cnt: 1},
   {abap: `SELECT foo, bar from mara INTO table @data(foobar).`, cnt: 0},
   {abap: `SELECT * from mara INTO corresponding fields of table @foobar.`, cnt: 0},
 ];
