@@ -1,5 +1,4 @@
 import * as Statements from "../abap/2_statements/statements";
-import * as Structures from "../abap/3_structures/structures";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -13,8 +12,6 @@ import {EditHelper, IEdit} from "../edit_helper";
 export class AvoidUseConf extends BasicRuleConfig {
   /** Detects DEFINE (macro definitions) */
   public define: boolean = true;
-  /** Detects ENDSELECT */
-  public endselect: boolean = true;
   /** Detects statics */
   public statics: boolean = true;
   /** Detects DEFAULT KEY definitions, from version v740sp02 and up */
@@ -38,8 +35,6 @@ export class AvoidUse extends ABAPRule {
 DEFAULT KEY: https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-default-key
 
 Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
-
-ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
 
 DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
@@ -100,16 +95,6 @@ DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
           message = "DEFAULT KEY";
           issues.push(Issue.atToken(file, token, this.getDescription(message), this.getMetadata().key, this.conf.severity));
         }
-      }
-    }
-
-    if (this.conf.endselect) {
-      for (const s of file.getStructure()?.findAllStructures(Structures.Select) || []) {
-        const select = s.findDirectStatement(Statements.SelectLoop);
-        if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
-          continue;
-        }
-        issues.push(Issue.atStatement(file, select, this.getDescription("ENDSELECT"), this.getMetadata().key, this.conf.severity));
       }
     }
 

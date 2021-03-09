@@ -12,6 +12,7 @@ export class CheckSubrcConf extends BasicRuleConfig {
   public openDataset: boolean = true;
   public authorityCheck: boolean = true;
   public selectSingle: boolean = true;
+  public selectTable: boolean = true;
   public updateDatabase: boolean = true;
   public insertDatabase: boolean = true;
   public modifyDatabase: boolean = true;
@@ -76,6 +77,12 @@ FIND with MATCH LINE`,
       } else if (config.selectSingle === true
           && statement.get() instanceof Statements.Select
           && statement.concatTokens().toUpperCase().startsWith("SELECT SINGLE ")
+          && this.isChecked(i, statements) === false
+          && this.checksDbcnt(i, statements) === false) {
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+      } else if (config.selectTable === true
+          && statement.get() instanceof Statements.Select
+          && statement.concatTokens().toUpperCase().startsWith("SELECT SINGLE ") === false
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));

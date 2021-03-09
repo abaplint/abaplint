@@ -70,6 +70,7 @@ SELECT * FROM tab INTO TABLE @res WHERE field = @val.`,
         }
       } else if (s.get() instanceof Statements.UpdateDatabase
           || s.get() instanceof Statements.ModifyDatabase
+          || s.get() instanceof Statements.InsertDatabase
           || s.get() instanceof Statements.DeleteDatabase) {
         for (const o of s.findAllExpressions(Expressions.SQLSource)) {
           const first = o.getFirstChild();

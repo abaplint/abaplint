@@ -106,10 +106,6 @@
           "description": "Detects DESCRIBE TABLE LINES, use lines() instead",
           "type": "boolean"
         },
-        "endselect": {
-          "description": "Detects ENDSELECT",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -128,7 +124,6 @@
       },
       "required": [
         "define",
-        "endselect",
         "statics",
         "defaultKey",
         "break",
@@ -382,6 +377,9 @@
         "selectSingle": {
           "type": "boolean"
         },
+        "selectTable": {
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
@@ -394,6 +392,7 @@
         "openDataset",
         "authorityCheck",
         "selectSingle",
+        "selectTable",
         "updateDatabase",
         "insertDatabase",
         "modifyDatabase",
@@ -708,6 +707,23 @@
         "deleteDynpro",
         "importDynpro"
       ],
+      "type": "object"
+    },
+    "DbOperationInLoopConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "DefinitionsTopConf": {
@@ -1453,6 +1469,17 @@
                 }
               ],
               "description": "Detects potentially dangerous statements\nTags: SingleFile, Security\nhttps://rules.abaplint.org/dangerous_statement"
+            },
+            "db_operation_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DbOperationInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Database operation in LOOP/DO/WHILE\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/db_operation_in_loop"
             },
             "definitions_top": {
               "anyOf": [
@@ -2201,6 +2228,17 @@
                 }
               ],
               "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\nTags: SingleFile\nhttps://rules.abaplint.org/rfc_error_handling"
+            },
+            "select_performance": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectPerformanceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Various checks regarding SELECT performance.\n\nENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/select_performance"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -4067,6 +4105,35 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "SelectPerformanceConf": {
+      "additionalProperties": false,
+      "properties": {
+        "endSelect": {
+          "description": "Detects ENDSELECT",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "selectStar": {
+          "description": "Detects SELECT *",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "endSelect",
+        "selectStar"
+      ],
       "type": "object"
     },
     "SelectionScreenNamingConf": {
