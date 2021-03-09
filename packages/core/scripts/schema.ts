@@ -26,6 +26,7 @@ import {ConstructorVisibilityPublicConf} from "../src/rules/constructor_visibili
 import {ContainsTabConf} from "../src/rules/contains_tab";
 import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
 import {DangerousStatementConf} from "../src/rules/dangerous_statement";
+import {DbOperationInLoopConf} from "../src/rules/db_operation_in_loop";
 import {DefinitionsTopConf} from "../src/rules/definitions_top";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
 import {DoubleSpaceConf} from "../src/rules/double_space";
@@ -94,6 +95,7 @@ import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
+import {SelectPerformanceConf} from "../src/rules/select_performance";
 import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
 import {ShortCaseConf} from "../src/rules/short_case";
@@ -156,6 +158,7 @@ export interface IConfig {
     "contains_tab"?: ContainsTabConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
+    "db_operation_in_loop"?: DbOperationInLoopConf | boolean,
     "definitions_top"?: DefinitionsTopConf | boolean,
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
@@ -224,6 +227,7 @@ export interface IConfig {
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
+    "select_performance"?: SelectPerformanceConf | boolean,
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,

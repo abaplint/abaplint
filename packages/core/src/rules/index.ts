@@ -25,6 +25,7 @@ export * from "./constructor_visibility_public";
 export * from "./contains_tab";
 export * from "./cyclomatic_complexity";
 export * from "./dangerous_statement";
+export * from "./db_operation_in_loop";
 export * from "./definitions_top";
 export * from "./description_empty";
 export * from "./double_space";
