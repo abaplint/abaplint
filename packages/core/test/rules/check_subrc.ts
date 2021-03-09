@@ -50,6 +50,14 @@ UPDATE zabaplint_pack
   WHERE devclass = iv_devclass.
 ASSERT sy-dbcnt = 1.`, cnt: 0},
 
+  {abap: `
+DATA bar TYPE i VALUE 1.
+SELECT *
+  INTO TABLE @DATA(lt_tab)
+  FROM voided
+  WHERE foo = @bar
+  ORDER BY PRIMARY KEY.`, cnt: 1},
+
   {abap: "FIND 'foo' IN TABLE tab FROM cline MATCH LINE cline.", cnt: 0},
   {abap: "FIND FIRST OCCURRENCE OF SUBSTRING 'BLAH' IN SECTION LENGTH 20 OF lv_foo MATCH COUNT l_count.", cnt: 0},
   {abap: "FIND REGEX 'blah' IN lv_statement SUBMATCHES lv_name.", cnt: 0},
