@@ -18,9 +18,15 @@ const tests = [
   {abap: "lv_foo = 2.", cnt: 0},
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
   {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1},
+
+// OCCURS
   {abap: "DATA tab LIKE foobar OCCURS 2.", cnt: 1},
   {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 2},
   {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1},
+  {abap: `DATA: BEGIN OF li_order OCCURS 0,
+  foo TYPE i,
+END OF li_order.`, cnt: 1},
+
   {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
   {abap: "SET EXTENDED CHECK ON.", cnt: 1},
   {abap: "TYPE-POOLS bar.", cnt: 1},
