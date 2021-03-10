@@ -18,7 +18,7 @@ export class PreferRaiseExceptionNew extends ABAPRule {
       title: "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE",
       shortDescription: `Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE`,
       extendedInformation: `
-      https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-raise-exception-new-to-raise-exception-type`,
+      https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-raise-exception-new-to-raise-exception-type`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
       goodExample: `RAISE EXCEPTION NEW cx_generation_error( previous = exception ).`,
       badExample: `RAISE EXCEPTION TYPE cx_generation_error

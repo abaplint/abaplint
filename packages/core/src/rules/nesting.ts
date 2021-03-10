@@ -19,7 +19,7 @@ export class Nesting extends ABAPRule {
       key: "nesting",
       title: "Check nesting depth",
       shortDescription: `Checks for methods exceeding a maximum nesting depth`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-the-nesting-depth-low
 https://docs.abapopenchecks.org/checks/74/`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };

@@ -26,7 +26,7 @@ export class CommentedCode extends ABAPRule {
       title: "Find commented code",
       shortDescription: `Detects usage of commented out code.`,
       extendedInformation:
-`https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
+`https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
 https://docs.abapopenchecks.org/checks/14/`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
     };

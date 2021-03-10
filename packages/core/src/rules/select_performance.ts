@@ -24,7 +24,9 @@ export class SelectPerformance extends ABAPRule {
       title: "SELECT performance",
       shortDescription: `Various checks regarding SELECT performance.
 
-ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE`,
+ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
+
+SELECT *: not reported if using INTO CORRESPONDING FIELDS OF`,
       tags: [RuleTag.SingleFile, RuleTag.Performance],
     };
   }
@@ -40,8 +42,13 @@ ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE`,
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
+    const stru = file.getStructure();
+    if (stru === undefined) {
+      return issues;
+    }
+
     if (this.conf.endSelect) {
-      for (const s of file.getStructure()?.findAllStructures(Structures.Select) || []) {
+      for (const s of stru.findAllStructures(Structures.Select) || []) {
         const select = s.findDirectStatement(Statements.SelectLoop);
         if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
           continue;
@@ -52,10 +59,18 @@ ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE`,
     }
 
     if (this.conf.selectStar) {
-      for (const f of file.getStructure()?.findAllExpressions(Expressions.SQLFieldList) || []) {
-        if (f.countTokens() === 1 && f.getFirstToken().getStr() === "*") {
-          const message = "Avoid use of SELECT *";
-          issues.push(Issue.atToken(file, f.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
+      const selects = stru.findAllStatements(Statements.Select);
+      selects.push(...stru.findAllStatements(Statements.SelectLoop));
+      for (const s of selects) {
+        for (const f of s.findAllExpressions(Expressions.SQLFieldList) || []) {
+          if (f.countTokens() === 1 && f.getFirstToken().getStr() === "*") {
+            const concat = s.concatTokens().toUpperCase();
+            if (concat.includes(" INTO CORRESPONDING FIELDS OF ")) {
+              continue;
+            }
+            const message = "Avoid use of SELECT *";
+            issues.push(Issue.atToken(file, f.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
+          }
         }
       }
     }

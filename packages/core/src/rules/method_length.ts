@@ -28,7 +28,7 @@ export class MethodLength implements IRule {
       key: "method_length",
       title: "Method Length",
       shortDescription: `Checks relating to method length.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-methods-small`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-methods-small`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }

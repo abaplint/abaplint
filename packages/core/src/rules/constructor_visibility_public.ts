@@ -21,7 +21,7 @@ export class ConstructorVisibilityPublic implements IRule {
 `
 This only applies to global classes.
 
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public
 https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };

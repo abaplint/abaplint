@@ -22,7 +22,7 @@ export class UseLineExists extends ABAPRule {
       title: "Use line_exists",
       shortDescription: `Use line_exists, from 740sp02 and up`,
       extendedInformation: `
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-line_exists-to-read-table-or-loop-at
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-line_exists-to-read-table-or-loop-at
 
 `,
       tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.SingleFile],

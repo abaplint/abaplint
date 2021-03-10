@@ -15,7 +15,7 @@ import {References} from "./references";
 import {Implementation} from "./implementation";
 
 // note Ranges are zero based in LSP,
-// https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
+// https://github.com/microsoft/language-server-protocol/blob/main/versions/protocol-2-x.md#range
 // but 1 based in abaplint
 
 // the types in this file are not completely correct

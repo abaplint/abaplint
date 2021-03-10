@@ -24,7 +24,7 @@ export class UseBoolExpression extends ABAPRule {
       title: "Use boolean expression",
       shortDescription: `Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up`,
       extendedInformation:
-        `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-xsdbool-to-set-boolean-variables`,
+        `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-xsdbool-to-set-boolean-variables`,
       tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `IF line IS INITIAL.
   has_entries = abap_false.
