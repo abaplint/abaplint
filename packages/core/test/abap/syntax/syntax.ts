@@ -3749,6 +3749,18 @@ INCLUDE lzfugr1f01.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("INSERT INTO TABLE ASSIGNING inline", () => {
+    const abap = `
+DATA: BEGIN OF gs_data,
+        name TYPE string,
+      END OF gs_data.
+DATA mt_data LIKE STANDARD TABLE OF gs_data WITH EMPTY KEY.
+INSERT VALUE #( name = 'XYZ' ) INTO TABLE mt_data ASSIGNING FIELD-SYMBOL(<ls_data>).
+WRITE <ls_data>-name.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

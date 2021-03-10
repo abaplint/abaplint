@@ -70,6 +70,12 @@ DATA foo TYPE string.
 DATA bar1 TYPE string.
 DATA bar2 TYPE string.
 SPLIT foo AT 'i' INTO bar1 bar2 IN CHARACTER MODE.`, cnt: 0},
+  {abap: `
+SELECT mandt, mtext
+  INTO TABLE @DATA(sdf)
+  FROM t000
+  GROUP BY mandt, mtext, ort01, mwaer
+  ORDER BY mwaer.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);

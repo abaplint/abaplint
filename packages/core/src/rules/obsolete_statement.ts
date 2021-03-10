@@ -74,6 +74,8 @@ LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en
 
 COMMUICATION: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapcommunication.htm
 
+OCCURS: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapdata_occurs.htm
+
 PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparameter.htm
 
 RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.htm`,
@@ -149,7 +151,9 @@ RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.ht
 
       if (this.conf.occurs) {
         if ((sta instanceof Statements.Describe)
-          || (sta instanceof Statements.Ranges)) {
+          || (sta instanceof Statements.Ranges)
+          || (sta instanceof Statements.DataBegin)
+          || (sta instanceof Statements.TypeBegin)) {
           const token = staNode.findDirectTokenByText("OCCURS");
           if (token) {
             const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key, this.conf.severity);
