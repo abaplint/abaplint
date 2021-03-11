@@ -53,10 +53,7 @@ add ORDER BY PRIMARY KEY if in doubt`,
       // skip COUNT(*)
       const list = s.findFirstExpression(Expressions.SQLFieldList);
       if (list?.getChildren().length === 1 && list.getFirstChild()?.get() instanceof Expressions.SQLAggregation) {
-        const concat = list.concatTokens().toUpperCase();
-        if (concat.startsWith("COUNT(")) {
-          continue;
-        }
+        continue;
       }
 
       if (s.findFirstExpression(Expressions.SQLOrderBy) === undefined) {

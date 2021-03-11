@@ -9,6 +9,12 @@ const tests = [
   {abap: `SELECT COUNT( * ) FROM  dm40l
   WHERE  dmoid     = mv_data_model
   AND    as4local  = mv_activation_state.`, cnt: 0},
+  {abap: `SELECT MAX( dokversion )
+  INTO ls_header-tdversion
+  FROM dokhl
+  WHERE id = c_lxe_text_type
+  AND   object = mv_text_object
+  AND   langu = ls_udmo_long_text-language.`, cnt: 0},
 ];
 
 testRule(tests, SelectAlwaysOrderBy);
