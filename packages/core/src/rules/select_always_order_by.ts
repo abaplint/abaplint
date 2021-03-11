@@ -49,6 +49,13 @@ add ORDER BY PRIMARY KEY if in doubt`,
       if (c.startsWith("SELECT SINGLE ")) {
         continue;
       }
+
+      // skip COUNT(*)
+      const list = s.findFirstExpression(Expressions.SQLFieldList);
+      if (list?.getChildren().length === 1 && list.getFirstChild()?.get() instanceof Expressions.SQLAggregation) {
+        continue;
+      }
+
       if (s.findFirstExpression(Expressions.SQLOrderBy) === undefined) {
         issues.push(Issue.atStatement(file, s, "Always add ORDER BY", this.getMetadata().key, this.conf.severity));
       }

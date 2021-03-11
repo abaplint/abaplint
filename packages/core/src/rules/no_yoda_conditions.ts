@@ -18,8 +18,7 @@ export class NoYodaConditions extends ABAPRule {
       key: "no_yoda_conditions",
       title: "No Yoda conditions",
       shortDescription: `Finds Yoda conditions and reports issues`,
-      extendedInformation: `
-https://en.wikipedia.org/wiki/Yoda_conditions`,
+      extendedInformation: `https://en.wikipedia.org/wiki/Yoda_conditions`,
       tags: [RuleTag.SingleFile],
       badExample: `IF 0 <> sy-subrc.
 ENDIF.`,
@@ -49,7 +48,13 @@ ENDIF.`,
         continue;
       }
 
-      if (this.isSimple(sources[0]) === true && this.isSimple(sources[1]) === false) {
+  // Scenarios:
+  //   constant COMPARE chain
+  //   constant COMPARE multiple tokens with spaces
+  //   fieldChain COMPARE multiple tokens with spaces
+
+      if ((this.withoutSpaces(sources[0]) === false && this.withoutSpaces(sources[1]) === true) || (
+        (this.isConstant(sources[0]) === true && this.isFieldChain(sources[1]) === true))) {
         const start = sources[0].getFirstToken().getStart();
         const end = sources[1].getLastToken().getEnd();
         const issue = Issue.atRange(file, start, end, "No Yoda conditions", this.getMetadata().key, this.conf.severity);
@@ -60,15 +65,24 @@ ENDIF.`,
     return issues;
   }
 
-  private isSimple(node: ExpressionNode): boolean {
-    const children = node.getChildren();
-    if (children.length > 1) {
+  private isConstant(node: ExpressionNode): boolean {
+    if (node.getChildren().length > 1) {
       return false;
-    } else if (children.length === 1 && children[0].countTokens() === 1) {
-      return true;
     }
 
-    return false;
+    return node.getFirstChild()?.get() instanceof Expressions.Constant;
+  }
+
+  private isFieldChain(node: ExpressionNode): boolean {
+    if (node.getChildren().length > 1) {
+      return false;
+    }
+
+    return node.getFirstChild()?.get() instanceof Expressions.FieldChain;
+  }
+
+  private withoutSpaces(node: ExpressionNode): boolean {
+    return node.concatTokensWithoutStringsAndComments().includes(" ");
   }
 
 }
