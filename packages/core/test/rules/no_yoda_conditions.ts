@@ -11,6 +11,7 @@ const tests = [
   {abap: "IF abap_false = is_preserved( lv_css_path ). endif.", cnt: 1},
   {abap: "IF is_preserved( lv_css_path ) = abap_false. endif.", cnt: 0},
   {abap: "IF iv_branch_name CP zif_abapgit_definitions=>c_git_branch-heads. ENDIF.", cnt: 0},
+  {abap: "IF iv_title CN ' _0'.", cnt: 0},
 ];
 
 testRule(tests, NoYodaConditions);
