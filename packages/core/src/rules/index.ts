@@ -76,6 +76,7 @@ export * from "./names_no_dash";
 export * from "./nesting";
 export * from "./newline_between_methods";
 export * from "./no_public_attributes";
+export * from "./no_yoda_conditions";
 export * from "./object_naming";
 export * from "./obsolete_statement";
 export * from "./omit_parameter_name";

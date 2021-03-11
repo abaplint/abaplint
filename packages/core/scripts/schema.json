@@ -2031,6 +2031,17 @@
               ],
               "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_public_attributes"
             },
+            "no_yoda_conditions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoYodaConditionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds Yoda conditions and reports issues\nTags: SingleFile\nhttps://rules.abaplint.org/no_yoda_conditions"
+            },
             "object_naming": {
               "anyOf": [
                 {
@@ -3513,6 +3524,23 @@
       "required": [
         "allowReadOnly"
       ],
+      "type": "object"
+    },
+    "NoYodaConditionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "ObjectNamingConf": {

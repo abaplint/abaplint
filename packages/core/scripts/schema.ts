@@ -77,6 +77,7 @@ import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
+import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
 import {ObjectNamingConf} from "../src/rules/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {OmitParameterNameConf} from "../src/rules/omit_parameter_name";
@@ -209,6 +210,7 @@ export interface IConfig {
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
+    "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "omit_parameter_name"?: OmitParameterNameConf | boolean,
