@@ -2240,6 +2240,17 @@
               ],
               "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\nTags: SingleFile\nhttps://rules.abaplint.org/rfc_error_handling"
             },
+            "select_always_order_by": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectAlwaysOrderByConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SELECT always ORDER BY\nTags: SingleFile\nhttps://rules.abaplint.org/select_always_order_by"
+            },
             "select_performance": {
               "anyOf": [
                 {
@@ -4119,6 +4130,23 @@
       "type": "object"
     },
     "SQLEscapeHostVariablesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SelectAlwaysOrderByConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
