@@ -77,6 +77,7 @@ import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
+import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
 import {ObjectNamingConf} from "../src/rules/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {OmitParameterNameConf} from "../src/rules/omit_parameter_name";
@@ -95,6 +96,7 @@ import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
+import {SelectAlwaysOrderByConf} from "../src/rules/select_always_order_by";
 import {SelectPerformanceConf} from "../src/rules/select_performance";
 import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
@@ -209,6 +211,7 @@ export interface IConfig {
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
+    "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "omit_parameter_name"?: OmitParameterNameConf | boolean,
@@ -227,6 +230,7 @@ export interface IConfig {
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
+    "select_always_order_by"?: SelectAlwaysOrderByConf | boolean,
     "select_performance"?: SelectPerformanceConf | boolean,
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,

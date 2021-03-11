@@ -14,12 +14,25 @@ ENDCLASS.
 CLASS cx_static_check IMPLEMENTATION.
 ENDCLASS.`;
 
+const cx_salv_not_found = `CLASS cx_salv_not_found DEFINITION PUBLIC INHERITING FROM cx_salv_error.
+ENDCLASS.
+CLASS cx_salv_not_found IMPLEMENTATION.
+ENDCLASS.` ;
+
+const cx_salv_error = `CLASS cx_salv_error DEFINITION PUBLIC INHERITING FROM cx_static_check.
+ENDCLASS.
+CLASS cx_salv_error IMPLEMENTATION.
+ENDCLASS.`;
+
 async function findIssues(abap: string, filename: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, abap));
   reg.addFile(new MemoryFile("cx_root.clas.abap", cx_root));
   reg.addFile(new MemoryFile("cx_static_check.clas.abap", cx_static_check));
+  reg.addFile(new MemoryFile("cx_salv_error.clas.abap", cx_salv_error));
+  reg.addFile(new MemoryFile("cx_salv_not_found.clas.abap", cx_salv_not_found));
   await reg.parseAsync();
   const rule = new UncaughtException();
+//  console.dir(reg.findIssues());
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
@@ -195,6 +208,37 @@ describe("Rule: uncaught_exception", () => {
       RAISE EXCEPTION TYPE lcx_sub.
     ENDMETHOD.
   ENDCLASS.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("caught via super", async () => {
+    const abap = `
+REPORT zfoobar.
+CLASS lcl_alv DEFINITION.
+  PUBLIC SECTION.
+    METHODS set_text
+      RAISING
+        cx_salv_not_found.
+    METHODS show_alv.
+ENDCLASS.
+
+CLASS lcl_alv IMPLEMENTATION.
+
+  METHOD set_text.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD show_alv.
+    DATA: lx_error TYPE REF TO cx_root.
+
+    TRY.
+        set_text( ).
+      CATCH cx_root INTO lx_error.
+* cx_root is a parent of cx_salv_not_found
+    ENDTRY.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
