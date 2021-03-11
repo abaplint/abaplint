@@ -17,7 +17,11 @@ export class SelectAlwaysOrderBy extends ABAPRule {
     return {
       key: "select_always_order_by",
       title: "SELECT always ORDER BY",
-      shortDescription: `SELECT always ORDER BY`,
+      shortDescription: `SELECTs should always have a ORDER BY clause
+
+This will make sure that the SELECT statement returns results in the same sequence on different databases
+
+add ORDER BY PRIMARY KEY if in doubt`,
       tags: [RuleTag.SingleFile],
     };
   }
