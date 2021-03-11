@@ -1,4 +1,4 @@
-import {SelectAlwaysOrderBy} from "../../src/rules";
+import {SelectAddOrderBy} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -17,4 +17,4 @@ const tests = [
   AND   langu = ls_udmo_long_text-language.`, cnt: 0},
 ];
 
-testRule(tests, SelectAlwaysOrderBy);
+testRule(tests, SelectAddOrderBy);

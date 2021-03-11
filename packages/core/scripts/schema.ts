@@ -96,7 +96,6 @@ import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
-import {SelectAlwaysOrderByConf} from "../src/rules/select_always_order_by";
 import {SelectPerformanceConf} from "../src/rules/select_performance";
 import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
@@ -230,7 +229,6 @@ export interface IConfig {
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
-    "select_always_order_by"?: SelectAlwaysOrderByConf | boolean,
     "select_performance"?: SelectPerformanceConf | boolean,
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
