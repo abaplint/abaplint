@@ -662,4 +662,15 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("badi", async () => {
+    const abap = `
+    CONSTANTS c_badi_class TYPE seoclsname VALUE 'CL_TEST'.
+    CONSTANTS c_badi_method TYPE seocmpname VALUE 'GET_TEST'.
+    DATA lo_badi TYPE REF TO cl_badi_base.
+    GET BADI lo_badi TYPE (c_badi_class).
+    CALL BADI lo_badi->(c_badi_method).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
