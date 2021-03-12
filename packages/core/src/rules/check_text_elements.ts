@@ -50,7 +50,7 @@ export class CheckTextElements implements IRule {
         continue;
       }
 
-      let texts = obj.getTexts();
+      let texts: readonly ITextElement[] = [];
       let mainName: string | undefined = undefined;
 
       const mains = this.graph.listMainForInclude(file.getFilename());
@@ -59,41 +59,36 @@ export class CheckTextElements implements IRule {
         mainName = mains[0];
         const main1 = this.reg.findObjectForFile(this.reg.getFileByName(mains[0])!)! as ABAPObject;
         texts = main1.getTexts();
+      } else {
+        texts = obj.getTexts();
       }
 
       const expressions = stru.findAllExpressionsMulti([Expressions.TextElement, Expressions.TextElementString]);
 
       for (const e of expressions) {
-        if (!(e.get() instanceof Expressions.TextElement)) {
-          continue;
-        }
-
-        const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
-        const key = token.getStr();
-        if (this.findKey(key, texts) === undefined) {
-          const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
-          output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
-        }
-      }
-
-      for (const e of expressions) {
-        if (!(e.get() instanceof Expressions.TextElementString)) {
-          continue;
-        }
-
-        const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
-        const code = e.getFirstToken().getStr();
-        const key = token.getStr();
-        let found = this.findKey(key, texts);
-        if (found && code.startsWith("'")) {
-          found = found.replace(/'/g, "''");
-        }
-        if (found === undefined) {
-          const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
-          output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
-        } else if (code !== "'" + found + "'"
-            && code !== "`" + found + "`") {
-          output.push(Issue.atToken(file, token, "Text does not match text element", this.getMetadata().key, this.conf.severity));
+        if (e.get() instanceof Expressions.TextElement) {
+          const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
+          const key = token.getStr();
+          if (this.findKey(key, texts) === undefined) {
+            const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
+            output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
+          }
+        } else {
+          // its a Expressions.TextElementString
+          const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
+          const code = e.getFirstToken().getStr();
+          const key = token.getStr();
+          let found = this.findKey(key, texts);
+          if (found && code.startsWith("'")) {
+            found = found.replace(/'/g, "''");
+          }
+          if (found === undefined) {
+            const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
+            output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
+          } else if (code !== "'" + found + "'"
+              && code !== "`" + found + "`") {
+            output.push(Issue.atToken(file, token, "Text does not match text element", this.getMetadata().key, this.conf.severity));
+          }
         }
       }
     }
