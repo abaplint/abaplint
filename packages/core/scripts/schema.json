@@ -2240,16 +2240,16 @@
               ],
               "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\nTags: SingleFile\nhttps://rules.abaplint.org/rfc_error_handling"
             },
-            "select_always_order_by": {
+            "select_add_order_by": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/SelectAlwaysOrderByConf"
+                  "$ref": "#/definitions/SelectAddOrderByConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "SELECTs should always have a ORDER BY clause\n\nThis will make sure that the SELECT statement returns results in the same sequence on different databases\n\nadd ORDER BY PRIMARY KEY if in doubt\nTags: SingleFile\nhttps://rules.abaplint.org/select_always_order_by"
+              "description": "SELECTs add ORDER BY clause\n\nThis will make sure that the SELECT statement returns results in the same sequence on different databases\n\nadd ORDER BY PRIMARY KEY if in doubt\nTags: SingleFile\nhttps://rules.abaplint.org/select_add_order_by"
             },
             "select_performance": {
               "anyOf": [
@@ -4146,7 +4146,7 @@
       },
       "type": "object"
     },
-    "SelectAlwaysOrderByConf": {
+    "SelectAddOrderByConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
