@@ -36,6 +36,11 @@ describe("Rule: prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE", () => {
     expect(issues5.length).to.equal(0);
   });
 
+  it("with MESSAGE", async () => {
+    const issues = await findIssues("RAISE EXCEPTION TYPE cx_blah MESSAGE e003.");
+    expect(issues.length).to.equal(0);
+  });
+
   it("issue", async () => {
     const issues1 = await findIssues(`RAISE EXCEPTION TYPE cx_generation_error
     EXPORTING
