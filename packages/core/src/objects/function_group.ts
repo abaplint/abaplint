@@ -1,4 +1,4 @@
-import {ABAPObject, ITextElement} from "./_abap_object";
+import {ABAPObject, ITextElements} from "./_abap_object";
 import {FunctionModuleDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
 import * as xmljs from "xml-js";
@@ -124,11 +124,11 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-  public getTexts(): readonly ITextElement[] {
+  public getTexts(): ITextElements {
     if (this.texts === undefined) {
       const found = this.findTextFile();
       if (found === undefined) {
-        return [];
+        return {};
       }
 
       const parsed = xmljs.xml2js(found.getRaw(), {compact: true});

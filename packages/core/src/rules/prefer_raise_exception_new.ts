@@ -22,8 +22,8 @@ export class PreferRaiseExceptionNew extends ABAPRule {
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
       goodExample: `RAISE EXCEPTION NEW cx_generation_error( previous = exception ).`,
       badExample: `RAISE EXCEPTION TYPE cx_generation_error
-      EXPORTING
-        previous = exception.`,
+  EXPORTING
+    previous = exception.`,
     };
   }
 
@@ -44,9 +44,12 @@ export class PreferRaiseExceptionNew extends ABAPRule {
 
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.Raise) {
-        if (statement.concatTokens().toString().toUpperCase().startsWith("RAISE EXCEPTION TYPE ")) {
+        const concat = statement.concatTokens().toUpperCase();
+        if (concat.includes(" MESSAGE ")) {
+          continue;
+        }
+        if (concat.startsWith("RAISE EXCEPTION TYPE ")) {
           const message = "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE";
-
           issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
         }
       }

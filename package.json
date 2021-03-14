@@ -30,11 +30,11 @@
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^4.17.0",
         "@typescript-eslint/parser": "^4.17.0",
-        "eslint": "^7.21.0",
+        "eslint": "^7.22.0",
         "eslint-plugin-import": "^2.22.1",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "typescript": "^4.2.3",
-        "chai": "^4.3.3",
+        "chai": "^4.3.4",
         "xml-js": "^1.6.11",
         "@aduh95/viz.js": "^3.3.4",
         "vscode-languageserver-types": "^3.16.0"
