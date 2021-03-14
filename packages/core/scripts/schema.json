@@ -1226,7 +1226,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for ambiguity between deleting or modifying from internal and database table\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\nTags: SingleFile\nhttps://rules.abaplint.org/ambiguous_statement"
+              "description": "Checks for ambiguity between deleting or modifying from internal and database table\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\n\nOnly works if the target version is 740sp05 or above\nTags: SingleFile\nhttps://rules.abaplint.org/ambiguous_statement"
             },
             "avoid_use": {
               "anyOf": [
