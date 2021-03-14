@@ -106,12 +106,10 @@ describe("Program, isInclude", () => {
     await reg.parseAsync();
     const prog = getABAPObjects(reg)[0] as Program;
     const texts = prog.getTexts();
-    expect(texts.length).to.equal(2);
-    expect(texts[0].key).to.equal("001");
-    expect(texts[1].key).to.equal("ABC");
-    expect(texts[0].text).to.equal("hello world 1");
-    expect(texts[1].text).to.equal("hello world 2");
+    expect(Object.keys(texts).length).to.equal(2);
+    expect(texts["001"]).to.equal("hello world 1");
+    expect(texts["ABC"]).to.equal("hello world 2");
+    expect(texts["bar"]).to.equal(undefined);
   });
-
 
 });

@@ -2,7 +2,7 @@ import {IRule} from "./_irule";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Expressions from "../abap/2_statements/expressions";
-import {ABAPObject, ITextElement} from "../objects/_abap_object";
+import {ABAPObject, ITextElements} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {IncludeGraph} from "../utils/include_graph";
@@ -50,7 +50,7 @@ export class CheckTextElements implements IRule {
         continue;
       }
 
-      let texts: readonly ITextElement[] = [];
+      let texts: ITextElements;
       let mainName: string | undefined = undefined;
 
       const mains = this.graph.listMainForInclude(file.getFilename());
@@ -68,8 +68,8 @@ export class CheckTextElements implements IRule {
       for (const e of expressions) {
         if (e.get() instanceof Expressions.TextElement) {
           const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
-          const key = token.getStr();
-          if (this.findKey(key, texts) === undefined) {
+          const key = token.getStr().toUpperCase();
+          if (texts[key] === undefined) {
             const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
             output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
           }
@@ -77,8 +77,8 @@ export class CheckTextElements implements IRule {
           // its a Expressions.TextElementString
           const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
           const code = e.getFirstToken().getStr();
-          const key = token.getStr();
-          let found = this.findKey(key, texts);
+          const key = token.getStr().toUpperCase();
+          let found = texts[key];
           if (found && code.startsWith("'")) {
             found = found.replace(/'/g, "''");
           }
@@ -94,15 +94,6 @@ export class CheckTextElements implements IRule {
     }
 
     return output;
-  }
-
-  private findKey(key: string, texts: readonly ITextElement[]): string | undefined {
-    for (const t of texts) {
-      if (key.toUpperCase() === t.key) {
-        return t.text;
-      }
-    }
-    return undefined;
   }
 
 }

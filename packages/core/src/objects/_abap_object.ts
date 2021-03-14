@@ -6,14 +6,11 @@ import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {IParseResult} from "./_iobject";
 import {ABAPFile} from "../abap/abap_file";
 
-export interface ITextElement {
-  key: string;
-  text: string;
-}
+export interface ITextElements {[key: string]: string}
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
-  protected texts: ITextElement[] | undefined;
+  protected texts: ITextElements | undefined;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
 
   abstract getSequencedFiles(): readonly ABAPFile[];
@@ -79,7 +76,7 @@ export abstract class ABAPObject extends AbstractObject {
     return undefined;
   }
 
-  public getTexts(): readonly ITextElement[] {
+  public getTexts(): ITextElements {
     if (this.texts === undefined) {
       this.findTexts(this.parseRaw());
     }
@@ -87,7 +84,7 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   protected findTexts(parsed: any) {
-    this.texts = [];
+    this.texts = {};
 
     if (parsed?.abapGit["asx:abap"]["asx:values"]?.TPOOL?.item === undefined) {
       return;
@@ -98,10 +95,11 @@ export abstract class ABAPObject extends AbstractObject {
         if (t.KEY === undefined) {
           throw new Error("findTexts, undefined");
         }
-        this.texts.push({
-          key: t.KEY._text,
-          text: t.ENTRY ? t.ENTRY._text : "",
-        });
+        const key = t.KEY._text;
+        if (key === undefined) {
+          continue;
+        }
+        this.texts[key.toUpperCase()] = t.ENTRY ? t.ENTRY._text : "";
       }
     }
   }
