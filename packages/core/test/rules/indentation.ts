@@ -152,6 +152,11 @@ SELECT * FROM bar
   WRITE 'sdf'.
 ENDSELECT.`, cnt: 0},
 
+  {abap: `
+AT LINE-SELECTION.
+  WRITE 'Hello'.
+AT SELECTION-SCREEN.
+  WRITE 'World'.`, cnt: 0},
 ];
 
 testRule(tests, Indentation);
