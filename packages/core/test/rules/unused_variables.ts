@@ -673,4 +673,13 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("UNPACK", async () => {
+    const abap = `
+  DATA foo TYPE i.
+  DATA bar TYPE c LENGTH 10.
+  UNPACK foo TO bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
