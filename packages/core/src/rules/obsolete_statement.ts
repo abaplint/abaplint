@@ -43,6 +43,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public ranges: boolean = true;
   /** Checks for COMMUNICATION */
   public communication: boolean = true;
+  /** Checks for PACK */
+  public pack: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -78,7 +80,9 @@ OCCURS: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapdata_occu
 
 PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparameter.htm
 
-RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.htm`,
+RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.htm
+
+PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm`,
     };
   }
 
@@ -126,6 +130,11 @@ RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.ht
 
       if (this.conf.communication && sta instanceof Statements.Communication) {
         const issue = Issue.atStatement(file, staNode, "COMMUNICATION is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.pack && sta instanceof Statements.Pack) {
+        const issue = Issue.atStatement(file, staNode, "PACK is obsolete", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

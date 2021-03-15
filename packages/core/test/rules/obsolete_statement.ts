@@ -40,6 +40,7 @@ END OF li_order.`, cnt: 1},
   {abap: "RANGES werks FOR sdfsdsd-werks.", cnt: 1},
   {abap: "DATA foo TYPE RANGE OF bar.", cnt: 0},
   {abap: "COMMUNICATION ACCEPT ID c.", cnt: 1},
+  {abap: "PACK s TO d.", cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);

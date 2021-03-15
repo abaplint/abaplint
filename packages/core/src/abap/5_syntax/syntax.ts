@@ -118,6 +118,8 @@ import {Transfer} from "./statements/transfer";
 import {ModifyDatabase} from "./statements/modify_database";
 import {TruncateDataset} from "./statements/truncate_dataset";
 import {CallBadi} from "./statements/call_badi";
+import {Pack} from "./statements/pack";
+import {Unpack} from "./statements/unpack";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -355,6 +357,10 @@ export class SyntaxLogic {
       new Select().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.InsertInternal) {
       new InsertInternal().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Pack) {
+      new Pack().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Unpack) {
+      new Unpack().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Assign) {
       new Assign().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.SetLocale) {
