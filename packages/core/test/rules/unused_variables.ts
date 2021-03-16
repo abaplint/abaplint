@@ -682,4 +682,12 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("FORMAT", async () => {
+    const abap = `
+  DATA lv_color TYPE i.
+  FORMAT COLOR = lv_color.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
