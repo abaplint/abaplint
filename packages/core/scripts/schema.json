@@ -1976,6 +1976,17 @@
               ],
               "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/mix_returning"
             },
+            "modify_only_own_db_tables": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ModifyOnlyOwnDBTablesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Modify only own DB tables\nTags: Security\nhttps://rules.abaplint.org/modify_only_own_db_tables"
+            },
             "msag_consistency": {
               "anyOf": [
                 {
@@ -3434,6 +3445,34 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "ModifyOnlyOwnDBTablesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ownTables": {
+          "description": "Case insensitve regex for own tables",
+          "type": "string"
+        },
+        "reportDynamic": {
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "reportDynamic",
+        "ownTables"
+      ],
       "type": "object"
     },
     "NamesNoDashConf": {

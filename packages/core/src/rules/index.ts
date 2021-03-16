@@ -71,6 +71,7 @@ export * from "./method_length";
 export * from "./method_overwrites_builtin";
 export * from "./method_parameter_names";
 export * from "./mix_returning";
+export * from "./modify_only_own_db_tables";
 export * from "./msag_consistency";
 export * from "./names_no_dash";
 export * from "./nesting";
