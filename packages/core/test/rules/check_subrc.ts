@@ -62,6 +62,13 @@ SELECT *
   {abap: "FIND FIRST OCCURRENCE OF SUBSTRING 'BLAH' IN SECTION LENGTH 20 OF lv_foo MATCH COUNT l_count.", cnt: 0},
   {abap: "FIND REGEX 'blah' IN lv_statement SUBMATCHES lv_name.", cnt: 0},
   {abap: "FIND 'blah' IN TABLE t_source IGNORING CASE.", cnt: 1},
+
+  {abap: `
+  DATA lcl_ref TYPE REF TO data.
+  FIELD-SYMBOLS <restab_standatd> TYPE STANDARD TABLE.
+  ASSIGN lcl_ref->* TO <restab_standatd>.
+  IF <restab_standatd> IS NOT ASSIGNED.
+  ENDIF.`, cnt: 0},
 ];
 
 testRule(tests, CheckSubrc);

@@ -143,12 +143,14 @@ FIND with MATCH LINE`,
 
   private isChecked(index: number, statements: readonly StatementNode[]): boolean {
     let assigned: string | undefined = undefined;
+    let assignedn: string | undefined = undefined;
 
     if (statements[index].get() instanceof Statements.Assign
         || statements[index].get() instanceof Statements.ReadTable) {
       const fs = statements[index].findFirstExpression(Expressions.FSTarget
       )?.findFirstExpression(Expressions.FieldSymbol)?.getFirstToken().getStr();
       assigned = fs?.toUpperCase() + " IS ASSIGNED";
+      assignedn = fs?.toUpperCase() + " IS NOT ASSIGNED";
     }
 
     for (let i = index + 1; i < statements.length; i++) {
@@ -161,9 +163,13 @@ FIND with MATCH LINE`,
       } else if (statement.get() instanceof Statements.EndIf) {
         continue;
       } else {
-        const a = assigned ? concat.includes(assigned) : false;
-        return concat.includes("SY-SUBRC")
-          || a
+        if (assigned && concat.includes(assigned)) {
+          return true;
+        }
+        if (assignedn && concat.includes(assignedn)) {
+          return true;
+        }
+        return concat.includes(" SY-SUBRC")
           || concat.includes("CL_ABAP_UNIT_ASSERT=>ASSERT_SUBRC");
       }
     }
