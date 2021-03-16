@@ -120,6 +120,7 @@ import {TruncateDataset} from "./statements/truncate_dataset";
 import {CallBadi} from "./statements/call_badi";
 import {Pack} from "./statements/pack";
 import {Unpack} from "./statements/unpack";
+import {Format} from "./statements/format";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -403,6 +404,8 @@ export class SyntaxLogic {
       new GetTime().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetParameter) {
       new GetParameter().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Format) {
+      new Format().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.WhenType) {
       new WhenType().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.If) {
