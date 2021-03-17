@@ -21,7 +21,7 @@ export class ModifyOnlyOwnDBTables extends ABAPRule {
       title: "Modify only own DB tables",
       shortDescription: `Modify only own DB tables`,
       extendedInformation: "https://docs.abapopenchecks.org/checks/26/",
-      tags: [RuleTag.Security],
+      tags: [RuleTag.Security, RuleTag.SingleFile],
     };
   }
 

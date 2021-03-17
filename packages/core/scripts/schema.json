@@ -1985,7 +1985,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Modify only own DB tables\nTags: Security\nhttps://rules.abaplint.org/modify_only_own_db_tables"
+              "description": "Modify only own DB tables\nTags: Security, SingleFile\nhttps://rules.abaplint.org/modify_only_own_db_tables"
             },
             "msag_consistency": {
               "anyOf": [
@@ -2491,7 +2491,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused variables and constants\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
+              "description": "Checks for unused variables and constants\nTags: Quickfix\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_bool_expression": {
               "anyOf": [
