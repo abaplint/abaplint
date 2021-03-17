@@ -220,7 +220,7 @@ ENDCLASS.`;
 
   it("pragma'ed", async () => {
     const abap = `
-CLASS lcl_test DEFINITION ##NEEDED.
+CLASS lcl_test DEFINITION.
   PRIVATE SECTION.
     CLASS-METHODS get
       EXPORTING
