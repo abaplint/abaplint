@@ -44,6 +44,7 @@ FIND with MATCH OFFSET
 FIND with MATCH LINE`,
       tags: [RuleTag.SingleFile],
       pseudoComment: "EC CI_SUBRC",
+      pragma: "##SUBRC_OK",
     };
   }
 
@@ -65,6 +66,10 @@ FIND with MATCH LINE`,
       const statement = statements[i];
 
 // todo: CALL FUNCTION
+
+      if (statement.getPragmas().some(t => t.getStr() === this.getMetadata().pragma)) {
+        continue;
+      }
 
       if (config.openDataset === true
           && statement.get() instanceof Statements.OpenDataset

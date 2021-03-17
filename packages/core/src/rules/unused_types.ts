@@ -11,6 +11,8 @@ import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {EditHelper, IEdit} from "../edit_helper";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
+import {ABAPFile} from "../abap/abap_file";
+import {StatementNode} from "../abap/nodes";
 
 class WorkArea {
   private readonly workarea: TypedIdentifier[] = [];
@@ -76,6 +78,7 @@ export class UnusedTypes implements IRule {
       title: "Unused types",
       shortDescription: `Checks for unused TYPE definitions`,
       tags: [RuleTag.Quickfix],
+      pragma: "##NEEDED",
     };
   }
 
@@ -129,7 +132,20 @@ export class UnusedTypes implements IRule {
     const ret: Issue[] = [];
     for (const t of removeDuplicates(this.workarea.get())) {
       const message = "Type \"" + t.getName() + "\" not used";
-      const fix = this.buildFix(t, obj);
+
+      const file = obj.getABAPFileByName(t.getFilename());
+      if (file === undefined) {
+        continue;
+      }
+      const statement = EditHelper.findStatement(t.getToken(), file);
+      if (statement === undefined) {
+        continue;
+      }
+      if (statement.getPragmas().some(t => t.getStr() === this.getMetadata().pragma)) {
+        continue;
+      }
+
+      const fix = this.buildFix(file, statement);
       ret.push(Issue.atIdentifier(t, message, this.getMetadata().key, this.conf.severity, fix));
     }
     return ret;
@@ -177,20 +193,10 @@ export class UnusedTypes implements IRule {
     return ret;
   }
 
-  private buildFix(v: Identifier, obj: ABAPObject): IEdit | undefined {
-    const file = obj.getABAPFileByName(v.getFilename());
-    if (file === undefined) {
+  private buildFix(file: ABAPFile, statement: StatementNode): IEdit | undefined {
+    if (statement.concatTokens().toUpperCase().includes("BEGIN OF")) {
       return undefined;
     }
-
-    const statement = EditHelper.findStatement(v.getToken(), file);
-    if (statement) {
-      if (statement.concatTokens().toUpperCase().includes("BEGIN OF")) {
-        return undefined;
-      }
-      return EditHelper.deleteStatement(file, statement);
-    }
-
-    return undefined;
+    return EditHelper.deleteStatement(file, statement);
   }
 }

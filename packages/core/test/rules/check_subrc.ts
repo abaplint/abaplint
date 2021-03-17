@@ -15,6 +15,11 @@ WHERE pgmid = iv_pgmid
 AND object = iv_object
 AND obj_name = iv_obj_name.                       "#EC CI_SUBRC`, cnt: 0},
   {abap: `
+SELECT SINGLE * FROM tadir INTO CORRESPONDING FIELDS OF rs_tadir
+WHERE pgmid = iv_pgmid
+AND object = iv_object
+AND obj_name = iv_obj_name ##SUBRC_OK.`, cnt: 0},
+  {abap: `
 SELECT SINGLE parentcl FROM tdevc INTO rv_parentcl
 WHERE devclass = mv_package.        "#EC CI_GENBUFF
 IF sy-subrc <> 0.

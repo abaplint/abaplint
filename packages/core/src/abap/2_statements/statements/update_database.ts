@@ -6,8 +6,6 @@ import {IStatementRunnable} from "../statement_runnable";
 export class UpdateDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const target = alt(DatabaseTable, Dynamic);
-
     const param = seq(SQLFieldName, "=", SQLSource);
     const parameters = seq(param, star(seq(opt(","), param)));
 
@@ -20,7 +18,7 @@ export class UpdateDatabase implements IStatement {
                           SQLSource);
 
     const ret = seq("UPDATE",
-                    target,
+                    DatabaseTable,
                     opt(SQLClient),
                     opt(DatabaseConnection),
                     opt(alt(fromTable, set)));

@@ -218,4 +218,22 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("pragma'ed", async () => {
+    const abap = `
+CLASS lcl_test DEFINITION.
+  PRIVATE SECTION.
+    CLASS-METHODS get
+      EXPORTING
+        ev_test TYPE i ##CALLED.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD get.
+    CLEAR ev_test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

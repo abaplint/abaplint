@@ -1,8 +1,9 @@
-import {regex as reg, Expression} from "../combi";
+import {altPrio, regex as reg, Expression} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
+import {Dynamic} from "./dynamic";
 
 export class DatabaseTable extends Expression {
   public getRunnable(): IStatementRunnable {
-    return reg(/^\*?(\/\w+\/)?\w+$/);
+    return altPrio(Dynamic, reg(/^\*?(\/\w+\/)?\w+$/));
   }
 }

@@ -8,11 +8,10 @@ export class DeleteDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const where = seq("WHERE", alt(SQLCond, Dynamic));
-    const source = alt(Dynamic, DatabaseTable);
 
-    const from = seq("FROM", source, optPrio(SQLClient), optPrio(DatabaseConnection), opt(where));
+    const from = seq("FROM", DatabaseTable, optPrio(SQLClient), optPrio(DatabaseConnection), opt(where));
 
-    const table = seq(source,
+    const table = seq(DatabaseTable,
                       optPrio(SQLClient),
                       opt(DatabaseConnection),
                       "FROM",

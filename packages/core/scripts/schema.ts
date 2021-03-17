@@ -72,6 +72,7 @@ import {MethodLengthConf} from "../src/rules/method_length";
 import {MethodOverwritesBuiltInConf} from "../src/rules/method_overwrites_builtin";
 import {MethodParameterNamesConf} from "../src/rules/method_parameter_names";
 import {MixReturningConf} from "../src/rules/mix_returning";
+import {ModifyOnlyOwnDBTablesConf} from "../src/rules/modify_only_own_db_tables";
 import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
 import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
@@ -206,6 +207,7 @@ export interface IConfig {
     "method_overwrites_builtin"?: MethodOverwritesBuiltInConf | boolean,
     "method_parameter_names"?: MethodParameterNamesConf | boolean,
     "mix_returning"?: MixReturningConf | boolean,
+    "modify_only_own_db_tables"?: ModifyOnlyOwnDBTablesConf | boolean,
     "msag_consistency"?: MSAGConsistencyConf | boolean,
     "names_no_dash"?: NamesNoDashConf | boolean,
     "nesting"?: NestingConf | boolean,

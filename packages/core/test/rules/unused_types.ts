@@ -43,6 +43,12 @@ describe("Rule: unused_types, single file", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("pragma'ed", async () => {
+    const abap = "TYPES bar TYPE c LENGTH 1 ##NEEDED.";
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("two unused", async () => {
     const abap = `
     TYPES foo TYPE c LENGTH 1.
