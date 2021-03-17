@@ -12,6 +12,7 @@ import {Identifier} from "../abap/4_file_information/_identifier";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
+import {EditHelper} from "../edit_helper";
 
 export class UnusedMethodsConf extends BasicRuleConfig {
 }
@@ -77,6 +78,7 @@ Skips:
 * INCLUDEs
 `,
       tags: [],
+      pragma: "##CALLED",
     };
   }
 
@@ -142,6 +144,19 @@ Skips:
 
     const issues: Issue[] = [];
     for (const i of this.wa.get()) {
+
+      const file = obj.getABAPFileByName(i.identifier.getFilename());
+      if (file === undefined) {
+        continue;
+      }
+      const statement = EditHelper.findStatement(i.identifier.getToken(), file);
+      if (statement === undefined) {
+        continue;
+      }
+      if (statement.getPragmas().some(t => t.getStr() === this.getMetadata().pragma)) {
+        continue;
+      }
+
       const message = "Method \"" + i.identifier.getName() + "\" not used";
       issues.push(Issue.atIdentifier(i.identifier, message, this.getMetadata().key, this.conf.severity));
     }
