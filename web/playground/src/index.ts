@@ -1,3 +1,14 @@
+// @ts-ignore
+global.MonacoEnvironment = {
+  globalAPI: true,
+  getWorkerUrl: function (_moduleId: any, label: any) {
+    if (label === "json") {
+      return "./json.worker.bundle.js";
+    }
+    return "./editor.worker.bundle.js";
+  },
+};
+
 import "../node_modules/@phosphor/default-theme/style/index.css";
 import "./index.less";
 import "../public/img/favicon-16x16.png";
