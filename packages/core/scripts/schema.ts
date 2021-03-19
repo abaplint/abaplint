@@ -46,6 +46,7 @@ import {FunctionalWritingConf} from "../src/rules/functional_writing";
 import {GlobalClassConf} from "../src/rules/global_class";
 import {IdenticalConditionsConf} from "../src/rules/identical_conditions";
 import {IdenticalContentsConf} from "../src/rules/identical_contents";
+import {IdenticalDescriptionsConf} from "../src/rules/identical_descriptions";
 import {IdenticalFormNamesConf} from "../src/rules/identical_form_names";
 import {IfInIfConf} from "../src/rules/if_in_if";
 import {ImplementMethodsConf} from "../src/rules/implement_methods";
@@ -181,6 +182,7 @@ export interface IConfig {
     "global_class"?: GlobalClassConf | boolean,
     "identical_conditions"?: IdenticalConditionsConf | boolean,
     "identical_contents"?: IdenticalContentsConf | boolean,
+    "identical_descriptions"?: IdenticalDescriptionsConf | boolean,
     "identical_form_names"?: IdenticalFormNamesConf | boolean,
     "if_in_if"?: IfInIfConf | boolean,
     "implement_methods"?: ImplementMethodsConf | boolean,
