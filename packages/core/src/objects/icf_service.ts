@@ -14,6 +14,11 @@ export class ICFService extends AbstractObject {
     };
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
+
   // todo, cache parsed data
   public getHandlerList(): string[] | undefined {
     const ret: string[] = [];

@@ -13,6 +13,11 @@ export class EnhancementSpot extends AbstractObject {
     return "ENHS";
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
+
   public getAllowedNaming() {
     return {
       maxLength: 30,

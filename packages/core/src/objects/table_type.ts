@@ -23,6 +23,11 @@ export class TableType extends AbstractObject {
     };
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
+
   public setDirty(): void {
     this.parsedXML = undefined;
     super.setDirty();

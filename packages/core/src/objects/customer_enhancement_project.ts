@@ -13,4 +13,8 @@ export class CustomerEnhancementProject extends AbstractObject {
     };
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
 }

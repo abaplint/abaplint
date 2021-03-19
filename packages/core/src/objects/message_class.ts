@@ -9,6 +9,11 @@ export class MessageClass extends AbstractObject {
     return "MSAG";
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
+
   public getAllowedNaming() {
     return {
       maxLength: 20,

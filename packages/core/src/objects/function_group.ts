@@ -12,6 +12,11 @@ export class FunctionGroup extends ABAPObject {
     return "FUGR";
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
+
   public setDirty() {
     super.setDirty();
     this.includes = undefined;

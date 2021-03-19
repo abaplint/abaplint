@@ -16,6 +16,11 @@ export class DataElement extends AbstractObject {
     return "DTEL";
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
+
   public getAllowedNaming() {
     return {
       maxLength: 30,
