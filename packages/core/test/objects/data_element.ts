@@ -17,6 +17,7 @@ describe("Data element, parse main xml", () => {
     <DATATYPE>CHAR</DATATYPE>
     <LENG>000002</LENG>
     <OUTPUTLEN>000002</OUTPUTLEN>
+    <DDTEXT>testing</DDTEXT>
    </DD04V>
   </asx:values>
  </asx:abap>
@@ -26,6 +27,7 @@ describe("Data element, parse main xml", () => {
     const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
+    expect(dtel.getDescription()).to.equal("testing");
   });
 
   it("HexType", async () => {

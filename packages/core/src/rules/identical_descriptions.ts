@@ -17,7 +17,7 @@ export class IdenticalDescriptions implements IRule {
       key: "identical_descriptions",
       title: "Identical descriptions",
       shortDescription: `Searches for objects with the same type and same description, case insensitive`,
-      extendedInformation: `Works for: INTF, CLAS, DOMA`,
+      extendedInformation: `Works for: INTF, CLAS, DOMA, DTEL`,
       tags: [],
     };
   }
@@ -32,7 +32,7 @@ export class IdenticalDescriptions implements IRule {
 
   public initialize(reg: IRegistry) {
     this.descriptions = {};
-    this.types = ["INTF", "CLAS", "DOMA"];
+    this.types = ["INTF", "CLAS", "DOMA", "DTEL"];
     for (const o of reg.getObjects()) {
       const type = o.getType();
       if (this.types.includes(type)) {
