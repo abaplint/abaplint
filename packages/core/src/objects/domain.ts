@@ -51,12 +51,13 @@ export class Domain extends AbstractObject {
     }
 
     const start = Date.now();
+    this.parsedXML = {};
     const parsed = super.parseRaw();
     if (parsed === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    const dd01v = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD01V;
+    const dd01v = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD01V;
     this.parsedXML = {
       description: dd01v?.DDTEXT?._text,
       datatype: dd01v?.DATATYPE?._text,
