@@ -6,6 +6,7 @@ import {DDIC} from "../ddic";
 
 export class Domain extends AbstractObject {
   private parsedXML: {
+    description?: string,
     datatype?: string,
     length?: string,
     decimals?: string,
@@ -17,8 +18,7 @@ export class Domain extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    return this.parsedXML?.description;
   }
 
   public getAllowedNaming() {
@@ -58,6 +58,7 @@ export class Domain extends AbstractObject {
 
     const dd01v = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD01V;
     this.parsedXML = {
+      description: dd01v?.DDTEXT?._text,
       datatype: dd01v?.DATATYPE?._text,
       length: dd01v?.LENG?._text,
       decimals: dd01v?.DECIMALS?._text,
