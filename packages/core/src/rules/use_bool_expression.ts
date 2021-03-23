@@ -110,8 +110,9 @@ DATA(fsdf) = xsdbool( foo <> bar ).`,
     if (version >= Version.v740sp08 || version === Version.Cloud) {
       for (const b of stru.findAllExpressions(Expressions.CondBody)) {
         const concat = b.concatTokens().toUpperCase();
-        if (concat.endsWith("THEN ABAP_TRUE ELSE ABAP_FALSE")
-            || concat.endsWith("THEN ABAP_FALSE ELSE ABAP_TRUE")) {
+        if (concat.endsWith(" THEN ABAP_TRUE ELSE ABAP_FALSE")
+            || concat.endsWith(" THEN ABAP_TRUE")
+            || concat.endsWith(" THEN ABAP_FALSE ELSE ABAP_TRUE")) {
           const message = "Use xsdbool";
           // eslint-disable-next-line max-len
           issues.push(Issue.atRange(file, b.getFirstToken().getStart(), b.getLastToken().getEnd(), message, this.getMetadata().key, this.conf.severity));
