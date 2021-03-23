@@ -597,4 +597,16 @@ inline_struct_table = struct_table.`;
     testFix(abap, expected);
   });
 
+  it("xsdbool", async () => {
+    const abap = `
+  DATA foo TYPE abap_bool.
+  foo = xsdbool( 1 = 2 ).`;
+
+    const expected = `
+  DATA foo TYPE abap_bool.
+  foo = boolc( 1 = 2 ).`;
+
+    testFix(abap, expected);
+  });
+
 });

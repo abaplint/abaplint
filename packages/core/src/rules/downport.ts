@@ -188,6 +188,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.replaceXsdBool(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     // todo, add more rules here
 
     return undefined;
@@ -443,7 +448,21 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         return name;
       }
     }
+  }
 
+  private replaceXsdBool(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
+
+    for (const r of spag?.getData().references || []) {
+      if (r.referenceType === ReferenceType.BuiltinMethodReference
+          && r.position.getName().toUpperCase() === "XSDBOOL") {
+        const token = r.position.getToken();
+        const fix = EditHelper.replaceRange(lowFile, token.getStart(), token.getEnd(), "boolc");
+        return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
+      }
+    }
+
+    return undefined;
   }
 
   private newToCreateObject(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

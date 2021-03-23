@@ -20,6 +20,7 @@ import {ConvBody} from "./conv_body";
 import {AttributeName} from "./attribute_name";
 import {FilterBody} from "./filter_body";
 import {CorrespondingBody} from "./corresponding_body";
+import {BuiltIn} from "../_builtin";
 
 /*
 * Type interference, valid scenarios:
@@ -46,17 +47,26 @@ export class Source {
     let first = children.shift();
 
     if (first instanceof TokenNode) {
-      const tok = first.getFirstToken().getStr().toUpperCase();
+      const token = first.getFirstToken();
+      const tok = token.getStr().toUpperCase();
       switch (tok) {
         case "(":
         case "-":
           break;
         case "BOOLC":
+        {
+          const method = new BuiltIn().searchBuiltin(tok);
+          scope.addReference(token, method, ReferenceType.BuiltinMethodReference, filename);
           new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new StringType();
+        }
         case "XSDBOOL":
+        {
+          const method = new BuiltIn().searchBuiltin(tok);
+          scope.addReference(token, method, ReferenceType.BuiltinMethodReference, filename);
           new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new CharacterType(1);
+        }
         case "REDUCE":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
