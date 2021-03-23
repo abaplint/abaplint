@@ -21,4 +21,9 @@ export class TypePool extends ABAPObject {
       allowNamespace: false,
     };
   }
+
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
 }

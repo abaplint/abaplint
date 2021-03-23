@@ -15,9 +15,11 @@ export interface IParseResult {
 }
 
 export interface IObject extends IArtifact {
-  getName(): string;
   /** the main place identifying the object, used for go-to */
   getIdentifier(): Identifier | undefined;
+  getName(): string;
+  getDescription(): string | undefined;
+
   setDirty(): void;
   isDirty(): boolean;
 

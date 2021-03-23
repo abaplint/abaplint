@@ -29,6 +29,7 @@ describe("Domain, parse main xml", () => {
     const dtel = reg.getFirstObject()! as Domain;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(BasicTypes.CharacterType);
+    expect(dtel.getDescription()).to.equal("Branch name");
   });
 
   it("parser error", async () => {

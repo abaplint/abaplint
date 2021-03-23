@@ -13,4 +13,8 @@ export class CompositeEnhancementSpot extends AbstractObject {
     };
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
 }

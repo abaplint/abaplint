@@ -68,6 +68,11 @@ export class View extends AbstractObject {
     return new Types.StructureType(components, this.getName());
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
+
 ///////////////
 
   private parseXML() {

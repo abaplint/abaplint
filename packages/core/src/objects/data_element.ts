@@ -6,6 +6,7 @@ import * as Types from "../abap/types/basic";
 
 export class DataElement extends AbstractObject {
   private parsedXML: {
+    description?: string,
     refkind?: string,
     domname?: string,
     datatype?: string,
@@ -14,6 +15,10 @@ export class DataElement extends AbstractObject {
 
   public getType(): string {
     return "DTEL";
+  }
+
+  public getDescription(): string | undefined {
+    return this.parsedXML?.description;
   }
 
   public getAllowedNaming() {
@@ -29,9 +34,6 @@ export class DataElement extends AbstractObject {
   }
 
   public parseType(reg: IRegistry): AbstractType {
-// note that this might look up in the Registry, so dont cache the resulting type, only the XML
-    this.parseXML();
-
     let type: AbstractType;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
       type = new Types.UnknownType("Data Element " + this.getName() + ", parser error");
@@ -47,27 +49,29 @@ export class DataElement extends AbstractObject {
     return type;
   }
 
-////////////////////
-
-  private parseXML() {
+  public parse() {
     if (this.parsedXML !== undefined) {
-      return;
+      return {updated: false, runtime: 0};
     }
 
+    const start = Date.now();
     this.parsedXML = {};
-
     const parsed = super.parseRaw();
     if (parsed === undefined) {
-      return;
+      return {updated: false, runtime: 0};
     }
 
-    const dd04v = parsed.abapGit["asx:abap"]["asx:values"].DD04V;
-
-    this.parsedXML.refkind = dd04v?.REFKIND?._text;
-    this.parsedXML.domname = dd04v?.DOMNAME?._text;
-    this.parsedXML.datatype = dd04v?.DATATYPE?._text;
-    this.parsedXML.leng = dd04v?.LENG?._text;
-    this.parsedXML.decimals = dd04v?.DECIMALS?._text;
+    const dd04v = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD04V;
+    this.parsedXML = {
+      description: dd04v?.DDTEXT?._text,
+      refkind: dd04v?.REFKIND?._text,
+      domname: dd04v?.DOMNAME?._text,
+      datatype: dd04v?.DATATYPE?._text,
+      leng: dd04v?.LENG?._text,
+      decimals: dd04v?.DECIMALS?._text,
+    };
+    const end = Date.now();
+    return {updated: true, runtime: end - start};
   }
 
 }

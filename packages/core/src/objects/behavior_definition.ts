@@ -13,4 +13,8 @@ export class BehaviorDefinition extends AbstractObject {
     };
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
 }

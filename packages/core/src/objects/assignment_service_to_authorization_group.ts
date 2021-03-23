@@ -13,4 +13,8 @@ export class AssignmentServiceToAuthorizationGroup extends AbstractObject {
     };
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
 }

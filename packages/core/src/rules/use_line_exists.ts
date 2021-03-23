@@ -26,6 +26,11 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-line
 
 `,
       tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `READ TABLE my_table TRANSPORTING NO FIELDS WITH KEY key = 'A'.
+IF sy-subrc = 0.
+ENDIF.`,
+      goodExample: `IF line_exists( my_table[ key = 'A' ] ).
+ENDIF.`,
     };
   }
 

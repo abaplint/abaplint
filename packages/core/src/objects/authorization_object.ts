@@ -13,4 +13,8 @@ export class AuthorizationObject extends AbstractObject {
     };
   }
 
+  public getDescription(): string | undefined {
+    // todo
+    return undefined;
+  }
 }
