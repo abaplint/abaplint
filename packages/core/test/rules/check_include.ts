@@ -126,4 +126,35 @@ FUNCTION-POOL ZABAPGIT_UNIT_TEST.`},
     expect(issues.length).to.equals(0);
   });
 
+  it("class example, error expected", async () => {
+    const contents = `CLASS zcl_inc DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS sdfds.
+ENDCLASS.
+CLASS ZCL_INC IMPLEMENTATION.
+  METHOD sdfds.
+    INCLUDE zinc.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([{filename: "zcl_inc.clas.abap", contents}]);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("class example, ok", async () => {
+    const contents = `CLASS zcl_inc DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS sdfds.
+ENDCLASS.
+CLASS ZCL_INC IMPLEMENTATION.
+  METHOD sdfds.
+    INCLUDE zexists.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zcl_inc.clas.abap", contents},
+      {filename: "zexists.prog.abap", contents: `WRITE 2.`},
+      {filename: "zexists.prog.xml", contents: `<SUBC>I</SUBC>`}]);
+    expect(issues.length).to.equals(1);
+  });
+
 });
