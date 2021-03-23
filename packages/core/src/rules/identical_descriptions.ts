@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
-import * as Objects from "../objects";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
@@ -11,13 +10,14 @@ export class IdenticalDescriptionsConf extends BasicRuleConfig {
 export class IdenticalDescriptions implements IRule {
   private conf = new IdenticalDescriptionsConf();
   private descriptions: {[type: string]: {[description: string]: string[]}};
+  private types: string[];
 
   public getMetadata(): IRuleMetadata {
     return {
       key: "identical_descriptions",
       title: "Identical descriptions",
       shortDescription: `Searches for objects with the same type and same description, case insensitive`,
-      extendedInformation: `Only works for interfaces and classes`,
+      extendedInformation: `Works for: INTF, CLAS, DOMA`,
       tags: [],
     };
   }
@@ -32,9 +32,10 @@ export class IdenticalDescriptions implements IRule {
 
   public initialize(reg: IRegistry) {
     this.descriptions = {};
+    this.types = ["INTF", "CLAS", "DOMA"];
     for (const o of reg.getObjects()) {
-      if (o instanceof Objects.Interface || o instanceof Objects.Class) {
-        const type = o.getType();
+      const type = o.getType();
+      if (this.types.includes(type)) {
         const description = o.getDescription()?.toUpperCase();
         if (description === undefined || description === "") {
           continue;
@@ -53,8 +54,8 @@ export class IdenticalDescriptions implements IRule {
 
   public run(o: IObject): Issue[] {
     const issues: Issue[] = [];
-    if (o instanceof Objects.Interface || o instanceof Objects.Class) {
-      const type = o.getType();
+    const type = o.getType();
+    if (this.types.includes(type)) {
       const description = o.getDescription()?.toUpperCase();
       if (description === undefined || description === "") {
         return issues;
