@@ -3761,6 +3761,25 @@ WRITE <ls_data>-name.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CLAS, INCLUDEs", () => {
+    const clas = `CLASS zcl_inc DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS sdfds.
+ENDCLASS.
+CLASS ZCL_INC IMPLEMENTATION.
+  METHOD sdfds.
+    INCLUDE zincclas.
+    moo = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const zincclas = `DATA moo TYPE i.`;
+    const issues = runMulti([
+      {filename: "zcl_inc.clas.abap", contents: clas},
+      {filename: "zincclas.prog.abap", contents: zincclas},
+      {filename: "zincclas.prog.xml", contents: "<SUBC>I</SUBC>"}]);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

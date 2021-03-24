@@ -18,7 +18,9 @@ export class NoYodaConditions extends ABAPRule {
       key: "no_yoda_conditions",
       title: "No Yoda conditions",
       shortDescription: `Finds Yoda conditions and reports issues`,
-      extendedInformation: `https://en.wikipedia.org/wiki/Yoda_conditions`,
+      extendedInformation: `https://en.wikipedia.org/wiki/Yoda_conditions
+
+Conditions with operators CP, NP, CS, NS, CA, NA, CO, CN are ignored`,
       tags: [RuleTag.SingleFile],
       badExample: `IF 0 <> sy-subrc.
 ENDIF.`,
@@ -39,7 +41,16 @@ ENDIF.`,
     const issues: Issue[] = [];
 
     for (const c of file.getStructure()?.findAllExpressions(Expressions.Compare) || []) {
-      if (c.findDirectExpression(Expressions.CompareOperator) === undefined) {
+      const operator = c.findDirectExpression(Expressions.CompareOperator)?.concatTokens().toUpperCase();
+      if (operator === undefined
+          || operator === "CP"
+          || operator === "NP"
+          || operator === "CS"
+          || operator === "NS"
+          || operator === "CA"
+          || operator === "NA"
+          || operator === "CO"
+          || operator === "CN") {
         continue;
       }
 

@@ -40,11 +40,6 @@ READ TABLE lt_results WITH KEY object = 'DTEL' obj_name = 'XMILOGID' TRANSPORTIN
 cl_abap_unit_assert=>assert_subrc( ).`, cnt: 0},
 
   {abap: `
-ASSIGN foo TO <left_operand>.
-IF <left_operand> IS ASSIGNED.
-ENDIF.`, cnt: 0},
-
-  {abap: `
 READ TABLE ct_failed_objects ASSIGNING <lfs_failed_objects> INDEX 1.
 IF <lfs_failed_objects> IS ASSIGNED.
 ENDIF.`, cnt: 0},
@@ -68,6 +63,37 @@ SELECT *
   {abap: "FIND REGEX 'blah' IN lv_statement SUBMATCHES lv_name.", cnt: 0},
   {abap: "FIND 'blah' IN TABLE t_source IGNORING CASE.", cnt: 1},
 
+// ASSIGN, non dynamic variant, no subrc is set
+  {abap: `
+  ASSIGN foo TO <left_operand>.
+  IF <left_operand> IS ASSIGNED.
+  ENDIF.`, cnt: 0},
+
+// todo, this should be an error?
+  {abap: `
+  ASSIGN foo TO <left_operand>.
+  IF sy-subrc = 0.
+  ENDIF.`, cnt: 0},
+
+// ASSIGN, 4 dynamic variants, these sets subrc
+  {abap: `
+  ASSIGN (name) TO <left_operand>.
+  IF sy-subrc = 0.
+  ENDIF.`, cnt: 0},
+  {abap: `
+  ASSIGN dref->* TO <left_operand>.
+  IF sy-subrc = 0.
+  ENDIF.`, cnt: 0},
+  {abap: `
+  ASSIGN dobj INCREMENT inc TO <left_operand>.
+  IF sy-subrc = 0.
+  ENDIF.`, cnt: 0},
+  {abap: `
+  ASSIGN COMPONENT comp OF STRUCTURE struc TO <left_operand>.
+  IF sy-subrc = 0.
+  ENDIF.`, cnt: 0},
+
+// todo, this should be an error as SY-SUBRC is set?
   {abap: `
   DATA lcl_ref TYPE REF TO data.
   FIELD-SYMBOLS <restab_standatd> TYPE STANDARD TABLE.
