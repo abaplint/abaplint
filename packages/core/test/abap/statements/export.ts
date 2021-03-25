@@ -31,6 +31,7 @@ const tests = [
   `EXPORT $hcat1 TO MEMORY ID sy-uname.`,
   "EXPORT <tab> FROM <tab> TO DATABASE bar(as) FROM fr ID id.",
   "EXPORT gi_inptab[] TO MEMORY ID sy-repid.",
+  "EXPORT foo TO MEMORY.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);

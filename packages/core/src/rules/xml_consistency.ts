@@ -4,7 +4,7 @@ import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import * as xmljs from "xml-js";
+import * as fastxmlparser from "fast-xml-parser";
 
 export class XMLConsistencyConf extends BasicRuleConfig {
 }
@@ -44,10 +44,9 @@ export class XMLConsistency implements IRule {
 
     const xml = obj.getXML();
     if (xml) {
-      try {
-        xmljs.xml2js(xml, {compact: true});
-      } catch (error) {
-        issues.push(Issue.atRow(file, 1, "XML parser error: " + error.toString(), this.getMetadata().key, this.conf.severity));
+      const res = fastxmlparser.validate(xml);
+      if (res !== true) {
+        issues.push(Issue.atRow(file, 1, "XML parser error: " + res.err.msg, this.getMetadata().key, this.conf.severity));
       }
     }
 

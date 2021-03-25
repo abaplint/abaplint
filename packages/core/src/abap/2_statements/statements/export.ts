@@ -19,7 +19,7 @@ export class Export implements IStatement {
                         tok(ParenRightW));
 
     const buffer = seq("DATA BUFFER", Target);
-    const memory = seq("MEMORY ID", Source);
+    const memory = seq("MEMORY", opt(seq("ID", Source)));
     const table = seq("INTERNAL TABLE", Target);
     const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(from, client, id));
     const database = seq("DATABASE", cluster, per(from, client, id, using));

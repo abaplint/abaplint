@@ -30,10 +30,9 @@ const xml = `<?xml version="1.0" encoding="utf-8"?>
 
 describe("rule, xml_consistency, error", async () => {
 
-  it("test", async () => {
+  it("test, name mismatch", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
     const issues = await run(reg);
-
     expect(issues.length).to.equals(1);
   });
 });
