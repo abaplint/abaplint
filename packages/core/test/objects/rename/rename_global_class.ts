@@ -119,7 +119,7 @@ ENDCLASS.`;
     }
   });
 
-  it.only("CLAS, inferred type", () => {
+  it("CLAS, inferred type", () => {
     const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
 ENDCLASS.
 CLASS ZCL_FOO IMPLEMENTATION.

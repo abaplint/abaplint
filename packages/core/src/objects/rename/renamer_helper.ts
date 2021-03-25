@@ -1,4 +1,5 @@
 import {Range, RenameFile, TextDocumentEdit, TextEdit} from "vscode-languageserver-types";
+import {ReferenceType} from "../..";
 import {Identifier} from "../../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../../abap/5_syntax/syntax";
 import {ScopeType} from "../../abap/5_syntax/_scope_type";
@@ -95,6 +96,7 @@ export class RenamerHelper {
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       for (const r of node.getData().references) {
         if (r.resolved?.equals(identifier)
+            && r.referenceType !== ReferenceType.InferredType
             && !(r.position.getStart() instanceof VirtualPosition)) {
           ret.push(r.position);
         }
