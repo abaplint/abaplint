@@ -1,4 +1,4 @@
-import {ver, seq, opt, tok, star, alt, optPrio, Expression} from "../combi";
+import {ver, seq, opt, tok, star, alt, optPrio, altPrio, Expression} from "../combi";
 import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from ".";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -24,7 +24,7 @@ export class SQLCompare extends Expression {
 
     const source = new SQLSource();
 
-    const sub = seq(opt(alt("ALL", "ANY", "SOME")), subSelect);
+    const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), subSelect);
 
     const builtin = ver(Version.v751, seq(alt("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
@@ -39,6 +39,6 @@ export class SQLCompare extends Expression {
 
     const exists = seq("EXISTS", subSelect);
 
-    return alt(ret, Dynamic, exists);
+    return altPrio(exists, Dynamic, ret);
   }
 }
