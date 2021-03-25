@@ -362,7 +362,7 @@ export class Registry implements IRegistry {
     if (input?.outputPerformance === true) {
       const perf: {name: string, time: number}[] = [];
       for (const p in rulePerformance) {
-        if (rulePerformance[p] > 10) { // ignore rules if it takes less than 10ms
+        if (rulePerformance[p] > 100) { // ignore rules if it takes less than 100ms
           perf.push({name: p, time: rulePerformance[p]});
         }
       }
