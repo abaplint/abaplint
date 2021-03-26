@@ -119,4 +119,35 @@ ENDCLASS.`;
     }
   });
 
+  it("CLAS, inferred type", () => {
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS ZCL_FOO IMPLEMENTATION.
+ENDCLASS.`;
+    const prog = `DATA foo TYPE REF TO zcl_foo.
+foo = NEW #( ).`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcl_foo.clas.abap", clas),
+      new MemoryFile("zfoo.prog.abap", prog),
+    ]).parse();
+
+    new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "cl_foo.clas.abap") {
+        const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS cl_foo IMPLEMENTATION.
+ENDCLASS.`;
+        expect(f.getRaw()).to.equal(expected);
+      } else if (f.getFilename() === "zfoo.prog.abap") {
+        expect(f.getRaw()).to.equal(`DATA foo TYPE REF TO cl_foo.\nfoo = NEW #( ).`);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });
