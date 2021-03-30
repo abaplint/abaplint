@@ -116,6 +116,7 @@ export * from "./types_naming";
 export * from "./uncaught_exception";
 export * from "./unknown_types";
 export * from "./unreachable_code";
+export * from "./unsecure_fae";
 export * from "./unused_methods";
 export * from "./unused_types";
 export * from "./unused_variables";

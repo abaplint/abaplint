@@ -2471,6 +2471,17 @@
               ],
               "description": "Checks for unreachable code.\nTags: SingleFile\nhttps://rules.abaplint.org/unreachable_code"
             },
+            "unsecure_fae": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnsecureFAEConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for Unsecure FAE\nTags: Experimental\nhttps://rules.abaplint.org/unsecure_fae"
+            },
             "unused_methods": {
               "anyOf": [
                 {
@@ -4597,6 +4608,23 @@
       "type": "object"
     },
     "UnreachableCodeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UnsecureFAEConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
