@@ -25,4 +25,14 @@ describe("Rule: unsecure_fae", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("basic", async () => {
+    const abap = `
+  DATA lt_list TYPE STANDARD TABLE OF table WITH EMPTY KEY.
+  SELECT * FROM table INTO TABLE @DATA(bar)
+    FOR ALL ENTRIES IN @lt_list
+    WHERE field = @lt_list-field.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equal(1);
+  });
+
 });

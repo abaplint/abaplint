@@ -1,3 +1,4 @@
+import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
@@ -37,18 +38,26 @@ export class UnsecureFAE implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
+    const issues: Issue[] = [];
     if (!(obj instanceof ABAPObject)) {
-      return [];
+      return issues;
     }
 
     const syntaxResult = new SyntaxLogic(this.reg, obj).run();
     if (syntaxResult.issues.length > 0) {
-      return [];
+      return issues;
     }
 
-// todo
+    for (const f of obj.getABAPFiles()) {
+      // todo
+      for (const e of f.getStructure()?.findAllExpressions(Expressions.SQLForAllEntries) || []) {
+        const token = e.getFirstToken();
+        const message = "Unsecure FAE";
+        issues.push(Issue.atToken(f, token, message, this.getMetadata().key, this.getConfig().severity));
+      }
+    }
 
-    return [];
+    return issues;
   }
 
 }
