@@ -36,8 +36,8 @@ export class NewlineBetweenMethods extends ABAPRule {
 
   private getMessage(): string {
     switch (this.conf.logic) {
-      case NewlineLogic.Exact: return `Exactly ${this.conf.count} newlines are required in between methods.`;
-      case NewlineLogic.Less: return `Less than ${this.conf.count} newlines and at least a single newline are required in between methods.`;
+      case NewlineLogic.Exact: return `Exactly ${this.conf.count} newlines are required in between methods`;
+      case NewlineLogic.Less: return `Less than ${this.conf.count} newlines and at least a single newline are required in between methods`;
       default: return "";
     }
   }
