@@ -18,7 +18,7 @@ export class UnsecureFAE implements IRule {
     return {
       key: "unsecure_fae",
       title: "Unsecure FAE",
-      shortDescription: `Checks for Unsecure FAE`,
+      shortDescription: `Checks for unsecure FAE`,
       extendedInformation: `Issues from rule check_syntax must be fixed before this rule takes effect`,
       tags: [RuleTag.Experimental],
     };
