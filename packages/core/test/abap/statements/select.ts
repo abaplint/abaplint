@@ -243,6 +243,7 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
   `SELECT SINGLE * FROM usr02 INTO @DATA(sdf) WHERE bname = @text-001.`,
   "SELECT SUM( (l_field) ) INTO l_value FROM (l_table).",
   "SELECT COUNT( DISTINCT ( field ) ) FROM voided INTO @DATA(lv_result).",
+  `SELECT SINGLE foo, bar FROM tab INTO (@lv_moo, @DATA(lv_bar)).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

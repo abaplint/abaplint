@@ -117,6 +117,7 @@ import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
+import {UnsecureFAEConf} from "../src/rules/unsecure_fae";
 import {UnusedMethodsConf} from "../src/rules/unused_methods";
 import {UnusedTypesConf} from "../src/rules/unused_types";
 import {UnusedVariablesConf} from "../src/rules/unused_variables";
@@ -253,6 +254,7 @@ export interface IConfig {
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
+    "unsecure_fae"?: UnsecureFAEConf | boolean,
     "unused_methods"?: UnusedMethodsConf | boolean,
     "unused_types"?: UnusedTypesConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,
