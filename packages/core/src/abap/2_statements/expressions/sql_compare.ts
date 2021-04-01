@@ -16,7 +16,7 @@ export class SQLCompare extends Expression {
                     "IN",
                     alt(SQLSource, list, subSelect));
 
-    const between = seq("BETWEEN", SQLSource, "AND", SQLSource);
+    const between = seq(opt("NOT"), "BETWEEN", SQLSource, "AND", SQLSource);
 
     const like = seq(opt("NOT"), "LIKE", SQLSource, optPrio(seq("ESCAPE", SQLSource)));
 

@@ -63,6 +63,13 @@ const tests = [
  END AS ernam
  FROM vbak
   INTO @DATA(ls_vbak2).`,
+
+  `SELECT field1 field2
+    INTO CORRESPONDING FIELDS OF TABLE lt_http
+    FROM ztab PACKAGE SIZE 2500
+    WHERE status not BETWEEN 200 and 299
+    and status <> 0
+    AND bar IN i_bar.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
