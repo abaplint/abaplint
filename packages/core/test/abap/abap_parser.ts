@@ -1,9 +1,10 @@
 import {expect} from "chai";
 import {ABAPParser} from "../../src/abap/abap_parser";
-import {MemoryFile, ABAPFile} from "../../src";
 import {IFile} from "../../src/files/_ifile";
 import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {defaultVersion} from "../../src/version";
+import {ABAPFile} from "../../src/abap/abap_file";
+import {MemoryFile} from "../../src/files/memory_file";
 
 function expectNoUnknown(output: readonly ABAPFile[]) {
   for (const file of output) {
@@ -14,7 +15,7 @@ function expectNoUnknown(output: readonly ABAPFile[]) {
 }
 
 describe("abap_parser", () => {
-  it("macro in class, no unknown expected", () => {
+  it("macro in class, no unknown expected", async () => {
     const files: IFile[] = [];
 
     files.push(new MemoryFile("zcl_macro.clas.abap", `
@@ -43,7 +44,7 @@ describe("abap_parser", () => {
     expectNoUnknown(output);
   });
 
-  it("macro in CASE, no unknown expected", () => {
+  it("macro in CASE, no unknown expected", async () => {
     const files: IFile[] = [];
 
     files.push(new MemoryFile("ztest.prog.abap", `
@@ -63,7 +64,7 @@ ENDCASE.`));
     expectNoUnknown(output);
   });
 
-  it("double chaining", () => {
+  it("double chaining", async () => {
     const files: IFile[] = [];
 
     files.push(new MemoryFile("zcl_chaining.prog.abap", `data: : bar type c.`));
@@ -74,7 +75,7 @@ ENDCASE.`));
     expectNoUnknown(output);
   });
 
-  it("should build structure, even with Unknown statements", () => {
+  it("should build structure, even with Unknown statements", async () => {
     const abap = `
     INTERFACE if_foo.
       with_syntax_error
@@ -88,7 +89,7 @@ ENDCASE.`));
     expect(output[0].getStructure()).to.not.equal(undefined);
   });
 
-  it("Macro inside TYPES", () => {
+  it("Macro inside TYPES", async () => {
     const abap = `
     DEFINE _macro.
     END-OF-DEFINITION.
