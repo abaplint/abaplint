@@ -76,7 +76,7 @@ function examplesEditor(abap: string) {
 }
 
 function findPath(ruleKey: string) {
-  const base = "https://github.com/abaplint/abaplint/blob/master/packages/core/src/rules/";
+  const base = "https://github.com/abaplint/abaplint/blob/main/packages/core/src/rules/";
   return base + ruleKey + ".ts";
 }
 
