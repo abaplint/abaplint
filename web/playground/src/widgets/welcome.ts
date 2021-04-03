@@ -38,7 +38,7 @@ export class WelcomeWidget extends Widget {
     Ctrl + Shift + P = Command Palette<br>
     <br>
     abaplint ` + Registry.abaplintVersion() + `<br>
-    <a href="https://github.com/abaplint/abaplint/tree/master/web/playground">playground sourcecode</a>
+    <a href="https://github.com/abaplint/abaplint/tree/main/web/playground">playground sourcecode</a>
     </center>`;
     content.appendChild(input);
 
