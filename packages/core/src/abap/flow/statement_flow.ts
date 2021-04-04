@@ -49,12 +49,20 @@ export class StatementFlow {
             flows.push({name: name + "-if_emptybody", statements: [ifst, endif]});
           }
 
-          flows.push({name: name + "-if_no", statements: [ifst, endif]});
-
           /*
           const elseif = c.findDirectStructures(Structures.ElseIf);
+          */
+
           const els = c.findDirectStructure(Structures.Else);
-*/
+          const elsest = els?.findDirectStatement(Statements.Else);
+          if (els && elsest) {
+            const body = els.findDirectStructure(Structures.Body);
+            let bodyFlows = this.traverse(body, name + "-if_else");
+            bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [ifst, elsest, ...b.statements, endif]};});
+            flows.push(...bodyFlows);
+          } else {
+            flows.push({name: name + "-if_no", statements: [ifst, endif]});
+          }
         } else {
           console.dir("todo, " + c.get().constructor.name);
         }

@@ -22,13 +22,13 @@ function dump(flows: StatementFlowPath[]): string {
 }
 
 describe("statement_flow", () => {
-  it.only("WRITE", async () => {
+  it("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
     const res = await build(abap);
     expect(dump(res)).to.equal("[[Write]]");
   });
 
-  it.only("FORM with two WRITEs", async () => {
+  it("FORM with two WRITEs", async () => {
     const abap = `
     FORM moo.
       WRITE 'hello'.
@@ -38,12 +38,23 @@ describe("statement_flow", () => {
     expect(dump(res)).to.equal("[[Form,Write,Write,EndForm]]");
   });
 
-  it.only("IF", async () => {
+  it("IF", async () => {
     const abap = `
     IF foo = bar.
       WRITE sdfds.
     ENDIF.`;
     const res = await build(abap);
     expect(dump(res)).to.equal("[[If,Write,EndIf],[If,EndIf]]");
+  });
+
+  it("IF, ELSE", async () => {
+    const abap = `
+    IF foo = bar.
+      WRITE sdfds.
+    ELSE.
+      DATA moo.
+    ENDIF.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[If,Write,EndIf],[If,Else,Data,EndIf]]");
   });
 });
