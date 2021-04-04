@@ -1,8 +1,7 @@
 import {expect} from "chai";
 import {ABAPFile} from "../../../src/abap/abap_file";
-import {StatementFlow} from "../../../src/abap/flow/statement_flow";
+import {StatementFlow, StatementFlowPath} from "../../../src/abap/flow/statement_flow";
 import {MemoryFile} from "../../../src/files/memory_file";
-import * as Statements from "../../../src/abap/2_statements/statements";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Registry} from "../../../src/registry";
 
@@ -17,24 +16,34 @@ async function build(abap: string) {
   return new StatementFlow().build(stru!);
 }
 
+function dump(flows: StatementFlowPath[]): string {
+  const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
+  return ret + "]";
+}
+
 describe("statement_flow", () => {
-  it("WRITE", async () => {
+  it.only("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
     const res = await build(abap);
-    expect(res).to.not.equal(undefined);
-    expect(res.length).to.equal(1);
-    expect(res[0].statements.length).to.equal(1);
-    expect(res[0].statements[0].get()).to.be.instanceof(Statements.Write);
+    expect(dump(res)).to.equal("[[Write]]");
   });
 
-  it("two WRITEs", async () => {
-    const abap = `WRITE 'hello'.
-    WRITE 'world'.`;
+  it.only("FORM with two WRITEs", async () => {
+    const abap = `
+    FORM moo.
+      WRITE 'hello'.
+      WRITE 'world'.
+    ENDFORM.`;
     const res = await build(abap);
-    expect(res).to.not.equal(undefined);
-    expect(res.length).to.equal(1);
-    expect(res[0].statements.length).to.equal(2);
-    expect(res[0].statements[0].get()).to.be.instanceof(Statements.Write);
-    expect(res[0].statements[1].get()).to.be.instanceof(Statements.Write);
+    expect(dump(res)).to.equal("[[Form,Write,Write,EndForm]]");
+  });
+
+  it.only("IF", async () => {
+    const abap = `
+    IF foo = bar.
+      WRITE sdfds.
+    ENDIF.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[If,Write,EndIf],[If,EndIf]]");
   });
 });
