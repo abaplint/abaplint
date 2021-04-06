@@ -17,14 +17,10 @@ export class EmptyStatement extends ABAPRule {
   public getMetadata() {
     return {
       key: "empty_statement",
-      title: "Remove emty statement",
+      title: "Remove empty statement",
       shortDescription: `Checks for empty statements (an empty statement is a single dot)`,
       tags: [RuleTag.Quickfix, RuleTag.SingleFile],
     };
-  }
-
-  private getMessage(): string {
-    return "Remove empty statement.";
   }
 
   public getConfig() {
@@ -47,7 +43,7 @@ export class EmptyStatement extends ABAPRule {
         const token = sta.getFirstToken();
         const fix = EditHelper.deleteRange(file, previousEnd, token.getEnd());
 
-        const issue = Issue.atStatement(file, sta, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
+        const issue = Issue.atStatement(file, sta, "Remove empty statement", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
 

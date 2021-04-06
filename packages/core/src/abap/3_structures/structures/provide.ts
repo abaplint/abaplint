@@ -1,14 +1,14 @@
 import * as Statements from "../../2_statements/statements";
 import {IStructure} from "./_structure";
-import {star, sta, beginEnd, sub} from "./_combi";
+import {opt, sta, beginEnd, sub} from "./_combi";
 import {IStructureRunnable} from "./_structure_runnable";
-import {Normal} from "./normal";
+import {Body} from "./body";
 
 export class Provide implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.Provide),
-                    star(sub(Normal)),
+                    opt(sub(Body)),
                     sta(Statements.EndProvide));
   }
 
