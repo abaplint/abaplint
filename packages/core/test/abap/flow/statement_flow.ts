@@ -28,14 +28,14 @@ describe("statement_flow", () => {
     expect(dump(res)).to.equal("[[Write]]");
   });
 
-  it.skip("FORM with two WRITEs", async () => {
+  it("FORM with two WRITEs", async () => {
     const abap = `
     FORM moo.
       WRITE 'hello'.
       WRITE 'world'.
     ENDFORM.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[Form,Write,Write,EndForm]]");
+    expect(dump(res)).to.equal("[[Form,Write,Write]]");
   });
 
   it("IF", async () => {
@@ -44,7 +44,7 @@ describe("statement_flow", () => {
       WRITE sdfds.
     ENDIF.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[If,Write,EndIf],[If,EndIf]]");
+    expect(dump(res)).to.equal("[[If,Write],[If]]");
   });
 
   it("IF, ELSE", async () => {
@@ -55,7 +55,7 @@ describe("statement_flow", () => {
       DATA moo.
     ENDIF.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[If,Write,EndIf],[If,Else,Data,EndIf]]");
+    expect(dump(res)).to.equal("[[If,Write],[If,Else,Data]]");
   });
 
   it("IF, ELSEIF, ELSE", async () => {
@@ -68,10 +68,10 @@ describe("statement_flow", () => {
       DATA moo.
     ENDIF.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[If,Write,EndIf],[If,ElseIf,Data,EndIf],[If,ElseIf,Else,Data,EndIf]]");
+    expect(dump(res)).to.equal("[[If,Write],[If,ElseIf,Data],[If,ElseIf,Else,Data]]");
   });
 
-  it.skip("FORM with CHECK", async () => {
+  it("FORM with CHECK", async () => {
     const abap = `
     FORM moo.
       WRITE 'hello'.
@@ -79,6 +79,27 @@ describe("statement_flow", () => {
       WRITE 'world'.
     ENDFORM.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[Form,Write,Check,Write,EndForm],[Form,Write,Check,EndForm]]");
+    expect(dump(res)).to.equal("[[Form,Write,Check],[Form,Write,Check,Write]]");
+  });
+
+  it("FORM with RETURN", async () => {
+    const abap = `
+    FORM moo.
+      WRITE 'hello'.
+      RETURN.
+      WRITE 'world'.
+    ENDFORM.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[Form,Write,Return]]");
+  });
+
+  it("IF with RETURN", async () => {
+    const abap = `
+    IF foo = bar.
+      RETURN.
+      WRITE 'world'.
+    ENDIF.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[If,Return],[If]]");
   });
 });
