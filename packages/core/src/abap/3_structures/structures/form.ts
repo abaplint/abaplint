@@ -1,19 +1,14 @@
 import * as Statements from "../../2_statements/statements";
 import {IStructure} from "./_structure";
-import {star, sta, beginEnd, sub, alt} from "./_combi";
+import {star, sta, beginEnd, sub} from "./_combi";
 import {Normal} from "./normal";
 import {IStructureRunnable} from "./_structure_runnable";
 
 export class Form implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const body = alt(sub(Normal),
-                     sta(Statements.Ranges),
-                     sta(Statements.TypePools),
-                     sta(Statements.Tables));
-
     return beginEnd(sta(Statements.Form),
-                    star(body),
+                    star(sub(Normal)),
                     sta(Statements.EndForm));
   }
 

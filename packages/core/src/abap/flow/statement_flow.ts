@@ -16,10 +16,10 @@ export type StatementFlowPath = {
 
 export class StatementFlow {
   public build(stru: StructureNode): StatementFlowPath[] {
-    return this.traverse(stru, "top");
+    return this.traverseStructure(stru, "top");
   }
 
-  private traverse(n: StructureNode | undefined, name: string): StatementFlowPath[] {
+  private traverseStructure(n: StructureNode | undefined, name: string): StatementFlowPath[] {
     const flows: StatementFlowPath[] = [];
     if (n === undefined) {
       return flows;
@@ -31,37 +31,45 @@ export class StatementFlow {
         flows.push({name, statements: [c]});
       } else {
         if (type instanceof Structures.Normal) {
-          flows.push(...this.traverse(c, name));
+          flows.push(...this.traverseStructure(c, name));
         } else if (type instanceof Structures.Form) {
-          const res = this.traverse(c, name + "-form").map(a => a.statements);
+          const res = this.traverseStructure(c, name + "-form").map(a => a.statements);
           const flat = res.reduce((acc, val) => acc.concat(val), []);
           flows.push({name: name + "-form", statements: flat});
         } else if (type instanceof Structures.If) {
-          const ifst = c.findDirectStatement(Statements.If);
+          const collect = [c.findDirectStatement(Statements.If)];
           const endif = c.findDirectStatement(Statements.EndIf);
 
           const body = c.findDirectStructure(Structures.Body);
           if (body) {
-            let bodyFlows = this.traverse(body, name + "-if_body");
-            bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [ifst, ...b.statements, endif]};});
+            let bodyFlows = this.traverseStructure(body, name + "-if_body");
+            bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, ...b.statements, endif]};});
             flows.push(...bodyFlows);
           } else {
-            flows.push({name: name + "-if_emptybody", statements: [ifst, endif]});
+            flows.push({name: name + "-if_emptybody", statements: [...collect, endif]});
           }
 
-          /*
-          const elseif = c.findDirectStructures(Structures.ElseIf);
-          */
+          for (const e of c.findDirectStructures(Structures.ElseIf)) {
+            const elseifst = e.findDirectStatement(Statements.ElseIf);
+            if (elseifst === undefined) {
+              continue;
+            }
+            collect.push(elseifst);
+            const body = e.findDirectStructure(Structures.Body);
+            let bodyFlows = this.traverseStructure(body, name + "-if_elseif");
+            bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, ...b.statements, endif]};});
+            flows.push(...bodyFlows);
+          }
 
           const els = c.findDirectStructure(Structures.Else);
           const elsest = els?.findDirectStatement(Statements.Else);
           if (els && elsest) {
             const body = els.findDirectStructure(Structures.Body);
-            let bodyFlows = this.traverse(body, name + "-if_else");
-            bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [ifst, elsest, ...b.statements, endif]};});
+            let bodyFlows = this.traverseStructure(body, name + "-if_else");
+            bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, elsest, ...b.statements, endif]};});
             flows.push(...bodyFlows);
           } else {
-            flows.push({name: name + "-if_no", statements: [ifst, endif]});
+            flows.push({name: name + "-if_no", statements: [...collect, endif]});
           }
         } else {
           console.dir("todo, " + c.get().constructor.name);

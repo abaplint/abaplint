@@ -57,4 +57,28 @@ describe("statement_flow", () => {
     const res = await build(abap);
     expect(dump(res)).to.equal("[[If,Write,EndIf],[If,Else,Data,EndIf]]");
   });
+
+  it("IF, ELSEIF, ELSE", async () => {
+    const abap = `
+    IF foo = bar.
+      WRITE sdfds.
+    ELSEIF moo = boo.
+      DATA moo.
+    ELSE.
+      DATA moo.
+    ENDIF.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[If,Write,EndIf],[If,ElseIf,Data,EndIf],[If,ElseIf,Else,Data,EndIf]]");
+  });
+
+  it.skip("FORM with CHECK", async () => {
+    const abap = `
+    FORM moo.
+      WRITE 'hello'.
+      CHECK a = b.
+      WRITE 'world'.
+    ENDFORM.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[Form,Write,Check,Write,EndForm],[Form,Write,Check,EndForm]]");
+  });
 });
