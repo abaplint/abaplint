@@ -28,7 +28,7 @@ describe("statement_flow", () => {
     expect(dump(res)).to.equal("[[Write]]");
   });
 
-  it("FORM with two WRITEs", async () => {
+  it.skip("FORM with two WRITEs", async () => {
     const abap = `
     FORM moo.
       WRITE 'hello'.
