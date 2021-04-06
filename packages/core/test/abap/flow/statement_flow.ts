@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {ABAPFile} from "../../../src/abap/abap_file";
-import {StatementFlow, StatementFlowPath} from "../../../src/abap/flow/statement_flow";
+import {dump, StatementFlow} from "../../../src/abap/flow/statement_flow";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Registry} from "../../../src/registry";
@@ -14,11 +14,6 @@ async function build(abap: string) {
   const stru = file?.getStructure();
   expect(stru).to.not.equal(undefined);
   return new StatementFlow().build(stru!);
-}
-
-function dump(flows: StatementFlowPath[]): string {
-  const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
-  return ret + "]";
 }
 
 describe("statement_flow", () => {
@@ -93,7 +88,7 @@ describe("statement_flow", () => {
     expect(dump(res)).to.equal("[[Form,Write,Return]]");
   });
 
-  it("IF with RETURN", async () => {
+  it.only("IF with RETURN", async () => {
     const abap = `
     IF foo = bar.
       RETURN.
@@ -101,5 +96,17 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await build(abap);
     expect(dump(res)).to.equal("[[If,Return],[If]]");
+  });
+
+  it("FORM with IF", async () => {
+    const abap = `
+    FORM bar.
+      IF foo = bar.
+        WRITE 'world'.
+      ENDIF.
+      DATA bar.
+    ENDFORM.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[Form,If,Write,Data],[Form,If,Data]]");
   });
 });
