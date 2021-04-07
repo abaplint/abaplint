@@ -85,7 +85,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.tables,
-          type: param.TYP?._text,
+          type: param.DBSTRUCT?._text,
         });
       }
     }
