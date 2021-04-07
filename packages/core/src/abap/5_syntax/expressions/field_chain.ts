@@ -72,15 +72,13 @@ export class FieldChain {
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
-        if (context instanceof VoidType) {
-          continue;
-        }
-        if (!(context instanceof TableType)) {
+        if (!(context instanceof TableType) && !(context instanceof VoidType)) {
           throw new Error("Table expression, expected table");
         }
         new TableExpression().runSyntax(current, scope, filename);
-        // todo, additional validations
-        context = context.getRowType();
+        if (!(context instanceof VoidType)) {
+          context = context.getRowType();
+        }
       } else if (current.get() instanceof Expressions.AttributeName) {
         context = new AttributeName().runSyntax(context, current, scope, filename, refType);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {

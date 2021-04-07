@@ -3715,6 +3715,16 @@ INCLUDE lzfugr1f01.`;
     expect(issues[0].getMessage()).to.contain("foo-bar");
   });
 
+  it("voided table expression", () => {
+    const abap = `
+  DATA ref_scan_manager TYPE REF TO sdfsdfsd.
+  DATA(back_structure) = ref_scan_manager->structures[ 2 ].
+  DATA(sdfs) = ref_scan_manager->statements[ back_structure-stmnt_from ].
+  WRITE sdfs.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("FORM name with dashes found", () => {
     const abap = `
     FORM foo-bar.
@@ -3777,6 +3787,89 @@ ENDCLASS.`;
       {filename: "zcl_inc.clas.abap", contents: clas},
       {filename: "zincclas.prog.abap", contents: zincclas},
       {filename: "zincclas.prog.xml", contents: "<SUBC>I</SUBC>"}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("function group with TABLES STRUCTURE parameter, voided type", () => {
+    const topabap = `FUNCTION-POOL ZFUGR_TEST.`;
+    const topxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>LZFUGR_TESTTOP</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>I</SUBC>
+        <APPL>S</APPL>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const saplabap = `INCLUDE LZFUGR_TESTTOP.
+    INCLUDE LZFUGR_TESTUXX.`;
+    const saplxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>SAPLZFUGR_TEST</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>F</SUBC>
+        <APPL>S</APPL>
+        <RLOAD>E</RLOAD>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const fugrxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <AREAT>test</AREAT>
+       <INCLUDES>
+        <SOBJ_NAME>LZFUGR_TESTTOP</SOBJ_NAME>
+        <SOBJ_NAME>SAPLZFUGR_TEST</SOBJ_NAME>
+       </INCLUDES>
+       <FUNCTIONS>
+        <item>
+         <FUNCNAME>ZTABLSTRU</FUNCNAME>
+         <SHORT_TEXT>test</SHORT_TEXT>
+         <TABLES>
+          <RSTBL>
+           <PARAMETER>FOOBAR</PARAMETER>
+           <DBSTRUCT>EDIDC</DBSTRUCT>
+          </RSTBL>
+         </TABLES>
+        </item>
+       </FUNCTIONS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const functionabap = `FUNCTION ztablstru.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  TABLES
+*"      FOOBAR STRUCTURE  EDIDC
+*"----------------------------------------------------------------------
+
+  WRITE foobar-docnum.
+
+ENDFUNCTION.`;
+    const issues = runMulti([
+      {filename: "zfugr_test.fugr.lzfugr_testtop.abap", contents: topabap},
+      {filename: "zfugr_test.fugr.lzfugr_testtop.xml", contents: topxml},
+      {filename: "zfugr_test.fugr.saplzfugr_test.abap", contents: saplabap},
+      {filename: "zfugr_test.fugr.saplzfugr_test.xml", contents: saplxml},
+      {filename: "zfugr_test.fugr.xml", contents: fugrxml},
+      {filename: "zfugr_test.fugr.ztablstru.abap", contents: functionabap}]);
     expect(issues.length).to.equals(0);
   });
 
