@@ -16,7 +16,7 @@ async function build(abap: string) {
   return new StatementFlow().build(stru!);
 }
 
-describe("statement_flow", () => {
+describe.skip("statement_flow", () => {
   it("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
     const res = await build(abap);
@@ -88,7 +88,7 @@ describe("statement_flow", () => {
     expect(dump(res)).to.equal("[[Form,Write,Return]]");
   });
 
-  it.only("IF with RETURN", async () => {
+  it("IF with RETURN", async () => {
     const abap = `
     IF foo = bar.
       RETURN.
