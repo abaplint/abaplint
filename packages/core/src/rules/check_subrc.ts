@@ -33,6 +33,8 @@ export class CheckSubrc extends ABAPRule {
 
 If sy-dbcnt is checked after database statements, it is considered okay.
 
+"SELECT SINGLE @abap_true FROM " is considered as an existence check
+
 If IS ASSIGNED is checked after assigning, it is considered okay.
 
 Following FIND statements are considered okay if subrc is not checked,
@@ -84,6 +86,10 @@ FIND with MATCH LINE`,
           && statement.concatTokens().toUpperCase().startsWith("SELECT SINGLE ")
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
+        const concat = statement.concatTokens().toUpperCase();
+        if (concat.startsWith("SELECT SINGLE @ABAP_TRUE FROM ")) {
+          continue;
+        }
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.selectTable === true
           && statement.get() instanceof Statements.Select

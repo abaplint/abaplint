@@ -12,10 +12,11 @@ function testFix(input: string, expected: string) {
 async function runMulti(files: MemoryFile[]): Promise<Issue[]> {
   const reg = new Registry().addFiles(files);
   await reg.parseAsync();
+//  console.dir(reg.findIssues());
   const rule = new UnusedVariables().initialize(reg);
-  let issues: Issue[] = [];
+  const issues: Issue[] = [];
   for (const o of reg.getObjects()) {
-    issues = issues.concat(rule.run(o));
+    issues.push(...rule.run(o));
   }
   return issues;
 }
@@ -698,6 +699,43 @@ ENDCLASS.`;
   WRITE sdfs.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
+  });
+
+  it("Table expression, target", async () => {
+    const abap = `
+  DATA result TYPE STANDARD TABLE OF string.
+  DATA int TYPE i VALUE 1.
+  result[ int ] = 'hello'.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it.skip("ABSTRACT METHOD", async () => {
+    const base = `
+CLASS zcl_base DEFINITION PUBLIC ABSTRACT.
+  PROTECTED SECTION.
+    METHODS inspect_tokens ABSTRACT IMPORTING
+      index TYPE i
+      unused TYPE i.
+ENDCLASS.
+CLASS zcl_base IMPLEMENTATION.
+ENDCLASS.`;
+    const input = `
+CLASS zcl_input DEFINITION PUBLIC INHERITING FROM zcl_base.
+  PROTECTED SECTION.
+    METHODS inspect_tokens REDEFINITION.
+ENDCLASS.
+CLASS zcl_input IMPLEMENTATION.
+  METHOD inspect_tokens.
+    WRITE index.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      new MemoryFile("zcl_base.clas.abap", base),
+      new MemoryFile("zcl_input.clas.abap", input),
+    ]);
+    console.dir(issues);
+    expect(issues.length).to.equal(1);
   });
 
 });

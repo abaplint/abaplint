@@ -86,14 +86,6 @@ export class References {
       if (vid?.equals(identifier)) {
         ret.push(vid);
       }
-      /*
-      for (const name in vars) {
-        const vid = vars[name];
-        if (vid.equals(identifier)) {
-          ret.push(vid);
-        }
-      }
-      */
 
       // this is for finding the definitions
       const types = node.getData().types;
@@ -101,14 +93,6 @@ export class References {
       if (tid?.equals(identifier)) {
         ret.push(tid);
       }
-      /*
-      for (const name in types) {
-        const vid = types[name];
-        if (vid.equals(identifier)) {
-          ret.push(vid);
-        }
-      }
-      */
 
       for (const r of node.getData().references) {
         if (r.resolved?.equals(identifier)) {
