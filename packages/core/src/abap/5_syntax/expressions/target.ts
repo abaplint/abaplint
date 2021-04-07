@@ -10,6 +10,7 @@ import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {FieldOffset} from "./field_offset";
 import {ReferenceType} from "../_reference";
+import {TableExpression} from "./table_expression";
 
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
@@ -58,15 +59,15 @@ export class Target {
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
-      } else if (current.get() instanceof Expressions.TableExpression) {
-        if (context instanceof VoidType) {
-          continue;
-        }
-        if (!(context instanceof TableType)) {
+      } else if (current instanceof ExpressionNode
+          && current.get() instanceof Expressions.TableExpression) {
+        if (!(context instanceof TableType) && !(context instanceof VoidType)) {
           throw new Error("Table expression, expected table");
         }
-        // todo, additional validations
-        context = context.getRowType();
+        new TableExpression().runSyntax(current, scope, filename);
+        if (!(context instanceof VoidType)) {
+          context = context.getRowType();
+        }
       } else if (current.get() instanceof Expressions.AttributeName) {
         const type = children.length === 0 ? ReferenceType.DataWriteReference : ReferenceType.DataReadReference;
         context = new AttributeName().runSyntax(context, current, scope, filename, type);

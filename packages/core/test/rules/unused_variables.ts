@@ -700,4 +700,13 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Table expression, target", async () => {
+    const abap = `
+  DATA result TYPE STANDARD TABLE OF string.
+  DATA int TYPE i VALUE 1.
+  result[ int ] = 'hello'.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
