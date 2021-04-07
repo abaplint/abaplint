@@ -690,4 +690,14 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Table expression", async () => {
+    const abap = `
+  DATA ref_scan_manager TYPE REF TO sdfsdfsd.
+  DATA(back_structure) = ref_scan_manager->structures[ 2 ].
+  DATA(sdfs) = ref_scan_manager->statements[ back_structure-stmnt_from ].
+  WRITE sdfs.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -3715,6 +3715,16 @@ INCLUDE lzfugr1f01.`;
     expect(issues[0].getMessage()).to.contain("foo-bar");
   });
 
+  it("voided table expression", () => {
+    const abap = `
+  DATA ref_scan_manager TYPE REF TO sdfsdfsd.
+  DATA(back_structure) = ref_scan_manager->structures[ 2 ].
+  DATA(sdfs) = ref_scan_manager->statements[ back_structure-stmnt_from ].
+  WRITE sdfs.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("FORM name with dashes found", () => {
     const abap = `
     FORM foo-bar.
