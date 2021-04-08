@@ -49,7 +49,7 @@ export class Implementation {
   }
 
   private findMethodImplementations(def: MethodDefinition): LServer.Location[] {
-    let ret: LServer.Location[] = [];
+    const ret: LServer.Location[] = [];
 
     // note that this searches _everything_
     for (const obj of this.reg.getObjects()) {
@@ -57,14 +57,14 @@ export class Implementation {
         continue;
       }
       const found = this.searchReferences(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop(), def);
-      ret = ret.concat(found);
+      ret.push(...found);
     }
 
     return ret;
   }
 
   private searchReferences(scope: ISpaghettiScopeNode, id: Identifier): LServer.Location[] {
-    let ret: LServer.Location[] = [];
+    const ret: LServer.Location[] = [];
 
     for (const r of scope.getData().references) {
       if (r.referenceType === ReferenceType.MethodImplementationReference
@@ -76,7 +76,7 @@ export class Implementation {
     }
 
     for (const c of scope.getChildren()) {
-      ret = ret.concat(this.searchReferences(c, id));
+      ret.push(...this.searchReferences(c, id));
     }
 
     return ret;

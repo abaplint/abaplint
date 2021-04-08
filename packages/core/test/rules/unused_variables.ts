@@ -710,7 +710,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("ABSTRACT METHOD", async () => {
+  it("ABSTRACT METHOD", async () => {
     const base = `
 CLASS zcl_base DEFINITION PUBLIC ABSTRACT.
   PROTECTED SECTION.
@@ -730,12 +730,38 @@ CLASS zcl_input IMPLEMENTATION.
     WRITE index.
   ENDMETHOD.
 ENDCLASS.`;
+    const locals = `
+CLASS ltd_check_base DEFINITION INHERITING FROM zcl_base.
+  PROTECTED SECTION.
+    METHODS inspect_tokens REDEFINITION.
+ENDCLASS.
+CLASS ltd_check_base IMPLEMENTATION.
+  METHOD inspect_tokens.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = await runMulti([
       new MemoryFile("zcl_base.clas.abap", base),
+      new MemoryFile("zcl_base.clas.locals_imp.abap", locals),
       new MemoryFile("zcl_input.clas.abap", input),
     ]);
-    console.dir(issues);
     expect(issues.length).to.equal(1);
+  });
+
+  it("SET PF-STATUS", async () => {
+    const abap = `
+    DATA bar TYPE c LENGTH 1 VALUE 'A'.
+    SET PF-STATUS bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SET TITLEBAR", async () => {
+    const abap = `
+    DATA bar TYPE c LENGTH 1 VALUE 'A'.
+    SET TITLEBAR bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
 });
