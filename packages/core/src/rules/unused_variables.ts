@@ -166,8 +166,7 @@ export class UnusedVariables implements IRule {
   }
 
   private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
-//    console.dir("search " + id.getName() + " " + node.getIdentifier().sname);
-    const found = new References(this.reg).search(id, node);
+    const found = new References(this.reg).search(id, node, true);
     return found.length > 1;
   }
 

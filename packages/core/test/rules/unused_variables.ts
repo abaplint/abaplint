@@ -710,7 +710,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("ABSTRACT METHOD", async () => {
+  it("ABSTRACT METHOD", async () => {
     const base = `
 CLASS zcl_base DEFINITION PUBLIC ABSTRACT.
   PROTECTED SECTION.
