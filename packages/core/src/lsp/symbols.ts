@@ -18,9 +18,9 @@ export class Symbols {
       return [];
     }
 
-    let ret: LServer.DocumentSymbol[] = [];
-    ret = ret.concat(this.outputClasses(file));
-    ret = ret.concat(this.outputForms(file));
+    const ret: LServer.DocumentSymbol[] = [];
+    ret.push(...this.outputClasses(file));
+    ret.push(...this.outputForms(file));
     return ret;
   }
 
@@ -61,16 +61,16 @@ export class Symbols {
     const ret: LServer.DocumentSymbol[] = [];
 
     for (const cla of file.getInfo().listClassDefinitions()) {
-      let children: LServer.DocumentSymbol[] = [];
-      children = children.concat(this.outputClassAttributes(cla.attributes));
-      children = children.concat(this.outputMethodDefinitions(cla.methods));
+      const children: LServer.DocumentSymbol[] = [];
+      children.push(...this.outputClassAttributes(cla.attributes));
+      children.push(...this.outputMethodDefinitions(cla.methods));
       const symbol = this.newSymbol(cla.identifier, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }
 
     for (const cla of file.getInfo().listClassImplementations()) {
-      let children: LServer.DocumentSymbol[] = [];
-      children = children.concat(this.outputMethodImplementations(cla.methods));
+      const children: LServer.DocumentSymbol[] = [];
+      children.push(...this.outputMethodImplementations(cla.methods));
       const symbol = this.newSymbol(cla.identifier, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }

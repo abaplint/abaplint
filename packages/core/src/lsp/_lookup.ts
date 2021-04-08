@@ -234,7 +234,7 @@ export class LSPLookup {
   }
 
   private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference[] {
-    let ret: IReference[] = [];
+    const ret: IReference[] = [];
 
     for (const r of scope.getData().references) {
       if (r.position.getStart().equals(token.getStart())) {
@@ -244,7 +244,7 @@ export class LSPLookup {
 
     const parent = scope.getParent();
     if (parent) {
-      ret = ret.concat(this.searchReferences(parent, token));
+      ret.push(...this.searchReferences(parent, token));
     }
 
     return ret;

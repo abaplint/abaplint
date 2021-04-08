@@ -40,7 +40,7 @@ export class References {
     return locs.map(LSPUtils.identiferToLocation);
   }
 
-  public search(identifier: Identifier, node: ISpaghettiScopeNode): Identifier[] {
+  public search(identifier: Identifier, node: ISpaghettiScopeNode, _exitAfterFound = false): Identifier[] {
     let ret: Identifier[] = [];
 
     // todo, this first assumes that the identifier is a variable?
@@ -54,7 +54,7 @@ export class References {
           if (this.reg.isDependency(o)) {
             continue; // do not search in dependencies
           }
-          ret = ret.concat(this.findReferences(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
+          ret.push(...this.findReferences(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
         }
       }
     }
