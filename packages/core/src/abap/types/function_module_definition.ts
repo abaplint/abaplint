@@ -15,6 +15,7 @@ export interface IFunctionModuleParameter {
 
 export class FunctionModuleDefinition {
   private name: string;
+  private description: string;
   private parameters: IFunctionModuleParameter[];
 
   public constructor(data: any) {
@@ -23,6 +24,10 @@ export class FunctionModuleDefinition {
 
   public getParameters(): readonly IFunctionModuleParameter[] {
     return this.parameters;
+  }
+
+  public getDescription(): string {
+    return this.description;
   }
 
   public getName(): string {
@@ -36,6 +41,7 @@ export class FunctionModuleDefinition {
       throw new Error("Function module name undefined");
     }
     this.name = data.FUNCNAME._text;
+    this.description = data.SHORT_TEXT._text;
     this.parameters = [];
 
     if (data.IMPORT) {
