@@ -738,4 +738,20 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("SET PF-STATUS", async () => {
+    const abap = `
+    DATA bar TYPE c LENGTH 1 VALUE 'A'.
+    SET PF-STATUS bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SET TITLEBAR", async () => {
+    const abap = `
+    DATA bar TYPE c LENGTH 1 VALUE 'A'.
+    SET TITLEBAR bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

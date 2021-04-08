@@ -121,6 +121,8 @@ import {CallBadi} from "./statements/call_badi";
 import {Pack} from "./statements/pack";
 import {Unpack} from "./statements/unpack";
 import {Format} from "./statements/format";
+import {SetPFStatus} from "./statements/set_pf_status";
+import {SetTitlebar} from "./statements/set_titlebar";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -324,6 +326,10 @@ export class SyntaxLogic {
       new Catch().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Loop) {
       new Loop().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SetPFStatus) {
+      new SetPFStatus().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SetTitlebar) {
+      new SetTitlebar().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Submit) {
       new Submit().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ReadTable) {
