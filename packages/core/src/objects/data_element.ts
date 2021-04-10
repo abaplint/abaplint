@@ -56,19 +56,19 @@ export class DataElement extends AbstractObject {
 
     const start = Date.now();
     this.parsedXML = {};
-    const parsed = super.parseRaw();
+    const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return {updated: false, runtime: 0};
     }
 
     const dd04v = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD04V;
     this.parsedXML = {
-      description: dd04v?.DDTEXT?._text,
-      refkind: dd04v?.REFKIND?._text,
-      domname: dd04v?.DOMNAME?._text,
-      datatype: dd04v?.DATATYPE?._text,
-      leng: dd04v?.LENG?._text,
-      decimals: dd04v?.DECIMALS?._text,
+      description: dd04v?.DDTEXT,
+      refkind: dd04v?.REFKIND,
+      domname: dd04v?.DOMNAME,
+      datatype: dd04v?.DATATYPE,
+      leng: dd04v?.LENG,
+      decimals: dd04v?.DECIMALS,
     };
     const end = Date.now();
     return {updated: true, runtime: end - start};

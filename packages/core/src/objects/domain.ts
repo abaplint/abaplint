@@ -52,17 +52,17 @@ export class Domain extends AbstractObject {
 
     const start = Date.now();
     this.parsedXML = {};
-    const parsed = super.parseRaw();
+    const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return {updated: false, runtime: 0};
     }
 
     const dd01v = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD01V;
     this.parsedXML = {
-      description: dd01v?.DDTEXT?._text,
-      datatype: dd01v?.DATATYPE?._text,
-      length: dd01v?.LENG?._text,
-      decimals: dd01v?.DECIMALS?._text,
+      description: dd01v?.DDTEXT,
+      datatype: dd01v?.DATATYPE,
+      length: dd01v?.LENG,
+      decimals: dd01v?.DECIMALS,
     };
     const end = Date.now();
     return {updated: true, runtime: end - start};
