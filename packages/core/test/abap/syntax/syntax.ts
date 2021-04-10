@@ -1976,7 +1976,7 @@ ENDIF.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("sy-sdfsdsdf not found", () => {
+  it("sy-sdfsdsdf not found", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF i.
     DESCRIBE TABLE tab LINES sy-sdfsdsdf.`;
@@ -3873,7 +3873,7 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("SELECT without INTO, implicit workarea", () => {
+  it("SELECT without INTO, implicit workarea not found", () => {
     const abap = `
     SELECT * FROM foobar WHERE field = 'bar'.
     ENDSELECT.`;

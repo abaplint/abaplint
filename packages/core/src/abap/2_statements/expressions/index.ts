@@ -148,6 +148,7 @@ export * from "./sql_path";
 export * from "./sql_source_simple";
 export * from "./sql_source";
 export * from "./sql_into_table";
+export * from "./sql_into_structure";
 export * from "./sql_target";
 export * from "./string_template_formatting";
 export * from "./string_template";
