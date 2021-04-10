@@ -10,9 +10,10 @@ async function runMulti(files: {filename: string, contents: string}[]): Promise<
     reg.addFile(new MemoryFile(file.filename, file.contents));
   }
   await reg.parseAsync();
-  let issues: Issue[] = [];
+  const issues: Issue[] = [];
+  const rule = new IntfReferencingClas().initialize(reg);
   for (const obj of reg.getObjects()) {
-    issues = issues.concat(new IntfReferencingClas().initialize(reg).run(obj));
+    issues.push(...rule.run(obj));
   }
   return issues;
 }

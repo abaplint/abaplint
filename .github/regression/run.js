@@ -13,13 +13,18 @@ for (let r of repos) {
 
   let folder = r.split("/")[1];
 
+  let configFile = folder + "/abaplint.json";
+  if (fs.existsSync(configFile) === false) {
+    configFile = folder + "/abaplint.jsonc";
+  }
+
   map[r].before_start = new Date();
-  childProcess.execSync("node ./abaplint_before " + folder + "/abaplint.json -f json > output.json || true");
+  childProcess.execSync("node ./abaplint_before " + configFile + " -f json > output.json || true");
   map[r].before_end = new Date();
   map[r].before = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 
   map[r].after_start = new Date();
-  childProcess.execSync("node ./abaplint_after " + folder + "/abaplint.json -f json > output.json || true");
+  childProcess.execSync("node ./abaplint_after " + configFile + " -f json > output.json || true");
   map[r].after_end = new Date();
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 

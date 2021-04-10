@@ -51,4 +51,45 @@ describe("rule, identical_descriptions", () => {
     const issues = new IdenticalDescriptions().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equals(1);
   });
+
+  it("test, FUNC", () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("zfugr_test.fugr.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>test</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZFUGR_TESTTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZFUGR_TEST</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZSOMETHIGN</FUNCNAME>
+     <SHORT_TEXT>test</SHORT_TEXT>
+    </item>
+    <item>
+     <FUNCNAME>ZTABLSTRU</FUNCNAME>
+     <SHORT_TEXT>test</SHORT_TEXT>
+     <TABLES>
+      <RSTBL>
+       <PARAMETER>FOOBAR</PARAMETER>
+       <DBSTRUCT>EDIDC</DBSTRUCT>
+      </RSTBL>
+     </TABLES>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>FOOBAR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Control record (IDoc)</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`)]);
+    const issues = new IdenticalDescriptions().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equals(1);
+  });
 });

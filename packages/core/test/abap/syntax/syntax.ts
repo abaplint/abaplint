@@ -1310,7 +1310,7 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues[0].getMessage()).to.contain("lv_i");
   });
 
-  it.skip("DATA, already specified", () => {
+  it("DATA, already specified", () => {
     const abap = `DATA foo.\nDATA foo.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
@@ -1326,13 +1326,13 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, sy field, unknown field", () => {
+  it("program, sy field, unknown field", () => {
     const abap = "WRITE sy-fooboo.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, definition in FOR expression, should not work after", () => {
+  it("program, definition in FOR expression, should not work after", () => {
     const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
       "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
       "WRITE j.";
@@ -1976,7 +1976,7 @@ ENDIF.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("sy-sdfsdsdf not found", () => {
+  it("sy-sdfsdsdf not found", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF i.
     DESCRIBE TABLE tab LINES sy-sdfsdsdf.`;
@@ -2894,6 +2894,14 @@ foo = content_type-right.`;
     const abap = `
 DATA ref TYPE REF TO object.
 CREATE OBJECT ref TYPE zcl_not_found.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("CREATE OBJECT TYPE, generic instantiation error", () => {
+    const abap = `
+DATA ref TYPE REF TO object.
+CREATE OBJECT ref.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
@@ -3872,6 +3880,95 @@ ENDFUNCTION.`;
       {filename: "zfugr_test.fugr.ztablstru.abap", contents: functionabap}]);
     expect(issues.length).to.equals(0);
   });
+
+  it("SELECT without INTO, implicit workarea not found", () => {
+    const abap = `
+    SELECT * FROM foobar WHERE field = 'bar'.
+    ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("SELECT without INTO, aggregation", () => {
+    const abap = `SELECT COUNT(*) FROM tcdrp WHERE object = 2.
+    SELECT COUNT( * ) FROM tcdrp WHERE object = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("SELECT without INTO, aggregation 2", () => {
+    const abap = `DATA lv_primary type string.
+    data lv_where type string.
+    SELECT COUNT(*) FROM (lv_primary) WHERE (lv_where).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("create voided object", () => {
+    const abap = `
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+    CREATE OBJECT lo_zip.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("create object, dynamic", () => {
+    const abap = `
+  DATA lo_manifest_provider TYPE REF TO object.
+  DATA lv_dyn TYPE string.
+  CREATE OBJECT lo_manifest_provider TYPE (lv_dyn).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("instantiate abstract, 1", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  CREATE OBJECT my_car TYPE vehicle.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("instantiate abstract, 2", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  CREATE OBJECT my_car.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it.skip("instantiate abstract, 3", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  my_car = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it.skip("instantiate abstract, 4", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  my_car = NEW vehicle( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

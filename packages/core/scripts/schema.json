@@ -1699,7 +1699,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Searches for objects with the same type and same description, case insensitive\nhttps://rules.abaplint.org/identical_descriptions"
+              "description": "Searches for objects with the same type and same description\nhttps://rules.abaplint.org/identical_descriptions"
             },
             "identical_form_names": {
               "anyOf": [
@@ -2933,6 +2933,13 @@
     "IntfReferencingClasConf": {
       "additionalProperties": false,
       "properties": {
+        "allow": {
+          "description": "List of classes allowed to be referenced, regex, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -2945,6 +2952,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "allow"
+      ],
       "type": "object"
     },
     "KeepSingleParameterCallsOnOneLineConf": {

@@ -5,11 +5,9 @@ import {SelectLoop as SelectLoopExpression} from "../expressions/select_loop";
 
 export class SelectLoop {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-
     const s = node.findDirectExpression(Expressions.SelectLoop);
     if (s) {
       new SelectLoopExpression().runSyntax(s, scope, filename);
     }
-
   }
 }
