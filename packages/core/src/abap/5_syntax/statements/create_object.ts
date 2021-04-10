@@ -45,8 +45,9 @@ export class CreateObject {
         } else if (!(found instanceof ObjectReferenceType)
             && !(found instanceof GenericObjectReferenceType)) {
           throw new Error("Target must be a object reference");
-        }
-        if (found instanceof ObjectReferenceType) {
+        } else if (found instanceof GenericObjectReferenceType && type === undefined) {
+          throw new Error("Generic type, cannot be instantiated");
+        } else if (found instanceof ObjectReferenceType) {
           const id = found.getIdentifier();
           if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
             throw new Error(id.getName() + " is abstract, cannot be instantiated");

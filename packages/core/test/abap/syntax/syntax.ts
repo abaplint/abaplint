@@ -2898,6 +2898,14 @@ CREATE OBJECT ref TYPE zcl_not_found.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("CREATE OBJECT TYPE, generic instantiation error", () => {
+    const abap = `
+DATA ref TYPE REF TO object.
+CREATE OBJECT ref.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("NEW lcl_clas( )->settings", () => {
     const abap = `
 CLASS lcl_clas DEFINITION.
