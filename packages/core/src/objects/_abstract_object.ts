@@ -138,7 +138,7 @@ export abstract class AbstractObject implements IObject {
       return undefined;
     }
     try {
-      return fastxmlparser.parse(xml);
+      return fastxmlparser.parse(xml, {parseNodeValue: false, ignoreAttributes: true, trimValues: false});
     } catch {
       return undefined;
     }

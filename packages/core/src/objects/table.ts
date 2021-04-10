@@ -7,11 +7,11 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 
 export enum EnhancementCategory {
-  NotClassified = 0,
-  CannotBeEhanced = 1,
-  Character = 2,
-  CharacterOrNumeric = 3,
-  Deep = 4,
+  NotClassified = "0",
+  CannotBeEhanced = "1",
+  Character = "2",
+  CharacterOrNumeric = "3",
+  Deep = "4",
 }
 
 export enum TableCategory {
