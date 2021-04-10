@@ -7,11 +7,11 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 
 export enum EnhancementCategory {
-  NotClassified = "0",
-  CannotBeEhanced = "1",
-  Character = "2",
-  CharacterOrNumeric = "3",
-  Deep = "4",
+  NotClassified = 0,
+  CannotBeEhanced = 1,
+  Character = 2,
+  CharacterOrNumeric = 3,
+  Deep = 4,
 }
 
 export enum TableCategory {
@@ -178,7 +178,7 @@ export class Table extends AbstractObject {
 ///////////////
 
   private parseXML() {
-    const parsed = super.parseRaw();
+    const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return;
     }
@@ -189,25 +189,25 @@ export class Table extends AbstractObject {
     if (parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS === undefined) {
       this.parsedData.enhancementCategory = EnhancementCategory.NotClassified;
     } else {
-      this.parsedData.enhancementCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS?._text;
+      this.parsedData.enhancementCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS;
     }
 
 // table category
-    this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS?._text;
+    this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS;
 
 // fields
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD03P_TABLE;
     for (const field of xmlToArray(fields?.DD03P)) {
       this.parsedData.fields.push({
-        FIELDNAME: field.FIELDNAME._text,
-        ROLLNAME: field.ROLLNAME?._text,
-        COMPTYPE: field.COMPTYPE?._text,
-        PRECFIELD: field.PRECFIELD?._text,
-        LENG: field.LENG?._text,
-        INTLEN: field.INTLEN?._text,
-        DATATYPE: field.DATATYPE?._text,
-        DECIMALS: field.DECIMALS?._text,
-        KEYFLAG: field.KEYFLAG?._text,
+        FIELDNAME: field.FIELDNAME,
+        ROLLNAME: field.ROLLNAME,
+        COMPTYPE: field.COMPTYPE,
+        PRECFIELD: field.PRECFIELD,
+        LENG: field.LENG,
+        INTLEN: field.INTLEN,
+        DATATYPE: field.DATATYPE,
+        DECIMALS: field.DECIMALS,
+        KEYFLAG: field.KEYFLAG,
       });
     }
   }
