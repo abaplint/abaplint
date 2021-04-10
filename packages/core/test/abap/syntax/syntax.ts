@@ -3888,6 +3888,62 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("SELECT without INTO, aggregation 2", () => {
+    const abap = `DATA lv_primary type string.
+    data lv_where type string.
+    SELECT COUNT(*) FROM (lv_primary) WHERE (lv_where).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("instantiate abstract, 1", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  CREATE OBJECT my_car TYPE vehicle.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("instantiate abstract, 2", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  CREATE OBJECT my_car.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it.skip("instantiate abstract, 3", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  my_car = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it.skip("instantiate abstract, 4", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  my_car = NEW vehicle( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
