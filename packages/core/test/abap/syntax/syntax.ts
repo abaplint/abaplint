@@ -3896,6 +3896,14 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("create voided object", () => {
+    const abap = `
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+    CREATE OBJECT lo_zip.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("instantiate abstract, 1", () => {
     const abap = `
   CLASS vehicle DEFINITION ABSTRACT.

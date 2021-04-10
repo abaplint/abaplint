@@ -5,7 +5,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {ReferenceType} from "../_reference";
-import {ObjectReferenceType} from "../../types/basic";
+import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 
 export class CreateObject {
@@ -34,20 +34,24 @@ export class CreateObject {
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
+
     let first = true;
     for (const t of node.findAllExpressions(Expressions.Target)) {
       const found = new Target().runSyntax(t, scope, filename);
       if (first === true) {
-        if (!(found instanceof ObjectReferenceType)) {
+        first = false;
+        if (found instanceof VoidType) {
+          continue;
+        } else if (!(found instanceof ObjectReferenceType)) {
           throw new Error("Target must be a object reference");
         }
         const id = found.getIdentifier();
         if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
           throw new Error(id.getName() + " is abstract, cannot be instantiated");
         }
-        first = false;
       }
     }
+
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(t, scope, filename);
     }
