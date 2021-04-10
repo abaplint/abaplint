@@ -59,7 +59,7 @@ export class Result {
   public length(): number {
     return this.tokens.length;
   }
-
+/*
   public toStr(): string {
     let ret = "";
     for (const token of this.tokens) {
@@ -67,4 +67,5 @@ export class Result {
     }
     return ret;
   }
+*/
 }
