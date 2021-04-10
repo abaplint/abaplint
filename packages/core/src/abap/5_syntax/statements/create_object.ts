@@ -5,7 +5,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {ReferenceType} from "../_reference";
-import {ObjectReferenceType, VoidType} from "../../types/basic";
+import {GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 
 export class CreateObject {
@@ -13,8 +13,8 @@ export class CreateObject {
     // todo, validate parameters
 
     // CREATE OBJECT, TYPE
-    const type = node.findDirectExpression(Expressions.ClassName);
-    if (type) {
+    const type = node.findExpressionAfterToken("TYPE");
+    if (type && type.get() instanceof Expressions.ClassName) {
       const token = type.getFirstToken();
       const name = token.getStr();
       const found = scope.findClassDefinition(name);
@@ -42,12 +42,15 @@ export class CreateObject {
         first = false;
         if (found instanceof VoidType) {
           continue;
-        } else if (!(found instanceof ObjectReferenceType)) {
+        } else if (!(found instanceof ObjectReferenceType)
+            && !(found instanceof GenericObjectReferenceType)) {
           throw new Error("Target must be a object reference");
         }
-        const id = found.getIdentifier();
-        if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
-          throw new Error(id.getName() + " is abstract, cannot be instantiated");
+        if (found instanceof ObjectReferenceType) {
+          const id = found.getIdentifier();
+          if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
+            throw new Error(id.getName() + " is abstract, cannot be instantiated");
+          }
         }
       }
     }

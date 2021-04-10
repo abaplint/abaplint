@@ -3904,6 +3904,15 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("create object, dynamic", () => {
+    const abap = `
+  DATA lo_manifest_provider TYPE REF TO object.
+  DATA lv_dyn TYPE string.
+  CREATE OBJECT lo_manifest_provider TYPE (lv_dyn).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("instantiate abstract, 1", () => {
     const abap = `
   CLASS vehicle DEFINITION ABSTRACT.
