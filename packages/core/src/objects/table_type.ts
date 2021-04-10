@@ -68,17 +68,17 @@ export class TableType extends AbstractObject {
 
     this.parsedXML = {};
 
-    const parsed = super.parseRaw();
+    const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return;
     }
 
     const dd40v = parsed.abapGit["asx:abap"]["asx:values"].DD40V;
-    this.parsedXML.rowtype = dd40v.ROWTYPE ? dd40v.ROWTYPE._text : "";
-    this.parsedXML.rowkind = dd40v.ROWKIND ? dd40v.ROWKIND._text : "";
-    this.parsedXML.datatype = dd40v.DATATYPE?._text;
-    this.parsedXML.leng = dd40v.LENG?._text;
-    this.parsedXML.decimals = dd40v.DECIMALS?._text;
+    this.parsedXML.rowtype = dd40v.ROWTYPE ? dd40v.ROWTYPE : "";
+    this.parsedXML.rowkind = dd40v.ROWKIND ? dd40v.ROWKIND : "";
+    this.parsedXML.datatype = dd40v.DATATYPE;
+    this.parsedXML.leng = dd40v.LENG;
+    this.parsedXML.decimals = dd40v.DECIMALS;
   }
 
 }

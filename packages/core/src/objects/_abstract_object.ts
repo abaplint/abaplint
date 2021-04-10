@@ -1,6 +1,7 @@
 import {IFile} from "../files/_ifile";
 import {IObject, IParseResult} from "./_iobject";
 import * as xmljs from "xml-js";
+import * as fastxmlparser from "fast-xml-parser";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import {Identifier} from "../abap/4_file_information/_identifier";
@@ -126,6 +127,18 @@ export abstract class AbstractObject implements IObject {
     }
     try {
       return xmljs.xml2js(xml, {compact: true});
+    } catch {
+      return undefined;
+    }
+  }
+
+  protected parseRaw2(): any | undefined {
+    const xml = this.getXML();
+    if (xml === undefined) {
+      return undefined;
+    }
+    try {
+      return fastxmlparser.parse(xml);
     } catch {
       return undefined;
     }
