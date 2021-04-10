@@ -16,7 +16,9 @@ export class IdenticalDescriptions implements IRule {
     return {
       key: "identical_descriptions",
       title: "Identical descriptions",
-      shortDescription: `Searches for objects with the same type and same description, case insensitive`,
+      shortDescription: `Searches for objects with the same type and same description, case insensitive
+
+Only checks the master language descriptions`,
       extendedInformation: `Works for: INTF, CLAS, DOMA, DTEL`,
       tags: [],
     };
