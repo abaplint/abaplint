@@ -1699,7 +1699,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Searches for objects with the same type and same description, case insensitive\nhttps://rules.abaplint.org/identical_descriptions"
+              "description": "Searches for objects with the same type and same description\nhttps://rules.abaplint.org/identical_descriptions"
             },
             "identical_form_names": {
               "anyOf": [
