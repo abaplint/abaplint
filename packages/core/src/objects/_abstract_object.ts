@@ -1,6 +1,5 @@
 import {IFile} from "../files/_ifile";
 import {IObject, IParseResult} from "./_iobject";
-import * as xmljs from "xml-js";
 import * as fastxmlparser from "fast-xml-parser";
 import {Issue} from "../issue";
 import {Version} from "../version";
@@ -118,18 +117,6 @@ export abstract class AbstractObject implements IObject {
       }
     }
     throw new Error("updateFile: file not found");
-  }
-
-  protected parseRaw(): any | undefined {
-    const xml = this.getXML();
-    if (xml === undefined) {
-      return undefined;
-    }
-    try {
-      return xmljs.xml2js(xml, {compact: true});
-    } catch {
-      return undefined;
-    }
   }
 
   protected parseRaw2(): any | undefined {
