@@ -1310,7 +1310,7 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues[0].getMessage()).to.contain("lv_i");
   });
 
-  it.skip("DATA, already specified", () => {
+  it("DATA, already specified", () => {
     const abap = `DATA foo.\nDATA foo.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
@@ -1326,13 +1326,13 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, sy field, unknown field", () => {
+  it("program, sy field, unknown field", () => {
     const abap = "WRITE sy-fooboo.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, definition in FOR expression, should not work after", () => {
+  it("program, definition in FOR expression, should not work after", () => {
     const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
       "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
       "WRITE j.";
