@@ -52,7 +52,7 @@ describe("rule, identical_descriptions", () => {
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("test, FUNC", () => {
+  it("test, FUNC", () => {
     const reg = new Registry().addFiles([
       new MemoryFile("zfugr_test.fugr.xml", `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
