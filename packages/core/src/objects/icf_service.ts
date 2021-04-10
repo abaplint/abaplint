@@ -23,7 +23,7 @@ export class ICFService extends AbstractObject {
   public getHandlerList(): string[] | undefined {
     const ret: string[] = [];
 
-    const parsed = this.parseRaw();
+    const parsed = this.parseRaw2();
     if (parsed === undefined
         || parsed.abapGit === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
@@ -33,7 +33,7 @@ export class ICFService extends AbstractObject {
     const table = parsed.abapGit["asx:abap"]["asx:values"].ICFHANDLER_TABLE;
     for (const h of xmlToArray(table)) {
       if (h.ICFHANDLER !== undefined) {
-        ret.push(h.ICFHANDLER.ICFHANDLER?._text);
+        ret.push(h.ICFHANDLER.ICFHANDLER);
       }
     }
 

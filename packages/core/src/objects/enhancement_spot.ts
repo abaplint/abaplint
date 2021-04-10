@@ -40,7 +40,7 @@ export class EnhancementSpot extends AbstractObject {
 /////////////////
 
   private parseXML(): IBadiDefinition[] {
-    const parsed = super.parseRaw();
+    const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return [];
     }
@@ -48,8 +48,8 @@ export class EnhancementSpot extends AbstractObject {
     const ret: IBadiDefinition[] = [];
     for (const b of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"]?.BADI_DATA?.ENH_BADI_DATA)) {
       ret.push({
-        name: b.BADI_NAME?._text,
-        interface: b.INTERFACE_NAME?._text,
+        name: b.BADI_NAME,
+        interface: b.INTERFACE_NAME,
       });
     }
 

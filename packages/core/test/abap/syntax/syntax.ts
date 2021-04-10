@@ -3969,6 +3969,28 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("ADD", () => {
+    const abap = `
+  DATA int TYPE i.
+  ADD 2 TO int.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CLOSE DATASET", () => {
+    const abap = `DATA bar TYPE string.
+    CLOSE DATASET bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ELSEIF", () => {
+    const abap = `IF 1 = 2.
+    ELSEIF 3 = 4.
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

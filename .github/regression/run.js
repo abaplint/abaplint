@@ -29,8 +29,10 @@ for (let r of repos) {
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 
   try {
-    map[r].version = require(`./${folder}/abaplint.json`).syntax.version;
-    map[r].version = map[r].version.trim();
+    const raw = fs.readFileSync(configFile).toString();
+    const reg = new RegExp(/"version": "(\w+)",/);
+    const match = raw.match(reg);
+    map[r].version = match[1].trim();
   } catch {
     map[r].version = "?";
   }

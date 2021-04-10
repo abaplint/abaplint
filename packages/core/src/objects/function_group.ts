@@ -1,7 +1,7 @@
 import {ABAPObject, ITextElements} from "./_abap_object";
 import {FunctionModuleDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
-import * as xmljs from "xml-js";
+import * as fastxmlparser from "fast-xml-parser";
 import {ABAPFile} from "../abap/abap_file";
 
 export class FunctionGroup extends ABAPObject {
@@ -136,7 +136,7 @@ export class FunctionGroup extends ABAPObject {
         return {};
       }
 
-      const parsed = xmljs.xml2js(found.getRaw(), {compact: true});
+      const parsed = fastxmlparser.parse(found.getRaw(), {parseNodeValue: false, ignoreAttributes: true, trimValues: false});
       this.findTexts(parsed);
     }
 
@@ -149,7 +149,7 @@ export class FunctionGroup extends ABAPObject {
     this.includes = [];
     this.modules = [];
 
-    const parsed = this.parseRaw();
+    const parsed = this.parseRaw2();
     if (parsed === undefined) {
       return;
     }
@@ -158,7 +158,7 @@ export class FunctionGroup extends ABAPObject {
     const includes = parsed.abapGit["asx:abap"]["asx:values"]?.INCLUDES;
     if (includes !== undefined) {
       for (const i of xmlToArray(includes.SOBJ_NAME)) {
-        this.includes.push(i?._text);
+        this.includes.push(i);
       }
     }
 

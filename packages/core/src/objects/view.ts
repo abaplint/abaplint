@@ -76,7 +76,7 @@ export class View extends AbstractObject {
 ///////////////
 
   private parseXML() {
-    const parsed = super.parseRaw();
+    const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return;
     }
@@ -86,9 +86,9 @@ export class View extends AbstractObject {
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
     for (const field of xmlToArray(fields?.DD27P)) {
       this.parsedData.fields.push({
-        VIEWFIELD: field.VIEWFIELD?._text,
-        TABNAME: field.TABNAME?._text,
-        FIELDNAME: field.FIELDNAME?._text,
+        VIEWFIELD: field.VIEWFIELD,
+        TABNAME: field.TABNAME,
+        FIELDNAME: field.FIELDNAME,
       });
     }
   }

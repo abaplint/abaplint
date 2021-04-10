@@ -1,6 +1,6 @@
 import {IFile} from "../files/_ifile";
 import {IObject, IParseResult} from "./_iobject";
-import * as xmljs from "xml-js";
+import * as fastxmlparser from "fast-xml-parser";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import {Identifier} from "../abap/4_file_information/_identifier";
@@ -47,15 +47,6 @@ export abstract class AbstractObject implements IObject {
 
   public getFiles(): readonly IFile[] {
     return this.files;
-  }
-
-  public getFileByName(filename: string): IFile | undefined {
-    for (const f of this.files) {
-      if (f.getFilename() === filename) {
-        return f;
-      }
-    }
-    return undefined;
   }
 
   public containsFile(filename: string): boolean {
@@ -128,13 +119,13 @@ export abstract class AbstractObject implements IObject {
     throw new Error("updateFile: file not found");
   }
 
-  protected parseRaw(): any | undefined {
+  protected parseRaw2(): any | undefined {
     const xml = this.getXML();
     if (xml === undefined) {
       return undefined;
     }
     try {
-      return xmljs.xml2js(xml, {compact: true});
+      return fastxmlparser.parse(xml, {parseNodeValue: false, ignoreAttributes: true, trimValues: false});
     } catch {
       return undefined;
     }

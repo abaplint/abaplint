@@ -45,6 +45,7 @@ ENDCLASS.`;
     const issues = rule.run(reg.getFirstObject()!);
 
     expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("GO_PERSIS");
   });
 });
 
