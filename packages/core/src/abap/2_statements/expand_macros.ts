@@ -8,6 +8,7 @@ import {Version} from "../../version";
 import {StatementParser} from "./statement_parser";
 import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
+import {VirtualPosition} from "../../position";
 
 class Macros {
   private readonly macros: {[index: string]: StatementNode[]};
@@ -150,7 +151,15 @@ export class ExpandMacros {
         next = undefined; // dont take the punctuation
       }
 
-      if (next && next.getStart().equals(now.getEnd())) {
+      // argh, macros is a nightmare
+      let end = now.getStart();
+      if (end instanceof VirtualPosition) {
+        end = new VirtualPosition(end, end.vrow, end.vcol + now.getStr().length);
+      } else {
+        end = now.getEnd();
+      }
+
+      if (next && next.getStart().equals(end)) {
         build += now.getStr();
       } else {
         build += now.getStr();

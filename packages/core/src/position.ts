@@ -35,8 +35,8 @@ export class Position {
 /** used for macro calls */
 export class VirtualPosition extends Position {
   private readonly virtual: Position;
-  private readonly vrow: number;
-  private readonly vcol: number;
+  public readonly vrow: number;
+  public readonly vcol: number;
 
   public constructor(virtual: Position, row: number, col: number) {
     super(virtual.getRow(), virtual.getCol());
