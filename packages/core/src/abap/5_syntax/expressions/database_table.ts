@@ -6,6 +6,10 @@ export class DatabaseTable {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, _filename: string): void {
 
     const name = node.getFirstToken().getStr();
+    if (name === "(") {
+      // dynamic
+      return;
+    }
 
     const found = scope.getDDIC().lookupTableOrView(name);
     if (found instanceof UnknownType) {

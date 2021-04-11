@@ -8,7 +8,7 @@ import {getABAPObjects} from "../../get_abap";
 import {Version} from "../../../src/version";
 import {MemoryFile} from "../../../src/files/memory_file";
 
-function run(reg: IRegistry, globalConstants?: string[], version?: Version): Issue[] {
+function run(reg: IRegistry, globalConstants?: string[], version?: Version, errorNamespace?: string): Issue[] {
   let ret: Issue[] = [];
 
   const config = reg.getConfig().get();
@@ -17,6 +17,9 @@ function run(reg: IRegistry, globalConstants?: string[], version?: Version): Iss
   }
   if (version) {
     config.syntax.version = version;
+  }
+  if (errorNamespace) {
+    config.syntax.errorNamespace = errorNamespace;
   }
   reg.setConfig(new Config(JSON.stringify(config)));
   reg.parse();
@@ -53,10 +56,10 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], version?: Version): Issue[] {
+function runProgram(abap: string, globalConstants?: string[], version?: Version, errorNamespace?: string): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
-  return run(reg, globalConstants, version);
+  return run(reg, globalConstants, version, errorNamespace);
 }
 
 ////////////////////////////////////////////////////////////
@@ -3989,6 +3992,29 @@ ENDFUNCTION.`;
     ELSEIF 3 = 4.
     ENDIF.`;
     const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("dynamic INSERT, full errornamespace", () => {
+    const abap = `FIELD-SYMBOLS <ls_table> TYPE any.
+    DATA c_tabname TYPE string.
+    INSERT (c_tabname) FROM <ls_table>.`;
+    const issues = runProgram(abap, [], Version.v702, ".");
+    expect(issues.length).to.equals(0);
+  });
+
+  it("dynamic DELETE, full errornamespace", () => {
+    const abap = `DATA c_tabname TYPE string.
+    DELETE FROM (c_tabname) WHERE type = 2.`;
+    const issues = runProgram(abap, [], Version.v702, ".");
+    expect(issues.length).to.equals(0);
+  });
+
+  it("dynamic MODIFY, full errornamespace", () => {
+    const abap = `DATA c_tabname TYPE string.
+    FIELD-SYMBOLS <ls_table> TYPE any.
+    MODIFY (c_tabname) FROM ls_content.`;
+    const issues = runProgram(abap, [], Version.v702, ".");
     expect(issues.length).to.equals(0);
   });
 
