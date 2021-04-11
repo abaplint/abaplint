@@ -8,8 +8,7 @@ import {Version} from "../../version";
 import {StatementParser} from "./statement_parser";
 import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
-
-// todo: nested macros are not expanded
+import {VirtualPosition} from "../../position";
 
 class Macros {
   private readonly macros: {[index: string]: StatementNode[]};
@@ -76,19 +75,23 @@ export class ExpandMacros {
     }
   }
 
-  public handleMacros(statements: StatementNode[]): {statements: StatementNode[], containsUnknown: boolean} {
+  public handleMacros(statements: readonly StatementNode[]): {statements: StatementNode[], containsUnknown: boolean} {
     const result: StatementNode[] = [];
     let containsUnknown = false;
 
     for (const statement of statements) {
-      if (statement.get() instanceof Unknown) {
+      if (statement.get() instanceof Unknown || statement.get() instanceof MacroCall) {
         const macroName = this.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
           result.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens())));
 
           const expanded = this.expandContents(macroName, statement);
-          for (const e of expanded) {
+          const handled = this.handleMacros(expanded);
+          for (const e of handled.statements) {
             result.push(e);
+          }
+          if (handled.containsUnknown === true) {
+            containsUnknown = true;
           }
 
           continue;
@@ -133,7 +136,6 @@ export class ExpandMacros {
     const lexerResult = Lexer.run(file, statement.getFirstToken().getStart());
 
     const result = new StatementParser(this.version).run([lexerResult], this.macros.listMacroNames());
-
     return result[0].statements;
   }
 
@@ -149,7 +151,15 @@ export class ExpandMacros {
         next = undefined; // dont take the punctuation
       }
 
-      if (next && next.getStart().equals(now.getEnd())) {
+      // argh, macros is a nightmare
+      let end = now.getStart();
+      if (end instanceof VirtualPosition) {
+        end = new VirtualPosition(end, end.vrow, end.vcol + now.getStr().length);
+      } else {
+        end = now.getEnd();
+      }
+
+      if (next && next.getStart().equals(end)) {
         build += now.getStr();
       } else {
         build += now.getStr();

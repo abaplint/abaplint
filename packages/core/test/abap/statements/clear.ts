@@ -8,6 +8,7 @@ const tests = [
   "CLEAR me->zif_foo~field.",
   "clear ld_data_changes with abap_true in character mode.",
   "CLEAR ct_source[].",
+  "clear borderx with 'X'.",
   "CLEAR value+l_pos(*).",
   "CLEAR <l_byte> WITH byte IN BYTE MODE.",
   "CLEAR $foo$.",
