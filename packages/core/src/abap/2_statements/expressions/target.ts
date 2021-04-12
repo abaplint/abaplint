@@ -11,10 +11,10 @@ export class Target extends Expression {
 
     const something = star(altPrio(attr, comp, TableExpression));
 
-    const cast = seq(alt(Cast, NewObject), Arrow, FieldAll);
+    const cast = seq(altPrio(Cast, NewObject), Arrow, FieldAll);
 
     const clas = seq(ClassName, tok(StaticArrow), AttributeName);
-    const start = alt(clas, TargetField, TargetFieldSymbol, cast);
+    const start = altPrio(cast, clas, TargetField, TargetFieldSymbol);
 
     const fields = seq(opt(FieldOffset), opt(FieldLength));
 

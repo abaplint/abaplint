@@ -8,13 +8,13 @@ export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = new SQLSource();
 
-    const list = seq(alt(tok(WParenLeft), tok(WParenLeftW)), val, star(seq(",", val)), ")");
+    const list = seq(altPrio(tok(WParenLeft), tok(WParenLeftW)), val, star(seq(",", val)), ")");
 
     const subSelect = seq("(", Select, ")");
 
     const inn = seq(opt("NOT"),
                     "IN",
-                    alt(SQLSource, list, subSelect));
+                    altPrio(SQLSource, list, subSelect));
 
     const between = seq(opt("NOT"), "BETWEEN", SQLSource, "AND", SQLSource);
 
