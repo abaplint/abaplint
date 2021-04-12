@@ -10,6 +10,8 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {DDIC} from "../ddic";
 
 export class IntfReferencingClasConf extends BasicRuleConfig {
+  /** List of classes allowed to be referenced, regex, case insensitive */
+  public allow: string[] = [];
 }
 
 export class IntfReferencingClas implements IRule {
@@ -29,6 +31,9 @@ export class IntfReferencingClas implements IRule {
   }
 
   public getConfig() {
+    if (this.conf.allow === undefined) {
+      this.conf.allow = [];
+    }
     return this.conf;
   }
 
@@ -60,9 +65,11 @@ export class IntfReferencingClas implements IRule {
     for (const r of node.getData().references) {
       if (r.referenceType === ReferenceType.ObjectOrientedReference
           && r.extra?.ooType === "CLAS"
-          && r.extra?.ooName) {
+          && r.extra?.ooName !== undefined) {
         const found = this.reg.getObject("CLAS", r.extra.ooName) as Class || undefined;
         if (found && ddic.isException(found.getClassDefinition(), found)) {
+          continue;
+        } else if (this.getConfig().allow.some(reg => new RegExp(reg, "i").test(r.extra!.ooName!))) {
           continue;
         }
         ret.push(Issue.atIdentifier(r.position, message + r.extra.ooName, this.getMetadata().key, this.conf.severity));

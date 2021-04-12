@@ -40,7 +40,7 @@ export class References {
     return locs.map(LSPUtils.identiferToLocation);
   }
 
-  public search(identifier: Identifier, node: ISpaghettiScopeNode): Identifier[] {
+  public search(identifier: Identifier, node: ISpaghettiScopeNode, exitAfterFound = false): Identifier[] {
     let ret: Identifier[] = [];
 
     // todo, this first assumes that the identifier is a variable?
@@ -48,14 +48,17 @@ export class References {
         || node.getIdentifier().stype === ScopeType.FunctionModule
         || node.getIdentifier().stype === ScopeType.Form) {
       ret = this.findReferences(node, identifier);
-    } else {
-      for (const o of this.reg.getObjects()) {
-        if (o instanceof ABAPObject) {
-          if (this.reg.isDependency(o)) {
-            continue; // do not search in dependencies
-          }
-          ret = ret.concat(this.findReferences(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
+    }
+    if (ret.length > 1 && exitAfterFound === true) {
+      return ret;
+    }
+
+    for (const o of this.reg.getObjects()) {
+      if (o instanceof ABAPObject) {
+        if (this.reg.isDependency(o)) {
+          continue; // do not search in dependencies
         }
+        ret.push(...this.findReferences(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
       }
     }
 
@@ -79,21 +82,12 @@ export class References {
     const ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
-
       // this is for finding the definitions
       const vars = node.getData().vars;
       const vid = vars[identifier.getName().toUpperCase()];
       if (vid?.equals(identifier)) {
         ret.push(vid);
       }
-      /*
-      for (const name in vars) {
-        const vid = vars[name];
-        if (vid.equals(identifier)) {
-          ret.push(vid);
-        }
-      }
-      */
 
       // this is for finding the definitions
       const types = node.getData().types;
@@ -101,14 +95,6 @@ export class References {
       if (tid?.equals(identifier)) {
         ret.push(tid);
       }
-      /*
-      for (const name in types) {
-        const vid = types[name];
-        if (vid.equals(identifier)) {
-          ret.push(vid);
-        }
-      }
-      */
 
       for (const r of node.getData().references) {
         if (r.resolved?.equals(identifier)) {

@@ -11,8 +11,9 @@ async function runMulti(files: {filename: string, contents: string}[]): Promise<
   }
   await reg.parseAsync();
   let issues: Issue[] = [];
+  const check = new CheckInclude().initialize(reg);
   for (const obj of reg.getObjects()) {
-    issues = issues.concat(new CheckInclude().initialize(reg).run(obj));
+    issues = issues.concat(check.run(obj));
   }
   return issues;
 }
@@ -147,14 +148,14 @@ ENDCLASS.`;
 ENDCLASS.
 CLASS ZCL_INC IMPLEMENTATION.
   METHOD sdfds.
-    INCLUDE zexists.
+    INCLUDE zexistsa.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = await runMulti([
       {filename: "zcl_inc.clas.abap", contents},
-      {filename: "zexists.prog.abap", contents: `WRITE 2.`},
-      {filename: "zexists.prog.xml", contents: `<SUBC>I</SUBC>`}]);
-    expect(issues.length).to.equals(1);
+      {filename: "zexistsa.prog.abap", contents: `WRITE 2.`},
+      {filename: "zexistsa.prog.xml", contents: `<SUBC>I</SUBC>`}]);
+    expect(issues.length).to.equals(0);
   });
 
 });

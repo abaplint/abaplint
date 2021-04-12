@@ -46,9 +46,9 @@ export class SQLEscapeHostVariables extends ABAPRule {
     }
 
     for (const s of file.getStatements()) {
+      const str = s.concatTokens().toUpperCase();
       if (s.get() instanceof Statements.Select
           || s.get() instanceof Statements.SelectLoop) {
-        const str = s.concatTokens().toUpperCase();
 // this is not completely correct and does not catch all, but okay for now
 // todo: replace with logic from "else if" branch below, when/if it proves to work
         if (str.includes(" INTO ( @")
@@ -70,6 +70,9 @@ export class SQLEscapeHostVariables extends ABAPRule {
           || s.get() instanceof Statements.ModifyDatabase
           || s.get() instanceof Statements.InsertDatabase
           || s.get() instanceof Statements.DeleteDatabase) {
+        if (str.startsWith("MODIFY SCREEN FROM ")) {
+          continue;
+        }
         for (const o of s.findAllExpressions(Expressions.SQLSource)) {
           const first = o.getFirstChild();
           if (first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain) {

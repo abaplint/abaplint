@@ -15,6 +15,7 @@ export interface IFunctionModuleParameter {
 
 export class FunctionModuleDefinition {
   private name: string;
+  private description: string;
   private parameters: IFunctionModuleParameter[];
 
   public constructor(data: any) {
@@ -23,6 +24,10 @@ export class FunctionModuleDefinition {
 
   public getParameters(): readonly IFunctionModuleParameter[] {
     return this.parameters;
+  }
+
+  public getDescription(): string {
+    return this.description;
   }
 
   public getName(): string {
@@ -35,7 +40,8 @@ export class FunctionModuleDefinition {
     if (data.FUNCNAME === undefined) {
       throw new Error("Function module name undefined");
     }
-    this.name = data.FUNCNAME._text;
+    this.name = data.FUNCNAME;
+    this.description = data.SHORT_TEXT;
     this.parameters = [];
 
     if (data.IMPORT) {
@@ -44,9 +50,9 @@ export class FunctionModuleDefinition {
           throw new Error("Function module name parameter undefined, importing");
         }
         this.parameters.push({
-          name: param.PARAMETER._text,
+          name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.importing,
-          type: param.TYP?._text,
+          type: param.TYP,
         });
       }
     }
@@ -57,9 +63,9 @@ export class FunctionModuleDefinition {
           throw new Error("Function module name parameter undefined, changing");
         }
         this.parameters.push({
-          name: param.PARAMETER._text,
+          name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.changing,
-          type: param.TYP?._text,
+          type: param.TYP,
         });
       }
     }
@@ -70,9 +76,9 @@ export class FunctionModuleDefinition {
           throw new Error("Function module name parameter undefined, exporting");
         }
         this.parameters.push({
-          name: param.PARAMETER._text,
+          name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.exporting,
-          type: param.TYP?._text,
+          type: param.TYP,
         });
       }
     }
@@ -83,9 +89,9 @@ export class FunctionModuleDefinition {
           throw new Error("Function module name parameter undefined, tables");
         }
         this.parameters.push({
-          name: param.PARAMETER._text,
+          name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.tables,
-          type: param.TYP?._text,
+          type: param.DBSTRUCT,
         });
       }
     }

@@ -1310,7 +1310,7 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues[0].getMessage()).to.contain("lv_i");
   });
 
-  it.skip("DATA, already specified", () => {
+  it("DATA, already specified", () => {
     const abap = `DATA foo.\nDATA foo.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
@@ -1326,13 +1326,13 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, sy field, unknown field", () => {
+  it("program, sy field, unknown field", () => {
     const abap = "WRITE sy-fooboo.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, definition in FOR expression, should not work after", () => {
+  it("program, definition in FOR expression, should not work after", () => {
     const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
       "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
       "WRITE j.";
@@ -1976,7 +1976,7 @@ ENDIF.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("sy-sdfsdsdf not found", () => {
+  it("sy-sdfsdsdf not found", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF i.
     DESCRIBE TABLE tab LINES sy-sdfsdsdf.`;
@@ -2898,6 +2898,14 @@ CREATE OBJECT ref TYPE zcl_not_found.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("CREATE OBJECT TYPE, generic instantiation error", () => {
+    const abap = `
+DATA ref TYPE REF TO object.
+CREATE OBJECT ref.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("NEW lcl_clas( )->settings", () => {
     const abap = `
 CLASS lcl_clas DEFINITION.
@@ -3715,6 +3723,16 @@ INCLUDE lzfugr1f01.`;
     expect(issues[0].getMessage()).to.contain("foo-bar");
   });
 
+  it("voided table expression", () => {
+    const abap = `
+  DATA ref_scan_manager TYPE REF TO sdfsdfsd.
+  DATA(back_structure) = ref_scan_manager->structures[ 2 ].
+  DATA(sdfs) = ref_scan_manager->statements[ back_structure-stmnt_from ].
+  WRITE sdfs.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("FORM name with dashes found", () => {
     const abap = `
     FORM foo-bar.
@@ -3777,6 +3795,200 @@ ENDCLASS.`;
       {filename: "zcl_inc.clas.abap", contents: clas},
       {filename: "zincclas.prog.abap", contents: zincclas},
       {filename: "zincclas.prog.xml", contents: "<SUBC>I</SUBC>"}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("function group with TABLES STRUCTURE parameter, voided type", () => {
+    const topabap = `FUNCTION-POOL ZFUGR_TEST.`;
+    const topxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>LZFUGR_TESTTOP</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>I</SUBC>
+        <APPL>S</APPL>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const saplabap = `INCLUDE LZFUGR_TESTTOP.
+    INCLUDE LZFUGR_TESTUXX.`;
+    const saplxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>SAPLZFUGR_TEST</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>F</SUBC>
+        <APPL>S</APPL>
+        <RLOAD>E</RLOAD>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const fugrxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <AREAT>test</AREAT>
+       <INCLUDES>
+        <SOBJ_NAME>LZFUGR_TESTTOP</SOBJ_NAME>
+        <SOBJ_NAME>SAPLZFUGR_TEST</SOBJ_NAME>
+       </INCLUDES>
+       <FUNCTIONS>
+        <item>
+         <FUNCNAME>ZTABLSTRU</FUNCNAME>
+         <SHORT_TEXT>test</SHORT_TEXT>
+         <TABLES>
+          <RSTBL>
+           <PARAMETER>FOOBAR</PARAMETER>
+           <DBSTRUCT>EDIDC</DBSTRUCT>
+          </RSTBL>
+         </TABLES>
+        </item>
+       </FUNCTIONS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const functionabap = `FUNCTION ztablstru.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  TABLES
+*"      FOOBAR STRUCTURE  EDIDC
+*"----------------------------------------------------------------------
+
+  WRITE foobar-docnum.
+
+ENDFUNCTION.`;
+    const issues = runMulti([
+      {filename: "zfugr_test.fugr.lzfugr_testtop.abap", contents: topabap},
+      {filename: "zfugr_test.fugr.lzfugr_testtop.xml", contents: topxml},
+      {filename: "zfugr_test.fugr.saplzfugr_test.abap", contents: saplabap},
+      {filename: "zfugr_test.fugr.saplzfugr_test.xml", contents: saplxml},
+      {filename: "zfugr_test.fugr.xml", contents: fugrxml},
+      {filename: "zfugr_test.fugr.ztablstru.abap", contents: functionabap}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("SELECT without INTO, implicit workarea not found", () => {
+    const abap = `
+    SELECT * FROM foobar WHERE field = 'bar'.
+    ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("SELECT without INTO, aggregation", () => {
+    const abap = `SELECT COUNT(*) FROM tcdrp WHERE object = 2.
+    SELECT COUNT( * ) FROM tcdrp WHERE object = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("SELECT without INTO, aggregation 2", () => {
+    const abap = `DATA lv_primary type string.
+    data lv_where type string.
+    SELECT COUNT(*) FROM (lv_primary) WHERE (lv_where).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("create voided object", () => {
+    const abap = `
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+    CREATE OBJECT lo_zip.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("create object, dynamic", () => {
+    const abap = `
+  DATA lo_manifest_provider TYPE REF TO object.
+  DATA lv_dyn TYPE string.
+  CREATE OBJECT lo_manifest_provider TYPE (lv_dyn).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("instantiate abstract, 1", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  CREATE OBJECT my_car TYPE vehicle.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("instantiate abstract, 2", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  CREATE OBJECT my_car.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it.skip("instantiate abstract, 3", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  my_car = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it.skip("instantiate abstract, 4", () => {
+    const abap = `
+  CLASS vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS vehicle IMPLEMENTATION.
+  ENDCLASS.
+  DATA my_car TYPE REF TO vehicle.
+  my_car = NEW vehicle( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("ADD", () => {
+    const abap = `
+  DATA int TYPE i.
+  ADD 2 TO int.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CLOSE DATASET", () => {
+    const abap = `DATA bar TYPE string.
+    CLOSE DATASET bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ELSEIF", () => {
+    const abap = `IF 1 = 2.
+    ELSEIF 3 = 4.
+    ENDIF.`;
+    const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
 

@@ -91,7 +91,7 @@ export class EmptyStructure extends ABAPRule {
     if (this.getConfig().try === true) {
       const tries = stru.findAllStructures(Structures.Try);
       for (const t of tries) {
-        const normal = t.findDirectStructure(Structures.Normal);
+        const normal = t.findDirectStructure(Structures.Body);
         if (normal === undefined) {
           const token = t.getFirstToken();
           const issue = Issue.atToken(

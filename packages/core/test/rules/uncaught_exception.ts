@@ -24,16 +24,31 @@ ENDCLASS.
 CLASS cx_salv_error IMPLEMENTATION.
 ENDCLASS.`;
 
-async function findIssues(abap: string, filename: string): Promise<readonly Issue[]> {
+const ycx_object_not_processed = `class YCX_OBJECT_NOT_PROCESSED definition
+  public
+  inheriting from CX_STATIC_CHECK
+  create public .
+ENDCLASS.
+
+CLASS YCX_OBJECT_NOT_PROCESSED IMPLEMENTATION.
+ENDCLASS.`;
+
+
+async function findIssues(abap: string, filename: string, extra: MemoryFile[] = []): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, abap));
   reg.addFile(new MemoryFile("cx_root.clas.abap", cx_root));
   reg.addFile(new MemoryFile("cx_static_check.clas.abap", cx_static_check));
   reg.addFile(new MemoryFile("cx_salv_error.clas.abap", cx_salv_error));
   reg.addFile(new MemoryFile("cx_salv_not_found.clas.abap", cx_salv_not_found));
+  reg.addFile(new MemoryFile("ycx_object_not_processed.clas.abap", ycx_object_not_processed));
+  reg.addFiles(extra);
   await reg.parseAsync();
-  const rule = new UncaughtException();
-//  console.dir(reg.findIssues());
-  return rule.initialize(reg).run(reg.getFirstObject()!);
+  const rule = new UncaughtException().initialize(reg);
+  const issues: Issue[] = [];
+  for (const o of reg.getObjects()) {
+    issues.push(...rule.run(o));
+  }
+  return issues;
 }
 
 describe("Rule: uncaught_exception", () => {
@@ -240,6 +255,40 @@ CLASS lcl_alv IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Method with raise, expect error", async () => {
+    const abap = `
+    CLASS lcl_file DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS download.
+  ENDCLASS.
+
+  CLASS lcl_file IMPLEMENTATION.
+    METHOD download.
+      RAISE EXCEPTION TYPE ycx_object_not_processed.
+    ENDMETHOD.
+  ENDCLASS.`;
+    const file = new MemoryFile("zreport.prog.abap", `INCLUDE zinclude.`);
+    const issues = await findIssues(abap, "zinclude.prog.abap", [file]);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Method with raise, fixed", async () => {
+    const abap = `
+  CLASS lcl_file DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS download RAISING ycx_object_not_processed cx_abap_invalid_value.
+  ENDCLASS.
+
+  CLASS lcl_file IMPLEMENTATION.
+    METHOD download.
+      RAISE EXCEPTION TYPE ycx_object_not_processed.
+    ENDMETHOD.
+  ENDCLASS.`;
+    const file = new MemoryFile("zreport.prog.abap", `INCLUDE zinclude.`);
+    const issues = await findIssues(abap, "zinclude.prog.abap", [file]);
     expect(issues.length).to.equal(0);
   });
 

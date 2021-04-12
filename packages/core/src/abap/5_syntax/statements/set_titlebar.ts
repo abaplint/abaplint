@@ -1,13 +1,12 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {SelectLoop as SelectLoopExpression} from "../expressions/select_loop";
+import {Source} from "../expressions/source";
 
-export class SelectLoop {
+export class SetTitlebar {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    const s = node.findDirectExpression(Expressions.SelectLoop);
-    if (s) {
-      new SelectLoopExpression().runSyntax(s, scope, filename);
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
     }
   }
 }

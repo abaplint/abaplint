@@ -3,6 +3,7 @@ import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {FunctionGroup} from "../objects";
 
 export class IdenticalDescriptionsConf extends BasicRuleConfig {
 }
@@ -16,8 +17,12 @@ export class IdenticalDescriptions implements IRule {
     return {
       key: "identical_descriptions",
       title: "Identical descriptions",
-      shortDescription: `Searches for objects with the same type and same description, case insensitive`,
-      extendedInformation: `Works for: INTF, CLAS, DOMA, DTEL`,
+      shortDescription: `Searches for objects with the same type and same description`,
+      extendedInformation: `Case insensitive
+
+Only checks the master language descriptions
+
+Works for: INTF, CLAS, DOMA, DTEL, FUNC in same FUGR`,
       tags: [],
     };
   }
@@ -68,7 +73,27 @@ export class IdenticalDescriptions implements IRule {
       }
     }
 
+    if (o instanceof FunctionGroup) {
+      issues.push(...this.checkFunctionModules(o));
+    }
+
     return issues;
+  }
+
+  private checkFunctionModules(fugr: FunctionGroup): Issue[] {
+    const descriptions: {[type: string]: boolean} = {};
+    for (const fm of fugr.getModules()) {
+      const d = fm.getDescription().toUpperCase();
+      if (d === "") {
+        continue;
+      }
+      if (descriptions[d] !== undefined) {
+        const message = "FUGR " + fugr.getName() + " contains function modules with identical descriptions";
+        return [Issue.atRow(fugr.getXMLFile()!, 1, message, this.getMetadata().key, this.getConfig().severity)];
+      }
+      descriptions[d] = true;
+    }
+    return [];
   }
 
 }

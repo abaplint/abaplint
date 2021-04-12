@@ -92,6 +92,7 @@ SELECT *
   ASSIGN COMPONENT comp OF STRUCTURE struc TO <left_operand>.
   IF sy-subrc = 0.
   ENDIF.`, cnt: 0},
+  {abap: `SELECT SINGLE @abap_true FROM sdfds WHERE name = 'sdfsd'.`, cnt: 0},
 
 // todo, this should be an error as SY-SUBRC is set?
   {abap: `

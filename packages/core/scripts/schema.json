@@ -1699,7 +1699,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Searches for objects with the same type and same description, case insensitive\nhttps://rules.abaplint.org/identical_descriptions"
+              "description": "Searches for objects with the same type and same description\nhttps://rules.abaplint.org/identical_descriptions"
             },
             "identical_form_names": {
               "anyOf": [
@@ -2249,7 +2249,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "\nEnsures you have no descriptions in metadata of methods, parameters, etc.\n\nClass descriptions are required, see rule description_empty.\n\nConsider using ABAP Doc for documentation.\n\nhttps://rules.abaplint.org/remove_descriptions"
+              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc.\n\nClass descriptions are required, see rule description_empty.\n\nConsider using ABAP Doc for documentation.\nhttps://rules.abaplint.org/remove_descriptions"
             },
             "rfc_error_handling": {
               "anyOf": [
@@ -2480,7 +2480,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for Unsecure FAE\nTags: Experimental\nhttps://rules.abaplint.org/unsecure_fae"
+              "description": "Checks for unsecure FAE\nTags: Experimental\nhttps://rules.abaplint.org/unsecure_fae"
             },
             "unused_methods": {
               "anyOf": [
@@ -2933,6 +2933,13 @@
     "IntfReferencingClasConf": {
       "additionalProperties": false,
       "properties": {
+        "allow": {
+          "description": "List of classes allowed to be referenced, regex, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -2945,6 +2952,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "allow"
+      ],
       "type": "object"
     },
     "KeepSingleParameterCallsOnOneLineConf": {

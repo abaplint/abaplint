@@ -1,14 +1,13 @@
 import * as Statements from "../../2_statements/statements";
 import {IStructure} from "./_structure";
-import {star, sta, seq, sub} from "./_combi";
-import {Normal} from "./normal";
+import {sta, seq, sub, opt} from "./_combi";
+import {Body} from "./body";
 import {IStructureRunnable} from "./_structure_runnable";
 
 export class Catch implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const normal = star(sub(Normal));
-    const cat = seq(sta(Statements.Catch), normal);
+    const cat = seq(sta(Statements.Catch), opt(sub(Body)));
 
     return cat;
   }

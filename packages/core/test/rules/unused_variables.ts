@@ -12,10 +12,11 @@ function testFix(input: string, expected: string) {
 async function runMulti(files: MemoryFile[]): Promise<Issue[]> {
   const reg = new Registry().addFiles(files);
   await reg.parseAsync();
+//  console.dir(reg.findIssues());
   const rule = new UnusedVariables().initialize(reg);
-  let issues: Issue[] = [];
+  const issues: Issue[] = [];
   for (const o of reg.getObjects()) {
-    issues = issues.concat(rule.run(o));
+    issues.push(...rule.run(o));
   }
   return issues;
 }
@@ -686,6 +687,79 @@ ENDCLASS.`;
     const abap = `
   DATA lv_color TYPE i.
   FORMAT COLOR = lv_color.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Table expression", async () => {
+    const abap = `
+  DATA ref_scan_manager TYPE REF TO sdfsdfsd.
+  DATA(back_structure) = ref_scan_manager->structures[ 2 ].
+  DATA(sdfs) = ref_scan_manager->statements[ back_structure-stmnt_from ].
+  WRITE sdfs.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Table expression, target", async () => {
+    const abap = `
+  DATA result TYPE STANDARD TABLE OF string.
+  DATA int TYPE i VALUE 1.
+  result[ int ] = 'hello'.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ABSTRACT METHOD", async () => {
+    const base = `
+CLASS zcl_base DEFINITION PUBLIC ABSTRACT.
+  PROTECTED SECTION.
+    METHODS inspect_tokens ABSTRACT IMPORTING
+      index TYPE i
+      unused TYPE i.
+ENDCLASS.
+CLASS zcl_base IMPLEMENTATION.
+ENDCLASS.`;
+    const input = `
+CLASS zcl_input DEFINITION PUBLIC INHERITING FROM zcl_base.
+  PROTECTED SECTION.
+    METHODS inspect_tokens REDEFINITION.
+ENDCLASS.
+CLASS zcl_input IMPLEMENTATION.
+  METHOD inspect_tokens.
+    WRITE index.
+  ENDMETHOD.
+ENDCLASS.`;
+    const locals = `
+CLASS ltd_check_base DEFINITION INHERITING FROM zcl_base.
+  PROTECTED SECTION.
+    METHODS inspect_tokens REDEFINITION.
+ENDCLASS.
+CLASS ltd_check_base IMPLEMENTATION.
+  METHOD inspect_tokens.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      new MemoryFile("zcl_base.clas.abap", base),
+      new MemoryFile("zcl_base.clas.locals_imp.abap", locals),
+      new MemoryFile("zcl_input.clas.abap", input),
+    ]);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("SET PF-STATUS", async () => {
+    const abap = `
+    DATA bar TYPE c LENGTH 1 VALUE 'A'.
+    SET PF-STATUS bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SET TITLEBAR", async () => {
+    const abap = `
+    DATA bar TYPE c LENGTH 1 VALUE 'A'.
+    SET TITLEBAR bar.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });

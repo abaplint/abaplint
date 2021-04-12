@@ -1,6 +1,6 @@
 import {AbstractObject} from "./_abstract_object";
 import {Message} from "../abap/types/message";
-import {xmlToArray} from "../xml_utils";
+import {xmlToArray, unescape} from "../xml_utils";
 
 export class MessageClass extends AbstractObject {
   private parsedMessages: Message[] | undefined = undefined;
@@ -50,17 +50,17 @@ export class MessageClass extends AbstractObject {
 
     this.parsedMessages = [];
 
-    const parsed = super.parseRaw();
+    const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return;
     }
 
-    const t100 = parsed?.abapGit["asx:abap"]["asx:values"]?.T100;
+    const t100 = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100;
     if (t100 === undefined) {
       return;
     }
     for (const msg of xmlToArray(t100.T100)) {
-      this.parsedMessages.push(new Message(msg.MSGNR?._text, msg.TEXT?._text));
+      this.parsedMessages.push(new Message(msg.MSGNR, unescape(msg.TEXT)));
     }
   }
 

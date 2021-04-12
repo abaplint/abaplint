@@ -1,5 +1,5 @@
 import {AbstractObject} from "./_abstract_object";
-import {xmlToArray} from "../xml_utils";
+import {xmlToArray, unescape} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
 import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
@@ -79,7 +79,7 @@ export abstract class ABAPObject extends AbstractObject {
 
   public getTexts(): ITextElements {
     if (this.texts === undefined) {
-      this.findTexts(this.parseRaw());
+      this.findTexts(this.parseRaw2());
     }
     return this.texts!;
   }
@@ -92,15 +92,15 @@ export abstract class ABAPObject extends AbstractObject {
     }
 
     for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
-      if (t?.ID?._text === "I") {
+      if (t?.ID === "I") {
         if (t.KEY === undefined) {
           throw new Error("findTexts, undefined");
         }
-        const key = t.KEY._text;
+        const key = t.KEY;
         if (key === undefined) {
           continue;
         }
-        this.texts[key.toUpperCase()] = t.ENTRY ? t.ENTRY._text : "";
+        this.texts[key.toUpperCase()] = t.ENTRY ? unescape(t.ENTRY) : "";
       }
     }
   }

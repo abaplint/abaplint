@@ -23,8 +23,7 @@ export class Identifier {
 
   public equals(id: Identifier): boolean {
     // note how the boolean condition is evalulated lazily
-    return id.getStart().getCol() === this.getStart().getCol()
-      && id.getStart().getRow() === this.getStart().getRow()
+    return id.getStart().equals(this.getStart())
       && id.getFilename() === this.getFilename();
   }
 

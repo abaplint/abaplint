@@ -33,7 +33,8 @@ export class PreferInline implements IRule {
       key: "prefer_inline",
       title: "Prefer Inline Declarations",
       shortDescription: `Prefer inline to up-front declarations.`,
-      extendedInformation: `
+      extendedInformation: `EXPERIMENTAL
+
 Activates if language version is v740sp02 or above.
 
 Variables must be local(METHOD or FORM).
