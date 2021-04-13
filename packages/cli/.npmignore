@@ -13,6 +13,7 @@ foo.prog.abap
 npm-debug.log
 packages/*
 scripts/*
+sample/*
 src/*
 test/*
 tsconfig.json
