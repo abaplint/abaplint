@@ -55,18 +55,23 @@ class WorkArea {
     this.statements = [];
   }
 
-  public addUnknown(t: Token[], colon: Token | undefined) {
-    this.statements.push(new StatementNode(new Unknown(), colon).setChildren(this.tokensToNodes(t)));
+  public addUnknown(pre: Token[], post: Token[], colon: Token | undefined) {
+    const st = new StatementNode(new Unknown(), colon);
+    st.setChildren(this.tokensToNodes(pre, post));
+    this.statements.push(st);
   }
 
   public toResult(): IStatementResult {
     return {file: this.file, tokens: this.tokens, statements: this.statements};
   }
 
-  private tokensToNodes(tokens: Token[]): TokenNode[] {
+  private tokensToNodes(tokens1: Token[], tokens2: Token[]): TokenNode[] {
     const ret: TokenNode[] = [];
 
-    for (const t of tokens) {
+    for (const t of tokens1) {
+      ret.push(new TokenNode(t));
+    }
+    for (const t of tokens2) {
       ret.push(new TokenNode(t));
     }
 
@@ -237,7 +242,8 @@ export class StatementParser {
       const match = Combi.run(st.getMatcher(), filtered, this.version);
       if (match) {
         const last = tokens[tokens.length - 1];
-        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
+        match.push(new TokenNode(last));
+        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match);
       }
     }
     // next try the statements without specific keywords
@@ -245,7 +251,8 @@ export class StatementParser {
       const match = Combi.run(st.getMatcher(), filtered, this.version);
       if (match) {
         const last = tokens[tokens.length - 1];
-        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
+        match.push(new TokenNode(last));
+        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match);
       }
     }
 
@@ -270,17 +277,17 @@ export class StatementParser {
 
       const str = token.getStr();
       if (str === ".") {
-        wa.addUnknown(pre.concat(add), colon);
+        wa.addUnknown(pre, add, colon);
         add = [];
         pre = [];
         colon = undefined;
       } else if (str === "," && pre.length > 0) {
-        wa.addUnknown(pre.concat(add), colon);
+        wa.addUnknown(pre, add, colon);
         add = [];
       } else if (str === ":" && colon === undefined) {
         colon = token;
         add.pop(); // do not add colon token to statement
-        pre = add.slice(0);
+        pre.push(...add);
         add = [];
       } else if (str === ":") {
         add.pop(); // do not add colon token to statement
@@ -288,7 +295,7 @@ export class StatementParser {
     }
 
     if (add.length > 0) {
-      wa.addUnknown(pre.concat(add), colon);
+      wa.addUnknown(pre, add, colon);
     }
   }
 }

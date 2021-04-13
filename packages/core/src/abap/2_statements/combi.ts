@@ -770,8 +770,8 @@ class Alternative implements IStatementRunnable {
     if (f1.length === 1 && f2.length === 1 && f1[0] === f2[0]) {
       return f1;
     }
-    const result = f1.concat(f2);
-    return result;
+    f1.push(...f2);
+    return f1;
   }
 }
 
@@ -799,14 +799,14 @@ class AlternativePriority implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result: Result[] = [];
+    const result: Result[] = [];
 
     for (const sequ of this.list) {
 //      console.log(seq.toStr());
       const temp = sequ.run(r);
 
       if (temp.length > 0) {
-        result = result.concat(temp);
+        result.push(...temp);
         break;
       }
     }
@@ -842,8 +842,8 @@ class AlternativePriority implements IStatementRunnable {
     if (f1.length === 1 && f2.length === 1 && f1[0] === f2[0]) {
       return f1;
     }
-    const result = f1.concat(f2);
-    return result;
+    f1.push(...f2);
+    return f1;
   }
 }
 
