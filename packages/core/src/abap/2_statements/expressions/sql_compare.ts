@@ -28,17 +28,15 @@ export class SQLCompare extends Expression {
 
     const builtin = ver(Version.v751, seq(alt("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
-    const rett = seq(alt(SQLFieldName, builtin),
-                     alt(seq(SQLCompareOperator, alt(source, sub)),
+    const rett = seq(altPrio(builtin, SQLFieldName),
+                     alt(seq(SQLCompareOperator, altPrio(sub, source)),
                          inn,
                          like,
                          between,
                          nul));
 
-    const ret = rett;
-
     const exists = seq("EXISTS", subSelect);
 
-    return altPrio(exists, Dynamic, ret);
+    return altPrio(exists, Dynamic, rett);
   }
 }

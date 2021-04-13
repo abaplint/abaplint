@@ -1,4 +1,4 @@
-import {plusPrio, seq, ver, tok, Expression, optPrio, altPrio} from "../combi";
+import {plus, seq, ver, tok, Expression, optPrio, altPrio} from "../combi";
 import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation, SQLCase} from ".";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
@@ -17,12 +17,12 @@ export class SQLFieldList extends Expression {
 
     return altPrio("*",
                    Dynamic,
-                   plusPrio(seq(altPrio(SQLAggregation,
-                                        SQLCase,
-                                        SQLFunction,
-                                        SQLPath,
-                                        SQLFieldName,
-                                        abap,
-                                        Constant), optPrio(as), comma)));
+                   plus(seq(altPrio(SQLAggregation,
+                                    SQLCase,
+                                    SQLFunction,
+                                    SQLPath,
+                                    SQLFieldName,
+                                    abap,
+                                    Constant), optPrio(as), comma)));
   }
 }
