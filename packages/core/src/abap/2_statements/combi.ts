@@ -544,6 +544,7 @@ class WordSequence implements IStatementRunnable {
 
   private readonly stri: string;
   private readonly words: IStatementRunnable[] = [];
+  private readonly seq: Sequence;
 
   public constructor(stri: string) {
     this.stri = stri;
@@ -555,6 +556,7 @@ class WordSequence implements IStatementRunnable {
 // todo, use Dash token
       this.words.push(new Word(st));
     }
+    this.seq = new Sequence(this.words);
   }
 
   public listKeywords(): string[] {
@@ -566,7 +568,7 @@ class WordSequence implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    return (new Sequence(this.words)).run(r);
+    return this.seq.run(r);
   }
 
   public railroad() {
