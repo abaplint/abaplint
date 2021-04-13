@@ -1,4 +1,4 @@
-import {ver, seq, opt, tok, star, alt, optPrio, altPrio, Expression} from "../combi";
+import {ver, seq, tok, starPrio, alt, optPrio, altPrio, Expression} from "../combi";
 import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from ".";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -8,19 +8,19 @@ export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = new SQLSource();
 
-    const list = seq(altPrio(tok(WParenLeft), tok(WParenLeftW)), val, star(seq(",", val)), ")");
+    const list = seq(altPrio(tok(WParenLeft), tok(WParenLeftW)), val, starPrio(seq(",", val)), ")");
 
     const subSelect = seq("(", Select, ")");
 
-    const inn = seq(opt("NOT"),
+    const inn = seq(optPrio("NOT"),
                     "IN",
                     altPrio(SQLSource, list, subSelect));
 
-    const between = seq(opt("NOT"), "BETWEEN", SQLSource, "AND", SQLSource);
+    const between = seq(optPrio("NOT"), "BETWEEN", SQLSource, "AND", SQLSource);
 
-    const like = seq(opt("NOT"), "LIKE", SQLSource, optPrio(seq("ESCAPE", SQLSource)));
+    const like = seq(optPrio("NOT"), "LIKE", SQLSource, optPrio(seq("ESCAPE", SQLSource)));
 
-    const nul = seq("IS", opt("NOT"), alt("NULL", ver(Version.v753, "INITIAL")));
+    const nul = seq("IS", optPrio("NOT"), alt("NULL", ver(Version.v753, "INITIAL")));
 
     const source = new SQLSource();
 
@@ -29,11 +29,11 @@ export class SQLCompare extends Expression {
     const builtin = ver(Version.v751, seq(alt("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
     const rett = seq(altPrio(builtin, SQLFieldName),
-                     alt(seq(SQLCompareOperator, altPrio(sub, source)),
-                         inn,
-                         like,
-                         between,
-                         nul));
+                     altPrio(seq(SQLCompareOperator, altPrio(sub, source)),
+                             inn,
+                             like,
+                             between,
+                             nul));
 
     const exists = seq("EXISTS", subSelect);
 
