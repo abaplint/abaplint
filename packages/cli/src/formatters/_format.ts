@@ -11,6 +11,8 @@ export class Formatter {
         return new Formatters.Json().output(issues, fileCount);
       case "junit":
         return new Formatters.Junit().output(issues, fileCount);
+      case "codeframe":
+        return new Formatters.CodeFrame().output(issues, fileCount);
       default:
         return new Formatters.Standard().output(issues, fileCount);
     }
