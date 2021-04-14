@@ -129,7 +129,7 @@ function displayHelp(): string {
     "  abaplint -d | --default   show default configuration\n" +
     "\n" +
     "Options:\n" +
-    "  -f, --format <format>  output format (standard, total, json, summary, junit)\n" +
+    "  -f, --format <format>  output format (standard, total, json, summary, junit, codeframe)\n" +
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
     "  --fix                  apply quick fixes to files\n" +
