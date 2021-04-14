@@ -294,12 +294,12 @@ export class SpaghettiScope implements ISpaghettiScope {
 
   private allNodes(): SpaghettiScopeNode[] {
     const ret: SpaghettiScopeNode[] = [];
-    let stack: SpaghettiScopeNode[] = [this.node];
+    const stack: SpaghettiScopeNode[] = [this.node];
 
     while (stack.length > 0) {
       const current = stack.pop()!;
       ret.push(current);
-      stack = stack.concat(current.getChildren());
+      stack.push(...current.getChildren());
     }
 
     return ret;

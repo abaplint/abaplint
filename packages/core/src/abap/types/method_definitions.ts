@@ -34,7 +34,10 @@ export class MethodDefinitions implements IMethodDefinitions {
   }
 
   public getAll(): readonly IMethodDefinition[] {
-    return this.pub.concat(this.pro).concat(this.pri);
+    const ret = this.pub;
+    ret.push(...this.pro);
+    ret.push(...this.pri);
+    return ret;
   }
 
   public getByName(name: string | undefined): IMethodDefinition | undefined {
