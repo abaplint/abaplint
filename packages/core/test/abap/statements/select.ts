@@ -244,6 +244,8 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
   "SELECT SUM( (l_field) ) INTO l_value FROM (l_table).",
   "SELECT COUNT( DISTINCT ( field ) ) FROM voided INTO @DATA(lv_result).",
   `SELECT SINGLE foo, bar FROM tab INTO (@lv_moo, @DATA(lv_bar)).`,
+  `SELECT SINGLE FROM rfcdes FIELDS rfcdest WHERE rfcdest = @lv_rfcdes INTO @lv_rfcdes.`,
+  `SELECT SINGLE FROM tadir FIELDS object, obj_name WHERE devclass = @co_package INTO @DATA(ls_object).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

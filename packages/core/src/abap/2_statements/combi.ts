@@ -493,9 +493,9 @@ class Sequence implements IStatementRunnable {
   }
 
   public listKeywords(): string[] {
-    let ret: string[] = [];
+    const ret: string[] = [];
     for (const i of this.list) {
-      ret = ret.concat(i.listKeywords());
+      ret.push(...i.listKeywords());
     }
     return ret;
   }
@@ -544,6 +544,7 @@ class WordSequence implements IStatementRunnable {
 
   private readonly stri: string;
   private readonly words: IStatementRunnable[] = [];
+  private readonly seq: Sequence;
 
   public constructor(stri: string) {
     this.stri = stri;
@@ -555,6 +556,7 @@ class WordSequence implements IStatementRunnable {
 // todo, use Dash token
       this.words.push(new Word(st));
     }
+    this.seq = new Sequence(this.words);
   }
 
   public listKeywords(): string[] {
@@ -566,7 +568,7 @@ class WordSequence implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    return (new Sequence(this.words)).run(r);
+    return this.seq.run(r);
   }
 
   public railroad() {
@@ -611,7 +613,9 @@ export abstract class Expression implements IStatementRunnable {
           }
           re.setChildren(children.reverse());
 
-          t.setNodes(t.getNodes().slice(0, length - consumed).concat([re]));
+          const n = t.getNodes().slice(0, length - consumed);
+          n.push(re);
+          t.setNodes(n);
         }
         moo.push(t);
       }
@@ -661,9 +665,9 @@ class Permutation implements IStatementRunnable {
   }
 
   public listKeywords(): string[] {
-    let ret: string[] = [];
+    const ret: string[] = [];
     for (const i of this.list) {
-      ret = ret.concat(i.listKeywords());
+      ret.push(...i.listKeywords());
     }
     return ret;
   }
@@ -720,9 +724,9 @@ class Alternative implements IStatementRunnable {
   }
 
   public listKeywords(): string[] {
-    let ret: string[] = [];
+    const ret: string[] = [];
     for (const i of this.list) {
-      ret = ret.concat(i.listKeywords());
+      ret.push(...i.listKeywords());
     }
     return ret;
   }
@@ -770,8 +774,8 @@ class Alternative implements IStatementRunnable {
     if (f1.length === 1 && f2.length === 1 && f1[0] === f2[0]) {
       return f1;
     }
-    const result = f1.concat(f2);
-    return result;
+    f1.push(...f2);
+    return f1;
   }
 }
 
@@ -787,9 +791,9 @@ class AlternativePriority implements IStatementRunnable {
   }
 
   public listKeywords(): string[] {
-    let ret: string[] = [];
+    const ret: string[] = [];
     for (const i of this.list) {
-      ret = ret.concat(i.listKeywords());
+      ret.push(...i.listKeywords());
     }
     return ret;
   }
@@ -799,14 +803,14 @@ class AlternativePriority implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result: Result[] = [];
+    const result: Result[] = [];
 
     for (const sequ of this.list) {
 //      console.log(seq.toStr());
       const temp = sequ.run(r);
 
       if (temp.length > 0) {
-        result = result.concat(temp);
+        result.push(...temp);
         break;
       }
     }
@@ -842,8 +846,8 @@ class AlternativePriority implements IStatementRunnable {
     if (f1.length === 1 && f2.length === 1 && f1[0] === f2[0]) {
       return f1;
     }
-    const result = f1.concat(f2);
-    return result;
+    f1.push(...f2);
+    return f1;
   }
 }
 
@@ -936,13 +940,19 @@ function map(s: InputType): IStatementRunnable {
   }
 }
 export function seq(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  return new Sequence([map(first), map(second)].concat(rest.map(map)));
+  const list = [map(first), map(second)];
+  list.push(...rest.map(map));
+  return new Sequence(list);
 }
 export function alt(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  return new Alternative([map(first), map(second)].concat(rest.map(map)));
+  const list = [map(first), map(second)];
+  list.push(...rest.map(map));
+  return new Alternative(list);
 }
 export function altPrio(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  return new AlternativePriority([map(first), map(second)].concat(rest.map(map)));
+  const list = [map(first), map(second)];
+  list.push(...rest.map(map));
+  return new AlternativePriority(list);
 }
 export function opt(first: InputType): IStatementRunnable {
   return new Optional(map(first));
@@ -951,7 +961,9 @@ export function optPrio(first: InputType): IStatementRunnable {
   return new OptionalPriority(map(first));
 }
 export function per(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  return new Permutation([map(first), map(second)].concat(rest.map(map)));
+  const list = [map(first), map(second)];
+  list.push(...rest.map(map));
+  return new Permutation(list);
 }
 export function star(first: InputType): IStatementRunnable {
   return new Star(map(first));
