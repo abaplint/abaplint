@@ -7,7 +7,7 @@ import {IntegerType, IStructureComponent, StructureType} from "../../types/basic
 import {TypedIdentifier} from "../../types/_typed_identifier";
 
 export class TypeEnum {
-  public runSyntax(node: StructureNode, _scope: CurrentScope, filename: string): TypedIdentifier[] {
+  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier[] {
     if (!(node.get() instanceof Structures.TypeEnum)) {
       throw new Error("TypeEnum, unexpected type");
     }
@@ -17,7 +17,7 @@ export class TypeEnum {
       throw new Error("TypeEnum, unexpected type, begin");
     }
 
-    let ret: TypedIdentifier[] = [];
+    const ret: TypedIdentifier[] = [];
     for (const type of node.findDirectStatements(Statements.Type)) {
       const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
       if (expr === undefined) {
@@ -27,9 +27,21 @@ export class TypeEnum {
       // integer is default if BASE TYPE is not specified
       ret.push(new TypedIdentifier(token, filename, new IntegerType()));
     }
+    for (const type of node.findDirectStatements(Statements.TypeEnum)) {
+      const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
+      if (expr === undefined) {
+        continue;
+      }
+      const token = expr.getFirstToken();
+      // integer is default if BASE TYPE is not specified
+      ret.push(new TypedIdentifier(token, filename, new IntegerType()));
+    }
 
-    const stru = begin.findExpressionAfterToken("STRUCTURE");
-    if (stru) {
+    let name = begin.findExpressionAfterToken("STRUCTURE");
+    if (name === undefined) {
+      name = begin.findFirstExpression(Expressions.NamespaceSimpleName);
+    }
+    if (name) {
       const components: IStructureComponent[] = [];
       for (const r of ret) {
         components.push({
@@ -37,8 +49,9 @@ export class TypeEnum {
           type: r.getType(),
         });
       }
-      const id = new TypedIdentifier(stru.getFirstToken(), filename, new StructureType(components));
-      ret = [id];
+      const id = new TypedIdentifier(name.getFirstToken(), filename, new StructureType(components));
+      scope.addType(id);
+      ret.push(id);
     }
 
     return ret;

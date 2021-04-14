@@ -935,12 +935,12 @@ DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_tru
   });
 
   it("value from ENUM, procedural", () => {
-    const abap = "  TYPES:\n" +
-      "    BEGIN OF ENUM enum_name,\n" +
-      "      value1,\n" +
-      "    END OF ENUM enum_name.\n" +
-      "  DATA var_name TYPE enum_name.\n" +
-      "  var_name = value1.\n";
+    const abap = `
+    TYPES: BEGIN OF ENUM enum_name,
+            value1,
+    END OF ENUM enum_name.
+    DATA var_name TYPE enum_name.
+    var_name = value1.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -2890,7 +2890,7 @@ TYPES:
 DATA foo TYPE te_content_type.
 foo = content_type-right.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("CREATE OBJECT TYPE, not found", () => {

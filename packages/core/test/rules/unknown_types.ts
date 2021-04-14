@@ -1209,4 +1209,14 @@ CONSTANTS:
     expect(issues.length).to.equals(0);
   });
 
+  it("ENUM type", () => {
+    const abap = `TYPES: BEGIN OF ENUM ty_moo BASE TYPE c,
+    undefined VALUE IS INITIAL,
+  END OF ENUM ty_moo.
+  DATA moo TYPE ty_moo.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });
