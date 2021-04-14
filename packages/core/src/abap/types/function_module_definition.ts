@@ -15,7 +15,7 @@ export interface IFunctionModuleParameter {
 
 export class FunctionModuleDefinition {
   private name: string;
-  private description: string;
+  private description: string | undefined;
   private parameters: IFunctionModuleParameter[];
 
   public constructor(data: any) {
@@ -26,7 +26,7 @@ export class FunctionModuleDefinition {
     return this.parameters;
   }
 
-  public getDescription(): string {
+  public getDescription(): string | undefined {
     return this.description;
   }
 

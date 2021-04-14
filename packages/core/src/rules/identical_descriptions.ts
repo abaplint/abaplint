@@ -83,8 +83,8 @@ Works for: INTF, CLAS, DOMA, DTEL, FUNC in same FUGR`,
   private checkFunctionModules(fugr: FunctionGroup): Issue[] {
     const descriptions: {[type: string]: boolean} = {};
     for (const fm of fugr.getModules()) {
-      const d = fm.getDescription().toUpperCase();
-      if (d === "") {
+      const d = fm.getDescription()?.toUpperCase();
+      if (d === undefined || d === "") {
         continue;
       }
       if (descriptions[d] !== undefined) {
