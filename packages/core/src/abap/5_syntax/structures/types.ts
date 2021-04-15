@@ -14,7 +14,7 @@ export class Types {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
 
-    let components: IStructureComponent[] = [];
+    const components: IStructureComponent[] = [];
     let voidd: VoidType | undefined = undefined;
     for (const c of node.getChildren()) {
       const ctyp = c.get();
@@ -29,7 +29,7 @@ export class Types {
           if (found instanceof VoidType) {
             voidd = found;
           } else {
-            components = components.concat(found);
+            components.push(...found);
           }
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {

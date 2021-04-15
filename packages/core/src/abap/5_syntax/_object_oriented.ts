@@ -103,12 +103,12 @@ export class ObjectOriented {
   }
 
   public findInterfaces(cd: IClassDefinition): readonly {name: string, partial: boolean}[] {
-    let ret = cd.getImplementing();
+    const ret = [...cd.getImplementing()];
 
     const sup = cd.getSuperClass();
     if (sup) {
       try {
-        ret = ret.concat(this.findInterfaces(this.findSuperDefinition(sup)));
+        ret.push(...this.findInterfaces(this.findSuperDefinition(sup)));
       } catch {
 // ignore errors, they will show up as variable not found anyhow
       }
