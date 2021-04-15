@@ -4018,6 +4018,22 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("dynamic MODIFY, full errornamespace", () => {
+    const abap = `
+TYPES: BEGIN OF bar,
+         field TYPE c LENGTH 1,
+       END OF bar.
+TYPES: BEGIN OF something,
+         field1 TYPE c LENGTH 1.
+         INCLUDE TYPE bar AS mo.
+TYPES END OF something.
+DATA moo TYPE something.
+WRITE moo-field1.
+WRITE moo-mo-field.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
