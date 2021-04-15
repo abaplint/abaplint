@@ -17,8 +17,8 @@ export class IncludeType {
 
     let ityp = new BasicTypes(filename, scope).parseType(iname);
     const as = node.findExpressionAfterToken("AS")?.concatTokens();
-    if (as && ityp) {
-      ityp = new StructureType([{name: as, type: ityp}]);
+    if (as && ityp instanceof StructureType) {
+      ityp = new StructureType(ityp.getComponents().concat([{name: as, type: ityp}]));
     }
 
     if (ityp
