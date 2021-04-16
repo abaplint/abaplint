@@ -24,6 +24,7 @@ const tests = [
 // todo, table key should not use generic Compare
 //  "DELETE TABLE <lt_values> WITH TABLE KEY (lv_key) = <lv_key>.",
   "DELETE <fs> WHERE (l_where).",
+  `DELETE ADJACENT DUPLICATES FROM li_tab COMPARING field+4(8).`,
 ];
 
 statementType(tests, "DELETE", Statements.DeleteInternal);

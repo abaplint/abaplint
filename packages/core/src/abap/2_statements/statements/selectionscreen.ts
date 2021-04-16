@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, regex as reg, tok} from "../combi";
+import {verNot, str, seq, altPrio, optPrio, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
 import {Version} from "../../../version";
@@ -10,9 +10,9 @@ export class SelectionScreen implements IStatement {
   public getMatcher(): IStatementRunnable {
     const beginBlock = seq("BEGIN OF BLOCK",
                            BlockName,
-                           opt("WITH FRAME"),
-                           opt(seq("TITLE", alt(InlineField, TextElement))),
-                           opt("NO INTERVALS"));
+                           optPrio("WITH FRAME"),
+                           optPrio(seq("TITLE", alt(InlineField, TextElement))),
+                           optPrio("NO INTERVALS"));
     const endBlock = seq("END OF BLOCK", BlockName);
 
     const nesting = seq("NESTING LEVEL", Source);
@@ -38,9 +38,9 @@ export class SelectionScreen implements IStatement {
     const commentOpt = per(seq("FOR FIELD", Field), modif, visible);
 
     const position = seq(opt(reg(/^\/?[\d\w]+$/)),
-                         alt(tok(ParenLeft), tok(WParenLeft)),
+                         altPrio(tok(ParenLeft), tok(WParenLeft)),
                          Integer,
-                         alt(tok(ParenRightW), tok(ParenRight)));
+                         altPrio(tok(ParenRightW), tok(ParenRight)));
 
     const comment = seq("COMMENT",
                         position,
@@ -56,7 +56,8 @@ export class SelectionScreen implements IStatement {
                      opt(modif),
                      opt(visible));
 
-    const def = seq("DEFAULT SCREEN", Integer);
+    const prog = seq("PROGRAM", Field);
+    const def = seq("DEFAULT", opt(prog), "SCREEN", Integer);
 
     const tab = seq("TAB",
                     tok(WParenLeft),
@@ -71,13 +72,13 @@ export class SelectionScreen implements IStatement {
 
     const skip = seq("SKIP", opt(Integer));
 
-    const posSymbols = alt("POS_LOW", "POS_HIGH");
+    const posSymbols = altPrio("POS_LOW", "POS_HIGH");
 
     // number between 1 and 83
     const posIntegers = reg(/^(0?[1-9]|[1234567][0-9]|8[0-3])$/);
 
     const pos = seq("POSITION",
-                    alt(posIntegers, posSymbols));
+                    altPrio(posIntegers, posSymbols));
 
     const incl = seq("INCLUDE BLOCKS", BlockName);
 
@@ -86,7 +87,7 @@ export class SelectionScreen implements IStatement {
                        "FOR",
                        Integer,
                        "LINES",
-                       opt("NO INTERVALS"));
+                       optPrio("NO INTERVALS"));
 
     const uline = seq("ULINE", opt(position));
 
@@ -94,23 +95,23 @@ export class SelectionScreen implements IStatement {
     const iso = seq("INCLUDE SELECT-OPTIONS", Field);
 
     const ret = seq("SELECTION-SCREEN",
-                    alt(comment,
-                        func,
-                        skip,
-                        pos,
-                        incl,
-                        iso,
-                        push,
-                        tab,
-                        uline,
-                        beginBlock,
-                        tabbed,
-                        endBlock,
-                        beginLine,
-                        endLine,
-                        param,
-                        beginScreen,
-                        endScreen));
+                    altPrio(comment,
+                            func,
+                            skip,
+                            pos,
+                            incl,
+                            iso,
+                            push,
+                            tab,
+                            uline,
+                            beginBlock,
+                            tabbed,
+                            endBlock,
+                            beginLine,
+                            endLine,
+                            param,
+                            beginScreen,
+                            endScreen));
 
     return verNot(Version.Cloud, ret);
   }

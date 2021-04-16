@@ -52,6 +52,14 @@ const tests = [
 
   "SUBMIT zprog WITH p_foo EQ lv_foo SIGN 'I' WITH p_bar EQ lv_bar SIGN 'I' AND RETURN.",
   "SUBMIT zfoobar VIA JOB lv_job NUMBER lv_number USER lv_user LANGUAGE lv_language AND RETURN.",
+
+  /* todo
+  `SUBMIT zsdfsd
+  WITH foo = bar
+  WITH layout = layout EXPORTING LIST TO MEMORY
+  WITH bar IN moo
+  AND RETURN.`,
+  */
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);
