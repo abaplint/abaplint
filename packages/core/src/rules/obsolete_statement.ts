@@ -84,7 +84,9 @@ PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparame
 
 RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.htm
 
-PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm`,
+PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
+
+SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm`,
     };
   }
 
