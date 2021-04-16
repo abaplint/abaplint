@@ -57,27 +57,18 @@ export class MethodDefinitions implements IMethodDefinitions {
     }
 
     const pri = cdef.findDirectStructure(Structures.PrivateSection);
-    if (pri) {
-      const defs = pri.findAllStatements(MethodDef);
-      for (const def of defs) {
-        this.all.push(new MethodDefinition(def, Visibility.Private, this.filename, scope));
-      }
+    for (const def of pri?.findAllStatements(MethodDef) || []) {
+      this.all.push(new MethodDefinition(def, Visibility.Private, this.filename, scope));
     }
 
     const pro = node.findDirectStructure(Structures.ProtectedSection);
-    if (pro) {
-      const defs = pro.findAllStatements(MethodDef);
-      for (const def of defs) {
-        this.all.push(new MethodDefinition(def, Visibility.Protected, this.filename, scope));
-      }
+    for (const def of pro?.findAllStatements(MethodDef) || []) {
+      this.all.push(new MethodDefinition(def, Visibility.Protected, this.filename, scope));
     }
 
     const pub = node.findDirectStructure(Structures.PublicSection);
-    if (pub) {
-      const defs = pub.findAllStatements(MethodDef);
-      for (const def of defs) {
-        this.all.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
-      }
+    for (const def of pub?.findAllStatements(MethodDef) || []) {
+      this.all.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
     }
   }
 
