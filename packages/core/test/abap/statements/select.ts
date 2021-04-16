@@ -246,6 +246,12 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
   `SELECT SINGLE foo, bar FROM tab INTO (@lv_moo, @DATA(lv_bar)).`,
   `SELECT SINGLE FROM rfcdes FIELDS rfcdest WHERE rfcdest = @lv_rfcdes INTO @lv_rfcdes.`,
   `SELECT SINGLE FROM tadir FIELDS object, obj_name WHERE devclass = @co_package INTO @DATA(ls_object).`,
+
+  `SELECT a~bar, c~*
+    FROM bar AS a
+    INNER JOIN moo AS b ON a~field1 = b~field2
+    INNER JOIN sdf AS c ON c~field3 = b~field4
+    INTO TABLE @DATA(lt_final).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

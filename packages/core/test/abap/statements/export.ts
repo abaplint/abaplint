@@ -32,6 +32,7 @@ const tests = [
   "EXPORT <tab> FROM <tab> TO DATABASE bar(as) FROM fr ID id.",
   "EXPORT gi_inptab[] TO MEMORY ID sy-repid.",
   "EXPORT foo TO MEMORY.",
+  "export *zfoobar-field to memory.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);
