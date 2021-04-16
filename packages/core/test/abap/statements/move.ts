@@ -226,6 +226,7 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   "DATA(sdfs) = VALUE syst( mandt = '22' ) + 2.", // note that this is not a syntax error on 751, but a runtime error
   "DATA(sdfs) = CORRESPONDING syst( val ) + 2.",  // note that this is not a syntax error on 751, but a runtime error
   `lv_var = get_field('FOO').`,
+  `DATA(sdfs) = NEW ty_sdfsd( ( option = 'EQ' sign = 'E' low = '90' ) ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);
