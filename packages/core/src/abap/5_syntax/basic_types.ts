@@ -360,9 +360,10 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE")) {
       found = this.resolveTypeName(typename, this.findLength(node));
 
-      if (found && node.concatTokens().toUpperCase().includes(" OCCURS ")) {
-        found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
-      } else if (found && node.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
+      const concat = node.concatTokens().toUpperCase();
+      if (found && concat.includes(" OCCURS ")) {
+        found = new Types.TableType(found, concat.includes("WITH HEADER LINE"), name);
+      } else if (found && concat.includes("WITH HEADER LINE")) {
         if (found instanceof Types.VoidType) {
           found = new Types.TableType(found, true);
         } else if (!(found instanceof Types.TableType)) {
@@ -385,7 +386,7 @@ export class BasicTypes {
 
         found = new Types.CharacterType(length, name); // fallback
         if (node.findDirectTokenByText("OCCURS")) {
-          found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
+          found = new Types.TableType(found, concat.includes("WITH HEADER LINE"), name);
         }
       }
 
