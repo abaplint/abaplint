@@ -28,12 +28,7 @@ export class MethodDefinitions implements IMethodDefinitions {
       return undefined;
     }
 
-    for (const m of this.getAll()) {
-      if (m.getName().toUpperCase() === name.toUpperCase()) {
-        return m;
-      }
-    }
-    return undefined;
+    return this.all[name.toUpperCase()];
   }
 
 ///////////////////////
