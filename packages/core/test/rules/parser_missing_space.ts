@@ -3,7 +3,7 @@ import {ParserMissingSpace} from "../../src/rules/parser_missing_space";
 
 const tests = [
   {abap: "ro_html->add('foo' && 'bar' ).", cnt: 1},
-  {abap: "moo('sdf').", cnt: 0}, // it should include spaces to be recoginized as a method call
+  {abap: "moo('sdf').", cnt: 1},
   {abap: "moo( bar).", cnt: 1},
   {abap: "moo( 'sdf' ).", cnt: 0},
   {abap: "moo( bar ).", cnt: 0},
