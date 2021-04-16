@@ -8,18 +8,18 @@ import {IMethodDefinitions} from "./_method_definitions";
 import {IMethodDefinition} from "./_method_definition";
 
 export class MethodDefinitions implements IMethodDefinitions {
-  private readonly all: IMethodDefinition[];
+  private readonly all: {[index: string]: IMethodDefinition} = {};
   private readonly filename: string;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
-    this.all = [];
+    this.all = {};
     this.filename = filename;
     this.parse(node, scope);
   }
 
   public* getAll(): Generator<IMethodDefinition, void, undefined> {
-    for (const a of this.all) {
-      yield a;
+    for (const a in this.all) {
+      yield this.all[a];
     }
   }
 
@@ -41,7 +41,8 @@ export class MethodDefinitions implements IMethodDefinitions {
   private parseInterface(node: StructureNode, scope: CurrentScope) {
     const defs = node.findAllStatements(MethodDef);
     for (const def of defs) {
-      this.all.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+      const m = new MethodDefinition(def, Visibility.Public, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
   }
 
@@ -58,17 +59,20 @@ export class MethodDefinitions implements IMethodDefinitions {
 
     const pri = cdef.findDirectStructure(Structures.PrivateSection);
     for (const def of pri?.findAllStatements(MethodDef) || []) {
-      this.all.push(new MethodDefinition(def, Visibility.Private, this.filename, scope));
+      const m = new MethodDefinition(def, Visibility.Private, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
 
     const pro = node.findDirectStructure(Structures.ProtectedSection);
     for (const def of pro?.findAllStatements(MethodDef) || []) {
-      this.all.push(new MethodDefinition(def, Visibility.Protected, this.filename, scope));
+      const m = new MethodDefinition(def, Visibility.Protected, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
 
     const pub = node.findDirectStructure(Structures.PublicSection);
     for (const def of pub?.findAllStatements(MethodDef) || []) {
-      this.all.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+      const m = new MethodDefinition(def, Visibility.Public, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
   }
 
