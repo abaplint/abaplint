@@ -24,6 +24,7 @@ jobs:
       with:
         deploy_key: ${{ secrets.COVERAGE_DEPLOY_KEY }}
         external_repository: abaplint/coverage.abaplint.org
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'        
         publish_branch: main
         publish_dir: ./packages/core/coverage
-        force_orphan: true
