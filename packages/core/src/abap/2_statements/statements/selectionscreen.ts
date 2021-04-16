@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, regex as reg, tok} from "../combi";
+import {verNot, str, seq, altPrio, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
 import {Version} from "../../../version";
@@ -56,7 +56,8 @@ export class SelectionScreen implements IStatement {
                      opt(modif),
                      opt(visible));
 
-    const def = seq("DEFAULT SCREEN", Integer);
+    const prog = seq("PROGRAM", Field);
+    const def = seq("DEFAULT", opt(prog), "SCREEN", Integer);
 
     const tab = seq("TAB",
                     tok(WParenLeft),
@@ -94,23 +95,23 @@ export class SelectionScreen implements IStatement {
     const iso = seq("INCLUDE SELECT-OPTIONS", Field);
 
     const ret = seq("SELECTION-SCREEN",
-                    alt(comment,
-                        func,
-                        skip,
-                        pos,
-                        incl,
-                        iso,
-                        push,
-                        tab,
-                        uline,
-                        beginBlock,
-                        tabbed,
-                        endBlock,
-                        beginLine,
-                        endLine,
-                        param,
-                        beginScreen,
-                        endScreen));
+                    altPrio(comment,
+                            func,
+                            skip,
+                            pos,
+                            incl,
+                            iso,
+                            push,
+                            tab,
+                            uline,
+                            beginBlock,
+                            tabbed,
+                            endBlock,
+                            beginLine,
+                            endLine,
+                            param,
+                            beginScreen,
+                            endScreen));
 
     return verNot(Version.Cloud, ret);
   }
