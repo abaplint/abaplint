@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {StatementNode, ExpressionNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
@@ -144,56 +145,58 @@ export class BasicTypes {
     }
 
     const chainText = typeName.concatTokens().toUpperCase();
-    if (chainText === "STRING") {
-      return new Types.StringType();
-    } else if (chainText === "XSTRING") {
-      return new Types.XStringType();
-    } else if (chainText === "D") {
-      return new Types.DateType();
-    } else if (chainText === "T") {
-      return new Types.TimeType();
-    } else if (chainText === "XSEQUENCE") {
-      return new Types.XSequenceType();
-    } else if (chainText === "CLIKE") {
-      return new Types.CLikeType();
-    } else if (chainText === "ANY") {
-      return new Types.AnyType();
-    } else if (chainText === "DATA") {
-      return new Types.AnyType();
-    } else if (chainText === "NUMERIC") {
-      return new Types.NumericGenericType();
-    } else if (chainText === "UTCLONG") { // todo, take version into account
-      return new Types.UTCLongType();
-    } else if (chainText === "DECFLOAT16") {
-      return new Types.DecFloat16Type();
-    } else if (chainText === "DECFLOAT34") {
-      return new Types.DecFloat34Type();
-    } else if (chainText === "CSEQUENCE") {
-      return new Types.CSequenceType();
-    } else if (chainText === "I" || chainText === "INT8") { // todo, take version into account
-      return new Types.IntegerType();
-    } else if (chainText === "F") {
-      return new Types.FloatType();
-    } else if (chainText === "P") {
-      return new Types.PackedType(1, 1); // todo, length and decimals
-    } else if (chainText === "C") {
-      if (length) {
-        return new Types.CharacterType(length);
-      } else {
-        return new Types.CharacterType(1);
-      }
-    } else if (chainText === "X") {
-      if (length) {
-        return new Types.HexType(length);
-      } else {
-        return new Types.HexType(1);
-      }
-    } else if (chainText === "N") {
-      if (length) {
-        return new Types.NumericType(length);
-      } else {
-        return new Types.NumericType(1);
-      }
+    switch (chainText) {
+      case "STRING":
+        return new Types.StringType();
+      case "XSTRING":
+        return new Types.XStringType();
+      case "D":
+        return new Types.DateType();
+      case "T":
+        return new Types.TimeType();
+      case "XSEQUENCE":
+        return new Types.XSequenceType();
+      case "CLIKE":
+        return new Types.CLikeType();
+      case "ANY":
+        return new Types.AnyType();
+      case "DATA":
+        return new Types.AnyType();
+      case "NUMERIC":
+        return new Types.NumericGenericType();
+      case "UTCLONG": // todo, take version into account
+        return new Types.UTCLongType();
+      case "DECFLOAT16":
+        return new Types.DecFloat16Type();
+      case "DECFLOAT34":
+        return new Types.DecFloat34Type();
+      case "CSEQUENCE":
+        return new Types.CSequenceType();
+      case "I":
+      case "INT8": // todo, take version into account
+        return new Types.IntegerType();
+      case "F":
+        return new Types.FloatType();
+      case "P":
+        return new Types.PackedType(1, 1); // todo, length and decimals
+      case "C":
+        if (length) {
+          return new Types.CharacterType(length);
+        } else {
+          return new Types.CharacterType(1);
+        }
+      case "X":
+        if (length) {
+          return new Types.HexType(length);
+        } else {
+          return new Types.HexType(1);
+        }
+      case "N":
+        if (length) {
+          return new Types.NumericType(length);
+        } else {
+          return new Types.NumericType(1);
+        }
     }
 
     const typ = this.scope.findType(chainText);
