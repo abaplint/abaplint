@@ -21,6 +21,8 @@ const tests = [
   {abap: "DATA(test) = VALUE string_table( ( `( 1 =`) ).", cnt: 1},
   {abap: "DATA(test) = VALUE string_table( (`( 1 =` ) ).", cnt: 1},
   {abap: "DATA(test) = VALUE string_table( ( `( 1 =` ) ).", cnt: 0},
+  {abap: `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050').`, cnt: 1},
+  {abap: `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050' ).`, cnt: 0},
 ];
 
 testRule(tests, ParserMissingSpace);

@@ -70,6 +70,9 @@ const tests = [
     WHERE status not BETWEEN 200 and 299
     and status <> 0
     AND bar IN i_bar.`,
+
+  `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050' ).`,
+  `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050').`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
