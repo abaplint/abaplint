@@ -3,6 +3,6 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLAliasField extends Expression {
   public getRunnable(): IStatementRunnable {
-    return reg(/^\w+~\w+?$/);
+    return reg(/^\w+~\w+$/);
   }
 }

@@ -5,7 +5,7 @@ import {TableBody} from "./table_body";
 
 export class FieldSub extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ret = seq(reg(/^!?(\/\w+\/)?[a-zA-Z_%$][\w%$\$\*]*$/),
+    const ret = seq(reg(/^\*?!?(\/\w+\/)?[a-zA-Z_%$][\w%$\$\*]*$/),
                     starPrio(seq(tok(Dash), reg(/^[\w%$\$\*]+$/))),
                     opt(TableBody));
 
