@@ -17,8 +17,10 @@ export class MethodDefinitions implements IMethodDefinitions {
     this.parse(node, scope);
   }
 
-  public getAll(): readonly IMethodDefinition[] {
-    return this.all;
+  public* getAll(): Generator<IMethodDefinition, void, undefined> {
+    for (const a of this.all) {
+      yield a;
+    }
   }
 
   public getByName(name: string | undefined): IMethodDefinition | undefined {

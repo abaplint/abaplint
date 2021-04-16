@@ -30,11 +30,11 @@ CLASS cl IMPLEMENTATION.
 ENDCLASS.`;
 
     const reg = new Registry().addFile(new MemoryFile("cl.clas.abap", abap)).parse();
-    const def = run(reg);
+    const cdef = run(reg);
+    expect(cdef).to.not.equal(undefined);
+    const def = cdef!.getMethodDefinitions().getByName("name");
     expect(def).to.not.equal(undefined);
-    const defs = def!.getMethodDefinitions().getAll();
-    expect(defs.length).to.equal(1);
-    const parameters = defs[0].getParameters();
+    const parameters = def!.getParameters();
     expect(parameters.getDefaultImporting()).to.equal("IV_URL");
     expect(parameters.getParameterDefault("IV_VALIDATE")?.concatTokens()).to.equal("abap_false");
     expect(parameters.getParameterDefault("SDFDSDFS")).to.equal(undefined);
