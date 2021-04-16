@@ -81,9 +81,10 @@ describe("Types, class_definition", () => {
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = def!.getMethodDefinitions()!.getPublic();
+    const pub = def!.getMethodDefinitions()!.getAll();
     expect(pub.length).to.equal(1);
     expect(pub[0].isEventHandler()).to.equal(true);
+    expect(pub[0].getVisibility()).to.equal(Visibility.Public);
     expect(pub[0]!.getParameters().getAll().length).to.equal(2);
   });
 
@@ -120,8 +121,9 @@ describe("Types, class_definition", () => {
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = def!.getMethodDefinitions()!.getPublic();
+    const pub = def!.getMethodDefinitions()!.getAll();
     expect(pub.length).to.equal(1);
+    expect(pub[0].getVisibility()).to.equal(Visibility.Public);
     expect(pub[0].isStatic()).to.equal(true);
   });
 
@@ -152,10 +154,11 @@ ENDCLASS.`;
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = def!.getMethodDefinitions()!.getPublic();
+    const pub = def!.getMethodDefinitions()!.getAll();
     expect(pub.length).to.equal(1);
     const importing = pub[0].getParameters().getImporting();
     expect(importing.length).to.equal(1);
+    expect(pub[0].getVisibility()).to.equal(Visibility.Public);
     expect(importing[0].getType()).to.not.be.instanceof(UnknownType);
   });
 

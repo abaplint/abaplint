@@ -108,9 +108,9 @@ describe("Objects, class, getMethodDefinitions", () => {
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
     const methods = def!.getMethodDefinitions();
-    expect(methods.getPrivate().length).to.equal(1);
-    expect(methods.getPrivate()[0].getName()).to.equal("method1");
-    expect(methods.getPrivate()[0].getVisibility()).to.equal(Visibility.Private);
+    expect(methods.getAll().length).to.equal(1);
+    expect(methods.getAll()[0].getName()).to.equal("method1");
+    expect(methods.getAll()[0].getVisibility()).to.equal(Visibility.Private);
   });
 
   it("test, parser error", () => {

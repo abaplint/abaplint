@@ -8,36 +8,17 @@ import {IMethodDefinitions} from "./_method_definitions";
 import {IMethodDefinition} from "./_method_definition";
 
 export class MethodDefinitions implements IMethodDefinitions {
-  private readonly pri: IMethodDefinition[];
-  private readonly pub: IMethodDefinition[];
-  private readonly pro: IMethodDefinition[];
+  private readonly all: IMethodDefinition[];
   private readonly filename: string;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
-    this.pri = [];
-    this.pub = [];
-    this.pro = [];
+    this.all = [];
     this.filename = filename;
     this.parse(node, scope);
   }
 
-  public getPublic(): IMethodDefinition[] {
-    return this.pub;
-  }
-
-  public getProtected(): IMethodDefinition[] {
-    return this.pro;
-  }
-
-  public getPrivate(): IMethodDefinition[] {
-    return this.pri;
-  }
-
   public getAll(): readonly IMethodDefinition[] {
-    const ret = this.pub;
-    ret.push(...this.pro);
-    ret.push(...this.pri);
-    return ret;
+    return this.all;
   }
 
   public getByName(name: string | undefined): IMethodDefinition | undefined {
@@ -58,7 +39,7 @@ export class MethodDefinitions implements IMethodDefinitions {
   private parseInterface(node: StructureNode, scope: CurrentScope) {
     const defs = node.findAllStatements(MethodDef);
     for (const def of defs) {
-      this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+      this.all.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
     }
   }
 
@@ -77,7 +58,7 @@ export class MethodDefinitions implements IMethodDefinitions {
     if (pri) {
       const defs = pri.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pri.push(new MethodDefinition(def, Visibility.Private, this.filename, scope));
+        this.all.push(new MethodDefinition(def, Visibility.Private, this.filename, scope));
       }
     }
 
@@ -85,7 +66,7 @@ export class MethodDefinitions implements IMethodDefinitions {
     if (pro) {
       const defs = pro.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pro.push(new MethodDefinition(def, Visibility.Protected, this.filename, scope));
+        this.all.push(new MethodDefinition(def, Visibility.Protected, this.filename, scope));
       }
     }
 
@@ -93,7 +74,7 @@ export class MethodDefinitions implements IMethodDefinitions {
     if (pub) {
       const defs = pub.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+        this.all.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
       }
     }
   }
