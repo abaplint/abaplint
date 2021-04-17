@@ -1,7 +1,6 @@
 import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {Issue} from "../../issue";
-import {INode} from "../nodes/_inode";
 import {Token} from "../1_lexer/tokens/_token";
 import {StatementNode, StructureNode} from "../nodes";
 import {IRegistry} from "../../_iregistry";
@@ -217,16 +216,19 @@ export class SyntaxLogic {
     this.issues.push(issue);
   }
 
-  private traverse(node: INode): void {
+  private traverse(node: StructureNode | StatementNode): void {
     for (const child of node.getChildren()) {
+      const isStructure = child instanceof StructureNode;
+      const isStatement = child instanceof StatementNode;
+
       try {
-        if (child instanceof StructureNode) {
-          const gotoNext = this.updateScopeStructure(child);
+        if (isStructure) {
+          const gotoNext = this.updateScopeStructure(child as StructureNode);
           if (gotoNext === true) {
             continue;
           }
-        } else if (child instanceof StatementNode) {
-          this.updateScopeStatement(child);
+        } else if (isStatement) {
+          this.updateScopeStatement(child as StatementNode);
         }
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
@@ -234,8 +236,8 @@ export class SyntaxLogic {
       }
 
       // walk into INCLUDEs
-      if (child instanceof StatementNode && child.get() instanceof Statements.Include) {
-        const file = this.helpers.proc.findInclude(child, this.object);
+      if (isStatement && child.get() instanceof Statements.Include) {
+        const file = this.helpers.proc.findInclude(child as StatementNode, this.object);
         if (file !== undefined && file.getStructure() !== undefined) {
           const old = this.currentFile;
           this.currentFile = file;
@@ -244,7 +246,9 @@ export class SyntaxLogic {
         }
       }
 
-      this.traverse(child);
+      if (isStructure || isStatement) {
+        this.traverse(child as StatementNode | StructureNode);
+      }
     }
   }
 
