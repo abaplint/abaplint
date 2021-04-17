@@ -75,8 +75,7 @@ export class FindGlobalDefinitions {
       count = count + this.count(a.getType());
     }
 
-    const methods = obj.getDefinition()!.getMethodDefinitions().getAll();
-    for (const m of methods) {
+    for (const m of def.getMethodDefinitions().getAll()) {
       for (const p of m.getParameters().getAll()) {
         count = count + this.count(p.getType());
       }

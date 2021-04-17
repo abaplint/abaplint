@@ -42,7 +42,6 @@ export interface ISpaghettiScopeNode {
   getFirstChild(): ISpaghettiScopeNode | undefined;
   getIdentifier(): IScopeIdentifier;
   getData(): IScopeData;
-//  getNextSibling(): ISpaghettiScopeNode | undefined;
   calcCoverage(): {start: Position, end: Position};
   findClassDefinition(name: string): IClassDefinition | undefined;
   findFormDefinition(name: string): IFormDefinition | undefined;

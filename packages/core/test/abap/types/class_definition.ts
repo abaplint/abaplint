@@ -81,10 +81,11 @@ describe("Types, class_definition", () => {
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = def!.getMethodDefinitions()!.getPublic();
-    expect(pub.length).to.equal(1);
-    expect(pub[0].isEventHandler()).to.equal(true);
-    expect(pub[0]!.getParameters().getAll().length).to.equal(2);
+    const pub = def!.getMethodDefinitions()!.getByName("double_click");
+    expect(pub).to.not.equal(undefined);
+    expect(pub!.isEventHandler()).to.equal(true);
+    expect(pub!.getVisibility()).to.equal(Visibility.Public);
+    expect(pub!.getParameters().getAll().length).to.equal(2);
   });
 
   it("method alias", () => {
@@ -120,9 +121,10 @@ describe("Types, class_definition", () => {
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = def!.getMethodDefinitions()!.getPublic();
-    expect(pub.length).to.equal(1);
-    expect(pub[0].isStatic()).to.equal(true);
+    const pub = def!.getMethodDefinitions()!.getByName("moo");
+    expect(pub).to.not.equal(undefined);
+    expect(pub!.getVisibility()).to.equal(Visibility.Public);
+    expect(pub!.isStatic()).to.equal(true);
   });
 
   it("method, local defined type", () => {
@@ -152,10 +154,11 @@ ENDCLASS.`;
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = def!.getMethodDefinitions()!.getPublic();
-    expect(pub.length).to.equal(1);
-    const importing = pub[0].getParameters().getImporting();
+    const pub = def!.getMethodDefinitions().getByName("moo");
+    expect(pub).to.not.equal(undefined);
+    const importing = pub!.getParameters().getImporting();
     expect(importing.length).to.equal(1);
+    expect(pub!.getVisibility()).to.equal(Visibility.Public);
     expect(importing[0].getType()).to.not.be.instanceof(UnknownType);
   });
 

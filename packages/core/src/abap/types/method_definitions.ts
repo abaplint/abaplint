@@ -8,36 +8,19 @@ import {IMethodDefinitions} from "./_method_definitions";
 import {IMethodDefinition} from "./_method_definition";
 
 export class MethodDefinitions implements IMethodDefinitions {
-  private readonly pri: IMethodDefinition[];
-  private readonly pub: IMethodDefinition[];
-  private readonly pro: IMethodDefinition[];
+  private readonly all: {[index: string]: IMethodDefinition} = {};
   private readonly filename: string;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
-    this.pri = [];
-    this.pub = [];
-    this.pro = [];
+    this.all = {};
     this.filename = filename;
     this.parse(node, scope);
   }
 
-  public getPublic(): IMethodDefinition[] {
-    return this.pub;
-  }
-
-  public getProtected(): IMethodDefinition[] {
-    return this.pro;
-  }
-
-  public getPrivate(): IMethodDefinition[] {
-    return this.pri;
-  }
-
-  public getAll(): readonly IMethodDefinition[] {
-    const ret = this.pub;
-    ret.push(...this.pro);
-    ret.push(...this.pri);
-    return ret;
+  public* getAll(): Generator<IMethodDefinition, void, undefined> {
+    for (const a in this.all) {
+      yield this.all[a];
+    }
   }
 
   public getByName(name: string | undefined): IMethodDefinition | undefined {
@@ -45,12 +28,7 @@ export class MethodDefinitions implements IMethodDefinitions {
       return undefined;
     }
 
-    for (const m of this.getAll()) {
-      if (m.getName().toUpperCase() === name.toUpperCase()) {
-        return m;
-      }
-    }
-    return undefined;
+    return this.all[name.toUpperCase()];
   }
 
 ///////////////////////
@@ -58,7 +36,8 @@ export class MethodDefinitions implements IMethodDefinitions {
   private parseInterface(node: StructureNode, scope: CurrentScope) {
     const defs = node.findAllStatements(MethodDef);
     for (const def of defs) {
-      this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+      const m = new MethodDefinition(def, Visibility.Public, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
   }
 
@@ -74,27 +53,21 @@ export class MethodDefinitions implements IMethodDefinitions {
     }
 
     const pri = cdef.findDirectStructure(Structures.PrivateSection);
-    if (pri) {
-      const defs = pri.findAllStatements(MethodDef);
-      for (const def of defs) {
-        this.pri.push(new MethodDefinition(def, Visibility.Private, this.filename, scope));
-      }
+    for (const def of pri?.findAllStatements(MethodDef) || []) {
+      const m = new MethodDefinition(def, Visibility.Private, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
 
     const pro = node.findDirectStructure(Structures.ProtectedSection);
-    if (pro) {
-      const defs = pro.findAllStatements(MethodDef);
-      for (const def of defs) {
-        this.pro.push(new MethodDefinition(def, Visibility.Protected, this.filename, scope));
-      }
+    for (const def of pro?.findAllStatements(MethodDef) || []) {
+      const m = new MethodDefinition(def, Visibility.Protected, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
 
     const pub = node.findDirectStructure(Structures.PublicSection);
-    if (pub) {
-      const defs = pub.findAllStatements(MethodDef);
-      for (const def of defs) {
-        this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
-      }
+    for (const def of pub?.findAllStatements(MethodDef) || []) {
+      const m = new MethodDefinition(def, Visibility.Public, this.filename, scope);
+      this.all[m.getName().toUpperCase()] = m;
     }
   }
 

@@ -242,20 +242,7 @@ export class CurrentScope {
   public findFormDefinition(name: string): IFormDefinition | undefined {
     return this.current?.findFormDefinition(name);
   }
-/*
-  public listFormDefinitions(): IFormDefinition[] {
-    const ret = this.current?.listFormDefinitions();
-    if (ret === undefined) {
-      return [];
-    }
-    return ret;
-  }
 
-  public listTypes() {
-    const ret = this.current?.getData().types;
-    return ret;
-  }
-*/
   public findType(name: string | undefined): TypedIdentifier | undefined {
     if (name === undefined) {
       return undefined;

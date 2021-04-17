@@ -4,23 +4,22 @@ import {ITypeDefinitions} from "./_type_definitions";
 // todo: public + protected + private
 export class TypeDefinitions implements ITypeDefinitions {
   private readonly list: TypedIdentifier[];
+  private readonly map: {[index: string]: TypedIdentifier} = {};
 
   public constructor(list: TypedIdentifier[]) {
     this.list = list;
+    for (const t of list) {
+// todo, can assumptions be made regarding the case of t.getName()?
+      this.map[t.getName().toUpperCase()] = t;
+    }
   }
 
   public getAll(): readonly TypedIdentifier[] {
     return this.list;
   }
 
-  // todo, optimize
   public getByName(name: string): TypedIdentifier | undefined {
-    for (const t of this.getAll()) {
-      if (t.getName().toUpperCase() === name.toUpperCase()) {
-        return t;
-      }
-    }
-    return undefined;
+    return this.map[name.toUpperCase()];
   }
 
 }

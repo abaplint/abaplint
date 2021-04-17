@@ -45,6 +45,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public communication: boolean = true;
   /** Checks for PACK */
   public pack: boolean = true;
+    /** Checks for SELECT without INTO */
+  public selectWithoutInto: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -82,7 +84,9 @@ PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparame
 
 RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.htm
 
-PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm`,
+PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
+
+SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm`,
     };
   }
 
@@ -145,6 +149,14 @@ PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm`,
 
       if (this.conf.ranges && sta instanceof Statements.Ranges) {
         const issue = Issue.atStatement(file, staNode, "Use TYPE RANGE OF instead of RANGES", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.selectWithoutInto
+          && (sta instanceof Statements.Select || sta instanceof Statements.SelectLoop)
+          && staNode.findFirstExpression(Expressions.SQLIntoStructure) === undefined
+          && staNode.findFirstExpression(Expressions.SQLIntoTable) === undefined) {
+        const issue = Issue.atStatement(file, staNode, "SELECT without INTO", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

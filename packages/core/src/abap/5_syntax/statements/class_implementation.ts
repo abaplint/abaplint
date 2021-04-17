@@ -21,7 +21,9 @@ export class ClassImplementation {
     }
     const classAttributes = classDefinition.getAttributes();
 
-    classDefinition.getTypeDefinitions().getAll().map((t) => scope.addType(t));
+    for (const t of classDefinition.getTypeDefinitions().getAll()) {
+      scope.addType(t);
+    }
 
     const sup = scope.findClassDefinition(classDefinition.getSuperClass());
     if (sup) {

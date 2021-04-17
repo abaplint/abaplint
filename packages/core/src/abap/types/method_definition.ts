@@ -17,7 +17,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly static: boolean;
   private readonly raising: string[];
 
-// todo: final
+// todo: final flag
 
   public constructor(node: StatementNode, visibility: Visibility, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof MethodDef)) {

@@ -59,40 +59,7 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return this.identifier;
   }
 
-  /*
-  private getNextSibling(): SpaghettiScopeNode | undefined {
-    const parent = this.getParent();
-    if (parent === undefined) {
-      return undefined;
-    }
-
-    let returnNext = false;
-    for (const sibling of parent.getChildren()) {
-      if (sibling.getIdentifier().stype === this.getIdentifier().stype
-          && sibling.getIdentifier().sname === this.getIdentifier().sname) {
-        returnNext = true;
-      } else if (returnNext === true) {
-        return sibling;
-      }
-    }
-
-    return undefined;
-  }
-  */
-
   public calcCoverage(): {start: Position, end: Position} {
-    /*
-    let end: Position | undefined;
-
-    // assumption: children start positions in ascending order
-    const sibling = this.getNextSibling();
-    if (sibling !== undefined && sibling.getIdentifier().filename === this.getIdentifier().filename) {
-      end = sibling.getIdentifier().start;
-    } else {
-      end = new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
-    }
-    */
-
     if (this.identifier.end === undefined) {
       throw new Error("internal error, caclCoverage");
     }
@@ -148,6 +115,7 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return undefined;
   }
 
+  // todo, can be deleted, not called from anywhere?
   public listFormDefinitions(): IFormDefinition[] {
     let search: SpaghettiScopeNode | undefined = this;
     const ret: IFormDefinition[] = [];
@@ -181,11 +149,11 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
   public findType(name: string): TypedIdentifier | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
+    const upper = name.toUpperCase();
     while (search !== undefined) {
-      for (const lname in search.getData().types) {
-        if (lname.toUpperCase() === name.toUpperCase()) {
-          return search.getData().types[lname];
-        }
+      const data = search.getData();
+      if (data.types[upper]) {
+        return data.types[upper];
       }
       search = search.getParent();
     }
@@ -196,11 +164,11 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
   public findVariable(name: string): TypedIdentifier | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
+    const upper = name.toUpperCase();
     while (search !== undefined) {
-      for (const local in search.getData().vars) {
-        if (local === name.toUpperCase()) {
-          return search.getData().vars[local];
-        }
+      const data = search.getData();
+      if (data.vars[upper]) {
+        return data.vars[upper];
       }
       search = search.getParent();
     }
@@ -208,6 +176,7 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return undefined;
   }
 
+  // TODO, this method can be deleted? its only used in tests?
   public findScopeForVariable(name: string): IScopeIdentifier | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 

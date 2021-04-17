@@ -22,12 +22,12 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const def = run(reg);
+    const cdef = run(reg);
+    expect(cdef).to.not.equal(undefined);
+    const def = cdef!.getMethodDefinitions().getByName("method1");
     expect(def).to.not.equal(undefined);
-    const defs = def!.getMethodDefinitions().getAll();
-    expect(defs.length).to.equal(1);
-    expect(defs[0].getName()).to.equal("method1");
-    expect(defs[0].getVisibility()).to.equal(Visibility.Public);
+    expect(def!.getName()).to.equal("method1");
+    expect(def!.getVisibility()).to.equal(Visibility.Public);
   });
 
   it("test, parser error", () => {
@@ -44,11 +44,11 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const def = run(reg);
-    const defs = def!.getMethodDefinitions().getAll();
-    expect(defs.length).to.equal(1);
-    expect(defs[0].getParameters().getImporting().length).to.equal(1);
-    expect(defs[0].getParameters().getImporting()[0].getName()).to.equal("foo");
+    const cdef = run(reg);
+    const def = cdef!.getMethodDefinitions().getByName("method1");
+    expect(def).to.not.equal(undefined);
+    expect(def!.getParameters().getImporting().length).to.equal(1);
+    expect(def!.getParameters().getImporting()[0].getName()).to.equal("foo");
   });
 
   it("test, returning", () => {
@@ -57,10 +57,10 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const def = run(reg);
-    const defs = def!.getMethodDefinitions().getAll();
-    expect(defs.length).to.equal(1);
-    const returning = defs[0].getParameters().getReturning();
+    const cdef = run(reg);
+    const def = cdef!.getMethodDefinitions().getByName("method1");
+    expect(def).to.not.equal(undefined);
+    const returning = def!.getParameters().getReturning();
     expect(returning).to.not.equal(undefined);
     if (returning) {
       expect(returning.getName()).to.equal("rv_foo");

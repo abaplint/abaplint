@@ -107,10 +107,10 @@ describe("Objects, class, getMethodDefinitions", () => {
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const methods = def!.getMethodDefinitions();
-    expect(methods.getPrivate().length).to.equal(1);
-    expect(methods.getPrivate()[0].getName()).to.equal("method1");
-    expect(methods.getPrivate()[0].getVisibility()).to.equal(Visibility.Private);
+    const method = def!.getMethodDefinitions().getByName("method1");
+    expect(method).to.not.equal(undefined);
+    expect(method!.getName()).to.equal("method1");
+    expect(method!.getVisibility()).to.equal(Visibility.Private);
   });
 
   it("test, parser error", () => {
@@ -132,9 +132,9 @@ describe("Objects, class, getMethodDefinitions", () => {
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions()).to.not.equal(undefined);
-    const methods = def!.getMethodDefinitions()!.getAll();
-    expect(methods.length).to.equal(1);
-    const parameters = methods[0].getParameters();
+    const method = def!.getMethodDefinitions()!.getByName("method1");
+    expect(method).to.not.equal(undefined);
+    const parameters = method!.getParameters();
     expect(parameters.getImporting().length).to.equal(1);
   });
 
