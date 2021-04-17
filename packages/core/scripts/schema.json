@@ -3835,6 +3835,10 @@
           "description": "Checks for usages of IS REQUESTED",
           "type": "boolean"
         },
+        "selectWithoutInto": {
+          "description": "Checks for SELECT without INTO",
+          "type": "boolean"
+        },
         "setExtended": {
           "description": "Checks for SET EXTENDED CHECK",
           "type": "boolean"
@@ -3874,7 +3878,8 @@
         "parameter",
         "ranges",
         "communication",
-        "pack"
+        "pack",
+        "selectWithoutInto"
       ],
       "type": "object"
     },
