@@ -2810,7 +2810,7 @@ ENDLOOP.`;
     WRITE foo-low.
   ENDLOOP.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("LOOP AT select option", () => {

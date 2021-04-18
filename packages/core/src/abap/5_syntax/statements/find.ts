@@ -6,8 +6,9 @@ import {StringType, StructureType, IntegerType, TableType} from "../../types/bas
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Find {
+export class Find implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {

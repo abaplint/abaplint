@@ -6,8 +6,9 @@ import {UnknownType} from "../../types/basic/unknown_type";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {IReferenceExtras, ReferenceType} from "../_reference";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Catch {
+export class Catch implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const c of node.findDirectExpressions(Expressions.ClassName)) {

@@ -10,8 +10,9 @@ import {FSTarget} from "../expressions/fstarget";
 import {ComponentCompare} from "../expressions/component_compare";
 import {ComponentCond} from "../expressions/component_cond";
 import {Dynamic} from "../expressions/dynamic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Loop {
+export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     let target = node.findDirectExpression(Expressions.Target);
     const targetType = target ? new Target().runSyntax(target, scope, filename) : undefined;

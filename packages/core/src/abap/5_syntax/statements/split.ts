@@ -5,8 +5,9 @@ import {TableType, StringType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Split {
+export class Split implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const type = node.findTokenSequencePosition("INTO", "TABLE") ? new TableType(new StringType(), false) : new StringType();

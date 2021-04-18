@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class WhenType {
+export class WhenType implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const nameToken = node.findFirstExpression(Expressions.ClassName)?.getFirstToken();
     if (nameToken === undefined) {

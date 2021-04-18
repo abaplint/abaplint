@@ -90,7 +90,7 @@ ENDIF.`,
           || type instanceof Statements.Form
           || type instanceof Statements.Else
           || type instanceof Statements.ElseIf
-          || type instanceof Statements.Method) {
+          || type instanceof Statements.MethodImplementation) {
         expected = expected + 2;
       }
       for (const t of tokens) {

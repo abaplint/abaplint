@@ -3,9 +3,10 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Tables {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+export class Tables implements StatementSyntax {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const nameToken = node.findFirstExpression(Expressions.Field)?.getFirstToken();
     if (nameToken === undefined) {
       return undefined;
@@ -18,9 +19,10 @@ export class Tables {
 
     const found = scope.getDDIC()?.lookupTableOrView(name);
     if (found) {
-      return new TypedIdentifier(nameToken, filename, found);
+      scope.addIdentifier(new TypedIdentifier(nameToken, filename, found));
+      return;
     }
 
-    return new TypedIdentifier(nameToken, filename, new UnknownType("Tables, fallback"));
+    scope.addIdentifier(new TypedIdentifier(nameToken, filename, new UnknownType("Tables, fallback")));
   }
 }

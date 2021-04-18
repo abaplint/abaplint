@@ -100,7 +100,7 @@ export class UncaughtException extends ABAPRule {
         }
       }
     } else if (n instanceof StatementNode) {
-      if (get instanceof Statements.Method) {
+      if (get instanceof Statements.MethodImplementation) {
         this.setSinkedFromMethod(n, file);
       } else if (get instanceof Statements.EndMethod) {
         this.sinked = undefined; // back to top level

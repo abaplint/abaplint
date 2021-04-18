@@ -5,8 +5,9 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Move {
+export class Move implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const targets = node.findDirectExpressions(Expressions.Target);
     const firstTarget = targets[0];

@@ -5,8 +5,9 @@ import {InlineData} from "../expressions/inline_data";
 import {StringType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Message {
+export class Message implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const found = node.findExpressionAfterToken("INTO");
     const inline = found?.findDirectExpression(Expressions.InlineData);

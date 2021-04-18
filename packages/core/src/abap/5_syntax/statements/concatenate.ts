@@ -5,8 +5,9 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StringType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Concatenate {
+export class Concatenate implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);

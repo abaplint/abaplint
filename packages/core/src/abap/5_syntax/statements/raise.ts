@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Raise {
+export class Raise implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
 // todo

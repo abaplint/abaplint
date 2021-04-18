@@ -3,8 +3,9 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Sort {
+export class Sort implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findDirectExpressions(Expressions.Dynamic)) {

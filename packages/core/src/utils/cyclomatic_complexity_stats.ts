@@ -44,7 +44,8 @@ export class CyclomaticComplexityStats {
           }
         }
 
-        const name = m.findDirectStatement(Statements.Method)?.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
+        const name = m.findDirectStatement(Statements.MethodImplementation)?.findDirectExpression(
+          Expressions.MethodName)?.getFirstToken().getStr();
 
         res.push({
           file,

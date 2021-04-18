@@ -5,9 +5,10 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType, TableType, StructureType, CharacterType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {Dynamic} from "../expressions/dynamic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class SelectOption {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+export class SelectOption implements StatementSyntax {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
 
     for(const d of node.findDirectExpressions(Expressions.Dynamic)) {
@@ -37,13 +38,12 @@ export class SelectOption {
         {name: "LOW", type: found},
         {name: "HIGH", type: found},
       ]);
-      return new TypedIdentifier(nameToken, filename, new TableType(stru, true));
+      scope.addIdentifier(new TypedIdentifier(nameToken, filename, new TableType(stru, true)));
+      return;
     }
 
     if (nameToken) {
-      return new TypedIdentifier(nameToken, filename, new UnknownType("Select option, fallback"));
+      scope.addIdentifier(new TypedIdentifier(nameToken, filename, new UnknownType("Select option, fallback")));
     }
-
-    return undefined;
   }
 }

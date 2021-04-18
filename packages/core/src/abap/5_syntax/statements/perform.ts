@@ -4,8 +4,9 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 import {Source} from "../expressions/source";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Perform {
+export class Perform implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     if (!(node.get() instanceof Statements.Perform)) {
       throw new Error("checkPerform unexpected node type");

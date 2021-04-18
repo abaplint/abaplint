@@ -5,8 +5,9 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class CallFunction {
+export class CallFunction implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     // todo, lots of work here, similar to receive.ts
 

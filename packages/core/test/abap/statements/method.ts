@@ -14,4 +14,4 @@ const tests = [
   "METHOD sdfd BY DATABASE PROCEDURE FOR HDB LANGUAGE GRAPH OPTIONS READ-ONLY USING zcl_bar=>bar.",
 ];
 
-statementType(tests, "METHOD", Statements.Method);
+statementType(tests, "METHOD", Statements.MethodImplementation);

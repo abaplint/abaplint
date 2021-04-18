@@ -171,7 +171,7 @@ export class StatementParser {
       const statement = wa.statements[i];
       const type = statement.get();
       if (type instanceof Statements.ExecSQL
-          || (type instanceof Statements.Method && statement.findDirectExpression(Expressions.Language))) {
+          || (type instanceof Statements.MethodImplementation && statement.findDirectExpression(Expressions.Language))) {
         sql = true;
       } else if (sql === true) {
         if (type instanceof Statements.EndExec

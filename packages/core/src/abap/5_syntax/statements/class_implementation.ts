@@ -7,8 +7,9 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {Position} from "../../../position";
 import {BuiltIn} from "../_builtin";
 import {ScopeType} from "../_scope_type";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class ClassImplementation {
+export class ClassImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const helper = new ObjectOriented(scope);
 

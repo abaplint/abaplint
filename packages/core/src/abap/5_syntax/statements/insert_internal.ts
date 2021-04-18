@@ -7,8 +7,9 @@ import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TableType} from "../../types/basic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class InsertInternal {
+export class InsertInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     let targetType: AbstractType | undefined;

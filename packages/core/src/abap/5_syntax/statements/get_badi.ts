@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class GetBadi {
+export class GetBadi implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {

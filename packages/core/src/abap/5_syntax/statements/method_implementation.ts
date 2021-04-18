@@ -4,8 +4,9 @@ import * as Expressions from "../../2_statements/expressions";
 import {ObjectOriented} from "../_object_oriented";
 import {ScopeType} from "../_scope_type";
 import {ReferenceType} from "../_reference";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class MethodImplementation {
+export class MethodImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const helper = new ObjectOriented(scope);
 

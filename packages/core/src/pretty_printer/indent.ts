@@ -142,7 +142,7 @@ export class Indent {
         || type instanceof Statements.Form
         || type instanceof Statements.Else
         || type instanceof Statements.ElseIf
-        || type instanceof Statements.Method
+        || type instanceof Statements.MethodImplementation
         || type instanceof Statements.TestInjection
         || type instanceof Statements.TestSeam
         || type instanceof Statements.StartOfSelection

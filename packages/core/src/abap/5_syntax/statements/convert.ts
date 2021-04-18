@@ -5,8 +5,9 @@ import {InlineData} from "../expressions/inline_data";
 import {TimeType, DateType, PackedType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Convert {
+export class Convert implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
 // todo, the source must be of a specific type

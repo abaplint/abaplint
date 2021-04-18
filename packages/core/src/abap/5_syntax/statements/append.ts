@@ -6,8 +6,9 @@ import {Target} from "../expressions/target";
 import {TableType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {FSTarget} from "../expressions/fstarget";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Append {
+export class Append implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     let targetType: AbstractType | undefined = undefined;

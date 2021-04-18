@@ -8,8 +8,9 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {Identifier} from "../../1_lexer/tokens/identifier";
 import {DatabaseTable} from "../expressions/database_table";
 import {Dynamic} from "../expressions/dynamic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class UpdateDatabase {
+export class UpdateDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);

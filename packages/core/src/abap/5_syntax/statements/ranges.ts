@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {StructureType, TableType, CharacterType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Ranges {
+export class Ranges implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string) {
     const nameToken = node.findFirstExpression(Expressions.SimpleName)?.getFirstToken();
 
