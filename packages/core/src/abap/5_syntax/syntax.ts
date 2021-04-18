@@ -390,11 +390,11 @@ export class SyntaxLogic {
     return false;
   }
 
-// todo, yes, this will have to be refactored
   private updateScopeStatement(node: StatementNode): void {
     const filename = this.currentFile.getFilename();
     const s = node.get();
 
+    // todo, refactor
     if (s instanceof Statements.Type) {
       this.scope.addType(new Type().runSyntax(node, this.scope, filename));
       return;
