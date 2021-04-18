@@ -228,6 +228,7 @@ addToMap(new Form());
 addToMap(new SelectOption());
 addToMap(new Tables());
 addToMap(new Parameter());
+addToMap(new FieldSymbol());
 
 // -----------------------------------
 
@@ -405,9 +406,6 @@ export class SyntaxLogic {
       return;
     } else if (s instanceof Statements.Data) {
       this.scope.addIdentifier(new DataStatement().runSyntax(node, this.scope, filename));
-      return;
-    } else if (s instanceof Statements.FieldSymbol) {
-      this.scope.addIdentifier(new FieldSymbol().runSyntax(node, this.scope, filename));
       return;
     }
 
