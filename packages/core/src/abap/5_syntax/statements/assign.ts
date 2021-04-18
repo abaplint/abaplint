@@ -5,8 +5,9 @@ import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
 import {Dynamic} from "../expressions/dynamic";
 import {VoidType} from "../../types/basic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Assign {
+export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const sources = node.findDirectExpressions(Expressions.Source);
     const firstSource = sources[0];

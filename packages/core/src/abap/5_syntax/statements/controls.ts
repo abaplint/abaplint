@@ -3,8 +3,9 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {StructureType, CharacterType, IntegerType, TableType} from "../../types/basic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Controls {
+export class Controls implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const name = node.findDirectExpression(Expressions.NamespaceSimpleName);

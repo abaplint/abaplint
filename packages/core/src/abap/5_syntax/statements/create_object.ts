@@ -7,8 +7,9 @@ import {Dynamic} from "../expressions/dynamic";
 import {ReferenceType} from "../_reference";
 import {GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class CreateObject {
+export class CreateObject implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     // todo, validate parameters
 

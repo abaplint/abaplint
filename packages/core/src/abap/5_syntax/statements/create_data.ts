@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {Dynamic} from "../expressions/dynamic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class CreateData {
+export class CreateData implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {

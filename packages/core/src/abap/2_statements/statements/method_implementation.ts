@@ -3,7 +3,7 @@ import {seq, opt, optPrio, alt, plus, altPrio, regex as reg} from "../combi";
 import {MethodName, Language, SimpleFieldChain} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
-export class Method implements IStatement {
+export class MethodImplementation implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const name = reg(/[\w~]+/);

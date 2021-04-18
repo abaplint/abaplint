@@ -6,7 +6,7 @@ export * from "./data";
 export * from "./report";
 export * from "./write";
 export * from "./endmethod";
-export * from "./method";
+export * from "./method_implementation";
 export * from "./endform";
 export * from "./form";
 export * from "./import_nametab";

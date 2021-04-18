@@ -82,7 +82,7 @@ export class DefinitionsTop extends ABAPRule {
         continue;
       } else if (c instanceof StatementNode && c.get() instanceof Statements.Form) {
         continue;
-      } else if (c instanceof StatementNode && c.get() instanceof Statements.Method) {
+      } else if (c instanceof StatementNode && c.get() instanceof Statements.MethodImplementation) {
         continue;
       }
 

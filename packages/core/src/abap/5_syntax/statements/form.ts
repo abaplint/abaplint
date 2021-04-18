@@ -3,8 +3,9 @@ import {CurrentScope} from "../_current_scope";
 import {FormDefinition} from "../../types/form_definition";
 import {ScopeType} from "../_scope_type";
 import {FormName} from "../../2_statements/expressions";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Form {
+export class Form implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const name = node.findDirectExpression(FormName)?.concatTokens();
     if (name === undefined) {

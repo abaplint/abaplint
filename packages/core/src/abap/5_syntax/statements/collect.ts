@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
 import {Target} from "../expressions/target";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Collect {
+export class Collect implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const source = node.findDirectExpression(Expressions.Source);
     if (source) {

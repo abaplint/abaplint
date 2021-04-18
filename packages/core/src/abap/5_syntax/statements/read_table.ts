@@ -7,8 +7,9 @@ import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {ComponentCompareSimple} from "../expressions/component_compare_simple";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class ReadTable {
+export class ReadTable implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const sources = node.findDirectExpressions(Expressions.Source);

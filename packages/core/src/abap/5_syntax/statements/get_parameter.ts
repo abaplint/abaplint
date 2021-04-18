@@ -5,8 +5,9 @@ import {InlineData} from "../expressions/inline_data";
 import {CharacterType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class GetParameter {
+export class GetParameter implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const target = node.findDirectExpression(Expressions.Target);
 

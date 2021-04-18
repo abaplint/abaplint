@@ -29,7 +29,7 @@ export class MethodLengthStats {
     for (const file of obj.getABAPFiles()) {
       for (const stat of file.getStatements()) {
         const type = stat.get();
-        if (type instanceof Statements.Method) {
+        if (type instanceof Statements.MethodImplementation) {
           pos = stat.getFirstToken().getStart();
           name = this.findName(stat);
           method = true;

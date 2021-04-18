@@ -122,6 +122,111 @@ import {Unpack} from "./statements/unpack";
 import {Format} from "./statements/format";
 import {SetPFStatus} from "./statements/set_pf_status";
 import {SetTitlebar} from "./statements/set_titlebar";
+import {StatementSyntax} from "./_statement_syntax";
+
+// -----------------------------------
+
+const map: {[name: string]: StatementSyntax} = {};
+function addToMap(handler: StatementSyntax) {
+  if (map[handler.constructor.name] !== undefined) {
+    throw new Error("syntax.ts duplicate statement syntax handler");
+  }
+  map[handler.constructor.name] = handler;
+}
+addToMap(new InterfaceDeferred());
+addToMap(new Perform());
+addToMap(new ClassDeferred());
+addToMap(new Call());
+addToMap(new ClassImplementation());
+addToMap(new MethodImplementation());
+addToMap(new Move());
+addToMap(new GetBadi());
+addToMap(new CallBadi());
+addToMap(new Replace());
+addToMap(new TruncateDataset());
+addToMap(new Assert());
+addToMap(new Catch());
+addToMap(new Loop());
+addToMap(new SetPFStatus());
+addToMap(new SetTitlebar());
+addToMap(new Submit());
+addToMap(new ReadTable());
+addToMap(new SyntaxCheck());
+addToMap(new Import());
+addToMap(new Collect());
+addToMap(new Export());
+addToMap(new Scan());
+addToMap(new Transfer());
+addToMap(new Split());
+addToMap(new CallFunction());
+addToMap(new DeleteInternal());
+addToMap(new Clear());
+addToMap(new Receive());
+addToMap(new GetBit());
+addToMap(new ClassLocalFriends());
+addToMap(new Select());
+addToMap(new InsertInternal());
+addToMap(new Pack());
+addToMap(new Unpack());
+addToMap(new Assign());
+addToMap(new SetLocale());
+addToMap(new SetParameter());
+addToMap(new Convert());
+addToMap(new Controls());
+addToMap(new When());
+addToMap(new InsertDatabase());
+addToMap(new DeleteDatabase());
+addToMap(new UpdateDatabase());
+addToMap(new Sort());
+addToMap(new Condense());
+addToMap(new OpenDataset());
+addToMap(new CloseDataset());
+addToMap(new ReadReport());
+addToMap(new Do());
+addToMap(new Describe());
+addToMap(new Find());
+addToMap(new Message());
+addToMap(new SystemCall());
+addToMap(new GetTime());
+addToMap(new GetParameter());
+addToMap(new Format());
+addToMap(new WhenType());
+addToMap(new If());
+addToMap(new LogPoint());
+addToMap(new While());
+addToMap(new With());
+addToMap(new WithLoop());
+addToMap(new CallTransformation());
+addToMap(new GetLocale());
+addToMap(new GetReference());
+addToMap(new ElseIf());
+addToMap(new GetRunTime());
+addToMap(new CreateObject());
+addToMap(new ImportDynpro());
+addToMap(new CreateData());
+addToMap(new Case());
+addToMap(new Raise());
+addToMap(new Concatenate());
+addToMap(new Append());
+addToMap(new SelectLoop());
+addToMap(new Write());
+addToMap(new MoveCorresponding());
+addToMap(new AuthorityCheck());
+addToMap(new InsertReport());
+addToMap(new SelectionScreen());
+addToMap(new Ranges());
+addToMap(new Add());
+addToMap(new RaiseEvent());
+addToMap(new Subtract());
+addToMap(new AddCorresponding());
+addToMap(new SubtractCorresponding());
+addToMap(new Multiply());
+addToMap(new Divide());
+addToMap(new Check());
+addToMap(new ModifyDatabase());
+addToMap(new Form());
+
+// -----------------------------------
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -285,209 +390,40 @@ export class SyntaxLogic {
   private updateScopeStatement(node: StatementNode): void {
     const filename = this.currentFile.getFilename();
     const s = node.get();
+
     if (s instanceof Statements.Type) {
       this.scope.addType(new Type().runSyntax(node, this.scope, filename));
+      return;
     } else if (s instanceof Statements.Constant) {
       this.scope.addIdentifier(new Constant().runSyntax(node, this.scope, filename));
+      return;
     } else if (s instanceof Statements.Static) {
       this.scope.addIdentifier(new Static().runSyntax(node, this.scope, filename));
+      return;
     } else if (s instanceof Statements.Data) {
       this.scope.addIdentifier(new DataStatement().runSyntax(node, this.scope, filename));
+      return;
     } else if (s instanceof Statements.Parameter) {
       this.scope.addIdentifier(new Parameter().runSyntax(node, this.scope, filename));
+      return;
     } else if (s instanceof Statements.FieldSymbol) {
       this.scope.addIdentifier(new FieldSymbol().runSyntax(node, this.scope, filename));
+      return;
     } else if (s instanceof Statements.Tables) {
       this.scope.addIdentifier(new Tables().runSyntax(node, this.scope, filename));
+      return;
     } else if (s instanceof Statements.SelectOption) {
       this.scope.addIdentifier(new SelectOption().runSyntax(node, this.scope, filename));
+      return;
+    }
 
-    } else if (s instanceof Statements.InterfaceDeferred) {
-      new InterfaceDeferred().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ClassDeferred) {
-      new ClassDeferred().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Perform) {
-      new Perform().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Call) {
-      new Call().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ClassImplementation) {
-      new ClassImplementation().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Method) {
-      new MethodImplementation().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Move) {
-      new Move().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.GetBadi) {
-      new GetBadi().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.CallBadi) {
-      new CallBadi().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Replace) {
-      new Replace().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.TruncateDataset) {
-      new TruncateDataset().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Assert) {
-      new Assert().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Catch) {
-      new Catch().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Loop) {
-      new Loop().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SetPFStatus) {
-      new SetPFStatus().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SetTitlebar) {
-      new SetTitlebar().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Submit) {
-      new Submit().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ReadTable) {
-      new ReadTable().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SyntaxCheck) {
-      new SyntaxCheck().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Import) {
-      new Import().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Collect) {
-      new Collect().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Export) {
-      new Export().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Scan) {
-      new Scan().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Transfer) {
-      new Transfer().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Split) {
-      new Split().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.CallFunction) {
-      new CallFunction().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.DeleteInternal) {
-      new DeleteInternal().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Clear) {
-      new Clear().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Receive) {
-      new Receive().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.GetBit) {
-      new GetBit().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ClassLocalFriends) {
-      new ClassLocalFriends().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Select) {
-      new Select().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.InsertInternal) {
-      new InsertInternal().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Pack) {
-      new Pack().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Unpack) {
-      new Unpack().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Assign) {
-      new Assign().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SetLocale) {
-      new SetLocale().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SetParameter) {
-      new SetParameter().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Convert) {
-      new Convert().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Controls) {
-      new Controls().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.When) {
-      new When().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.InsertDatabase) {
-      new InsertDatabase().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.DeleteDatabase) {
-      new DeleteDatabase().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.UpdateDatabase) {
-      new UpdateDatabase().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Sort) {
-      new Sort().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Condense) {
-      new Condense().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.OpenDataset) {
-      new OpenDataset().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.CloseDataset) {
-      new CloseDataset().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ReadReport) {
-      new ReadReport().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Do) {
-      new Do().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Describe) {
-      new Describe().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Find) {
-      new Find().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Message) {
-      new Message().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SystemCall) {
-      new SystemCall().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.GetTime) {
-      new GetTime().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.GetParameter) {
-      new GetParameter().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Format) {
-      new Format().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.WhenType) {
-      new WhenType().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.If) {
-      new If().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.LogPoint) {
-      new LogPoint().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.While) {
-      new While().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.With) {
-      new With().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.WithLoop) {
-      new WithLoop().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.CallTransformation) {
-      new CallTransformation().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.GetLocale) {
-      new GetLocale().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.GetReference) {
-      new GetReference().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ElseIf) {
-      new ElseIf().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.GetRunTime) {
-      new GetRunTime().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.CreateObject) {
-      new CreateObject().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ImportDynpro) {
-      new ImportDynpro().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.CreateData) {
-      new CreateData().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Case) {
-      new Case().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Raise) {
-      new Raise().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Concatenate) {
-      new Concatenate().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Append) {
-      new Append().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SelectLoop) {
-      new SelectLoop().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Write) {
-      new Write().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.MoveCorresponding) {
-      new MoveCorresponding().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.AuthorityCheck) {
-      new AuthorityCheck().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.InsertReport) {
-      new InsertReport().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SelectionScreen) {
-      new SelectionScreen().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Ranges) {
-      new Ranges().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Add) {
-      new Add().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.RaiseEvent) {
-      new RaiseEvent().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Subtract) {
-      new Subtract().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.AddCorresponding) {
-      new AddCorresponding().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.SubtractCorresponding) {
-      new SubtractCorresponding().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Multiply) {
-      new Multiply().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Divide) {
-      new Divide().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Check) {
-      new Check().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.ModifyDatabase) {
-      new ModifyDatabase().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Form) {
-      new Form().runSyntax(node, this.scope, filename);
+    const name = s.constructor.name;
+    if (map[name]) {
+      map[name].runSyntax(node, this.scope, filename);
+      return;
+    }
 
-    } else if (s instanceof Statements.FunctionModule) {
+    if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
 
     } else if (s instanceof Statements.EndForm
@@ -496,6 +432,8 @@ export class SyntaxLogic {
         || s instanceof Statements.EndClass
         || s instanceof Statements.EndInterface) {
       this.scope.pop(node.getLastToken().getEnd());
+//    } else {
+//      console.dir(name + " unhandled");
     }
   }
 

@@ -5,8 +5,9 @@ import {MethodCallChain} from "../expressions/method_call_chain";
 import {MethodSource} from "../expressions/method_source";
 import {MethodCallBody} from "../expressions/method_call_body";
 import {VoidType} from "../../types/basic/void_type";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class Call {
+export class Call implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const chain = node.findDirectExpression(Expressions.MethodCallChain);
     if (chain) {

@@ -3,8 +3,9 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CharacterType, StructureType} from "../../types/basic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class SelectionScreen {
+export class SelectionScreen implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string) {
 
     const field = node.findFirstExpression(Expressions.InlineField);

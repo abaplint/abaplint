@@ -3,8 +3,9 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Dynamic} from "../expressions/dynamic";
 import {DatabaseTable} from "../expressions/database_table";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class ModifyDatabase {
+export class ModifyDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, scope, filename);

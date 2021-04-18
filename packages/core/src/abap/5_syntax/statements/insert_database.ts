@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Dynamic} from "../expressions/dynamic";
 import {DatabaseTable} from "../expressions/database_table";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class InsertDatabase {
+export class InsertDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findAllExpressions(Expressions.Source)) {

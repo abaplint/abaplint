@@ -8,7 +8,7 @@ import {Body} from "./body";
 export class Method implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    return beginEnd(sta(Statements.Method),
+    return beginEnd(sta(Statements.MethodImplementation),
                     opt(alt(sub(Body), star(sta(NativeSQL)))),
                     sta(Statements.EndMethod));
   }

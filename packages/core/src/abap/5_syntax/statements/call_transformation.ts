@@ -6,8 +6,9 @@ import {Source} from "../expressions/source";
 import {XStringType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {Dynamic} from "../expressions/dynamic";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class CallTransformation {
+export class CallTransformation implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {

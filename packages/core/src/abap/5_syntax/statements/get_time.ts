@@ -4,8 +4,9 @@ import {CurrentScope} from "../_current_scope";
 import {InlineData} from "../expressions/inline_data";
 import {PackedType} from "../../types/basic";
 import {Target} from "../expressions/target";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class GetTime {
+export class GetTime implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const target = node.findDirectExpression(Expressions.Target);
 

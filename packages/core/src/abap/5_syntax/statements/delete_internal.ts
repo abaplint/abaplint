@@ -5,8 +5,9 @@ import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {ComponentCompare} from "../expressions/component_compare";
 import {ComponentCond} from "../expressions/component_cond";
+import {StatementSyntax} from "../_statement_syntax";
 
-export class DeleteInternal {
+export class DeleteInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
