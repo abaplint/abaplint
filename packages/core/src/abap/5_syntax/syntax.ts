@@ -225,6 +225,9 @@ addToMap(new Divide());
 addToMap(new Check());
 addToMap(new ModifyDatabase());
 addToMap(new Form());
+addToMap(new SelectOption());
+addToMap(new Tables());
+addToMap(new Parameter());
 
 // -----------------------------------
 
@@ -403,17 +406,8 @@ export class SyntaxLogic {
     } else if (s instanceof Statements.Data) {
       this.scope.addIdentifier(new DataStatement().runSyntax(node, this.scope, filename));
       return;
-    } else if (s instanceof Statements.Parameter) {
-      this.scope.addIdentifier(new Parameter().runSyntax(node, this.scope, filename));
-      return;
     } else if (s instanceof Statements.FieldSymbol) {
       this.scope.addIdentifier(new FieldSymbol().runSyntax(node, this.scope, filename));
-      return;
-    } else if (s instanceof Statements.Tables) {
-      this.scope.addIdentifier(new Tables().runSyntax(node, this.scope, filename));
-      return;
-    } else if (s instanceof Statements.SelectOption) {
-      this.scope.addIdentifier(new SelectOption().runSyntax(node, this.scope, filename));
       return;
     }
 
