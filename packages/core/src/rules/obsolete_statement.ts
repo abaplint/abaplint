@@ -86,7 +86,8 @@ RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.ht
 
 PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
 
-SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm`,
+SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm
+SELECT COUNT(*) is considered okay`,
     };
   }
 
@@ -155,7 +156,8 @@ SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/
       if (this.conf.selectWithoutInto
           && (sta instanceof Statements.Select || sta instanceof Statements.SelectLoop)
           && staNode.findFirstExpression(Expressions.SQLIntoStructure) === undefined
-          && staNode.findFirstExpression(Expressions.SQLIntoTable) === undefined) {
+          && staNode.findFirstExpression(Expressions.SQLIntoTable) === undefined
+          && staNode.findFirstExpression(Expressions.SQLFieldList)?.concatTokens().toUpperCase() !== "COUNT(*)") {
         const issue = Issue.atStatement(file, staNode, "SELECT without INTO", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }

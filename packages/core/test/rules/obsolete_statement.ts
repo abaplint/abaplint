@@ -43,6 +43,7 @@ END OF li_order.`, cnt: 1},
   {abap: "PACK s TO d.", cnt: 1},
   {abap: "SELECT SINGLE * FROM t000.", cnt: 1},
   {abap: "SELECT SINGLE * FROM t000 INTO bar.", cnt: 0},
+  {abap: `SELECT COUNT(*) FROM tcdrp WHERE object = mv_object.`, cnt: 0},
 ];
 
 testRule(tests, ObsoleteStatement);
