@@ -65,7 +65,7 @@ function buildChips(json: any) {
 
 function buildIndex(json: any) {
 
-  let html = `<h1>abaplint rules documentation</h1>
+  let html = `<h1>abaplint rules documentation, ${abaplint.Registry.abaplintVersion()}</h1>
 <a href="https://abaplint.org">abaplint</a> can be configured by placing a <tt>abaplint.json</tt> file in the root of the git repository.
 If no configuration file is found, the default configuration will be used, which contains have all rules enabled.
 <br><br>
@@ -107,6 +107,8 @@ debug: false
 </script>`;
 
   fs.writeFileSync("build/index.html", preamble() + html + search + postamble);
+
+  fs.writeFileSync("build/count.txt", "" + json.length);
 }
 
 const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
