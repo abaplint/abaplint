@@ -27,3 +27,5 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 [Design documentation](https://github.com/abaplint/abaplint/blob/main/docs/design/index.adoc)
 
 [Development](docs/development.md)
+
+[Code Coverage](https://coverage.abaplint.org)
