@@ -41,7 +41,8 @@ jobs:
         cname: schema.abaplint.org
         publish_dir: ../../schema.abaplint.org
     - name: killall ssh-agent
-      run: killall ssh-agent        
+      if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
+      run: killall ssh-agent
     - name: deploy rules.abaplint.org
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
