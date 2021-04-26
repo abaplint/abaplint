@@ -90,9 +90,10 @@ export class FunctionGroup extends ABAPObject {
   }
 
   public getInclude(name: string): ABAPFile | undefined {
+    const upper = name.toUpperCase();
     const includes = this.getIncludeFiles();
     for (const i of includes) {
-      if (i.name.toUpperCase() === name.toUpperCase()) {
+      if (i.name.toUpperCase() === upper) {
         return i.file;
       }
     }

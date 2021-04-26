@@ -173,7 +173,6 @@ export class IncludeGraph implements IIncludeGraph {
 
   private addVertices() {
     for (const o of getABAPObjects(this.reg)) {
-
       if (o instanceof Program) {
         const file = o.getMainABAPFile();
         if (file) {

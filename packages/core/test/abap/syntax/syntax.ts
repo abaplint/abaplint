@@ -4049,6 +4049,96 @@ WRITE moo-field.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("PROG includes from FUGR", () => {
+    const d01abap = `DATA bar TYPE i.`;
+    const d01xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>LZFUGR1D01</NAME>
+    <SUBC>I</SUBC>
+    <APPL>S</APPL>
+    <RLOAD>E</RLOAD>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>R</ID>
+     <ENTRY>Include LZFUGR1D01</ENTRY>
+     <LENGTH>18</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const topabap = `FUNCTION-POOL zfugr1.`;
+    const topxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>LZFUGR1TOP</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>I</SUBC>
+    <APPL>S</APPL>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const saplabap = `
+    INCLUDE LZFUGR1TOP.
+    INCLUDE LZFUGR1UXX.
+    INCLUDE LZFUGR1D01.`;
+    const saplxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>SAPLZFUGR1</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>F</SUBC>
+    <APPL>S</APPL>
+    <RLOAD>E</RLOAD>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const fugrxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>test</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZFUGR1D01</SOBJ_NAME>
+    <SOBJ_NAME>LZFUGR1TOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZFUGR1</SOBJ_NAME>
+   </INCLUDES>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const progabap = `INCLUDE lzfugr1d01.
+    WRITE bar.`;
+    const issues = runMulti([
+      {filename: "zfugr1.fugr.lzfugr1d01.abap", contents: d01abap},
+      {filename: "zfugr1.fugr.lzfugr1d01.xml", contents: d01xml},
+      {filename: "zfugr1.fugr.lzfugr1top.abap", contents: topabap},
+      {filename: "zfugr1.fugr.lzfugr1top.xml", contents: topxml},
+      {filename: "zfugr1.fugr.saplzfugr1.abap", contents: saplabap},
+      {filename: "zfugr1.fugr.saplzfugr1.xml", contents: saplxml},
+      {filename: "zfugr1.fugr.xml", contents: fugrxml},
+      {filename: "zfugr1.prog.abap", contents: progabap}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

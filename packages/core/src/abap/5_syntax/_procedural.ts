@@ -55,6 +55,7 @@ export class Procedural {
     }
     const name = expr.getFirstToken().getStr();
 
+    // look in the current function group
     if (obj instanceof FunctionGroup) {
       const incl = obj.getInclude(name);
       if (incl !== undefined) {
@@ -66,6 +67,17 @@ export class Procedural {
     if (prog !== undefined) {
       return prog.getABAPFiles()[0];
     }
+
+    // todo, this is slow, try determining the FUGR name from the include name
+    for (const fugr of this.reg.getObjectsByType("FUGR")) {
+      if (fugr instanceof FunctionGroup) {
+        const found = fugr.getInclude(name);
+        if (found) {
+          return found;
+        }
+      }
+    }
+
     return undefined;
   }
 
