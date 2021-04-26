@@ -173,8 +173,9 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public findDirectTokenByText(text: string): Token | undefined {
+    const upper = text.toUpperCase();
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode && child.get().getStr().toUpperCase() === text.toUpperCase()) {
+      if (child instanceof TokenNode && child.get().getStr().toUpperCase() === upper) {
         return child.get();
       }
     }

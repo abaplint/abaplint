@@ -28,7 +28,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#indent-and-
   }
 
   private getMessage(): string {
-    return "Code can't contain tabs";
+    return "Code should not contain tabs";
   }
 
   public getConfig() {

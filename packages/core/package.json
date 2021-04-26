@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.74.8",
+    "version": "2.74.9",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -60,12 +60,12 @@
         "@types/mocha": "^8.2.2",
         "@types/node": "^14.14.41",
         "chai": "^4.3.4",
-        "eslint": "^7.24.0",
+        "eslint": "^7.25.0",
         "madge": "^4.0.2",
         "mocha": "^8.3.2",
         "nyc": "^15.1.0",
         "source-map-support": "^0.5.19",
-        "ts-json-schema-generator": "^0.90.0",
+        "ts-json-schema-generator": "^0.91.0",
         "typescript": "^4.2.4"
     },
     "dependencies": {
