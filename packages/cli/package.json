@@ -47,7 +47,7 @@
         "@types/progress": "^2.0.3",
         "chai": "^4.3.4",
         "chalk": "^4.1.1",
-        "eslint": "^7.24.0",
+        "eslint": "^7.25.0",
         "glob": "^7.1.6",
         "json5": "^2.2.0",
         "memfs": "^3.2.2",
@@ -55,7 +55,7 @@
         "mocha": "^8.3.2",
         "progress": "^2.0.3",
         "typescript": "^4.2.4",
-        "webpack": "^5.35.0",
+        "webpack": "^5.35.1",
         "webpack-cli": "^4.6.0",
         "xml-js": "^1.6.11"
     },
