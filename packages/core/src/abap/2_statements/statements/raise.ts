@@ -25,14 +25,14 @@ export class Raise implements IStatement {
 
     const exporting = seq("EXPORTING", ParameterListS);
 
-    const from = altPrio(seq("TYPE", ClassName),
-                         altPrio(ver(Version.v752, Source), SimpleSource2));
+    const from = seq("TYPE",
+                     ClassName,
+                     opt(alt(ver(Version.v750, alt(mess, messid)), ver(Version.v752, "USING MESSAGE"))),
+                     optPrio(exporting));
 
     const clas = seq(optPrio("RESUMABLE"),
                      "EXCEPTION",
-                     from,
-                     opt(alt(ver(Version.v750, alt(mess, messid)), ver(Version.v752, "USING MESSAGE"))),
-                     optPrio(exporting));
+                     altPrio(from, ver(Version.v752, Source), SimpleSource2));
 
     const ret = seq("RAISE", altPrio(clas, Field));
 
