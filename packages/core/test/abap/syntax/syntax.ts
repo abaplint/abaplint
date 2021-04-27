@@ -3948,7 +3948,7 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("instantiate abstract, 3", () => {
+  it("instantiate abstract, 3", () => {
     const abap = `
   CLASS vehicle DEFINITION ABSTRACT.
   ENDCLASS.
@@ -3960,7 +3960,7 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("instantiate abstract, 4", () => {
+  it("instantiate abstract, 4", () => {
     const abap = `
   CLASS vehicle DEFINITION ABSTRACT.
   ENDCLASS.

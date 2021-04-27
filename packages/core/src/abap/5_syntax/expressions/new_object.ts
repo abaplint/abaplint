@@ -22,6 +22,11 @@ export class NewObject {
     } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
       scope.addReference(typeToken, targetType.getIdentifier(), ReferenceType.InferredType, filename);
       ret = targetType;
+
+      const clas = scope.findClassDefinition(targetType.getIdentifierName());
+      if (clas?.isAbstract() === true) {
+        throw new Error(clas.getName() + " is abstract, cannot be instantiated");
+      }
     } else if (typeName === "#" && targetType) {
       ret = targetType;
     } else if (typeName === "#") {
@@ -32,7 +37,12 @@ export class NewObject {
       const objDefinition = scope.findObjectDefinition(typeName);
       if (objDefinition) {
         scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
-        ret = new ObjectReferenceType(objDefinition);
+        const objref = new ObjectReferenceType(objDefinition);
+        const clas = scope.findClassDefinition(objref.getIdentifierName());
+        if (clas?.isAbstract() === true) {
+          throw new Error(clas.getName() + " is abstract, cannot be instantiated");
+        }
+        ret = objref;
       }
     }
 
@@ -66,7 +76,6 @@ export class NewObject {
   }
 
   private parameters(node: ExpressionNode, obj: ObjectReferenceType, scope: CurrentScope, filename: string) {
-
     const name = obj.getIdentifier().getName();
     const def = scope.findObjectDefinition(name);
     const helper = new ObjectOriented(scope);
