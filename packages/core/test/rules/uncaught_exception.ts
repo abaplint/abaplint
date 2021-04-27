@@ -312,6 +312,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  // todo, the INCLUDE should be expanded when traversing the structure
   it.skip("PROG with INCL, expect error", async () => {
     const progabap = `
     REPORT ytop.
