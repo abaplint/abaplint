@@ -12,12 +12,14 @@ export class MethodDef implements IStatement {
 
     const def = ver(Version.v740sp08, seq("DEFAULT", altPrio("FAIL", "IGNORE")));
 
-    const parameters = seq(optPrio(altPrio(seq(Abstract, optPrio("FOR TESTING")), "FINAL", "FOR TESTING", def)),
+    const parameters = seq(optPrio(altPrio("FINAL", def, Abstract)),
                            optPrio(MethodDefImporting),
                            optPrio(MethodDefExporting),
                            optPrio(MethodDefChanging),
                            optPrio(MethodDefReturning),
-                           optPrio(alt(MethodDefRaising, exceptions)));
+                           optPrio(altPrio(MethodDefRaising, exceptions)));
+
+    const testing = seq(optPrio(Abstract), "FOR TESTING", optPrio(altPrio(MethodDefRaising, exceptions)));
 
 // todo, this is only from version something
     const tableFunction = seq("FOR TABLE FUNCTION", reg(/^\w+?$/));
@@ -30,6 +32,7 @@ export class MethodDef implements IStatement {
                     MethodName,
                     alt(seq(optPrio(Abstract), EventHandler),
                         parameters,
+                        testing,
                         tableFunction,
                         ddl,
                         amdp,

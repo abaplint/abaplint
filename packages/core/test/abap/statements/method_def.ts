@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementExpectFail, statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -91,12 +91,15 @@ const tests = [
     OPTIONS CDS SESSION CLIENT REQUIRED.`,
   `CLASS-METHODS get_shortest_path AMDP OPTIONS CDS SESSION CLIENT current.`,
 ];
-
 statementType(tests, "METHODS", Statements.MethodDef);
 
 
 const versions = [
   {abap: "METHODS method2 DEFAULT IGNORE.", ver: Version.v740sp08},
 ];
-
 statementVersion(versions, "METHODS", Statements.MethodDef);
+
+const fails = [
+  "METHODS test1 FOR TESTING RETURNING VALUE(vbeln) TYPE string.",
+];
+statementExpectFail(fails, "MethodDef");
