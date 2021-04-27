@@ -8,7 +8,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {StatementNode, StructureNode} from "../abap/nodes";
 import {IRegistry} from "../_iregistry";
-import {Class} from "../objects";
+import {Class, Program} from "../objects";
 import {DDIC} from "../ddic";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
@@ -55,6 +55,8 @@ export class UncaughtException extends ABAPRule {
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
     if (obj.getType() === "INTF") { // nothing can be raised in interfaces
+      return [];
+    } if (obj instanceof Program && obj.isInclude() === true) {
       return [];
     }
 
