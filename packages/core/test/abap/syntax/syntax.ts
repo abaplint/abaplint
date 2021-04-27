@@ -1319,7 +1319,7 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, constant, begin, error", () => {
+  it("program, constant, begin, error", () => {
     const abap =
       "CONSTANTS: BEGIN OF c_mode,\n" +
       "             create TYPE i VALUE 1,\n" +
