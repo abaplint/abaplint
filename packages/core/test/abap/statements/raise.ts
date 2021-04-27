@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementExpectFail, statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -32,3 +32,9 @@ const versions = [
 ];
 
 statementVersion(versions, "RAISE", Statements.Raise);
+
+
+const fails = [
+  "RAISE EXCEPTION NEW cx_blah( ) MESSAGE e003.",
+];
+statementExpectFail(fails, "RAISE");

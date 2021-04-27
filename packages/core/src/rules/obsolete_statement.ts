@@ -45,8 +45,10 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public communication: boolean = true;
   /** Checks for PACK */
   public pack: boolean = true;
-    /** Checks for SELECT without INTO */
+  /** Checks for SELECT without INTO */
   public selectWithoutInto: boolean = true;
+  /** FREE MEMORY, without ID */
+  public freeMemory: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -87,7 +89,9 @@ RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.ht
 PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
 
 SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm
-SELECT COUNT(*) is considered okay`,
+SELECT COUNT(*) is considered okay
+
+FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree_mem_id_obsolete.htm`,
     };
   }
 
@@ -214,6 +218,14 @@ SELECT COUNT(*) is considered okay`,
       if (this.conf.typePools && sta instanceof Statements.TypePools && configVersion >= Version.v702){
         const issue = Issue.atStatement(file, staNode, "Statement \"TYPE-POOLS\" is obsolete", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
+      }
+
+      if (this.conf.freeMemory && sta instanceof Statements.FreeMemory) {
+        const concat = staNode.concatTokens().toUpperCase();
+        if (concat === "FREE MEMORY.") {
+          const issue = Issue.atStatement(file, staNode, "Statement \"FREE MEMORY\" without ID is obsolete", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
       }
     }
     return issues;

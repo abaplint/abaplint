@@ -48,7 +48,7 @@ export class Procedural {
 
   public findInclude(node: StatementNode, obj: ABAPObject): ABAPFile | undefined {
 // assumption: no cyclic includes, includes not found are reported by rule "check_include"
-// todo: how to make sure code is not duplicated here and in rule "check_include" ?
+// todo: how to make sure code is not duplicated here and in rule "check_include" / include graph?
     const expr = node.findFirstExpression(Expressions.IncludeName);
     if (expr === undefined) {
       return undefined;

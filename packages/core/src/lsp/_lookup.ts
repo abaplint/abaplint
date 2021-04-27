@@ -4,7 +4,6 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {IFormDefinition} from "../abap/types/_form_definition";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorData, LSPUtils} from "./_lsp_utils";
 import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
@@ -68,12 +67,6 @@ export class LSPLookup {
         definitionId: intf,
         implementation: undefined,
         scope: bottomScope};
-    }
-
-    const form = this.findPerform(cursor, bottomScope);
-    if (form) {
-      const found = LSPUtils.identiferToLocation(form);
-      return {hover: "Call FORM", definition: found, implementation: found, scope: bottomScope};
     }
 
     const type = bottomScope.findType(cursor.token.getStr());
@@ -280,31 +273,6 @@ export class LSPLookup {
 
     const def = scope.getParent()?.findClassDefinition(scope.getIdentifier().sname)?.getMethodDefinitions()?.getByName(nameToken.getStr());
     return def;
-  }
-
-  private static findPerform(found: ICursorData, scope: ISpaghettiScopeNode): IFormDefinition | undefined {
-    if (!(found.snode.get() instanceof Statements.Perform)) {
-      return undefined;
-    }
-
-    const name = found.snode.findFirstExpression(Expressions.FormName);
-    if (name === undefined) {
-      return undefined;
-    }
-
-// check the cursor is at the right token
-    const token = name.getFirstToken();
-    if (token.getStart().getCol() !== found.token.getStart().getCol()
-        || token.getStart().getRow() !== found.token.getStart().getRow()) {
-      return undefined;
-    }
-
-    const resolved = scope.findFormDefinition(found.token.getStr());
-    if (resolved) {
-      return resolved;
-    }
-
-    return undefined;
   }
 
   private static findFunctionModule(found: ICursorData): string | undefined {

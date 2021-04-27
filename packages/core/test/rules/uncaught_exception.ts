@@ -292,4 +292,45 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("PROG with INCL, INCL should be skipped", async () => {
+    const progabap = `
+    REPORT ytop.
+    INCLUDE ysub.`;
+    const inclabap = `CLASS lcl_file DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS download RAISING cx_static_check.
+ENDCLASS.
+CLASS lcl_file IMPLEMENTATION.
+  METHOD download.
+    RAISE EXCEPTION TYPE cx_static_check.
+  ENDMETHOD.
+ENDCLASS.`;
+    const inclxml = `<SUBC>I</SUBC>`;
+    const sub1 = new MemoryFile("ysub.prog.abap", inclabap);
+    const sub2 = new MemoryFile("ysub.prog.xml", inclxml);
+    const issues = await findIssues(progabap, "ytop.prog.abap", [sub1, sub2]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  // todo, the INCLUDE should be expanded when traversing the structure
+  it.skip("PROG with INCL, expect error", async () => {
+    const progabap = `
+    REPORT ytop.
+    INCLUDE ysub.`;
+    const inclabap = `CLASS lcl_file DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS download.
+ENDCLASS.
+CLASS lcl_file IMPLEMENTATION.
+  METHOD download.
+    RAISE EXCEPTION TYPE cx_static_check.
+  ENDMETHOD.
+ENDCLASS.`;
+    const inclxml = `<SUBC>I</SUBC>`;
+    const sub1 = new MemoryFile("ysub.prog.abap", inclabap);
+    const sub2 = new MemoryFile("ysub.prog.xml", inclxml);
+    const issues = await findIssues(progabap, "ytop.prog.abap", [sub1, sub2]);
+    expect(issues.length).to.equal(1);
+  });
+
 });

@@ -1319,7 +1319,7 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("program, constant, begin, error", () => {
+  it("program, constant, begin, error", () => {
     const abap =
       "CONSTANTS: BEGIN OF c_mode,\n" +
       "             create TYPE i VALUE 1,\n" +
@@ -3629,7 +3629,7 @@ DATA date TYPE d.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("FUGR include INCLUDEd in PROG", () => {
+  it("FUGR include INCLUDEd in PROG", () => {
     const topabap = `FUNCTION-POOL ZFUGR1.`;
     const topxml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0">
@@ -3948,7 +3948,7 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("instantiate abstract, 3", () => {
+  it("instantiate abstract, 3", () => {
     const abap = `
   CLASS vehicle DEFINITION ABSTRACT.
   ENDCLASS.
@@ -3960,7 +3960,7 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("instantiate abstract, 4", () => {
+  it("instantiate abstract, 4", () => {
     const abap = `
   CLASS vehicle DEFINITION ABSTRACT.
   ENDCLASS.
