@@ -3799,6 +3799,10 @@
           "description": "Checks for FIELD-SYMBOLS ... STRUCTURE",
           "type": "boolean"
         },
+        "freeMemory": {
+          "description": "FREE MEMORY, without ID",
+          "type": "boolean"
+        },
         "load": {
           "description": "Checks for addition LOAD",
           "type": "boolean"
@@ -3879,7 +3883,8 @@
         "ranges",
         "communication",
         "pack",
-        "selectWithoutInto"
+        "selectWithoutInto",
+        "freeMemory"
       ],
       "type": "object"
     },
