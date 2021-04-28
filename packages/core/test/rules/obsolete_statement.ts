@@ -41,9 +41,12 @@ END OF li_order.`, cnt: 1},
   {abap: "DATA foo TYPE RANGE OF bar.", cnt: 0},
   {abap: "COMMUNICATION ACCEPT ID c.", cnt: 1},
   {abap: "PACK s TO d.", cnt: 1},
+
+  // select without into
   {abap: "SELECT SINGLE * FROM t000.", cnt: 1},
   {abap: "SELECT SINGLE * FROM t000 INTO bar.", cnt: 0},
   {abap: `SELECT COUNT(*) FROM tcdrp WHERE object = mv_object.`, cnt: 0},
+  {abap: `SELECT COUNT( * ) FROM dm40l WHERE dmoid = mv_data_model AND as4local = mv_activation_state.`, cnt: 0},
 
   {abap: "FREE MEMORY.", cnt: 1},
   {abap: "FREE MEMORY ID bar.", cnt: 0},
