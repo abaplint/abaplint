@@ -34,13 +34,16 @@ export class Catch implements StatementSyntax {
       if (token && found.found === true && firstClassName && found.id) {
         const identifier = new TypedIdentifier(token, filename, new ObjectReferenceType(found.id), [IdentifierMeta.InlineDefinition]);
         scope.addIdentifier(identifier);
+        scope.addReference(token, identifier, ReferenceType.DataWriteReference, filename);
       } else if (token && scope.getDDIC().inErrorNamespace(firstClassName) === false) {
         const identifier = new TypedIdentifier(token, filename, new VoidType(firstClassName), [IdentifierMeta.InlineDefinition]);
         scope.addIdentifier(identifier);
+        scope.addReference(token, identifier, ReferenceType.DataWriteReference, filename);
       } else if (token) {
         const message = "Catch, could not determine type for \"" + token.getStr() + "\"";
         const identifier = new TypedIdentifier(token, filename, new UnknownType(message), [IdentifierMeta.InlineDefinition]);
         scope.addIdentifier(identifier);
+        scope.addReference(token, identifier, ReferenceType.DataWriteReference, filename);
       }
     } else if (target) {
       new Target().runSyntax(target, scope, filename);

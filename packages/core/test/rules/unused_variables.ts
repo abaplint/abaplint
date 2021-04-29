@@ -813,4 +813,16 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CATCH INTO is a write", async () => {
+    const abap = `
+FORM bar.
+  TRY.
+    CATCH cx_static_check INTO DATA(lo_exc).
+      WRITE lo_exc->get_text( ).
+  ENDTRY.
+ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
