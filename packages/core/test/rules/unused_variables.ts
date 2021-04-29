@@ -764,4 +764,19 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CALL TRANSACTION", async () => {
+    const abap = `
+  DATA lv_mode TYPE c LENGTH 1 VALUE 'N'.
+  DATA lt_batch TYPE STANDARD TABLE OF bdcdata WITH EMPTY KEY.
+  DATA lt_messages TYPE STANDARD TABLE OF bdcmsgcoll WITH EMPTY KEY.
+  CALL TRANSACTION 'FOOBAR'
+    WITH AUTHORITY-CHECK
+    USING lt_batch
+    MODE lv_mode
+    UPDATE 'S'
+    MESSAGES INTO lt_messages.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

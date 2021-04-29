@@ -123,6 +123,7 @@ import {Format} from "./statements/format";
 import {SetPFStatus} from "./statements/set_pf_status";
 import {SetTitlebar} from "./statements/set_titlebar";
 import {StatementSyntax} from "./_statement_syntax";
+import {CallTransaction} from "./statements/call_transaction";
 
 // -----------------------------------
 
@@ -198,6 +199,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new With());
   addToMap(new WithLoop());
   addToMap(new CallTransformation());
+  addToMap(new CallTransaction());
   addToMap(new GetLocale());
   addToMap(new GetReference());
   addToMap(new ElseIf());
