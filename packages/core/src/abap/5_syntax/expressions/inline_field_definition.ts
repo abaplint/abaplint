@@ -6,6 +6,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {BasicTypes} from "../basic_types";
 import {UnknownType} from "../../types/basic/unknown_type";
+import {ReferenceType} from "../_reference";
 
 export class InlineFieldDefinition {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): void {
@@ -29,6 +30,7 @@ export class InlineFieldDefinition {
     }
 
     const identifier = new TypedIdentifier(field.getFirstToken(), filename, type, [IdentifierMeta.InlineDefinition]);
+    scope.addReference(field.getFirstToken(), identifier, ReferenceType.DataWriteReference, filename);
     scope.addIdentifier(identifier);
   }
 }

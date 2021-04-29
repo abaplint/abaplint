@@ -330,7 +330,7 @@ WRITE bar.`);
     DATA(language) = COND #( WHEN rb_langa = abap_true THEN '%' ELSE 'a' ).
     WRITE language.`;
     const issues = await runSingle(abap);
-    expect(issues.length).to.equal(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("EXPORT", async () => {
@@ -762,6 +762,81 @@ ENDCLASS.`;
     SET TITLEBAR bar.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
+  });
+
+  it("CALL TRANSACTION", async () => {
+    const abap = `
+  DATA lv_mode TYPE c LENGTH 1 VALUE 'N'.
+  DATA lt_batch TYPE STANDARD TABLE OF bdcdata WITH EMPTY KEY.
+  DATA lt_messages TYPE STANDARD TABLE OF bdcmsgcoll WITH EMPTY KEY.
+  CALL TRANSACTION 'FOOBAR'
+    WITH AUTHORITY-CHECK
+    USING lt_batch
+    MODE lv_mode
+    UPDATE 'S'
+    MESSAGES INTO lt_messages.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Report inline, 1", async () => {
+    const abap = `
+    FORM moo.
+      DATA(lv_subrc) = sy-subrc.
+    ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Report inline, 2", async () => {
+    const abap = `
+    DATA(lv_subrc) = sy-subrc.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Report inline, 1 ok", async () => {
+    const abap = `
+    FORM moo.
+      DATA(lv_subrc1) = sy-subrc.
+      WRITE lv_subrc1.
+    ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Report inline, ok 2", async () => {
+    const abap = `
+    DATA(lv_subrc2) = sy-subrc.
+    WRITE lv_subrc2.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CATCH INTO is a write", async () => {
+    const abap = `
+FORM bar.
+  TRY.
+    CATCH cx_static_check INTO DATA(lo_exc).
+      WRITE lo_exc->get_text( ).
+  ENDTRY.
+ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("REDUCE", async () => {
+    const abap = `
+  FORM bar.
+    TYPES: BEGIN OF ty_record,
+        value TYPE i,
+      END OF ty_record.
+    DATA records TYPE STANDARD TABLE OF ty_record WITH EMPTY KEY.
+    DATA(total) = REDUCE i( INIT sum = 0 FOR record IN records NEXT sum = sum + record-value ).
+    WRITE total.
+  ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });

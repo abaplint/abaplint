@@ -160,10 +160,12 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       if (this.conf.selectWithoutInto
           && (sta instanceof Statements.Select || sta instanceof Statements.SelectLoop)
           && staNode.findFirstExpression(Expressions.SQLIntoStructure) === undefined
-          && staNode.findFirstExpression(Expressions.SQLIntoTable) === undefined
-          && staNode.findFirstExpression(Expressions.SQLFieldList)?.concatTokens().toUpperCase() !== "COUNT(*)") {
-        const issue = Issue.atStatement(file, staNode, "SELECT without INTO", this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+          && staNode.findFirstExpression(Expressions.SQLIntoTable) === undefined) {
+        const concat = staNode.findFirstExpression(Expressions.SQLFieldList)?.concatTokens().toUpperCase();
+        if (concat !== "COUNT(*)" && concat !== "COUNT( * )") {
+          const issue = Issue.atStatement(file, staNode, "SELECT without INTO", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
       }
 
       if (this.conf.requested && sta instanceof Statements.If) {

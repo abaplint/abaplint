@@ -40,7 +40,7 @@ export class References {
     return locs.map(LSPUtils.identiferToLocation);
   }
 
-  public search(identifier: Identifier, node: ISpaghettiScopeNode, exitAfterFound = false): Identifier[] {
+  public search(identifier: Identifier, node: ISpaghettiScopeNode, exitAfterFound = false, removeDuplicates = true): Identifier[] {
     let ret: Identifier[] = [];
 
     // todo, this first assumes that the identifier is a variable?
@@ -63,7 +63,11 @@ export class References {
     }
 
     // remove duplicates, might be a changing(read and write) position
-    return this.removeDuplicates(ret);
+    if (removeDuplicates === true) {
+      return this.removeDuplicates(ret);
+    } else {
+      return ret;
+    }
   }
 
 ////////////////////////////////////////////
