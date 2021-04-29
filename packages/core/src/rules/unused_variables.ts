@@ -166,8 +166,13 @@ export class UnusedVariables implements IRule {
   }
 
   private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
-    const found = new References(this.reg).search(id, node, true);
-    return found.length > 1;
+    const isInline = id.getMeta().includes(IdentifierMeta.InlineDefinition);
+    const found = new References(this.reg).search(id, node, true, isInline === false);
+    if (isInline === true) {
+      return found.length > 2; // inline definitions are always written to
+    } else {
+      return found.length > 1;
+    }
   }
 
   private findStatement(v: TypedIdentifier, obj: ABAPObject): StatementNode | undefined {

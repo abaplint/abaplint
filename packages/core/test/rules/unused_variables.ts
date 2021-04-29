@@ -330,7 +330,7 @@ WRITE bar.`);
     DATA(language) = COND #( WHEN rb_langa = abap_true THEN '%' ELSE 'a' ).
     WRITE language.`;
     const issues = await runSingle(abap);
-    expect(issues.length).to.equal(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("EXPORT", async () => {
@@ -775,6 +775,40 @@ ENDCLASS.`;
     MODE lv_mode
     UPDATE 'S'
     MESSAGES INTO lt_messages.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Report inline, 1", async () => {
+    const abap = `
+    FORM moo.
+      DATA(lv_subrc) = sy-subrc.
+    ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Report inline, 2", async () => {
+    const abap = `
+    DATA(lv_subrc) = sy-subrc.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Report inline, 1 ok", async () => {
+    const abap = `
+    FORM moo.
+      DATA(lv_subrc1) = sy-subrc.
+      WRITE lv_subrc1.
+    ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Report inline, ok 2", async () => {
+    const abap = `
+    DATA(lv_subrc2) = sy-subrc.
+    WRITE lv_subrc2.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });
