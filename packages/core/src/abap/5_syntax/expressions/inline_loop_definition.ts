@@ -5,6 +5,7 @@ import {Source} from "./source";
 import {TableType, UnknownType, VoidType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {ReferenceType} from "../_reference";
 
 export class InlineLoopDefinition {
   public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string): void {
@@ -32,6 +33,7 @@ export class InlineLoopDefinition {
         throw new Error("InlineLoopDefinition, not a table type");
       }
       const identifier = new TypedIdentifier(target.getFirstToken(), filename, rowType, [IdentifierMeta.InlineDefinition]);
+      scope.addReference(target.getFirstToken(), identifier, ReferenceType.DataWriteReference, filename);
       scope.addIdentifier(identifier);
     }
 

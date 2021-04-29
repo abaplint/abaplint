@@ -825,4 +825,18 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("REDUCE", async () => {
+    const abap = `
+  FORM bar.
+    TYPES: BEGIN OF ty_record,
+        value TYPE i,
+      END OF ty_record.
+    DATA records TYPE STANDARD TABLE OF ty_record WITH EMPTY KEY.
+    DATA(total) = REDUCE i( INIT sum = 0 FOR record IN records NEXT sum = sum + record-value ).
+    WRITE total.
+  ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
