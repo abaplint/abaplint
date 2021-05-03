@@ -91,18 +91,19 @@ export class Attributes implements IAttributes {
 
   // todo, optimize
   public findByName(name: string): ClassAttribute | ClassConstant | undefined {
+    const upper = name.toUpperCase();
     for (const a of this.getStatic()) {
-      if (a.getName().toUpperCase() === name.toUpperCase()) {
+      if (a.getName().toUpperCase() === upper) {
         return a;
       }
     }
     for (const a of this.getInstance()) {
-      if (a.getName().toUpperCase() === name.toUpperCase()) {
+      if (a.getName().toUpperCase() === upper) {
         return a;
       }
     }
     for (const a of this.getConstants()) {
-      if (a.getName().toUpperCase() === name.toUpperCase()) {
+      if (a.getName().toUpperCase() === upper) {
         return a;
       }
     }
