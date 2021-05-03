@@ -124,6 +124,7 @@ import {SetPFStatus} from "./statements/set_pf_status";
 import {SetTitlebar} from "./statements/set_titlebar";
 import {StatementSyntax} from "./_statement_syntax";
 import {CallTransaction} from "./statements/call_transaction";
+import {SetHandler} from "./statements/set_handler";
 
 // -----------------------------------
 
@@ -139,6 +140,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Perform());
   addToMap(new ClassDeferred());
   addToMap(new Call());
+  addToMap(new SetHandler());
   addToMap(new ClassImplementation());
   addToMap(new MethodImplementation());
   addToMap(new Move());
