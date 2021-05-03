@@ -20,8 +20,9 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
 
     // FORMs can contain a dash in the name
-    const pos = st.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
-    const name = st.findFirstExpression(Expressions.FormName)!.concatTokens();
+    const formName = st.findFirstExpression(Expressions.FormName);
+    const pos = formName!.getFirstToken().getStart();
+    const name = formName!.concatTokens();
     const nameToken = new Tokens.Identifier(pos, name);
 
     super(nameToken, filename);
