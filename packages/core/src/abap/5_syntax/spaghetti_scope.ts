@@ -88,9 +88,10 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
   public findClassDefinition(name: string): IClassDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
+    const upper = name.toUpperCase();
     while (search !== undefined) {
       for (const cdef of search.getData().cdefs) {
-        if (cdef.getName().toUpperCase() === name.toUpperCase()) {
+        if (cdef.getName().toUpperCase() === upper) {
           return cdef;
         }
       }
@@ -103,9 +104,10 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
   public findFormDefinition(name: string): IFormDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
+    const upper = name.toUpperCase();
     while (search !== undefined) {
       for (const form of search.getData().forms) {
-        if (form.getName().toUpperCase() === name.toUpperCase()) {
+        if (form.getName().toUpperCase() === upper) {
           return form;
         }
       }
