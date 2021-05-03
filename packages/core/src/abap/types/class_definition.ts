@@ -30,6 +30,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly friends: string[];
   private readonly superClass: string | undefined;
   private readonly implementing: IImplementing[];
+  private readonly testing: boolean;
+  private readonly abstract: boolean;
   private aliases: IAliases;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -67,6 +69,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
 
     scope.pop(node.getLastToken().getEnd());
+
+    const concat = this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase();
+    this.testing = concat.includes(" FOR TESTING");
+    this.abstract = concat.includes(" ABSTRACT");
   }
 
   public getFriends() {
@@ -110,11 +116,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 
   public isForTesting(): boolean {
-    return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING");
+    return this.testing;
   }
 
   public isAbstract(): boolean {
-    return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT");
+    return this.abstract;
   }
 
 /*
@@ -156,7 +162,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   private parse(filename: string, scope: CurrentScope) {
     for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
-      const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
+      const partial = node.concatTokens().toUpperCase().includes(" PARTIALLY IMPLEMENTED");
       const token = node.findFirstExpression(Expressions.InterfaceName)?.getFirstToken();
       if (token === undefined) {
         throw new Error("ClassDefinition, unable to find interface token");
