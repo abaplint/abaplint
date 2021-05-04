@@ -847,4 +847,12 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("MESSAGE TYPE var", async () => {
+    const abap = `
+    DATA lv_msgty TYPE sy-msgty.
+    MESSAGE ID 'ABC' TYPE lv_msgty NUMBER '123'.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
