@@ -317,7 +317,6 @@ export class BuiltIn {
     components.push({name: "slset", type: new CharacterType(14)});
     components.push({name: "spono", type: new CharacterType(10)});
     components.push({name: "srows", type: new IntegerType()});
-    components.push({name: "srows", type: new IntegerType()});
     components.push({name: "staco", type: new IntegerType()});
     components.push({name: "staro", type: new IntegerType()});
     components.push({name: "stepl", type: new IntegerType()});

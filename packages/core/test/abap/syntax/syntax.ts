@@ -4049,6 +4049,16 @@ WRITE moo-field.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("structure, duplicate field names", () => {
+    const abap = `
+TYPES: BEGIN OF main,
+           foo TYPE i,
+           foo TYPE i,
+         END OF main.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("PROG includes from FUGR", () => {
     const d01abap = `DATA bar TYPE i.`;
     const d01xml = `<?xml version="1.0" encoding="utf-8"?>

@@ -131,9 +131,10 @@ export class Registry implements IRegistry {
   }
 
   public getFileByName(filename: string): IFile | undefined {
+    const upper = filename.toUpperCase();
     for (const o of this.getObjects()) {
       for (const f of o.getFiles()) {
-        if (f.getFilename().toUpperCase() === filename.toUpperCase()) {
+        if (f.getFilename().toUpperCase() === upper) {
           return f;
         }
       }
@@ -232,9 +233,10 @@ export class Registry implements IRegistry {
 
   // assumption: the file is already in the registry
   public findObjectForFile(file: IFile): IObject | undefined {
+    const filename = file.getFilename();
     for (const obj of this.getObjects()) {
       for (const ofile of obj.getFiles()) {
-        if (ofile.getFilename() === file.getFilename()) {
+        if (ofile.getFilename() === filename) {
           return obj;
         }
       }

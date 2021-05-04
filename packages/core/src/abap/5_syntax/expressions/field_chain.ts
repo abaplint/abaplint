@@ -20,9 +20,10 @@ export class FieldChain {
     filename: string,
     refType?: ReferenceType | undefined): AbstractType | undefined {
 
-    if (node.concatTokens().includes("-")) {
+    const concat = node.concatTokens();
+    if (concat.includes("-")) {
       // workaround for names with dashes
-      const found = scope.findVariable(node.concatTokens());
+      const found = scope.findVariable(concat);
       if (found) {
         if (refType) {
           scope.addReference(node.getFirstToken(), found, refType, filename);

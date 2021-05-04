@@ -32,8 +32,9 @@ export class ABAPFileInformation implements IABAPFileInformation {
   }
 
   public getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined {
+    const upper = name.toUpperCase();
     for (const i of this.listInterfaceDefinitions()) {
-      if (i.identifier.getName().toUpperCase() === name.toUpperCase()) {
+      if (i.identifier.getName().toUpperCase() === upper) {
         return i;
       }
     }
@@ -45,8 +46,9 @@ export class ABAPFileInformation implements IABAPFileInformation {
   }
 
   public getClassDefinitionByName(name: string): InfoClassDefinition | undefined {
+    const upper = name.toUpperCase();
     for (const d of this.listClassDefinitions()) {
-      if (d.identifier.getName().toUpperCase() === name.toUpperCase()) {
+      if (d.identifier.getName().toUpperCase() === upper) {
         return d;
       }
     }
@@ -54,8 +56,9 @@ export class ABAPFileInformation implements IABAPFileInformation {
   }
 
   public getClassImplementationByName(name: string): InfoClassImplementation | undefined {
+    const upper = name.toUpperCase();
     for (const impl of this.listClassImplementations()) {
-      if (impl.identifier.getName().toUpperCase() === name.toUpperCase()) {
+      if (impl.identifier.getName().toUpperCase() === upper) {
         return impl;
       }
     }
@@ -147,17 +150,19 @@ export class ABAPFileInformation implements IABAPFileInformation {
       aliases.push(...this.parseAliases(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
+      const containsGlobal = found.findFirstExpression(Expressions.ClassGlobal);
+      const concat = found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase();
 
       this.classes.push({
         name: className.getStr(),
         identifier: new Identifier(className, this.filename),
-        isLocal: found.findFirstExpression(Expressions.ClassGlobal) === undefined,
-        isGlobal: found.findFirstExpression(Expressions.ClassGlobal) !== undefined,
+        isLocal: containsGlobal === undefined,
+        isGlobal: containsGlobal !== undefined,
         methods,
         superClassName,
         interfaces: this.getImplementing(found),
-        isForTesting: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING"),
-        isAbstract: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT"),
+        isForTesting: concat.includes(" FOR TESTING"),
+        isAbstract: concat.includes(" ABSTRACT"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
         aliases,
         attributes,
@@ -186,9 +191,9 @@ export class ABAPFileInformation implements IABAPFileInformation {
         }
       }
 
-      const allAbstract = node.concatTokens().toUpperCase().includes(" ALL METHODS ABSTRACT");
-
-      const partial = node.concatTokens().toUpperCase().includes(" PARTIALLY IMPLEMENTED");
+      const concat = node.concatTokens().toUpperCase();
+      const allAbstract = concat.includes(" ALL METHODS ABSTRACT");
+      const partial = concat.includes(" PARTIALLY IMPLEMENTED");
       const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
       ret.push({
         name,

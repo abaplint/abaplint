@@ -160,9 +160,10 @@ export class CurrentScope {
   }
 
   public isBadiDef(name: string): boolean {
+    const upper = name.toUpperCase();
     for (const enhs of this.reg.getObjectsByType("ENHS")) {
       for (const def of (enhs as EnhancementSpot).listBadiDefinitions()) {
-        if (def.name.toUpperCase() === name.toUpperCase()) {
+        if (def.name.toUpperCase() === upper) {
           return true;
         }
       }

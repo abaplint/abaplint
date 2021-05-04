@@ -6,6 +6,7 @@ export interface IStructureComponent {
 }
 
 export class StructureType extends AbstractType {
+  private readonly indexed: {[index: string]: AbstractType};
   private readonly components: IStructureComponent[];
 
   public constructor(components: IStructureComponent[], name?: string) {
@@ -13,28 +14,24 @@ export class StructureType extends AbstractType {
     if (components.length === 0) {
       throw new Error("Structure does not contain any components");
     }
-// todo, check for duplicate names
+
+    this.indexed = {};
+    for (const c of components) {
+      const upper = c.name.toUpperCase();
+      if (this.indexed[upper] !== undefined) {
+        throw new Error("Structure, duplicate field name " + upper);
+      }
+      this.indexed[upper] = c.type;
+    }
     this.components = components;
   }
 
-  public getComponents(): {name: string, type: AbstractType}[] {
-    const result: {name: string, type: AbstractType}[] = [];
-    for (const c of this.components) {
-      result.push({
-        name: c.name,
-        type: c.type,
-      });
-    }
-    return result;
+  public getComponents(): IStructureComponent[] {
+    return this.components;
   }
 
   public getComponentByName(name: string): AbstractType | undefined {
-    for (const c of this.getComponents()) {
-      if (c.name.toUpperCase() === name.toUpperCase()) {
-        return c.type;
-      }
-    }
-    return undefined;
+    return this.indexed[name.toUpperCase()];
   }
 
   public toText(level: number) {
