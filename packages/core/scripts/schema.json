@@ -2282,7 +2282,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Various checks regarding SELECT performance.\n\nENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE\n\nSELECT *: not reported if using INTO CORRESPONDING FIELDS OF\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/select_performance"
+              "description": "Various checks regarding SELECT performance.\n\nENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE\n\nSELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/select_performance"
             },
             "selection_screen_naming": {
               "anyOf": [
