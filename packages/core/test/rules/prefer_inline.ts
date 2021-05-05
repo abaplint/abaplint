@@ -244,6 +244,16 @@ ENDFORM.`);
 
 ////////////////////
 
+  it.skip("Dont inline, type P, this will change the type?", async () => {
+    const issues = await findIssues(`
+FORM asdf.
+  DATA lv_moo TYPE p DECIMALS 3.
+  lv_moo = 2.
+  WRITE: / lv_moo.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   it.skip("Types should not change when inlining", async () => {
     const issues = await findIssues(`
 DATA foo TYPE c.

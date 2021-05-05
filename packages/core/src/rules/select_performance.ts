@@ -26,7 +26,7 @@ export class SelectPerformance extends ABAPRule {
 
 ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
 
-SELECT *: not reported if using INTO CORRESPONDING FIELDS OF`,
+SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
       tags: [RuleTag.SingleFile, RuleTag.Performance],
     };
   }
@@ -65,7 +65,8 @@ SELECT *: not reported if using INTO CORRESPONDING FIELDS OF`,
         for (const f of s.findAllExpressions(Expressions.SQLFieldList) || []) {
           if (f.countTokens() === 1 && f.getFirstToken().getStr() === "*") {
             const concat = s.concatTokens().toUpperCase();
-            if (concat.includes(" INTO CORRESPONDING FIELDS OF ")) {
+            if (concat.includes(" INTO CORRESPONDING FIELDS OF ")
+                || concat.includes(" APPENDING CORRESPONDING FIELDS OF ")) {
               continue;
             }
             const message = "Avoid use of SELECT *";
