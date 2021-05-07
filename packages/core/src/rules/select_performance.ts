@@ -1,4 +1,3 @@
-import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
@@ -22,8 +21,8 @@ export class SelectPerformance extends ABAPRule {
     return {
       key: "select_performance",
       title: "SELECT performance",
-      shortDescription: `Various checks regarding SELECT performance.
-
+      shortDescription: `Various checks regarding SELECT performance.`,
+      extendedInformation: `
 ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
 
 SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
@@ -62,16 +61,14 @@ SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
       const selects = stru.findAllStatements(Statements.Select);
       selects.push(...stru.findAllStatements(Statements.SelectLoop));
       for (const s of selects) {
-        for (const f of s.findAllExpressions(Expressions.SQLFieldList) || []) {
-          if (f.countTokens() === 1 && f.getFirstToken().getStr() === "*") {
-            const concat = s.concatTokens().toUpperCase();
-            if (concat.includes(" INTO CORRESPONDING FIELDS OF ")
-                || concat.includes(" APPENDING CORRESPONDING FIELDS OF ")) {
-              continue;
-            }
-            const message = "Avoid use of SELECT *";
-            issues.push(Issue.atToken(file, f.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
+        const concat = s.concatTokens().toUpperCase();
+        if (concat.startsWith("SELECT * ")) {
+          if (concat.includes(" INTO CORRESPONDING FIELDS OF ")
+              || concat.includes(" APPENDING CORRESPONDING FIELDS OF ")) {
+            continue;
           }
+          const message = "Avoid use of SELECT *";
+          issues.push(Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
         }
       }
     }

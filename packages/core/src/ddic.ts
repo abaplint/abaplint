@@ -8,6 +8,7 @@ import * as Types from "./abap/types/basic";
 import {ABAPObject} from "./objects/_abap_object";
 import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_information";
 import {ObjectReferenceType, UnknownType, VoidType} from "./abap/types/basic";
+import {View} from "./objects/view";
 
 export class DDIC {
   private readonly reg: IRegistry;
@@ -151,6 +152,21 @@ export class DDIC {
       return foundTABL.parseType(this.reg);
     }
     return this.lookupView(name);
+  }
+
+  public lookupTableOrView2(name: string | undefined): Table | View | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+    const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
+    if (foundTABL) {
+      return foundTABL;
+    }
+    const foundVIEW = this.reg.getObject("VIEW", name) as View | undefined;
+    if (foundVIEW) {
+      return foundVIEW;
+    }
+    return undefined;
   }
 
   public lookupTable(name: string | undefined): AbstractType {

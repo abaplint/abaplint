@@ -24,7 +24,7 @@ export class UseLineExists extends ABAPRule {
       extendedInformation: `
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-line_exists-to-read-table-or-loop-at
 
-`,
+Not reported if the READ TABLE statement contains BINARY SEARCH.`,
       tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.SingleFile],
       badExample: `READ TABLE my_table TRANSPORTING NO FIELDS WITH KEY key = 'A'.
 IF sy-subrc = 0.
@@ -56,8 +56,12 @@ ENDIF.`,
     const statements = file.getStatements();
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
-      if (statement.get() instanceof Statements.ReadTable
-          && statement.concatTokens().toUpperCase().includes("TRANSPORTING NO FIELDS")
+      if (!(statement.get() instanceof Statements.ReadTable)) {
+        continue;
+      }
+      const concat = statement.concatTokens().toUpperCase();
+      if (concat.includes(" TRANSPORTING NO FIELDS") === true
+          && concat.includes(" BINARY SEARCH") === false
           && this.checksSubrc(i, statements) === true
           && this.usesTabix(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, "Use line_exists", this.getMetadata().key, this.conf.severity));

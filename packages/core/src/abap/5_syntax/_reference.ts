@@ -5,20 +5,23 @@ export enum ReferenceType {
   ObjectOrientedReference = "ObjectOrientedReference",
   ObjectOrientedVoidReference = "ObjectOrientedVoidReference",
 
+  TableReference = "TableReference",
+  TableVoidReference = "TableVoidReference",
+
   MethodReference = "MethodReference",
   BuiltinMethodReference = "BuiltinMethodReference",
   MethodImplementationReference = "MethodImplementationReference",
 
   TypeReference = "TypeReference",
   BuiltinTypeReference = "BuiltinTypeReference",
+  VoidType = "VoidType",
+  InferredType = "InferredType",
 
   FormReference = "FormReference",
+//  FormVoidReference = "FormReference",
 
   DataReadReference = "DataReadReference",
   DataWriteReference = "DataWriteReference",
-
-  VoidType = "VoidType",
-  InferredType = "InferredType",
 }
 
 export interface IReferenceExtras {
