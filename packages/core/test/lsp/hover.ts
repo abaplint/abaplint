@@ -916,6 +916,15 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain(`Void`);
   });
 
+  it("hover, voided db table", () => {
+    const abap = `SELECT * FROM bar INTO TABLE @DATA(sdfds).`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 15));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`Void`);
+  });
+
   it("hover, expect one void", () => {
     // note that in this case abaplint does not know if its a class or a ddic object
     const abap = `DATA foo TYPE REF TO cl_sdfsd.`;
