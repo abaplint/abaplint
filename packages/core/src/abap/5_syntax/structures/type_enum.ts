@@ -5,6 +5,7 @@ import {StructureNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {IntegerType, IStructureComponent, StructureType} from "../../types/basic";
 import {TypedIdentifier} from "../../types/_typed_identifier";
+import {ReferenceType} from "../_reference";
 
 export class TypeEnum {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier[] {
@@ -35,6 +36,15 @@ export class TypeEnum {
       const token = expr.getFirstToken();
       // integer is default if BASE TYPE is not specified
       ret.push(new TypedIdentifier(token, filename, new IntegerType()));
+    }
+
+    const baseType = begin.findExpressionAfterToken("TYPE")?.getFirstToken();
+    const baseName = baseType?.getStr();
+    if (baseType && baseName) {
+      const found = scope.findType(baseName);
+      if (found) {
+        scope.addReference(baseType, found, ReferenceType.TypeReference, filename);
+      }
     }
 
     let name = begin.findExpressionAfterToken("STRUCTURE");

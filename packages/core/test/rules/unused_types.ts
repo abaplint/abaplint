@@ -243,4 +243,17 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("ENUM BASE TYPE", async () => {
+    const abap = `
+  TYPES:
+  category_base TYPE n LENGTH 2,
+  BEGIN OF ENUM category BASE TYPE category_base,
+    sdfsd VALUE IS INITIAL,
+    fdsfd VALUE '01',
+  END OF ENUM category.
+DATA foo TYPE category.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
