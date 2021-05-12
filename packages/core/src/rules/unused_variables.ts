@@ -32,7 +32,9 @@ export class UnusedVariables implements IRule {
 
       Experimental, might give false positives. Skips event parameters.
 
-      Note that this currently does not work if the source code uses macros.`,
+      Note that this currently does not work if the source code uses macros.
+
+      Unused variables are not reported if the object contains syntax errors.`,
       tags: [RuleTag.Quickfix],
       pragma: "##NEEDED",
       pseudoComment: "EC NEEDED",
