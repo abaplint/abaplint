@@ -19,6 +19,7 @@ const tests = [
     AND sss <> ' '.`, cnt: 0},
   {abap: `SELECT * FROM tab INTO @DATA(ls_tab) WHERE field = @l_var ORDER BY blah.
     ENDSELECT.`, cnt: 2}, // both endselect and select *
+  {abap:`SELECT SINGLE * FROM sdfds INTO @sdfsd WHERE sdfdsss = @sdfaasd.`, cnt: 1},
 ];
 
 testRule(tests, SelectPerformance);

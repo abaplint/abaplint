@@ -62,14 +62,16 @@ SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
       selects.push(...stru.findAllStatements(Statements.SelectLoop));
       for (const s of selects) {
         const concat = s.concatTokens().toUpperCase();
-        if (concat.startsWith("SELECT * ")) {
-          if (concat.includes(" INTO CORRESPONDING FIELDS OF ")
-              || concat.includes(" APPENDING CORRESPONDING FIELDS OF ")) {
-            continue;
-          }
-          const message = "Avoid use of SELECT *";
-          issues.push(Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
+        if (concat.startsWith("SELECT * ") === false
+            && concat.startsWith("SELECT SINGLE * ") === false ) {
+          continue;
         }
+        if (concat.includes(" INTO CORRESPONDING FIELDS OF ")
+            || concat.includes(" APPENDING CORRESPONDING FIELDS OF ")) {
+          continue;
+        }
+        const message = "Avoid use of SELECT *";
+        issues.push(Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
       }
     }
 
