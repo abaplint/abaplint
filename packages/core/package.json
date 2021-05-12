@@ -62,7 +62,7 @@
         "chai": "^4.3.4",
         "eslint": "^7.26.0",
         "madge": "^4.0.2",
-        "mocha": "^8.3.2",
+        "mocha": "^8.4.0",
         "nyc": "^15.1.0",
         "source-map-support": "^0.5.19",
         "ts-json-schema-generator": "^0.92.0",
