@@ -7,6 +7,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {IRegistry} from "../_iregistry";
+import {TableType} from "../abap/types/basic";
 
 export class SelectAddOrderByConf extends BasicRuleConfig {
 }
@@ -49,9 +50,7 @@ If the target is a sorted/hashed table, no issue is reported`,
       return [];
     }
 
-    // todo
-//    const spaghetti =
-    new SyntaxLogic(this.reg, obj).run().spaghetti;
+    const spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
 
     for (const file of obj.getABAPFiles()) {
       const stru = file.getStructure();
@@ -71,11 +70,22 @@ If the target is a sorted/hashed table, no issue is reported`,
         const list = s.findFirstExpression(Expressions.SQLFieldList);
         if (list?.getChildren().length === 1 && list.getFirstChild()?.get() instanceof Expressions.SQLAggregation) {
           continue;
+        } else if (s.findFirstExpression(Expressions.SQLOrderBy)) {
+          continue;
         }
 
-        if (s.findFirstExpression(Expressions.SQLOrderBy) === undefined) {
-          issues.push(Issue.atStatement(file, s, "Add ORDER BY", this.getMetadata().key, this.conf.severity));
+        const target = s.findFirstExpression(Expressions.SQLIntoTable)?.findFirstExpression(Expressions.Target);
+        if (target) {
+          const start = target.getFirstToken().getStart();
+          const scope = spaghetti.lookupPosition(start, file.getFilename());
+          const type = scope?.findWriteReference(start)?.getType();
+          if (type instanceof TableType
+              && (type?.getAccessType() === "SORTED" || type?.getAccessType() === "HASHED")) {
+            continue;
+          }
         }
+
+        issues.push(Issue.atStatement(file, s, "Add ORDER BY", this.getMetadata().key, this.conf.severity));
       }
     }
 

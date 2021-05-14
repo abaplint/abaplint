@@ -178,6 +178,19 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return undefined;
   }
 
+  public findWriteReference(pos: Position): TypedIdentifier | undefined {
+    for (const r of this.getData().references) {
+      if (r.referenceType === ReferenceType.DataWriteReference
+          && r.position.getStart().equals(pos)) {
+        if (r.resolved instanceof TypedIdentifier) {
+          return r.resolved;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
   // TODO, this method can be deleted? its only used in tests?
   public findScopeForVariable(name: string): IScopeIdentifier | undefined {
     let search: SpaghettiScopeNode | undefined = this;

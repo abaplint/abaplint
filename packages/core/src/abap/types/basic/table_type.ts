@@ -1,9 +1,15 @@
 import {AbstractType} from "./_abstract_type";
 
-export type tableType = undefined | "STANDARD" | "SORTED" | "HASHED" | "INDEX" | "ANY";
+export enum TableAccessType {
+  standard = "STANDARD",
+  sorted = "SORTED",
+  hashed = "HASHED",
+  index = "INDEX",
+  any = "ANY",
+}
 
 export type ITableOptions = {
-  type?: tableType,
+  type?: TableAccessType,
   keyFields?: string[],
   isUnique?: boolean,
   withHeader: boolean,
@@ -11,16 +17,20 @@ export type ITableOptions = {
 
 export class TableType extends AbstractType {
   private readonly rowType: AbstractType;
-  private readonly withHeader: boolean;
+  private readonly options: ITableOptions;
 
   public constructor(rowType: AbstractType, options: ITableOptions, qualifiedName?: string) {
     super(qualifiedName);
     this.rowType = rowType;
-    this.withHeader = options.withHeader;
+    this.options = options;
   }
 
   public isWithHeader(): boolean {
-    return this.withHeader;
+    return this.options.withHeader;
+  }
+
+  public getAccessType(): TableAccessType | undefined {
+    return this.options.type;
   }
 
   public getRowType(): AbstractType {
@@ -35,7 +45,7 @@ export class TableType extends AbstractType {
   public toText(level: number) {
     const type = this.rowType;
 
-    if (this.withHeader === true) {
+    if (this.options.withHeader === true) {
       return "Table with header of " + type.toText(level + 1);
     } else {
       return "Table of " + type.toText(level + 1);

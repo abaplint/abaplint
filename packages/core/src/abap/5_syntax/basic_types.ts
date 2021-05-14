@@ -10,7 +10,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {TableType, VoidType} from "../types/basic";
+import {TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
 
@@ -255,13 +255,13 @@ export class BasicTypes {
       return undefined;
     }
 
-    let type: Types.tableType = undefined;
+    let type: Types.TableAccessType | undefined = undefined;
     if (text.includes(" STANDARD TABLE ")) {
-      type = "STANDARD";
+      type = TableAccessType.standard;
     } else if (text.includes(" SORTED TABLE ")) {
-      type = "SORTED";
+      type = TableAccessType.sorted;
     } else if (text.includes(" HASHED TABLE ")) {
-      type = "HASHED";
+      type = TableAccessType.hashed;
     }
     const options: Types.ITableOptions = {
       withHeader: text.includes("WITH HEADER LINE"),
