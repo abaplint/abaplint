@@ -1,8 +1,11 @@
 import {AbstractType} from "./_abstract_type";
 
-// todo: add keys and table type
-
-export type ITableOptions = {withHeader: boolean};
+export type ITableOptions = {
+  type?: "STANDARD" | "SORTED" | "HASHED" | "INDEX" | "ANY",
+  keyFields?: string[],
+  isUnique?: boolean,
+  withHeader: boolean,
+};
 
 export class TableType extends AbstractType {
   private readonly rowType: AbstractType;
