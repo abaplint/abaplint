@@ -2,14 +2,16 @@ import {AbstractType} from "./_abstract_type";
 
 // todo: add keys and table type
 
+export type ITableOptions = {withHeader: boolean};
+
 export class TableType extends AbstractType {
   private readonly rowType: AbstractType;
   private readonly withHeader: boolean;
 
-  public constructor(rowType: AbstractType, withHeader: boolean, qualifiedName?: string) {
+  public constructor(rowType: AbstractType, options: ITableOptions, qualifiedName?: string) {
     super(qualifiedName);
     this.rowType = rowType;
-    this.withHeader = withHeader;
+    this.withHeader = options.withHeader;
   }
 
   public isWithHeader(): boolean {

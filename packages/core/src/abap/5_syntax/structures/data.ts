@@ -44,7 +44,7 @@ export class Data {
         }
         if (found instanceof Basic.VoidType) {
           if (table === true) {
-            return new TypedIdentifier(name, filename, new Basic.TableType(found, true));
+            return new TypedIdentifier(name, filename, new Basic.TableType(found, {withHeader: true}));
           } else {
             return new TypedIdentifier(name, filename, found);
           }
@@ -62,7 +62,7 @@ export class Data {
     }
 
     if (table === true) {
-      return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components), true));
+      return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components), {withHeader: true}));
     } else {
       return new TypedIdentifier(name, filename, new Basic.StructureType(components));
     }

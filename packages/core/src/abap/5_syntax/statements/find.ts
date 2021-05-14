@@ -21,9 +21,9 @@ export class Find implements StatementSyntax {
         {name: "LINE", type: new IntegerType()},
         {name: "OFFSET", type: new IntegerType()},
         {name: "LENGTH", type: new IntegerType()},
-        {name: "SUBMATCHES", type: new TableType(new StringType(), false)},
+        {name: "SUBMATCHES", type: new TableType(new StringType(), {withHeader: false})},
       ]);
-      this.inline(rfound, scope, filename, new TableType(type, false));
+      this.inline(rfound, scope, filename, new TableType(type, {withHeader: false}));
     }
 
     const ofound = node.findExpressionAfterToken("OFFSET");

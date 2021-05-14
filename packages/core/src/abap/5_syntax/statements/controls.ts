@@ -36,7 +36,7 @@ export class Controls implements StatementSyntax {
         {name: "LINE_SELECTOR", type: new CharacterType(1)},
         {name: "H_GRID", type: new CharacterType(1)},
         {name: "V_GRID", type: new CharacterType(1)},
-        {name: "COLS", type: new TableType(cols, false)},
+        {name: "COLS", type: new TableType(cols, {withHeader: false})},
         {name: "INVISIBLE", type: new CharacterType(1)},
       ]);
       const id = new TypedIdentifier(token, filename, type);

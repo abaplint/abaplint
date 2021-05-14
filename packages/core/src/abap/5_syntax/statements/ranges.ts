@@ -23,7 +23,7 @@ export class Ranges implements StatementSyntax {
         {name: "low", type: found},
         {name: "high", type: found},
       ]);
-      const type = new TableType(structure, true);
+      const type = new TableType(structure, {withHeader: true});
       const id = new TypedIdentifier(nameToken, filename, type);
       scope.addIdentifier(id);
     }

@@ -10,7 +10,7 @@ import {StatementSyntax} from "../_statement_syntax";
 export class Split implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    const type = node.findTokenSequencePosition("INTO", "TABLE") ? new TableType(new StringType(), false) : new StringType();
+    const type = node.findTokenSequencePosition("INTO", "TABLE") ? new TableType(new StringType(), {withHeader: false}) : new StringType();
 
     for (const target of node.findAllExpressions(Expressions.Target)) {
       const inline = target.findDirectExpression(Expressions.InlineData);

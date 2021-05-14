@@ -38,7 +38,7 @@ export class SelectOption implements StatementSyntax {
         {name: "LOW", type: found},
         {name: "HIGH", type: found},
       ]);
-      scope.addIdentifier(new TypedIdentifier(nameToken, filename, new TableType(stru, true)));
+      scope.addIdentifier(new TypedIdentifier(nameToken, filename, new TableType(stru, {withHeader: true})));
       return;
     }
 

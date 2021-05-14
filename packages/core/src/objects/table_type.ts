@@ -42,16 +42,16 @@ export class TableType extends AbstractObject {
     if (this.parsedXML === undefined || this.parsedXML === {}) {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
     } else if (this.parsedXML.rowkind === "S") {
-      type = new Types.TableType(ddic.lookupTableOrView(this.parsedXML.rowtype), false, this.getName());
+      type = new Types.TableType(ddic.lookupTableOrView(this.parsedXML.rowtype), {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "E") {
-      type = new Types.TableType(ddic.lookupDataElement(this.parsedXML.rowtype), false, this.getName());
+      type = new Types.TableType(ddic.lookupDataElement(this.parsedXML.rowtype), {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "L") {
-      type = new Types.TableType(ddic.lookupTableType(this.parsedXML.rowtype), false, this.getName());
+      type = new Types.TableType(ddic.lookupTableType(this.parsedXML.rowtype), {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
-      type = new Types.TableType(ddic.lookupObject(this.parsedXML.rowtype), false, this.getName());
+      type = new Types.TableType(ddic.lookupObject(this.parsedXML.rowtype), {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "") {
       const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName(), false);
-      type = new Types.TableType(row, false, this.getName());
+      type = new Types.TableType(row, {withHeader: false}, this.getName());
     } else {
       type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName(), this.getName());
     }
