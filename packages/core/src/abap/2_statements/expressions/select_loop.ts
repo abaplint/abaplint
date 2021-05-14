@@ -1,4 +1,4 @@
-import {seq, per, opt, alt, ver, star, Expression, optPrio} from "../combi";
+import {seq, per, opt, alt, ver, star, Expression, optPrio, altPrio} from "../combi";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLIntoTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,6 +8,7 @@ import {SQLPath} from "./sql_path";
 import {SQLAsName} from "./sql_as_name";
 import {SQLCase} from "./sql_case";
 import {SQLIntoStructure} from "./sql_into_structure";
+import {SQLFieldList} from "./sql_field_list";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -43,10 +44,10 @@ export class SelectLoop extends Expression {
                      SQLForAllEntries,
                      alt(tab, SQLIntoStructure));
 
+    const strict = seq(SQLFrom, "FIELDS", SQLFieldList, where, SQLIntoStructure, up);
+
     const ret = seq("SELECT",
-                    optPrio("DISTINCT"),
-                    fields,
-                    perm);
+                    altPrio(seq(optPrio("DISTINCT"), fields, perm), strict));
 
     return ret;
   }

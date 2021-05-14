@@ -73,6 +73,7 @@ const tests = [
 
   `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050' ).`,
   `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050').`,
+  `SELECT FROM zsdfsd FIELDS @abap_true WHERE name = @sdf INTO @DATA(dddsf) UP TO 1 ROWS.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
