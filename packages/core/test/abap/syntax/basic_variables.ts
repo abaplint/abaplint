@@ -794,13 +794,40 @@ ENDCLASS.`;
     expect((type as Basic.VoidType).getVoided()?.toLowerCase()).to.equal("cl_abap_zip");
   });
 
-  it("Packed", () => {
+  it("Packed, 1", () => {
     const abap = `
     DATA foo TYPE p.`;
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.PackedType);
+    const p = type as Basic.PackedType;
+    expect(p.getLength()).to.equal(1);
+    expect(p.getDecimals()).to.equal(0);
+  });
+
+  it("Packed, 2", () => {
+    const abap = `
+    DATA foo TYPE p LENGTH 5.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+    const p = type as Basic.PackedType;
+    expect(p.getLength()).to.equal(5);
+    expect(p.getDecimals()).to.equal(0);
+  });
+
+  it("Packed, 3", () => {
+    const abap = `
+    DATA foo TYPE p LENGTH 5 DECIMALS 2.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+    const p = type as Basic.PackedType;
+    expect(p.getLength()).to.equal(5);
+    expect(p.getDecimals()).to.equal(2);
   });
 
   it("TYPE sy-index", () => {
