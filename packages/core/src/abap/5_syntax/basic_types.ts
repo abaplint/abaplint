@@ -249,45 +249,15 @@ export class BasicTypes {
     return undefined;
   }
 
-  public parseType(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
+  public parseTable(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
-
-    let text = node.findFirstExpression(Expressions.Type)?.concatTokens().toUpperCase();
+    const text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
     if (text === undefined) {
-      text = node.findFirstExpression(Expressions.TypeParam)?.concatTokens().toUpperCase();
-    }
-    if (text === undefined) {
-      text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
-    }
-    if (text === undefined) {
-      text = node.findFirstExpression(Expressions.FormParamType)?.concatTokens().toUpperCase();
-    }
-    if (text === undefined) {
-      text = "TYPE";
+      return undefined;
     }
 
     let found: AbstractType | undefined = undefined;
-    if (text.startsWith("LIKE LINE OF ")) {
-      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
-
-      if (type === undefined) {
-        return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
-      } else if (type instanceof Types.TableType) {
-        return type.getRowType();
-      } else if (type instanceof Types.VoidType) {
-        return type;
-      } else {
-        return new Types.UnknownType("Type error, not a table type " + name);
-      }
-    } else if (text.startsWith("LIKE REF TO ")) {
-      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
-      if (type === undefined) {
-        return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
-      }
-      return new Types.DataReference(type);
-    } else if (text.startsWith("TYPE TABLE OF REF TO ")
+    if (text.startsWith("TYPE TABLE OF REF TO ")
         || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
         || text.startsWith("TYPE SORTED TABLE OF REF TO ")
         || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
@@ -330,6 +300,59 @@ export class BasicTypes {
         {name: "high", type: found},
       ], name);
       return new Types.TableType(structure, {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")});
+    }
+
+    // fallback to old style syntax, OCCURS etc
+    return this.parseType(node, name);
+  }
+
+  public parseType(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
+    const typename = node.findFirstExpression(Expressions.TypeName);
+
+    let text = node.findFirstExpression(Expressions.Type)?.concatTokens().toUpperCase();
+    if (text === undefined) {
+      text = node.findFirstExpression(Expressions.TypeParam)?.concatTokens().toUpperCase();
+    }
+    if (text === undefined) {
+      text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
+      if (text?.startsWith("TYPE") === false && text?.startsWith("LIKE") === false) {
+        text = "TYPE";
+      }
+    }
+    if (text === undefined) {
+      text = node.findFirstExpression(Expressions.FormParamType)?.concatTokens().toUpperCase();
+    }
+    if (text === undefined) {
+      text = "TYPE";
+    }
+
+    let found: AbstractType | undefined = undefined;
+    if (text.startsWith("LIKE LINE OF ")) {
+      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
+
+      if (type === undefined) {
+        return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
+      } else if (type instanceof Types.TableType) {
+        return type.getRowType();
+      } else if (type instanceof Types.VoidType) {
+        return type;
+      } else {
+        return new Types.UnknownType("Type error, not a table type " + name);
+      }
+    } else if (text.startsWith("LIKE REF TO ")) {
+      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
+      if (type === undefined) {
+        return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
+      }
+      return new Types.DataReference(type);
+    } else if (text === "TYPE STANDARD TABLE"
+        || text === "TYPE SORTED TABLE"
+        || text === "TYPE HASHED TABLE"
+        || text === "TYPE INDEX TABLE"
+        || text === "TYPE ANY TABLE") {
+      return new Types.TableType(new Types.AnyType(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")});
     } else if (text.startsWith("LIKE ")) {
       let sub = node.findFirstExpression(Expressions.Type);
       if (sub === undefined) {
@@ -338,10 +361,13 @@ export class BasicTypes {
       if (sub === undefined) {
         sub = node.findFirstExpression(Expressions.TypeParam);
       }
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.FieldChain);
+      }
       found = this.resolveLikeName(sub);
 
-      if (found && node.findDirectTokenByText("OCCURS")) {
-        found = new Types.TableType(found, {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")}, name);
+      if (found && text.includes(" OCCURS ")) {
+        found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
@@ -388,7 +414,7 @@ export class BasicTypes {
         }
 
         found = new Types.CharacterType(length, name); // fallback
-        if (node.findDirectTokenByText("OCCURS")) {
+        if (concat.includes(" OCCURS ")) {
           found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, name);
         }
       }

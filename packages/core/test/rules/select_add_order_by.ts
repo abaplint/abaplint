@@ -18,7 +18,7 @@ const tests = [
   /*
   {abap: `
   DATA itab TYPE HASHED TABLE OF string.
-  SELECT text FROM t100 INTO TABLE @itab.`, cnt: 0},
+  SELECT text FROM t100 INTO TABLE @itab.`, cnt: 0, only: true},
   {abap: `
   DATA itab2 TYPE SORTED TABLE OF string.
   SELECT text FROM t100 INTO TABLE @itab2.`, cnt: 0},
