@@ -133,7 +133,7 @@ export class BasicTypes {
     return type;
   }
 
-  public resolveTypeName(typeName: ExpressionNode | undefined, length?: number): AbstractType | undefined {
+  public resolveTypeName(typeName: ExpressionNode | undefined, length?: number, decimals?: number): AbstractType | undefined {
     if (typeName === undefined) {
       return undefined;
     }
@@ -177,7 +177,13 @@ export class BasicTypes {
       case "F":
         return new Types.FloatType();
       case "P":
-        return new Types.PackedType(1, 1); // todo, length and decimals
+        if (length && decimals) {
+          return new Types.PackedType(length, decimals);
+        } else if (length) {
+          return new Types.PackedType(length, 0);
+        } else {
+          return new Types.PackedType(1, 0);
+        }
       case "C":
         if (length) {
           return new Types.CharacterType(length);
@@ -399,7 +405,7 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE REF TO ")) {
       found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {
-      found = this.resolveTypeName(typename, this.findLength(node));
+      found = this.resolveTypeName(typename, this.findLength(node), this.findDecimals(node));
 
       const concat = node.concatTokens().toUpperCase();
       if (found && concat.includes(" OCCURS ")) {
@@ -636,6 +642,14 @@ export class BasicTypes {
     }
 
     throw new Error("findValue, unexpected");
+  }
+
+  private findDecimals(node: StatementNode | ExpressionNode): number | undefined {
+    const dec = node.findDirectExpression(Expressions.Decimals)?.findDirectExpression(Expressions.Integer)?.concatTokens();
+    if (dec) {
+      return parseInt(dec, 10);
+    }
+    return undefined;
   }
 
   private findLength(node: StatementNode | ExpressionNode): number | undefined {
