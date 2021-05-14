@@ -1,7 +1,9 @@
 import {AbstractType} from "./_abstract_type";
 
+export type tableType = undefined | "STANDARD" | "SORTED" | "HASHED" | "INDEX" | "ANY";
+
 export type ITableOptions = {
-  type?: "STANDARD" | "SORTED" | "HASHED" | "INDEX" | "ANY",
+  type?: tableType,
   keyFields?: string[],
   isUnique?: boolean,
   withHeader: boolean,

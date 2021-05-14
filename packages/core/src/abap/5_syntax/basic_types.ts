@@ -255,6 +255,19 @@ export class BasicTypes {
       return undefined;
     }
 
+    let type: Types.tableType = undefined;
+    if (text.includes(" STANDARD TABLE ")) {
+      type = "STANDARD";
+    } else if (text.includes(" SORTED TABLE ")) {
+      type = "SORTED";
+    } else if (text.includes(" HASHED TABLE ")) {
+      type = "HASHED";
+    }
+    const options: Types.ITableOptions = {
+      withHeader: text.includes("WITH HEADER LINE"),
+      type: type,
+    };
+
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("TYPE TABLE OF REF TO ")
         || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
@@ -262,7 +275,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
       found = this.resolveTypeRef(typename);
       if (found) {
-        return new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
+        return new Types.TableType(found, options, name);
       }
     } else if (text.startsWith("TYPE TABLE OF ")
         || text.startsWith("TYPE STANDARD TABLE OF ")
@@ -270,7 +283,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF ")) {
       found = this.resolveTypeName(typename);
       if (found) {
-        return new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
+        return new Types.TableType(found, options, name);
       }
     } else if (text.startsWith("LIKE TABLE OF ")
         || text.startsWith("LIKE STANDARD TABLE OF ")
@@ -278,14 +291,14 @@ export class BasicTypes {
         || text.startsWith("LIKE HASHED TABLE OF ")) {
       found = this.resolveLikeName(node);
       if (found) {
-        return new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
+        return new Types.TableType(found, options, name);
       }
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), {withHeader: text.includes("WITH HEADER LINE")});
+      return new Types.TableType(new Types.AnyType(), options);
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
@@ -298,7 +311,7 @@ export class BasicTypes {
         {name: "low", type: found},
         {name: "high", type: found},
       ], name);
-      return new Types.TableType(structure, {withHeader: text.includes("WITH HEADER LINE")});
+      return new Types.TableType(structure, options);
     }
 
     // fallback to old style syntax, OCCURS etc
