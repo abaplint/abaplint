@@ -7,7 +7,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {IRegistry} from "../_iregistry";
-import {TableType} from "../abap/types/basic";
+import {TableAccessType, TableType} from "../abap/types/basic";
 
 export class SelectAddOrderByConf extends BasicRuleConfig {
 }
@@ -80,7 +80,7 @@ If the target is a sorted/hashed table, no issue is reported`,
           const scope = spaghetti.lookupPosition(start, file.getFilename());
           const type = scope?.findWriteReference(start)?.getType();
           if (type instanceof TableType
-              && (type?.getAccessType() === "SORTED" || type?.getAccessType() === "HASHED")) {
+              && (type?.getAccessType() === TableAccessType.sorted || type?.getAccessType() === TableAccessType.hashed)) {
             continue;
           }
         }
