@@ -3302,14 +3302,14 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
-  it("MESSAGE WITH TEXT, on 702", () => {
+  it("LOOP at list with header line", () => {
     const abap = `
   DATA list(250) OCCURS 0 WITH HEADER LINE.
   LOOP AT list.
     WRITE / list.
   ENDLOOP.`;
     const issues = runProgram(abap, [], Version.v702);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
   it("TYPES with OCCURS", () => {

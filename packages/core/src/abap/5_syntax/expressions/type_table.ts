@@ -27,7 +27,7 @@ export class TypeTable {
       }
     }
 
-    const type = new BasicTypes(filename, scope).parseType(node, qualifiedName);
+    const type = new BasicTypes(filename, scope).parseTable(node, qualifiedName);
     if (type === undefined) {
       return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }

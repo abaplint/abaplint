@@ -1,27 +1,32 @@
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
-import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPFile} from "../abap/abap_file";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {IObject} from "../objects/_iobject";
+import {ABAPObject} from "../objects/_abap_object";
+import {IRegistry} from "../_iregistry";
+import {TableAccessType, TableType} from "../abap/types/basic";
 
 export class SelectAddOrderByConf extends BasicRuleConfig {
 }
 
-export class SelectAddOrderBy extends ABAPRule {
-
+export class SelectAddOrderBy implements IRule {
+  private reg: IRegistry;
   private conf = new SelectAddOrderByConf();
 
   public getMetadata(): IRuleMetadata {
     return {
       key: "select_add_order_by",
       title: "SELECT add ORDER BY",
-      shortDescription: `SELECTs add ORDER BY clause
-
+      shortDescription: `SELECTs add ORDER BY clause`,
+      extendedInformation: `
 This will make sure that the SELECT statement returns results in the same sequence on different databases
 
-add ORDER BY PRIMARY KEY if in doubt`,
+add ORDER BY PRIMARY KEY if in doubt
+
+If the target is a sorted/hashed table, no issue is reported`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -30,33 +35,56 @@ add ORDER BY PRIMARY KEY if in doubt`,
     return this.conf;
   }
 
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
   public setConfig(conf: SelectAddOrderByConf): void {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public run(obj: IObject): Issue[] {
     const issues: Issue[] = [];
-
-    const stru = file.getStructure();
-    if (stru === undefined) {
-      return issues;
+    if (!(obj instanceof ABAPObject) || obj.getType() === "INTF") {
+      return [];
     }
 
-    const selects = stru.findAllStatements(Statements.Select);
-    selects.push(...stru.findAllStatements(Statements.SelectLoop));
-    for (const s of selects) {
-      const c = s.concatTokens();
-      if (c.startsWith("SELECT SINGLE ")) {
-        continue;
+    const spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
+
+    for (const file of obj.getABAPFiles()) {
+      const stru = file.getStructure();
+      if (stru === undefined) {
+        return issues;
       }
 
-      // skip COUNT(*)
-      const list = s.findFirstExpression(Expressions.SQLFieldList);
-      if (list?.getChildren().length === 1 && list.getFirstChild()?.get() instanceof Expressions.SQLAggregation) {
-        continue;
-      }
+      const selects = stru.findAllStatements(Statements.Select);
+      selects.push(...stru.findAllStatements(Statements.SelectLoop));
+      for (const s of selects) {
+        const c = s.concatTokens();
+        if (c.startsWith("SELECT SINGLE ")) {
+          continue;
+        }
 
-      if (s.findFirstExpression(Expressions.SQLOrderBy) === undefined) {
+        // skip COUNT(*)
+        const list = s.findFirstExpression(Expressions.SQLFieldList);
+        if (list?.getChildren().length === 1 && list.getFirstChild()?.get() instanceof Expressions.SQLAggregation) {
+          continue;
+        } else if (s.findFirstExpression(Expressions.SQLOrderBy)) {
+          continue;
+        }
+
+        const target = s.findFirstExpression(Expressions.SQLIntoTable)?.findFirstExpression(Expressions.Target);
+        if (target) {
+          const start = target.getFirstToken().getStart();
+          const scope = spaghetti.lookupPosition(start, file.getFilename());
+          const type = scope?.findWriteReference(start)?.getType();
+          if (type instanceof TableType
+              && (type?.getAccessType() === TableAccessType.sorted || type?.getAccessType() === TableAccessType.hashed)) {
+            continue;
+          }
+        }
+
         issues.push(Issue.atStatement(file, s, "Add ORDER BY", this.getMetadata().key, this.conf.severity));
       }
     }

@@ -103,7 +103,7 @@ export class Procedural {
         found = ddic.lookup(param.type);
       }
       if (param.direction === FunctionModuleParameterDirection.tables) {
-        found = new TableType(found, true);
+        found = new TableType(found, {withHeader: true});
       }
       const type = new TypedIdentifier(nameToken, filename, found);
       this.scope.addNamedIdentifier(param.name, type);

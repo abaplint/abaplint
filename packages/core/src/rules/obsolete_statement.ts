@@ -191,7 +191,7 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         }
 
         for (const dataDef of staNode.findAllExpressions(Expressions.DataDefinition)) {
-          const token = dataDef.findDirectTokenByText("OCCURS");
+          const token = dataDef.findDirectExpression(Expressions.TypeTable)?.findDirectTokenByText("OCCURS");
           if (token) {
             const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key, this.conf.severity);
             issues.push(issue);

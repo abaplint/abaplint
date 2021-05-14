@@ -50,6 +50,7 @@ export interface ISpaghettiScopeNode {
   findType(name: string): TypedIdentifier | undefined;
   findVariable(name: string): TypedIdentifier | undefined;
   findScopeForVariable(name: string): IScopeIdentifier | undefined;
+  findWriteReference(pos: Position): TypedIdentifier | undefined;
 }
 
 export interface ISpaghettiScope {

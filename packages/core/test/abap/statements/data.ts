@@ -83,10 +83,12 @@ const tests = [
   "DATA /sdfs/sdfsd-sdfsd TYPE string.",
   "data mepo1313-evers like ekpo-evers.",
   "DATA lt_tab OCCURS 10.",
+  "DATA lt_tab OCCURS 10 WITH HEADER LINE.",
   "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
   "DATA foo TYPE c %_PREDEFINED.",
   "DATA lt_attr_href LIKE SORTED TABLE OF ls_attr_href WITH NON-UNIQUE KEY val.",
   "data bar like range of foo.",
+  "DATA list(250) OCCURS 0 WITH HEADER LINE.",
 ];
 
 statementType(tests, "DATA", Statements.Data);

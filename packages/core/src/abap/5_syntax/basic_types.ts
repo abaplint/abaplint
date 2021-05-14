@@ -10,7 +10,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {TableType, VoidType} from "../types/basic";
+import {TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
 
@@ -47,7 +47,6 @@ export class BasicTypes {
     }
 
 // todo: DDIC types
-
     return undefined;
   }
 
@@ -82,7 +81,7 @@ export class BasicTypes {
       }
 
       if (type instanceof TableType && chain.getLastChild()?.get() instanceof Expressions.TableBody) {
-        type = new TableType(type.getRowType(), false);
+        type = new TableType(type.getRowType(), {withHeader: false});
       } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
         type = type.getRowType();
       } else if (type === undefined) {
@@ -249,6 +248,76 @@ export class BasicTypes {
     return undefined;
   }
 
+  public parseTable(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
+    const typename = node.findFirstExpression(Expressions.TypeName);
+    const text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
+    if (text === undefined) {
+      return undefined;
+    }
+
+    let type: Types.TableAccessType | undefined = undefined;
+    if (text.includes(" STANDARD TABLE ")) {
+      type = TableAccessType.standard;
+    } else if (text.includes(" SORTED TABLE ")) {
+      type = TableAccessType.sorted;
+    } else if (text.includes(" HASHED TABLE ")) {
+      type = TableAccessType.hashed;
+    }
+    const options: Types.ITableOptions = {
+      withHeader: text.includes("WITH HEADER LINE"),
+      type: type,
+    };
+
+    let found: AbstractType | undefined = undefined;
+    if (text.startsWith("TYPE TABLE OF REF TO ")
+        || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
+        || text.startsWith("TYPE SORTED TABLE OF REF TO ")
+        || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
+      found = this.resolveTypeRef(typename);
+      if (found) {
+        return new Types.TableType(found, options, name);
+      }
+    } else if (text.startsWith("TYPE TABLE OF ")
+        || text.startsWith("TYPE STANDARD TABLE OF ")
+        || text.startsWith("TYPE SORTED TABLE OF ")
+        || text.startsWith("TYPE HASHED TABLE OF ")) {
+      found = this.resolveTypeName(typename);
+      if (found) {
+        return new Types.TableType(found, options, name);
+      }
+    } else if (text.startsWith("LIKE TABLE OF ")
+        || text.startsWith("LIKE STANDARD TABLE OF ")
+        || text.startsWith("LIKE SORTED TABLE OF ")
+        || text.startsWith("LIKE HASHED TABLE OF ")) {
+      found = this.resolveLikeName(node);
+      if (found) {
+        return new Types.TableType(found, options, name);
+      }
+    } else if (text === "TYPE STANDARD TABLE"
+        || text === "TYPE SORTED TABLE"
+        || text === "TYPE HASHED TABLE"
+        || text === "TYPE INDEX TABLE"
+        || text === "TYPE ANY TABLE") {
+      return new Types.TableType(new Types.AnyType(), options);
+    } else if (text.startsWith("TYPE RANGE OF ")) {
+      const sub = node.findFirstExpression(Expressions.TypeName);
+      found = this.resolveTypeName(sub);
+      if (found === undefined) {
+        return new Types.UnknownType("TYPE RANGE OF, could not resolve type");
+      }
+      const structure = new Types.StructureType([
+        {name: "sign", type: new Types.CharacterType(1)},
+        {name: "option", type: new Types.CharacterType(2)},
+        {name: "low", type: found},
+        {name: "high", type: found},
+      ], name);
+      return new Types.TableType(structure, options);
+    }
+
+    // fallback to old style syntax, OCCURS etc
+    return this.parseType(node, name);
+  }
+
   public parseType(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
 
@@ -258,6 +327,9 @@ export class BasicTypes {
     }
     if (text === undefined) {
       text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
+      if (text?.startsWith("TYPE") === false && text?.startsWith("LIKE") === false) {
+        text = "TYPE";
+      }
     }
     if (text === undefined) {
       text = node.findFirstExpression(Expressions.FormParamType)?.concatTokens().toUpperCase();
@@ -287,49 +359,12 @@ export class BasicTypes {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       }
       return new Types.DataReference(type);
-    } else if (text.startsWith("TYPE TABLE OF REF TO ")
-        || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
-        || text.startsWith("TYPE SORTED TABLE OF REF TO ")
-        || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
-      found = this.resolveTypeRef(typename);
-      if (found) {
-        return new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
-      }
-    } else if (text.startsWith("TYPE TABLE OF ")
-        || text.startsWith("TYPE STANDARD TABLE OF ")
-        || text.startsWith("TYPE SORTED TABLE OF ")
-        || text.startsWith("TYPE HASHED TABLE OF ")) {
-      found = this.resolveTypeName(typename);
-      if (found) {
-        return new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
-      }
-    } else if (text.startsWith("LIKE TABLE OF ")
-        || text.startsWith("LIKE STANDARD TABLE OF ")
-        || text.startsWith("LIKE SORTED TABLE OF ")
-        || text.startsWith("LIKE HASHED TABLE OF ")) {
-      found = this.resolveLikeName(node);
-      if (found) {
-        return new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
-      }
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
-    } else if (text.startsWith("TYPE RANGE OF ")) {
-      const sub = node.findFirstExpression(Expressions.TypeName);
-      found = this.resolveTypeName(sub);
-      if (found === undefined) {
-        return new Types.UnknownType("TYPE RANGE OF, could not resolve type");
-      }
-      const structure = new Types.StructureType([
-        {name: "sign", type: new Types.CharacterType(1)},
-        {name: "option", type: new Types.CharacterType(2)},
-        {name: "low", type: found},
-        {name: "high", type: found},
-      ], name);
-      return new Types.TableType(structure, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
+      return new Types.TableType(new Types.AnyType(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")});
     } else if (text.startsWith("LIKE ")) {
       let sub = node.findFirstExpression(Expressions.Type);
       if (sub === undefined) {
@@ -338,10 +373,13 @@ export class BasicTypes {
       if (sub === undefined) {
         sub = node.findFirstExpression(Expressions.TypeParam);
       }
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.FieldChain);
+      }
       found = this.resolveLikeName(sub);
 
-      if (found && node.findDirectTokenByText("OCCURS")) {
-        found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), name);
+      if (found && text.includes(" OCCURS ")) {
+        found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
@@ -365,14 +403,14 @@ export class BasicTypes {
 
       const concat = node.concatTokens().toUpperCase();
       if (found && concat.includes(" OCCURS ")) {
-        found = new Types.TableType(found, concat.includes("WITH HEADER LINE"), name);
+        found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, name);
       } else if (found && concat.includes("WITH HEADER LINE")) {
         if (found instanceof Types.VoidType) {
-          found = new Types.TableType(found, true);
+          found = new Types.TableType(found, {withHeader: true});
         } else if (!(found instanceof Types.TableType)) {
           throw new Error("WITH HEADER LINE can only be used with internal table");
         } else {
-          found = new Types.TableType(found.getRowType(), true);
+          found = new Types.TableType(found.getRowType(), {withHeader: true});
         }
       }
 
@@ -388,8 +426,8 @@ export class BasicTypes {
         }
 
         found = new Types.CharacterType(length, name); // fallback
-        if (node.findDirectTokenByText("OCCURS")) {
-          found = new Types.TableType(found, concat.includes("WITH HEADER LINE"), name);
+        if (concat.includes(" OCCURS ")) {
+          found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, name);
         }
       }
 
