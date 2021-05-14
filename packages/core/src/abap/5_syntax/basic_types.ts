@@ -47,7 +47,6 @@ export class BasicTypes {
     }
 
 // todo: DDIC types
-
     return undefined;
   }
 
@@ -263,7 +262,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
       found = this.resolveTypeRef(typename);
       if (found) {
-        return new Types.TableType(found, {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")}, name);
+        return new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
       }
     } else if (text.startsWith("TYPE TABLE OF ")
         || text.startsWith("TYPE STANDARD TABLE OF ")
@@ -271,7 +270,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF ")) {
       found = this.resolveTypeName(typename);
       if (found) {
-        return new Types.TableType(found, {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")}, name);
+        return new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
       }
     } else if (text.startsWith("LIKE TABLE OF ")
         || text.startsWith("LIKE STANDARD TABLE OF ")
@@ -279,14 +278,14 @@ export class BasicTypes {
         || text.startsWith("LIKE HASHED TABLE OF ")) {
       found = this.resolveLikeName(node);
       if (found) {
-        return new Types.TableType(found, {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")}, name);
+        return new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
       }
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")});
+      return new Types.TableType(new Types.AnyType(), {withHeader: text.includes("WITH HEADER LINE")});
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
@@ -299,7 +298,7 @@ export class BasicTypes {
         {name: "low", type: found},
         {name: "high", type: found},
       ], name);
-      return new Types.TableType(structure, {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")});
+      return new Types.TableType(structure, {withHeader: text.includes("WITH HEADER LINE")});
     }
 
     // fallback to old style syntax, OCCURS etc
