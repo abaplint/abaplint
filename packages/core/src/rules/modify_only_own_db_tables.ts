@@ -54,7 +54,7 @@ export class ModifyOnlyOwnDBTables extends ABAPRule {
           continue;
         }
 
-        if (s.get() instanceof Expressions.Dynamic) {
+        if (databaseTable.getFirstChild()?.get() instanceof Expressions.Dynamic) {
           if (this.getConfig().reportDynamic === true) {
             output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
           }
