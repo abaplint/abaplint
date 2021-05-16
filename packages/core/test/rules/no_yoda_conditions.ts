@@ -1,4 +1,4 @@
-import {NoYodaConditions} from "../../src/rules";
+import {NoYodaConditions, NoYodaConditionsConf} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -14,6 +14,20 @@ const tests = [
   {abap: "IF iv_title CN ' _0'. ENDIF.", cnt: 0},
   {abap: "IF 'sdf' CS '*' && 'sdf'. ENDIF.", cnt: 0},
   {abap: "IF 'sdf' CS method( ). ENDIF.", cnt: 0},
+  {abap: "IF 1 = 2.", cnt: 0},
 ];
 
 testRule(tests, NoYodaConditions);
+
+const onlyConstants = new NoYodaConditionsConf();
+onlyConstants.onlyConstants = true;
+
+const tests2 = [
+  {abap: "IF a = method( ). ENDIF.", cnt: 0},
+  {abap: "IF 0 <> SY-SUBRC. endif.", cnt: 1},
+  {abap: "IF var = cl_test=>meth( ). ENDIF.", cnt: 0},
+  {abap: "IF var = var2 + 1. ENDIF.", cnt: 0},
+  {abap: "IF 1 = 2. ENDIF.", cnt: 0},
+];
+
+testRule(tests2, NoYodaConditions, onlyConstants);
