@@ -32,7 +32,7 @@ export interface IRegistry {
   /** Get number of objects in the registry, default is skipping dependencies */
   getObjectCount(skipDependencies?: boolean): number;
   getFirstObject(): IObject | undefined;
-  getObject(type: string | undefined, name: string): IObject | undefined;
+  getObject(type: string | undefined, name: string | undefined): IObject | undefined;
 
   // file operations
   findObjectForFile(file: IFile): IObject | undefined;

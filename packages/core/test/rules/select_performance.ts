@@ -41,7 +41,7 @@ async function findIssues(files: IFile[]): Promise<readonly Issue[]> {
 
 describe("Rule: select_performance", () => {
 
-  it.skip("Check number of columns", async () => {
+  it("Check number of columns", async () => {
 
     const ztab = `
     <?xml version="1.0" encoding="utf-8"?>
@@ -99,7 +99,6 @@ describe("Rule: select_performance", () => {
     const file = new MemoryFile("zfoo.prog.abap", abap);
 
     const issues = await findIssues([tabl, file]);
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 
