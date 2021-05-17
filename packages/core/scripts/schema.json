@@ -4296,7 +4296,7 @@
           "description": "Problem severity"
         },
         "starOkayIfFewColumns": {
-          "description": "SELECT * is considered okay if the table is less than X columns, the table must be known to the linter",
+          "description": "\"SELECT\" * is considered okay if the table is less than X columns, the table must be known to the linter",
           "type": "number"
         }
       },
