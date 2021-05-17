@@ -7,6 +7,8 @@ import {ABAPFile} from "../abap/abap_file";
 import {ExpressionNode} from "../abap/nodes";
 
 export class NoYodaConditionsConf extends BasicRuleConfig {
+  /** Only report issues where the left side is a constant */
+  public onlyConstants: boolean = false;
 }
 
 export class NoYodaConditions extends ABAPRule {
@@ -56,6 +58,16 @@ ENDIF.`,
 
       const sources = c.findDirectExpressions(Expressions.Source);
       if (sources.length !== 2) {
+        continue;
+      }
+
+      if (this.conf.onlyConstants === true) {
+        if (this.isConstant(sources[0]) === true && this.isConstant(sources[1]) === false) {
+          const start = sources[0].getFirstToken().getStart();
+          const end = sources[1].getLastToken().getEnd();
+          const issue = Issue.atRange(file, start, end, "No Yoda conditions", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
         continue;
       }
 

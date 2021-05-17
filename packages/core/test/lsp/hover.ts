@@ -952,4 +952,14 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("static");
   });
 
+  it("Hover SELECT table", () => {
+    const abap = `SELECT SINGLE * FROM ztab INTO @DATA(sdfs).`;
+    const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file, tabl]).parse();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 22));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("TableReference");
+  });
+
 });

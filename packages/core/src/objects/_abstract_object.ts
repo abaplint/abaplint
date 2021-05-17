@@ -79,7 +79,7 @@ export abstract class AbstractObject implements IObject {
     if (file === undefined) {
       return undefined;
     }
-    return new Identifier(new IdentifierToken(new Position(0, 0), this.getName()), file.getFilename());
+    return new Identifier(new IdentifierToken(new Position(1, 1), this.getName()), file.getFilename());
   }
 
   public getXMLFile() {

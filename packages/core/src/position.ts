@@ -1,3 +1,4 @@
+// first position is (1,1)
 export class Position {
   private readonly row: number;
   private readonly col: number;
