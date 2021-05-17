@@ -22,8 +22,7 @@ export class SelectPerformance extends ABAPRule {
       key: "select_performance",
       title: "SELECT performance",
       shortDescription: `Various checks regarding SELECT performance.`,
-      extendedInformation: `
-ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
+      extendedInformation: `ENDSELECT: not reported when the corresponding SELECT has PACKAGE SIZE
 
 SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
       tags: [RuleTag.SingleFile, RuleTag.Performance],
