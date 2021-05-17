@@ -1,5 +1,10 @@
+import {MemoryFile} from "../../src/files/memory_file";
+import {IFile} from "../../src/files/_ifile";
+import {Issue} from "../../src/issue";
+import {Registry} from "../../src/registry";
 import {SelectPerformance} from "../../src/rules";
 import {testRule} from "./_utils";
+import {expect} from "chai";
 
 const tests = [
 
@@ -23,3 +28,79 @@ const tests = [
 ];
 
 testRule(tests, SelectPerformance);
+
+
+async function findIssues(files: IFile[]): Promise<readonly Issue[]> {
+  const reg = new Registry().addFiles(files);
+  await reg.parseAsync();
+  let issues = reg.findIssues();
+  const key = new SelectPerformance().getMetadata().key;
+  issues = issues.filter(i => i.getKey() === key);
+  return issues;
+}
+
+describe("Rule: select_performance", () => {
+
+  it.skip("Check number of columns", async () => {
+
+    const ztab = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZTAB</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>TRANSP</TABCLASS>
+        <DDTEXT>transparent table</DDTEXT>
+        <CONTFLAG>A</CONTFLAG>
+       </DD02V>
+       <DD09L>
+        <TABNAME>ZTAB</TABNAME>
+        <AS4LOCAL>A</AS4LOCAL>
+        <TABKAT>0</TABKAT>
+        <TABART>APPL0</TABART>
+        <BUFALLOW>N</BUFALLOW>
+       </DD09L>
+       <DD03P_TABLE>
+        <DD03P>
+         <TABNAME>ZTAB</TABNAME>
+         <FIELDNAME>FIELD1</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0001</POSITION>
+         <KEYFLAG>X</KEYFLAG>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>C</INTTYPE>
+         <INTLEN>000040</INTLEN>
+         <NOTNULL>X</NOTNULL>
+         <DATATYPE>CHAR</DATATYPE>
+         <LENG>000020</LENG>
+         <MASK>  CHAR</MASK>
+        </DD03P>
+        <DD03P>
+         <TABNAME>ZTAB</TABNAME>
+         <FIELDNAME>VALUE1</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0002</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>X</INTTYPE>
+         <INTLEN>000004</INTLEN>
+         <DATATYPE>INT4</DATATYPE>
+         <LENG>000010</LENG>
+         <MASK>  INT4</MASK>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+
+    const abap = `SELECT SINGLE * FROM ztab INTO @DATA(sdfs).`;
+    const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+
+    const issues = await findIssues([tabl, file]);
+    console.dir(issues);
+    expect(issues.length).to.equal(0);
+  });
+
+});

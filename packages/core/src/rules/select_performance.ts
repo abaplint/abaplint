@@ -1,20 +1,23 @@
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
-import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPFile} from "../abap/abap_file";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {IObject} from "../objects/_iobject";
+import {ABAPObject} from "../objects/_abap_object";
+import {IRegistry} from "../_iregistry";
 
 export class SelectPerformanceConf extends BasicRuleConfig {
   /** Detects ENDSELECT */
   public endSelect: boolean = true;
   /** Detects SELECT * */
   public selectStar: boolean = true;
+  /** SELECT * is considered okay if the table is less than X columns, the table must be known to the linter */
+  public starOkayIfFewColumns: number = 10;
 }
 
-export class SelectPerformance extends ABAPRule {
-
+export class SelectPerformance implements IRule {
+  protected reg: IRegistry;
   private conf = new SelectPerformanceConf();
 
   public getMetadata(): IRuleMetadata {
@@ -29,6 +32,11 @@ SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
     };
   }
 
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
   public getConfig() {
     return this.conf;
   }
@@ -37,40 +45,51 @@ SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public run(obj: IObject): readonly Issue[] {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
     const issues: Issue[] = [];
 
-    const stru = file.getStructure();
-    if (stru === undefined) {
-      return issues;
-    }
+    for (const file of obj.getABAPFiles()) {
 
-    if (this.conf.endSelect) {
-      for (const s of stru.findAllStructures(Structures.Select) || []) {
-        const select = s.findDirectStatement(Statements.SelectLoop);
-        if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
-          continue;
-        }
-        const message = "Avoid use of ENDSELECT";
-        issues.push(Issue.atStatement(file, select, message, this.getMetadata().key, this.conf.severity));
+      const stru = file.getStructure();
+      if (stru === undefined) {
+        return issues;
       }
-    }
 
-    if (this.conf.selectStar) {
-      const selects = stru.findAllStatements(Statements.Select);
-      selects.push(...stru.findAllStatements(Statements.SelectLoop));
-      for (const s of selects) {
-        const concat = s.concatTokens().toUpperCase();
-        if (concat.startsWith("SELECT * ") === false
-            && concat.startsWith("SELECT SINGLE * ") === false ) {
-          continue;
+//      new SyntaxLogic(this.reg, obj).run().spaghetti.getTop()
+
+      if (this.conf.endSelect) {
+        for (const s of stru.findAllStructures(Structures.Select) || []) {
+          const select = s.findDirectStatement(Statements.SelectLoop);
+          if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
+            continue;
+          }
+          const message = "Avoid use of ENDSELECT";
+          issues.push(Issue.atStatement(file, select, message, this.getMetadata().key, this.conf.severity));
         }
-        if (concat.includes(" INTO CORRESPONDING FIELDS OF ")
+      }
+
+      if (this.conf.selectStar) {
+        const selects = stru.findAllStatements(Statements.Select);
+        selects.push(...stru.findAllStatements(Statements.SelectLoop));
+        for (const s of selects) {
+          const concat = s.concatTokens().toUpperCase();
+          if (concat.startsWith("SELECT * ") === false
+            && concat.startsWith("SELECT SINGLE * ") === false) {
+            continue;
+          }
+          if (concat.includes(" INTO CORRESPONDING FIELDS OF ")
             || concat.includes(" APPENDING CORRESPONDING FIELDS OF ")) {
-          continue;
+            continue;
+          }
+
+
+          const message = "Avoid use of SELECT *";
+          issues.push(Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
         }
-        const message = "Avoid use of SELECT *";
-        issues.push(Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
       }
     }
 
