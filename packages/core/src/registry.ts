@@ -142,8 +142,8 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public getObject(type: string | undefined, name: string): IObject | undefined {
-    if (type === undefined) {
+  public getObject(type: string | undefined, name: string | undefined): IObject | undefined {
+    if (type === undefined || name === undefined) {
       return undefined;
     }
 
