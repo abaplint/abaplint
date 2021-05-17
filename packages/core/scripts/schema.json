@@ -3635,11 +3635,18 @@
           },
           "type": "array"
         },
+        "onlyConstants": {
+          "description": "Only report issues where the left side is a constant",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "onlyConstants"
+      ],
       "type": "object"
     },
     "ObjectNamingConf": {
