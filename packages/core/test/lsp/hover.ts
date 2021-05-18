@@ -962,4 +962,28 @@ ENDCLASS.`;
     expect(hoverVariable?.value).to.contain("TableReference");
   });
 
+  it("Hover, nested interfaces", () => {
+    const abap = `INTERFACE zif_ajson_reader.
+  METHODS members.
+ENDINTERFACE.
+
+INTERFACE zif_ajson.
+  INTERFACES zif_ajson_reader.
+ENDINTERFACE.
+
+CLASS zcl_ajson DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_ajson.
+ENDCLASS.
+CLASS zcl_ajson IMPLEMENTATION.
+  METHOD zif_ajson_reader~members.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 13, 13));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("ObjectOrientedReference");
+  });
+
 });

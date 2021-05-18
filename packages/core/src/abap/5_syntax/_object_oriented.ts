@@ -105,6 +105,13 @@ export class ObjectOriented {
   public findInterfaces(cd: IClassDefinition): readonly {name: string, partial: boolean}[] {
     const ret = [...cd.getImplementing()];
 
+    for (const r of ret) {
+      const nested = this.scope.findInterfaceDefinition(r.name)?.getImplementing();
+      if (nested) {
+        ret.push(...nested);
+      }
+    }
+
     const sup = cd.getSuperClass();
     if (sup) {
       try {
