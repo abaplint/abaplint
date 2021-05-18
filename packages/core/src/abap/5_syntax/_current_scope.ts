@@ -208,6 +208,7 @@ export class CurrentScope {
 
 ///////////////////////////
 
+  /** Lookup class in local and global scope */
   public findClassDefinition(name: string | undefined): IClassDefinition | undefined {
     if (name === undefined) {
       return undefined;
@@ -226,6 +227,7 @@ export class CurrentScope {
     return undefined;
   }
 
+  /** Lookup interface in local and global scope */
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
     const ilocal = this.current?.findInterfaceDefinition(name);
     if (ilocal) {
