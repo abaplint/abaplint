@@ -3,6 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {GlobalClass} from "../../src/rules/global_class";
 
+
 async function run(file: MemoryFile){
   const reg = new Registry().addFile(file);
   await reg.parseAsync();
