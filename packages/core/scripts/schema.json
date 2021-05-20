@@ -1666,7 +1666,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks related to global classes.\n* global classes must be in own files\n* file names must match class name\n* global classes must be global definitions\nTags: Syntax\nhttps://rules.abaplint.org/global_class"
+              "description": "Checks related to global classes.\n* global classes must be in own files\n* file names must match class name\n* global classes must be global definitions\n* global interfaces must be global definitions\nTags: Syntax\nhttps://rules.abaplint.org/global_class"
             },
             "identical_conditions": {
               "anyOf": [
