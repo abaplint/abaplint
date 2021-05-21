@@ -22,6 +22,7 @@ export class CurrentScope {
   protected current: SpaghettiScopeNode | undefined;
   protected allowHeaderUse: string | undefined;
 
+
   public static buildDefault(reg: IRegistry, obj?: IObject): CurrentScope {
     const s = new CurrentScope(reg);
 
