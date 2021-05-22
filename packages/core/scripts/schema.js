@@ -35,18 +35,25 @@ for(const rule of abaplint.ArtifactsRules.getRules()) {
 }
 rules.sort((a, b) => { return a.key.localeCompare(b.key); });
 
-let output = "import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings} from \"../src/_config\";\n";
+let output = `// AUTO GENERATED FILE!
+import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintAppSettings} from \"../src/_config\";\n`;
 for(const rule of rules) {
   output = output + "import {" + rule.config + "} from \"" + ruledir + findFile(rule.key) + "\";\n";
 }
 
 // todo, take this part automatically from the typescript code
 output = output + `\nexport interface IConfig {
+  /** Global settings */
   global: IGlobalConfig;
   /** External git dependencies used for syntax checks */
   dependencies?: IDependency[];
+  /** Syntax settings */
   syntax: ISyntaxSettings;
+  /** Automatic object rename settings, use with command line paramter "--rename" */
   rename?: IRenameSettings;
+  /** abaplint.app settings, see https://docs.abaplint.app */
+  app?: IAbaplintAppSettings;
+  /** Settings for each rule, see https://rules.abaplint.org */
   rules: {\n`;
 for (const rule of rules) {
   output = output + "    \"" + rule.key + "\"?: " + rule.config + " | boolean" + ",\n";

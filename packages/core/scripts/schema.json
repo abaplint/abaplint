@@ -1154,9 +1154,23 @@
       },
       "type": "object"
     },
+    "IAbaplintAppSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "observations": {
+          "description": "Enable or disable observations, enabled by default",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "IConfig": {
       "additionalProperties": false,
       "properties": {
+        "app": {
+          "$ref": "#/definitions/IAbaplintAppSettings",
+          "description": "abaplint.app settings, see https://docs.abaplint.app"
+        },
         "dependencies": {
           "description": "External git dependencies used for syntax checks",
           "items": {
@@ -1165,13 +1179,16 @@
           "type": "array"
         },
         "global": {
-          "$ref": "#/definitions/IGlobalConfig"
+          "$ref": "#/definitions/IGlobalConfig",
+          "description": "Global settings"
         },
         "rename": {
-          "$ref": "#/definitions/IRenameSettings"
+          "$ref": "#/definitions/IRenameSettings",
+          "description": "Automatic object rename settings, use with command line paramter \"--rename\""
         },
         "rules": {
           "additionalProperties": false,
+          "description": "Settings for each rule, see https://rules.abaplint.org",
           "properties": {
             "7bit_ascii": {
               "anyOf": [
@@ -2596,7 +2613,8 @@
           "type": "object"
         },
         "syntax": {
-          "$ref": "#/definitions/ISyntaxSettings"
+          "$ref": "#/definitions/ISyntaxSettings",
+          "description": "Syntax settings"
         }
       },
       "required": [
