@@ -1,4 +1,5 @@
-import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings} from "../src/_config";
+// AUTO GENERATED FILE!
+import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintAppSettings} from "../src/_config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
 import {AllowedObjectNamingConf} from "../src/rules/allowed_object_naming";
@@ -130,11 +131,17 @@ import {WhitespaceEndConf} from "../src/rules/whitespace_end";
 import {XMLConsistencyConf} from "../src/rules/xml_consistency";
 
 export interface IConfig {
+  /** Global settings */
   global: IGlobalConfig;
   /** External git dependencies used for syntax checks */
   dependencies?: IDependency[];
+  /** Syntax settings */
   syntax: ISyntaxSettings;
+  /** Automatic object rename settings, use with command line paramter "--rename" */
   rename?: IRenameSettings;
+  /** abaplint.app settings, see https://docs.abaplint.app */
+  app?: IAbaplintAppSettings;
+  /** Settings for each rule, see https://rules.abaplint.org */
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,

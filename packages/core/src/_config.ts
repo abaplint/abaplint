@@ -51,12 +51,23 @@ export interface IRenameSettings {
   }[];
 }
 
+export interface IAbaplintAppSettings {
+  /** Enable or disable observations, enabled by default */
+  observations?: boolean,
+}
+
 export interface IConfig {
+  /** Global settings */
   global: IGlobalConfig;
   /** External git dependencies used for syntax checks */
   dependencies?: IDependency[];
+  /** Syntax settings */
   syntax: ISyntaxSettings;
+  /** Automatic object rename settings, use with command line paramter "--rename" */
   rename?: IRenameSettings;
+  /** abaplint.app settings, see https://docs.abaplint.app */
+  app?: IAbaplintAppSettings;
+  /** Settings for each rule, see https://rules.abaplint.org */
   rules: any;
 }
 

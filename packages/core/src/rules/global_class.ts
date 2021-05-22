@@ -19,7 +19,8 @@ export class GlobalClass extends ABAPRule {
       shortDescription: `Checks related to global classes.
 * global classes must be in own files
 * file names must match class name
-* global classes must be global definitions`,
+* global classes must be global definitions
+* global interfaces must be global definitions`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -61,6 +62,12 @@ export class GlobalClass extends ABAPRule {
       }
     }
 
+    for (const intf of file.getInfo().listInterfaceDefinitions()) {
+      if (intf.isLocal && obj instanceof Objects.Interface && file.getFilename().match(/\.intf\.abap$/)) {
+        const issue = Issue.atIdentifier(intf.identifier, "Global interface must be global", this.getMetadata().key, this.conf.severity);
+        output.push(issue);
+      }
+    }
 
     return output;
   }

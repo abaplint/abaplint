@@ -129,7 +129,7 @@ export class UnusedVariables implements IRule {
           && this.isUsed(vars[name], node) === false) {
         const message = "Variable \"" + vars[name].getName() + "\" not used";
 
-        const statement = this.findStatement(vars[name], obj);
+        const statement = this.findStatement(vars[name]);
         if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
           continue;
         } else if (this.suppressedbyPseudo(statement, vars[name], obj)) {
@@ -177,13 +177,21 @@ export class UnusedVariables implements IRule {
     }
   }
 
-  private findStatement(v: TypedIdentifier, obj: ABAPObject): StatementNode | undefined {
-    const file = obj.getABAPFileByName(v.getFilename());
+  private findStatement(v: TypedIdentifier): StatementNode | undefined {
+    const file = this.reg.getFileByName(v.getFilename());
     if (file === undefined) {
       return undefined;
     }
+    const object = this.reg.findObjectForFile(file);
+    if (!(object instanceof ABAPObject)) {
+      return undefined;
+    }
+    const abapfile = object.getABAPFileByName(v.getFilename());
+    if (abapfile === undefined) {
+      return undefined;
+    }
 
-    const statement = EditHelper.findStatement(v.getToken(), file);
+    const statement = EditHelper.findStatement(v.getToken(), abapfile);
     return statement;
   }
 
