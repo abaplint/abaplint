@@ -855,4 +855,16 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Pragma in include", async () => {
+    const abap1 = `REPORT ztest_unused_var.
+    INCLUDE ztest_unused_var_incl.`;
+    const abap2 = `CONSTANTS c_test_incl TYPE i VALUE 1 ##NEEDED.`;
+
+    const issues = await runMulti([
+      new MemoryFile("ztest_unused_var.prog.abap", abap1),
+      new MemoryFile("ztest_unused_var_incl.prog.abap", abap2),
+    ]);
+    expect(issues.length).to.equal(0);
+  });
+
 });
