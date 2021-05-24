@@ -1,4 +1,4 @@
-import {ChainMainlyDeclarations} from "../../src/rules";
+import {ChainMainlyDeclarations, ChainMainlyDeclarationsConf} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -26,3 +26,13 @@ ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, ChainMainlyDeclarations);
+
+const testsSort = [
+  {abap: "SORT: variable", cnt: 1},
+  {abap: "SORT variable", cnt: 0},
+];
+
+const config2 = new ChainMainlyDeclarationsConf();
+config2.sort = false;
+
+testRule(testsSort, ChainMainlyDeclarations, config2);
