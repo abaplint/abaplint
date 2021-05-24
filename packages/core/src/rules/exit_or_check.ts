@@ -39,7 +39,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-re
   }
 
   public runParsed(file: ABAPFile) {
-
     const issues: Issue[] = [];
 
     const stack: StatementNode[] = [];
