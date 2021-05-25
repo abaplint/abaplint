@@ -33,8 +33,8 @@ export class ObjectOriented {
     }
 
     for (const t of idef.getTypeDefinitions().getAll()) {
-      const n = name + "~" + t.getName();
-      this.scope.addTypeNamed(n, t);
+      const n = name + "~" + t.type.getName();
+      this.scope.addTypeNamed(n, t.type);
     }
 
     this.scope.addListPrefix(idef.getAttributes().getConstants(), name + "~");
@@ -349,8 +349,9 @@ export class ObjectOriented {
         }
       }
       for (const t of cdef.getTypeDefinitions().getAll()) {
-        // todo, dont add private types from superclass to scope
-        this.scope.addType(t);
+        if (t.visibility !== Visibility.Private) {
+          this.scope.addType(t.type);
+        }
       }
       this.fromInterfaces(cdef);
       sup = cdef.getSuperClass();

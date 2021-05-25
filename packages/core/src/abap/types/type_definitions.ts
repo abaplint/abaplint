@@ -1,25 +1,24 @@
 import {TypedIdentifier} from "./_typed_identifier";
-import {ITypeDefinitions} from "./_type_definitions";
+import {ITypeDefinitions, TypeDefinitionsEntry} from "./_type_definitions";
 
-// todo: public + protected + private
 export class TypeDefinitions implements ITypeDefinitions {
-  private readonly list: TypedIdentifier[];
-  private readonly map: {[index: string]: TypedIdentifier} = {};
+  private readonly list: TypeDefinitionsEntry[];
+  private readonly map: {[index: string]: TypeDefinitionsEntry} = {};
 
-  public constructor(list: TypedIdentifier[]) {
+  public constructor(list: TypeDefinitionsEntry[]) {
     this.list = list;
     for (const t of list) {
 // todo, can assumptions be made regarding the case of t.getName()?
-      this.map[t.getName().toUpperCase()] = t;
+      this.map[t.type.getName().toUpperCase()] = t;
     }
   }
 
-  public getAll(): readonly TypedIdentifier[] {
+  public getAll(): TypeDefinitionsEntry[] {
     return this.list;
   }
 
   public getByName(name: string): TypedIdentifier | undefined {
-    return this.map[name.toUpperCase()];
+    return this.map[name.toUpperCase()].type;
   }
 
 }

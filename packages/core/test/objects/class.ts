@@ -392,8 +392,8 @@ describe("Objects, class, getTypeDefinitions", () => {
     expect(def).to.not.equal(undefined);
     const attr = def!.getTypeDefinitions().getAll();
     expect(attr.length).to.equal(1);
-    expect(attr[0].getName()).to.equal("zstr");
-    expect(attr[0].getType()).to.be.instanceof(Basic.StringType);
+    expect(attr[0].type.getName()).to.equal("zstr");
+    expect(attr[0].type.getType()).to.be.instanceof(Basic.StringType);
   });
 
   it("test, TYPES BEGIN OF", () => {
@@ -412,7 +412,7 @@ describe("Objects, class, getTypeDefinitions", () => {
     expect(def).to.not.equal(undefined);
     const attr = def!.getTypeDefinitions().getAll();
     expect(attr.length).to.equal(1);
-    expect(attr[0].getName()).to.equal("foo");
+    expect(attr[0].type.getName()).to.equal("foo");
   });
 
   it("test, TYPES, must be parsed in sequence", () => {
@@ -434,11 +434,11 @@ describe("Objects, class, getTypeDefinitions", () => {
     expect(def).to.not.equal(undefined);
     const attr = def!.getTypeDefinitions().getAll();
     expect(attr.length).to.equal(2);
-    expect(attr[0].getName()).to.equal("ty_header");
-    expect(attr[0].getType()).to.not.be.instanceof(Basic.VoidType);
-    expect(attr[1].getName()).to.equal("ty_headers");
-    expect(attr[1].getType()).to.not.be.instanceof(Basic.VoidType);
-    const tab = attr[1].getType() as Basic.TableType;
+    expect(attr[0].type.getName()).to.equal("ty_header");
+    expect(attr[0].type.getType()).to.not.be.instanceof(Basic.VoidType);
+    expect(attr[1].type.getName()).to.equal("ty_headers");
+    expect(attr[1].type.getType()).to.not.be.instanceof(Basic.VoidType);
+    const tab = attr[1].type.getType() as Basic.TableType;
     expect(tab.getRowType()).to.not.be.instanceof(Basic.VoidType);
   });
 });

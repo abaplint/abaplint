@@ -8,6 +8,7 @@ import {Position} from "../../../position";
 import {BuiltIn} from "../_builtin";
 import {ScopeType} from "../_scope_type";
 import {StatementSyntax} from "../_statement_syntax";
+import {Visibility} from "../../4_file_information/visibility";
 
 export class ClassImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -23,7 +24,9 @@ export class ClassImplementation implements StatementSyntax {
     const classAttributes = classDefinition.getAttributes();
 
     for (const t of classDefinition.getTypeDefinitions().getAll()) {
-      scope.addType(t);
+      if (t.visibility !== Visibility.Private) {
+        scope.addType(t.type);
+      }
     }
 
     const sup = scope.findClassDefinition(classDefinition.getSuperClass());

@@ -69,7 +69,7 @@ export class FindGlobalDefinitions {
     // todo, count constants
     let count = 0;
     for (const t of def.getTypeDefinitions().getAll()) {
-      count = count + this.count(t.getType());
+      count = count + this.count(t.type.getType());
     }
     for (const a of def.getAttributes().getAll()) {
       count = count + this.count(a.getType());

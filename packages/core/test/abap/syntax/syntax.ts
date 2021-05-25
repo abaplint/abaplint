@@ -4149,6 +4149,25 @@ TYPES: BEGIN OF main,
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("private types from superclass should not be inherited", () => {
+    const abap = `
+CLASS top DEFINITION.
+  PRIVATE SECTION.
+    TYPES ty TYPE c LENGTH 1.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PRIVATE SECTION.
+    TYPES ty TYPE c LENGTH 1.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
