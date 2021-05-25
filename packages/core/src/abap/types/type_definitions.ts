@@ -18,7 +18,7 @@ export class TypeDefinitions implements ITypeDefinitions {
   }
 
   public getByName(name: string): TypedIdentifier | undefined {
-    return this.map[name.toUpperCase()].type;
+    return this.map[name.toUpperCase()]?.type;
   }
 
 }
