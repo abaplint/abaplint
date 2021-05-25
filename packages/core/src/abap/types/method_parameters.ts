@@ -3,7 +3,7 @@ import {MethodDef} from "../2_statements/statements/method_def";
 import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode} from "../nodes";
 import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
-import {UnknownType, VoidType} from "./basic";
+import {ObjectReferenceType, UnknownType, VoidType} from "./basic";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {MethodDefReturning} from "../5_syntax/expressions/method_def_returning";
 import {MethodParam} from "../5_syntax/expressions/method_param";
@@ -117,6 +117,10 @@ export class MethodParameters implements IMethodParameters {
       for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();
         const search = token.getStr().toUpperCase().replace("!", "");
+        if (search === "SENDER" && def) {
+          this.importing.push(new TypedIdentifier(token, this.filename, new ObjectReferenceType(def), [IdentifierMeta.EventParameter]));
+          continue;
+        }
         const found = event?.getParameters().find(p => p.getName().toUpperCase() === search);
         if (found) {
           this.importing.push(new TypedIdentifier(token, this.filename, found.getType(), [IdentifierMeta.EventParameter]));
