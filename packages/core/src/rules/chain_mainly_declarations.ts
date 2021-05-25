@@ -26,6 +26,8 @@ export class ChainMainlyDeclarationsConf extends BasicRuleConfig {
   public include: boolean = true;
   /** Allow CHECK statements to be chained */
   public check: boolean = true;
+  /** Allow SORT statements to be chained */
+  public sort: boolean = true;
 }
 
 export class ChainMainlyDeclarations extends ABAPRule {
@@ -126,6 +128,8 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
       } else if (this.conf.include === true && s instanceof Statements.Include) {
         continue;
       } else if (this.conf.check === true && s instanceof Statements.Check) {
+        continue;
+      } else if (this.conf.sort === true && s instanceof Statements.Sort) {
         continue;
       }
 
