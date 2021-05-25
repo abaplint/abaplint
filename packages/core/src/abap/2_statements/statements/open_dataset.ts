@@ -28,7 +28,7 @@ export class OpenDataset implements IStatement {
     const windows = str("WITH WINDOWS LINEFEED");
 
     const ret = seq("OPEN DATASET",
-                    Target,
+                    Source,
                     per(direction, type, mode, wbom, replacement, filter, encoding, pos, message, ignoring, bom, code, feed, windows));
 
     return verNot(Version.Cloud, ret);

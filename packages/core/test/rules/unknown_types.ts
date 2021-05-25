@@ -1219,4 +1219,24 @@ CONSTANTS:
     expect(issues.length).to.equals(0);
   });
 
+  it("EVENTS, implicit SENDER parameter", () => {
+    const abap = `
+INTERFACE bar.
+  EVENTS moo.
+ENDINTERFACE.
+
+CLASS clas DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_moo FOR EVENT moo OF bar
+      IMPORTING sender.
+ENDCLASS.
+CLASS clas IMPLEMENTATION.
+  METHOD on_moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });

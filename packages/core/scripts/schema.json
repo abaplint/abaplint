@@ -228,6 +228,10 @@
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         },
+        "sort": {
+          "description": "Allow SORT statements to be chained",
+          "type": "boolean"
+        },
         "unassign": {
           "description": "Allow UNASSIGN statements to be chained",
           "type": "boolean"
@@ -247,7 +251,8 @@
         "hide",
         "free",
         "include",
-        "check"
+        "check",
+        "sort"
       ],
       "type": "object"
     },
