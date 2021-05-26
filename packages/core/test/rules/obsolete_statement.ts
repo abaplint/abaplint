@@ -2,7 +2,8 @@ import {ObsoleteStatement} from "../../src/rules/obsolete_statement";
 import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
-  {abap: "REFRESH lt_table.", cnt: 1},
+  {abap: "REFRESH lt_table.", cnt: 1, fix: true},
+  {abap: "REFRESH foo FROM TABLE bar.", cnt: 1, fix: false},
   {abap: "COMPUTE lv_foo = 2 + 2.", cnt: 1},
   {abap: "SUBTRACT 2 FROM lv_foo.", cnt: 1},
   {abap: "MULTIPLY lv_foo BY 2.", cnt: 1},
@@ -55,6 +56,7 @@ END OF li_order.`, cnt: 1},
 testRule(tests, ObsoleteStatement);
 
 const fixes = [
+  {input: "REFRESH foo.", output: "CLEAR foo."},
   {input: "MOVE foo TO bar.", output: "bar = foo."},
   {input: "MOVE foo ?TO bar.", output: "bar ?= foo."},
   {input: "MOVE struc-foo TO struc1-struc2-bar.", output: "struc1-struc2-bar = struc-foo."},

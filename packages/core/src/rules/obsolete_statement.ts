@@ -238,7 +238,14 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
   }
 
   private getFix(file: ABAPFile, statement: IStatement, statementNode: StatementNode): IEdit | undefined {
-    if (statement instanceof Statements.Move) {
+    if (statement instanceof Statements.Refresh) {
+      if (statementNode.getChildren().length === 6) {
+        return undefined;
+      }
+
+      return EditHelper.replaceToken(file, statementNode.getFirstToken(), "CLEAR");
+    }
+    else if (statement instanceof Statements.Move) {
       if (statementNode.getColon() !== undefined) {
         return undefined;
       }
