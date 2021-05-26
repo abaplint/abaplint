@@ -4203,6 +4203,15 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("DESCRIBE FIELD, inline", () => {
+    const abap = `
+  FIELD-SYMBOLS <bar> TYPE any.
+  DESCRIBE FIELD <bar> LENGTH DATA(len) IN CHARACTER MODE.
+  WRITE len.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
