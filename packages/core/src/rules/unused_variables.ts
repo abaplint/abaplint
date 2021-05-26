@@ -15,7 +15,9 @@ import {StatementNode} from "../abap/nodes/statement_node";
 import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
-  /** skip specific names, case insensitive */
+  /** skip specific names, case insensitive
+   * @uniqueItems true
+  */
   public skipNames: string[] = [];
 }
 

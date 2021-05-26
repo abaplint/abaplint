@@ -6,7 +6,9 @@ import {Position} from "../position";
 import {IRegistry} from "../_iregistry";
 
 export class AllowedObjectTypesConf extends BasicRuleConfig {
-  /** List of allowed object types, example: ["CLAS", "INTF"] */
+  /** List of allowed object types, example: ["CLAS", "INTF"]
+   * @uniqueItems true
+  */
   public allowed: string[] = [];
 }
 

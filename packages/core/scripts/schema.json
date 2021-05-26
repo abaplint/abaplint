@@ -51,7 +51,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
@@ -963,7 +964,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
@@ -1002,13 +1004,15 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "pseudo": {
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "severity": {
           "$ref": "#/definitions/Severity",
@@ -1031,7 +1035,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
@@ -2658,7 +2663,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "files": {
           "description": "input files, glob format",
@@ -2729,7 +2735,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         }
       },
       "required": [
@@ -2750,14 +2757,16 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "globalMacros": {
           "description": "List of full named global macros",
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "version": {
           "$ref": "#/definitions/Version",
@@ -2961,7 +2970,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
@@ -4434,7 +4444,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
@@ -4759,7 +4770,8 @@
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         }
       },
       "required": [

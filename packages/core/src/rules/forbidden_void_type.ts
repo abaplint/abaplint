@@ -13,7 +13,9 @@ import {IRuleMetadata, IRule} from "./_irule";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class ForbiddenVoidTypeConf extends BasicRuleConfig {
-  /** List of forbidden void types, array of string regex, case in-sensitive */
+  /** List of forbidden void types, array of string regex, case in-sensitive
+   * @uniqueItems true
+  */
   public check: string[] = [];
 }
 
