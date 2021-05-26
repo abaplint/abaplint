@@ -11,7 +11,9 @@ export interface IGlobalConfig {
   useApackDependencies?: boolean;
   /** Do not report any issues for includes without main programs */
   skipIncludesWithoutMain?: boolean;
-  /** list of files to exclude, case insensitive regex */
+  /** list of files to exclude, case insensitive regex
+   * @uniqueItems true
+  */
   exclude?: string[];
 }
 
@@ -29,16 +31,22 @@ export interface ISyntaxSettings {
   version?: Version;
   /** Report error for objects in this regex namespace. Types not in namespace will be void */
   errorNamespace: string;
-  /** List of full named global constants */
+  /** List of full named global constants
+   * @uniqueItems true
+  */
   globalConstants?: string[];
-  /** List of full named global macros */
+  /** List of full named global macros
+   * @uniqueItems true
+  */
   globalMacros?: string[];
 }
 
 export interface IRenameSettings {
   /** output folder */
   output: string;
-  /** list of regex, matches filenames to be skipped, case insensitive */
+  /** list of regex, matches filenames to be skipped, case insensitive
+   * @uniqueItems true
+  */
   skip?: string[];
   /** List of rename patterns */
   patterns: {

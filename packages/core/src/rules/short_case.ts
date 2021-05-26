@@ -12,7 +12,9 @@ export class ShortCaseConf extends BasicRuleConfig {
    * Example: if length = 1, at least 2 branches are required
    */
   public length: number = 1;
-  /** List of inputs for CASE which are allowed */
+  /** List of inputs for CASE which are allowed
+   * @uniqueItems true
+  */
   public allow: string[] = [];
 }
 

@@ -10,7 +10,9 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {DDIC} from "../ddic";
 
 export class IntfReferencingClasConf extends BasicRuleConfig {
-  /** List of classes allowed to be referenced, regex, case insensitive */
+  /** List of classes allowed to be referenced, regex, case insensitive
+   * @uniqueItems true
+  */
   public allow: string[] = [];
 }
 

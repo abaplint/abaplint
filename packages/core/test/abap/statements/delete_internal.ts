@@ -25,6 +25,7 @@ const tests = [
 //  "DELETE TABLE <lt_values> WITH TABLE KEY (lv_key) = <lv_key>.",
   "DELETE <fs> WHERE (l_where).",
   `DELETE ADJACENT DUPLICATES FROM li_tab COMPARING field+4(8).`,
+  `DELETE ADJACENT DUPLICATES FROM lt_chck USING KEY s00 COMPARING ALL FIELDS.`,
 ];
 
 statementType(tests, "DELETE", Statements.DeleteInternal);

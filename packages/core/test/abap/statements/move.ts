@@ -227,6 +227,10 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   "DATA(sdfs) = CORRESPONDING syst( val ) + 2.",  // note that this is not a syntax error on 751, but a runtime error
   `lv_var = get_field('FOO').`,
   `DATA(sdfs) = NEW ty_sdfsd( ( option = 'EQ' sign = 'E' low = '90' ) ).`,
+  `DATA(dat1) = COND string( WHEN 1 = 2 THEN 'asdf' WHEN 'sdf' = '' THEN '').`,
+  `DATA(dat2) = CONV string( 'sdf').`,
+  `DATA(sdfs) = SWITCH string( val WHEN 2 THEN 'sdf').`,
+  `<ls_list>-sdfds = |{ lv_order_date DATE = (cl_abap_format=>d_user) }|.`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

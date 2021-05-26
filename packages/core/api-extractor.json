@@ -12,6 +12,11 @@
     "untrimmedFilePath": "<projectFolder>/build/abaplint.d.ts"
   },
   "messages": {
+    "tsdocMessageReporting": {
+      "tsdoc-undefined-tag": {
+        "logLevel": "none"
+      }
+    },
     "extractorMessageReporting": {
       "ae-missing-release-tag": {
         "logLevel": "none"

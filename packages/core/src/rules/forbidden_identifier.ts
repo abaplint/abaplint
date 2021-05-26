@@ -8,7 +8,9 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class ForbiddenIdentifierConf extends BasicRuleConfig {
-  /** List of forbideen identifiers, array of string regex */
+  /** List of forbideen identifiers, array of string regex
+   * @uniqueItems true
+  */
   public check: string[] = [];
 }
 
