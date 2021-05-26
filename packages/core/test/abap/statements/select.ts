@@ -252,6 +252,11 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
     INNER JOIN moo AS b ON a~field1 = b~field2
     INNER JOIN sdf AS c ON c~field3 = b~field4
     INTO TABLE @DATA(lt_final).`,
+
+  `SELECT SINGLE SUM( reserved + reserved ) FROM bar1 INTO @DATA(sdfsd1).`,
+  `SELECT SINGLE SUM( reserved + reserved + reserved ) FROM bar1 INTO @DATA(sdfsd1).`,
+  `SELECT SINGLE SUM( reserved - reserved ) FROM bar2 INTO @DATA(sdfsd2).`,
+  `SELECT SINGLE SUM( reserved * reserved ) FROM bar3 INTO @DATA(sdfsd3).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
