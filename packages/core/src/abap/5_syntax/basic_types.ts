@@ -59,6 +59,9 @@ export class BasicTypes {
     if (chain === undefined) {
       chain = node.findFirstExpression(Expressions.TypeName);
     }
+    if (chain === undefined) {
+      chain = node.findFirstExpression(Expressions.FieldSub);
+    }
     const fullName = chain?.concatTokens();
     const children = chain?.getChildren();
 
@@ -310,6 +313,19 @@ export class BasicTypes {
       found = this.resolveTypeName(sub);
       if (found === undefined) {
         return new Types.UnknownType("TYPE RANGE OF, could not resolve type");
+      }
+      const structure = new Types.StructureType([
+        {name: "sign", type: new Types.CharacterType(1)},
+        {name: "option", type: new Types.CharacterType(2)},
+        {name: "low", type: found},
+        {name: "high", type: found},
+      ], name);
+      return new Types.TableType(structure, options);
+    } else if (text.startsWith("LIKE RANGE OF ")) {
+      const sub = node.findFirstExpression(Expressions.FieldSub);
+      found = this.resolveLikeName(sub);
+      if (found === undefined) {
+        return new Types.UnknownType("LIKE RANGE OF, could not resolve type");
       }
       const structure = new Types.StructureType([
         {name: "sign", type: new Types.CharacterType(1)},

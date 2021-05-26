@@ -1274,4 +1274,11 @@ ENDCLASS.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("LIKE RANGE OF constant", () => {
+    const abap = `DATA lt_not LIKE RANGE OF abap_true.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });

@@ -31,7 +31,7 @@ export class Describe implements StatementSyntax {
 
     const typeTarget = node.findExpressionAfterToken("TYPE");
     if (typeTarget?.get() instanceof Expressions.Target) {
-      const inline = linesTarget?.findDirectExpression(Expressions.InlineData);
+      const inline = typeTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, new CharacterType(1));
       } else {
@@ -41,7 +41,7 @@ export class Describe implements StatementSyntax {
 
     const lengthTarget = node.findExpressionAfterToken("LENGTH");
     if (lengthTarget?.get() instanceof Expressions.Target) {
-      const inline = linesTarget?.findDirectExpression(Expressions.InlineData);
+      const inline = lengthTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, new IntegerType());
       } else {

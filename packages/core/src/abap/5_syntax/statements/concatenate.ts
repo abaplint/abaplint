@@ -9,9 +9,6 @@ import {StatementSyntax} from "../_statement_syntax";
 
 export class Concatenate implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
-    }
 
     const target = node.findFirstExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
@@ -20,6 +17,10 @@ export class Concatenate implements StatementSyntax {
       new InlineData().runSyntax(inline, scope, filename, new StringType());
     } else if (target) {
       new Target().runSyntax(target, scope, filename);
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
     }
   }
 }
