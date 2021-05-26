@@ -41,7 +41,7 @@ END OF li_order.`, cnt: 1, fix: false},
   {abap: "FIELD-SYMBOLS <bar> STRUCTURE usr02 DEFAULT usr02.", cnt: 1},
   {abap: "PARAMETER foo TYPE c.", cnt: 1, fix: true},
   {abap: "PARAMETERS foo TYPE c.", cnt: 0, fix: false},
-  {abap: "RANGES werks FOR sdfsdsd-werks.", cnt: 1},
+  {abap: "RANGES werks FOR sdfsdsd-werks.", cnt: 1, fix: true},
   {abap: "DATA foo TYPE RANGE OF bar.", cnt: 0},
   {abap: "COMMUNICATION ACCEPT ID c.", cnt: 1},
   {abap: "PACK s TO d.", cnt: 1},
@@ -74,6 +74,7 @@ const fixes = [
   {input: "PARAMETER foo TYPE c.", output: "PARAMETERS foo TYPE c."},
   {input: "CLASS foo DEFINITION LOAD.", output: "CLASS foo DEFINITION."},
   {input: "INTERFACE foo LOAD.", output: "INTERFACE foo."},
+  {input: "RANGES werks FOR sdfsdsd-werks.", output: "TYPES werks LIKE RANGE OF sdfsdsd-werks."},
 ];
 
 testRuleFix(fixes, ObsoleteStatement);

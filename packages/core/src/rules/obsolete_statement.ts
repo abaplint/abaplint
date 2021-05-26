@@ -122,11 +122,11 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
           || (sta instanceof Statements.ClassDefinitionLoad && this.conf.load && configVersion >= Version.v702)
           || (sta instanceof Statements.InterfaceLoad && this.conf.load && configVersion >= Version.v702)
           || (sta instanceof Statements.Multiply && this.conf.multiply)
+          || (sta instanceof Statements.Divide && this.conf.divide)
           || (sta instanceof Statements.Move && this.conf.move
           && staNode.getTokens()[0].getStr().toUpperCase() === "MOVE"
           && staNode.getTokens()[1].getStr() !== "-"
-          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT")
-          || (sta instanceof Statements.Divide && this.conf.divide)) {
+          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT") ) {
         if (prev === undefined || staNode.getStart().getCol() !== prev.getCol() || staNode.getStart().getRow() !== prev.getRow()) {
           const message = "Statement \"" + staNode.getFirstToken().getStr() + "\" is obsolete";
           const fix = this.getFix(file, sta, staNode);
@@ -162,7 +162,16 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       }
 
       if (this.conf.ranges && sta instanceof Statements.Ranges) {
-        const issue = Issue.atStatement(file, staNode, "Use TYPE RANGE OF instead of RANGES", this.getMetadata().key, this.conf.severity);
+        const children = staNode.getChildren();
+        let fix = undefined;
+        if (children.length === 5) {
+          const simpleNameString = children[1].concatTokens();
+          const fieldSubString = children[3].concatTokens();
+          const replacement = "TYPES " + simpleNameString + " LIKE RANGE OF " + fieldSubString + ".";
+          fix = EditHelper.replaceRange(file, staNode.getStart(), staNode.getEnd(), replacement);
+        }
+        
+        const issue = Issue.atStatement(file, staNode, "Use LIKE RANGE OF instead of RANGES", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
 
