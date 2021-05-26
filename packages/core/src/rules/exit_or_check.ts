@@ -7,8 +7,8 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class ExitOrCheckConf extends BasicRuleConfig {
-  public exit: boolean = true;
-  public check: boolean = true;
+  public allowExit: boolean = true;
+  public allowCheck: boolean = true;
 }
 
 export class ExitOrCheck extends ABAPRule {
@@ -54,11 +54,11 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-re
           || statement.get() instanceof Statements.EndSelect
           || statement.get() instanceof Statements.EndDo) {
         stack.pop();
-      } else if (this.conf.check === true && statement.get() instanceof Statements.Check && stack.length === 0) {
+      } else if (this.conf.allowCheck === true && statement.get() instanceof Statements.Check && stack.length === 0) {
         const message = "CHECK is not allowed outside of loops";
         const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
-      } else if (this.conf.exit === true && statement.get() instanceof Statements.Exit && stack.length === 0) {
+      } else if (this.conf.allowExit === true && statement.get() instanceof Statements.Exit && stack.length === 0) {
         const message = "EXIT is not allowed outside of loops";
         const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
