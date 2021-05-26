@@ -22,10 +22,10 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public subtract: boolean = true;
   /** Check for MULTIPLY statement */
   public multiply: boolean = true;
-  /** Check for MOVE statement */
-  public move: boolean = true;
   /** Check for DIVIDE statement */
   public divide: boolean = true;
+  /** Check for MOVE statement */
+  public move: boolean = true;
   /** Checks for usages of IS REQUESTED */
   public requested: boolean = true;
   /** Checks for usages of OCCURS */
@@ -272,6 +272,22 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       }
       else if (statement instanceof Statements.Subtract) {
         replacement = targetString + " = " + targetString + " - " + sourceString + ".";
+      }
+
+      return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
+    }
+    else if (statement instanceof Statements.Multiply ||
+          statement instanceof Statements.Divide) {
+      const children = statementNode.getChildren();
+      const targetString = children[1].concatTokens();
+      const sourceString = children[3].concatTokens();
+      let replacement = "";
+
+      if (statement instanceof Statements.Multiply) {
+        replacement = targetString + " = " + targetString + " * " + sourceString + ".";
+      }
+      else if (statement instanceof Statements.Divide) {
+        replacement = targetString + " = " + targetString + " / " + sourceString + ".";
       }
 
       return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
