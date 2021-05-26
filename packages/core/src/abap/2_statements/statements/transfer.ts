@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, seq, opt} from "../combi";
-import {Target, Source} from "../expressions";
+import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -12,7 +12,7 @@ export class Transfer implements IStatement {
     const ret = seq("TRANSFER",
                     Source,
                     "TO",
-                    Target,
+                    Source,
                     opt(length),
                     opt("NO END OF LINE"));
 

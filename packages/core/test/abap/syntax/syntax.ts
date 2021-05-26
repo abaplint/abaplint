@@ -4149,6 +4149,54 @@ TYPES: BEGIN OF main,
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("private types from superclass should not be inherited", () => {
+    const abap = `
+CLASS top DEFINITION.
+  PRIVATE SECTION.
+    TYPES ty TYPE c LENGTH 1.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PRIVATE SECTION.
+    TYPES ty TYPE c LENGTH 1.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("testclass referencing friended type", () => {
+    const test = `
+    CLASS ltcl_syntax_cases DEFINITION DEFERRED.
+    CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_syntax_cases.
+
+    CLASS ltcl_syntax_cases DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+      PRIVATE SECTION.
+        DATA: mt_after_parse TYPE zcl_sdfsdf=>ty_match_tt.
+    ENDCLASS.
+    CLASS ltcl_syntax_cases IMPLEMENTATION.
+    ENDCLASS.`;
+    const clas = `
+    CLASS zcl_sdfsdf DEFINITION PUBLIC.
+      PROTECTED SECTION.
+        TYPES:
+          BEGIN OF ty_match,
+            text_tag TYPE string,
+          END OF ty_match .
+        TYPES:
+          ty_match_tt TYPE STANDARD TABLE OF ty_match WITH DEFAULT KEY.
+    ENDCLASS.
+    CLASS zcl_sdfsdf IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

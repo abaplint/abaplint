@@ -1219,4 +1219,59 @@ CONSTANTS:
     expect(issues.length).to.equals(0);
   });
 
+  it("EVENTS, implicit SENDER parameter", () => {
+    const abap = `
+INTERFACE bar.
+  EVENTS moo.
+ENDINTERFACE.
+
+CLASS clas DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_moo FOR EVENT moo OF bar
+      IMPORTING sender.
+ENDCLASS.
+CLASS clas IMPLEMENTATION.
+  METHOD on_moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("reference private type from private method", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PRIVATE SECTION.
+    TYPES ty_bar TYPE c LENGTH 1.
+    METHODS moo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA data TYPE ty_bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("reference unknown type in class", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PRIVATE SECTION.
+    METHODS moo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA data TYPE lcl=>ty_asdf.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(1);
+  });
+
 });
