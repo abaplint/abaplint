@@ -1,5 +1,5 @@
 import {ver, seq, tok, altPrio, optPrio, regex, Expression} from "../combi";
-import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, InstanceArrow} from "../../1_lexer/tokens";
+import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, InstanceArrow, ParenRightW} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
 import {Version} from "../../../version";
@@ -20,6 +20,7 @@ export class Source extends Expression {
     const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), optPrio(ref));
 
     const rparen = tok(WParenRightW);
+    const rparenNoSpace = altPrio(tok(ParenRightW), tok(WParenRightW));
 
 // paren used for eg. "( 2 + 1 ) * 4"
     const paren = seq(tok(WParenLeftW),
@@ -56,28 +57,28 @@ export class Source extends Expression {
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            ConvBody,
-                                           rparen,
+                                           rparenNoSpace,
                                            optPrio(after)));
 
     const swit = ver(Version.v740sp02, seq("SWITCH",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            SwitchBody,
-                                           rparen,
+                                           rparenNoSpace,
                                            optPrio(after)));
 
     const value = ver(Version.v740sp02, seq("VALUE",
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             ValueBody,
-                                            rparen,
+                                            rparenNoSpace,
                                             optPrio(after)));
 
     const cond = ver(Version.v740sp02, seq("COND",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            CondBody,
-                                           rparen,
+                                           rparenNoSpace,
                                            optPrio(after)));
 
     const reff = ver(Version.v740sp02, seq("REF",

@@ -37,6 +37,7 @@ const tests = [
   "APPEND LINES OF tab TO index TO target.",
   "APPEND LINES OF tab FROM index TO target.",
   `APPEND VALUE #( %tky = travel-%tky ) TO reported-travel.`,
+  `APPEND VALUE #( field_name = 'STATUS') TO gt_list.`,
 ];
 
 statementType(tests, "APPEND", Statements.Append);

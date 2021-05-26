@@ -2,6 +2,7 @@ import {seq, per, altPrio, ver, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
+import {Dynamic} from "./dynamic";
 
 export class StringTemplateFormatting extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -11,7 +12,7 @@ export class StringTemplateFormatting extends Expression {
 
     const alignOptions = altPrio("LEFT", "RIGHT", "CENTER", Source);
 
-    const dateTimeOptions = altPrio("RAW", "ISO", "USER", "ENVIRONMENT", Source);
+    const dateTimeOptions = altPrio("RAW", "ISO", "USER", "ENVIRONMENT", Source, Dynamic);
 
     const timeStampOptions = altPrio("SPACE", "ISO", "USER", "ENVIRONMENT", Source);
 
