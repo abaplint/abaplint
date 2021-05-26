@@ -23,7 +23,7 @@ export class ClassImplementation implements StatementSyntax {
     const classAttributes = classDefinition.getAttributes();
 
     for (const t of classDefinition.getTypeDefinitions().getAll()) {
-      scope.addType(t);
+      scope.addType(t.type);
     }
 
     const sup = scope.findClassDefinition(classDefinition.getSuperClass());

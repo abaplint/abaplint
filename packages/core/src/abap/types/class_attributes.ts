@@ -23,7 +23,7 @@ export class Attributes implements IAttributes {
   private readonly instance: ClassAttribute[];
   private readonly constants: ClassConstant[];
   private readonly types: TypeDefinitions;
-  private readonly tlist: TypedIdentifier[];
+  private readonly tlist: {type: TypedIdentifier, visibility: Visibility}[];
   private readonly filename: string;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -169,7 +169,7 @@ export class Attributes implements IAttributes {
           const res = new Types().runSyntax(c, scope, this.filename);
           if (res) {
             scope.addType(res);
-            this.tlist.push(res);
+            this.tlist.push({type: res, visibility});
           }
         } else {
           // begin recursion
@@ -191,7 +191,7 @@ export class Attributes implements IAttributes {
           const res = new Type().runSyntax(c, scope, this.filename);
           if (res) {
             scope.addType(res);
-            this.tlist.push(res);
+            this.tlist.push({type: res, visibility});
           }
         }
       }
