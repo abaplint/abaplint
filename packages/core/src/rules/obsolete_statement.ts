@@ -260,11 +260,20 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
       }
     }
-    else if (statement instanceof Statements.Add) {
+    else if (statement instanceof Statements.Add ||
+            statement instanceof Statements.Subtract) {
       const children = statementNode.getChildren();
       const sourceString = children[1].concatTokens();
       const targetString = children[3].concatTokens();
-      const replacement = targetString + " = " + targetString + " + " + sourceString + ".";
+      let replacement = "";
+
+      if (statement instanceof Statements.Add) {
+        replacement = targetString + " = " + targetString + " + " + sourceString + ".";
+      }
+      else if (statement instanceof Statements.Subtract) {
+        replacement = targetString + " = " + targetString + " - " + sourceString + ".";
+      }
+
       return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
     }
     else if (statement instanceof Statements.Move) {
