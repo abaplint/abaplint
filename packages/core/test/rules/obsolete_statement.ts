@@ -24,12 +24,12 @@ const tests = [
   {abap: "lv_foo = 2.", cnt: 0},
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
 
-  {abap: "DATA tab LIKE foobar OCCURS 2.", cnt: 1},
-  {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 2},
-  {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1},
+  {abap: "DATA tab LIKE foobar OCCURS 2.", cnt: 1, fix: false},
+  {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 2, fix: false},
+  {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1, fix: false},
   {abap: `DATA: BEGIN OF li_order OCCURS 0,
   foo TYPE i,
-END OF li_order.`, cnt: 1},
+END OF li_order.`, cnt: 1, fix: false},
 
   {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
   {abap: "SET EXTENDED CHECK ON.", cnt: 1},
@@ -39,8 +39,8 @@ END OF li_order.`, cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of string WITH HEADER LINE.", cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of string with header line.", cnt: 1},
   {abap: "FIELD-SYMBOLS <bar> STRUCTURE usr02 DEFAULT usr02.", cnt: 1},
-  {abap: "PARAMETER foo TYPE c.", cnt: 1},
-  {abap: "PARAMETERS foo TYPE c.", cnt: 0},
+  {abap: "PARAMETER foo TYPE c.", cnt: 1, fix: true},
+  {abap: "PARAMETERS foo TYPE c.", cnt: 0, fix: false},
   {abap: "RANGES werks FOR sdfsdsd-werks.", cnt: 1},
   {abap: "DATA foo TYPE RANGE OF bar.", cnt: 0},
   {abap: "COMMUNICATION ACCEPT ID c.", cnt: 1},
@@ -71,6 +71,7 @@ const fixes = [
   {input: "MOVE struc-foo TO struc1-struc2-bar.", output: "struc1-struc2-bar = struc-foo."},
   {input: "IF foo IS REQUESTED.", output: "IF foo IS SUPPLIED."},
   {input: "IF bar IS NOT REQUESTED.", output: "IF bar IS NOT SUPPLIED."},
+  {input: "PARAMETER foo TYPE c.", output: "PARAMETERS foo TYPE c."},
 ];
 
 testRuleFix(fixes, ObsoleteStatement);

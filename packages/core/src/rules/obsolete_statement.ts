@@ -151,9 +151,14 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         issues.push(issue);
       }
 
-      if (this.conf.parameter && sta instanceof Statements.Parameter && staNode.getFirstToken().getStr().toUpperCase() === "PARAMETER") {
-        const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of PARAMETER", this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+      if (this.conf.parameter && sta instanceof Statements.Parameter) {
+        const token = staNode.getFirstToken();
+        
+        if (token.getStr().toUpperCase() === "PARAMETER") {
+          const fix = EditHelper.replaceToken(file, token, "PARAMETERS");
+          const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of PARAMETER", this.getMetadata().key, this.conf.severity, fix);
+          issues.push(issue);
+        }        
       }
 
       if (this.conf.ranges && sta instanceof Statements.Ranges) {
