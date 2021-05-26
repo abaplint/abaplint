@@ -9,6 +9,7 @@ import {SQLAsName} from "./sql_as_name";
 import {SQLCase} from "./sql_case";
 import {SQLIntoStructure} from "./sql_into_structure";
 import {SQLFieldList} from "./sql_field_list";
+import {SQLHints} from "./sql_hints";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -47,7 +48,8 @@ export class SelectLoop extends Expression {
     const strict = seq(SQLFrom, "FIELDS", SQLFieldList, where, SQLIntoStructure, up);
 
     const ret = seq("SELECT",
-                    altPrio(seq(optPrio("DISTINCT"), fields, perm), strict));
+                    altPrio(seq(optPrio("DISTINCT"), fields, perm), strict),
+                    optPrio(SQLHints));
 
     return ret;
   }

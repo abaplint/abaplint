@@ -74,6 +74,12 @@ const tests = [
   `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050' ).`,
   `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050').`,
   `SELECT FROM zsdfsd FIELDS @abap_true WHERE name = @sdf INTO @DATA(dddsf) UP TO 1 ROWS.`,
+
+  `SELECT field1 INTO CORRESPONDING FIELDS OF TABLE li_tab FROM dbtab
+  PACKAGE SIZE 2500
+  WHERE foo IN bar
+  %_HINTS ORACLE 'sdfsdf'.`,
+
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
