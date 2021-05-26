@@ -14,7 +14,8 @@ const tests = [
   {abap: "MOVE for ?TO bar.", cnt: 1, fix: true},
   {abap: "MOVE EXACT is_status-installed_release TO lv_number.", cnt: 0, fix: false},
   {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1, fix: false},
-  {abap: "IF foo IS REQUESTED.", cnt: 1},
+  {abap: "IF foo IS REQUESTED.", cnt: 1, fix: true},
+  {abap: "IF bar IS NOT REQUESTED.", cnt: 1, fix: true},
   {abap: "CLEAR lt_table.", cnt: 0},
   {abap: "lv_foo = 2 + 2.", cnt: 0},
   {abap: "lv_foo = lv_foo - 1.", cnt: 0},
@@ -68,6 +69,8 @@ const fixes = [
   {input: "MOVE foo TO bar.", output: "bar = foo."},
   {input: "MOVE foo ?TO bar.", output: "bar ?= foo."},
   {input: "MOVE struc-foo TO struc1-struc2-bar.", output: "struc1-struc2-bar = struc-foo."},
+  {input: "IF foo IS REQUESTED.", output: "IF foo IS SUPPLIED."},
+  {input: "IF bar IS NOT REQUESTED.", output: "IF bar IS NOT SUPPLIED."},
 ];
 
 testRuleFix(fixes, ObsoleteStatement);

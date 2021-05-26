@@ -176,7 +176,8 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         for (const compare of staNode.findAllExpressions(Expressions.Compare)) {
           const token = compare.findDirectTokenByText("REQUESTED");
           if (token) {
-            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key, this.conf.severity);
+            const fix = EditHelper.replaceToken(file, token, "SUPPLIED");
+            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key, this.conf.severity, fix);
             issues.push(issue);
           }
         }
