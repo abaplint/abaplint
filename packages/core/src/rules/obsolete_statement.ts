@@ -153,12 +153,12 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
 
       if (this.conf.parameter && sta instanceof Statements.Parameter) {
         const token = staNode.getFirstToken();
-        
+
         if (token.getStr().toUpperCase() === "PARAMETER") {
           const fix = EditHelper.replaceToken(file, token, "PARAMETERS");
           const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of PARAMETER", this.getMetadata().key, this.conf.severity, fix);
           issues.push(issue);
-        }        
+        }
       }
 
       if (this.conf.ranges && sta instanceof Statements.Ranges) {
@@ -170,7 +170,7 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
           const replacement = "TYPES " + simpleNameString + " LIKE RANGE OF " + fieldSubString + ".";
           fix = EditHelper.replaceRange(file, staNode.getStart(), staNode.getEnd(), replacement);
         }
-        
+
         const issue = Issue.atStatement(file, staNode, "Use LIKE RANGE OF instead of RANGES", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
@@ -237,7 +237,8 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       }
 
       if (this.conf.typePools && sta instanceof Statements.TypePools && configVersion >= Version.v702){
-        const issue = Issue.atStatement(file, staNode, "Statement \"TYPE-POOLS\" is obsolete", this.getMetadata().key, this.conf.severity);
+        const fix = EditHelper.deleteStatement(file, staNode);
+        const issue = Issue.atStatement(file, staNode, "Statement \"TYPE-POOLS\" is obsolete", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
 
@@ -338,7 +339,7 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       else {
         token = statementNode.getChildren()[2].getFirstToken();
       }
-      
+
       let startPosition = token.getStart();
       startPosition = new Position(startPosition.getRow(), startPosition.getCol() - 1);
       return EditHelper.deleteRange(file, startPosition, token.getEnd());

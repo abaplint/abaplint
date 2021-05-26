@@ -35,7 +35,7 @@ END OF li_order.`, cnt: 1, fix: false},
 
   {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
   {abap: "SET EXTENDED CHECK ON.", cnt: 1},
-  {abap: "TYPE-POOLS bar.", cnt: 1},
+  {abap: "TYPE-POOLS bar.", cnt: 1, fix: true},
   {abap: "DATA tab TYPE STANDARD TABLE of string WITH HEADER LINE.", cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of string with header line.", cnt: 1},
   {abap: "FIELD-SYMBOLS <bar> STRUCTURE usr02 DEFAULT usr02.", cnt: 1},
@@ -75,6 +75,7 @@ const fixes = [
   {input: "CLASS foo DEFINITION LOAD.", output: "CLASS foo DEFINITION."},
   {input: "INTERFACE foo LOAD.", output: "INTERFACE foo."},
   {input: "RANGES werks FOR sdfsdsd-werks.", output: "TYPES werks LIKE RANGE OF sdfsdsd-werks."},
+  {input: "TYPE-POOLS bar.", output: ""},
 ];
 
 testRuleFix(fixes, ObsoleteStatement);
