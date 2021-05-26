@@ -319,6 +319,21 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
 
       return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
     }
+    else if (statement instanceof Statements.ClassDefinitionLoad ||
+            statement instanceof Statements.InterfaceLoad) {
+
+      let token = undefined;
+      if (statement instanceof Statements.ClassDefinitionLoad) {
+        token = statementNode.getChildren()[3].getFirstToken();
+      }
+      else {
+        token = statementNode.getChildren()[2].getFirstToken();
+      }
+      
+      let startPosition = token.getStart();
+      startPosition = new Position(startPosition.getRow(), startPosition.getCol() - 1);
+      return EditHelper.deleteRange(file, startPosition, token.getEnd());
+    }
 
     return undefined;
   }

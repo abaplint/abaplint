@@ -16,6 +16,8 @@ const tests = [
   {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1, fix: false},
   {abap: "IF foo IS REQUESTED.", cnt: 1, fix: true},
   {abap: "IF bar IS NOT REQUESTED.", cnt: 1, fix: true},
+  {abap: "CLASS class DEFINITION LOAD.", cnt: 1, fix: true},
+  {abap: "INTERFACE intf LOAD.", cnt: 1, fix: true},
   {abap: "CLEAR lt_table.", cnt: 0},
   {abap: "lv_foo = 2 + 2.", cnt: 0},
   {abap: "lv_foo = lv_foo - 1.", cnt: 0},
@@ -34,8 +36,6 @@ END OF li_order.`, cnt: 1, fix: false},
   {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
   {abap: "SET EXTENDED CHECK ON.", cnt: 1},
   {abap: "TYPE-POOLS bar.", cnt: 1},
-  {abap: "CLASS class DEFINITION LOAD.", cnt: 1},
-  {abap: "INTERFACE intf LOAD.", cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of string WITH HEADER LINE.", cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of string with header line.", cnt: 1},
   {abap: "FIELD-SYMBOLS <bar> STRUCTURE usr02 DEFAULT usr02.", cnt: 1},
@@ -72,6 +72,8 @@ const fixes = [
   {input: "IF foo IS REQUESTED.", output: "IF foo IS SUPPLIED."},
   {input: "IF bar IS NOT REQUESTED.", output: "IF bar IS NOT SUPPLIED."},
   {input: "PARAMETER foo TYPE c.", output: "PARAMETERS foo TYPE c."},
+  {input: "CLASS foo DEFINITION LOAD.", output: "CLASS foo DEFINITION."},
+  {input: "INTERFACE foo LOAD.", output: "INTERFACE foo."},
 ];
 
 testRuleFix(fixes, ObsoleteStatement);
