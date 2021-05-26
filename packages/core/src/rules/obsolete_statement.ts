@@ -242,30 +242,25 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       if (statementNode.getColon() !== undefined) {
         return undefined;
       }
+
+      const sourceExpression = statementNode.findDirectExpression(Expressions.Source);
+      const sourceString = sourceExpression?.concatTokens();
+      const targetString = statementNode.findDirectExpression(Expressions.Target)?.concatTokens();
+
       const tokens = statementNode.getTokens();
-      let appendSource = true;
-      let source = "";
-      let target = "";
       let operator = " = ";
-      for (let index = 1;index < tokens.length - 1; index++) {
+      for (let index = 2;index < tokens.length - 1; index++) {
         const token = tokens[index].getStr();
-        if (token === "TO" || token === "?TO") {
-          appendSource = false;
-
-          if (token === "?TO") {
-            operator = " ?= ";
-          }
-          continue;
+        if (token === "TO") {
+          break;
         }
-
-        if (appendSource === true) {
-          source += token;
+        else if (token === "?TO") {
+          operator = " ?= ";
+          break;
         }
-        else {
-          target += token;
-        }
+        continue;
       }
-      const replacement = target + operator + source + ".";
+      const replacement = targetString + operator + sourceString + ".";
 
       return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
     }
