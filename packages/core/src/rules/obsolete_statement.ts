@@ -245,13 +245,28 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
 
       return EditHelper.replaceToken(file, statementNode.getFirstToken(), "CLEAR");
     }
+    else if (statement instanceof Statements.Compute) {
+      const children = statementNode.getChildren();
+      if (children.length === 5) {
+        const tokenForDeletion = statementNode.getFirstToken();
+        let endPosition = tokenForDeletion.getEnd();
+        endPosition = new Position(endPosition.getRow(), endPosition.getCol() + 1);
+        return EditHelper.deleteRange(file, tokenForDeletion.getStart(), endPosition);
+      }
+      else {
+        const targetString = children[2].concatTokens();
+        const sourceString = children[4].concatTokens();
+        const replacement = targetString + " = EXACT #( " + sourceString + " ).";
+        return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
+      }
+    }
     else if (statement instanceof Statements.Move) {
       if (statementNode.getColon() !== undefined) {
         return undefined;
       }
 
       const children = statementNode.getChildren();
-      const sourceString = children[1].concatTokens();      
+      const sourceString = children[1].concatTokens();
       const targetString = children[3].concatTokens();
 
       let operator = children[2].concatTokens();

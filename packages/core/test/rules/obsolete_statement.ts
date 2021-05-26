@@ -4,7 +4,8 @@ import {testRule, testRuleFix} from "./_utils";
 const tests = [
   {abap: "REFRESH lt_table.", cnt: 1, fix: true},
   {abap: "REFRESH foo FROM TABLE bar.", cnt: 1, fix: false},
-  {abap: "COMPUTE lv_foo = 2 + 2.", cnt: 1},
+  {abap: "COMPUTE foo = 2 + 2.", cnt: 1, fix: true},
+  {abap: "COMPUTE EXACT foo = 2 + 2.", cnt: 1, fix: true},
   {abap: "SUBTRACT 2 FROM lv_foo.", cnt: 1},
   {abap: "MULTIPLY lv_foo BY 2.", cnt: 1},
   {abap: "DIVIDE lv_foo BY 2.", cnt: 1},
@@ -57,6 +58,8 @@ testRule(tests, ObsoleteStatement);
 
 const fixes = [
   {input: "REFRESH foo.", output: "CLEAR foo."},
+  {input: "COMPUTE foo = 2 + 3.", output: "foo = 2 + 3."},
+  {input: "COMPUTE EXACT foo = 2 + 3.", output: "foo = EXACT #( 2 + 3 )."},
   {input: "MOVE foo TO bar.", output: "bar = foo."},
   {input: "MOVE foo ?TO bar.", output: "bar ?= foo."},
   {input: "MOVE struc-foo TO struc1-struc2-bar.", output: "struc1-struc2-bar = struc-foo."},
