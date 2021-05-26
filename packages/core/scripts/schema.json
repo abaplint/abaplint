@@ -2121,7 +2121,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usages of certain obsolete statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/obsolete_statement"
+              "description": "Checks for usages of certain obsolete statements\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/obsolete_statement"
             },
             "omit_parameter_name": {
               "anyOf": [

@@ -7,6 +7,9 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Version} from "../version";
+import {EditHelper, IEdit} from "../edit_helper";
+import {IStatement} from "../abap/2_statements/statements/_statement";
+import {StatementNode} from "../abap/nodes";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
   /** Check for REFRESH statement */
@@ -60,7 +63,7 @@ export class ObsoleteStatement extends ABAPRule {
       key: "obsolete_statement",
       title: "Obsolete statements",
       shortDescription: `Checks for usages of certain obsolete statements`,
-      tags: [RuleTag.SingleFile, RuleTag.Styleguide],
+      tags: [RuleTag.SingleFile, RuleTag.Styleguide, RuleTag.Quickfix],
       extendedInformation: `
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs
 
@@ -126,7 +129,8 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
           || (sta instanceof Statements.Divide && this.conf.divide)) {
         if (prev === undefined || staNode.getStart().getCol() !== prev.getCol() || staNode.getStart().getRow() !== prev.getRow()) {
           const message = "Statement \"" + staNode.getFirstToken().getStr() + "\" is obsolete";
-          const issue = Issue.atStatement(file, staNode, message, this.getMetadata().key, this.conf.severity);
+          const fix = this.getFix(file, sta, staNode);
+          const issue = Issue.atStatement(file, staNode, message, this.getMetadata().key, this.conf.severity, fix);
           issues.push(issue);
         }
         prev = staNode.getStart();
@@ -231,5 +235,41 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       }
     }
     return issues;
+  }
+
+  private getFix(file: ABAPFile, statement: IStatement, statementNode: StatementNode): IEdit | undefined {
+    if (statement instanceof Statements.Move) {
+      if (statementNode.getColon() !== undefined) {
+        return undefined;
+      }
+      const tokens = statementNode.getTokens();
+      let appendSource = true;
+      let source = "";
+      let target = "";
+      let operator = " = ";
+      for (let index = 1;index < tokens.length - 1; index++) {
+        const token = tokens[index].getStr();
+        if (token === "TO" || token === "?TO") {
+          appendSource = false;
+
+          if (token === "?TO") {
+            operator = " ?= ";
+          }
+          continue;
+        }
+
+        if (appendSource === true) {
+          source += token;
+        }
+        else {
+          target += token;
+        }
+      }
+      const replacement = target + operator + source + ".";
+
+      return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
+    }
+
+    return undefined;
   }
 }

@@ -1,5 +1,5 @@
 import {ObsoleteStatement} from "../../src/rules/obsolete_statement";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "REFRESH lt_table.", cnt: 1},
@@ -7,19 +7,19 @@ const tests = [
   {abap: "SUBTRACT 2 FROM lv_foo.", cnt: 1},
   {abap: "MULTIPLY lv_foo BY 2.", cnt: 1},
   {abap: "DIVIDE lv_foo BY 2.", cnt: 1},
-  {abap: "MOVE 2 TO lv_foo.", cnt: 1},
+  {abap: "MOVE 2 TO lv_foo.", cnt: 1, fix: true},
+  {abap: "MOVE for ?TO bar.", cnt: 1, fix: true},
+  {abap: "MOVE EXACT is_status-installed_release TO lv_number.", cnt: 0, fix: false},
+  {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1, fix: false},
   {abap: "IF foo IS REQUESTED.", cnt: 1},
   {abap: "CLEAR lt_table.", cnt: 0},
   {abap: "lv_foo = 2 + 2.", cnt: 0},
-  {abap: "MOVE EXACT is_status-installed_release TO lv_number.", cnt: 0},
   {abap: "lv_foo = lv_foo - 1.", cnt: 0},
   {abap: "lv_foo = lv_foo * 2.", cnt: 0},
   {abap: "lv_foo = lv_foo / 2.", cnt: 0},
   {abap: "lv_foo = 2.", cnt: 0},
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
-  {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1},
 
-// OCCURS
   {abap: "DATA tab LIKE foobar OCCURS 2.", cnt: 1},
   {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 2},
   {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1},
@@ -53,3 +53,11 @@ END OF li_order.`, cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);
+
+const fixes = [
+  {input: "MOVE foo TO bar.", output: "bar = foo."},
+  {input: "MOVE foo ?TO bar.", output: "bar ?= foo."},
+  {input: "MOVE struc-foo TO struc1-struc2-bar.", output: "struc1-struc2-bar = struc-foo."},
+];
+
+testRuleFix(fixes, ObsoleteStatement);
