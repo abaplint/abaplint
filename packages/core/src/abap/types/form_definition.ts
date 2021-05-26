@@ -83,7 +83,8 @@ export class FormDefinition extends Identifier implements IFormDefinition {
   private findParams(node: ExpressionNode | StatementNode, scope: CurrentScope) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
-      res.push(new FormParam().runSyntax(param, scope, this.filename));
+      const p = new FormParam().runSyntax(param, scope, this.filename);
+      res.push(p);
     }
     return res;
   }

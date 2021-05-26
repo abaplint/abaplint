@@ -4,11 +4,10 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class FormParam extends Expression {
   public getRunnable(): IStatementRunnable {
-    const stru = seq(FormParamName, "STRUCTURE", NamespaceSimpleName);
-    const val = seq(PassByValue, optPrio(FormParamType));
-    const field = seq(FormParamName, optPrio(FormParamType));
+    const stru = seq("STRUCTURE", NamespaceSimpleName);
 
-    const ret = altPrio(stru, val, field);
+    const ret = seq(altPrio(PassByValue, FormParamName),
+                    optPrio(altPrio(FormParamType, stru)));
 
     return ret;
   }
