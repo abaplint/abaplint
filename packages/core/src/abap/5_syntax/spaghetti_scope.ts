@@ -278,8 +278,15 @@ export class SpaghettiScope implements ISpaghettiScope {
     return ret;
   }
 
-  public lookupPosition(p: Position, filename: string): SpaghettiScopeNode | undefined {
+  public lookupPosition(p: Position | undefined, filename: string | undefined): SpaghettiScopeNode | undefined {
+    if (p === undefined || filename === undefined) {
+      return undefined;
+    }
     return this.lookupPositionTraverse(p, filename, this.node);
+  }
+
+  public getFirstChild() {
+    return this.node.getFirstChild();
   }
 
   public getTop(): SpaghettiScopeNode {

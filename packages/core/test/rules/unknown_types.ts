@@ -1281,7 +1281,7 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("Refer to TYPE from TYPE POOL", () => {
+  it("Refer to TYPE from TYPE POOL", () => {
     const pool = `
     TYPE-POOL zfoo.
     TYPES zfoo_moo TYPE c LENGTH 5.`;
@@ -1292,5 +1292,7 @@ ENDCLASS.`;
     issues = issues.filter(i => i.getKey() === key);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
+
+// todo, type pools, resolve constant
 
 });

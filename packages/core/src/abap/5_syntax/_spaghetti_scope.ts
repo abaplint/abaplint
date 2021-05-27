@@ -58,8 +58,9 @@ export interface ISpaghettiScope {
   listDefinitions(filename: string): IScopeVariable[];
   listReadPositions(filename: string): Identifier[];
   listWritePositions(filename: string): Identifier[];
-  lookupPosition(p: Position, filename: string): ISpaghettiScopeNode | undefined;
+  lookupPosition(p: Position | undefined, filename: string | undefined): ISpaghettiScopeNode | undefined;
   getTop(): ISpaghettiScopeNode;
+  getFirstChild(): ISpaghettiScopeNode | undefined;
 }
 
 export interface ISyntaxResult {
