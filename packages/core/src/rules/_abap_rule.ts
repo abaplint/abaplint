@@ -25,10 +25,10 @@ export abstract class ABAPRule implements IRule {
     }
 
     const abap = obj as ABAPObject;
-    let output: Issue[] = [];
+    const output: Issue[] = [];
 
     for (const file of abap.getABAPFiles()) {
-      output = output.concat(this.runParsed(file, obj));
+      output.push(...this.runParsed(file, obj));
     }
 
     return output;

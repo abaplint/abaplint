@@ -223,6 +223,12 @@ export class BasicTypes {
       return typ.getType();
     }
 
+    const type = this.scope.findTypePoolType(chainText);
+    if (type) {
+      this.scope.addReference(typeName.getFirstToken(), typ, ReferenceType.TypeReference, this.filename);
+      return type;
+    }
+
     const ddic = this.scope.getDDIC().lookup(chainText);
     if (ddic) {
       if (ddic instanceof TypedIdentifier) {

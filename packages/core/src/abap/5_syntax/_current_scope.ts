@@ -10,12 +10,16 @@ import {IRegistry} from "../../_iregistry";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
-import {Class} from "../../objects/class";
-import {Interface} from "../../objects/interface";
 import {IScopeIdentifier} from "./_spaghetti_scope";
 import {ReferenceType, IReferenceExtras} from "./_reference";
+import {AbstractType} from "../types/basic/_abstract_type";
+
 import {IObject} from "../../objects/_iobject";
-import {EnhancementSpot} from "../../objects";
+import {Class} from "../../objects/class";
+import {Interface} from "../../objects/interface";
+import {EnhancementSpot} from "../../objects/enhancement_spot";
+import {TypePool} from "../../objects/type_pool";
+import {SyntaxLogic} from "./syntax";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -228,6 +232,40 @@ export class CurrentScope {
     return undefined;
   }
 
+  public findTypePoolConstant(name: string | undefined): TypedIdentifier | undefined {
+    if (name === undefined || name.includes("_") === undefined) {
+      return undefined;
+    }
+
+    const typePoolName = name.split("_")[0];
+    const typePool = this.reg.getObject("TYPE", typePoolName) as TypePool | undefined;
+    if (typePool === undefined) {
+      return undefined;
+    }
+
+    const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild();
+
+    const found = spag?.findVariable(name);
+    return found;
+  }
+
+  public findTypePoolType(name: string): AbstractType | undefined {
+    if (name.includes("_") === undefined) {
+      return undefined;
+    }
+
+    const typePoolName = name.split("_")[0];
+    const typePool = this.reg.getObject("TYPE", typePoolName) as TypePool | undefined;
+    if (typePool === undefined) {
+      return undefined;
+    }
+
+    const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild();
+
+    const found = spag?.findType(name)?.getType();
+    return found;
+  }
+
   /** Lookup interface in local and global scope */
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
     const ilocal = this.current?.findInterfaceDefinition(name);
@@ -258,7 +296,11 @@ export class CurrentScope {
     if (name === undefined) {
       return undefined;
     }
-    return this.current?.findVariable(name);
+    const found = this.current?.findVariable(name);
+    if (found) {
+      return found;
+    }
+    return this.findTypePoolConstant(name);
   }
 
 ///////////////////////////
