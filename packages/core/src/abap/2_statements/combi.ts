@@ -26,9 +26,12 @@ class Regex implements IStatementRunnable {
     const result: Result[] = [];
 
     for (const input of r) {
-      if (input.remainingLength() !== 0
-          && this.regexp.test(input.peek().getStr()) === true) {
-        result.push(input.shift(new TokenNodeRegex(input.peek())));
+      if (input.remainingLength() === 0) {
+        continue;
+      }
+      const token = input.peek();
+      if (this.regexp.test(token.getStr()) === true) {
+        result.push(input.shift(new TokenNodeRegex(token)));
       }
     }
 
