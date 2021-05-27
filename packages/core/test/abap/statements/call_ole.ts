@@ -10,6 +10,7 @@ const tests = [
   "CALL METHOD OF lo_docs 'Open' = cv_ole_doc EXPORTING #1 = cv_fullpath.",
   "CALL METHOD OF moo-obj 'GetServ' = service NO FLUSH EXPORTING #1 = 'bar'.",
   "CALL METHOD OF app 'Create' = handle NO FLUSH QUEUEONLY.",
+  "CALL METHOD OF var1 var2.",
 ];
 
 statementType(tests, "CALL METHOD OF", Statements.CallOLE);
