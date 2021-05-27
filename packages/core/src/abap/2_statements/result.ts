@@ -1,12 +1,12 @@
-import {Token as Tokens_Token} from "../1_lexer/tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 import {ExpressionNode} from "../nodes/expression_node";
 import {TokenNode} from "../nodes/token_node";
 
 export class Result {
-  private readonly tokens: readonly Tokens_Token[];
+  private readonly tokens: readonly Token[];
   private nodes: (ExpressionNode | TokenNode)[] | undefined;
 
-  public constructor(a: readonly Tokens_Token[], n?: (ExpressionNode | TokenNode)[]) {
+  public constructor(a: readonly Token[], n?: (ExpressionNode | TokenNode)[]) {
 // tokens: not yet matched
 // nodes: matched tokens
     this.tokens = a;
@@ -16,7 +16,7 @@ export class Result {
     }
   }
 
-  public peek(): Tokens_Token {
+  public peek(): Token {
     return this.tokens[0];
   }
 
@@ -32,10 +32,6 @@ export class Result {
     } else {
       throw new Error("shift, error");
     }
-  }
-
-  public getTokens(): readonly Tokens_Token[] {
-    return this.tokens;
   }
 
   public popNode(): ExpressionNode | TokenNode | undefined {
@@ -59,13 +55,5 @@ export class Result {
   public length(): number {
     return this.tokens.length;
   }
-/*
-  public toStr(): string {
-    let ret = "";
-    for (const token of this.tokens) {
-      ret = ret + " " + token.getStr();
-    }
-    return ret;
-  }
-*/
+
 }
