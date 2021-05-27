@@ -7,6 +7,9 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Version} from "../version";
+import {EditHelper, IEdit} from "../edit_helper";
+import {IStatement} from "../abap/2_statements/statements/_statement";
+import {StatementNode} from "../abap/nodes";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
   /** Check for REFRESH statement */
@@ -19,10 +22,10 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public subtract: boolean = true;
   /** Check for MULTIPLY statement */
   public multiply: boolean = true;
-  /** Check for MOVE statement */
-  public move: boolean = true;
   /** Check for DIVIDE statement */
   public divide: boolean = true;
+  /** Check for MOVE statement */
+  public move: boolean = true;
   /** Checks for usages of IS REQUESTED */
   public requested: boolean = true;
   /** Checks for usages of OCCURS */
@@ -60,7 +63,7 @@ export class ObsoleteStatement extends ABAPRule {
       key: "obsolete_statement",
       title: "Obsolete statements",
       shortDescription: `Checks for usages of certain obsolete statements`,
-      tags: [RuleTag.SingleFile, RuleTag.Styleguide],
+      tags: [RuleTag.SingleFile, RuleTag.Styleguide, RuleTag.Quickfix],
       extendedInformation: `
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs
 
@@ -119,14 +122,15 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
           || (sta instanceof Statements.ClassDefinitionLoad && this.conf.load && configVersion >= Version.v702)
           || (sta instanceof Statements.InterfaceLoad && this.conf.load && configVersion >= Version.v702)
           || (sta instanceof Statements.Multiply && this.conf.multiply)
+          || (sta instanceof Statements.Divide && this.conf.divide)
           || (sta instanceof Statements.Move && this.conf.move
           && staNode.getTokens()[0].getStr().toUpperCase() === "MOVE"
           && staNode.getTokens()[1].getStr() !== "-"
-          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT")
-          || (sta instanceof Statements.Divide && this.conf.divide)) {
+          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT") ) {
         if (prev === undefined || staNode.getStart().getCol() !== prev.getCol() || staNode.getStart().getRow() !== prev.getRow()) {
           const message = "Statement \"" + staNode.getFirstToken().getStr() + "\" is obsolete";
-          const issue = Issue.atStatement(file, staNode, message, this.getMetadata().key, this.conf.severity);
+          const fix = this.getFix(file, sta, staNode);
+          const issue = Issue.atStatement(file, staNode, message, this.getMetadata().key, this.conf.severity, fix);
           issues.push(issue);
         }
         prev = staNode.getStart();
@@ -147,13 +151,27 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         issues.push(issue);
       }
 
-      if (this.conf.parameter && sta instanceof Statements.Parameter && staNode.getFirstToken().getStr().toUpperCase() === "PARAMETER") {
-        const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of PARAMETER", this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+      if (this.conf.parameter && sta instanceof Statements.Parameter) {
+        const token = staNode.getFirstToken();
+
+        if (token.getStr().toUpperCase() === "PARAMETER") {
+          const fix = EditHelper.replaceToken(file, token, "PARAMETERS");
+          const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of PARAMETER", this.getMetadata().key, this.conf.severity, fix);
+          issues.push(issue);
+        }
       }
 
       if (this.conf.ranges && sta instanceof Statements.Ranges) {
-        const issue = Issue.atStatement(file, staNode, "Use TYPE RANGE OF instead of RANGES", this.getMetadata().key, this.conf.severity);
+        const children = staNode.getChildren();
+        let fix = undefined;
+        if (children.length === 5) {
+          const simpleNameString = children[1].concatTokens();
+          const fieldSubString = children[3].concatTokens();
+          const replacement = "TYPES " + simpleNameString + " LIKE RANGE OF " + fieldSubString + ".";
+          fix = EditHelper.replaceRange(file, staNode.getStart(), staNode.getEnd(), replacement);
+        }
+
+        const issue = Issue.atStatement(file, staNode, "Use LIKE RANGE OF instead of RANGES", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
 
@@ -172,7 +190,8 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         for (const compare of staNode.findAllExpressions(Expressions.Compare)) {
           const token = compare.findDirectTokenByText("REQUESTED");
           if (token) {
-            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key, this.conf.severity);
+            const fix = EditHelper.replaceToken(file, token, "SUPPLIED");
+            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key, this.conf.severity, fix);
             issues.push(issue);
           }
         }
@@ -218,7 +237,8 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       }
 
       if (this.conf.typePools && sta instanceof Statements.TypePools && configVersion >= Version.v702){
-        const issue = Issue.atStatement(file, staNode, "Statement \"TYPE-POOLS\" is obsolete", this.getMetadata().key, this.conf.severity);
+        const fix = EditHelper.deleteStatement(file, staNode);
+        const issue = Issue.atStatement(file, staNode, "Statement \"TYPE-POOLS\" is obsolete", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
 
@@ -231,5 +251,100 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
       }
     }
     return issues;
+  }
+
+  private getFix(file: ABAPFile, statement: IStatement, statementNode: StatementNode): IEdit | undefined {
+    if (statement instanceof Statements.Refresh) {
+      if (statementNode.getChildren().length === 6) {
+        return undefined;
+      }
+
+      return EditHelper.replaceToken(file, statementNode.getFirstToken(), "CLEAR");
+    }
+    else if (statement instanceof Statements.Compute) {
+      const children = statementNode.getChildren();
+      if (children.length === 5) {
+        const tokenForDeletion = statementNode.getFirstToken();
+        let endPosition = tokenForDeletion.getEnd();
+        endPosition = new Position(endPosition.getRow(), endPosition.getCol() + 1);
+        return EditHelper.deleteRange(file, tokenForDeletion.getStart(), endPosition);
+      }
+      else {
+        const targetString = children[2].concatTokens();
+        const sourceString = children[4].concatTokens();
+        const replacement = targetString + " = EXACT #( " + sourceString + " ).";
+        return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
+      }
+    }
+    else if (statement instanceof Statements.Add ||
+            statement instanceof Statements.Subtract) {
+      const children = statementNode.getChildren();
+      const sourceString = children[1].concatTokens();
+      const targetString = children[3].concatTokens();
+      let replacement = "";
+
+      if (statement instanceof Statements.Add) {
+        replacement = targetString + " = " + targetString + " + " + sourceString + ".";
+      }
+      else if (statement instanceof Statements.Subtract) {
+        replacement = targetString + " = " + targetString + " - " + sourceString + ".";
+      }
+
+      return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
+    }
+    else if (statement instanceof Statements.Multiply ||
+          statement instanceof Statements.Divide) {
+      const children = statementNode.getChildren();
+      const targetString = children[1].concatTokens();
+      const sourceString = children[3].concatTokens();
+      let replacement = "";
+
+      if (statement instanceof Statements.Multiply) {
+        replacement = targetString + " = " + targetString + " * " + sourceString + ".";
+      }
+      else if (statement instanceof Statements.Divide) {
+        replacement = targetString + " = " + targetString + " / " + sourceString + ".";
+      }
+
+      return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
+    }
+    else if (statement instanceof Statements.Move) {
+      if (statementNode.getColon() !== undefined) {
+        return undefined;
+      }
+
+      const children = statementNode.getChildren();
+      const sourceString = children[1].concatTokens();
+      const targetString = children[3].concatTokens();
+
+      let operator = children[2].concatTokens();
+      if (operator === "TO") {
+        operator = " = ";
+      }
+      else {
+        operator = " ?= ";
+      }
+
+      const replacement = targetString + operator + sourceString + ".";
+
+      return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
+    }
+    else if (statement instanceof Statements.ClassDefinitionLoad ||
+            statement instanceof Statements.InterfaceLoad) {
+
+      let token = undefined;
+      if (statement instanceof Statements.ClassDefinitionLoad) {
+        token = statementNode.getChildren()[3].getFirstToken();
+      }
+      else {
+        token = statementNode.getChildren()[2].getFirstToken();
+      }
+
+      let startPosition = token.getStart();
+      startPosition = new Position(startPosition.getRow(), startPosition.getCol() - 1);
+      return EditHelper.deleteRange(file, startPosition, token.getEnd());
+    }
+
+    return undefined;
   }
 }
