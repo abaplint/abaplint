@@ -37,7 +37,7 @@ export class StructureParser {
     } else if (filename.endsWith(".intf.abap")) {
       return new Structures.InterfaceGlobal();
     } else {
-// todo
+// todo, add a special structure for TYPE-POOLS
       return new Structures.Any();
     }
   }

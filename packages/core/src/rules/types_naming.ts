@@ -4,8 +4,10 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ExpressionNode} from "../abap/nodes";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "../objects/_abap_object";
+import {TypePool} from "../objects";
 
 export class TypesNamingConf extends BasicRuleConfig {
   /** The pattern for TYPES */
@@ -16,11 +18,12 @@ export class TypesNaming extends ABAPRule {
 
   private conf = new TypesNamingConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "types_naming",
       title: "TYPES naming conventions",
       shortDescription: `Allows you to enforce a pattern for TYPES definitions`,
+      extendedInformation: `Does not run for TYPE POOLS`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
     };
   }
@@ -33,10 +36,14 @@ export class TypesNaming extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
     const testRegex = new RegExp(this.conf.pattern, "i");
     let nesting = 0;
+
+    if (obj instanceof TypePool) {
+      return [];
+    }
 
     for (const stat of file.getStatements()) {
       let expr: ExpressionNode | undefined = undefined;

@@ -1281,4 +1281,16 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it.only("Refer to TYPE from TYPE POOL", () => {
+    const pool = `
+    TYPE-POOL zfoo.
+    TYPES zfoo_moo TYPE c LENGTH 5.`;
+    const prog = `DATA bar TYPE zfoo_moo.`;
+    let issues = runMulti([
+      {filename: "zfoo.type.abap", contents: pool},
+      {filename: "zreport.prog.abap", contents: prog}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
