@@ -23,29 +23,17 @@ export class Result {
   }
 
   public shift(node: ExpressionNode | TokenNode): Result {
-    if (this.nodes) {
-      const cp = this.nodes.slice();
-      if (node) {
-        cp.push(node);
-      }
-      return new Result(this.tokens, this.tokenIndex + 1, cp);
-    } else {
-      throw new Error("shift, error");
-    }
+    const cp = this.nodes!.slice();
+    cp.push(node);
+    return new Result(this.tokens, this.tokenIndex + 1, cp);
   }
 
   public popNode(): ExpressionNode | TokenNode | undefined {
-    if (!this.nodes) {
-      throw new Error("popNode, error");
-    }
-    return this.nodes.pop();
+    return this.nodes!.pop();
   }
 
   public getNodes(): (ExpressionNode | TokenNode)[] {
-    if (!this.nodes) {
-      throw new Error("getNodes, error");
-    }
-    return this.nodes;
+    return this.nodes!;
   }
 
   public setNodes(n: (ExpressionNode | TokenNode)[]): void {
