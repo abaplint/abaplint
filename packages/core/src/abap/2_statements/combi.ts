@@ -600,8 +600,7 @@ export abstract class Expression implements IStatementRunnable {
       for (const t of temp) {
         let consumed = input.remainingLength() - t.remainingLength();
         if (consumed > 0) {
-          const length = t.getNodes().length;
-          const re = new ExpressionNode(this);
+          const originalLength = t.getNodes().length;
           const children: (ExpressionNode | TokenNode)[] = [];
           while (consumed > 0) {
             const sub = t.popNode();
@@ -610,9 +609,10 @@ export abstract class Expression implements IStatementRunnable {
               consumed = consumed - sub.countTokens();
             }
           }
+          const re = new ExpressionNode(this);
           re.setChildren(children.reverse());
 
-          const n = t.getNodes().slice(0, length - consumed);
+          const n = t.getNodes().slice(0, originalLength - consumed);
           n.push(re);
           t.setNodes(n);
         }
