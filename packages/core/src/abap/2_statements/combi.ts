@@ -597,7 +597,6 @@ export abstract class Expression implements IStatementRunnable {
     for (const input of r) {
       const temp = this.runnable.run([input]);
 
-      const moo: Result[] = [];
       for (const t of temp) {
         let consumed = input.remainingLength() - t.remainingLength();
         if (consumed > 0) {
@@ -617,10 +616,9 @@ export abstract class Expression implements IStatementRunnable {
           n.push(re);
           t.setNodes(n);
         }
-        moo.push(t);
+        results.push(t);
       }
 
-      results.push(...moo);
     }
 //    console.dir(results);
     return results;
