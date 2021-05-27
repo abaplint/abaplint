@@ -4,31 +4,31 @@ import {TokenNode} from "../nodes/token_node";
 
 export class Result {
   private readonly tokens: readonly Token[];
+  private readonly tokenIndex: number;
   private nodes: (ExpressionNode | TokenNode)[] | undefined;
 
-  public constructor(a: readonly Token[], n?: (ExpressionNode | TokenNode)[]) {
-// tokens: not yet matched
+  public constructor(tokens: readonly Token[], tokenIndex: number, nodes?: (ExpressionNode | TokenNode)[]) {
+// tokens: all tokens, from the tokenIndex = not yet matched
 // nodes: matched tokens
-    this.tokens = a;
-    this.nodes = n;
+    this.tokens = tokens;
+    this.tokenIndex = tokenIndex;
+    this.nodes = nodes;
     if (this.nodes === undefined) {
       this.nodes = [];
     }
   }
 
   public peek(): Token {
-    return this.tokens[0];
+    return this.tokens[this.tokenIndex];
   }
 
   public shift(node: ExpressionNode | TokenNode): Result {
-    const copy = this.tokens.slice();
-    copy.shift();
     if (this.nodes) {
       const cp = this.nodes.slice();
       if (node) {
         cp.push(node);
       }
-      return new Result(copy, cp);
+      return new Result(this.tokens, this.tokenIndex + 1, cp);
     } else {
       throw new Error("shift, error");
     }
@@ -52,8 +52,8 @@ export class Result {
     this.nodes = n;
   }
 
-  public length(): number {
-    return this.tokens.length;
+  public remainingLength(): number {
+    return this.tokens.length - this.tokenIndex;
   }
 
 }

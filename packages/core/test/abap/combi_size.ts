@@ -24,7 +24,7 @@ function tok(s: string): Token[] {
 }
 
 function res(s: string) {
-  return new Result(tok(s));
+  return new Result(tok(s), 0);
 }
 
 const resultSize = [

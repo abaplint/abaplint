@@ -26,7 +26,7 @@ class Regex implements IStatementRunnable {
     const result: Result[] = [];
 
     for (const input of r) {
-      if (input.length() !== 0
+      if (input.remainingLength() !== 0
           && this.regexp.test(input.peek().getStr()) === true) {
         result.push(input.shift(new TokenNodeRegex(input.peek())));
       }
@@ -68,7 +68,7 @@ class Word implements IStatementRunnable {
     const result: Result[] = [];
 
     for (const input of r) {
-      if (input.length() !== 0
+      if (input.remainingLength() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
 //        console.log("match, " + this.s + result.length);
         result.push(input.shift(new TokenNode(input.peek())));
@@ -110,7 +110,7 @@ class Token implements IStatementRunnable {
     const result: Result[] = [];
 
     for (const input of r) {
-      if (input.length() !== 0
+      if (input.remainingLength() !== 0
           && input.peek().constructor.name.toUpperCase() === this.s.toUpperCase()) {
         result.push(input.shift(new TokenNode(input.peek())));
       }
@@ -252,7 +252,7 @@ class OptionalPriority implements IStatementRunnable {
         result.push(...res);
       } else if (res.length === 0) {
         result.push(input);
-      } else if (res[0].length() < input.length()) {
+      } else if (res[0].remainingLength() < input.remainingLength()) {
         result.push(...res);
       } else {
         result.push(input);
@@ -599,7 +599,7 @@ export abstract class Expression implements IStatementRunnable {
 
       const moo: Result[] = [];
       for (const t of temp) {
-        let consumed = input.length() - t.length();
+        let consumed = input.remainingLength() - t.remainingLength();
         if (consumed > 0) {
           const length = t.getNodes().length;
           const re = new ExpressionNode(this);
@@ -885,11 +885,11 @@ export class Combi {
 
     this.ver = version;
 
-    const input = new Result(tokens);
+    const input = new Result(tokens, 0);
     const result = runnable.run([input]);
 //    console.log("res: " + result.length);
     for (const res of result) {
-      if (res.length() === 0) {
+      if (res.remainingLength() === 0) {
         return res.getNodes();
       }
     }
