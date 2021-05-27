@@ -422,9 +422,11 @@ class StarPrioroity implements IStatementRunnable {
 class Plus implements IStatementRunnable {
 
   private readonly plu: IStatementRunnable;
+  private readonly sub: Sequence;
 
   public constructor(plu: IStatementRunnable) {
     this.plu = plu;
+    this.sub = new Sequence([this.plu, new Star(this.plu)]);
   }
 
   public listKeywords(): string[] {
@@ -436,7 +438,7 @@ class Plus implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    return new Sequence([this.plu, new Star(this.plu)]).run(r);
+    return this.sub.run(r);
   }
 
   public railroad() {
@@ -455,9 +457,11 @@ class Plus implements IStatementRunnable {
 class PlusPriority implements IStatementRunnable {
 
   private readonly plu: IStatementRunnable;
+  private readonly sub: Sequence;
 
   public constructor(plu: IStatementRunnable) {
     this.plu = plu;
+    this.sub = new Sequence([this.plu, new StarPrioroity(this.plu)]);
   }
 
   public listKeywords(): string[] {
@@ -469,7 +473,7 @@ class PlusPriority implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    return new Sequence([this.plu, new StarPrioroity(this.plu)]).run(r);
+    return this.sub.run(r);
   }
 
   public railroad() {
