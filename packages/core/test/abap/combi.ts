@@ -115,11 +115,11 @@ const tests = [
 describe("combi matching -", () => {
   tests.forEach((test) => {
     it(test.n, () => {
-      const input = new Result(test.t);
+      const input = new Result(test.t, 0);
       const result = test.c.run([input]);
       let match = false;
       for (const res of result) {
-        if (res.length() === 0) {
+        if (res.remainingLength() === 0) {
           match = true;
         }
       }
