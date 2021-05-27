@@ -232,6 +232,23 @@ export class CurrentScope {
     return undefined;
   }
 
+  public findTypePoolConstant(name: string | undefined): TypedIdentifier | undefined {
+    if (name === undefined || name.includes("_") === undefined) {
+      return undefined;
+    }
+
+    const typePoolName = name.split("_")[0];
+    const typePool = this.reg.getObject("TYPE", typePoolName) as TypePool | undefined;
+    if (typePool === undefined) {
+      return undefined;
+    }
+
+    const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild();
+
+    const found = spag?.findVariable(name);
+    return found;
+  }
+
   public findTypePoolType(name: string): AbstractType | undefined {
     if (name.includes("_") === undefined) {
       return undefined;
@@ -279,7 +296,11 @@ export class CurrentScope {
     if (name === undefined) {
       return undefined;
     }
-    return this.current?.findVariable(name);
+    const found = this.current?.findVariable(name);
+    if (found) {
+      return found;
+    }
+    return this.findTypePoolConstant(name);
   }
 
 ///////////////////////////

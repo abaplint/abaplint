@@ -4230,6 +4230,17 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("Refer to CONSTANTS from TYPE POOL", () => {
+    const pool = `
+    TYPE-POOL zfoo.
+    CONSTANTS zfoo_moo TYPE c LENGTH 6 VALUE 'foobar'.`;
+    const prog = `WRITE zfoo_moo.`;
+    const issues = runMulti([
+      {filename: "zfoo.type.abap", contents: pool},
+      {filename: "zreport.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

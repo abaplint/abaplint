@@ -1293,6 +1293,4 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-// todo, type pools, resolve constant
-
 });
