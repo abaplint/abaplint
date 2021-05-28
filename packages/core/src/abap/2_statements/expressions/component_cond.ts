@@ -1,5 +1,5 @@
-import {seq, opt, tok, alt, star, Expression} from "../combi";
-import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
+import {seq, opt, tok, alt, star, Expression, altPrio} from "../combi";
+import {ParenRightW, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {ComponentCompare} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class ComponentCond extends Expression {
     const another = seq(opt("NOT"),
                         tok(WParenLeftW),
                         ComponentCond,
-                        tok(WParenRightW));
+                        altPrio(tok(WParenRightW), tok(ParenRightW)));
 
     const cnd = alt(ComponentCompare, another);
 

@@ -95,10 +95,10 @@ class Word implements IStatementRunnable {
 
 class Token implements IStatementRunnable {
 
-  private readonly s: string;
+  private readonly name: string;
 
   public constructor(s: string) {
-    this.s = s.toUpperCase();
+    this.name = s.toUpperCase();
   }
 
   public listKeywords(): string[] {
@@ -114,7 +114,7 @@ class Token implements IStatementRunnable {
 
     for (const input of r) {
       if (input.remainingLength() !== 0
-          && input.peek().constructor.name.toUpperCase() === this.s) {
+          && input.peek().constructor.name.toUpperCase() === this.name) {
         result.push(input.shift(new TokenNode(input.peek())));
       }
     }
@@ -122,11 +122,11 @@ class Token implements IStatementRunnable {
   }
 
   public railroad() {
-    let text = this.s;
+    let text = this.name;
 
     for (const token in Tokens) {
       const toke: any = Tokens;
-      if (token === this.s && toke[token].railroad) {
+      if (token === this.name && toke[token].railroad.toUpperCase()) {
         text = toke[token].railroad();
         break;
       }
@@ -135,7 +135,7 @@ class Token implements IStatementRunnable {
   }
 
   public toStr() {
-    return "Token \"" + this.s + "\"";
+    return "Token \"" + this.name + "\"";
   }
 
   public first() {

@@ -20,7 +20,7 @@ export class StringTemplateFormatting extends Expression {
 
     const signOptions = altPrio("LEFT", "LEFTPLUS", "LEFTSPACE", "RIGHT", "RIGHTPLUS", "RIGHTSPACE", Source);
 
-    const caseOptions = altPrio("RAW", "UPPER", "LOWER", Source);
+    const caseOptions = altPrio("RAW", "UPPER", "LOWER", Source, Dynamic);
 
     const zeroXSDOptions = altPrio("YES", "NO", Source);
 

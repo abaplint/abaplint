@@ -20,7 +20,7 @@ const tests = [
   "PARAMETERS cb_errl AS CHECKBOX DEFAULT 'X'.",
   "PARAMETER p_top  TYPE i DEFAULT 100 OBLIGATORY.",
   "PARAMETERS p_aid LIKE toaom-archiv_id OBLIGATORY.",
-  "PARAMETERS p_file(128) TYPE c LOWER CASE OBLIGATORY DEFAULT 'C:\filename.xls'.",
+  "PARAMETERS p_file(128) TYPE c LOWER CASE OBLIGATORY DEFAULT 'C:\\filename.xls'.",
   "PARAMETERS p_mail TYPE c LENGTH 40 LOWER CASE.",
   "PARAMETERS moo-boo LIKE foo-bar.",
   "parameters foo radiobutton group 123.",
@@ -35,6 +35,7 @@ const tests = [
   "PARAMETERS p_layout TYPE slis_vari MEMORY ID sy-repid NO-DISPLAY.",
   "PARAMETERS %blah RADIOBUTTON GROUP func MODIF ID old DEFAULT 'X'.",
   "PARAMETERS p_foo LIKE moo-boo-loo MODIF ID foo.",
+  "PARAMETERS p_sel TYPE char10 OBLIGATORY AS LISTBOX VISIBLE LENGTH 15 DEFAULT 'BAR' USER-COMMAND ukey.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

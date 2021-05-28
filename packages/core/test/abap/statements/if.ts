@@ -99,6 +99,7 @@ const tests = [
   "IF foo- = 2.", // "foo-" is an allowed variable name
   "IF ( foo = 'bar').",
   "IF ('bar' = foo ).",
+  "IF |{ lv_host CASE = (cl_abap_format=>c_lower) }| EQ 'http'.",
 ];
 
 statementType(tests, "IF", Statements.If);
