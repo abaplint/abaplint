@@ -29,6 +29,8 @@ const tests = [
   "LOOP AT mt_out ASSIGNING FIELD-SYMBOL(<ls_out>) GROUP BY ( d = <ls_out>-d group_size = GROUP SIZE ) REFERENCE INTO DATA(lr_group).",
   "LOOP AT tab ASSIGNING FIELD-SYMBOL(<fs>) WHERE field IS NOT INITIAL.",
   "LOOP AT tab ASSIGNING FIELD-SYMBOL(<fs>) WHERE field IS NOT INITIAL GROUP BY <fs>-key.",
+  "LOOP AT tab WHERE ( field EQ 'B' ).",
+  "LOOP AT tab WHERE ( field EQ 'B').",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

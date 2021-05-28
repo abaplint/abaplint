@@ -53,7 +53,7 @@ This rule makes sure the spaces are consistently required across the language.`,
   private missingSpace(statement: StatementNode): Position | undefined {
 
     const found = statement.findAllExpressionsMulti([Expressions.CondSub, Expressions.SQLCond,
-      Expressions.ValueBody, Expressions.Cond, Expressions.MethodCallParam], true);
+      Expressions.ValueBody, Expressions.Cond, Expressions.ComponentCond, Expressions.MethodCallParam], true);
     let pos: Position | undefined = undefined;
     for (const f of found) {
       if (f.get() instanceof Expressions.CondSub) {
@@ -62,6 +62,8 @@ This rule makes sure the spaces are consistently required across the language.`,
         pos = this.checkValueBody(f);
       } else if (f.get() instanceof Expressions.Cond) {
         pos = this.checkCond(f);
+      } else if (f.get() instanceof Expressions.ComponentCond) {
+        pos = this.checkComponentCond(f);
       } else if (f.get() instanceof Expressions.SQLCond) {
         pos = this.checkSQLCond(f);
       } else if (f.get() instanceof Expressions.MethodCallParam) {
@@ -104,6 +106,31 @@ This rule makes sure the spaces are consistently required across the language.`,
     const children = cond.getChildren();
     for (let i = 0; i < children.length; i++) {
       if (children[i].get() instanceof Expressions.Cond) {
+        const current = children[i];
+        const prev = children[i - 1].getLastToken();
+        const next = children[i + 1].getFirstToken();
+
+        if (prev.getStr() === "("
+            && prev.getRow() === current.getFirstToken().getRow()
+            && prev.getCol() + 1 === current.getFirstToken().getStart().getCol()) {
+          return current.getFirstToken().getStart();
+        }
+
+        if (next.getStr() === ")"
+            && next.getRow() === current.getLastToken().getRow()
+            && next.getCol() === current.getLastToken().getEnd().getCol()) {
+          return current.getLastToken().getEnd();
+        }
+
+      }
+    }
+    return undefined;
+  }
+
+  private checkComponentCond(cond: ExpressionNode): Position | undefined {
+    const children = cond.getChildren();
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].get() instanceof Expressions.ComponentCond) {
         const current = children[i];
         const prev = children[i - 1].getLastToken();
         const next = children[i + 1].getFirstToken();
