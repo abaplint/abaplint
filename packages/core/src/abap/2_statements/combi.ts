@@ -126,7 +126,7 @@ class Token implements IStatementRunnable {
 
     for (const token in Tokens) {
       const toke: any = Tokens;
-      if (token === this.name && toke[token].railroad.toUpperCase()) {
+      if (token.toUpperCase() === this.name && toke[token].railroad) {
         text = toke[token].railroad();
         break;
       }
