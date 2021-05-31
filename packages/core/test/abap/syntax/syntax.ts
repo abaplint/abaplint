@@ -4255,6 +4255,17 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("SELECT, multiple inline data definitions", () => {
+    const abap = `
+SELECT SINGLE field1, field2
+  FROM voided
+  INTO ( @DATA(lv_field1), @DATA(lv_field2) ).
+WRITE lv_field1.
+WRITE lv_field2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
