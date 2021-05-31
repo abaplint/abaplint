@@ -4241,6 +4241,20 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("REDUCE with INDEX INTO", () => {
+    const abap = `
+    TYPES ty_t_coefficients TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA it_coefficients TYPE ty_t_coefficients.
+    DATA mv_number TYPE c LENGTH 10.
+    DATA(rv_val) = REDUCE i( INIT n = 0
+                           FOR coef IN it_coefficients
+                           INDEX INTO lv_idx
+                           LET lv_pos = lv_idx - 1
+                           IN NEXT n = n + coef * mv_number+lv_pos(1) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
