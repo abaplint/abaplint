@@ -18,8 +18,7 @@ export class Select {
       new SQLFrom().runSyntax(from, scope, filename);
     }
 
-    const inline = node.findFirstExpression(Expressions.InlineData);
-    if (inline) {
+    for (const inline of node.findAllExpressions(Expressions.InlineData)) {
       // todo, for now these are voided
       new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
     }
