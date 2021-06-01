@@ -257,6 +257,11 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
   `SELECT SINGLE SUM( reserved + reserved + reserved ) FROM bar1 INTO @DATA(sdfsd1).`,
   `SELECT SINGLE SUM( reserved - reserved ) FROM bar2 INTO @DATA(sdfsd2).`,
   `SELECT SINGLE SUM( reserved * reserved ) FROM bar3 INTO @DATA(sdfsd3).`,
+
+  `SELECT CAST( dfsds AS CHAR( 8 ) ) AS sdf
+  FROM dsfsd
+  ORDER BY sdfd
+  INTO TABLE @DATA(lt_data).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
