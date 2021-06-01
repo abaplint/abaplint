@@ -6,7 +6,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes";
-import {Position} from "..";
+import {Position} from "../position";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 
 export class ChainMainlyDeclarationsConf extends BasicRuleConfig {
