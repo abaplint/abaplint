@@ -1,3 +1,6 @@
+import {VoidType} from "../abap/types/basic";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
+import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
 
@@ -22,6 +25,10 @@ export class DataDefinition extends AbstractObject {
   public getDescription(): string | undefined {
     // todo
     return undefined;
+  }
+
+  public parseType(_reg: IRegistry): AbstractType {
+    return new VoidType("DDLSTodo");
   }
 
   public parse(): IParseResult {
