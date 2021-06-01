@@ -1337,4 +1337,13 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("determine type, INSERT INITIAL LINE INTO TABLE", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  INSERT INITIAL LINE INTO TABLE tab ASSIGNING FIELD-SYMBOL(<row>).`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

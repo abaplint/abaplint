@@ -369,7 +369,11 @@ export class BasicTypes {
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
+      let e = node.findFirstExpression(Expressions.Type);
+      if (e === undefined) {
+        e = node.findFirstExpression(Expressions.FormParamType);
+      }
+      const type = this.resolveLikeName(e, false);
 
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
