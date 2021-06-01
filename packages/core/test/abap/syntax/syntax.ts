@@ -4266,6 +4266,27 @@ WRITE lv_field2.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("Less strict handling of constant values", () => {
+    const abap = `CONSTANTS bar TYPE if_sxml_node=>node_type VALUE if_sxml_node=>co_nt_final.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("Less strict handling of constant values, error, not voided", () => {
+    const abap = `CONSTANTS bar TYPE c VALUE zerror=>co.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("Less strict handling of constant values, error if undefined is used for length", () => {
+    const abap = `
+    CONSTANTS bar TYPE if_sxml_node=>node_type VALUE if_sxml_node=>co_nt_final.
+    CONSTANTS moo TYPE c LENGTH bar VALUE 'A'.`;
+    const issues = runProgram(abap);
+    // todo, this should be an error?
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
