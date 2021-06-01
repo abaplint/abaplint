@@ -26,7 +26,7 @@ export class InsertInternal implements StatementSyntax {
       if (source === undefined) {
         source = node.findDirectExpression(Expressions.Source);
       }
-      const sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : undefined;
+      const sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : targetType;
 
       const inlinefs = afterAssigning?.findDirectExpression(Expressions.InlineFS);
       if (inlinefs) {
