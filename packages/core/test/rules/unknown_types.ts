@@ -1316,4 +1316,25 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("structured constants", () => {
+    const abap = `
+  types:
+    TY_RC type c length 2 .
+
+  constants:
+    begin of ZCX_TEXT2TAB_ERROR,
+      msgid type symsgid value 'SY',
+      msgno type symsgno value '499',
+      attr1 type scx_attrname value 'METHNAME',
+      attr2 type scx_attrname value 'MSG',
+      attr3 type scx_attrname value 'LOCATION',
+      attr4 type scx_attrname value '',
+    end of ZCX_TEXT2TAB_ERROR .
+
+    DATA foo type ty_rc.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });
