@@ -1293,4 +1293,27 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Unknown constant, should be voided with value undefined", () => {
+    const abap = `CONSTANTS c_tab LIKE cl_abap_char_utilities=>horizontal_tab VALUE cl_abap_char_utilities=>horizontal_tab.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Constant, found", () => {
+    const clas = `CLASS cl_abap_char_utilities DEFINITION PUBLIC.
+    PUBLIC SECTION.
+      CONSTANTS horizontal_tab TYPE c LENGTH 1 VALUE 'A'.
+  ENDCLASS.
+  CLASS cl_abap_char_utilities IMPLEMENTATION.
+  ENDCLASS.`;
+    const abap = `constants c_tab like cl_abap_char_utilities=>horizontal_tab value cl_abap_char_utilities=>horizontal_tab.`;
+    let issues = runMulti([
+      {filename: "zprog.prog.abap", contents: abap},
+      {filename: "cl_abap_char_utilities.clas.abap", contents: clas},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });
