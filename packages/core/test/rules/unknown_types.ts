@@ -1293,4 +1293,48 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Unknown constant, should be voided with value undefined", () => {
+    const abap = `CONSTANTS c_tab LIKE cl_abap_char_utilities=>horizontal_tab VALUE cl_abap_char_utilities=>horizontal_tab.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Constant, found", () => {
+    const clas = `CLASS cl_abap_char_utilities DEFINITION PUBLIC.
+    PUBLIC SECTION.
+      CONSTANTS horizontal_tab TYPE c LENGTH 1 VALUE 'A'.
+  ENDCLASS.
+  CLASS cl_abap_char_utilities IMPLEMENTATION.
+  ENDCLASS.`;
+    const abap = `constants c_tab like cl_abap_char_utilities=>horizontal_tab value cl_abap_char_utilities=>horizontal_tab.`;
+    let issues = runMulti([
+      {filename: "zprog.prog.abap", contents: abap},
+      {filename: "cl_abap_char_utilities.clas.abap", contents: clas},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("structured constants", () => {
+    const abap = `
+  types:
+    TY_RC type c length 2 .
+
+  constants:
+    begin of ZCX_TEXT2TAB_ERROR,
+      msgid type symsgid value 'SY',
+      msgno type symsgno value '499',
+      attr1 type scx_attrname value 'METHNAME',
+      attr2 type scx_attrname value 'MSG',
+      attr3 type scx_attrname value 'LOCATION',
+      attr4 type scx_attrname value '',
+    end of ZCX_TEXT2TAB_ERROR .
+
+    DATA foo type ty_rc.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });

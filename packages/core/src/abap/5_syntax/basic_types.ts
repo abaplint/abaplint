@@ -579,7 +579,11 @@ export class BasicTypes {
       const name = first.getFirstToken().getStr();
       const obj = this.scope.findObjectDefinition(name);
       if (obj === undefined) {
-        throw new Error("resolveConstantValue, not found: " + name);
+        if (this.scope.getDDIC().inErrorNamespace(name) === true) {
+          throw new Error("resolveConstantValue, not found: " + name);
+        } else {
+          return undefined;
+        }
       }
       const children = expr.getChildren();
 
@@ -646,7 +650,7 @@ export class BasicTypes {
   public findValue(node: StatementNode): string | undefined {
     const val = node.findFirstExpression(Expressions.Value);
     if (val === undefined) {
-      throw new Error("set VALUE");
+      throw new Error("VALUE missing in expression");
     }
 
     if (val.concatTokens().toUpperCase() === "VALUE IS INITIAL") {
@@ -690,7 +694,8 @@ export class BasicTypes {
 
       const cchain = flen.findFirstExpression(Expressions.SimpleFieldChain);
       if (cchain) {
-        return this.parseInt(this.resolveConstantValue(cchain));
+        const val = this.resolveConstantValue(cchain);
+        return this.parseInt(val);
       }
     }
 
@@ -710,7 +715,8 @@ export class BasicTypes {
 
     const chain = val.findFirstExpression(Expressions.SimpleFieldChain);
     if (chain) {
-      return this.parseInt(this.resolveConstantValue(chain));
+      const val = this.resolveConstantValue(chain);
+      return this.parseInt(val);
     }
 
     throw new Error("Unexpected, findLength");
