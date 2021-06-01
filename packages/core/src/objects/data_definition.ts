@@ -13,6 +13,10 @@ export class DataDefinition extends AbstractObject {
     };
   }
 
+  public getSQLViewName(): string | undefined {
+    return undefined;
+  }
+
   public getDescription(): string | undefined {
     // todo
     return undefined;
