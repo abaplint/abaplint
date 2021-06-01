@@ -4287,6 +4287,19 @@ WRITE lv_field2.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("FORM type, refer LIKE LINE", () => {
+    const abap = `
+DATA: BEGIN OF gi_order OCCURS 0,
+        date TYPE d,
+      END OF gi_order.
+
+FORM block_log USING order LIKE LINE OF gi_order.
+  WRITE order-date.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
