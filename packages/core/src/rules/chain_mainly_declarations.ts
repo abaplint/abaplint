@@ -4,6 +4,10 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper, IEdit} from "../edit_helper";
+import {StatementNode} from "../abap/nodes";
+import {Position} from "..";
+import {IStatement} from "../abap/2_statements/statements/_statement";
 
 export class ChainMainlyDeclarationsConf extends BasicRuleConfig {
   /** Allow definition statements to be chained */
@@ -44,7 +48,7 @@ https://docs.abapopenchecks.org/checks/23/
 
 https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statements_guidl.htm
 `,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `CALL METHOD: bar.`,
       goodExample: `CALL METHOD bar.`,
     };
@@ -72,11 +76,7 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
       if (colon === undefined) {
         continue;
       }
-      if (previousRow === colon.getStart().getRow()) {
-        continue;
-      }
       const statement = statementNode.get();
-
 
       if (this.conf.definitions === true
           && (statement instanceof Statements.ClassData
@@ -133,8 +133,15 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
         continue;
       }
 
+      let prevFix: IEdit | undefined;
+      if (previousRow === colon.getStart().getRow()) {
+        prevFix = issues.pop()?.getFix();
+      }
+
+      const fix = this.getFix(file, statement, statementNode, prevFix);
+
       const message = "Chain mainly declarations";
-      issues.push(Issue.atToken(file, statementNode.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
+      issues.push(Issue.atToken(file, statementNode.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix));
 
       previousRow = statementNode.getColon()!.getStart().getRow();
     }
@@ -142,4 +149,39 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
     return issues;
   }
 
+  private getFix(file: ABAPFile, statement: IStatement, statementNode: StatementNode, prevFix: IEdit | undefined): IEdit | undefined {
+    if (statement instanceof Statements.ClassDataBegin ||
+      statement instanceof Statements.ClassDataEnd ||
+      statement instanceof Statements.StaticBegin ||
+      statement instanceof Statements.StaticEnd ||
+      statement instanceof Statements.ConstantBegin ||
+      statement instanceof Statements.ConstantEnd ||
+      statement instanceof Statements.TypeBegin ||
+      statement instanceof Statements.TypeEnd ||
+      statement instanceof Statements.TypeEnumBegin ||
+      statement instanceof Statements.TypeEnumEnd ||
+      statement instanceof Statements.DataBegin ||
+      statement instanceof Statements.DataEnd) {
+      return undefined;
+    }
+
+    let replacement = statementNode.concatTokens();
+    replacement = replacement.replace(",", ".");
+
+    let start: Position;
+    if (prevFix === undefined) {
+      start = statementNode.getStart();
+    }
+    else {
+      start = statementNode.getTokens()[1].getStart();
+    }
+
+    let fix = EditHelper.replaceRange(file, start, statementNode.getEnd(), replacement);
+
+    if (prevFix !== undefined) {
+      fix = EditHelper.merge(fix, prevFix);
+    }
+
+    return fix;
+  }
 }
