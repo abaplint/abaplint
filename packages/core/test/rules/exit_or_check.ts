@@ -26,6 +26,6 @@ const tests2 = [
 ];
 
 const config2 = new ExitOrCheckConf();
-config2.allowCheck = false;
-config2.allowExit = false;
+config2.allowCheck = true;
+config2.allowExit = true;
 testRule(tests2, ExitOrCheck, config2);
