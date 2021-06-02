@@ -1318,7 +1318,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nTags: SingleFile\nhttps://rules.abaplint.org/chain_mainly_declarations"
+              "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "check_abstract": {
               "anyOf": [
