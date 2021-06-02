@@ -9,6 +9,7 @@ import {ABAPObject} from "./objects/_abap_object";
 import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_information";
 import {ObjectReferenceType, UnknownType, VoidType} from "./abap/types/basic";
 import {View} from "./objects/view";
+import {DataDefinition} from "./objects";
 
 export class DDIC {
   private readonly reg: IRegistry;
@@ -96,6 +97,11 @@ export class DDIC {
       return foundTTYP.parseType(this.reg);
     }
 
+    const foundDDLS = this.reg.getObject("DDLS", name) as DataDefinition | undefined;
+    if (foundDDLS) {
+      return foundDDLS.parseType(this.reg);
+    }
+
     const foundDTEL = this.reg.getObject("DTEL", name) as DataElement | undefined;
     if (foundDTEL) {
       return foundDTEL.parseType(this.reg);
@@ -151,10 +157,14 @@ export class DDIC {
     if (foundTABL) {
       return foundTABL.parseType(this.reg);
     }
+    const foundDDLS = this.reg.getObject("DDLS", name) as DataDefinition | undefined;
+    if (foundDDLS) {
+      return foundDDLS.parseType(this.reg);
+    }
     return this.lookupView(name);
   }
 
-  public lookupTableOrView2(name: string | undefined): Table | View | undefined {
+  public lookupTableOrView2(name: string | undefined): Table | DataDefinition | View | undefined {
     if (name === undefined) {
       return undefined;
     }
@@ -165,6 +175,10 @@ export class DDIC {
     const foundVIEW = this.reg.getObject("VIEW", name) as View | undefined;
     if (foundVIEW) {
       return foundVIEW;
+    }
+    const foundDDLS = this.reg.getObject("DDLS", name) as DataDefinition | undefined;
+    if (foundDDLS) {
+      return foundDDLS;
     }
     return undefined;
   }
