@@ -52,6 +52,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public selectWithoutInto: boolean = true;
   /** FREE MEMORY, without ID */
   public freeMemory: boolean = true;
+  /** Checks for EXIT FROM SQL */
+  public exitFromSQL: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -246,6 +248,14 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         const concat = staNode.concatTokens().toUpperCase();
         if (concat === "FREE MEMORY.") {
           const issue = Issue.atStatement(file, staNode, "Statement \"FREE MEMORY\" without ID is obsolete", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+      }
+
+      if (this.conf.exitFromSQL && sta instanceof Statements.Exit) {
+        const concat = staNode.concatTokens().toUpperCase();
+        if (concat === "EXIT FROM SQL.") {
+          const issue = Issue.atStatement(file, staNode, "Statement \"EXIT FROM SQL\" is obsolete", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }
