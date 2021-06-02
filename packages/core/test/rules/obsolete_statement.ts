@@ -54,6 +54,10 @@ END OF li_order.`, cnt: 1, fix: false},
 
   {abap: "FREE MEMORY.", cnt: 1},
   {abap: "FREE MEMORY ID bar.", cnt: 0},
+
+  {abap: "EXIT.", cnt: 0},
+  {abap: "EXIT FROM SQL.", cnt: 1, fix: false},
+  {abap: "EXIT FROM STEP-LOOP.", cnt: 0},
 ];
 
 testRule(tests, ObsoleteStatement);
