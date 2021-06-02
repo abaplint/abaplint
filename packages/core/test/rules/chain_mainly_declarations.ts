@@ -1,5 +1,5 @@
 import {ChainMainlyDeclarations, ChainMainlyDeclarationsConf} from "../../src/rules";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -36,3 +36,15 @@ const config2 = new ChainMainlyDeclarationsConf();
 config2.sort = false;
 
 testRule(testsSort, ChainMainlyDeclarations, config2);
+
+const fixes = [
+  {input: `SORT: foo,
+  bar,
+  xxx.`,
+  output: `SORT foo.
+  SORT bar.
+  SORT xxx.`},
+  {input: `SORT: foo,bar, xxx.`, output: `SORT foo.SORT bar. SORT xxx.`},
+];
+
+testRuleFix(fixes, ChainMainlyDeclarations, config2);
