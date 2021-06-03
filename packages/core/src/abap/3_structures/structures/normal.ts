@@ -106,6 +106,7 @@ export class Normal implements IStructure {
                sta(Statements.GetRunTime),
                sta(Statements.GetTime),
                sta(Statements.Hide),
+               sta(Statements.Nodes),
                sta(Statements.ImportDynpro),
                sta(Statements.ImportNametab),
                sta(Statements.MoveCorresponding),
