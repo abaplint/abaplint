@@ -1,4 +1,4 @@
-import {seq, per, alt, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
+import {seq, per, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
 import {SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -9,7 +9,7 @@ import {SQLFieldName} from "./sql_field_name";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
-    const into = alt(SQLIntoStructure, SQLIntoTable);
+    const into = altPrio(SQLIntoTable, SQLIntoStructure);
 
     const where = seq("WHERE", SQLCond);
 
