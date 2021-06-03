@@ -1,5 +1,5 @@
 import {seq, per, opt, alt, ver, star, Expression, optPrio, altPrio} from "../combi";
-import {SQLSource, SQLFrom, DatabaseTable, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLIntoTable, SQLGroupBy, SQLForAllEntries} from ".";
+import {SQLSource, SQLFrom, Dynamic, SQLCond, SQLFieldName, SQLAggregation, SQLIntoTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
@@ -31,9 +31,7 @@ export class SelectLoop extends Expression {
 
     const pack = seq("PACKAGE SIZE", SQLSource);
 
-    const from2 = seq("FROM", DatabaseTable);
-
-    const tab = seq(SQLIntoTable, alt(pack, seq(from2, pack), seq(pack, from2)));
+    const tab = seq(SQLIntoTable, alt(pack, seq(SQLFrom, pack), seq(pack, SQLFrom)));
 
     const perm = per(SQLFrom,
                      where,
