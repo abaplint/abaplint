@@ -28,7 +28,7 @@ export class DataDefinition extends AbstractObject {
   }
 
   public parseType(_reg: IRegistry): AbstractType {
-    return new VoidType("DDLSTodo");
+    return new VoidType("DDLS:todo");
   }
 
   public parse(): IParseResult {
