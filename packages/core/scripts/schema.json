@@ -1604,7 +1604,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/exit_or_check"
+              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/exit_or_check"
             },
             "exporting": {
               "anyOf": [
@@ -3845,6 +3845,10 @@
           },
           "type": "array"
         },
+        "exitFromSQL": {
+          "description": "Checks for EXIT FROM SQL",
+          "type": "boolean"
+        },
         "fieldSymbolStructure": {
           "description": "Checks for FIELD-SYMBOLS ... STRUCTURE",
           "type": "boolean"
@@ -3934,7 +3938,8 @@
         "communication",
         "pack",
         "selectWithoutInto",
-        "freeMemory"
+        "freeMemory",
+        "exitFromSQL"
       ],
       "type": "object"
     },
