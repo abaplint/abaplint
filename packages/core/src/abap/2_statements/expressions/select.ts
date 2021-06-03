@@ -1,9 +1,11 @@
-import {seq, per, opt, alt, str, Expression, altPrio, optPrio, ver} from "../combi";
+import {seq, per, alt, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
 import {SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
 import {SQLIntoStructure} from "./sql_into_structure";
+import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
+import {SQLFieldName} from "./sql_field_name";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -20,11 +22,14 @@ export class Select extends Expression {
     const fields = seq("FIELDS", SQLFieldList);
 
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
-                     SQLOrderBy, up, offset, client, SQLHaving, bypass, SQLGroupBy, fields, DatabaseConnection);
+                     SQLOrderBy, up, offset, client, SQLHaving,
+                     bypass, SQLGroupBy, fields, DatabaseConnection);
+
+    const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
 
     const ret = seq("SELECT",
                     altPrio("DISTINCT", optPrio(seq("SINGLE", optPrio("FOR UPDATE")))),
-                    opt(SQLFieldList),
+                    optPrio(altPrio(SQLFieldList, paren)),
                     perm);
 
     return ret;
