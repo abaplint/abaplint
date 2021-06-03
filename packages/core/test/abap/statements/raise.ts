@@ -15,6 +15,7 @@ const tests = [
   "RAISE EXCEPTION lr_/foo/cx_bar.",
   "RAISE EXCEPTION TYPE cx_error MESSAGE e004(clas) EXPORTING previous = lx_error.",
   "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZZZ' NUMBER '001' WITH <fs>-value.",
+  "RAISE EXCEPTION TYPE zcx_error MESSAGE s123(c$).",
   "RAISE exc.",
 ];
 

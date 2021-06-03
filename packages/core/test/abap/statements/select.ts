@@ -262,6 +262,9 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
   FROM dsfsd
   ORDER BY sdfd
   INTO TABLE @DATA(lt_data).`,
+
+  `SELECT DISTINCT ( mestyp ) INTO CORRESPONDING FIELDS OF TABLE @lt_edimsg FROM edimsg.`,
+  `SELECT ( mestyp ) INTO CORRESPONDING FIELDS OF TABLE @lt_edimsg FROM edimsg.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

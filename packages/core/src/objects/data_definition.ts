@@ -28,7 +28,7 @@ export class DataDefinition extends AbstractObject {
   }
 
   public parseType(_reg: IRegistry): AbstractType {
-    return new VoidType("DDLSTodo");
+    return new VoidType("DDLS:todo");
   }
 
   public parse(): IParseResult {
@@ -40,7 +40,7 @@ export class DataDefinition extends AbstractObject {
     const asddls = this.getFiles().find(f => f.getFilename().endsWith(".asddls"));
     const match = asddls?.getRaw().match(/@AbapCatalog\.sqlViewName: '(\w+)'/);
     if (match) {
-      this.sqlViewName = match[1];
+      this.sqlViewName = match[1].toUpperCase();
     }
 
     return {updated: true, runtime: 0};

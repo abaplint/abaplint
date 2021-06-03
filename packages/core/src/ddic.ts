@@ -107,6 +107,14 @@ export class DDIC {
       return foundDTEL.parseType(this.reg);
     }
 
+    const upper = name.toUpperCase();
+    for (const obj of this.reg.getObjectsByType("DDLS")) {
+      const ddls = obj as DataDefinition;
+      if (ddls.getSQLViewName() === upper) {
+        return ddls.parseType(this.reg);
+      }
+    }
+
     return undefined;
   }
 
@@ -160,6 +168,13 @@ export class DDIC {
     const foundDDLS = this.reg.getObject("DDLS", name) as DataDefinition | undefined;
     if (foundDDLS) {
       return foundDDLS.parseType(this.reg);
+    }
+    const upper = name.toUpperCase();
+    for (const obj of this.reg.getObjectsByType("DDLS")) {
+      const ddls = obj as DataDefinition;
+      if (ddls.getSQLViewName() === upper) {
+        return ddls.parseType(this.reg);
+      }
     }
     return this.lookupView(name);
   }
