@@ -195,6 +195,13 @@ export class DDIC {
     if (foundDDLS) {
       return foundDDLS;
     }
+    const upper = name.toUpperCase();
+    for (const obj of this.reg.getObjectsByType("DDLS")) {
+      const ddls = obj as DataDefinition;
+      if (ddls.getSQLViewName() === upper) {
+        return ddls;
+      }
+    }
     return undefined;
   }
 
