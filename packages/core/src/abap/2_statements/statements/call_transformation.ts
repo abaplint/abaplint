@@ -1,12 +1,12 @@
 import {IStatement} from "./_statement";
 import {seq, alt, per, plus} from "../combi";
-import {Target, Field, Source, Dynamic, NamespaceSimpleName} from "../expressions";
+import {Target, Field, Source, Dynamic, NamespaceSimpleName, Integer} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallTransformation implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const field = seq(Field, "=", Source);
+    const field = seq(alt(Field, Integer), "=", Source);
 
     const options = seq("OPTIONS", plus(field));
     const parameters = seq("PARAMETERS", alt(plus(field), Dynamic));
