@@ -95,6 +95,7 @@ export * from "./method_source";
 export * from "./modif";
 export * from "./namespace_simple_name";
 export * from "./new_object";
+export * from "./ole_exporting";
 export * from "./or";
 export * from "./parameter_exception";
 export * from "./parameter_list_exceptions";

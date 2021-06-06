@@ -112,7 +112,7 @@ export class SkipLogic {
 
     const definition = obj.getClassDefinition();
     if (definition) {
-      sup = definition.superClassName;
+      sup = definition.superClassName?.toUpperCase();
     }
 
     if (obj.getName().match(/_MPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_MODEL") {

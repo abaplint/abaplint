@@ -31,4 +31,24 @@ describe("Rule: global_class", () => {
     const issues = await run(file);
     expect(issues.length).to.equal(0);
   });
+
+  it("global class must be global", async () => {
+    const file = new MemoryFile("class.clas.abap", `
+CLASS class definition.
+endclass.
+class class implementation.
+endclass.`);
+    const issues = await run(file);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("class must match filename, implementation and definition", async () => {
+    const file = new MemoryFile("class1.clas.abap", `
+CLASS class2 definition public.
+endclass.
+class class2 implementation.
+endclass.`);
+    const issues = await run(file);
+    expect(issues.length).to.equal(2);
+  });
 });

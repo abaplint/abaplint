@@ -3,10 +3,13 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
 import {Class, Interface} from "../objects";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper, IEdit} from "../edit_helper";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -22,12 +25,12 @@ export class ImplementMethods extends ABAPRule {
   private conf = new ImplementMethodsConf();
   private obj: ABAPObject;
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "implement_methods",
       title: "Implement methods",
       shortDescription: `Checks for abstract methods and methods from interfaces which need implementing.`,
-      tags: [RuleTag.Syntax],
+      tags: [RuleTag.Syntax, RuleTag.Quickfix],
     };
   }
 
@@ -103,12 +106,32 @@ export class ImplementMethods extends ABAPRule {
 
       if (found === undefined) {
         const message = "Implement method \"" + md.name + "\"";
-        const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity);
+        const fix = this.buildFix(impl, md.name);
+        const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity, fix);
         ret.push(issue);
       }
     }
 
     return ret;
+  }
+
+  private buildFix(impl: InfoClassImplementation, methodName: string): IEdit | undefined {
+    const file = this.obj.getABAPFileByName(impl.identifier.getFilename());
+    if (file === undefined) {
+      return undefined;
+    }
+
+    for (const i of file.getStructure()?.findAllStatements(Statements.ClassImplementation) || []) {
+      const name = i.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr().toUpperCase();
+      if (name === impl.identifier.getName().toUpperCase()) {
+        return EditHelper.insertAt(file, i.getLastToken().getEnd(), `
+  METHOD ${methodName.toLowerCase()}.
+    RETURN. " todo, implement method
+  ENDMETHOD.`);
+      }
+    }
+
+    return undefined;
   }
 
   private findInterface(identifier: Identifier, name: string): InfoInterfaceDefinition | Issue | undefined {
@@ -197,7 +220,8 @@ export class ImplementMethods extends ABAPRule {
 
         if (this.isImplemented(m, def, impl) === false) {
           const message = "Implement method \"" + m.method.name + "\" from interface \"" + m.objectName + "\"";
-          const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity);
+          const fix = this.buildFix(impl, m.objectName + "~" + m.method.name);
+          const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity, fix);
           ret.push(issue);
         }
       }

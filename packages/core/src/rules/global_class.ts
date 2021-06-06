@@ -43,7 +43,7 @@ export class GlobalClass extends ABAPRule {
       }
 
       if (definition.isGlobal && obj instanceof Objects.Class && definition.name.toUpperCase() !== obj.getName().toUpperCase()) {
-        const issue = Issue.atIdentifier(definition.identifier, "Class name must match filename", this.getMetadata().key, this.conf.severity);
+        const issue = Issue.atIdentifier(definition.identifier, "Class definition name must match filename", this.getMetadata().key, this.conf.severity);
         output.push(issue);
       }
 
@@ -57,7 +57,7 @@ export class GlobalClass extends ABAPRule {
       if (file.getFilename().match(/\.clas\.abap$/)
           && obj instanceof Objects.Class
           && impl.identifier.getName().toUpperCase() !== obj.getName().toUpperCase()) {
-        const issue = Issue.atIdentifier(impl.identifier, "Class name must match filename", this.getMetadata().key, this.conf.severity);
+        const issue = Issue.atIdentifier(impl.identifier, "Class implementation name must match filename", this.getMetadata().key, this.conf.severity);
         output.push(issue);
       }
     }
