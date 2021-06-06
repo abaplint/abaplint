@@ -31,6 +31,11 @@ export class DataDefinition extends AbstractObject {
     return new VoidType("DDLS:todo");
   }
 
+  public setDirty(): void {
+    this.sqlViewName = undefined;
+    super.setDirty();
+  }
+
   public parse(): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};

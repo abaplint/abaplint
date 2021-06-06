@@ -73,6 +73,12 @@ const tests = [
   "  objects (lt_obj)\n" +
   "  source xml lv_xml\n" +
   "  result xml rv_res.",
+
+  `CALL TRANSFORMATION id
+  OPTIONS value_handling = 'accept_data_loss accept_decimals_loss'
+  SOURCE XML lr_xml
+  RESULT
+    0001 = et_sdf.`,
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);

@@ -5,6 +5,8 @@ const tests = [
   "break-point.",
   "BREAK-POINT AT NEXT APPLICATION STATEMENT.",
   "break username.",
+  "BREAK sy-uname.",
+  "BREAK sy-anything.",
   "BREAK-POINT lv_logtxt.",
 ];
 

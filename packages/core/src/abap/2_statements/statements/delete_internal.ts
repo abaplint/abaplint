@@ -9,7 +9,8 @@ export class DeleteInternal implements IStatement {
 // todo, is READ and DELETE similar? something can be reused?
     const index = seq("INDEX", Source);
 
-    const using = seq("USING KEY", altPrio(SimpleName, Dynamic));
+    const keyName = altPrio(SimpleName, Dynamic);
+    const using = seq("USING KEY", keyName);
 
     const fromTo = seq(optPrio(seq("FROM", Source)),
                        optPrio(seq("TO", Source)));
@@ -17,7 +18,7 @@ export class DeleteInternal implements IStatement {
     const where = seq("WHERE", alt(ComponentCond, Dynamic));
 
     const key = seq("WITH TABLE KEY",
-                    opt(seq(SimpleName, "COMPONENTS")),
+                    opt(seq(keyName, "COMPONENTS")),
                     plus(ComponentCompare));
 
     const table = seq(opt("TABLE"),
