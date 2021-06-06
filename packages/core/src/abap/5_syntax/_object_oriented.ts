@@ -328,7 +328,7 @@ export class ObjectOriented {
   private findSuperDefinition(name: string): IClassDefinition {
     const csup = this.scope.findClassDefinition(name);
     if (csup === undefined) {
-      throw new Error("super class \"" + name + "\" not found or contains errors");
+      throw new Error("Super class \"" + name + "\" not found or contains errors");
     }
     return csup;
   }
