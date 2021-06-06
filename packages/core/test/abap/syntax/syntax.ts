@@ -4308,6 +4308,28 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("call strlen()", () => {
+    const abap = `
+    DATA(len) = strlen( |abc| ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("call strlen(), 2", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m1.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m1.
+    DATA(len) = strlen( |abc| ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
