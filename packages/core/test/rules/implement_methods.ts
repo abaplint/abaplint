@@ -3,6 +3,7 @@ import {ImplementMethods} from "../../src/rules";
 import {Registry} from "../../src/registry";
 import {Issue} from "../../src/issue";
 import {MemoryFile} from "../../src/files/memory_file";
+import {testRuleFixSingle} from "./_utils";
 
 async function runMulti(files: {filename: string, contents: string}[]): Promise<Issue[]> {
   const reg = new Registry();
@@ -15,6 +16,10 @@ async function runMulti(files: {filename: string, contents: string}[]): Promise<
     issues = issues.concat(new ImplementMethods().initialize(reg).run(obj));
   }
   return issues;
+}
+
+function testFix(input: string, expected: string) {
+  testRuleFixSingle(input, expected, new ImplementMethods());
 }
 
 describe("Rules, implement_methods", () => {
@@ -387,6 +392,26 @@ ENDCLASS.`;
     const issues = await runMulti([
       {filename: "zfoobar.prog.abap", contents: prog}]);
     expect(issues.length).to.equals(0);
+  });
+
+  it("normal class, quickfix", async () => {
+    const abap = `CLASS zcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    METHODS foobar.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+
+    const expected = `CLASS zcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    METHODS foobar.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD foobar.
+    RETURN. " todo, implement method
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
   });
 
 });
