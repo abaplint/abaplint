@@ -4300,6 +4300,14 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("contains() is voided, not builtin", () => {
+    const abap = `
+    DATA lv_str TYPE string.
+    cl_abap_matcher=>contains( pattern = 'abc' text = lv_str ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
