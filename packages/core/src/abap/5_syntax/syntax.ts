@@ -125,6 +125,7 @@ import {SetTitlebar} from "./statements/set_titlebar";
 import {StatementSyntax} from "./_statement_syntax";
 import {CallTransaction} from "./statements/call_transaction";
 import {SetHandler} from "./statements/set_handler";
+import {Wait} from "./statements/wait";
 
 // -----------------------------------
 
@@ -182,6 +183,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new DeleteDatabase());
   addToMap(new UpdateDatabase());
   addToMap(new Sort());
+  addToMap(new Wait());
   addToMap(new Condense());
   addToMap(new OpenDataset());
   addToMap(new CloseDataset());
