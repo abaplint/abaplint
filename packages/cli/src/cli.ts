@@ -189,8 +189,9 @@ async function run() {
       loaded = await FileOperations.loadFiles(compress, files, progress);
       deps = await loadDependencies(config, compress, progress, base);
 
-      reg = new Registry(config).addFiles(loaded);
+      reg = new Registry(config);
       reg.addDependencies(deps);
+      reg.addFiles(loaded); // if the object exists in repo, it should take precedence over deps
       await reg.parseAsync({progress, outputPerformance: parsingPerformance});
       issues = issues.concat(reg.findIssues({progress, outputPerformance: parsingPerformance}));
     } catch (error) {

@@ -97,6 +97,7 @@ export class Class extends ABAPObject {
 
     const parsed = super.parseRaw2();
     if (parsed === undefined
+        || parsed.abapGit["asx:abap"] === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
       return;
     }

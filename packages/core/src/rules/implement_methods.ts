@@ -96,7 +96,7 @@ export class ImplementMethods extends ABAPRule {
     for (const md of def.methods) {
       const found = impl.methods.find(m => m.getName().toUpperCase() === md.name.toUpperCase());
 
-      if (md.isAbstract) {
+      if (md.isAbstract === true) {
         if (found !== undefined) {
           const issue = Issue.atIdentifier(found, "Do not implement abstract method \"" + md.name + "\"", this.getMetadata().key, this.conf.severity);
           ret.push(issue);

@@ -867,4 +867,12 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("WAIT UP TO", async () => {
+    const abap = `
+  DATA gv_wait TYPE i VALUE 2.
+  WAIT UP TO gv_wait SECONDS.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
