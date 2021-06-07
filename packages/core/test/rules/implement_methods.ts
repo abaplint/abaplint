@@ -414,4 +414,29 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("ALIASes, should be case insensitive", async () => {
+    const prog = `
+INTERFACE top.
+  METHODS get_parameter_list IMPORTING int TYPE i.
+ENDINTERFACE.
+
+INTERFACE sub.
+  INTERFACES top.
+  ALIASES get_parameter_list FOR TOP~get_parameter_list.
+ENDINTERFACE.
+
+CLASS clas DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES sub.
+ENDCLASS.
+CLASS clas IMPLEMENTATION.
+  METHOD sub~get_parameter_list.
+    WRITE int.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

@@ -38,7 +38,7 @@ export class ClassImplementation implements StatementSyntax {
     scope.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
     scope.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
 
-    helper.fromSuperClass(classDefinition);
-    helper.fromInterfaces(classDefinition);
+    const implemented = helper.fromSuperClass(classDefinition);
+    helper.fromInterfaces(classDefinition, implemented);
   }
 }
