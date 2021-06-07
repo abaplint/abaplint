@@ -4365,6 +4365,33 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("Double interface implementation, ok, 2", () => {
+    const abap = `
+INTERFACE if_singleton.
+  DATA bar TYPE c LENGTH 1.
+ENDINTERFACE.
+
+INTERFACE if_new.
+  INTERFACES if_singleton.
+ENDINTERFACE.
+
+CLASS cl_base DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES if_singleton.
+ENDCLASS.
+CLASS cl_base IMPLEMENTATION.
+ENDCLASS.
+
+CLASS cl_new DEFINITION INHERITING FROM cl_base.
+  PUBLIC SECTION.
+    INTERFACES if_new.
+ENDCLASS.
+CLASS cl_new IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

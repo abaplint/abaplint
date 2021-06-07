@@ -20,11 +20,13 @@ export class ObjectOriented {
     this.scope = scope;
   }
 
-  public fromInterfaces(classDefinition: IClassDefinition): void {
+  // returns list of interfaces implemented
+  public fromInterfaces(classDefinition: IClassDefinition, skip?: string[]): string[] {
     const ignore: string[] = [];
     for (const i of classDefinition.getImplementing()) {
-      ignore.push(...this.fromInterfaceByName(i.name, ignore));
+      ignore.push(...this.fromInterfaceByName(i.name, ignore.concat(skip || [])));
     }
+    return ignore;
   }
 
   private fromInterfaceByName(name: string, ignore: string[]): string[] {
@@ -340,8 +342,11 @@ export class ObjectOriented {
     return csup;
   }
 
-  public fromSuperClass(child: IClassDefinition) {
+  // returns list of interfaces implemented
+  public fromSuperClass(child: IClassDefinition): string[] {
     let sup = child.getSuperClass();
+    const ignore: string[] = [];
+
     while (sup !== undefined) {
       const cdef = this.findSuperDefinition(sup);
       for (const a of cdef.getAttributes().getAll()) {
@@ -360,9 +365,11 @@ export class ObjectOriented {
           this.scope.addType(t.type);
         }
       }
-      this.fromInterfaces(cdef);
+      ignore.push(...this.fromInterfaces(cdef, ignore));
       sup = cdef.getSuperClass();
     }
+
+    return ignore;
   }
 
 }
