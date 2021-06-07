@@ -21,16 +21,18 @@ export class ObjectOriented {
   }
 
   public fromInterfaces(classDefinition: IClassDefinition): void {
+    const ignore: string[] = [];
     for (const i of classDefinition.getImplementing()) {
-      this.fromInterfaceByName(i.name);
+      ignore.push(...this.fromInterfaceByName(i.name, ignore));
     }
   }
 
-  private fromInterfaceByName(name: string) {
+  private fromInterfaceByName(name: string, ignore: string[]): string[] {
     const idef = this.scope.findInterfaceDefinition(name);
-    if (idef === undefined) {
-      return;
+    if (idef === undefined || ignore.includes(name.toUpperCase())) {
+      return [];
     }
+    const ret: string[] = [name.toUpperCase()];
 
     for (const t of idef.getTypeDefinitions().getAll()) {
       const n = name + "~" + t.type.getName();
@@ -42,8 +44,13 @@ export class ObjectOriented {
     this.scope.addListPrefix(idef.getAttributes().getInstance(), name + "~");
 
     for (const i of idef.getImplementing()) {
-      this.fromInterfaceByName(i.name);
+      if (ignore.includes(i.name.toUpperCase())) {
+        continue;
+      }
+      this.fromInterfaceByName(i.name, ignore);
+      ret.push(i.name.toUpperCase());
     }
+    return ret;
   }
 
   public addAliasedAttributes(classDefinition: IClassDefinition): void {
