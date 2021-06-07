@@ -269,7 +269,7 @@ export class ImplementMethods extends ABAPRule {
 
   private viaAliasInInterface(m: IMethod, intf: InfoInterfaceDefinition, impl: InfoClassImplementation): boolean {
     for (const a of intf.aliases) {
-      if (a.component === m.objectName + "~" + m.method.name) {
+      if (a.component.toUpperCase() === m.objectName.toUpperCase() + "~" + m.method.name.toUpperCase()) {
         const name = intf.name + "~" + a.name;
         const found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
         if (found) {
