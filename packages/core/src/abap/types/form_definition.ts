@@ -8,7 +8,7 @@ import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
-import {TableType, UnknownType} from "./basic";
+import {TableType, UnknownType, VoidType} from "./basic";
 
 export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
@@ -56,17 +56,21 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     }
 
     for (const param of tables.findAllExpressions(Expressions.FormParam)) {
-      const p = new FormParam().runSyntax(param, scope, this.filename);
-      let type = new TableType(p.getType(), {withHeader: true});
+      if (param.getChildren().length === 1) {
+        // untyped TABLES parameter
+        ret.push(new TypedIdentifier(param.getFirstToken(), filename, new VoidType("FORM:UNTYPED"), [IdentifierMeta.FormParameter]));
+      } else {
+        const p = new FormParam().runSyntax(param, scope, this.filename);
 
-      if (param.getTokens()[1]?.getStr().toUpperCase() === "LIKE") {
-        const like = p.getType();
-        if (!(like instanceof UnknownType) && like instanceof TableType) {
-          type = new TableType(like.getRowType(), {withHeader: true});
+        let type = p.getType();
+        if (type instanceof TableType) {
+          type = new TableType(type.getRowType(), {withHeader: true});
+        } else if (!(type instanceof UnknownType) && !(type instanceof VoidType)) {
+          throw new Error("FORM TABLES type must be table type");
         }
-      }
 
-      ret.push(new TypedIdentifier(p.getToken(), filename, type, [IdentifierMeta.FormParameter]));
+        ret.push(new TypedIdentifier(p.getToken(), filename, type, [IdentifierMeta.FormParameter]));
+      }
     }
 
     return ret;

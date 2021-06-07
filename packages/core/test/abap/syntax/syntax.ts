@@ -4330,6 +4330,21 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("FORM, TABLES", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         id TYPE i,
+       END OF ty.
+TYPES typ TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+
+FORM ok TABLES bar TYPE typ.
+  WRITE bar[ 1 ]-id.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
