@@ -875,4 +875,12 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SHIFT", async () => {
+    const abap = `
+  DATA lv_temp TYPE string.
+  SHIFT lv_temp BY 1 PLACES LEFT.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
