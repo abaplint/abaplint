@@ -176,7 +176,7 @@ field = zcl_global_class=>method( ).`;
   it("program, inline definition", () => {
     const abap = "DATA(foobar) = 2.\nWRITE foobar.\n";
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
   it("program, variable foobar not found, target", () => {
@@ -4456,6 +4456,24 @@ ENDCLASS.`;
   WRITE ls_len-offset.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("Cannot move char into tab", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  tab = '2'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Incompatible");
+  });
+
+  it("Cannot move char into ref", () => {
+    const abap = `
+    DATA ref TYPE REF TO object.
+    ref = '2'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Incompatible");
   });
 
 // todo, static method cannot access instance attributes
