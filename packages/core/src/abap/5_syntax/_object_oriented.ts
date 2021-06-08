@@ -49,7 +49,8 @@ export class ObjectOriented {
       if (ignore.includes(i.name.toUpperCase())) {
         continue;
       }
-      this.fromInterfaceByName(i.name, ignore);
+      ret.push(...this.fromInterfaceByName(i.name, ignore));
+      ignore.push(i.name.toUpperCase());
       ret.push(i.name.toUpperCase());
     }
     return ret;
