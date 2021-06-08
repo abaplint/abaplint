@@ -23,7 +23,11 @@ export class Find implements StatementSyntax {
         {name: "LENGTH", type: new IntegerType()},
         {name: "SUBMATCHES", type: new TableType(new StringType(), {withHeader: false})},
       ]);
-      this.inline(rfound, scope, filename, new TableType(type, {withHeader: false}));
+      if (node.concatTokens().toUpperCase().startsWith("FIND FIRST")) {
+        this.inline(rfound, scope, filename, type);
+      } else {
+        this.inline(rfound, scope, filename, new TableType(type, {withHeader: false}));
+      }
     }
 
     const ofound = node.findExpressionAfterToken("OFFSET");

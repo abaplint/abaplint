@@ -66,7 +66,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
         if (type instanceof TableType) {
           type = new TableType(type.getRowType(), {withHeader: true});
         } else if (!(type instanceof UnknownType) && !(type instanceof VoidType)) {
-          throw new Error("FORM TABLES type must be table type");
+          type = new UnknownType("FORM TABLES type must be table type");
         }
 
         ret.push(new TypedIdentifier(p.getToken(), filename, type, [IdentifierMeta.FormParameter]));

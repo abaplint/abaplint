@@ -31,8 +31,7 @@ export class TypeTable extends Expression {
                          "TABLE OF",
                          optPrio("REF TO"),
                          opt(FieldChain),
-                         opt(key),
-                         opt(header));
+                         opt(per(key, header)));
 
     const rangeType = seq("RANGE OF", TypeName, opt(header), opt(initial));
     const rangeLike = seq("RANGE OF", FieldSub, opt(header), opt(initial));
