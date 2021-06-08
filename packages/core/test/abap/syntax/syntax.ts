@@ -4449,6 +4449,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("FIND FIRST inline RESULTS", () => {
+    const abap = `
+  DATA lv_last TYPE string.
+  FIND FIRST OCCURRENCE OF 'sdf' IN lv_last RESULTS DATA(ls_len).
+  WRITE ls_len-offset.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
