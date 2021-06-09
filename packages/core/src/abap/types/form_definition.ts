@@ -63,6 +63,12 @@ export class FormDefinition extends Identifier implements IFormDefinition {
         const p = new FormParam().runSyntax(param, scope, this.filename);
 
         let type = p.getType();
+
+        const isStructure = param.findDirectTokenByText("STRUCTURE") !== undefined;
+        if (isStructure) {
+          type = new TableType(type, {withHeader: true});
+        }
+
         if (type instanceof TableType) {
           type = new TableType(type.getRowType(), {withHeader: true});
         } else if (!(type instanceof UnknownType) && !(type instanceof VoidType)) {
