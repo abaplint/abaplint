@@ -126,6 +126,7 @@ import {StatementSyntax} from "./_statement_syntax";
 import {CallTransaction} from "./statements/call_transaction";
 import {SetHandler} from "./statements/set_handler";
 import {Wait} from "./statements/wait";
+import {Shift} from "./statements/shift";
 
 // -----------------------------------
 
@@ -212,6 +213,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new ImportDynpro());
   addToMap(new CreateData());
   addToMap(new Case());
+  addToMap(new Shift());
   addToMap(new Raise());
   addToMap(new Concatenate());
   addToMap(new Append());

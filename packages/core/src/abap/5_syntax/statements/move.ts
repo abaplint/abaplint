@@ -6,6 +6,7 @@ import {Target} from "../expressions/target";
 import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
+import {TypeUtils} from "../_type_utils";
 
 export class Move implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -34,6 +35,11 @@ export class Move implements StatementSyntax {
 
     if (inline) {
       new InlineData().runSyntax(inline, scope, filename, sourceType);
+      targetType = sourceType;
+    }
+
+    if (TypeUtils.isAssignable(sourceType, targetType) === false) {
+      throw new Error("Incompatible types");
     }
   }
 }
