@@ -1,7 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {UnknownType} from "../../types/basic";
+import {AnyType, UnknownType} from "../../types/basic";
 import {FormParamName, NamespaceSimpleName} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -23,6 +23,11 @@ export class FormParam {
         type = new UnknownType("todo, FORM STRUCTURES typing");
       }
       return new TypedIdentifier(nameToken, filename, type, [IdentifierMeta.FormParameter]);
+    }
+
+    if (node.getChildren().length === 1 && nameToken) {
+      // untyped FORM parameter
+      return new TypedIdentifier(nameToken, filename, new AnyType(), [IdentifierMeta.FormParameter]);
     }
 
     const bfound = new BasicTypes(filename, scope).parseType(node);
