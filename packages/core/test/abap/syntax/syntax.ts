@@ -4517,6 +4517,22 @@ MOVE lv_int1 TO lv_str.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("Move string to clike structre, ok", () => {
+    const abap = `
+  DATA iv_msg TYPE string.
+  DATA:
+    BEGIN OF ls_msg,
+      a1 TYPE c LENGTH 50,
+      a2 TYPE c LENGTH 50,
+      a3 TYPE c LENGTH 50,
+      a4 TYPE c LENGTH 50,
+    END OF ls_msg.
+
+  ls_msg = iv_msg.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
