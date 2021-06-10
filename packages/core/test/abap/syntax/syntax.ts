@@ -4545,6 +4545,16 @@ ls_msg = iv_msg.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("string to xstring, and xstring to string, ok", () => {
+    const abap = `
+  DATA hex TYPE xstring.
+  DATA char TYPE string.
+  hex = char.
+  char = hex.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

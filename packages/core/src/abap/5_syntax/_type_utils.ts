@@ -1,9 +1,28 @@
-import {AnyType, DataReference, GenericObjectReferenceType, ObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../types/basic";
+import {AnyType, CharacterType, DataReference, GenericObjectReferenceType, ObjectReferenceType, StringType, StructureType, TableType, UnknownType, VoidType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 
 export class TypeUtils {
-  // public static isCharLike, todo
   // public static isHexLike, todo
+
+  public static isCharLike(type: AbstractType | undefined): boolean {
+    if (type === undefined) {
+      return false;
+    } else if (type instanceof StructureType) {
+      for (const c of type.getComponents()) {
+        if (this.isCharLike(c.type) === false) {
+          return false;
+        }
+      }
+      return true;
+    } else if (type instanceof StringType
+        || type instanceof VoidType
+        || type instanceof AnyType
+        || type instanceof UnknownType
+        || type instanceof CharacterType) {
+      return true;
+    }
+    return false;
+  }
 
   public static isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
     /*
@@ -45,6 +64,8 @@ export class TypeUtils {
           || source instanceof VoidType
           || source instanceof AnyType
           || source instanceof UnknownType) {
+        return true;
+      } else if (this.isCharLike(target) && this.isCharLike(source)) {
         return true;
       }
       return false;
