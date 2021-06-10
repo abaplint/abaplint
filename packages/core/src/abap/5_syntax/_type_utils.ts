@@ -12,7 +12,7 @@ export class TypeUtils {
 */
     if (target instanceof TableType) {
       if (target.isWithHeader()) {
-        return true; // todo
+        return this.isAssignable(source, target.getRowType());
       }
       if (source instanceof TableType
           || source instanceof VoidType
@@ -39,8 +39,9 @@ export class TypeUtils {
       }
       return false;
     } else if (target instanceof StructureType) {
-      if (source instanceof StructureType
-          || (source instanceof TableType && source.isWithHeader())
+      if (source instanceof TableType && source.isWithHeader()) {
+        return this.isAssignable(source.getRowType(), target);
+      } else if (source instanceof StructureType
           || source instanceof VoidType
           || source instanceof AnyType
           || source instanceof UnknownType) {
