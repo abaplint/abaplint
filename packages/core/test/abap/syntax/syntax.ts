@@ -4517,7 +4517,7 @@ MOVE lv_int1 TO lv_str.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("Move string to clike structre, ok", () => {
+  it("Move string to charlike structre, ok", () => {
     const abap = `
   DATA iv_msg TYPE string.
   DATA:
@@ -4531,6 +4531,22 @@ MOVE lv_int1 TO lv_str.`;
   ls_msg = iv_msg.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Move string to hexlike structre, not ok", () => {
+    const abap = `
+  DATA iv_msg TYPE string.
+DATA:
+  BEGIN OF ls_msg,
+    a1 TYPE x LENGTH 50,
+    a2 TYPE x LENGTH 50,
+  END OF ls_msg.
+
+ls_msg = iv_msg.
+
+WRITE ls_msg.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
   });
 
 // todo, static method cannot access instance attributes
