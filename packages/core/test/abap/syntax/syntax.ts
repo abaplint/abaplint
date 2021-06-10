@@ -4524,8 +4524,6 @@ MOVE lv_int1 TO lv_str.`;
     BEGIN OF ls_msg,
       a1 TYPE c LENGTH 50,
       a2 TYPE c LENGTH 50,
-      a3 TYPE c LENGTH 50,
-      a4 TYPE c LENGTH 50,
     END OF ls_msg.
 
   ls_msg = iv_msg.`;
@@ -4542,9 +4540,7 @@ DATA:
     a2 TYPE x LENGTH 50,
   END OF ls_msg.
 
-ls_msg = iv_msg.
-
-WRITE ls_msg.`;
+ls_msg = iv_msg.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
   });
