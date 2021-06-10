@@ -946,19 +946,19 @@ DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_tru
   });
 
   it("value from ENUM, object oriented", () => {
-    const abap = "CLASS lcl_foo DEFINITION.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    TYPES:\n" +
-      "      BEGIN OF ENUM enum_name,\n" +
-      "        value1,\n" +
-      "      END OF ENUM enum_name.\n" +
-      "    METHODS: moo.\n" +
-      "ENDCLASS.\n" +
-      "CLASS lcl_foo IMPLEMENTATION.\n" +
-      "  METHOD moo.\n" +
-      "    WRITE value1.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.\n";
+    const abap = `CLASS lcl_foo DEFINITION.
+        PUBLIC SECTION.
+          TYPES:
+            BEGIN OF ENUM enum_name,
+              value1,
+            END OF ENUM enum_name.
+          METHODS: moo.
+      ENDCLASS.
+      CLASS lcl_foo IMPLEMENTATION.
+        METHOD moo.
+          WRITE value1.
+        ENDMETHOD.
+      ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -4502,6 +4502,19 @@ ENDCLASS.`;
     ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Move int to structure not possible", () => {
+    const abap = `
+TYPES:
+  BEGIN OF ts_str,
+    comp_one TYPE i,
+  END OF ts_str.
+DATA lv_int1 TYPE i VALUE 1.
+DATA lv_str TYPE ts_str.
+MOVE lv_int1 TO lv_str.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
   });
 
 // todo, static method cannot access instance attributes

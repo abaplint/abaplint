@@ -4,8 +4,9 @@ import * as Structures from "../../3_structures/structures";
 import {StructureNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {IntegerType, IStructureComponent, StructureType} from "../../types/basic";
-import {TypedIdentifier} from "../../types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {ReferenceType} from "../_reference";
+import {EnumType} from "../../types/basic/enum_type";
 
 export class TypeEnum {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier[] {
@@ -47,11 +48,15 @@ export class TypeEnum {
       }
     }
 
-    let name = begin.findExpressionAfterToken("STRUCTURE");
-    if (name === undefined) {
-      name = begin.findFirstExpression(Expressions.NamespaceSimpleName);
-    }
+    const name = begin.findFirstExpression(Expressions.NamespaceSimpleName);
     if (name) {
+      const id = new TypedIdentifier(name.getFirstToken(), filename, new EnumType(), [IdentifierMeta.Enum]);
+      scope.addType(id);
+      ret.push(id);
+    }
+
+    const stru = begin.findExpressionAfterToken("STRUCTURE");
+    if (stru) {
       const components: IStructureComponent[] = [];
       for (const r of ret) {
         components.push({
@@ -59,7 +64,7 @@ export class TypeEnum {
           type: r.getType(),
         });
       }
-      const id = new TypedIdentifier(name.getFirstToken(), filename, new StructureType(components));
+      const id = new TypedIdentifier(stru.getFirstToken(), filename, new StructureType(components), [IdentifierMeta.Enum]);
       scope.addType(id);
       ret.push(id);
     }

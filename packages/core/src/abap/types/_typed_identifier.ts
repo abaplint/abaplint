@@ -14,6 +14,7 @@ export const enum IdentifierMeta {
   BuiltIn = "built-in",
   DDIC = "ddic",
   Static = "static",
+  Enum = "enum",
 // todo, MethodPreferred
 // todo, Optional
 }

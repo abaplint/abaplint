@@ -1,4 +1,4 @@
-import {AnyType, GenericObjectReferenceType, ObjectReferenceType, TableType, UnknownType, VoidType} from "../types/basic";
+import {AnyType, DataReference, GenericObjectReferenceType, ObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 
 export class TypeUtils {
@@ -24,6 +24,23 @@ export class TypeUtils {
     } else if (target instanceof ObjectReferenceType || target instanceof GenericObjectReferenceType) {
       if (source instanceof ObjectReferenceType
           || source instanceof GenericObjectReferenceType
+          || source instanceof VoidType
+          || source instanceof AnyType
+          || source instanceof UnknownType) {
+        return true;
+      }
+      return false;
+    } else if (target instanceof DataReference) {
+      if (source instanceof DataReference
+          || source instanceof VoidType
+          || source instanceof AnyType
+          || source instanceof UnknownType) {
+        return true;
+      }
+      return false;
+    } else if (target instanceof StructureType) {
+      if (source instanceof StructureType
+          || (source instanceof TableType && source.isWithHeader())
           || source instanceof VoidType
           || source instanceof AnyType
           || source instanceof UnknownType) {
