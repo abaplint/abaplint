@@ -5,15 +5,9 @@ import {IStatementRunnable} from "../statement_runnable";
 export class DataDefinition extends Expression {
   public getRunnable(): IStatementRunnable {
 
-//    const occurs = seq("OCCURS", Expressions.Integer);
     const initial = seq("INITIAL SIZE", Expressions.Integer);
 
     const simple = opt(per("READ-ONLY",
-    /*
-                           occurs,
-                           initial,
-                           "WITH HEADER LINE",
-                           */
                            Expressions.Type,
                            Expressions.Length,
                            Expressions.Decimals,

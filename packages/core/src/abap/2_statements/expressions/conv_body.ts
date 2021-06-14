@@ -1,9 +1,9 @@
-import {seq, Expression, opt} from "../combi";
+import {seq, Expression, optPrio} from "../combi";
 import {Source, Let} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ConvBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(opt(Let), Source);
+    return seq(optPrio(Let), Source);
   }
 }
