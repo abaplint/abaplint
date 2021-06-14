@@ -1,7 +1,6 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, per, tok, regex as reg, altPrio} from "../combi";
-import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
-import {ParenLeft, ParenRightW, WParenLeft, ParenRight} from "../../1_lexer/tokens";
+import {verNot, seq, opt, alt, per, altPrio} from "../combi";
+import {Target, Source, Dynamic, FieldSub, Color, WriteOffsetLength} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -56,18 +55,8 @@ export class Write implements IStatement {
                         seq("CURRENCY", Source),
                         "NO-SIGN");
 
-    const post = seq(alt(FieldChain, reg(/^[\d]+$/), reg(/^\*$/)), alt(tok(ParenRightW), tok(ParenRight)));
-    const wlength = seq(tok(WParenLeft), post);
-    const length = seq(tok(ParenLeft), post);
-
-// todo, move to expression?
-    const complex = alt(wlength,
-                        seq(alt(FieldChain, reg(/^\/?[\w\d]+$/), "/"), opt(length)));
-
-    const at = seq(opt("AT"), complex);
-
     const ret = seq("WRITE",
-                    opt(at),
+                    opt(WriteOffsetLength),
                     altPrio(Source, Dynamic, "/"),
                     opt(options));
 

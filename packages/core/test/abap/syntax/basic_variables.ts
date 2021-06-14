@@ -1692,7 +1692,7 @@ DATA(sdf) = ref->*-int.`;
 
   it("Chained statment", () => {
     const abap = `
-    CLASS lcl DEFINITION.
+  CLASS lcl DEFINITION.
     PUBLIC SECTION.
       DATA moo TYPE i.
       METHODS bar RETURNING VALUE(ref) TYPE REF TO lcl.
