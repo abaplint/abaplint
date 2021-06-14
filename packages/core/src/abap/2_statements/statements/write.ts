@@ -9,18 +9,20 @@ export class Write implements IStatement {
   public getMatcher(): IStatementRunnable {
 
     const mask = seq("USING",
-                     alt("NO EDIT MASK",
-                         seq("EDIT MASK", Source)));
+                     altPrio("NO EDIT MASK",
+                             seq("EDIT MASK", Source)));
 
-    const onOff = alt(alt("ON", "OFF"), seq("=", FieldSub));
+    const onOff = alt(altPrio("ON", "OFF"), seq("=", FieldSub));
 
-    const dateFormat = alt("DD/MM/YY",
-                           "MM/DD/YY",
-                           "DD/MM/YYYY",
-                           "MM/DD/YYYY",
-                           "DDMMYY",
-                           "MMDDYY",
-                           "YYMMDD");
+    const dateFormat = altPrio("DD/MM/YY",
+                               "MM/DD/YY",
+                               "DD/MM/YYYY",
+                               "MM/DD/YYYY",
+                               "DDMMYY",
+                               "MMDDYY",
+                               "YYMMDD");
+
+    const as = seq("AS", altPrio("LINE", "ICON", "CHECKBOX", "SYMBOL"));
 
     const to = seq("TO", Target);
     const options = per(mask,
@@ -32,12 +34,9 @@ export class Write implements IStatement {
                         seq("INPUT", opt(onOff)),
                         "NO-GAP",
                         "LEFT-JUSTIFIED",
-                        "AS LINE",
-                        "AS ICON",
+                        as,
                         seq("FRAMES", onOff),
                         seq("HOTSPOT", opt(onOff)),
-                        "AS CHECKBOX",
-                        "AS SYMBOL",
                         "RIGHT-JUSTIFIED",
                         seq("TIME ZONE", Source),
                         seq("UNDER", Source),
