@@ -1,27 +1,13 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, tok, alt, regex as reg, optPrio, altPrio} from "../combi";
-import {ParenLeft, WParenLeft, ParenRightW} from "../../1_lexer/tokens";
-import {Dynamic, Field} from "../expressions";
+import {verNot, seq, optPrio} from "../combi";
+import {WriteOffsetLength} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Uline implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const right = tok(ParenRightW);
-
-    const contents = altPrio(Field, reg(/^\d+$/));
-
-    // todo, reuse the "AT" thing in ULINE and WRITE?
-    const pos = seq(reg(/^(\/\d*|\d+)$/), opt(seq(tok(ParenLeft), contents, right)));
-
-    const pos1 = seq(tok(WParenLeft), contents, right);
-
-    const dyn = seq(opt("/"), Dynamic);
-
-    const field = seq(Field, tok(ParenLeft), contents, right);
-
-    const ret = seq("ULINE", optPrio("AT"), opt(alt(pos, pos1, dyn, field)), optPrio("NO-GAP"));
+    const ret = seq("ULINE", optPrio(WriteOffsetLength), optPrio("NO-GAP"));
 
     return verNot(Version.Cloud, ret);
   }
