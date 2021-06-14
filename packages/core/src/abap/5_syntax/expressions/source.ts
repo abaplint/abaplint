@@ -17,10 +17,10 @@ import {ReferenceType} from "../_reference";
 import {SwitchBody} from "./switch_body";
 import {CondBody} from "./cond_body";
 import {ConvBody} from "./conv_body";
-import {AttributeName} from "./attribute_name";
 import {FilterBody} from "./filter_body";
 import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
+import {AttributeChain} from "./attribute_chain";
 
 /*
 * Type interference, valid scenarios:
@@ -141,8 +141,8 @@ export class Source {
 //        console.dir("dash");
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
         context = new ComponentChain().runSyntax(context, first);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, first, scope, filename, ReferenceType.DataReadReference);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeChain) {
+        context = new AttributeChain().runSyntax(context, first, scope, filename, ReferenceType.DataReadReference);
       }
       first = children.shift();
       if (first === undefined) {
