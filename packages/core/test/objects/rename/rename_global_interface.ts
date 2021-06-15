@@ -158,4 +158,29 @@ ENDCLASS.`;
     }
   });
 
+  it("INTF, add namespace", () => {
+    const abap = `INTERFACE zif_abapgit_auth PUBLIC.
+ENDINTERFACE.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zif_abapgit_auth.intf.abap", abap),
+      new MemoryFile("zif_abapgit_auth.intf.xml", xml),
+    ]).parse();
+
+    new Renamer(reg).rename("INTF", "zif_abapgit_auth", "/name/if_auth");
+
+    expect(reg.getObjectCount()).to.equal(1);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "#name#if_auth.intf.abap") {
+        const expected = `INTERFACE /name/if_auth PUBLIC.
+ENDINTERFACE.`;
+        expect(f.getRaw()).to.equal(expected);
+      } else if (f.getFilename() === "#name#if_auth.intf.xml") {
+        expect(f.getRaw().includes("<CLSNAME>/NAME/IF_AUTH</CLSNAME>")).to.equal(true);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });
