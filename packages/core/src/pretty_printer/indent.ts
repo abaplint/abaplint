@@ -67,6 +67,9 @@ export class Indent {
         || type instanceof Statements.EndTestSeam
         || type instanceof Statements.EndForm
         || type instanceof Statements.EndCatch
+        || (this.options.selectionScreenBlockIndentation === true
+          && type instanceof Statements.SelectionScreen
+          && statement.concatTokens().toUpperCase().includes("END OF BLOCK"))
         || type instanceof Statements.ElseIf
         || type instanceof Statements.EndFunction
         || type instanceof Statements.EndInterface
@@ -145,6 +148,9 @@ export class Indent {
         || type instanceof Statements.MethodImplementation
         || type instanceof Statements.TestInjection
         || type instanceof Statements.TestSeam
+        || (this.options.selectionScreenBlockIndentation === true
+          && type instanceof Statements.SelectionScreen
+          && statement.concatTokens().toUpperCase().includes("BEGIN OF BLOCK"))
         || type instanceof Statements.StartOfSelection
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.AtLineSelection
@@ -171,6 +177,7 @@ export class Indent {
     }
     return ret;
   }
+
   private skipIndentForGlobalClass(statement: StatementNode): boolean {
     if (!this.options.globalClassSkipFirst) {
       return false;
