@@ -4555,6 +4555,30 @@ ls_msg = iv_msg.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, integer to voided structure", () => {
+    const abap = `
+    TYPES:
+    BEGIN OF st_sequence,
+      field1 TYPE foo,
+      field2 TYPE bar,
+    END OF st_sequence.
+  DATA l_seq TYPE st_sequence.
+  l_seq = sy-tabix.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, string to numc", () => {
+    const abap = `
+  DATA: BEGIN OF bar,
+  foo TYPE n LENGTH 5,
+END OF bar.
+DATA lv_str TYPE string.
+bar = lv_str.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

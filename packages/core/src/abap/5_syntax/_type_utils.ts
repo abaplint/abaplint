@@ -1,4 +1,4 @@
-import {AnyType, CharacterType, DataReference, GenericObjectReferenceType, ObjectReferenceType, StringType, StructureType, TableType, UnknownType, VoidType} from "../types/basic";
+import {AnyType, CharacterType, DataReference, GenericObjectReferenceType, IntegerType, NumericType, ObjectReferenceType, StringType, StructureType, TableType, UnknownType, VoidType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 
 export class TypeUtils {
@@ -18,6 +18,7 @@ export class TypeUtils {
         || type instanceof VoidType
         || type instanceof AnyType
         || type instanceof UnknownType
+        || type instanceof NumericType
         || type instanceof CharacterType) {
       return true;
     }
@@ -65,7 +66,8 @@ export class TypeUtils {
           || source instanceof AnyType
           || source instanceof UnknownType) {
         return true;
-      } else if (this.isCharLike(target) && this.isCharLike(source)) {
+      } else if (this.isCharLike(target)
+          && (this.isCharLike(source) || source instanceof IntegerType)) {
         return true;
       }
       return false;
