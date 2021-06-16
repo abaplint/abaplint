@@ -2941,6 +2941,10 @@
         "ignoreGlobalInterface": {
           "type": "boolean"
         },
+        "selectionScreenBlockIndentation": {
+          "description": "Add indentation for SELECTION SCREEN BLOCK, standard pretty printer indents this from 754",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
@@ -2949,6 +2953,7 @@
       "required": [
         "ignoreExceptions",
         "alignTryCatch",
+        "selectionScreenBlockIndentation",
         "globalClassSkipFirst",
         "ignoreGlobalClassDefinition",
         "ignoreGlobalInterface"
