@@ -61,7 +61,7 @@ export class RenamerHelper {
   public renameFiles(obj: ABAPObject, oldName: string, name: string): RenameFile[] {
     const list: RenameFile[] = [];
 
-    const newName = name.toLowerCase().replace(/\//g, "%23");
+    const newName = name.toLowerCase().replace(/\//g, "#");
 
     for (const f of obj.getFiles()) {
 // todo, this is not completely correct, ie. if the URI contains the same directory name as the object name

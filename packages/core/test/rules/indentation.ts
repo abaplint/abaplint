@@ -157,6 +157,12 @@ AT LINE-SELECTION.
   WRITE 'Hello'.
 AT SELECTION-SCREEN.
   WRITE 'World'.`, cnt: 0},
+
+  {abap: `
+SELECTION-SCREEN BEGIN OF BLOCK table_compare WITH FRAME TITLE TEXT-006.
+PARAMETERS p_diff AS CHECKBOX DEFAULT abap_true MODIF ID exl.
+SELECTION-SCREEN END OF BLOCK table_compare.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);
@@ -166,11 +172,16 @@ const tests2 = [
   {abap: "class ycl_something definition public final.\npublic section.\nendclass.\n", cnt: 0},
   {abap: "interface zif_foobar public.\nmethods foo.\nendinterface.\n", cnt: 0},
   {abap: "write hello.\n", cnt: 0},
+  {abap: `
+SELECTION-SCREEN BEGIN OF BLOCK table_compare WITH FRAME TITLE TEXT-006.
+  PARAMETERS p_diff AS CHECKBOX DEFAULT abap_true MODIF ID exl.
+SELECTION-SCREEN END OF BLOCK table_compare.`, cnt: 0},
   {abap: " write hello.\n", cnt: 1},
 ];
 
 const config = new IndentationConf();
 config.ignoreGlobalClassDefinition = true;
+config.selectionScreenBlockIndentation = true;
 config.ignoreGlobalInterface = true;
 
 testRule(tests2, Indentation, config);

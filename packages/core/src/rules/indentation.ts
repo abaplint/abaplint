@@ -18,6 +18,8 @@ export class IndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   /** Align TRY CATCH, TRY and CATCH should have the same indentation */
   public alignTryCatch: boolean = false;
+  /** Add indentation for SELECTION SCREEN BLOCK, standard pretty printer indents this from 754 */
+  public selectionScreenBlockIndentation: boolean = false;
   public globalClassSkipFirst: boolean = false;
   public ignoreGlobalClassDefinition: boolean = false;
   public ignoreGlobalInterface: boolean = false;
@@ -62,6 +64,7 @@ export class Indentation extends ABAPRule {
     }
 
     const indentOpts: IIndentationOptions = {
+      selectionScreenBlockIndentation: this.conf?.selectionScreenBlockIndentation,
       alignTryCatch: this.conf?.alignTryCatch,
       globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };

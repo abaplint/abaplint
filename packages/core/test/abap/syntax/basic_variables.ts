@@ -1690,4 +1690,23 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.DataReference);
   });
 
+  it("Chained statment", () => {
+    const abap = `
+  CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      DATA moo TYPE i.
+      METHODS bar RETURNING VALUE(ref) TYPE REF TO lcl.
+  ENDCLASS.
+  CLASS lcl IMPLEMENTATION.
+    METHOD bar.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA(sdf) = NEW lcl( )->bar( )->moo.`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });

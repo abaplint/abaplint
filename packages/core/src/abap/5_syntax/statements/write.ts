@@ -4,6 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {Dynamic} from "../expressions/dynamic";
 
 export class Write implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -12,6 +13,10 @@ export class Write implements StatementSyntax {
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
+    }
+
+    for (const s of node.findAllExpressions(Expressions.Dynamic)) {
+      new Dynamic().runSyntax(s, scope, filename);
     }
 
     const target = node.findDirectExpression(Expressions.Target);
