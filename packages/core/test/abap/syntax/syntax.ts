@@ -4626,6 +4626,14 @@ ASSIGN er_entity->* TO FIELD-SYMBOL(<ls_entity>).
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, clear voided table body", () => {
+    const abap = `
+  DATA msg TYPE voided.
+  CLEAR msg[].`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
