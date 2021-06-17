@@ -26,7 +26,7 @@ export class TypeUtils {
   }
 
   public static isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
-    /*
+/*
     console.dir(source);
     console.dir(target);
 */

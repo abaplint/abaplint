@@ -25,6 +25,10 @@ export class TableType extends AbstractType {
     this.options = options;
   }
 
+  public getOptions(): ITableOptions {
+    return this.options;
+  }
+
   public isWithHeader(): boolean {
     return this.options.withHeader;
   }

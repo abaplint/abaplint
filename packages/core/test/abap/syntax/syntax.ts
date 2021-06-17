@@ -4579,6 +4579,53 @@ bar = lv_str.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, to table body", () => {
+    const abap = `
+DATA: li_data TYPE TABLE OF string.
+DATA: BEGIN OF lines OCCURS 1,
+        txt(1000),
+      END OF lines.
+lines[] = li_data.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, table body to table body", () => {
+    const abap = `
+DATA: li_data TYPE TABLE OF string.
+DATA: BEGIN OF lines OCCURS 1,
+        txt(1000),
+      END OF lines.
+lines[] = li_data[].`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, table body to table header", () => {
+    const abap = `
+DATA: li_data TYPE TABLE OF string.
+DATA: BEGIN OF lines OCCURS 1,
+        txt(1000),
+      END OF lines.
+lines = li_data[].`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("ok, data references and fs", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         field TYPE i,
+       END OF ty_bar.
+DATA er_entity TYPE REF TO ty_bar.
+DATA ls_entity TYPE ty_bar.
+CREATE DATA er_entity TYPE ty_bar.
+ASSIGN er_entity->* TO FIELD-SYMBOL(<ls_entity>).
+<ls_entity> = ls_entity.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -21,6 +21,7 @@ import {FilterBody} from "./filter_body";
 import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
 import {AttributeChain} from "./attribute_chain";
+import {Dereference} from "./dereference";
 
 /*
 * Type interference, valid scenarios:
@@ -137,6 +138,8 @@ export class Source {
         context = new Source().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
         context = new Constant().runSyntax(first);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dereference) {
+        context = new Dereference().runSyntax(context);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
 //        console.dir("dash");
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {

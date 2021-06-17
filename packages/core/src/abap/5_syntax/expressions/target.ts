@@ -59,6 +59,13 @@ export class Target {
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
+      } else if (current.get() instanceof Expressions.TableBody) {
+        if (!(context instanceof TableType)) {
+          throw new Error("Not a internal table, \"[]\"");
+        }
+        if (context.isWithHeader()) {
+          context = new TableType(context.getRowType(), {...context.getOptions(), withHeader: false});
+        }
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {
