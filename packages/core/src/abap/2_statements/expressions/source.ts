@@ -1,11 +1,12 @@
 import {ver, seq, tok, altPrio, optPrio, regex, Expression} from "../combi";
-import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, InstanceArrow, ParenRightW} from "../../1_lexer/tokens";
+import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, ParenRightW} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {TextElement} from "./text_element";
 import {AttributeChain} from "./attribute_chain";
+import {Dereference} from "./dereference";
 
 // todo, COND and SWITCH are quite similar?
 
@@ -13,11 +14,9 @@ import {AttributeChain} from "./attribute_chain";
 
 export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ref = seq(tok(InstanceArrow), "*");
-
     const comp = seq(tok(Dash), ComponentChain);
     const attr = seq(Arrow, AttributeChain);
-    const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), optPrio(ref));
+    const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), optPrio(Dereference));
 
     const rparen = tok(WParenRightW);
     const rparenNoSpace = altPrio(tok(ParenRightW), tok(WParenRightW));
@@ -42,7 +41,7 @@ export class Source extends Expression {
                                              TextElement,
                                              bool,
                                              method,
-                                             seq(FieldChain, optPrio(ref)),
+                                             seq(FieldChain, optPrio(Dereference)),
                                              paren),
                     optPrio(after));
 

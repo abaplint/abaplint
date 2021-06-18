@@ -13,6 +13,7 @@ export * from "./class_friends";
 export * from "./class_global";
 export * from "./class_name";
 export * from "./color";
+export * from "./dereference";
 export * from "./compare_operator";
 export * from "./compare";
 export * from "./component_chain_simple";

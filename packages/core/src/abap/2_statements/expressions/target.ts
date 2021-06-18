@@ -3,6 +3,7 @@ import {TargetField, TargetFieldSymbol, NewObject, InlineData, InlineFS, Arrow, 
 import {InstanceArrow, StaticArrow, Dash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {AttributeName} from "./attribute_name";
+import {Dereference} from "./dereference";
 
 export class Target extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -18,9 +19,7 @@ export class Target extends Expression {
 
     const fields = seq(optPrio(FieldOffset), optPrio(FieldLength));
 
-    const ref = seq(tok(InstanceArrow), "*");
-
-    const optional = altPrio(TableBody, fields, ref);
+    const optional = altPrio(TableBody, fields, Dereference);
 
     return altPrio(InlineData, InlineFS, seq(start, something, optional));
   }
