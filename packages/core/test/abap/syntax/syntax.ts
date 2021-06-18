@@ -4658,6 +4658,17 @@ g_item_tab = ' '.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, clike to structure", () => {
+    const abap = `
+  FIELD-SYMBOLS <fs> TYPE clike.
+  DATA: BEGIN OF ls_key,
+          foo TYPE c LENGTH 10,
+        END OF ls_key.
+  ls_key = <fs>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
