@@ -1,4 +1,4 @@
-import {AnyType, CharacterType, DataReference, GenericObjectReferenceType, IntegerType, NumericType, ObjectReferenceType, StringType, StructureType, TableType, UnknownType, VoidType} from "../types/basic";
+import {AnyType, CharacterType, DataReference, DateType, GenericObjectReferenceType, IntegerType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 
 export class TypeUtils {
@@ -19,6 +19,9 @@ export class TypeUtils {
         || type instanceof AnyType
         || type instanceof UnknownType
         || type instanceof NumericType
+        || type instanceof DateType
+        || type instanceof PackedType
+        || type instanceof TimeType
         || type instanceof CharacterType) {
       return true;
     }
