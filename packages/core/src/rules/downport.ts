@@ -47,6 +47,7 @@ Current rules:
 * CAST changed to ?=
 * LOOP AT method_call( ) is outlined
 * VALUE # with structure fields
+* VALUE # with internal table lines
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -261,12 +262,18 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
       const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
-      let concat = "";
+
+      let structureName = uniqueName;
       for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
-        concat += b.concatTokens() + " ";
+        if (b.concatTokens() === "(") {
+          structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+          body += indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+        }
         if (b.get() instanceof Expressions.FieldAssignment) {
-          body += indentation + uniqueName + "-" + concat.trim() + ".\n";
-          concat = "";
+          body += indentation + structureName + "-" + b.concatTokens() + ".\n";
+        }
+        if (b.concatTokens() === ")") {
+          body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
         }
       }
 
