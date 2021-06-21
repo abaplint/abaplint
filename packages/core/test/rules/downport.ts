@@ -609,4 +609,35 @@ inline_struct_table = struct_table.`;
     testFix(abap, expected);
   });
 
+  it("VALUE appending to table", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_hash,
+         word  TYPE i,
+         shift TYPE i,
+       END OF ty_hash.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_hash WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+tab = VALUE #( ( word = 0 shift = 3 ) ( word = 4 shift = 5 ) ).`;
+
+    const expected = `
+TYPES: BEGIN OF ty_hash,
+         word  TYPE i,
+         shift TYPE i,
+       END OF ty_hash.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_hash WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+DATA temp2 LIKE LINE OF temp1.
+temp2-word = 0.
+temp2-shift = 3.
+APPEND temp2 TO temp1.
+DATA temp3 LIKE LINE OF temp1.
+temp3-word = 4.
+temp3-shift = 5.
+APPEND temp3 TO temp1.
+tab = temp1.`;
+
+    testFix(abap, expected);
+  });
+
 });

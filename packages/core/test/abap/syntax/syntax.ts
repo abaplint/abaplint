@@ -4634,6 +4634,41 @@ ASSIGN er_entity->* TO FIELD-SYMBOL(<ls_entity>).
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, date to structure", () => {
+    const abap = `
+DATA: BEGIN OF l_new_date,
+        year(4),
+        month(2),
+        day(2),
+      END OF l_new_date.
+DATA l_call_date LIKE sy-datum.
+l_new_date = l_call_date.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, char to structure with packed", () => {
+    const abap = `
+DATA: BEGIN OF g_item_tab OCCURS 0,
+        ssdf    TYPE c LENGTH 1,
+        days(5) TYPE p,
+      END OF g_item_tab.
+g_item_tab = ' '.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, clike to structure", () => {
+    const abap = `
+  FIELD-SYMBOLS <fs> TYPE clike.
+  DATA: BEGIN OF ls_key,
+          foo TYPE c LENGTH 10,
+        END OF ls_key.
+  ls_key = <fs>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
