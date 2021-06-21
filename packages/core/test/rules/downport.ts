@@ -631,11 +631,25 @@ DATA temp2 LIKE LINE OF temp1.
 temp2-word = 0.
 temp2-shift = 3.
 APPEND temp2 TO temp1.
-DATA temp3 LIKE LINE OF temp1.
-temp3-word = 4.
-temp3-shift = 5.
-APPEND temp3 TO temp1.
+temp2-word = 4.
+temp2-shift = 5.
+APPEND temp2 TO temp1.
 tab = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("VALUE appending simple value to table", async () => {
+    const abap = `
+TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA(sdf) = VALUE ty( ( 1 ) ( 2 ) ).`;
+
+    const expected = `
+TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA temp1 TYPE ty.
+APPEND 1 TO temp1.
+APPEND 2 TO temp1.
+DATA(sdf) = temp1.`;
 
     testFix(abap, expected);
   });

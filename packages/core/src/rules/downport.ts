@@ -264,13 +264,22 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       let body = "";
 
       let structureName = uniqueName;
+      let added = false;
+      let data = "";
       for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
-        if (b.concatTokens() === "(") {
+        if (b.concatTokens() === "(" && added === false) {
           structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-          body += indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+          data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
         }
         if (b.get() instanceof Expressions.FieldAssignment) {
+          if (added === false) {
+            body += data;
+            added = true;
+          }
           body += indentation + structureName + "-" + b.concatTokens() + ".\n";
+        }
+        if (b.get() instanceof Expressions.Source) {
+          structureName = b.concatTokens();
         }
         if (b.concatTokens() === ")") {
           body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
