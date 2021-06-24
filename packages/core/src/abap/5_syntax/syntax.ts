@@ -127,6 +127,7 @@ import {CallTransaction} from "./statements/call_transaction";
 import {SetHandler} from "./statements/set_handler";
 import {Wait} from "./statements/wait";
 import {Shift} from "./statements/shift";
+import {SetBit} from "./statements/set_bit";
 
 // -----------------------------------
 
@@ -186,6 +187,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Sort());
   addToMap(new Wait());
   addToMap(new Condense());
+  addToMap(new SetBit());
   addToMap(new OpenDataset());
   addToMap(new CloseDataset());
   addToMap(new ReadReport());
