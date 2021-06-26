@@ -883,4 +883,12 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SET BIT", async () => {
+    const abap = `
+    DATA rv_byte8 TYPE x LENGTH 8.
+    SET BIT 1 OF rv_byte8 TO 1.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

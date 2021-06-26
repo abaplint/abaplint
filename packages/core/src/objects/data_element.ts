@@ -39,8 +39,12 @@ export class DataElement extends AbstractObject {
       type = new Types.UnknownType("Data Element " + this.getName() + ", parser error");
     } else {
       const ddic = new DDIC(reg);
-      if (this.parsedXML.refkind === "D" && this.parsedXML.domname) {
-        type = ddic.lookupDomain(this.parsedXML.domname);
+      if (this.parsedXML.refkind === "D") {
+        if (this.parsedXML.domname) {
+          type = ddic.lookupDomain(this.parsedXML.domname);
+        } else {
+          type = new Types.UnknownType("DOMNAME unexpectely empty");
+        }
       } else {
         type = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
       }
