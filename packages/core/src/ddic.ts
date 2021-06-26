@@ -297,6 +297,7 @@ export class DDIC {
           return new Types.UnknownType(text + " unknown length", parent);
         }
         return new Types.HexType(parseInt(length, 10), qualified);
+      case "TIMN": // Native HANA
       case "TIMS":
         return new Types.TimeType(qualified); //HHMMSS
       case "DECFLOAT16": // len = 16
@@ -310,6 +311,7 @@ export class DDIC {
           return new Types.UnknownType(text + " unknown length", parent);
         }
         return new Types.FloatingPointType(parseInt(length, 10), qualified);
+      case "DATN": // Native HANA
       case "DATS":
         return new Types.DateType(qualified); //YYYYMMDD
       case "INT1":
