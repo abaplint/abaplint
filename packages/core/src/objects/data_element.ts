@@ -43,7 +43,7 @@ export class DataElement extends AbstractObject {
         if (this.parsedXML.domname) {
           type = ddic.lookupDomain(this.parsedXML.domname);
         } else {
-          type = new Types.UnknownType("DOMNAME unexpectely empty");
+          type = new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName());
         }
       } else {
         type = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());

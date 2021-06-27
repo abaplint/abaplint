@@ -50,8 +50,12 @@ export class TableType extends AbstractObject {
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
       type = new Types.TableType(ddic.lookupObject(this.parsedXML.rowtype), {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "") {
-      const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName(), false);
-      type = new Types.TableType(row, {withHeader: false}, this.getName());
+      if (this.parsedXML.datatype === undefined) {
+        type = new Types.UnknownType("Table Type, empty DATATYPE" + this.getName(), this.getName());
+      } else {
+        const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName(), false);
+        type = new Types.TableType(row, {withHeader: false}, this.getName());
+      }
     } else {
       type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName(), this.getName());
     }
