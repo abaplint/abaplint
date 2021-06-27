@@ -138,6 +138,9 @@ export class Table extends AbstractObject {
           type: ddic.lookupTableType(field.ROLLNAME)});
       } else if (comptype === "") { // built in
         const datatype = field.DATATYPE;
+        if (datatype === undefined) {
+          throw new Error("Expected DATATYPE");
+        }
         const length = field.LENG ? field.LENG : field.INTLEN;
         const decimals = field.DECIMALS ? field.DECIMALS : undefined;
         components.push({

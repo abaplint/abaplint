@@ -43,7 +43,7 @@
         "@types/glob": "^7.1.3",
         "@types/minimist": "^1.2.1",
         "@types/mocha": "^8.2.2",
-        "@types/node": "^15.12.4",
+        "@types/node": "^15.12.5",
         "@types/progress": "^2.0.3",
         "chai": "^4.3.4",
         "chalk": "^4.1.1",
