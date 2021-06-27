@@ -1,7 +1,6 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt} from "../combi";
+import {seq, opt, alt} from "../combi";
 import * as Expressions from "../expressions";
-import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class IncludeType implements IStatement {
@@ -17,7 +16,7 @@ export class IncludeType implements IStatement {
                     opt(tas),
                     opt(renaming));
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }
