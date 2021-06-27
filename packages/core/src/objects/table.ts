@@ -5,6 +5,7 @@ import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
+import {AnyType, DataReference} from "../abap/types/basic";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -129,9 +130,15 @@ export class Table extends AbstractObject {
         if (field.ROLLNAME === undefined) {
           throw new Error("Expected ROLLNAME");
         }
-        components.push({
-          name: field.FIELDNAME,
-          type: ddic.lookupObject(field.ROLLNAME)});
+        if (field.ROLLNAME === "DATA") {
+          components.push({
+            name: field.FIELDNAME,
+            type: new DataReference(new AnyType())});
+        } else {
+          components.push({
+            name: field.FIELDNAME,
+            type: ddic.lookupObject(field.ROLLNAME)});
+        }
       } else if (comptype === "L") {
         components.push({
           name: field.FIELDNAME,
