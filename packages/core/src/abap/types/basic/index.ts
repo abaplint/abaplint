@@ -15,6 +15,7 @@ export * from "./numeric_generic_type";
 export * from "./numeric_type";
 export * from "./object_reference_type";
 export * from "./packed_type";
+export * from "./simple_type";
 export * from "./string_type";
 export * from "./structure_type";
 export * from "./table_type";

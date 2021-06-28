@@ -1709,4 +1709,20 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("SIMPLE", () => {
+    const abap = `
+    FIELD-SYMBOLS <bar> TYPE simple.`;
+    const identifier = resolveVariable(abap, "<bar>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.SimpleType);
+  });
+
+  it("TABLE", () => {
+    const abap = `
+    FIELD-SYMBOLS <bar> TYPE table.`;
+    const identifier = resolveVariable(abap, "<bar>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });
