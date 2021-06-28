@@ -162,6 +162,10 @@ export class BasicTypes {
         return new Types.CLikeType();
       case "ANY":
         return new Types.AnyType();
+      case "SIMPLE":
+        return new Types.SimpleType();
+      case "TABLE":
+        return new Types.TableType(new Types.AnyType(), {withHeader: false});
       case "DATA":
         return new Types.AnyType();
       case "NUMERIC":
