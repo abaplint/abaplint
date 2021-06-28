@@ -95,6 +95,9 @@ export class Table extends AbstractObject {
           name: field.FIELDNAME,
           type: ddic.lookupDataElement(field.ROLLNAME)});
       } else if (field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP") { // incude or append structure
+        if (field.PRECFIELD === undefined) {
+          return new Types.UnknownType("Table, parser error, PRECFIELD undefined");
+        }
         let found = ddic.lookupTableOrView(field.PRECFIELD);
         if (found instanceof TypedIdentifier) {
           found = found.getType();
