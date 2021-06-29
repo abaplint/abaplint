@@ -45,8 +45,27 @@ export class DataElement extends AbstractObject {
         } else {
           type = new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName());
         }
+      } else if (this.parsedXML.refkind === "R") {
+        if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
+          type = new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName());
+        } else {
+          let found = reg.getObject("INTF", this.parsedXML.domname);
+          if (found === undefined) {
+            found = reg.getObject("CLAS", this.parsedXML.domname);
+          }
+          const id = found?.getIdentifier();
+          if (found && id) {
+            type = new Types.ObjectReferenceType(id, this.parsedXML.domname);
+          } else {
+            type = new Types.UnknownType("REF not found, " + this.parsedXML.domname);
+          }
+        }
       } else {
-        type = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
+        if (this.parsedXML.datatype === undefined || this.parsedXML.datatype === "") {
+          type = new Types.UnknownType("DATATYPE unexpectely empty in " + this.getName());
+        } else {
+          type = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
+        }
       }
     }
 

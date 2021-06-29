@@ -92,4 +92,41 @@ describe("Rule: no_unknown_ddic", () => {
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("DTEL with REF TO intf", async () => {
+    const xml = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZINTF_REF</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>ZIF_ABAPGIT_AUTH</DOMNAME>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>sdfsd</DDTEXT>
+    <REPTEXT>sdfsd</REPTEXT>
+    <SCRTEXT_S>sdfsd</SCRTEXT_S>
+    <SCRTEXT_M>sdfsd</SCRTEXT_M>
+    <SCRTEXT_L>sdfsd</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>REF</DATATYPE>
+    <REFKIND>R</REFKIND>
+    <REFTYPE>I</REFTYPE>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const intf = `INTERFACE zif_abapgit_auth PUBLIC.
+ENDINTERFACE.`;
+    const reg = new Registry().addFile(new MemoryFile("zint_ref.dtel.xml", xml));
+    reg.addFile(new MemoryFile("zif_abapgit_auth.intf.abap", intf));
+    await reg.parseAsync();
+
+    const issues = new CheckDDIC().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
