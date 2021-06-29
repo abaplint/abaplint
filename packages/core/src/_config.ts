@@ -29,7 +29,7 @@ export interface IDependency {
 export interface ISyntaxSettings {
   /** ABAP language version */
   version?: Version;
-  /** Report error for objects in this regex namespace. Types not in namespace will be void */
+  /** Report error for objects in this regex namespace. Types not in namespace will be void. Case insensitive */
   errorNamespace: string;
   /** List of full named global constants
    * @uniqueItems true
