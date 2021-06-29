@@ -56,6 +56,8 @@ export class DataElement extends AbstractObject {
           const id = found?.getIdentifier();
           if (found && id) {
             type = new Types.ObjectReferenceType(id, this.parsedXML.domname);
+          } else if (ddic.inErrorNamespace(this.parsedXML.domname) === false) {
+            type = new Types.VoidType(this.parsedXML.domname);
           } else {
             type = new Types.UnknownType("REF not found, " + this.parsedXML.domname);
           }
