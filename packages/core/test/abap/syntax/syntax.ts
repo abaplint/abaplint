@@ -4669,7 +4669,7 @@ g_item_tab = ' '.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("ok, enum default in interface method definition", () => {
+  it("ok, enum default in interface method definition", () => {
     const abap = `
 INTERFACE lif_enum_test.
   TYPES:
