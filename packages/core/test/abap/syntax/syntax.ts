@@ -4669,6 +4669,23 @@ g_item_tab = ' '.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, enum default in interface method definition", () => {
+    const abap = `
+INTERFACE lif_enum_test.
+  TYPES:
+    BEGIN OF ENUM mode,
+      value1,
+      value2,
+    END OF ENUM mode.
+
+  METHODS:
+    blah
+      IMPORTING mode TYPE mode DEFAULT value1.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

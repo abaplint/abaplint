@@ -163,7 +163,9 @@ export class Attributes implements IAttributes {
           const enums = new TypeEnum().runSyntax(c, scope, this.filename);
           for (const e of enums) {
           // for now add ENUM values as constants
-            this.constants.push(new ClassConstant(e, visibility, "novalueClassAttributeEnum"));
+            const attr = new ClassConstant(e, visibility, "novalueClassAttributeEnum");
+            this.constants.push(attr);
+            scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.Types) {
           const res = new Types().runSyntax(c, scope, this.filename);

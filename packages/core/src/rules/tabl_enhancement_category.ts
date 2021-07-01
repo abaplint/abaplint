@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {Table, EnhancementCategory} from "../objects";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
@@ -12,12 +12,15 @@ export class TABLEnhancementCategoryConf extends BasicRuleConfig {
 export class TABLEnhancementCategory implements IRule {
   private conf = new TABLEnhancementCategoryConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "tabl_enhancement_category",
       title: "TABL enhancement category must be set",
-      shortDescription: `Checks that tables do not have the enhancement category 'not classified'. 
+      shortDescription: `Checks that tables do not have the enhancement category 'not classified'.`,
+      extendedInformation: `SAP note 3063227 changes the default to 'Cannot be enhanced'.
+
 You may use standard report RS_DDIC_CLASSIFICATION_FINAL for adjustment.`,
+      tags: [],
     };
   }
 
