@@ -1396,4 +1396,20 @@ DATA sdf TYPE lcl_bar=>enum1.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("type in interface from interface via alias", () => {
+    const abap = `
+INTERFACE lcl_bar.
+  TYPES ty_bar TYPE c LENGTH 1.
+ENDINTERFACE.
+
+INTERFACE lcl_top.
+  INTERFACES lcl_bar.
+  ALIASES ty_bar FOR lcl_bar~ty_bar.
+  METHODS bar IMPORTING field TYPE ty_bar.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });
