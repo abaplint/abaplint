@@ -28,7 +28,7 @@ export class AttributeName {
     if (context instanceof ObjectReferenceType) {
       const def = scope.findObjectDefinition(context.getIdentifierName());
       if (def === undefined) {
-        throw new Error("Definition for \"" + context.getIdentifierName() + "\" not found in scope");
+        throw new Error("Definition for \"" + context.getIdentifierName() + "\" not found in scope(AttributeName)");
       }
       const token = node.getFirstToken();
       const name = token.getStr();

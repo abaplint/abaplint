@@ -30,7 +30,7 @@ export class AttributeChain {
 
     const def = scope.findClassDefinition(inputContext.getIdentifierName());
     if (def === undefined) {
-      throw new Error("Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope");
+      throw new Error("Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)");
     }
     const nameToken = first.getFirstToken();
     const name = nameToken.getStr();
