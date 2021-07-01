@@ -9,7 +9,10 @@ import {ReferenceType} from "../_reference";
 import {EnumType} from "../../types/basic/enum_type";
 
 export class TypeEnum {
-  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier[] {
+  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): {values: TypedIdentifier[], types: TypedIdentifier[]} {
+    const values: TypedIdentifier[] = [];
+    const types: TypedIdentifier[] = [];
+
     if (!(node.get() instanceof Structures.TypeEnum)) {
       throw new Error("TypeEnum, unexpected type");
     }
@@ -19,7 +22,6 @@ export class TypeEnum {
       throw new Error("TypeEnum, unexpected type, begin");
     }
 
-    const ret: TypedIdentifier[] = [];
     for (const type of node.findDirectStatements(Statements.Type)) {
       const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
       if (expr === undefined) {
@@ -27,7 +29,7 @@ export class TypeEnum {
       }
       const token = expr.getFirstToken();
       // integer is default if BASE TYPE is not specified
-      ret.push(new TypedIdentifier(token, filename, new IntegerType()));
+      values.push(new TypedIdentifier(token, filename, new IntegerType()));
     }
     for (const type of node.findDirectStatements(Statements.TypeEnum)) {
       const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
@@ -36,7 +38,7 @@ export class TypeEnum {
       }
       const token = expr.getFirstToken();
       // integer is default if BASE TYPE is not specified
-      ret.push(new TypedIdentifier(token, filename, new IntegerType()));
+      values.push(new TypedIdentifier(token, filename, new IntegerType()));
     }
 
     const baseType = begin.findExpressionAfterToken("TYPE")?.getFirstToken();
@@ -52,23 +54,22 @@ export class TypeEnum {
     if (name) {
       const id = new TypedIdentifier(name.getFirstToken(), filename, new EnumType(), [IdentifierMeta.Enum]);
       scope.addType(id);
-      ret.push(id);
+      types.push(id);
     }
 
     const stru = begin.findExpressionAfterToken("STRUCTURE");
     if (stru) {
       const components: IStructureComponent[] = [];
-      for (const r of ret) {
+      for (const r of values) {
         components.push({
           name: r.getName(),
           type: r.getType(),
         });
       }
       const id = new TypedIdentifier(stru.getFirstToken(), filename, new StructureType(components), [IdentifierMeta.Enum]);
-      scope.addType(id);
-      ret.push(id);
+      values.push(id);
     }
 
-    return ret;
+    return {values, types};
   }
 }

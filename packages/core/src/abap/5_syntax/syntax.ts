@@ -396,7 +396,8 @@ export class SyntaxLogic {
       this.scope.addIdentifier(new Statics().runSyntax(node, this.scope, filename));
       return true;
     } else if (stru instanceof Structures.TypeEnum) {
-      this.scope.addList(new TypeEnum().runSyntax(node, this.scope, filename));
+      const values = new TypeEnum().runSyntax(node, this.scope, filename).values;
+      this.scope.addList(values);
       return true;
     }
     return false;

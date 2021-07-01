@@ -160,12 +160,16 @@ export class Attributes implements IAttributes {
             scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
-          const enums = new TypeEnum().runSyntax(c, scope, this.filename);
-          for (const e of enums) {
+          const {values, types} = new TypeEnum().runSyntax(c, scope, this.filename);
+          for (const v of values) {
           // for now add ENUM values as constants
-            const attr = new ClassConstant(e, visibility, "novalueClassAttributeEnum");
+            const attr = new ClassConstant(v, visibility, "novalueClassAttributeEnum");
             this.constants.push(attr);
             scope.addIdentifier(attr);
+          }
+          for (const t of types) {
+            this.tlist.push({type: t, visibility});
+//            scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.Types) {
           const res = new Types().runSyntax(c, scope, this.filename);
