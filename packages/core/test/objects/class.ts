@@ -181,7 +181,7 @@ describe("Objects, class, getAttributes", () => {
     expect(def).to.not.equal(undefined);
     const attr = def!.getAttributes();
     expect(attr).to.not.equal(undefined);
-    expect(attr.getConstants().length).to.equal(2);
+    expect(attr.getConstants().length).to.equal(1);
     expect(attr.getConstants()[0].getName()).to.equal("value1");
     expect(attr.getConstants()[0].getVisibility()).to.equal(Visibility.Public);
   });

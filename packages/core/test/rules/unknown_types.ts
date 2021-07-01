@@ -1382,4 +1382,18 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("use enum type from interface", () => {
+    const abap = `
+INTERFACE lcl_bar.
+  TYPES: BEGIN OF ENUM enum1,
+           val1,
+         END OF ENUM enum1.
+ENDINTERFACE.
+
+DATA sdf TYPE lcl_bar=>enum1.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(0);
+  });
+
 });
