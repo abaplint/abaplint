@@ -4725,6 +4725,22 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("infer type, INSERT INTO TABLE, NEW #", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA tab TYPE STANDARD TABLE OF REF TO lcl WITH EMPTY KEY.
+    INSERT NEW #( ) INTO TABLE tab.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
