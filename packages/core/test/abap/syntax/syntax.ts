@@ -4706,6 +4706,25 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, loop group by, with inlines, 2", () => {
+    const abap = `
+TYPES: BEGIN OF ty_line,
+         author         TYPE string,
+         author_name    TYPE string,
+       END OF ty_line.
+
+DATA t_line TYPE STANDARD TABLE OF ty_line WITH EMPTY KEY.
+
+LOOP AT t_line ASSIGNING FIELD-SYMBOL(<s_line>)
+    GROUP BY ( author = <s_line>-author name = <s_line>-author_name )
+    ASSIGNING FIELD-SYMBOL(<t_group>).
+  LOOP AT GROUP <t_group> ASSIGNING <s_line> WHERE author = <s_line>-author.
+  ENDLOOP.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

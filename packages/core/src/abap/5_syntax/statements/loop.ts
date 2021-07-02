@@ -28,17 +28,20 @@ export class Loop implements StatementSyntax {
     }
     let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename, targetType) : undefined;
 
+    const concat = node.concatTokens().toUpperCase();
     if (sourceType === undefined) {
       throw new Error("No source type determined");
     } else if (sourceType instanceof UnknownType) {
       throw new Error("Loop, not a table type, " + sourceType.getError());
-    } else if (!(sourceType instanceof TableType) && !(sourceType instanceof VoidType)) {
+    } else if (!(sourceType instanceof TableType)
+        && !(sourceType instanceof VoidType)
+        && concat.startsWith("LOOP AT GROUP ") === false) {
       throw new Error("Loop, not a table type");
     }
 
     if (sourceType instanceof TableType) {
       sourceType = sourceType.getRowType();
-      if (node.concatTokens().toUpperCase().includes(" REFERENCE INTO ")) {
+      if (concat.includes(" REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
       }
     }
