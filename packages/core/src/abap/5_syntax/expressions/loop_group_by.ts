@@ -2,6 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {IStructureComponent, StructureType, VoidType} from "../../types/basic";
 import {CurrentScope} from "../_current_scope";
+import {ComponentCompare} from "./component_compare";
 import {InlineFS} from "./inline_fs";
 
 export class LoopGroupBy {
@@ -21,6 +22,10 @@ export class LoopGroupBy {
     const inlinefs = node.findFirstExpression(Expressions.InlineFS);
     if (inlinefs) {
       new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
+      new ComponentCompare().runSyntax(t, scope, filename);
     }
 
   }
