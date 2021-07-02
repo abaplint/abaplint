@@ -20,7 +20,11 @@ export class MethodParam {
 
     const def = type.findDirectExpression(Expressions.Default);
     if (def) {
-      new Default().runSyntax(def, scope, filename);
+      try {
+        new Default().runSyntax(def, scope, filename);
+      } catch (e) {
+        return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType(e.toString()), meta);
+      }
     }
 
     const found = new BasicTypes(filename, scope).parseType(type);
