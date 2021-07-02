@@ -4741,7 +4741,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("cyclic referenced global interfaces", () => {
+  it("cyclic referenced global interfaces", () => {
     const intf1 = `INTERFACE zintf1 PUBLIC.
   METHODS blah
     IMPORTING
