@@ -4741,6 +4741,23 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("cyclic referenced global interfaces", () => {
+    const intf1 = `INTERFACE zintf1 PUBLIC.
+  METHODS blah
+    IMPORTING
+      iv TYPE c DEFAULT zintf2=>co_true.
+ENDINTERFACE.`;
+    const intf2 = `INTERFACE zintf2 PUBLIC.
+  INTERFACES zintf1.
+  CONSTANTS co_true TYPE c LENGTH 1 VALUE 'X'.
+ENDINTERFACE.`;
+    const issues = runMulti([
+      {filename: "zintf1.intf.abap", contents: intf1},
+      {filename: "zintf2.intf.abap", contents: intf2},
+    ]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
