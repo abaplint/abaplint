@@ -11,6 +11,7 @@ import {ComponentCompare} from "../expressions/component_compare";
 import {ComponentCond} from "../expressions/component_cond";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
+import {LoopGroupBy} from "../expressions/loop_group_by";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -74,6 +75,11 @@ export class Loop implements StatementSyntax {
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(t, scope, filename);
+    }
+
+    const group = node.findDirectExpression(Expressions.LoopGroupBy);
+    if (group) {
+      new LoopGroupBy().runSyntax(group, scope, filename);
     }
 
   }

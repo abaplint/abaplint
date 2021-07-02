@@ -1396,7 +1396,7 @@ DATA sdf TYPE lcl_bar=>enum1.`;
     expect(issues.length).to.equals(0);
   });
 
-  it("type in interface from interface via alias", () => {
+  it.skip("type in interface from interface via alias", () => {
     const abap = `
 INTERFACE lcl_bar.
   TYPES ty_bar TYPE c LENGTH 1.
