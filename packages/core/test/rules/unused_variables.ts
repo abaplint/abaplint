@@ -891,4 +891,22 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LOOP with GROUP", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_line,
+         request TYPE string,
+       END OF ty_line.
+DATA t_line TYPE STANDARD TABLE OF ty_line WITH EMPTY KEY.
+
+LOOP AT t_line REFERENCE INTO DATA(os_line)
+    WHERE request IS NOT INITIAL
+    GROUP BY ( request = os_line->request )
+    ASCENDING
+    ASSIGNING FIELD-SYMBOL(<t_group>).
+  WRITE <t_group>-request.
+ENDLOOP.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
