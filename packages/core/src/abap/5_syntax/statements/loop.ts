@@ -11,6 +11,7 @@ import {ComponentCompare} from "../expressions/component_compare";
 import {ComponentCond} from "../expressions/component_cond";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
+import {LoopGroupBy} from "../expressions/loop_group_by";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -27,17 +28,20 @@ export class Loop implements StatementSyntax {
     }
     let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename, targetType) : undefined;
 
+    const concat = node.concatTokens().toUpperCase();
     if (sourceType === undefined) {
       throw new Error("No source type determined");
     } else if (sourceType instanceof UnknownType) {
       throw new Error("Loop, not a table type, " + sourceType.getError());
-    } else if (!(sourceType instanceof TableType) && !(sourceType instanceof VoidType)) {
+    } else if (!(sourceType instanceof TableType)
+        && !(sourceType instanceof VoidType)
+        && concat.startsWith("LOOP AT GROUP ") === false) {
       throw new Error("Loop, not a table type");
     }
 
     if (sourceType instanceof TableType) {
       sourceType = sourceType.getRowType();
-      if (node.concatTokens().toUpperCase().includes(" REFERENCE INTO ")) {
+      if (concat.includes(" REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
       }
     }
@@ -74,6 +78,11 @@ export class Loop implements StatementSyntax {
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(t, scope, filename);
+    }
+
+    const group = node.findDirectExpression(Expressions.LoopGroupBy);
+    if (group) {
+      new LoopGroupBy().runSyntax(group, scope, filename);
     }
 
   }

@@ -84,8 +84,22 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 /////////////////
 
   private parse(scope: CurrentScope) {
+    // todo, proper sequencing, the statements should be processed line by line
     this.attributes = new Attributes(this.node, this.filename, scope);
     this.typeDefinitions = this.attributes.getTypes();
+
+    this.aliases = new Aliases(this.node, this.filename, scope);
+    // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
+    for (const a of this.aliases.getAll()) {
+      const [objName, fieldName] = a.getComponent().split("~");
+      const idef = scope.findInterfaceDefinition(objName);
+      if (idef) {
+        const found = idef.getTypeDefinitions().getByName(fieldName);
+        if (found) {
+          scope.addTypeNamed(a.getName(), found);
+        }
+      }
+    }
 
     this.methodDefinitions = new MethodDefinitions(this.node, this.filename, scope);
 
@@ -111,7 +125,6 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
       }
     }
 
-    this.aliases = new Aliases(this.node, this.filename, scope);
   }
 
 }
