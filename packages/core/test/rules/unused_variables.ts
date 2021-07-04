@@ -909,4 +909,13 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SET HANDLER, 2", async () => {
+    const abap = `
+  DATA lo_events TYPE REF TO cl_voided.
+  DATA blah TYPE REF TO cl_voided.
+  SET HANDLER blah->on_link_click FOR lo_events.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
