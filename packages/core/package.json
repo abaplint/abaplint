@@ -58,14 +58,14 @@
         "@microsoft/api-extractor": "^7.17.1",
         "@types/chai": "^4.2.19",
         "@types/mocha": "^8.2.2",
-        "@types/node": "^15.14.0",
+        "@types/node": "^16.0.0",
         "chai": "^4.3.4",
-        "eslint": "^7.29.0",
+        "eslint": "^7.30.0",
         "madge": "^5.0.1",
-        "mocha": "^9.0.1",
+        "mocha": "^9.0.2",
         "nyc": "^15.1.0",
         "source-map-support": "^0.5.19",
-        "ts-json-schema-generator": "^0.93.0",
+        "ts-json-schema-generator": "^0.94.0",
         "typescript": "^4.3.5"
     },
     "dependencies": {
