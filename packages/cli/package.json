@@ -55,7 +55,7 @@
         "mocha": "^9.0.2",
         "progress": "^2.0.3",
         "typescript": "^4.3.5",
-        "webpack": "^5.42.0",
+        "webpack": "^5.42.1",
         "webpack-cli": "^4.7.2",
         "xml-js": "^1.6.11"
     },
