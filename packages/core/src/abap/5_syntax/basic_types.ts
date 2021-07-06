@@ -587,6 +587,9 @@ export class BasicTypes {
       const name = first.getFirstToken().getStr();
       const obj = this.scope.findObjectDefinition(name);
       if (obj === undefined) {
+        if (this.scope.existsObject(name).found === true) {
+          return undefined;
+        }
         if (this.scope.getDDIC().inErrorNamespace(name) === true) {
           throw new Error("resolveConstantValue, not found: " + name);
         } else {
