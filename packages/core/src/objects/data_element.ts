@@ -34,6 +34,8 @@ export class DataElement extends AbstractObject {
   }
 
   public parseType(reg: IRegistry): AbstractType {
+    reg.getDDICReferences().setUsing(this, []);
+
     let type: AbstractType;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
       type = new Types.UnknownType("Data Element " + this.getName() + ", parser error");
@@ -41,7 +43,7 @@ export class DataElement extends AbstractObject {
       const ddic = new DDIC(reg);
       if (this.parsedXML.refkind === "D") {
         if (this.parsedXML.domname) {
-          type = ddic.lookupDomain(this.parsedXML.domname);
+          type = ddic.lookupDomain(this.parsedXML.domname, this);
         } else {
           type = new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName());
         }
@@ -95,6 +97,7 @@ export class DataElement extends AbstractObject {
       leng: dd04v?.LENG,
       decimals: dd04v?.DECIMALS,
     };
+
     const end = Date.now();
     return {updated: true, runtime: end - start};
   }

@@ -11,6 +11,8 @@ import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
 import {SyntaxLogic} from "./abap/5_syntax/syntax";
 import {ExcludeHelper} from "./utils/excludeHelper";
+import {DDICReferences} from "./ddic_references";
+import {IDDICReferences} from "./_iddic_references";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -71,21 +73,29 @@ class ParsingPerformance {
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 export class Registry implements IRegistry {
   private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
   private readonly objectsByType: { [type: string]: { [name: string]: IObject } } = {};
   /** object containing filenames of dependencies */
   private readonly dependencies: { [filename: string]: boolean } = {};
+  private readonly references: IDDICReferences;
   private conf: IConfiguration;
   private issues: Issue[] = [];
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
+    this.references = new DDICReferences();
   }
 
   public static abaplintVersion(): string {
     // magic, see build script "version.sh"
     return "{{ VERSION }}";
+  }
+
+  public getDDICReferences() {
+    return this.references;
   }
 
   public* getObjects(): Generator<IObject, void, undefined> {
@@ -187,6 +197,7 @@ export class Registry implements IRegistry {
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
     if (obj.getFiles().length === 0) {
+      this.references.setUsing(obj, []);
       this.removeObject(obj);
     }
     return this;

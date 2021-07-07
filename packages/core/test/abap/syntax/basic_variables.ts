@@ -1725,4 +1725,12 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("C Pointer", () => {
+    const abap = `
+  DATA bar TYPE %_c_pointer.`;
+    const identifier = resolveVariable(abap, "bar");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.HexType);
+  });
+
 });

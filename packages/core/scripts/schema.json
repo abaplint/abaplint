@@ -2519,6 +2519,17 @@
               ],
               "description": "Checks for unsecure FAE\nTags: Experimental\nhttps://rules.abaplint.org/unsecure_fae"
             },
+            "unused_ddic": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedDDICConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks the usage of DDIC objects\nTags: Syntax\nhttps://rules.abaplint.org/unused_ddic"
+            },
             "unused_methods": {
               "anyOf": [
                 {
@@ -4711,6 +4722,23 @@
       "type": "object"
     },
     "UnsecureFAEConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UnusedDDICConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

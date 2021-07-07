@@ -3,6 +3,7 @@ import {IConfiguration} from "./_config";
 import {IFile} from "./files/_ifile";
 import {IProgress} from "./progress";
 import {Issue} from "./issue";
+import {IDDICReferences} from "./_iddic_references";
 
 export interface IRunInput {
   progress?: IProgress;
@@ -12,13 +13,19 @@ export interface IRunInput {
 export interface IRegistry {
   parse(): IRegistry;
   parseAsync(input?: IRunInput): Promise<IRegistry>;
+
+  // dependency operations
   addDependencies(files: readonly IFile[]): IRegistry;
   addDependency(file: IFile): IRegistry;
   isDependency(obj: IObject): boolean;
   isFileDependency(filename: string): boolean;
+
   findIssues(input?: IRunInput): readonly Issue[];
   findIssuesObject(iobj: IObject): readonly Issue[];
+
+  // miscellaneous
   inErrorNamespace(name: string): boolean;
+  getDDICReferences(): IDDICReferences;
 
   // config operations
   getConfig(): IConfiguration;

@@ -164,6 +164,8 @@ export class BasicTypes {
         return new Types.AnyType();
       case "SIMPLE":
         return new Types.SimpleType();
+      case "%_C_POINTER":
+        return new Types.HexType(8);
       case "TABLE":
         return new Types.TableType(new Types.AnyType(), {withHeader: false});
       case "DATA":
