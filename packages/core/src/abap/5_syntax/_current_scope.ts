@@ -20,6 +20,7 @@ import {Interface} from "../../objects/interface";
 import {EnhancementSpot} from "../../objects/enhancement_spot";
 import {TypePool} from "../../objects/type_pool";
 import {SyntaxLogic} from "./syntax";
+import {IDDICReferences} from "../../_iddic_references";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -309,7 +310,7 @@ export class CurrentScope {
     return new DDIC(this.reg);
   }
 
-  public getDDICReferences() {
+  public getDDICReferences(): IDDICReferences {
     return this.reg.getDDICReferences();
   }
 
