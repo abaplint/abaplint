@@ -241,17 +241,17 @@ export class DDIC {
     }
   }
 
-  public lookupTableType(name: string | undefined): AbstractType {
+  public lookupTableType(name: string | undefined): ILookupResult {
     if (name === undefined) {
-      return new Types.UnknownType("undefined, lookupTableType");
+      return {type: new Types.UnknownType("undefined, lookupTableType")};
     }
     const found = this.reg.getObject("TTYP", name) as TableType | undefined;
     if (found) {
-      return found.parseType(this.reg);
+      return {type: found.parseType(this.reg), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + " not found, lookupTableType");
+      return {type: new Types.UnknownType(name + " not found, lookupTableType")};
     } else {
-      return new Types.VoidType(name);
+      return {type: new Types.VoidType(name)};
     }
   }
 

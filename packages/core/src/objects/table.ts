@@ -144,14 +144,18 @@ export class Table extends AbstractObject {
             name: field.FIELDNAME,
             type: new DataReference(new AnyType())});
         } else {
-          components.push({
-            name: field.FIELDNAME,
-            type: ddic.lookupObject(field.ROLLNAME).type});
+          const lookup = ddic.lookupObject(field.ROLLNAME);
+          components.push({name: field.FIELDNAME, type: lookup.type});
+          if (lookup.object) {
+            references.push(lookup.object);
+          }
         }
       } else if (comptype === "L") {
-        components.push({
-          name: field.FIELDNAME,
-          type: ddic.lookupTableType(field.ROLLNAME)});
+        const lookup = ddic.lookupTableType(field.ROLLNAME);
+        components.push({name: field.FIELDNAME, type: lookup.type});
+        if (lookup.object) {
+          references.push(lookup.object);
+        }
       } else if (comptype === "") { // built in
         const datatype = field.DATATYPE;
         if (datatype === undefined) {
