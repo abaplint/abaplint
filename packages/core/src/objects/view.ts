@@ -5,6 +5,7 @@ import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
+import {IObject} from "./_iobject";
 
 export class View extends AbstractObject {
   private parsedData: {
@@ -38,13 +39,18 @@ export class View extends AbstractObject {
     }
 
     const components: Types.IStructureComponent[] = [];
+    const references: IObject[] = [];
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
       if (field.VIEWFIELD === "*") {
         // ignore, this is a special case of old style .INCLUDE
         continue;
       }
-      let found = ddic.lookupTableOrView(field.TABNAME).type;
+      const lookup = ddic.lookupTableOrView(field.TABNAME);
+      if (lookup.object) {
+        references.push(lookup.object);
+      }
+      let found = lookup.type;
       if (found instanceof TypedIdentifier) {
         found = found.getType();
       }
@@ -61,8 +67,9 @@ export class View extends AbstractObject {
         type: found});
     }
 
+    reg.getDDICReferences().setUsing(this, references);
     if (components.length === 0) {
-      throw new Error("View " + this.getName() + " does not contain any components");
+      return new Types.UnknownType("View " + this.getName() + " does not contain any components");
     }
 
     return new Types.StructureType(components, this.getName());
@@ -76,12 +83,12 @@ export class View extends AbstractObject {
 ///////////////
 
   private parseXML() {
+    this.parsedData = {fields: []};
+
     const parsed = super.parseRaw2();
-    if (parsed === undefined) {
+    if (parsed === undefined || parsed.abapGit === undefined) {
       return;
     }
-
-    this.parsedData = {fields: []};
 
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
     for (const field of xmlToArray(fields?.DD27P)) {

@@ -3,6 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
+import {IObject} from "./_iobject";
 
 export class TableType extends AbstractObject {
   private parsedXML: {
@@ -38,17 +39,34 @@ export class TableType extends AbstractObject {
 
     const ddic = new DDIC(reg);
 
+    const references: IObject[] = [];
     let type: AbstractType;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
     } else if (this.parsedXML.rowkind === "S") {
-      type = new Types.TableType(ddic.lookupTableOrView(this.parsedXML.rowtype).type, {withHeader: false}, this.getName());
+      const lookup = ddic.lookupTableOrView(this.parsedXML.rowtype);
+      type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
+      if (lookup.object) {
+        references.push(lookup.object);
+      }
     } else if (this.parsedXML.rowkind === "E") {
-      type = new Types.TableType(ddic.lookupDataElement(this.parsedXML.rowtype).type, {withHeader: false}, this.getName());
+      const lookup = ddic.lookupDataElement(this.parsedXML.rowtype);
+      type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
+      if (lookup.object) {
+        references.push(lookup.object);
+      }
     } else if (this.parsedXML.rowkind === "L") {
-      type = new Types.TableType(ddic.lookupTableType(this.parsedXML.rowtype).type, {withHeader: false}, this.getName());
+      const lookup = ddic.lookupTableType(this.parsedXML.rowtype);
+      type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
+      if (lookup.object) {
+        references.push(lookup.object);
+      }
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
-      type = new Types.TableType(ddic.lookupObject(this.parsedXML.rowtype).type, {withHeader: false}, this.getName());
+      const lookup = ddic.lookupObject(this.parsedXML.rowtype);
+      type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
+      if (lookup.object) {
+        references.push(lookup.object);
+      }
     } else if (this.parsedXML.rowkind === "") {
       if (this.parsedXML.datatype === undefined) {
         type = new Types.UnknownType("Table Type, empty DATATYPE" + this.getName(), this.getName());
@@ -60,6 +78,7 @@ export class TableType extends AbstractObject {
       type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName(), this.getName());
     }
 
+    reg.getDDICReferences().setUsing(this, references);
     return type;
   }
 
@@ -73,7 +92,7 @@ export class TableType extends AbstractObject {
     this.parsedXML = {};
 
     const parsed = super.parseRaw2();
-    if (parsed === undefined) {
+    if (parsed === undefined || parsed.abapGit === undefined) {
       return;
     }
 

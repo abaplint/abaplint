@@ -163,7 +163,6 @@ describe("Rule: unused_ddic", () => {
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-// todo: DTEL referenced from TTYP
 // todo: DTEL referenced from ABAP code
 
 });
