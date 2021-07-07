@@ -6,6 +6,7 @@ import {DDIC} from "../ddic";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference} from "../abap/types/basic";
+import {IObject} from "./_iobject";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -81,32 +82,37 @@ export class Table extends AbstractObject {
   public parseType(reg: IRegistry): AbstractType {
     if (this.parsedData === undefined) {
       this.parseXML();
-    }
-    if (this.parsedData === undefined) {
-      return new Types.UnknownType("Table, parser error");
+      if (this.parsedData === undefined) {
+        return new Types.UnknownType("Table, parser error");
+      }
     }
 
+    const references: IObject[] = [];
     const components: Types.IStructureComponent[] = [];
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
       const comptype = field.COMPTYPE ? field.COMPTYPE : "";
       if (comptype === "E") { // data element
-        components.push({
-          name: field.FIELDNAME,
-          type: ddic.lookupDataElement(field.ROLLNAME)});
+        const lookup = ddic.lookupDataElement(field.ROLLNAME);
+        components.push({name: field.FIELDNAME, type: lookup.type});
+        if (lookup.object) {
+          references.push(lookup.object);
+        }
       } else if (field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP") { // incude or append structure
         if (field.PRECFIELD === undefined) {
           return new Types.UnknownType("Table, parser error, PRECFIELD undefined");
         }
-        let found = ddic.lookupTableOrView(field.PRECFIELD);
+        const lookup = ddic.lookupTableOrView(field.PRECFIELD);
+        let found = lookup.type;
+        if (lookup.object) {
+          references.push(lookup.object);
+        }
         if (found instanceof TypedIdentifier) {
           found = found.getType();
         }
         if (found instanceof Types.StructureType) {
           for (const c of found.getComponents()) {
-            components.push({
-              name: c.name,
-              type: c.type});
+            components.push({name: c.name, type: c.type});
           }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {
@@ -117,18 +123,18 @@ export class Table extends AbstractObject {
           // set the full structure to void
           return found;
         } else {
-          components.push({
-            name: field.FIELDNAME,
-            type: found});
+          components.push({name: field.FIELDNAME, type: found});
         }
       } else if (comptype === "S" && field.FIELDNAME.startsWith(".INCLU-")) {
         components.push({
           name: field.FIELDNAME,
           type: new Types.UnknownType("Table " + this.getName() + ", todo, group named INCLUDE")});
       } else if (comptype === "S") {
-        components.push({
-          name: field.FIELDNAME,
-          type: ddic.lookupTableOrView(field.ROLLNAME)});
+        const lookup = ddic.lookupTableOrView(field.ROLLNAME);
+        components.push({name: field.FIELDNAME, type: lookup.type});
+        if (lookup.object) {
+          references.push(lookup.object);
+        }
       } else if (comptype === "R") {
         if (field.ROLLNAME === undefined) {
           throw new Error("Expected ROLLNAME");
@@ -138,35 +144,39 @@ export class Table extends AbstractObject {
             name: field.FIELDNAME,
             type: new DataReference(new AnyType())});
         } else {
-          components.push({
-            name: field.FIELDNAME,
-            type: ddic.lookupObject(field.ROLLNAME)});
+          const lookup = ddic.lookupObject(field.ROLLNAME);
+          components.push({name: field.FIELDNAME, type: lookup.type});
+          if (lookup.object) {
+            references.push(lookup.object);
+          }
         }
       } else if (comptype === "L") {
-        components.push({
-          name: field.FIELDNAME,
-          type: ddic.lookupTableType(field.ROLLNAME)});
+        const lookup = ddic.lookupTableType(field.ROLLNAME);
+        components.push({name: field.FIELDNAME, type: lookup.type});
+        if (lookup.object) {
+          references.push(lookup.object);
+        }
       } else if (comptype === "") { // built in
         const datatype = field.DATATYPE;
         if (datatype === undefined) {
           throw new Error("Expected DATATYPE");
         }
         const length = field.LENG ? field.LENG : field.INTLEN;
-        const decimals = field.DECIMALS ? field.DECIMALS : undefined;
         components.push({
           name: field.FIELDNAME,
-          type: ddic.textToType(datatype, length, decimals, this.getName())});
+          type: ddic.textToType(datatype, length, field.DECIMALS, this.getName())});
       } else {
         components.push({
           name: field.FIELDNAME,
-          type: new Types.UnknownType("Table " + this.getName() + ", unknown component type " + comptype)});
+          type: new Types.UnknownType("Table " + this.getName() + ", unknown component type \"" + comptype + "\"")});
       }
     }
 
     if (components.length === 0) {
-      throw new Error("Table/Structure " + this.getName() + " does not contain any components");
+      return new Types.UnknownType("Table/Structure " + this.getName() + " does not contain any components");
     }
 
+    reg.getDDICReferences().setUsing(this, references);
     return new Types.StructureType(components, this.getName());
   }
 
@@ -197,6 +207,10 @@ export class Table extends AbstractObject {
     }
 
     this.parsedData = {fields: []};
+
+    if (parsed.abapGit === undefined) {
+      return;
+    }
 
 // enhancement category
     if (parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS === undefined) {

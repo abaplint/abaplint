@@ -17,7 +17,7 @@ export class FormParam {
       if (typeName) {
         type = scope.findType(typeName)?.getType();
         if (type === undefined) {
-          type = scope.getDDIC().lookupTableOrView(typeName);
+          type = scope.getDDIC().lookupTableOrView(typeName).type;
         }
       } else {
         type = new UnknownType("todo, FORM STRUCTURES typing");

@@ -5,8 +5,8 @@ import {AbstractType} from "./_abstract_type";
 export class ObjectReferenceType extends AbstractType {
   private readonly identifier: Identifier;
 
-  public constructor(id: Identifier, name?: string) {
-    super(name);
+  public constructor(id: Identifier, qualifiedName?: string) {
+    super(qualifiedName);
     this.identifier = id;
   }
 

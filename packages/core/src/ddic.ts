@@ -12,6 +12,11 @@ import {View} from "./objects/view";
 import {DataDefinition} from "./objects";
 import {IObject} from "./objects/_iobject";
 
+export interface ILookupResult {
+  type: AbstractType;
+  object?: IObject;
+}
+
 export class DDIC {
   private readonly reg: IRegistry;
 
@@ -66,19 +71,21 @@ export class DDIC {
     return this.reg.inErrorNamespace(name);
   }
 
-  public lookupObject(name: string): AbstractType {
-    const globalClas = this.reg.getObject("CLAS", name)?.getIdentifier();
+  public lookupObject(name: string): ILookupResult {
+    const clas = this.reg.getObject("CLAS", name);
+    const globalClas = clas?.getIdentifier();
     if (globalClas) {
-      return new ObjectReferenceType(globalClas);
+      return {type: new ObjectReferenceType(globalClas, name), object: clas};
     }
-    const globalIntf = this.reg.getObject("INTF", name)?.getIdentifier();
+    const intf = this.reg.getObject("INTF", name);
+    const globalIntf = intf?.getIdentifier();
     if (globalIntf) {
-      return new ObjectReferenceType(globalIntf);
+      return {type: new ObjectReferenceType(globalIntf, name), object: intf};
     }
     if (this.inErrorNamespace(name) === true) {
-      return new UnknownType(name);
+      return {type: new UnknownType(name)};
     } else {
-      return new VoidType(name);
+      return {type: new VoidType(name)};
     }
   }
 
@@ -133,49 +140,48 @@ export class DDIC {
     }
   }
 
-  public lookupDomain(name: string, parent: IObject): AbstractType {
+  public lookupDomain(name: string): ILookupResult {
     const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
-      this.reg.getDDICReferences().setUsing(parent, [found]);
-      return found.parseType(this.reg);
+      return {type: found.parseType(this.reg), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + ", lookupDomain");
+      return {type: new Types.UnknownType(name + ", lookupDomain"), object: undefined};
     } else {
-      return new Types.VoidType(name);
+      return {type: new Types.VoidType(name), object: undefined};
     }
   }
 
-  public lookupDataElement(name: string | undefined): AbstractType {
+  public lookupDataElement(name: string | undefined): ILookupResult {
     if (name === undefined) {
-      return new Types.UnknownType("undefined, lookupDataElement");
+      return {type: new Types.UnknownType("undefined, lookupDataElement")};
     }
     const found = this.reg.getObject("DTEL", name) as DataElement | undefined;
     if (found) {
-      return found.parseType(this.reg);
+      return {type: found.parseType(this.reg), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + " not found, lookupDataElement");
+      return {type: new Types.UnknownType(name + " not found, lookupDataElement")};
     } else {
-      return new Types.VoidType(name);
+      return {type: new Types.VoidType(name)};
     }
   }
 
-  public lookupTableOrView(name: string | undefined): AbstractType {
+  public lookupTableOrView(name: string | undefined): ILookupResult {
     if (name === undefined) {
-      return new Types.UnknownType("undefined, lookupTableOrView");
+      return {type: new Types.UnknownType("undefined, lookupTableOrView")};
     }
     const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
     if (foundTABL) {
-      return foundTABL.parseType(this.reg);
+      return {type: foundTABL.parseType(this.reg), object: foundTABL};
     }
     const foundDDLS = this.reg.getObject("DDLS", name) as DataDefinition | undefined;
     if (foundDDLS) {
-      return foundDDLS.parseType(this.reg);
+      return {type: foundDDLS.parseType(this.reg), object: foundDDLS};
     }
     const upper = name.toUpperCase();
     for (const obj of this.reg.getObjectsByType("DDLS")) {
       const ddls = obj as DataDefinition;
       if (ddls.getSQLViewName() === upper) {
-        return ddls.parseType(this.reg);
+        return {type: ddls.parseType(this.reg), object: ddls};
       }
     }
     return this.lookupView(name);
@@ -221,31 +227,31 @@ export class DDIC {
     }
   }
 
-  public lookupView(name: string | undefined): AbstractType {
+  private lookupView(name: string | undefined): ILookupResult {
     if (name === undefined) {
-      return new Types.UnknownType("undefined, lookupView");
+      return {type: new Types.UnknownType("undefined, lookupView")};
     }
     const found = this.reg.getObject("VIEW", name) as Table | undefined;
     if (found) {
-      return found.parseType(this.reg);
+      return {type: found.parseType(this.reg), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + " not found, lookupView");
+      return {type: new Types.UnknownType(name + " not found, lookupView")};
     } else {
-      return new Types.VoidType(name);
+      return {type: new Types.VoidType(name)};
     }
   }
 
-  public lookupTableType(name: string | undefined): AbstractType {
+  public lookupTableType(name: string | undefined): ILookupResult {
     if (name === undefined) {
-      return new Types.UnknownType("undefined, lookupTableType");
+      return {type: new Types.UnknownType("undefined, lookupTableType")};
     }
     const found = this.reg.getObject("TTYP", name) as TableType | undefined;
     if (found) {
-      return found.parseType(this.reg);
+      return {type: found.parseType(this.reg), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + " not found, lookupTableType");
+      return {type: new Types.UnknownType(name + " not found, lookupTableType")};
     } else {
-      return new Types.VoidType(name);
+      return {type: new Types.VoidType(name)};
     }
   }
 

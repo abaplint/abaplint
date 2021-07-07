@@ -2528,7 +2528,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the usage of DDIC objects\nTags: Syntax\nhttps://rules.abaplint.org/unused_ddic"
+              "description": "Checks the usage of DDIC objects\nhttps://rules.abaplint.org/unused_ddic"
             },
             "unused_methods": {
               "anyOf": [

@@ -1,4 +1,4 @@
-import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {Issue} from "../issue";
 import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
@@ -17,8 +17,8 @@ export class UnusedDDIC implements IRule {
       key: "unused_ddic",
       title: "Unused DDIC",
       shortDescription: `Checks the usage of DDIC objects`,
-      extendedInformation: `Objects checked: DOMA`,
-      tags: [RuleTag.Syntax],
+      extendedInformation: `Objects checked: DOMA + DTEL`,
+      tags: [],
     };
   }
 
@@ -36,11 +36,8 @@ export class UnusedDDIC implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
-    if (obj instanceof Objects.DataElement
-        || obj instanceof Objects.Domain
-        || obj instanceof Objects.Table
-        || obj instanceof Objects.View
-        || obj instanceof Objects.TableType) {
+    if (obj instanceof Objects.Domain
+        || obj instanceof Objects.DataElement) {
       return this.check(obj);
     }
 

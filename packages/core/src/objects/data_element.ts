@@ -1,7 +1,8 @@
 import {AbstractObject} from "./_abstract_object";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {IRegistry} from "../_iregistry";
-import {DDIC} from "../ddic";
+import {DDIC, ILookupResult} from "../ddic";
+import {IObject} from "./_iobject";
 import * as Types from "../abap/types/basic";
 
 export class DataElement extends AbstractObject {
@@ -34,46 +35,39 @@ export class DataElement extends AbstractObject {
   }
 
   public parseType(reg: IRegistry): AbstractType {
-    reg.getDDICReferences().setUsing(this, []);
+    const references: IObject[] = [];
 
-    let type: AbstractType;
+    let lookup: ILookupResult | undefined = undefined;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
-      type = new Types.UnknownType("Data Element " + this.getName() + ", parser error");
+      lookup = {type: new Types.UnknownType("Data Element " + this.getName() + ", parser error")};
     } else {
       const ddic = new DDIC(reg);
       if (this.parsedXML.refkind === "D") {
-        if (this.parsedXML.domname) {
-          type = ddic.lookupDomain(this.parsedXML.domname, this);
+        if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
+          lookup = {type: new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName())};
         } else {
-          type = new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName());
+          lookup = ddic.lookupDomain(this.parsedXML.domname);
         }
       } else if (this.parsedXML.refkind === "R") {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
-          type = new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName());
+          lookup = {type: new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName())};
         } else {
-          let found = reg.getObject("INTF", this.parsedXML.domname);
-          if (found === undefined) {
-            found = reg.getObject("CLAS", this.parsedXML.domname);
-          }
-          const id = found?.getIdentifier();
-          if (found && id) {
-            type = new Types.ObjectReferenceType(id, this.parsedXML.domname);
-          } else if (ddic.inErrorNamespace(this.parsedXML.domname) === false) {
-            type = new Types.VoidType(this.parsedXML.domname);
-          } else {
-            type = new Types.UnknownType("REF not found, " + this.parsedXML.domname);
-          }
+          lookup = ddic.lookupObject(this.parsedXML.domname);
         }
       } else {
         if (this.parsedXML.datatype === undefined || this.parsedXML.datatype === "") {
-          type = new Types.UnknownType("DATATYPE unexpectely empty in " + this.getName());
+          lookup = {type: new Types.UnknownType("DATATYPE unexpectely empty in " + this.getName())};
         } else {
-          type = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
+          lookup = {type: ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName())};
         }
       }
     }
 
-    return type;
+    if (lookup.object) {
+      references.push(lookup.object);
+    }
+    reg.getDDICReferences().setUsing(this, references);
+    return lookup.type;
   }
 
   public parse() {
