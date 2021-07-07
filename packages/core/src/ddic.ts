@@ -69,11 +69,11 @@ export class DDIC {
   public lookupObject(name: string): AbstractType {
     const globalClas = this.reg.getObject("CLAS", name)?.getIdentifier();
     if (globalClas) {
-      return new ObjectReferenceType(globalClas);
+      return new ObjectReferenceType(globalClas, name);
     }
     const globalIntf = this.reg.getObject("INTF", name)?.getIdentifier();
     if (globalIntf) {
-      return new ObjectReferenceType(globalIntf);
+      return new ObjectReferenceType(globalIntf, name);
     }
     if (this.inErrorNamespace(name) === true) {
       return new UnknownType(name);
