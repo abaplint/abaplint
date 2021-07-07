@@ -44,7 +44,7 @@ export class View extends AbstractObject {
         // ignore, this is a special case of old style .INCLUDE
         continue;
       }
-      let found = ddic.lookupTableOrView(field.TABNAME);
+      let found = ddic.lookupTableOrView(field.TABNAME).type;
       if (found instanceof TypedIdentifier) {
         found = found.getType();
       }

@@ -36,7 +36,8 @@ export class UnusedDDIC implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
-    if (obj instanceof Objects.Domain) {
+    if (obj instanceof Objects.Domain
+        || obj instanceof Objects.DataElement) {
       return this.check(obj);
     }
 

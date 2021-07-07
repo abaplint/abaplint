@@ -42,9 +42,9 @@ export class TableType extends AbstractObject {
     if (this.parsedXML === undefined || this.parsedXML === {}) {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
     } else if (this.parsedXML.rowkind === "S") {
-      type = new Types.TableType(ddic.lookupTableOrView(this.parsedXML.rowtype), {withHeader: false}, this.getName());
+      type = new Types.TableType(ddic.lookupTableOrView(this.parsedXML.rowtype).type, {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "E") {
-      type = new Types.TableType(ddic.lookupDataElement(this.parsedXML.rowtype), {withHeader: false}, this.getName());
+      type = new Types.TableType(ddic.lookupDataElement(this.parsedXML.rowtype).type, {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "L") {
       type = new Types.TableType(ddic.lookupTableType(this.parsedXML.rowtype), {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
