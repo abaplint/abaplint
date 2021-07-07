@@ -24,15 +24,19 @@ export class CheckAbstract extends ABAPRule {
       shortDescription: `Checks abstract methods and classes:
 - class defined as abstract and final,
 - non-abstract class contains abstract methods`,
+      extendedInformation: `If a class defines only constants, use an interface instead`,
       tags: [RuleTag.SingleFile],
     };
   }
 
   private getDescription(issueType: IssueType, name: string): string {
     switch (issueType) {
-      case IssueType.AbstractAndFinal: return "Classes cannot be ABSTRACT and FINAL: " + name;
-      case IssueType.NotAbstractClass: return "Abstract methods require abstract classes: " + name;
-      default: return "";
+      case IssueType.AbstractAndFinal:
+        return "Classes should not be ABSTRACT and FINAL: " + name;
+      case IssueType.NotAbstractClass:
+        return "Abstract methods require abstract classes: " + name;
+      default:
+        return "";
     }
   }
 
