@@ -1,10 +1,9 @@
 import {IObject} from "./objects/_iobject";
 
 export interface IDDICReferences {
-  addUsing(obj: IObject, using: IObject): void;
-  clearUsing(obj: IObject): void;
+  setUsing(obj: IObject, using: IObject[]): void;
 
   listUsing(obj: IObject): IObject[];
 
-  listUsedBy(obj: IObject): IObject[];
+  listWhereUsed(obj: IObject): {type: string, name: string}[];
 }

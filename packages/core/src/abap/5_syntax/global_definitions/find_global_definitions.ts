@@ -9,6 +9,7 @@ import * as BasicTypes from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {IProgress} from "../../../progress";
 import {TypedIdentifier} from "../../types/_typed_identifier";
+import {DataElement} from "../../../objects";
 
 // todo: rewrite all of this to use a graph based deterministic approach instead
 
@@ -29,6 +30,8 @@ export class FindGlobalDefinitions {
     for (const o of this.reg.getObjects()) {
       if ((o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined) {
         candidates.push(o);
+      } else if (o instanceof DataElement) {
+        o.parseType(this.reg); // make sure the references are set after parsing finishes
       }
     }
     // make sure the sequence is always the same, disregarding the sequence they were added to the registry

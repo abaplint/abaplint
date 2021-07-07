@@ -17,7 +17,7 @@ export class UnusedDDIC implements IRule {
       key: "unused_ddic",
       title: "Unused DDIC",
       shortDescription: `Checks the usage of DDIC objects`,
-      extendedInformation: `todo`,
+      extendedInformation: `Objects checked: DOMA`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -42,17 +42,22 @@ export class UnusedDDIC implements IRule {
         || obj instanceof Objects.View
         || obj instanceof Objects.TableType) {
       return this.check(obj);
-    } else {
-      return [];
     }
+
+    return [];
   }
 
-  private check(_obj: Objects.DataElement | Objects.Domain | Objects.Table | Objects.View| Objects.TableType): Issue[] {
-    const ret: Issue[] = [];
+  private check(obj: IObject): Issue[] {
+    const id = obj.getIdentifier();
+    const refs = this.reg.getDDICReferences();
+    const list = refs.listWhereUsed(obj);
 
-    console.log(this.reg.getObjectCount());
+    if (id && list.length === 0) {
+      const message = obj.getType() + " " + obj.getName() + " not statically referenced";
+      return [Issue.atIdentifier(id, message, this.getMetadata().key, this.conf.severity)];
+    }
 
-    return ret;
+    return [];
   }
 
 }

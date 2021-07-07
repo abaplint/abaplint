@@ -10,6 +10,7 @@ import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_informat
 import {ObjectReferenceType, UnknownType, VoidType} from "./abap/types/basic";
 import {View} from "./objects/view";
 import {DataDefinition} from "./objects";
+import {IObject} from "./objects/_iobject";
 
 export class DDIC {
   private readonly reg: IRegistry;
@@ -132,9 +133,10 @@ export class DDIC {
     }
   }
 
-  public lookupDomain(name: string): AbstractType {
+  public lookupDomain(name: string, parent: IObject): AbstractType {
     const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
+      this.reg.getDDICReferences().setUsing(parent, [found]);
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + ", lookupDomain");
