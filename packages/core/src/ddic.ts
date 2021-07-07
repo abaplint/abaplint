@@ -12,6 +12,11 @@ import {View} from "./objects/view";
 import {DataDefinition} from "./objects";
 import {IObject} from "./objects/_iobject";
 
+export interface ILookupResult {
+  type: AbstractType;
+  object?: IObject;
+}
+
 export class DDIC {
   private readonly reg: IRegistry;
 
@@ -66,19 +71,21 @@ export class DDIC {
     return this.reg.inErrorNamespace(name);
   }
 
-  public lookupObject(name: string): AbstractType {
-    const globalClas = this.reg.getObject("CLAS", name)?.getIdentifier();
+  public lookupObject(name: string): ILookupResult {
+    const clas = this.reg.getObject("CLAS", name);
+    const globalClas = clas?.getIdentifier();
     if (globalClas) {
-      return new ObjectReferenceType(globalClas, name);
+      return {type: new ObjectReferenceType(globalClas, name), object: clas};
     }
-    const globalIntf = this.reg.getObject("INTF", name)?.getIdentifier();
+    const intf = this.reg.getObject("INTF", name);
+    const globalIntf = intf?.getIdentifier();
     if (globalIntf) {
-      return new ObjectReferenceType(globalIntf, name);
+      return {type: new ObjectReferenceType(globalIntf, name), object: intf};
     }
     if (this.inErrorNamespace(name) === true) {
-      return new UnknownType(name);
+      return {type: new UnknownType(name)};
     } else {
-      return new VoidType(name);
+      return {type: new VoidType(name)};
     }
   }
 
@@ -133,15 +140,14 @@ export class DDIC {
     }
   }
 
-  public lookupDomain(name: string, parent: IObject): AbstractType {
+  public lookupDomain(name: string): ILookupResult {
     const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
-      this.reg.getDDICReferences().setUsing(parent, [found]);
-      return found.parseType(this.reg);
+      return {type: found.parseType(this.reg), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + ", lookupDomain");
+      return {type: new Types.UnknownType(name + ", lookupDomain"), object: undefined};
     } else {
-      return new Types.VoidType(name);
+      return {type: new Types.VoidType(name), object: undefined};
     }
   }
 
