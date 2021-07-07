@@ -26,7 +26,7 @@ export class Procedural {
   public addAllFormDefinitions(file: ABAPFile, obj: ABAPObject) {
     const structure = file.getStructure();
     if (structure) {
-      const dummy = CurrentScope.buildDefault(this.reg);
+      const dummy = CurrentScope.buildDefault(this.reg, obj);
       for (const found of structure.findAllStructures(Structures.Form)) {
         this.scope.addFormDefinitions([new FormDefinition(found, file.getFilename(), dummy)]);
       }
@@ -100,7 +100,7 @@ export class Procedural {
     for (const param of definition.getParameters()) {
       let found: AbstractType = new CharacterType(1);
       if (param.type) {
-        found = ddic.lookup(param.type);
+        found = ddic.lookup(param.type).type;
       }
       if (param.direction === FunctionModuleParameterDirection.tables) {
         found = new TableType(found, {withHeader: true});

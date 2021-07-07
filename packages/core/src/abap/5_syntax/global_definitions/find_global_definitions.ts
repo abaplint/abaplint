@@ -115,7 +115,7 @@ export class FindGlobalDefinitions {
       const found = struc?.findFirstStructure(Structures.Interface);
       if (struc && file && found) {
         try {
-          const def = new InterfaceDefinition(found, file.getFilename(), CurrentScope.buildDefault(this.reg));
+          const def = new InterfaceDefinition(found, file.getFilename(), CurrentScope.buildDefault(this.reg, obj));
           obj.setDefinition(def);
         } catch {
           obj.setDefinition(undefined);
@@ -127,7 +127,7 @@ export class FindGlobalDefinitions {
       const found = struc?.findFirstStructure(Structures.ClassDefinition);
       if (struc && file && found) {
         try {
-          const def = new ClassDefinition(found, file.getFilename(), CurrentScope.buildDefault(this.reg));
+          const def = new ClassDefinition(found, file.getFilename(), CurrentScope.buildDefault(this.reg, obj));
           obj.setDefinition(def);
         } catch {
           obj.setDefinition(undefined);

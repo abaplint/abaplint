@@ -88,7 +88,7 @@ export class BasicTypes {
       } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
         type = type.getRowType();
       } else if (type === undefined) {
-        type = this.scope.getDDIC().lookupNoVoid(name);
+        type = this.scope.getDDIC().lookupNoVoid(name)?.type;
       }
 
       // todo, this only looks up one level, reuse field_chain.ts?
@@ -237,12 +237,13 @@ export class BasicTypes {
 
     const ddic = this.scope.getDDIC().lookup(chainText);
     if (ddic) {
-      if (ddic instanceof TypedIdentifier) {
-        this.scope.addReference(typeName.getFirstToken(), ddic, ReferenceType.TypeReference, this.filename);
-      } else if (ddic instanceof VoidType) {
+      this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), ddic.object);
+      if (ddic.type instanceof TypedIdentifier) {
+        this.scope.addReference(typeName.getFirstToken(), ddic.type, ReferenceType.TypeReference, this.filename);
+      } else if (ddic.type instanceof VoidType) {
         this.scope.addReference(typeName.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       }
-      return ddic;
+      return ddic.type;
     }
 
     return undefined;

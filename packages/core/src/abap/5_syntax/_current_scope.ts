@@ -20,15 +20,16 @@ import {Interface} from "../../objects/interface";
 import {EnhancementSpot} from "../../objects/enhancement_spot";
 import {TypePool} from "../../objects/type_pool";
 import {SyntaxLogic} from "./syntax";
+import {IDDICReferences} from "../../_iddic_references";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
   protected allowHeaderUse: string | undefined;
+  protected parentObj: IObject;
 
-
-  public static buildDefault(reg: IRegistry, obj?: IObject): CurrentScope {
-    const s = new CurrentScope(reg);
+  public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
+    const s = new CurrentScope(reg, obj);
 
     s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
     this.addBuiltIn(s, reg.getConfig().getSyntaxSetttings().globalConstants!);
@@ -52,8 +53,9 @@ export class CurrentScope {
     }
   }
 
-  private constructor(reg: IRegistry) {
+  private constructor(reg: IRegistry, obj: IObject) {
     this.current = undefined;
+    this.parentObj = obj;
     this.reg = reg;
   }
 
@@ -307,6 +309,14 @@ export class CurrentScope {
 
   public getDDIC(): DDIC {
     return new DDIC(this.reg);
+  }
+
+  public getDDICReferences(): IDDICReferences {
+    return this.reg.getDDICReferences();
+  }
+
+  public getParentObj(): IObject {
+    return this.parentObj;
   }
 
   public getName(): string {

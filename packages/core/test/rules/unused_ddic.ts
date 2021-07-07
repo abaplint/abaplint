@@ -7,6 +7,7 @@ import {UnusedDDIC} from "../../src/rules";
 async function run(files: IFile[]){
   const reg = new Registry().addFiles(files);
   await reg.parseAsync();
+  reg.findIssues();
   const obj = reg.getFirstObject()!;
   const issues = new UnusedDDIC().initialize(reg).run(obj);
   return issues;
@@ -163,6 +164,32 @@ describe("Rule: unused_ddic", () => {
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-// todo: DTEL referenced from ABAP code
+  it("DTEL used from PROG", async () => {
+    const zunused = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZUSEDPROG</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const prog = `DATA bar TYPE zusedprog.`;
+
+    const files = [new MemoryFile(`zusedprog.dtel.xml`, zunused), new MemoryFile(`zprog.prog.abap`, prog)];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 });

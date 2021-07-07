@@ -14,7 +14,28 @@ export class DDICReferences implements IDDICReferences {
     this.index[newName][newType] = using;
   }
 
-  public listUsing(obj: IObject): IObject[] {
+  public addUsing(obj: IObject, using: IObject | undefined) {
+    if (using === undefined) {
+      return;
+    }
+
+    const newName = obj.getName().toUpperCase();
+    const newType = obj.getType();
+
+    if (this.index[newName] === undefined) {
+      this.index[newName] = {};
+    }
+    if (this.index[newName][newType] === undefined) {
+      this.index[newName][newType] = [];
+    }
+    this.index[newName][newType].push(using);
+  }
+
+  public clear(obj: IObject) {
+    this.setUsing(obj, []);
+  }
+
+  public listUsing(obj: IObject): readonly IObject[] {
     const newName = obj.getName().toUpperCase();
     const newType = obj.getType();
 

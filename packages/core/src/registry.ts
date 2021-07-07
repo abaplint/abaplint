@@ -197,7 +197,7 @@ export class Registry implements IRegistry {
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
     if (obj.getFiles().length === 0) {
-      this.references.setUsing(obj, []);
+      this.references.clear(obj);
       this.removeObject(obj);
     }
     return this;
