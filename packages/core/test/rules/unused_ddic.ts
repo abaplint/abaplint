@@ -7,6 +7,7 @@ import {UnusedDDIC} from "../../src/rules";
 async function run(files: IFile[]){
   const reg = new Registry().addFiles(files);
   await reg.parseAsync();
+  reg.findIssues();
   const obj = reg.getFirstObject()!;
   const issues = new UnusedDDIC().initialize(reg).run(obj);
   return issues;
@@ -163,7 +164,7 @@ describe("Rule: unused_ddic", () => {
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("DTEL used from PROG", async () => {
+  it.skip("DTEL used from PROG", async () => {
     const zunused = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -184,9 +185,9 @@ describe("Rule: unused_ddic", () => {
  </asx:abap>
 </abapGit>`;
 
-    const prog = `DATA bar TYPE zused.`;
+    const prog = `DATA bar TYPE zusedprog.`;
 
-    const files = [new MemoryFile(`zusedprog.dtel.xml`, zunused), new MemoryFile(`zprog.prog.xml`, prog)];
+    const files = [new MemoryFile(`zusedprog.dtel.xml`, zunused), new MemoryFile(`zprog.prog.abap`, prog)];
     const issues = await run(files);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });

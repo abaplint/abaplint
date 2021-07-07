@@ -25,9 +25,9 @@ export class CurrentScope {
   protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
   protected allowHeaderUse: string | undefined;
+//  protected currentObj: IObject;
 
-
-  public static buildDefault(reg: IRegistry, obj?: IObject): CurrentScope {
+  public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
     const s = new CurrentScope(reg);
 
     s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
@@ -307,6 +307,10 @@ export class CurrentScope {
 
   public getDDIC(): DDIC {
     return new DDIC(this.reg);
+  }
+
+  public getDDICReferences() {
+    return this.reg.getDDICReferences();
   }
 
   public getName(): string {

@@ -277,6 +277,7 @@ export class SyntaxLogic {
     }
 
     this.issues = [];
+    this.reg.getDDICReferences().clear(this.object);
 
     if (this.object instanceof Program && this.object.isInclude()) {
 // todo, show some kind of error?

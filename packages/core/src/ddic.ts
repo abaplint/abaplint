@@ -89,37 +89,37 @@ export class DDIC {
     }
   }
 
-  public lookupNoVoid(name: string): AbstractType | undefined {
+  public lookupNoVoid(name: string): ILookupResult | undefined {
     const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
     if (foundTABL) {
-      return foundTABL.parseType(this.reg);
+      return {type: foundTABL.parseType(this.reg), object: foundTABL};
     }
 
     const foundVIEW = this.reg.getObject("VIEW", name) as Table | undefined;
     if (foundVIEW) {
-      return foundVIEW.parseType(this.reg);
+      return {type: foundVIEW.parseType(this.reg), object: foundVIEW};
     }
 
     const foundTTYP = this.reg.getObject("TTYP", name) as TableType | undefined;
     if (foundTTYP) {
-      return foundTTYP.parseType(this.reg);
+      return {type: foundTTYP.parseType(this.reg), object: foundTTYP};
     }
 
     const foundDDLS = this.reg.getObject("DDLS", name) as DataDefinition | undefined;
     if (foundDDLS) {
-      return foundDDLS.parseType(this.reg);
+      return {type: foundDDLS.parseType(this.reg), object: foundDDLS};
     }
 
     const foundDTEL = this.reg.getObject("DTEL", name) as DataElement | undefined;
     if (foundDTEL) {
-      return foundDTEL.parseType(this.reg);
+      return {type: foundDTEL.parseType(this.reg), object: foundDTEL};
     }
 
     const upper = name.toUpperCase();
     for (const obj of this.reg.getObjectsByType("DDLS")) {
       const ddls = obj as DataDefinition;
       if (ddls.getSQLViewName() === upper) {
-        return ddls.parseType(this.reg);
+        return {type: ddls.parseType(this.reg), object: obj};
       }
     }
 
@@ -127,16 +127,16 @@ export class DDIC {
   }
 
   /** lookup with voiding and unknown types */
-  public lookup(name: string): AbstractType {
+  public lookup(name: string): ILookupResult {
     const found = this.lookupNoVoid(name);
     if (found) {
       return found;
     }
 
     if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + " not found, lookup");
+      return {type: new Types.UnknownType(name + " not found, lookup")};
     } else {
-      return new Types.VoidType(name);
+      return {type: new Types.VoidType(name)};
     }
   }
 
