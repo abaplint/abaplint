@@ -116,7 +116,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
         const idef = scope.findInterfaceDefinition(name);
         if (idef) {
-          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename);
+          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
         } else if (scope.getDDIC().inErrorNamespace(name) === false) {
           scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
         } else {

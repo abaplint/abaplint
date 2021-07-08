@@ -153,7 +153,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     if (name) {
       const s = scope.findClassDefinition(name);
       if (s) {
-        scope.addReference(token, s, ReferenceType.ObjectOrientedReference, filename);
+        scope.addReference(token, s, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
       } else if (scope.getDDIC().inErrorNamespace(name) === false) {
         scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
       }
@@ -172,7 +172,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
       const intf = scope.findInterfaceDefinition(name);
       if (intf) {
-        scope.addReference(token, intf, ReferenceType.ObjectOrientedReference, filename);
+        scope.addReference(token, intf, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
       }
     }
 
