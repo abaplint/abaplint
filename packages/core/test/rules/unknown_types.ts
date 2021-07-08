@@ -1412,4 +1412,21 @@ ENDINTERFACE.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("global class, method returning type unknown", () => {
+    const abap = `
+CLASS zcl_bar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    METHODS bar
+      RETURNING VALUE(ref) TYPE zusedprog.
+ENDCLASS.
+
+CLASS zcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zcl_bar.clas.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(1);
+  });
+
 });
