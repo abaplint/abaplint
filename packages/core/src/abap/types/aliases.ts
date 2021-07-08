@@ -52,9 +52,10 @@ export class Aliases implements IAliases {
       this.aliases.push(new Alias(name, visibility, compName, this.filename));
 
       if (compName.includes("~")) {
-        const idef = scope.findInterfaceDefinition(compName.split("~")[0]);
+        const name = compName.split("~")[0];
+        const idef = scope.findInterfaceDefinition(name);
         if (idef) {
-          scope.addReference(compToken, idef, ReferenceType.ObjectOrientedReference, filename);
+          scope.addReference(compToken, idef, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
         }
       }
     }

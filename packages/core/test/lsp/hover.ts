@@ -986,4 +986,19 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("ObjectOrientedReference");
   });
 
+  it("Hover, implemented interface, check for extras", () => {
+    const abap = `INTERFACE lif1.
+ENDINTERFACE.
+
+INTERFACE lif2.
+  INTERFACES lif1.
+ENDINTERFACE.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 4, 15));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("ObjectOrientedReference");
+    expect(hover?.value).to.contain("Extra");
+  });
+
 });
