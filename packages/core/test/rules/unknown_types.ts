@@ -1429,4 +1429,18 @@ ENDCLASS.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("Unknown implemented interface", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zunknown.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zsdfsd.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equals(1);
+  });
+
 });
