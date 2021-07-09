@@ -12,7 +12,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import { ReferenceType } from "../abap/5_syntax/_reference";
+import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
