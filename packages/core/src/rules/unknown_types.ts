@@ -12,6 +12,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
+import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -56,6 +57,13 @@ export class UnknownTypes implements IRule {
 
   private traverse(node: ISpaghettiScopeNode): Issue[] {
     const ret: Issue[] = [];
+
+    for (const r of node.getData().references) {
+      if (r.referenceType === ReferenceType.ObjectOrientedUnknownReference && r.extra?.ooName) {
+        const message = r.extra.ooName + " unknown";
+        ret.push(Issue.atIdentifier(r.position, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
 
     if (node.getIdentifier().stype !== ScopeType.ClassImplementation) {
       const vars = node.getData().vars;

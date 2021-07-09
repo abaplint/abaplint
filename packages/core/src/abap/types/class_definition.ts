@@ -173,6 +173,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       const intf = scope.findInterfaceDefinition(name);
       if (intf) {
         scope.addReference(token, intf, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+      } else {
+        scope.addReference(token, undefined, ReferenceType.ObjectOrientedUnknownReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
       }
     }
 

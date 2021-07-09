@@ -17,9 +17,10 @@ export class Tables implements StatementSyntax {
       name = name.substr(1);
     }
 
-    const found = scope.getDDIC()?.lookupTableOrView(name).type;
+    const found = scope.getDDIC()?.lookupTableOrView(name);
     if (found) {
-      scope.addIdentifier(new TypedIdentifier(nameToken, filename, found));
+      scope.getDDICReferences().addUsing(scope.getParentObj(), found.object);
+      scope.addIdentifier(new TypedIdentifier(nameToken, filename, found.type));
       return;
     }
 
