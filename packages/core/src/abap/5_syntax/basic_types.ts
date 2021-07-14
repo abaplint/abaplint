@@ -536,11 +536,12 @@ export class BasicTypes {
       const found = this.scope.findType(subs[0]);
       foundType = found?.getType();
       if (foundType === undefined) {
-        const f = this.scope.getDDIC().lookupTableOrView(subs[0]).type;
-        if (f instanceof TypedIdentifier) {
-          foundType = f.getType();
+        const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
+        this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), f.object);
+        if (f.type instanceof TypedIdentifier) {
+          foundType = f.type.getType();
         } else {
-          foundType = f;
+          foundType = f.type;
         }
       } else {
         this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
