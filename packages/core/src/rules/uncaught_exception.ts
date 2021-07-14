@@ -32,9 +32,8 @@ export class UncaughtException extends ABAPRule {
     return {
       key: "uncaught_exception",
       title: "Uncaught Exception",
-      shortDescription: `Uncaught Exception
-
-      Does not report any issues if the code contains syntax errors`,
+      shortDescription: `Checks for uncaught static exception`,
+      extendedInformation: `Does not report any issues if the code contains syntax errors`,
       tags: [RuleTag.Syntax],
     };
   }

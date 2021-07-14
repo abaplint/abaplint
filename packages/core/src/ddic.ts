@@ -293,6 +293,10 @@ export class DDIC {
       case "UTCLONG":
         return new Types.CharacterType(27, qualified);
       case "NUMC": // 1 <= len <= 255
+        if (length === undefined) {
+          return new Types.UnknownType(text + " unknown length", parent);
+        }
+        return new Types.NumericType(parseInt(length, 10), qualified);
       case "CHAR": // 1 <= len <= 30000 (1333 for table fields)
       case "LCHR": // 256 <= len <= 32000
         if (length === undefined) {
