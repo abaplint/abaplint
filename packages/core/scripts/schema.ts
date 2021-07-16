@@ -25,6 +25,7 @@ import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
 import {CommentedCodeConf} from "../src/rules/commented_code";
 import {ConstructorVisibilityPublicConf} from "../src/rules/constructor_visibility_public";
 import {ContainsTabConf} from "../src/rules/contains_tab";
+import {CyclicOOConf} from "../src/rules/cyclic_oo";
 import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
 import {DangerousStatementConf} from "../src/rules/dangerous_statement";
 import {DbOperationInLoopConf} from "../src/rules/db_operation_in_loop";
@@ -169,6 +170,7 @@ export interface IConfig {
     "commented_code"?: CommentedCodeConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
+    "cyclic_oo"?: CyclicOOConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
     "db_operation_in_loop"?: DbOperationInLoopConf | boolean,

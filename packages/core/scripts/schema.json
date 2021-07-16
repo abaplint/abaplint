@@ -625,6 +625,34 @@
       ],
       "type": "object"
     },
+    "CyclicOOConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "skip": {
+          "description": "List of object names to skip, must be full upper case name",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "skip"
+      ],
+      "type": "object"
+    },
     "CyclomaticComplexityConf": {
       "additionalProperties": false,
       "properties": {
@@ -1484,6 +1512,17 @@
                 }
               ],
               "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
+            },
+            "cyclic_oo": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CyclicOOConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds cyclic OO references\nhttps://rules.abaplint.org/cyclic_oo"
             },
             "cyclomatic_complexity": {
               "anyOf": [
