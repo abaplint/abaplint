@@ -9,7 +9,7 @@ import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
 import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {TableType, CharacterType, UnknownType} from "../types/basic";
+import {TableType, UnknownType, AnyType, VoidType} from "../types/basic";
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
@@ -98,8 +98,10 @@ export class Procedural {
     const ddic = new DDIC(this.reg);
 
     for (const param of definition.getParameters()) {
-      let found: AbstractType = new CharacterType(1);
-      if (param.type) {
+      let found: AbstractType | undefined = undefined;
+      if (param.type === undefined || param.type === "") {
+        found = new AnyType();
+      } else {
         found = ddic.lookup(param.type).type;
       }
       if (param.direction === FunctionModuleParameterDirection.tables) {
@@ -110,6 +112,9 @@ export class Procedural {
         if (f) {
           found = f;
         }
+      }
+      if (found instanceof UnknownType && new DDIC(this.reg).inErrorNamespace(param.type) === false) {
+        found = new VoidType(param.type);
       }
       const type = new TypedIdentifier(nameToken, filename, found);
       this.scope.addNamedIdentifier(param.name, type);
