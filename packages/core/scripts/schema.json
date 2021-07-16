@@ -638,8 +638,19 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "skip": {
+          "description": "List of object names to skip, must be full upper case name",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
         }
       },
+      "required": [
+        "skip"
+      ],
       "type": "object"
     },
     "CyclomaticComplexityConf": {
