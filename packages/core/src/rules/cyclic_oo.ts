@@ -11,6 +11,10 @@ import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ABAPObject} from "../objects/_abap_object";
 
 export class CyclicOOConf extends BasicRuleConfig {
+  /** List of object names to skip, must be full upper case name
+   * @uniqueItems true
+  */
+  public skip: string[] = [];
 }
 
 export class CyclicOO implements IRule {
@@ -33,22 +37,31 @@ export class CyclicOO implements IRule {
 
   public setConfig(conf: CyclicOOConf) {
     this.conf = conf;
+    if (this.conf.skip === undefined) {
+      this.conf.skip = [];
+    }
   }
 
   public initialize(reg: IRegistry): IRule {
     this.reg = reg;
     this.edges = {};
     for (const obj of this.reg.getObjectsByType("CLAS")) {
+      const name = obj.getName().toUpperCase();
       if (!(obj instanceof ABAPObject)) {
         continue;
+      } else if (this.conf.skip.indexOf(name) >= 0) {
+        continue;
       }
-      this.buildEdges(obj.getName().toUpperCase(), new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
+      this.buildEdges(name, new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
     }
     for (const obj of this.reg.getObjectsByType("INTF")) {
+      const name = obj.getName().toUpperCase();
       if (!(obj instanceof ABAPObject)) {
         continue;
+      } else if (this.conf.skip.indexOf(name) >= 0) {
+        continue;
       }
-      this.buildEdges(obj.getName().toUpperCase(), new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
+      this.buildEdges(name, new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
     }
     return this;
   }
@@ -63,9 +76,9 @@ export class CyclicOO implements IRule {
       return [];
     }
 
-    const path = this.findCycle(obj.getName(), obj.getName(), []);
+    const path = this.findCycle(obj.getName(), obj.getName(), [obj.getName()]);
     if (path) {
-      const message = "Cyclic definitions/usage: " + path;
+      const message = "Cyclic definition/usage: " + path;
       return [Issue.atIdentifier(id, message, this.getMetadata().key, this.conf.severity)];
     }
 
@@ -107,7 +120,7 @@ export class CyclicOO implements IRule {
           this.edges[from] = [];
         }
         const name = r.extra.ooName.toUpperCase();
-        if (this.edges[from].indexOf(name) < 0) {
+        if (name !== from && this.edges[from].indexOf(name) < 0) {
           this.edges[from].push(name);
         }
       }
