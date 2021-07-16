@@ -17,7 +17,7 @@ export class UnusedDDIC implements IRule {
       key: "unused_ddic",
       title: "Unused DDIC",
       shortDescription: `Checks the usage of DDIC objects`,
-      extendedInformation: `Objects checked: DOMA + DTEL`,
+      extendedInformation: `Objects checked: DOMA + DTEL + TABL + TTYP + VIEW`,
       tags: [],
     };
   }

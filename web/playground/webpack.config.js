@@ -24,6 +24,7 @@ module.exports = ({mode} = {mode: "development"}) => ({
   resolve: {
     fallback: {
       "buffer": require.resolve("buffer/"),
+      "path": require.resolve("path-browserify"),
       "stream": require.resolve("stream-browserify"),
       "crypto": require.resolve("crypto-browserify"),
     },
