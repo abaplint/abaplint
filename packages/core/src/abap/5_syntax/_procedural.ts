@@ -9,7 +9,7 @@ import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
 import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {TableType, CharacterType} from "../types/basic";
+import {TableType, CharacterType, UnknownType} from "../types/basic";
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
@@ -104,6 +104,12 @@ export class Procedural {
       }
       if (param.direction === FunctionModuleParameterDirection.tables) {
         found = new TableType(found, {withHeader: true});
+      }
+      if (found instanceof UnknownType && param.type) {
+        const f = ddic.lookupBuiltinType(param.type);
+        if (f) {
+          found = f;
+        }
       }
       const type = new TypedIdentifier(nameToken, filename, found);
       this.scope.addNamedIdentifier(param.name, type);
