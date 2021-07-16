@@ -23,6 +23,7 @@ export * from "./colon_missing_space";
 export * from "./commented_code";
 export * from "./constructor_visibility_public";
 export * from "./contains_tab";
+export * from "./cyclic_oo";
 export * from "./cyclomatic_complexity";
 export * from "./dangerous_statement";
 export * from "./db_operation_in_loop";
