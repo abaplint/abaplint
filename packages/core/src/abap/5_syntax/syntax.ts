@@ -438,8 +438,6 @@ export class SyntaxLogic {
         || s instanceof Statements.EndClass
         || s instanceof Statements.EndInterface) {
       this.scope.pop(node.getLastToken().getEnd());
-//    } else {
-//      console.dir(name + " unhandled");
     }
   }
 
