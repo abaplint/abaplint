@@ -9,7 +9,7 @@ import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
 import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {TableType, UnknownType, AnyType, VoidType} from "../types/basic";
+import {TableType, UnknownType, AnyType, VoidType, StructureType} from "../types/basic";
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
@@ -107,6 +107,18 @@ export class Procedural {
       if (param.direction === FunctionModuleParameterDirection.tables) {
         found = new TableType(found, {withHeader: true});
       }
+
+      if (found instanceof UnknownType && param.type?.includes("-")) {
+        const [name, field] = param.type.split("-");
+        const f = ddic.lookupTableOrView(name).type;
+        if (f && f instanceof StructureType) {
+          const c = f.getComponentByName(field);
+          if (c) {
+            found = c;
+          }
+        }
+      }
+
       if (found instanceof UnknownType && param.type) {
         const f = ddic.lookupBuiltinType(param.type);
         if (f) {
