@@ -39,17 +39,27 @@ export class DDLParser {
 
   private parsedToResult(node: ExpressionNode): IDDLParserResult {
     const fields: IDDLParserResultField[] = [];
-    for (const f of node.findDirectExpressions(Expressions.DDLStructureField).concat(
-      node.findDirectExpressions(Expressions.DDLTableField))) {
-
+    let found = node.findDirectExpressions(Expressions.DDLStructureField);
+    found = found.concat(node.findDirectExpressions(Expressions.DDLTableField));
+    found = found.concat(node.findDirectExpressions(Expressions.DDLInclude));
+    for (const f of found) {
       const name = f.findDirectExpression(Expressions.DDLName)?.concatTokens() || "";
-      const type = f.findDirectExpression(Expressions.DDLType)?.concatTokens() || "";
-      fields.push({
-        name,
-        type,
-        key: false,
-        notNull: false,
-      });
+      if (f.get() instanceof Expressions.DDLInclude) {
+        fields.push({
+          name: ".INCLUDE",
+          type: name,
+          key: false,
+          notNull: false,
+        });
+      } else {
+        const type = f.findDirectExpression(Expressions.DDLType)?.concatTokens() || "";
+        fields.push({
+          name,
+          type,
+          key: false,
+          notNull: false,
+        });
+      }
     }
 
     const result: IDDLParserResult = {

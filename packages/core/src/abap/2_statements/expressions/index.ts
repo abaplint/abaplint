@@ -36,6 +36,7 @@ export * from "./database_table";
 export * from "./ddl/ddl_name";
 export * from "./ddl/ddl_structure_field";
 export * from "./ddl/ddl_structure";
+export * from "./ddl/ddl_include";
 export * from "./ddl/ddl_table_field";
 export * from "./ddl/ddl_table";
 export * from "./ddl/ddl_type";

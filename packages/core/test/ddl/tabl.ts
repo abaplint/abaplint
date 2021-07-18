@@ -57,4 +57,17 @@ define table zhvam_cust {
     expect(result?.fields.length).to.equal(2);
   });
 
+  it("with include", async () => {
+    const tabl = `@EndUserText.label : 'sdfsd'
+@AbapCatalog.enhancement.category : #NOT_CLASSIFIED
+define structure name {
+  field1 : type1;
+  include foobar;
+}`;
+    const file = new MemoryFile("zhvam_cust.tabl.astablds", tabl);
+    const result = new DDLParser().parse(file);
+    expect(result?.name).to.equal("name");
+    expect(result?.fields.length).to.equal(2);
+  });
+
 });
