@@ -3,6 +3,6 @@ import {IStatementRunnable} from "../../statement_runnable";
 
 export class DDLName extends Expression {
   public getRunnable(): IStatementRunnable {
-    return regex(/\w+/);
+    return regex(/^\w+$/);
   }
 }
