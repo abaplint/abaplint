@@ -2,7 +2,7 @@ import * as Tokens from "./tokens";
 import {IFile} from "../../files/_ifile";
 import {Position, VirtualPosition} from "../../position";
 import {Token} from "./tokens/_token";
-import {ILexerResult} from "./lexer_result";
+import {IABAPLexerResult} from "./lexer_result";
 
 enum Mode {
   Normal,
@@ -100,7 +100,7 @@ export class Lexer {
   private static stream: Stream;
   private static buffer: Buffer;
 
-  public static run(file: IFile, virtual?: Position): ILexerResult {
+  public static run(file: IFile, virtual?: Position): IABAPLexerResult {
     this.virtual = virtual;
     this.tokens = [];
     this.m = Mode.Normal;
