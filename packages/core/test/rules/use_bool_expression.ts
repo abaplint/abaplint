@@ -47,6 +47,18 @@ ENDIF.`, cnt: 1},
   {abap: `DATA(fsdf) = COND #( WHEN foo <> bar THEN abap_true ELSE abap_false ).`, cnt: 1},
   {abap: `DATA(fsdf) = COND #( WHEN foo <> bar THEN abap_false ELSE abap_true ).`, cnt: 1},
   {abap: `DATA(fsdf) = COND #( WHEN foo <> bar THEN abap_true ).`, cnt: 1},
+
+  {abap: `IF number MOD 2 EQ 0.
+  DATA(is_even) = abap_true.
+ELSE.
+  is_even = abap_false.
+ENDIF.`, cnt: 1},
+
+  {abap: `IF number MOD 2 EQ 0.
+DATA(is_even) = abap_false.
+ELSE.
+is_even = abap_true.
+ENDIF.`, cnt: 1},
 ];
 
 testRule(tests, UseBoolExpression);

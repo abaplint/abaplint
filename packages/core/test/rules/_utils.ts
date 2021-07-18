@@ -25,7 +25,7 @@ export function testRule(tests: TestRuleType, rule: new () => IRule, config?: an
   testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;
   describe(testTitle, function () {
     // note that timeout() only works inside function()
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach((test) => {
       const title = "\"" + test.abap + "\" should have " + test.cnt + " issue(s)";
       const callback = () => {
@@ -62,7 +62,7 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
   testTitle = testTitle || `test ${nrule.getMetadata().key} rule fixes`;
   describe(testTitle, function () {
     // note that timeout() only works inside function()
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach((test) => {
       it("Fix \"" + test.input + "\"", () => {
         testRuleFixSingle(test.input, test.output, nrule);
@@ -94,7 +94,7 @@ export function testRuleWithVariableConfig(tests: any, rule: new () => IRule, te
   const nrule = new rule();
   testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;
   describe(testTitle, function () {
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach((test: any) => {
       it(test.description, () => {
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
