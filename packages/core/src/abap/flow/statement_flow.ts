@@ -2,17 +2,11 @@ import {StatementNode, StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 
-// Levels: top, FORM, METHOD, FUNCTION-MODULE, MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE
-// Branching: IF, LOOP, DO, WHILE, CASE, TRY, ON, SELECT(loop), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
-// Exits: RETURN, EXIT, RAISE, MESSAGE, CONTINUE, REJECT, RESUME, STOP
-
-// positive paths listed first
-
-/** good for debugging, and used in unit tests */
-export function dump(flows: StatementFlowPath[]): string {
-  const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
-  return ret + "]";
-}
+// Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
+//
+// Branching: IF, LOOP, DO, WHILE, CASE, TRY, ON, SELECT(loop), CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
+//
+// Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE, CONTINUE, REJECT, RESUME, STOP
 
 export type StatementFlowPath = {
   name: string;
