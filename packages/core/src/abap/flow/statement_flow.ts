@@ -9,13 +9,18 @@ import * as Statements from "../2_statements/statements";
 // Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE, CONTINUE, REJECT, RESUME, STOP
 
 export type StatementFlowPath = {
-  name: string;
+  name: string; // todo, this should be the same as scope information
   statements: (StatementNode | undefined)[];
 };
 
 export class StatementFlow {
   public build(stru: StructureNode): StatementFlowPath[] {
-    return this.traverseStructure(stru, "top");
+    const ret: StatementFlowPath[] = [];
+    const forms = stru.findAllStructures(Structures.Form);
+    for (const f of forms) {
+      ret.push(...this.traverseBody(f.findDirectStructure(Structures.Body), "form:name"));
+    }
+    return ret;
   }
 
   private traverseBody(n: StructureNode | undefined, name: string): StatementFlowPath[] {
@@ -25,17 +30,19 @@ export class StatementFlow {
     }
 
 //    console.dir("input: " + n.get().constructor.name);
-    for (const c of n.getChildren()) {
-      const type = c.get();
-      if (type instanceof Structures.Normal) {
-        const firstChild = c.getFirstChild();
+    const children = [...n.getChildren()];
+    while (children.length > 0) {
+      const c = children.shift()!;
+//      console.dir(c);
+      if (c.get() instanceof Structures.Normal) {
+        const firstChild = c.getFirstChild(); // "Normal" only has one child
         if (firstChild instanceof StatementNode) {
           flows.forEach(f => f.statements.push(firstChild));
 //          current.push(firstChild);
-          console.dir("push: " + firstChild.constructor.name);
+//          console.dir("push: " + firstChild.constructor.name);
 
           if (firstChild.get() instanceof Statements.Check) {
-//            flows.push({name: name, statements: [...current]});
+            break;
           } else if (firstChild.get() instanceof Statements.Return) {
             break;
           }
