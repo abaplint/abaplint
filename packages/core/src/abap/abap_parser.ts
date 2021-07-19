@@ -4,7 +4,7 @@ import {Version, defaultVersion} from "../version";
 import {Lexer} from "./1_lexer/lexer";
 import {StatementParser} from "./2_statements/statement_parser";
 import {StructureParser} from "./3_structures/structure_parser";
-import {ILexerResult} from "./1_lexer/lexer_result";
+import {IABAPLexerResult} from "./1_lexer/lexer_result";
 import {ABAPFileInformation} from "./4_file_information/abap_file_information";
 import {ABAPFile} from "./abap_file";
 
@@ -34,7 +34,7 @@ export class ABAPParser {
 
 // 1: lexing
     const b1 = Date.now();
-    const lexerResult: readonly ILexerResult[] = files.map(f => Lexer.run(f));
+    const lexerResult: readonly IABAPLexerResult[] = files.map(f => Lexer.run(f));
     const lexingRuntime = Date.now() - b1;
 
 // 2: statements

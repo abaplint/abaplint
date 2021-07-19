@@ -98,7 +98,7 @@ export function structureType(cases: {abap: string, only?: boolean}[], expected:
 export function statementType(tests: any, description: string, type: any) {
   describe(description + " statement type", function() {
 // note that timeout() only works inside function()
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach((test: any) => {
       run(test, "\"" + test + "\" should be " + description, type);
     });
@@ -108,7 +108,7 @@ export function statementType(tests: any, description: string, type: any) {
 export function statementExpectFail(tests: string[], description: string) {
   describe(description + " statement version should fail,", function() {
 // note that timeout() only works inside function()
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach(test => {
       runExpectFail(test, "\"" + test + "\" should not be recognized");
     });
@@ -118,7 +118,7 @@ export function statementExpectFail(tests: string[], description: string) {
 export function statementVersion(tests: any, description: string, type: any) {
   describe(description + " statement version,", function() {
 // note that timeout() only works inside function()
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach((test: any) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
@@ -134,7 +134,7 @@ export function statementVersion(tests: any, description: string, type: any) {
 export function statementVersionOk(tests: {abap: string, ver: Version}[], description: string, type: any) {
   describe(description + " statement version,", function() {
 // note that timeout() only works inside function()
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach(test => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
     });
@@ -144,7 +144,7 @@ export function statementVersionOk(tests: {abap: string, ver: Version}[], descri
 export function statementVersionFail(tests: {abap: string, ver: Version}[], description: string) {
   describe(description + " statement version should fail,", function() {
 // note that timeout() only works inside function()
-    this.timeout(200);
+    this.timeout(250);
     tests.forEach(test => {
       runExpectFail(test.abap, "\"" + test.abap + "\" should not be recognized", test.ver);
     });

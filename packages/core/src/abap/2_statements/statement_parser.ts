@@ -9,7 +9,7 @@ import {Combi} from "./combi";
 import {Unknown, Empty, Comment, NativeSQL, IStatement} from "./statements/_statement";
 import {IStatementResult} from "./statement_result";
 import {Token} from "../1_lexer/tokens/_token";
-import {ILexerResult} from "../1_lexer/lexer_result";
+import {IABAPLexerResult} from "../1_lexer/lexer_result";
 import {ExpandMacros} from "./expand_macros";
 
 export const STATEMENT_MAX_TOKENS = 1000;
@@ -91,7 +91,7 @@ export class StatementParser {
   }
 
   /** input is one full object */
-  public run(input: readonly ILexerResult[], globalMacros: readonly string[]): IStatementResult[] {
+  public run(input: readonly IABAPLexerResult[], globalMacros: readonly string[]): IStatementResult[] {
     const macros = new ExpandMacros(globalMacros, this.version);
 
     const wa = input.map(i => new WorkArea(i.file, i.tokens));
