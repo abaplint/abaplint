@@ -13,12 +13,17 @@ export type StatementFlowPath = {
   statements: (StatementNode | undefined)[];
 };
 
+//function findBody(f: StructureNode): (StatementNode | ExpressionNode)[] {
+function findBody(f: StructureNode): StructureNode | undefined {
+  return f.findDirectStructure(Structures.Body);
+}
+
 export class StatementFlow {
   public build(stru: StructureNode): StatementFlowPath[] {
     const ret: StatementFlowPath[] = [];
     const forms = stru.findAllStructures(Structures.Form);
     for (const f of forms) {
-      ret.push(...this.traverseBody(f.findDirectStructure(Structures.Body), "form:name"));
+      ret.push(...this.traverseBody(findBody(f), "form:name"));
     }
     return ret;
   }
@@ -77,7 +82,7 @@ export class StatementFlow {
     const type = n.get();
     if (type instanceof Structures.Form) {
       const formst = n.findDirectStatement(Statements.Form);
-      let bodyFlows = this.traverseBody(n.findDirectStructure(Structures.Body), name + "-form");
+      let bodyFlows = this.traverseBody(findBody(n), name + "-form");
 //      console.dir(bodyFlows);
       bodyFlows = bodyFlows.map(a => {return {name: a.name, statements: [formst, ...a.statements]};});
       flows.push(...bodyFlows);
@@ -95,30 +100,23 @@ export class StatementFlow {
       }
     } else if (type instanceof Structures.If) {
       const collect = [n.findDirectStatement(Statements.If)];
-      const body = n.findDirectStructure(Structures.Body);
-      if (body) {
-        let bodyFlows = this.traverseBody(body, name + "-if_body");
-        bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, ...b.statements]};});
-        flows.push(...bodyFlows);
-      } else {
-        flows.push({name: name + "-if_emptybody", statements: [...collect]});
-      }
+      let bodyFlows = this.traverseBody(findBody(n), name + "-if_body");
+      bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, ...b.statements]};});
+      flows.push(...bodyFlows);
       for (const e of n.findDirectStructures(Structures.ElseIf)) {
         const elseifst = e.findDirectStatement(Statements.ElseIf);
         if (elseifst === undefined) {
           continue;
         }
         collect.push(elseifst);
-        const body = e.findDirectStructure(Structures.Body);
-        let bodyFlows = this.traverseBody(body, name + "-if_elseif");
+        let bodyFlows = this.traverseBody(findBody(e), name + "-if_elseif");
         bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, ...b.statements]};});
         flows.push(...bodyFlows);
       }
       const els = n.findDirectStructure(Structures.Else);
       const elsest = els?.findDirectStatement(Statements.Else);
       if (els && elsest) {
-        const body = els.findDirectStructure(Structures.Body);
-        let bodyFlows = this.traverseBody(body, name + "-if_else");
+        let bodyFlows = this.traverseBody(findBody(els), name + "-if_else");
         bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, elsest, ...b.statements]};});
         flows.push(...bodyFlows);
       } else {
