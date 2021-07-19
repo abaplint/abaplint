@@ -31,6 +31,9 @@ export class StatementFlow {
 
   private traverseBody(children: readonly (StatementNode | StructureNode)[], name: string): StatementFlowPath[] {
     let flows: StatementFlowPath[] = [{name, statements: []}];
+    if (children.length === 0) {
+      return [];
+    }
 
     for (let i = 0; i < children.length; i++) {
       const c = children[i];
@@ -41,11 +44,14 @@ export class StatementFlow {
           flows.forEach(f => f.statements.push(firstChild));
 //          current.push(firstChild);
 //          console.dir("push: " + firstChild.constructor.name);
-
           if (firstChild.get() instanceof Statements.Check) {
             // todo
             const after = children.slice(i + 1, children.length);
-            console.dir(after.map(a => a.getFirstChild()));
+            for (const b of this.traverseBody(after, name)) {
+              for (const f of [...flows]) {
+                flows.push({name: b.name, statements: [...f.statements, ...b.statements]});
+              }
+            }
             break;
           } else if (firstChild.get() instanceof Statements.Return) {
             break;

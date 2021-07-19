@@ -69,7 +69,7 @@ describe("statement_flow", () => {
     expect(dump(res)).to.equal("[[If,Write],[If,ElseIf,Data],[If,ElseIf,Else,Data]]");
   });
 
-  it.skip("CHECK", async () => {
+  it("CHECK", async () => {
     const abap = `
     WRITE 'hello'.
     CHECK a = b.
