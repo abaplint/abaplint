@@ -13,9 +13,10 @@ export type StatementFlowPath = {
   statements: (StatementNode | undefined)[];
 };
 
-//function findBody(f: StructureNode): (StatementNode | ExpressionNode)[] {
-function findBody(f: StructureNode): StructureNode | undefined {
-  return f.findDirectStructure(Structures.Body);
+function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
+  return f.findDirectStructure(Structures.Body)?.getChildren() || [];
+//function findBody(f: StructureNode): StructureNode | undefined {
+//  return f.findDirectStructure(Structures.Body);
 }
 
 export class StatementFlow {
@@ -28,16 +29,11 @@ export class StatementFlow {
     return ret;
   }
 
-  private traverseBody(n: StructureNode | undefined, name: string): StatementFlowPath[] {
+  private traverseBody(children: readonly (StatementNode | StructureNode)[], name: string): StatementFlowPath[] {
     let flows: StatementFlowPath[] = [{name, statements: []}];
-    if (n === undefined) {
-      return flows;
-    }
 
-//    console.dir("input: " + n.get().constructor.name);
-    const children = [...n.getChildren()];
-    while (children.length > 0) {
-      const c = children.shift()!;
+    for (let i = 0; i < children.length; i++) {
+      const c = children[i];
 //      console.dir(c);
       if (c.get() instanceof Structures.Normal) {
         const firstChild = c.getFirstChild(); // "Normal" only has one child
@@ -47,6 +43,9 @@ export class StatementFlow {
 //          console.dir("push: " + firstChild.constructor.name);
 
           if (firstChild.get() instanceof Statements.Check) {
+            // todo
+            const after = children.slice(i + 1, children.length);
+            console.dir(after.map(a => a.getFirstChild()));
             break;
           } else if (firstChild.get() instanceof Statements.Return) {
             break;
