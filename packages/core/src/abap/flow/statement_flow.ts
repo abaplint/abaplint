@@ -11,8 +11,7 @@ import * as Statements from "../2_statements/statements";
 // todo: RETURN inside structures?
 
 export type StatementFlowPath = {
-  name: string; // todo, this should be the same as scope information
-  statements: (StatementNode | undefined)[];
+  statements: StatementNode[];
 };
 
 function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
@@ -26,13 +25,13 @@ export class StatementFlow {
     const ret: StatementFlowPath[] = [];
     const forms = stru.findAllStructures(Structures.Form);
     for (const f of forms) {
-      ret.push(...this.traverseBody(findBody(f), "form:name"));
+      ret.push(...this.traverseBody(findBody(f)));
     }
     return ret;
   }
 
-  private traverseBody(children: readonly (StatementNode | StructureNode)[], name: string): StatementFlowPath[] {
-    let flows: StatementFlowPath[] = [{name, statements: []}];
+  private traverseBody(children: readonly (StatementNode | StructureNode)[]): StatementFlowPath[] {
+    let flows: StatementFlowPath[] = [{statements: []}];
     if (children.length === 0) {
       return [];
     }
@@ -49,9 +48,9 @@ export class StatementFlow {
           if (firstChild.get() instanceof Statements.Check) {
             // todo
             const after = children.slice(i + 1, children.length);
-            for (const b of this.traverseBody(after, name)) {
+            for (const b of this.traverseBody(after)) {
               for (const f of [...flows]) {
-                flows.push({name: b.name, statements: [...f.statements, ...b.statements]});
+                flows.push({statements: [...f.statements, ...b.statements]});
               }
             }
             break;
@@ -60,13 +59,13 @@ export class StatementFlow {
           }
         } else if(firstChild instanceof StructureNode) {
 //          console.dir("firstch: " + firstChild.get().constructor.name);
-          const found = this.traverseStructure(firstChild, name);
+          const found = this.traverseStructure(firstChild);
 //          console.dir("found: " + dump(found));
 
           const n: StatementFlowPath[] = [];
           for (const existing of flows) {
             for (const fo of found) {
-              const add = {name, statements: [...existing.statements, ...fo.statements]};
+              const add = {statements: [...existing.statements, ...fo.statements]};
               n.push(add);
             }
           }
@@ -80,7 +79,7 @@ export class StatementFlow {
     return flows;
   }
 
-  private traverseStructure(n: StructureNode | undefined, name: string): StatementFlowPath[] {
+  private traverseStructure(n: StructureNode | undefined): StatementFlowPath[] {
     const flows: StatementFlowPath[] = [];
     if (n === undefined) {
       return flows;
@@ -88,27 +87,27 @@ export class StatementFlow {
 
     const type = n.get();
     if (type instanceof Structures.Form) {
-      const formst = n.findDirectStatement(Statements.Form);
-      let bodyFlows = this.traverseBody(findBody(n), name + "-form");
+      const formst = n.findDirectStatement(Statements.Form)!;
+      let bodyFlows = this.traverseBody(findBody(n));
 //      console.dir(bodyFlows);
-      bodyFlows = bodyFlows.map(a => {return {name: a.name, statements: [formst, ...a.statements]};});
+      bodyFlows = bodyFlows.map(a => {return {statements: [formst, ...a.statements]};});
       flows.push(...bodyFlows);
     } else if (type instanceof Structures.Any) {
       // TODO TODO
       for (const c of n.getChildren()) {
 //        console.dir("yep");
         if (c instanceof StructureNode && c.get() instanceof Structures.Form) {
-          flows.push(...this.traverseStructure(c, name));
+          flows.push(...this.traverseStructure(c));
         } else if (c instanceof StructureNode && c.get() instanceof Structures.If) {
-          flows.push(...this.traverseStructure(c, name));
+          flows.push(...this.traverseStructure(c));
         } else {
           console.dir("any, todo, " + c.constructor.name + ", " + c.get().constructor.name);
         }
       }
     } else if (type instanceof Structures.If) {
-      const collect = [n.findDirectStatement(Statements.If)];
-      let bodyFlows = this.traverseBody(findBody(n), name + "-if_body");
-      bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, ...b.statements]};});
+      const collect = [n.findDirectStatement(Statements.If)!];
+      let bodyFlows = this.traverseBody(findBody(n));
+      bodyFlows = bodyFlows.map(b => {return {statements: [...collect, ...b.statements]};});
       flows.push(...bodyFlows);
       for (const e of n.findDirectStructures(Structures.ElseIf)) {
         const elseifst = e.findDirectStatement(Statements.ElseIf);
@@ -116,31 +115,31 @@ export class StatementFlow {
           continue;
         }
         collect.push(elseifst);
-        let bodyFlows = this.traverseBody(findBody(e), name + "-if_elseif");
-        bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, ...b.statements]};});
+        let bodyFlows = this.traverseBody(findBody(e));
+        bodyFlows = bodyFlows.map(b => {return {statements: [...collect, ...b.statements]};});
         flows.push(...bodyFlows);
       }
       const els = n.findDirectStructure(Structures.Else);
       const elsest = els?.findDirectStatement(Statements.Else);
       if (els && elsest) {
-        let bodyFlows = this.traverseBody(findBody(els), name + "-if_else");
-        bodyFlows = bodyFlows.map(b => {return {name: b.name, statements: [...collect, elsest, ...b.statements]};});
+        let bodyFlows = this.traverseBody(findBody(els));
+        bodyFlows = bodyFlows.map(b => {return {statements: [...collect, elsest, ...b.statements]};});
         flows.push(...bodyFlows);
       } else {
-        flows.push({name: name + "-if_no", statements: [...collect]});
+        flows.push({statements: [...collect]});
       }
     } else if (type instanceof Structures.Loop) {
-      const loop = n.findDirectStatement(Statements.Loop);
-      const bodyFlows = this.traverseBody(findBody(n), name + "-loop_body");
+      const loop = n.findDirectStatement(Statements.Loop)!;
+      const bodyFlows = this.traverseBody(findBody(n));
       for (const b of bodyFlows) {
-        flows.push({name: name + "-loop1", statements: [loop, ...b.statements]});
+        flows.push({statements: [loop, ...b.statements]});
       }
       for (const b1 of bodyFlows) {
         for (const b2 of bodyFlows) {
-          flows.push({name: name + "-loop2", statements: [loop, ...b1.statements, ...b2.statements]});
+          flows.push({statements: [loop, ...b1.statements, ...b2.statements]});
         }
       }
-      flows.push({name: name + "-loop", statements: [loop]});
+      flows.push({statements: [loop]});
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }
