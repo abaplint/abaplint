@@ -14,6 +14,8 @@ async function build(abap: string) {
   const reg = new Registry();
   reg.addFile(new MemoryFile("zstatement_flow.prog.abap", "FORM moo.\n" + abap + "\nENDFORM.\n"));
   await reg.parseAsync();
+  const issues = reg.findIssues().filter(i => i.getKey() === "parser_error");
+  expect(issues[0]?.getMessage()).to.equal(undefined);
   const obj = reg.getFirstObject()! as ABAPObject;
   const file = obj.getABAPFiles()[0] as ABAPFile | undefined;
   const stru = file?.getStructure();
@@ -114,5 +116,17 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await build(abap);
     expect(dump(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
+  });
+
+  it("LOOP with nested IF", async () => {
+    const abap = `
+    LOOP AT bar INTO foo.
+      ADD 2 to bar.
+      IF 1 = 2.
+        WRITE moo.
+      ENDIF.
+    ENDLOOP.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[Loop,Add,If,Write],[Loop,Add,If],[Loop,Add,If,Write,Add,If,Write],[Loop,Add,If,Write,Add,If],[Loop,Add,If,Add,If,Write],[Loop,Add,If,Add,If],[Loop]]");
   });
 });
