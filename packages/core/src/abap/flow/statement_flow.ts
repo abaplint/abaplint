@@ -6,7 +6,9 @@ import * as Statements from "../2_statements/statements";
 //
 // Branching: IF, LOOP, DO, WHILE, CASE, TRY, ON, SELECT(loop), CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
 //
-// Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE, CONTINUE, REJECT, RESUME, STOP
+// Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
+
+// todo: RETURN inside structures?
 
 export type StatementFlowPath = {
   name: string; // todo, this should be the same as scope information
@@ -127,6 +129,18 @@ export class StatementFlow {
       } else {
         flows.push({name: name + "-if_no", statements: [...collect]});
       }
+    } else if (type instanceof Structures.Loop) {
+      const loop = n.findDirectStatement(Statements.Loop);
+      const bodyFlows = this.traverseBody(findBody(n), name + "-loop_body");
+      for (const b of bodyFlows) {
+        flows.push({name: name + "-loop1", statements: [loop, ...b.statements]});
+      }
+      for (const b1 of bodyFlows) {
+        for (const b2 of bodyFlows) {
+          flows.push({name: name + "-loop2", statements: [loop, ...b1.statements, ...b2.statements]});
+        }
+      }
+      flows.push({name: name + "-loop", statements: [loop]});
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }

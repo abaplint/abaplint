@@ -106,4 +106,13 @@ describe("statement_flow", () => {
     const res = await build(abap);
     expect(dump(res)).to.equal("[[If,Write,Data],[If,Data]]");
   });
+
+  it("LOOP", async () => {
+    const abap = `
+    LOOP AT bar INTO foo.
+      WRITE 'world'.
+    ENDLOOP.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
+  });
 });
