@@ -6,7 +6,7 @@ import * as Statements from "../2_statements/statements";
 //
 // Branching: IF, LOOP, DO, WHILE, CASE, TRY, ON, SELECT(loop), CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
 //
-// Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
+// Exits: RETURN, EXIT, ASSERT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
 
 // todo: RETURN inside structures?
 
