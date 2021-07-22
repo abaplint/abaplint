@@ -311,7 +311,7 @@ export class BuiltIn {
     components.push({name: "opsys", type: new CharacterType(10)});
     components.push({name: "pagno", type: new IntegerType()});
     components.push({name: "pfkey", type: new CharacterType(20)});
-    components.push({name: "repid", type: new CharacterType(1)});
+    components.push({name: "repid", type: new CharacterType(40)});
     components.push({name: "saprl", type: new CharacterType(4)});
     components.push({name: "scols", type: new IntegerType()});
     components.push({name: "slset", type: new CharacterType(14)});
