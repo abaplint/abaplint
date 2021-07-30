@@ -54,13 +54,6 @@ export class ImplementMethods extends ABAPRule {
     for (const classDefinition of file.getInfo().listClassDefinitions()) {
       const classImplementation = this.lookupImplementationInObject(classDefinition.name, obj);
 
-      if (classImplementation === undefined) {
-        const message = "Class implementation for \"" + classDefinition.name + "\" not found";
-        const issue = Issue.atIdentifier(classDefinition.identifier, message, this.getMetadata().key, this.conf.severity);
-        ret.push(issue);
-        continue;
-      }
-
       ret = ret.concat(this.checkClass(classDefinition, classImplementation));
       ret = ret.concat(this.checkInterfaces(classDefinition, classImplementation));
     }
@@ -90,11 +83,11 @@ export class ImplementMethods extends ABAPRule {
     return undefined;
   }
 
-  private checkClass(def: InfoClassDefinition, impl: InfoClassImplementation): Issue[] {
+  private checkClass(def: InfoClassDefinition, impl: InfoClassImplementation | undefined): Issue[] {
     const ret: Issue[] = [];
 
     for (const md of def.methods) {
-      const found = impl.methods.find(m => m.getName().toUpperCase() === md.name.toUpperCase());
+      const found = impl?.methods.find(m => m.getName().toUpperCase() === md.name.toUpperCase());
 
       if (md.isAbstract === true) {
         if (found !== undefined) {
@@ -104,7 +97,11 @@ export class ImplementMethods extends ABAPRule {
         continue;
       }
 
-      if (found === undefined) {
+      if (impl === undefined) {
+        const message = "Class implementation for \"" + def.name + "\" not found";
+        const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      } else if (found === undefined) {
         const message = "Implement method \"" + md.name + "\"";
         const fix = this.buildFix(impl, md.name);
         const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity, fix);
@@ -201,7 +198,7 @@ export class ImplementMethods extends ABAPRule {
     return undefined;
   }
 
-  private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation): Issue[] {
+  private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation | undefined): Issue[] {
     const ret: Issue[] = [];
 
     for (const interfaceInfo of def.interfaces) {
@@ -220,9 +217,14 @@ export class ImplementMethods extends ABAPRule {
 
         if (this.isImplemented(m, def, impl) === false) {
           const message = "Implement method \"" + m.method.name + "\" from interface \"" + m.objectName + "\"";
-          const fix = this.buildFix(impl, m.objectName + "~" + m.method.name);
-          const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity, fix);
-          ret.push(issue);
+          if (impl) {
+            const fix = this.buildFix(impl, m.objectName + "~" + m.method.name);
+            const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity, fix);
+            ret.push(issue);
+          } else {
+            const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
+            ret.push(issue);
+          }
         }
       }
     }
@@ -230,7 +232,11 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private isImplemented(m: IMethod, def: InfoClassDefinition, impl: InfoClassImplementation): boolean {
+  private isImplemented(m: IMethod, def: InfoClassDefinition, impl: InfoClassImplementation | undefined): boolean {
+    if (impl === undefined) {
+      return false;
+    }
+
     const name = m.objectName + "~" + m.method.name;
     let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
 
