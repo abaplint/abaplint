@@ -9,7 +9,7 @@ let map = {};
 for (let r of repos) {
   map[r] = {};
 
-  childProcess.execSync("git clone --recurse-submodules https://github.com/" + r + ".git");
+  childProcess.execSync("git clone --recurse-submodules -–depth 1 https://github.com/" + r + ".git");
 
   let folder = r.split("/")[1];
 
