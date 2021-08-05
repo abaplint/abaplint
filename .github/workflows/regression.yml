@@ -43,6 +43,7 @@ jobs:
     - run: echo ${{ steps.findPr.outputs.pr }}
 
     - name: Find Comment
+      if: steps.findPr.outputs.pr != ''
       uses: peter-evans/find-comment@v1
       id: fc
       with:
@@ -52,6 +53,7 @@ jobs:
     - run: echo ${{ steps.fc.outputs.comment-id }}
 
     - name: Build body from file
+      if: steps.findPr.outputs.pr != ''
       id: get-comment-body
       run: |
         cd .. && cd ..
@@ -61,7 +63,9 @@ jobs:
         body="${body//$'\n'/'%0A'}"
         body="${body//$'\r'/'%0D'}"
         echo ::set-output name=body::$body
+
     - name: Create comment
+      if: steps.findPr.outputs.pr != ''
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
       with:
