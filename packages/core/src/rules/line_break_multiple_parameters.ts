@@ -9,6 +9,8 @@ import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 
 export class LineBreakMultipleParametersConf extends BasicRuleConfig {
+  /** Amount of allowed parameters on one line */
+  public count: number = 1;
 }
 
 export class LineBreakMultipleParameters extends ABAPRule {
@@ -55,6 +57,12 @@ export class LineBreakMultipleParameters extends ABAPRule {
         let previous = parameters[0];
         for (let i = 1; i < parameters.length; i++) {
           const current = parameters[i];
+
+          if (this.conf.count && i < this.conf.count) {
+            previous = current;
+            continue;
+          }
+
           const first = current.getFirstToken();
           if (previous.getFirstToken().getRow() === first.getRow()) {
             const fix = EditHelper.insertAt(file, first.getStart(), "\n" + " ".repeat(parameters[0].getFirstToken().getStart().getCol() - 1));
