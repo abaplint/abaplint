@@ -58,7 +58,7 @@ export class LineBreakMultipleParameters extends ABAPRule {
         for (let i = 1; i < parameters.length; i++) {
           const current = parameters[i];
 
-          if (i < this.conf.count) {
+          if (this.conf.count && i < this.conf.count) {
             previous = current;
             continue;
           }
