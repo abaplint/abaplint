@@ -2248,7 +2248,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+              "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_raise_exception_new"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -3145,6 +3145,10 @@
     "LineBreakMultipleParametersConf": {
       "additionalProperties": false,
       "properties": {
+        "count": {
+          "description": "Amount of allowed parameters on one line",
+          "type": "number"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -3157,6 +3161,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "count"
+      ],
       "type": "object"
     },
     "LineBreakStyleConf": {
