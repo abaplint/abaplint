@@ -5,6 +5,7 @@ import {Issue} from "../../src/issue";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {expect} from "chai";
+import {testRuleFix} from "./_utils";
 
 async function findIssues(abap: string, version?: Version): Promise<readonly Issue[]> {
   const config = Config.getDefault(version);
@@ -53,3 +54,16 @@ describe("Rule: prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE", () => {
     expect(issues2.length).to.equal(1);
   });
 });
+
+const fixes = [
+  {input: "RAISE EXCEPTION TYPE cx_generation_error.", output: "RAISE EXCEPTION NEW cx_generation_error( )."},
+  {input: `RAISE EXCEPTION TYPE cx_generation_error
+  EXPORTING
+    previous = exception.`, output: "RAISE EXCEPTION NEW cx_generation_error( previous = exception )."},
+  {input: `RAISE EXCEPTION TYPE cx_generation_error
+  EXPORTING
+    previous = exception
+    something = nothing.`, output: "RAISE EXCEPTION NEW cx_generation_error( previous = exception something = nothing )."},
+];
+
+testRuleFix(fixes, PreferRaiseExceptionNew);
