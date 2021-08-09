@@ -11,7 +11,7 @@ jobs:
         fetch-depth: 1
     - uses: actions/setup-node@v2
       with:
-        node-version: '12.x'
+        node-version: '14.x'
     - name: Run npm steps
       run: |
         npm install
@@ -25,7 +25,7 @@ jobs:
         deploy_key: ${{ secrets.COVERAGE_DEPLOY_KEY }}
         external_repository: abaplint/coverage.abaplint.org
         user_name: 'github-actions[bot]'
-        user_email: 'github-actions[bot]@users.noreply.github.com'        
+        user_email: 'github-actions[bot]@users.noreply.github.com'
         publish_branch: main
         cname: coverage.abaplint.org
         force_orphan: true
