@@ -7,9 +7,9 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {FormLengthStats} from "../utils/form_length_stats";
 
 export class MethodLengthConf extends BasicRuleConfig {
-  /** Maximum method length in statements. */
+  /** Maximum method/form length in statements. */
   public statements: number = 100;
-  /** Checks for empty methods. */
+  /** Checks for empty methods/forms. */
   public errorWhenEmpty: boolean = true;
   /** Option to ignore test classes for this check. */
   public ignoreTestClasses: boolean = false;

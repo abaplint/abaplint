@@ -51,7 +51,7 @@ describe("LSP, symbols", () => {
   });
 
   it("FORM Definition", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nFORM foobar.\nENDFORM.");
+    const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nFORM foobar.\n  WRITE 'test'.\nENDFORM.");
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
     expect(reg.findIssues().length).to.equal(0);
