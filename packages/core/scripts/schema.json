@@ -2028,7 +2028,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks relating to method length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
+              "description": "Checks relating to method/form length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
             },
             "method_overwrites_builtin": {
               "anyOf": [
@@ -3474,8 +3474,12 @@
     "MethodLengthConf": {
       "additionalProperties": false,
       "properties": {
+        "checkForms": {
+          "description": "Option to check forms.",
+          "type": "boolean"
+        },
         "errorWhenEmpty": {
-          "description": "Checks for empty methods.",
+          "description": "Checks for empty methods/forms.",
           "type": "boolean"
         },
         "exclude": {
@@ -3494,14 +3498,15 @@
           "description": "Problem severity"
         },
         "statements": {
-          "description": "Maximum method length in statements",
+          "description": "Maximum method/form length in statements.",
           "type": "number"
         }
       },
       "required": [
         "statements",
         "errorWhenEmpty",
-        "ignoreTestClasses"
+        "ignoreTestClasses",
+        "checkForms"
       ],
       "type": "object"
     },
