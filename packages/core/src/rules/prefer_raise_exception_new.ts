@@ -47,7 +47,7 @@ export class PreferRaiseExceptionNew extends ABAPRule {
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.Raise) {
         const concat = statement.concatTokens().toUpperCase();
-        if (concat.includes(" MESSAGE ")) {
+        if (concat.includes(" MESSAGE")) {
           continue;
         }
         if (concat.startsWith("RAISE EXCEPTION TYPE ")) {
