@@ -7,7 +7,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 function testRulesWithFile(tests: any): void {
   describe("test files for method length", () => {
     tests.forEach((test: any) => {
-      it("method length test", () => {
+      it(test.description, () => {
         const reg = new Registry();
         reg.addFile(new MemoryFile(test.filename, test.abap)).parse();
 
@@ -15,9 +15,7 @@ function testRulesWithFile(tests: any): void {
         rule.setConfig(test.conf);
 
         const issues = rule.initialize(reg).run(reg.getFirstObject()!);
-        it(test.description, () => {
-          expect(issues.length).to.equals(test.issueLength);
-        });
+        expect(issues.length).to.equals(test.issueLength);
       });
     });
   });
@@ -30,6 +28,10 @@ confIgnoreTestClasses.statements = 3;
 const confCheckTestClasses = new MethodLengthConf();
 confCheckTestClasses.ignoreTestClasses = false;
 confCheckTestClasses.statements = 3;
+
+const confCheckForms = new MethodLengthConf();
+confCheckForms.checkForms = false;
+confCheckForms.statements = 3;
 
 const abapTestClassOverLength = `
   CLASS ltcl_foo definition final for testing.
@@ -74,16 +76,31 @@ const abapClassOverLength = `
 
 const abapClassValidLength = `
   CLASS zcl_foo DEFINITION CREATE PUBLIC.
-    PUBLIC SECTION.
-      METHODS foo.
+  PUBLIC SECTION.
+  METHODS foo.
   ENDCLASS.
   CLASS zcl_foo IMPLEMENTATION.
-    METHOD foo.
-      WRITE '1''.
+  METHOD foo.
+  WRITE '1''.
+  WRITE '2'.
+  WRITE '3'.
+  ENDMETHOD.
+  ENDCLASS.`;
+
+const abapFormOverLength = `
+    FORM testing.
+      WRITE '1'.
       WRITE '2'.
       WRITE '3'.
-    ENDMETHOD.
-  ENDCLASS.`;
+      WRITE '4'.
+    ENDFORM.`;
+
+const abapFormValidLength = `
+    FORM testing.
+      WRITE '1'.
+      WRITE '2'.
+      WRITE '3'.
+    ENDFORM.`;
 
 const testClassTests = [
   {abap: abapTestClassOverLength,
@@ -126,6 +143,30 @@ const testClassTests = [
     description: "class, check, valid length",
     conf: confCheckTestClasses,
     filename: `zcl_foo_method_length.clas.abap`,
+    issueLength: 0},
+
+  {abap: abapFormOverLength,
+    description: "form, off, over length",
+    conf: confCheckForms,
+    filename: `zcl_foo.clas.abap`,
+    issueLength: 0},
+
+  {abap: abapFormValidLength,
+    description: "form, off, valid length",
+    conf: confCheckForms,
+    filename: `zcl_foo.clas.abap`,
+    issueLength: 0},
+
+  {abap: abapFormOverLength,
+    description: "form, check, over length",
+    conf: confCheckTestClasses,
+    filename: `zcl_foo.clas.abap`,
+    issueLength: 1},
+
+  {abap: abapFormValidLength,
+    description: "form, check, valid length",
+    conf: confCheckTestClasses,
+    filename: `zcl_foo.clas.abap`,
     issueLength: 0},
 ];
 

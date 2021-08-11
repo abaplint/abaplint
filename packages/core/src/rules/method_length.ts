@@ -1,17 +1,20 @@
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
-import {MethodLengthStats} from "../utils/method_length_stats";
+import {IMethodLengthResult, MethodLengthStats} from "../utils/method_length_stats";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {FormLengthStats} from "../utils/form_length_stats";
 
 export class MethodLengthConf extends BasicRuleConfig {
-  /** Maximum method length in statements */
+  /** Maximum method/form length in statements. */
   public statements: number = 100;
-  /** Checks for empty methods. */
+  /** Checks for empty methods/forms. */
   public errorWhenEmpty: boolean = true;
-  /** Option to ignore test classes for this check.  */
+  /** Option to ignore test classes for this check. */
   public ignoreTestClasses: boolean = false;
+  /** Option to check forms. */
+  public checkForms: boolean = true;
 }
 
 enum IssueType {
@@ -26,8 +29,8 @@ export class MethodLength implements IRule {
   public getMetadata(): IRuleMetadata {
     return {
       key: "method_length",
-      title: "Method Length",
-      shortDescription: `Checks relating to method length.`,
+      title: "Method/Form Length",
+      shortDescription: `Checks relating to method/form length.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-methods-small`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
@@ -36,10 +39,10 @@ export class MethodLength implements IRule {
   private getDescription(issueType: IssueType, actual: string): string {
     switch (issueType) {
       case IssueType.EmptyMethod: {
-        return "Empty method";
+        return "Empty method/form";
       }
       case IssueType.MaxStatements: {
-        return "Reduce method length to max " + this.conf.statements + " statements, currently " + actual;
+        return "Reduce method/form length to max " + this.conf.statements + " statements, currently " + actual;
       }
       default: {
         return "";
@@ -60,8 +63,21 @@ export class MethodLength implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
+    const methodStats = MethodLengthStats.run(obj);
+    const methodIssues = this.check(methodStats);
+
+    let formIssues: Issue[] = [];
+    if (this.conf.checkForms) {
+      const formStats = FormLengthStats.run(obj);
+      formIssues = this.check(formStats);
+    }
+
+    return methodIssues.concat(formIssues);
+  }
+
+  private check(stats: IMethodLengthResult[]) {
     const issues: Issue[] = [];
-    const stats = MethodLengthStats.run(obj);
+
     for (const s of stats) {
       if ((this.conf.ignoreTestClasses === true)
         && s.file.getFilename().includes(".testclasses.")) {
@@ -78,6 +94,7 @@ export class MethodLength implements IRule {
         issues.push(issue);
       }
     }
+
     return issues;
   }
 
