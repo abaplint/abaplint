@@ -54,6 +54,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public freeMemory: boolean = true;
   /** Checks for EXIT FROM SQL */
   public exitFromSQL: boolean = true;
+  /** Checks for SORT itab BY <fs> */
+  public sortByFS: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -96,7 +98,9 @@ PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
 SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm
 SELECT COUNT(*) is considered okay
 
-FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree_mem_id_obsolete.htm`,
+FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree_mem_id_obsolete.htm
+
+SORT BY <FS>: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsort_itab_obsolete.htm`,
     };
   }
 
@@ -258,6 +262,10 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
           const issue = Issue.atStatement(file, staNode, "Statement \"EXIT FROM SQL\" is obsolete", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
+      }
+
+      if (this.conf.sortByFS && sta instanceof Statements.Sort) {
+
       }
     }
     return issues;
