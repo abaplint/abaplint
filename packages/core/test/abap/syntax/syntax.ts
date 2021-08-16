@@ -8,6 +8,7 @@ import {getABAPObjects} from "../../get_abap";
 import {Version} from "../../../src/version";
 import {MemoryFile} from "../../../src/files/memory_file";
 
+
 function run(reg: IRegistry, globalConstants?: string[], version?: Version, errorNamespace?: string): Issue[] {
   let ret: Issue[] = [];
 
