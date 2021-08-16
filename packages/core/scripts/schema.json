@@ -3972,6 +3972,10 @@
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         },
+        "sortByFS": {
+          "description": "Checks for SORT itab BY <fs>",
+          "type": "boolean"
+        },
         "subtract": {
           "description": "Check for SUBTRACT statement",
           "type": "boolean"
@@ -4006,7 +4010,8 @@
         "pack",
         "selectWithoutInto",
         "freeMemory",
-        "exitFromSQL"
+        "exitFromSQL",
+        "sortByFS"
       ],
       "type": "object"
     },
