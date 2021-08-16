@@ -12,6 +12,7 @@ import {IStatement} from "../abap/2_statements/statements/_statement";
 import {ExpressionNode, StatementNode} from "../abap/nodes";
 import {SourceFieldSymbol} from "../abap/2_statements/expressions";
 
+
 export class ObsoleteStatementConf extends BasicRuleConfig {
   /** Check for REFRESH statement */
   public refresh: boolean = true;
