@@ -112,7 +112,7 @@ export class ObjectOriented {
     return className.getFirstToken().getStr();
   }
 
-  public findInterfaces(cd: IClassDefinition): readonly {name: string, partial: boolean}[] {
+  public findInterfaces(cd: IClassDefinition | IInterfaceDefinition): readonly {name: string, partial: boolean}[] {
     const ret = [...cd.getImplementing()];
 
     for (const r of ret) {
@@ -285,6 +285,9 @@ export class ObjectOriented {
     let interfaceName: string | undefined = undefined;
     if (name.includes("~")) {
       interfaceName = name.split("~")[0];
+      if (interfaceName && this.findInterfaces(def).some(i => i.name.toUpperCase() === interfaceName?.toUpperCase()) === false) {
+        return {method: undefined, def: undefined};
+      }
     }
 
 // todo, this is not completely correct? hmm, why? visibility?

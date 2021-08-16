@@ -4776,6 +4776,33 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("method lif1~foo( ) not relevant for the reference", () => {
+    const abap = `
+INTERFACE lif1.
+  METHODS foo.
+ENDINTERFACE.
+
+INTERFACE lif2.
+  METHODS bar.
+ENDINTERFACE.
+
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO lif2.
+    ref->bar( ).
+    ref->lif1~foo( ). " <- this should be a syntax error
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`Method "lif1~foo" not found`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
