@@ -9,7 +9,8 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {Version} from "../version";
 import {EditHelper, IEdit} from "../edit_helper";
 import {IStatement} from "../abap/2_statements/statements/_statement";
-import {StatementNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode} from "../abap/nodes";
+import {SourceFieldSymbol} from "../abap/2_statements/expressions";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
   /** Check for REFRESH statement */
@@ -265,7 +266,12 @@ SORT BY <FS>: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsor
       }
 
       if (this.conf.sortByFS && sta instanceof Statements.Sort) {
+        const afterBy = staNode.findExpressionAfterToken("BY");
 
+        if (afterBy instanceof ExpressionNode && afterBy.get() instanceof SourceFieldSymbol) {
+          const issue = Issue.atStatement(file, staNode, "Statement \"SORT itab BY <fs>\" is obsolete", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
       }
     }
     return issues;

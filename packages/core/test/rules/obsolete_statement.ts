@@ -59,7 +59,8 @@ END OF li_order.`, cnt: 1, fix: false},
   {abap: "EXIT FROM SQL.", cnt: 1, fix: false},
   {abap: "EXIT FROM STEP-LOOP.", cnt: 0},
 
-  {abap: "SORT foo BY <fs>", cnt:1, fix: false}
+  {abap: "SORT foo BY <fs>.", cnt: 1, fix: false},
+  {abap: "SORT foo BY (bar).", cnt: 0, fix: false},
 ];
 
 testRule(tests, ObsoleteStatement);
