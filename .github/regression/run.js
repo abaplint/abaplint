@@ -68,6 +68,7 @@ for (let name in map) {
     }
     let urlFile = i.file.split("/").splice(1).join("/");
     let url = "https://github.com/" + name + "/blob/main/" + urlFile + "#L" + i.start.row;
+    i.description = i.description.replace(/~/g, "\\~");
     issues += "[`" + i.file + ":" + i.start.row + "`](" + url + "): " + i.description + "(" + i.key + ")\n"
   }
 }
