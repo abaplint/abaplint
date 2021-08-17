@@ -82,7 +82,7 @@ export class MethodParameters implements IMethodParameters {
     return this.importing;
   }
 
-  public getRequiredImporting() {
+  public getRequiredParameters() {
     const ret: TypedIdentifier[] = [];
 
     for (const i of this.getImporting()) {

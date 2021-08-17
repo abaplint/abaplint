@@ -130,7 +130,7 @@ export class MethodParameters {
     }
 
     const allImporting = method.getParameters().getImporting();
-    const requiredImporting = new Set(method.getParameters().getRequiredImporting().map(i => i.getName().toUpperCase()));
+    const requiredImporting = new Set(method.getParameters().getRequiredParameters().map(i => i.getName().toUpperCase()));
 
     for (const item of this.parameterListS(node, scope, filename, method)) {
       let parameterType: AbstractType | undefined = undefined;

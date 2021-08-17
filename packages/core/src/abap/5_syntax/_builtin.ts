@@ -30,7 +30,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     this.row = row;
   }
 
-  public getRequiredImporting(): readonly TypedIdentifier[] {
+  public getRequiredParameters(): readonly TypedIdentifier[] {
     return [];
   }
 
