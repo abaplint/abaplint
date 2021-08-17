@@ -4803,6 +4803,29 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include(`Method "lif1~foo" not found`);
   });
 
+  it("check constructor parameters, ok, case and exclamation", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING !IV_bar TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD constructor.
+    RETURN.
+  ENDMETHOD.
+  METHOD run.
+    DATA ref TYPE REF TO bar.
+    CREATE OBJECT ref
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("check constructor parameters, parameter not found", () => {
     const abap = `
 CLASS bar DEFINITION.
