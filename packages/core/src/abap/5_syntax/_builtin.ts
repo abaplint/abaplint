@@ -29,6 +29,14 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     this.row = row;
   }
 
+  public getRequiredImporting(): readonly TypedIdentifier[] {
+    throw new Error("BuiltInMethod->Method not implemented.");
+  }
+
+  public getOptional(): readonly string[] {
+    throw new Error("BuiltInMethod->Method not implemented.");
+  }
+
   public getAll(): readonly TypedIdentifier[] {
     throw new Error("BuiltInMethod->getAll, Method not implemented.");
   }

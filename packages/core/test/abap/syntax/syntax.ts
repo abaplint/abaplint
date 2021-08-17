@@ -4803,6 +4803,86 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include(`Method "lif1~foo" not found`);
   });
 
+  it("check constructor parameters, parameter not found", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO bar.
+    CREATE OBJECT ref
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`IV_BAR`);
+  });
+
+  it("check constructor parameters, parameter not found, with TYPE", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO object.
+    CREATE OBJECT ref TYPE bar
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`IV_BAR`);
+  });
+
+  it("check constructor parameters, wrong parameter name", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING moo TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO object.
+    CREATE OBJECT ref TYPE bar
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`IV_BAR`);
+  });
+
+  it("check constructor parameters, parameter must be supplied", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING moo TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO object.
+    CREATE OBJECT ref TYPE bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`MOO`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
