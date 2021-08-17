@@ -5008,6 +5008,27 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include(`req`);
   });
 
+  it("method CHANGING parameter must be supplied", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    METHODS call CHANGING bar TYPE i.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD call.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD run.
+    call( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`bar`);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
