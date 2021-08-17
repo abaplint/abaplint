@@ -44,6 +44,10 @@ export class MethodParameters implements IMethodParameters {
     this.parse(node, scope, filename);
   }
 
+  public getOptional(): string[] {
+    return this.optional;
+  }
+
   public getAll(): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
     const returning = this.getReturning();
@@ -76,6 +80,19 @@ export class MethodParameters implements IMethodParameters {
 
   public getImporting() {
     return this.importing;
+  }
+
+  public getRequiredImporting() {
+    const ret: TypedIdentifier[] = [];
+
+    for (const i of this.getImporting()) {
+      if (this.getOptional().some(o => o.toUpperCase() === i.getName().toUpperCase()) === true) {
+        continue;
+      }
+      ret.push(i);
+    }
+
+    return ret;
   }
 
   public getExporting() {
@@ -117,6 +134,7 @@ export class MethodParameters implements IMethodParameters {
       for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();
         const search = token.getStr().toUpperCase().replace("!", "");
+        this.optional.push(search); // all parameters optional for event handlers
         if (search === "SENDER" && def) {
           this.importing.push(new TypedIdentifier(token, this.filename, new ObjectReferenceType(def), [IdentifierMeta.EventParameter]));
           continue;

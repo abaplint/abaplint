@@ -23,7 +23,7 @@ export class Call implements StatementSyntax {
 
     const body = node.findDirectExpression(Expressions.MethodCallBody);
     if (body) {
-      // todo, resove the method definition above and pass, if possible, in case of dynamic pass void
+      // todo, resolve the method definition above and pass, if possible, in case of dynamic pass void
       new MethodCallBody().runSyntax(body, scope, filename, new VoidType("CallTODO"));
     }
 

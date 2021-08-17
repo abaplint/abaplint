@@ -2612,7 +2612,7 @@ DELETE TABLE lt_results FROM 10.`;
   it("built-in match function", () => {
     const abap = `DATA(result) = match( val = || regex = || ).`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
   it("FIND, MATCH OFFSET inline", () => {
@@ -4775,6 +4775,239 @@ ENDINTERFACE.`;
     ]);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
+
+  it("method lif1~foo( ) not relevant for the reference", () => {
+    const abap = `
+INTERFACE lif1.
+  METHODS foo.
+ENDINTERFACE.
+
+INTERFACE lif2.
+  METHODS bar.
+ENDINTERFACE.
+
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO lif2.
+    ref->bar( ).
+    ref->lif1~foo( ). " <- this should be a syntax error
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`Method "lif1~foo" not found`);
+  });
+
+  it("check constructor parameters, ok, case and exclamation", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING !IV_bar TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD constructor.
+    RETURN.
+  ENDMETHOD.
+  METHOD run.
+    DATA ref TYPE REF TO bar.
+    CREATE OBJECT ref
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("check constructor parameters, parameter not found", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO bar.
+    CREATE OBJECT ref
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`IV_BAR`);
+  });
+
+  it("check constructor parameters, parameter not found, with TYPE", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO object.
+    CREATE OBJECT ref TYPE bar
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`IV_BAR`);
+  });
+
+  it("check constructor parameters, wrong parameter name", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING moo TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO object.
+    CREATE OBJECT ref TYPE bar
+      EXPORTING
+        iv_bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`IV_BAR`);
+  });
+
+  it("check constructor parameters, parameter must be supplied", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING moo TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO object.
+    CREATE OBJECT ref TYPE bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`MOO`);
+  });
+
+  it("check constructor parameters, from super class", () => {
+    const abap = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO sub.
+    CREATE OBJECT ref
+      EXPORTING
+        bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("check constructor parameters, pick the right constructor", () => {
+    const abap = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING moo TYPE i.
+    METHODS run.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( bar = moo ).
+  ENDMETHOD.
+  METHOD run.
+    DATA ref TYPE REF TO sup.
+    CREATE OBJECT ref TYPE sub
+      EXPORTING
+        moo = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("method parameter must be supplied", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo IMPORTING
+      val TYPE i
+      req TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    moo( val = 2 ).
+  ENDMETHOD.
+  METHOD moo.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`REQ`);
+  });
+
+  it.skip("method parameter must be supplied, none", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo IMPORTING req TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    moo( ).
+  ENDMETHOD.
+  METHOD moo.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`REQ`);
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

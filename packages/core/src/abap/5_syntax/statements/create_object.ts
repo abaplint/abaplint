@@ -8,21 +8,24 @@ import {ReferenceType} from "../_reference";
 import {GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 import {StatementSyntax} from "../_statement_syntax";
+import {IClassDefinition} from "../../types/_class_definition";
+import {ObjectOriented} from "../_object_oriented";
 
 export class CreateObject implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    // todo, validate parameters
+
+    let cdef: IClassDefinition | undefined = undefined;
 
     // CREATE OBJECT, TYPE
     const type = node.findExpressionAfterToken("TYPE");
     if (type && type.get() instanceof Expressions.ClassName) {
       const token = type.getFirstToken();
       const name = token.getStr();
-      const found = scope.findClassDefinition(name);
-      if (found) {
-        scope.addReference(token, found, ReferenceType.ObjectOrientedReference, filename);
-        if (found.isAbstract() === true) {
-          throw new Error(found.getName() + " is abstract, cannot be instantiated");
+      cdef = scope.findClassDefinition(name);
+      if (cdef) {
+        scope.addReference(token, cdef, ReferenceType.ObjectOrientedReference, filename);
+        if (cdef.isAbstract() === true) {
+          throw new Error(cdef.getName() + " is abstract, cannot be instantiated");
         }
       } else if (scope.getDDIC().inErrorNamespace(name) === false) {
         scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name, ooType: "CLAS"});
@@ -50,6 +53,9 @@ export class CreateObject implements StatementSyntax {
           throw new Error("Generic type, cannot be instantiated");
         } else if (found instanceof ObjectReferenceType) {
           const id = found.getIdentifier();
+          if (id instanceof ClassDefinition && cdef === undefined) {
+            cdef = id;
+          }
           if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
             throw new Error(id.getName() + " is abstract, cannot be instantiated");
           }
@@ -61,5 +67,35 @@ export class CreateObject implements StatementSyntax {
       new Dynamic().runSyntax(t, scope, filename);
     }
 
+    this.validateParameters(cdef, node, scope);
+  }
+
+  private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, scope: CurrentScope) {
+    if (cdef === undefined) {
+      return;
+    }
+
+    const methodDef = new ObjectOriented(scope).searchMethodName(cdef, "CONSTRUCTOR");
+    const methodParameters = methodDef.method?.getParameters();
+
+    const allImporting = methodParameters?.getImporting() || [];
+    const requiredImporting = new Set(methodParameters?.getRequiredImporting().map(i => i.getName().toUpperCase()));
+
+// todo, validate types
+    for (const p of node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.ParameterS) || []) {
+      const name = p.findDirectExpression(Expressions.ParameterName)?.concatTokens().toUpperCase();
+      if (name === undefined) {
+        continue;
+      }
+
+      if (allImporting?.some(p => p.getName().toUpperCase() === name) === false) {
+        throw new Error(`constructor parameter "${name}" does not exist`);
+      }
+      requiredImporting.delete(name);
+    }
+
+    for (const r of requiredImporting.values()) {
+      throw new Error(`constructor parameter "${r}" must be supplied`);
+    }
   }
 }
