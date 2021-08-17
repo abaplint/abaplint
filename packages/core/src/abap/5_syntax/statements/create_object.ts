@@ -93,7 +93,7 @@ export class CreateObject implements StatementSyntax {
       requiredImporting.delete(name);
     }
 
-    for (const r of requiredImporting.entries()) {
+    for (const r of requiredImporting.values()) {
       throw new Error(`constructor parameter "${r}" must be supplied`);
     }
   }
