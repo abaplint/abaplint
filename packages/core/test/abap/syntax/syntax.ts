@@ -5030,6 +5030,32 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include(`bar`);
   });
 
+  it("method call, ok, with importing and changing", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    METHODS call
+      IMPORTING moo TYPE i
+      CHANGING bar TYPE i.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD call.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD run.
+    data val type i.
+    call(
+      exporting moo = 2
+      changing bar = val ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

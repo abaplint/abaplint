@@ -24,18 +24,26 @@ interface IListItemS {
 }
 
 export class MethodParameters {
+
+  private requiredParameters: Set<string> | undefined = undefined;
+
   public runSyntax(node: INode, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string): void {
     if (!(node.get() instanceof Expressions.MethodParameters)) {
       throw new Error("MethodParameters, unexpected input");
     }
 
     const children = node.getChildren().slice();
+    if (method instanceof VoidType) {
+      this.requiredParameters = new Set();
+    } else {
+      this.requiredParameters = new Set(method.getParameters().getRequiredParameters().map(i => i.getName().toUpperCase()));
+    }
 
     while (children.length > 0) {
       const name = children.shift()?.getFirstToken().getStr().toUpperCase();
       switch (name) {
         case "EXPORTING":
-          this.checkExporting(children.shift(), scope, method, filename);
+          this.checkExporting(children.shift(), scope, method, filename, false);
           break;
         case "IMPORTING":
           this.checkImporting(children.shift(), scope, method, filename);
@@ -53,6 +61,8 @@ export class MethodParameters {
           throw new Error("MethodParameters, unexpected token, " + name);
       }
     }
+
+    this.reportErrors();
   }
 
 ///////////////////////
@@ -119,10 +129,13 @@ export class MethodParameters {
           console.log(parameterType); // todo
         }
       }
+
+      this.requiredParameters?.delete(item.name);
     }
   }
 
-  public checkExporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string): void {
+  public checkExporting(node: INode | undefined, scope: CurrentScope,
+                        method: IMethodDefinition | VoidType, filename: string, errors = true): void {
 
     if (method instanceof VoidType) {
       this.parameterListS(node, scope, filename, method);
@@ -130,7 +143,9 @@ export class MethodParameters {
     }
 
     const allImporting = method.getParameters().getImporting();
-    const requiredImporting = new Set(method.getParameters().getRequiredParameters().map(i => i.getName().toUpperCase()));
+    if (this.requiredParameters === undefined) {
+      this.requiredParameters = new Set(method.getParameters().getRequiredParameters().map(i => i.getName().toUpperCase()));
+    }
 
     for (const item of this.parameterListS(node, scope, filename, method)) {
       let parameterType: AbstractType | undefined = undefined;
@@ -146,10 +161,16 @@ export class MethodParameters {
         console.log(parameterType); // todo
       }
 
-      requiredImporting.delete(item.name);
+      this.requiredParameters.delete(item.name);
     }
 
-    for (const r of requiredImporting.values()) {
+    if (errors === true) {
+      this.reportErrors();
+    }
+  }
+
+  private reportErrors() {
+    for (const r of this.requiredParameters?.values() || []) {
       throw new Error(`method parameter "${r}" must be supplied`);
     }
   }
