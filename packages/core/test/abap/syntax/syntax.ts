@@ -4987,7 +4987,7 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include(`REQ`);
   });
 
-  it.only("method parameter must be supplied, none", () => {
+  it("method parameter must be supplied, none", () => {
     const abap = `
 CLASS bar DEFINITION.
   PUBLIC SECTION.
