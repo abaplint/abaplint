@@ -11,6 +11,7 @@ import {IEventDefinition} from "../types/_event_definition";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Visibility} from "../4_file_information/visibility";
 
+
 // todo, think some of the public methods can be made private
 
 export class ObjectOriented {
