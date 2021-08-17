@@ -9,7 +9,6 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import {Source} from "./source";
 
-// todo, checking that all mandatory parameters are filled
 // todo, checking that types are compatible
 
 interface IListItemT {
@@ -124,22 +123,33 @@ export class MethodParameters {
   }
 
   public checkExporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
+
+    if (method instanceof VoidType) {
+      return;
+    }
+
+    const allImporting = method.getParameters().getImporting();
+    const requiredImporting = new Set(method.getParameters().getRequiredImporting().map(i => i.getName().toUpperCase()));
+
     for (const item of this.parameterListS(node, scope, filename, method)) {
       let parameterType: AbstractType | undefined = undefined;
-      if (method instanceof VoidType) {
-        parameterType = method;
-      } else {
-        const parameter = method.getParameters().getImporting().find(p => p.getName().toUpperCase() === item.name);
-        if (parameter === undefined) {
-          throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
-        }
-        parameterType = parameter.getType();
+
+      const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
+      if (parameter === undefined) {
+        throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
       }
+      parameterType = parameter.getType();
 
       // todo, check that targetType and parameterType are compatible
       if (0) {
         console.log(parameterType); // todo
       }
+
+      requiredImporting.delete(item.name);
+    }
+
+    for (const r of requiredImporting.entries()) {
+      throw new Error(`method parameter "${r}" must be supplied`);
     }
   }
 

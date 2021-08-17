@@ -76,7 +76,7 @@ export class CreateObject implements StatementSyntax {
 
     const methodParameters = cdef.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters();
 
-    const allParameters = methodParameters?.getImporting() || [];
+    const allImporting = methodParameters?.getImporting() || [];
     const requiredImporting = new Set(methodParameters?.getRequiredImporting().map(i => i.getName().toUpperCase()));
 
 // todo, validate types
@@ -86,7 +86,7 @@ export class CreateObject implements StatementSyntax {
         continue;
       }
 
-      if (allParameters?.some(p => p.getName() === name) === false) {
+      if (allImporting?.some(p => p.getName() === name) === false) {
         throw new Error(`constructor parameter "${name}" does not exist`);
       }
       requiredImporting.delete(name);

@@ -2612,7 +2612,7 @@ DELETE TABLE lt_results FROM 10.`;
   it("built-in match function", () => {
     const abap = `DATA(result) = match( val = || regex = || ).`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
   it("FIND, MATCH OFFSET inline", () => {
@@ -4882,6 +4882,51 @@ ENDCLASS.`;
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include(`MOO`);
   });
+
+  it("method parameter must be supplied", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo IMPORTING
+      val TYPE i
+      req TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    moo( val = 2 ).
+  ENDMETHOD.
+  METHOD moo.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`REQ`);
+  });
+
+  it.skip("method parameter must be supplied, none", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo IMPORTING req TYPE i.
+    METHODS run.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD run.
+    moo( ).
+  ENDMETHOD.
+  METHOD moo.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`REQ`);
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

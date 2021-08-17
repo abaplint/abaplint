@@ -30,7 +30,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
   }
 
   public getRequiredImporting(): readonly TypedIdentifier[] {
-    throw new Error("BuiltInMethod->Method not implemented.");
+    return [];
   }
 
   public getOptional(): readonly string[] {
