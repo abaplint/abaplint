@@ -9,6 +9,7 @@ import {GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../t
 import {ClassDefinition} from "../../types";
 import {StatementSyntax} from "../_statement_syntax";
 import {IClassDefinition} from "../../types/_class_definition";
+import {ObjectOriented} from "../_object_oriented";
 
 export class CreateObject implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -66,16 +67,16 @@ export class CreateObject implements StatementSyntax {
       new Dynamic().runSyntax(t, scope, filename);
     }
 
-    this.validateParameters(cdef, node);
+    this.validateParameters(cdef, node, scope);
   }
 
-  private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode) {
+  private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, scope: CurrentScope) {
     if (cdef === undefined) {
       return;
     }
 
-// todo, search in super
-    const methodParameters = cdef.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters();
+    const methodDef = new ObjectOriented(scope).searchMethodName(cdef, "CONSTRUCTOR");
+    const methodParameters = methodDef.method?.getParameters();
 
     const allImporting = methodParameters?.getImporting() || [];
     const requiredImporting = new Set(methodParameters?.getRequiredImporting().map(i => i.getName().toUpperCase()));

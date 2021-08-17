@@ -4906,6 +4906,33 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include(`MOO`);
   });
 
+  it("check constructor parameters, from super class", () => {
+    const abap = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD run.
+    DATA ref TYPE REF TO sub.
+    CREATE OBJECT ref
+      EXPORTING
+        bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("method parameter must be supplied", () => {
     const abap = `
 CLASS bar DEFINITION.
