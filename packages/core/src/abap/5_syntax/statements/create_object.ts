@@ -53,7 +53,7 @@ export class CreateObject implements StatementSyntax {
           throw new Error("Generic type, cannot be instantiated");
         } else if (found instanceof ObjectReferenceType) {
           const id = found.getIdentifier();
-          if (id instanceof ClassDefinition) {
+          if (id instanceof ClassDefinition && cdef === undefined) {
             cdef = id;
           }
           if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
