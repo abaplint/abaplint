@@ -25,9 +25,9 @@ const fixTests = [
 testRuleFix(fixTests, InStatementIndentation);
 
 const testsNoBlock = [
-  {abap: "IF foo = bar1\nAND moo = boo.", cnt: 1},
-  {abap: "IF foo = bar2\n  AND moo = boo.", cnt: 0},
-  {abap: "IF foo = bar3\n    AND moo = boo.", cnt: 0}, // larger indent is allowed
+  {abap: "IF foo = baz1\nAND moo = boo.", cnt: 1},
+  {abap: "IF foo = baz2\n  AND moo = boo.", cnt: 0},
+  {abap: "IF foo = baz3\n    AND moo = boo.", cnt: 0}, // larger indent is allowed
 ];
 
 testRule(testsNoBlock, InStatementIndentation, new InStatementIndentationConf().blockStatements = 0);
