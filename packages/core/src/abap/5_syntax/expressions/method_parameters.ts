@@ -148,7 +148,7 @@ export class MethodParameters {
       requiredImporting.delete(item.name);
     }
 
-    for (const r of requiredImporting.entries()) {
+    for (const r of requiredImporting.values()) {
       throw new Error(`method parameter "${r}" must be supplied`);
     }
   }
