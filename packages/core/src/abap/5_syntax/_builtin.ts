@@ -11,7 +11,6 @@ import {Token} from "../1_lexer/tokens/_token";
 import {IMethodParameters} from "../types/_method_parameters";
 import {Version} from "../../version";
 
-
 interface IBuiltinMethod {
   name: string;
   mandatory?: {[key: string]: AbstractType},
