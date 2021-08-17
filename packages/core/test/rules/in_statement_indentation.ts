@@ -30,4 +30,6 @@ const testsNoBlock = [
   {abap: "IF foo = baz3\n    AND moo = boo.", cnt: 0}, // larger indent is allowed
 ];
 
-testRule(testsNoBlock, InStatementIndentation, new InStatementIndentationConf().blockStatements = 0);
+const conf = new InStatementIndentationConf();
+conf.blockStatements = 0;
+testRule(testsNoBlock, InStatementIndentation, conf);
