@@ -936,5 +936,12 @@ WRITE result.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("variable used in voided method call", async () => {
+    const abap = `
+DATA bar TYPE i.
+cl_voided=>void( bar = bar ).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 });

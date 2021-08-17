@@ -125,6 +125,7 @@ export class MethodParameters {
   public checkExporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string): void {
 
     if (method instanceof VoidType) {
+      this.parameterListS(node, scope, filename, method);
       return;
     }
 
