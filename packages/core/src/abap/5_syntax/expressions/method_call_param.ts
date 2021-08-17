@@ -34,6 +34,7 @@ export class MethodCallParam {
         for (const i of method.getParameters().getImporting()) {
           if (i.getName().toUpperCase() === name) {
             targetType = i.getType();
+            break;
           }
         }
       } else {
