@@ -133,6 +133,7 @@ export class MethodParameters implements IMethodParameters {
       const event = new ObjectOriented(scope).searchEvent(def, eventName);
       for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();
+        this.optional.push(token.getStr().toUpperCase()); // all parameters optional for event handlers
         const search = token.getStr().toUpperCase().replace("!", "");
         if (search === "SENDER" && def) {
           this.importing.push(new TypedIdentifier(token, this.filename, new ObjectReferenceType(def), [IdentifierMeta.EventParameter]));
