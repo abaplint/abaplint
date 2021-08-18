@@ -22,6 +22,12 @@ export class MethodCallParam {
     const child = children[1];
 
     if (child.get() instanceof WParenRight || child.get() instanceof WParenRightW) {
+      if (!(method instanceof VoidType)) {
+        const required = method.getParameters().getRequiredParameters();
+        if (required.length > 0) {
+          throw new Error("Parameter \"" + required[0].getName() + "\" must be supplied");
+        }
+      }
       return;
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.Source) {
       // todo, validate that the method has only one default importing, and types are compatible

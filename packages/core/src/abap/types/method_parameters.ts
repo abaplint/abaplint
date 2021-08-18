@@ -82,10 +82,16 @@ export class MethodParameters implements IMethodParameters {
     return this.importing;
   }
 
-  public getRequiredImporting() {
+  public getRequiredParameters() {
     const ret: TypedIdentifier[] = [];
 
     for (const i of this.getImporting()) {
+      if (this.getOptional().some(o => o.toUpperCase() === i.getName().toUpperCase()) === true) {
+        continue;
+      }
+      ret.push(i);
+    }
+    for (const i of this.getChanging()) {
       if (this.getOptional().some(o => o.toUpperCase() === i.getName().toUpperCase()) === true) {
         continue;
       }
