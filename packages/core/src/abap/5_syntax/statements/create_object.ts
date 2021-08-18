@@ -79,7 +79,7 @@ export class CreateObject implements StatementSyntax {
     const methodParameters = methodDef.method?.getParameters();
 
     const allImporting = methodParameters?.getImporting() || [];
-    const requiredImporting = new Set(methodParameters?.getRequiredImporting().map(i => i.getName().toUpperCase()));
+    const requiredImporting = new Set(methodParameters?.getRequiredParameters().map(i => i.getName().toUpperCase()));
 
 // todo, validate types
     for (const p of node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.ParameterS) || []) {

@@ -4987,7 +4987,7 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include(`REQ`);
   });
 
-  it.skip("method parameter must be supplied, none", () => {
+  it("method parameter must be supplied, none", () => {
     const abap = `
 CLASS bar DEFINITION.
   PUBLIC SECTION.
@@ -5005,9 +5005,56 @@ CLASS bar IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.include(`REQ`);
+    expect(issues[0].getMessage()).to.include(`req`);
   });
 
+  it("method CHANGING parameter must be supplied", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    METHODS call CHANGING bar TYPE i.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD call.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD run.
+    call( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include(`bar`);
+  });
+
+  it("method call, ok, with importing and changing", () => {
+    const abap = `
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    METHODS call
+      IMPORTING moo TYPE i
+      CHANGING bar TYPE i.
+ENDCLASS.
+
+CLASS bar IMPLEMENTATION.
+  METHOD call.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD run.
+    data val type i.
+    call(
+      exporting moo = 2
+      changing bar = val ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

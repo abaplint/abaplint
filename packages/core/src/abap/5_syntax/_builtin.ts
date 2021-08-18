@@ -11,7 +11,6 @@ import {Token} from "../1_lexer/tokens/_token";
 import {IMethodParameters} from "../types/_method_parameters";
 import {Version} from "../../version";
 
-
 interface IBuiltinMethod {
   name: string;
   mandatory?: {[key: string]: AbstractType},
@@ -30,7 +29,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     this.row = row;
   }
 
-  public getRequiredImporting(): readonly TypedIdentifier[] {
+  public getRequiredParameters(): readonly TypedIdentifier[] {
     return [];
   }
 
