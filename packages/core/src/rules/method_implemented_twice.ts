@@ -57,6 +57,19 @@ export class MethodImplementedTwice extends ABAPRule {
       }
     }
 
+    for (const iDef of file.getInfo().listInterfaceDefinitions()) {
+      const names: {[index: string]: boolean} = {};
+      for (const m of iDef.methods) {
+        const name = m.name.toUpperCase();
+        if (names[name] === undefined) {
+          names[name] = true;
+        } else {
+          const message = `Method ${name} implemented twice`;
+          issues.push(Issue.atIdentifier(m.identifier, message, this.getMetadata().key, this.getConfig().severity));
+        }
+      }
+    }
+
     return issues;
   }
 

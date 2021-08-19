@@ -1819,7 +1819,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/in_statement_indentation"
+              "description": "Checks alignment within statements which span multiple lines.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -2943,6 +2943,10 @@
     "InStatementIndentationConf": {
       "additionalProperties": false,
       "properties": {
+        "blockStatements": {
+          "description": "Additional indent for first statement of blocks",
+          "type": "number"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -2960,6 +2964,7 @@
         }
       },
       "required": [
+        "blockStatements",
         "ignoreExceptions"
       ],
       "type": "object"

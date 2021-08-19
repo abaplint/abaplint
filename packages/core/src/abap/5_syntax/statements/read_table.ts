@@ -1,13 +1,15 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType} from "../../types/basic";
+import {VoidType, TableType, IntegerType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {ComponentCompareSimple} from "../expressions/component_compare_simple";
 import {StatementSyntax} from "../_statement_syntax";
+import {AbstractType} from "../../types/basic/_abstract_type";
+import {TypeUtils} from "../_type_utils";
 
 export class ReadTable implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -23,7 +25,7 @@ export class ReadTable implements StatementSyntax {
     if (firstSource === undefined) {
       firstSource = sources[0];
     }
-    let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : undefined;
+    const sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : undefined;
 
     if (sourceType === undefined) {
       throw new Error("No source type determined, read table");
@@ -31,12 +33,29 @@ export class ReadTable implements StatementSyntax {
       throw new Error("Read table, not a table type");
     }
 
-    if (sourceType instanceof TableType) {
-      sourceType = sourceType.getRowType();
+    let rowType: AbstractType = sourceType;
+    if (rowType instanceof TableType) {
+      rowType = rowType.getRowType();
+    }
+
+    const indexSource = node.findExpressionAfterToken("INDEX");
+    if (indexSource) {
+      const indexType = new Source().runSyntax(indexSource, scope, filename);
+      if (TypeUtils.isAssignable(indexType, new IntegerType()) === false) {
+        throw new Error("READ TABLE, INDEX must be simple");
+      }
+    }
+
+    const fromSource = node.findExpressionAfterToken("FROM");
+    if (fromSource) {
+      const fromType = new Source().runSyntax(fromSource, scope, filename);
+      if (TypeUtils.isAssignable(fromType, new IntegerType()) === false) {
+        throw new Error("READ TABLE, FROM must be simple");
+      }
     }
 
     for (const s of sources) {
-      if (s === firstSource) {
+      if (s === firstSource || s === indexSource || s === fromSource) {
         continue;
       }
       new Source().runSyntax(s, scope, filename);
@@ -46,13 +65,13 @@ export class ReadTable implements StatementSyntax {
     if (target) {
       const inline = target.findFirstExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, sourceType);
+        new InlineData().runSyntax(inline, scope, filename, rowType);
         return;
       }
 
       const fst = target.findDirectExpression(Expressions.FSTarget);
       if (fst) {
-        new FSTarget().runSyntax(fst, scope, filename, sourceType);
+        new FSTarget().runSyntax(fst, scope, filename, rowType);
         return;
       }
 /*
@@ -69,5 +88,14 @@ export class ReadTable implements StatementSyntax {
         return;
       }
     }
+
+    const concat = node.concatTokens().toUpperCase();
+    if (target === undefined && concat.includes(" TRANSPORTING NO FIELDS ") === false) {
+      // if sourceType is void, assume its with header
+      if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {
+        throw new Error("READ TABLE, define INTO or TRANSPORTING NO FIELDS");
+      }
+    }
+
   }
 }

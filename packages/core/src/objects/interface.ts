@@ -75,9 +75,13 @@ export class Interface extends ABAPObject {
     }
 
     const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOINTERF;
-
-    this.parsedXML.description = vseo.DESCRIPT ? vseo.DESCRIPT : "";
-    this.parsedXML.name = vseo.CLSNAME ? vseo.CLSNAME : "";
+    if (vseo === undefined) {
+      this.parsedXML.description = "";
+      this.parsedXML.name = "";
+    } else {
+      this.parsedXML.description = vseo.DESCRIPT ? vseo.DESCRIPT : "";
+      this.parsedXML.name = vseo.CLSNAME ? vseo.CLSNAME : "";
+    }
   }
 
 }
