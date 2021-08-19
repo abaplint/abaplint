@@ -77,6 +77,8 @@ export class TypeUtils {
       return false;
     } else if (target instanceof IntegerType) {
       if (source instanceof DataReference
+          || source instanceof ObjectReferenceType
+          || source instanceof GenericObjectReferenceType
           || source instanceof TableType) {
         return false;
       }
