@@ -5056,6 +5056,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("value passed to method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING index TYPE REF TO i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    run( 1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
