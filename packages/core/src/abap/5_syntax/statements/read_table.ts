@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType} from "../../types/basic";
+import {VoidType, TableType, IntegerType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
@@ -9,6 +9,7 @@ import {FSTarget} from "../expressions/fstarget";
 import {ComponentCompareSimple} from "../expressions/component_compare_simple";
 import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {TypeUtils} from "../_type_utils";
 
 export class ReadTable implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -37,8 +38,24 @@ export class ReadTable implements StatementSyntax {
       rowType = rowType.getRowType();
     }
 
+    const indexSource = node.findExpressionAfterToken("INDEX");
+    if (indexSource) {
+      const indexType = new Source().runSyntax(indexSource, scope, filename);
+      if (TypeUtils.isAssignable(indexType, new IntegerType()) === false) {
+        throw new Error("READ TABLE, INDEX must be simple");
+      }
+    }
+
+    const fromSource = node.findExpressionAfterToken("FROM");
+    if (fromSource) {
+      const fromType = new Source().runSyntax(fromSource, scope, filename);
+      if (TypeUtils.isAssignable(fromType, new IntegerType()) === false) {
+        throw new Error("READ TABLE, FROM must be simple");
+      }
+    }
+
     for (const s of sources) {
-      if (s === firstSource) {
+      if (s === firstSource || s === indexSource || s === fromSource) {
         continue;
       }
       new Source().runSyntax(s, scope, filename);

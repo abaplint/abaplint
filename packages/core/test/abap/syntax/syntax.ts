@@ -5092,6 +5092,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("READ TABLE, INDEX should be simple", () => {
+    const abap = `
+  DATA mt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA index TYPE REF TO i.
+  READ TABLE mt_list INDEX index TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("READ TABLE, INDEX must be simple");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

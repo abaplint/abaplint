@@ -75,8 +75,13 @@ export class TypeUtils {
         return true;
       }
       return false;
+    } else if (target instanceof IntegerType) {
+      if (source instanceof DataReference
+          || source instanceof TableType) {
+        return false;
+      }
+      return true;
     }
-
 
     return true;
   }
