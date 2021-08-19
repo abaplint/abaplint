@@ -385,10 +385,12 @@ field = zcl_global_class=>method( ).`;
   });
 
   it("program, READ TABLE", () => {
-// todo, this code is not syntactically correct
-    const abap = `DATA lt_map TYPE STANDARD TABLE OF string.
-      DATA iv_tag TYPE string.
-      READ TABLE lt_map WITH KEY tag = iv_tag.`;
+    const abap = `TYPES: BEGIN OF ty_bar,
+    tag TYPE string,
+  END OF ty_bar.
+DATA lt_map TYPE STANDARD TABLE OF ty_bar.
+DATA iv_tag TYPE string.
+READ TABLE lt_map WITH KEY tag = iv_tag TRANSPORTING NO FIELDS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -5070,6 +5072,24 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("READ TABLE without target and header line", () => {
+    const abap = `
+    DATA ii_node TYPE REF TO if_ixml_node.
+    DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
+    READ TABLE mt_list WITH KEY table_line = ii_node.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("READ TABLE, define INTO or TRANSPORTING NO FIELDS");
+  });
+
+  it("READ TABLE TRANSPORTING NO FIELDS, ok", () => {
+    const abap = `
+    DATA ii_node TYPE REF TO if_ixml_node.
+    DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
+    READ TABLE mt_list WITH KEY table_line = ii_node TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 // todo, static method cannot access instance attributes
