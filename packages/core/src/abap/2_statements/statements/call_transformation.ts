@@ -1,22 +1,21 @@
 import {IStatement} from "./_statement";
-import {seq, alt, per, plus} from "../combi";
-import {Target, Field, Source, Dynamic, NamespaceSimpleName, Integer} from "../expressions";
+import {seq, alt, per} from "../combi";
+import {Target, Source, Dynamic, NamespaceSimpleName, CallTransformationParameters, CallTransformationOptions} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallTransformation implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const field = seq(alt(Field, Integer), "=", Source);
+    const options = seq("OPTIONS", CallTransformationOptions);
 
-    const options = seq("OPTIONS", plus(field));
-    const parameters = seq("PARAMETERS", alt(plus(field), Dynamic));
-    const objects = seq("OBJECTS", alt(plus(field), Dynamic));
+    const parameters = seq("PARAMETERS", CallTransformationParameters);
+    const objects = seq("OBJECTS", CallTransformationParameters);
 
     const source2 = seq("XML", Source);
-    const source = seq("SOURCE", alt(plus(field), source2, Dynamic));
+    const source = seq("SOURCE", alt(CallTransformationParameters, source2));
 
     const result2 = seq("XML", Target);
-    const result = seq("RESULT", alt(plus(field), result2, Dynamic));
+    const result = seq("RESULT", alt(CallTransformationParameters, result2));
 
     const call = seq("CALL TRANSFORMATION",
                      alt(NamespaceSimpleName, Dynamic),

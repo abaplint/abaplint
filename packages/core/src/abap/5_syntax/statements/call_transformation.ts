@@ -11,15 +11,15 @@ import {StatementSyntax} from "../_statement_syntax";
 export class CallTransformation implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    for (const s of node.findDirectExpressions(Expressions.Source)) {
+    for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
 
-    for (const d of node.findDirectExpressions(Expressions.Dynamic)) {
+    for (const d of node.findAllExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, scope, filename);
     }
 
-    for (const t of node.findDirectExpressions(Expressions.Target)) {
+    for (const t of node.findAllExpressions(Expressions.Target)) {
       const inline = t?.findDirectExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, new XStringType());
