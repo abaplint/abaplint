@@ -211,7 +211,7 @@ export interface IConfig {
     "local_testclass_location"?: LocalTestclassLocationConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
-    "many_parenthesis"?: ManyParenthesesConf | boolean,
+    "many_parentheses"?: ManyParenthesesConf | boolean,
     "max_one_method_parameter_per_line"?: MaxOneMethodParameterPerLineConf | boolean,
     "max_one_statement"?: MaxOneStatementConf | boolean,
     "message_exists"?: MessageExistsConf | boolean,

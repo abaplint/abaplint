@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ExpressionNode, TokenNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper} from "../edit_helper";
 
 export class ManyParenthesesConf extends BasicRuleConfig {
 }
@@ -61,7 +62,10 @@ ENDIF.
       }
       if (cond[0].getChildren().length === 1) {
         const message = "Too many parentheses, simple";
-        const issue = Issue.atToken(file, sub.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+        const fixText = sub.getChildren()[1].concatTokens();
+        const fix = EditHelper.replaceRange(file, sub.getFirstToken().getStart(), sub.getLastToken().getEnd(), fixText);
+
+        const issue = Issue.atToken(file, sub.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }
