@@ -58,6 +58,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public exitFromSQL: boolean = true;
   /** Checks for SORT itab BY <fs> */
   public sortByFS: boolean = true;
+  /** Checks for CALL TRANSFORMATION OBJECTS */
+  public callTransformation: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -102,7 +104,9 @@ SELECT COUNT(*) is considered okay
 
 FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree_mem_id_obsolete.htm
 
-SORT BY <FS>: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsort_itab_obsolete.htm`,
+SORT BY FS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsort_itab_obsolete.htm
+
+CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_objects.htm`,
     };
   }
 
@@ -271,6 +275,15 @@ SORT BY <FS>: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsor
 
         if (afterBy instanceof ExpressionNode && afterBy.get() instanceof SourceFieldSymbol) {
           const issue = Issue.atStatement(file, staNode, "Statement \"SORT itab BY <fs>\" is obsolete", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+      }
+
+      if (this.conf.callTransformation && sta instanceof Statements.CallTransformation) {
+        const objects = staNode.findExpressionAfterToken("OBJECTS");
+
+        if (objects) {
+          const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of OBJECTS", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }

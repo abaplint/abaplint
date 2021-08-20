@@ -3898,6 +3898,10 @@
           "description": "Check for ADD statement",
           "type": "boolean"
         },
+        "callTransformation": {
+          "description": "Checks for CALL TRANSFORMATION OBJECTS",
+          "type": "boolean"
+        },
         "communication": {
           "description": "Checks for COMMUNICATION",
           "type": "boolean"
@@ -4016,7 +4020,8 @@
         "selectWithoutInto",
         "freeMemory",
         "exitFromSQL",
-        "sortByFS"
+        "sortByFS",
+        "callTransformation"
       ],
       "type": "object"
     },

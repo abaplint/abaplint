@@ -68,11 +68,11 @@ const tests = [
   "  SOURCE XML lv_source\n" +
   "  RESULT XML lv_result.",
 
-  "call transformation (lv_name)\n" +
-  "  parameters (lt_par)\n" +
-  "  objects (lt_obj)\n" +
-  "  source xml lv_xml\n" +
-  "  result xml rv_res.",
+  `call transformation (lv_name)
+    parameters (lt_par)
+    objects (lt_obj)
+    source xml lv_xml
+    result xml rv_res.`,
 
   `CALL TRANSFORMATION id
   OPTIONS value_handling = 'accept_data_loss accept_decimals_loss'

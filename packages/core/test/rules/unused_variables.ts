@@ -944,4 +944,30 @@ cl_voided=>void( bar = bar ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CALL TRANSFORMATION", async () => {
+    const abap = `
+  DATA lv_name TYPE string.
+  DATA lv_xml TYPE string.
+  DATA rv_res TYPE string.
+
+  CALL TRANSFORMATION (lv_name)
+      SOURCE XML lv_xml
+      RESULT XML rv_res.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CALL TRANSFORMATION, 2", async () => {
+    const abap = `
+  DATA lv_name TYPE string.
+  DATA lv_xml TYPE string.
+  DATA rv_res TYPE string.
+
+  CALL TRANSFORMATION (lv_name)
+      SOURCE foo = lv_xml
+      RESULT XML rv_res.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
