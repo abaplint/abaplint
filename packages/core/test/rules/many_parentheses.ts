@@ -1,4 +1,4 @@
-import {ManyParenthesis} from "../../src/rules";
+import {ManyParentheses} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -20,4 +20,4 @@ const tests = [
   {abap: `IF foo IS NOT INITIAL AND NOT ( moo = bar AND field IS INITIAL ). ENDIF.`, cnt: 0},
 ];
 
-testRule(tests, ManyParenthesis);
+testRule(tests, ManyParentheses);
