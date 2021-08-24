@@ -203,7 +203,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   private emptyKey(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
 
-    for (const i of node.findAllExpressions(Expressions.TypeTable)) {
+    for (let i of node.findAllExpressions(Expressions.TypeTable)) {
+      const key = i.findDirectExpression(Expressions.TypeTableKeys);
+      if (key === undefined) {
+        continue;
+      }
+      i = key;
       const concat = i.concatTokens();
       if (concat.includes("WITH EMPTY KEY") === false) {
         continue;
