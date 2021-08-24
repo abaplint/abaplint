@@ -1733,14 +1733,29 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.HexType);
   });
 
-  it.skip("DATA tab TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.", () => {
+  it("DATA tab TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.", () => {
     const abap = `DATA tab TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.`;
     const identifier = resolveVariable(abap, "tab");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
     const type = identifier!.getType() as Basic.TableType;
     expect(type.isWithHeader()).to.equal(false);
-    expect(type.getOptions().keyFields).to.equal(["TABLE_LINE"]);
+    expect(type.getOptions().keyFields).to.have.all.members(["TABLE_LINE"]);
+  });
+
+  it("table, two key fields", () => {
+    const abap = `
+TYPES: BEGIN OF type,
+         int  TYPE i,
+         char TYPE c LENGTH 4,
+       END OF type.
+DATA tab TYPE SORTED TABLE OF type WITH UNIQUE KEY int char.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+    expect(type.isWithHeader()).to.equal(false);
+    expect(type.getOptions().keyFields).to.have.all.members(["INT", "CHAR"]);
   });
 
 });

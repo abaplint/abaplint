@@ -13,6 +13,7 @@ import {ReferenceType} from "./_reference";
 import {TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
+import {FieldSub, TypeTableKeys} from "../2_statements/expressions";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -224,9 +225,17 @@ export class BasicTypes {
     } else if (text.includes(" HASHED TABLE ")) {
       type = TableAccessType.hashed;
     }
+    const keyFields: string[] = [];
+    if (type) {
+      const keys = node.findFirstExpression(TypeTableKeys);
+      for (const k of keys?.findDirectExpressions(FieldSub) || []) {
+        keyFields.push(k.concatTokens().toUpperCase());
+      }
+    }
     const options: Types.ITableOptions = {
       withHeader: text.includes("WITH HEADER LINE"),
       type: type,
+      keyFields: keyFields,
     };
 
     let found: AbstractType | undefined = undefined;
