@@ -8,6 +8,7 @@ export enum TableAccessType {
   any = "ANY",
 }
 
+// todo, handling of secondary keys
 export type ITableOptions = {
   type?: TableAccessType,
   keyFields?: string[],
