@@ -1733,4 +1733,14 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.HexType);
   });
 
+  it.skip("DATA tab TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.", () => {
+    const abap = `DATA tab TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+    expect(type.isWithHeader()).to.equal(false);
+    expect(type.getOptions().keyFields).to.equal(["TABLE_LINE"]);
+  });
+
 });

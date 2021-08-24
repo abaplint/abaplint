@@ -27,17 +27,19 @@ export class TypeTable extends Expression {
                         opt("REF TO"),
                         opt(TypeName));
 
+    const keys = plusPrio(key);
+
     const likeType = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                          "TABLE OF",
                          optPrio("REF TO"),
                          opt(FieldChain),
-                         opt(per(key, header)));
+                         opt(per(header, initial, keys)));
 
     const rangeType = seq("RANGE OF", TypeName, opt(header), opt(initial));
     const rangeLike = seq("RANGE OF", FieldSub, opt(header), opt(initial));
 
     const typetable = seq(normal1,
-                          opt(per(header, initial, plusPrio(key))));
+                          opt(per(header, initial, keys)));
 
     const occurs = seq("OCCURS", Integer);
 
