@@ -2,7 +2,7 @@ import * as Statements from "../abap/2_statements/statements";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {TypeTable, TypeTableKeys} from "../abap/2_statements/expressions";
+import {TypeTable, TypeTableKey} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Version} from "../version";
@@ -88,7 +88,7 @@ DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
           && (this.reg.getConfig().getVersion() >= Version.v740sp02
           || this.reg.getConfig().getVersion() === Version.Cloud)
           && (statement instanceof Statements.Data || statement instanceof Statements.Type)) {
-        const tt = statementNode.findFirstExpression(TypeTable)?.findDirectExpression(TypeTableKeys);
+        const tt = statementNode.findFirstExpression(TypeTable)?.findDirectExpression(TypeTableKey);
         const token = tt?.findDirectTokenByText("DEFAULT");
         if (tt && token) {
           message = "DEFAULT KEY";

@@ -13,7 +13,7 @@ import {ReferenceType} from "./_reference";
 import {TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
-import {FieldSub, TypeTableKeys} from "../2_statements/expressions";
+import {FieldSub, TypeTableKey} from "../2_statements/expressions";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -227,7 +227,7 @@ export class BasicTypes {
     }
     const keyFields: string[] = [];
     if (type) {
-      const keys = node.findFirstExpression(TypeTableKeys);
+      const keys = node.findFirstExpression(TypeTableKey);
       for (const k of keys?.findDirectExpressions(FieldSub) || []) {
         keyFields.push(k.concatTokens().toUpperCase());
       }

@@ -1,9 +1,9 @@
-import {seq, opt, alt, ver, Expression, altPrio, plus, plusPrio} from "../combi";
+import {seq, opt, alt, ver, Expression, altPrio, plus} from "../combi";
 import {FieldSub, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
-export class TypeTableKeys extends Expression {
+export class TypeTableKey extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const uniqueness = alt("NON-UNIQUE", "UNIQUE");
@@ -17,9 +17,8 @@ export class TypeTableKeys extends Expression {
                                 "KEY",
                                 alt(seq(Field, "COMPONENTS", plus(FieldSub)),
                                     plus(FieldSub)))));
-    const keys = plusPrio(key);
 
-    return keys;
+    return key;
   }
 
 }
