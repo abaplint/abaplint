@@ -204,7 +204,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   private emptyKey(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
 
     for (let i of node.findAllExpressions(Expressions.TypeTable)) {
-      const key = i.findDirectExpression(Expressions.TypeTableKeys);
+      const key = i.findDirectExpression(Expressions.TypeTableKey);
       if (key === undefined) {
         continue;
       }
