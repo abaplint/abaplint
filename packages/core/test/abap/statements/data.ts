@@ -23,6 +23,7 @@ const tests = [
   "data sdf type table of ref to zcl_foobar.",
   "data range type range of string.",
   "data lt_foo type table of bar initial size 0.",
+  "DATA tab LIKE STANDARD TABLE OF int INITIAL SIZE 2.",
   "data foo    type  i value -1.",
   "data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.",
   "data item(4) value '  # '.",
