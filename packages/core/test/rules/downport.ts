@@ -43,6 +43,18 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("try downport unknown type", async () => {
+    const issues = await findIssues("DATA(bar) = VALUE zfoobar( ).");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("try downport unknown type, 2", async () => {
+    const issues = await findIssues(`
+    TYPES ty_bar TYPE STANDARD TABLE OF zfoobar WITH DEFAULT KEY.
+    DATA(bar) = VALUE ty_bar( ).`);
+    expect(issues.length).to.equal(1);
+  });
+
   it("try downporting voided LOOP", async () => {
     const abap = `
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
@@ -652,6 +664,14 @@ APPEND 2 TO temp1.
 DATA(sdf) = temp1.`;
 
     testFix(abap, expected);
+  });
+
+  it("downport, generic field symbol types", async () => {
+    const issues = await findIssues(`
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<fs>).
+  ENDLOOP.`);
+    expect(issues.length).to.equal(1);
   });
 
 });

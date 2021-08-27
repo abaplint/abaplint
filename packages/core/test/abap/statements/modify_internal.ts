@@ -2,7 +2,6 @@ import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
-  "MODIFY SCREEN.",
   "modify lt_table index sy-index from item.",
   "MODIFY lt_table INDEX SY-TABIX.",
   "modify lt_table.",

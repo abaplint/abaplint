@@ -59,7 +59,7 @@ _bar.`, cnt: 0},
   {abap: `write BAR.`, cnt: 1},
   {abap: `
 LOOP AT SCREEN INTO DATA(wa).
-  MODIFY screen FROM wa.
+  MODIFY SCREEN FROM wa.
 ENDLOOP.`, cnt: 0},
   {abap: `
 LOOP AT SCREEN INTO DATA(wa).
