@@ -603,7 +603,7 @@ ENDFORM.`;
 
     const expected = `
     DATA txt_table TYPE STANDARD TABLE OF string.
-    DATA inline_txt_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA inline_txt_table LIKE txt_table.
     inline_txt_table = txt_table.`;
 
     testFix(abap, expected);
@@ -624,7 +624,7 @@ TYPES: BEGIN OF ty_struct,
   txt TYPE string,
 END OF ty_struct.
 DATA struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
-DATA inline_struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
+DATA inline_struct_table LIKE struct_table.
 inline_struct_table = struct_table.`;
 
     testFix(abap, expected);
@@ -769,5 +769,17 @@ ENDFORM.`;
     testFix(abap, expected, [ztab, zrow]);
   });
 
+  it("Outline, even though its voided", async () => {
+    const abap = `
+  DATA temp1 TYPE voided.
+  DATA(ls_msg) = temp1.`;
+
+    const expected = `
+  DATA temp1 TYPE voided.
+  DATA ls_msg LIKE temp1.
+  ls_msg = temp1.`;
+
+    testFix(abap, expected);
+  });
 
 });
