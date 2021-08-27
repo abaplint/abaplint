@@ -782,4 +782,12 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.only("Table expression, by index", async () => {
+    const abap = `rv_lognumber = lt_lognumbers[ 1 ]-lognumber.`;
+
+    const expected = `sdfds`;
+
+    testFix(abap, expected);
+  });
+
 });
