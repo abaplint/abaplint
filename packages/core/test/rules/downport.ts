@@ -42,7 +42,12 @@ describe("Rule: downport", () => {
     const issues = await findIssues("DATA(bar) = VALUE asdf( ).");
     expect(issues.length).to.equal(1);
   });
-
+/*
+  it("try downport unknown type", async () => {
+    const issues = await findIssues("DATA(bar) = VALUE zfoobar( ).");
+    expect(issues.length).to.equal(1);
+  });
+*/
   it("try downporting voided LOOP", async () => {
     const abap = `
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
