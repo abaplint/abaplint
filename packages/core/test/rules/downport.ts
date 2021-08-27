@@ -782,10 +782,19 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it.only("Table expression, by index", async () => {
-    const abap = `rv_lognumber = lt_lognumbers[ 1 ]-lognumber.`;
+  it("Table expression, by index", async () => {
+    const abap = `FORM bar.
+  rv_lognumber = lt_lognumbers[ 1 ]-lognumber.
+ENDFORM.`;
 
-    const expected = `sdfds`;
+    const expected = `FORM bar.
+  DATA temp1 LIKE LINE OF lt_lognumbers.
+  READ TABLE lt_lognumbers INDEX 1 INTO temp1.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  rv_lognumber = temp1-lognumber.
+ENDFORM.`;
 
     testFix(abap, expected);
   });
