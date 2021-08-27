@@ -19,7 +19,7 @@ export class ManyParentheses extends ABAPRule {
       key: "many_parentheses",
       title: "Too many parentheses",
       shortDescription: `Searches for expressions where extra parentheses can safely be removed`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `
 IF ( destination IS INITIAL ).
 ENDIF.
