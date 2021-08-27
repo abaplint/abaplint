@@ -17,7 +17,7 @@ export class UnknownType extends AbstractType {
   }
 
   public toABAP(): string {
-    throw new Error("unknown, generic");
+    throw new Error("unknown, generic: " + this.error);
   }
 
   public isGeneric() {

@@ -11,6 +11,7 @@ const tests = [
   {abap: "MODIFY foo FROM bar.", cnt: 1},
   {abap: "MODIFY TABLE foo FROM bar.", cnt: 0},
   {abap: "MODIFY foo FROM @bar.", cnt: 0},
+  {abap: "MODIFY SCREEN FROM wa.", cnt: 0},
 ];
 
 testRule(tests, AmbiguousStatement);

@@ -82,6 +82,7 @@ export * from "./hide";
 export * from "./get_locale";
 export * from "./set_locale";
 export * from "./commit";
+export * from "./modify_screen";
 export * from "./commit_entities";
 export * from "./modify_entities";
 export * from "./read_entities";
