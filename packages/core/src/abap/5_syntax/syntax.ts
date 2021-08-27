@@ -128,6 +128,7 @@ import {SetHandler} from "./statements/set_handler";
 import {Wait} from "./statements/wait";
 import {Shift} from "./statements/shift";
 import {SetBit} from "./statements/set_bit";
+import {ModifyScreen} from "./statements/modify_screen";
 
 // -----------------------------------
 
@@ -172,6 +173,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new GetBit());
   addToMap(new ClassLocalFriends());
   addToMap(new Select());
+  addToMap(new ModifyScreen());
   addToMap(new InsertInternal());
   addToMap(new Pack());
   addToMap(new Unpack());
