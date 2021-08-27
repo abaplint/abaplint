@@ -46,6 +46,7 @@ export class Normal implements IStructure {
                sta(Statements.CallKernel),
                sta(Statements.CallOLE),
                sta(Statements.CallScreen),
+               sta(Statements.ModifyScreen),
                sta(Statements.CallSelectionScreen),
                sta(Statements.CallTransaction),
                sta(Statements.CallTransformation),
