@@ -1964,16 +1964,16 @@
               ],
               "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
             },
-            "many_parenthesis": {
+            "many_parentheses": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/ManyParenthesisConf"
+                  "$ref": "#/definitions/ManyParenthesesConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "Searches for expressions where extra parenthesis can safely be removed\nTags: SingleFile\nhttps://rules.abaplint.org/many_parenthesis"
+              "description": "Searches for expressions where extra parentheses can safely be removed\nTags: SingleFile\nhttps://rules.abaplint.org/many_parentheses"
             },
             "max_one_method_parameter_per_line": {
               "anyOf": [
@@ -3391,7 +3391,7 @@
       },
       "type": "object"
     },
-    "ManyParenthesisConf": {
+    "ManyParenthesesConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

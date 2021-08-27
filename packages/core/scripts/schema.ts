@@ -66,7 +66,7 @@ import {LocalClassNamingConf} from "../src/rules/local_class_naming";
 import {LocalTestclassLocationConf} from "../src/rules/local_testclass_location";
 import {LocalVariableNamesConf} from "../src/rules/local_variable_names";
 import {MainFileContentsConf} from "../src/rules/main_file_contents";
-import {ManyParenthesisConf} from "../src/rules/many_parenthesis";
+import {ManyParenthesesConf} from "../src/rules/many_parentheses";
 import {MaxOneMethodParameterPerLineConf} from "../src/rules/max_one_method_parameter_per_line";
 import {MaxOneStatementConf} from "../src/rules/max_one_statement";
 import {MessageExistsConf} from "../src/rules/message_exists";
@@ -211,7 +211,7 @@ export interface IConfig {
     "local_testclass_location"?: LocalTestclassLocationConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
-    "many_parenthesis"?: ManyParenthesisConf | boolean,
+    "many_parentheses"?: ManyParenthesesConf | boolean,
     "max_one_method_parameter_per_line"?: MaxOneMethodParameterPerLineConf | boolean,
     "max_one_statement"?: MaxOneStatementConf | boolean,
     "message_exists"?: MessageExistsConf | boolean,
