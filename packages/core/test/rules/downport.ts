@@ -343,9 +343,29 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("EMPTY KEY", async () => {
+  it("EMPTY KEY quick fix", async () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.`;
     const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, structured", async () => {
+    const abap = `TYPES:
+  BEGIN OF ty_line,
+    origin TYPE voided,
+    pedime TYPE STANDARD TABLE OF string WITH EMPTY KEY,
+  END OF ty_line.`;
+    const expected = `TYPES:
+  BEGIN OF ty_line,
+    origin TYPE voided,
+    pedime TYPE STANDARD TABLE OF string WITH DEFAULT KEY,
+  END OF ty_line.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, voided", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF voided WITH EMPTY KEY.`;
+    const expected = `DATA tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.`;
     testFix(abap, expected);
   });
 
