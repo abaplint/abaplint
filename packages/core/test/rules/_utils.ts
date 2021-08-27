@@ -5,6 +5,7 @@ import {IRule} from "../../src/rules/_irule";
 import {applyEditSingle} from "../../src/edit_helper";
 import {Issue} from "../../src/issue";
 import {IConfiguration} from "../../src/_config";
+import {IFile} from "../../src";
 
 export function runMulti(files: {filename: string, contents: string}[]): readonly Issue[] {
   const reg = new Registry();
@@ -71,8 +72,12 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
   });
 }
 
-export function testRuleFixSingle(input: string, expected: string, rule: IRule, conf?: IConfiguration) {
-  const reg = new Registry(conf).addFile(new MemoryFile("zfoo.prog.abap", input)).parse();
+export function testRuleFixSingle(input: string, expected: string, rule: IRule, conf?: IConfiguration, extraFiles?: IFile[]) {
+  const reg = new Registry(conf).addFile(new MemoryFile("zfoo.prog.abap", input));
+  for (const f of extraFiles || []) {
+    reg.addFile(f);
+  }
+  reg.parse();
   let issues = rule.initialize(reg).run(reg.getFirstObject()!);
   expect(issues.length).to.equal(1, "single issue expected");
 

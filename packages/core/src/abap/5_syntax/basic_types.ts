@@ -8,7 +8,7 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
-import {Identifier} from "../1_lexer/tokens/identifier";
+import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
 import {TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
@@ -47,7 +47,12 @@ export class BasicTypes {
       }
     }
 
-// todo: DDIC types
+    const lookup = this.scope.getDDIC().lookupNoVoid(name);
+    const id = lookup?.object?.getIdentifier();
+    if (id && lookup?.type) {
+      return new TypedIdentifier(id.getToken(), id.getFilename(), lookup.type);
+    }
+
     return undefined;
   }
 
@@ -199,7 +204,7 @@ export class BasicTypes {
     }
     let name = nameExpr.getFirstToken();
     if (nameExpr.countTokens() > 1) { // workaround for names with dashes
-      name = new Identifier(name.getStart(), nameExpr.concatTokens());
+      name = new TokenIdentifier(name.getStart(), nameExpr.concatTokens());
     }
 
     const found = this.parseType(node);

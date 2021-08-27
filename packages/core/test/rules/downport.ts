@@ -7,6 +7,7 @@ import {testRuleFixSingle} from "./_utils";
 import {IConfiguration} from "../../src/_config";
 import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
+import {IFile} from "../../src/files/_ifile";
 
 function buildConfig(): IConfiguration {
   const conf = Config.getDefault().get();
@@ -15,8 +16,8 @@ function buildConfig(): IConfiguration {
   return conf702;
 }
 
-function testFix(input: string, expected: string) {
-  testRuleFixSingle(input, expected, new Downport(), buildConfig());
+function testFix(input: string, expected: string, extraFiles?: IFile[]) {
+  testRuleFixSingle(input, expected, new Downport(), buildConfig(), extraFiles);
 }
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
@@ -710,5 +711,63 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.`);
     expect(issues.length).to.equal(1);
   });
+
+  it("downport, append #, with ddic table type", async () => {
+    const abap = `FORM bar.
+  DATA tab TYPE ztab.
+  APPEND VALUE #( msg = sy-msgv1 ) TO tab.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA tab TYPE ztab.
+  DATA temp1 TYPE ZROW.
+  temp1-msg = sy-msgv1.
+  APPEND temp1 TO tab.
+ENDFORM.`;
+
+    const zrow = new MemoryFile("zrow.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZROW</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>row</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>MSG</FIELDNAME>
+     <ROLLNAME>MSGV1</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    const ztab = new MemoryFile("ztab.ttyp.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTAB</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZROW</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <DATATYPE>STRU</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>tab</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    testFix(abap, expected, [ztab, zrow]);
+  });
+
 
 });
