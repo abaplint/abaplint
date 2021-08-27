@@ -7,6 +7,7 @@ import {testRuleFixSingle} from "./_utils";
 import {IConfiguration} from "../../src/_config";
 import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
+import {IFile} from "../../src/files/_ifile";
 
 function buildConfig(): IConfiguration {
   const conf = Config.getDefault().get();
@@ -15,8 +16,8 @@ function buildConfig(): IConfiguration {
   return conf702;
 }
 
-function testFix(input: string, expected: string) {
-  testRuleFixSingle(input, expected, new Downport(), buildConfig());
+function testFix(input: string, expected: string, extraFiles?: IFile[]) {
+  testRuleFixSingle(input, expected, new Downport(), buildConfig(), extraFiles);
 }
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
@@ -343,9 +344,29 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("EMPTY KEY", async () => {
+  it("EMPTY KEY quick fix", async () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.`;
     const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, structured", async () => {
+    const abap = `TYPES:
+  BEGIN OF ty_line,
+    origin TYPE voided,
+    pedime TYPE STANDARD TABLE OF string WITH EMPTY KEY,
+  END OF ty_line.`;
+    const expected = `TYPES:
+  BEGIN OF ty_line,
+    origin TYPE voided,
+    pedime TYPE STANDARD TABLE OF string WITH DEFAULT KEY,
+  END OF ty_line.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, voided", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF voided WITH EMPTY KEY.`;
+    const expected = `DATA tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.`;
     testFix(abap, expected);
   });
 
@@ -582,7 +603,7 @@ ENDFORM.`;
 
     const expected = `
     DATA txt_table TYPE STANDARD TABLE OF string.
-    DATA inline_txt_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA inline_txt_table LIKE txt_table.
     inline_txt_table = txt_table.`;
 
     testFix(abap, expected);
@@ -603,7 +624,7 @@ TYPES: BEGIN OF ty_struct,
   txt TYPE string,
 END OF ty_struct.
 DATA struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
-DATA inline_struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
+DATA inline_struct_table LIKE struct_table.
 inline_struct_table = struct_table.`;
 
     testFix(abap, expected);
@@ -689,6 +710,76 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`);
     expect(issues.length).to.equal(1);
+  });
+
+  it("downport, append #, with ddic table type", async () => {
+    const abap = `FORM bar.
+  DATA tab TYPE ztab.
+  APPEND VALUE #( msg = sy-msgv1 ) TO tab.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA tab TYPE ztab.
+  DATA temp1 TYPE ZROW.
+  temp1-msg = sy-msgv1.
+  APPEND temp1 TO tab.
+ENDFORM.`;
+
+    const zrow = new MemoryFile("zrow.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZROW</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>row</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>MSG</FIELDNAME>
+     <ROLLNAME>MSGV1</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    const ztab = new MemoryFile("ztab.ttyp.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTAB</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZROW</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <DATATYPE>STRU</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>tab</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    testFix(abap, expected, [ztab, zrow]);
+  });
+
+  it("Outline, even though its voided", async () => {
+    const abap = `
+  DATA temp1 TYPE voided.
+  DATA(ls_msg) = temp1.`;
+
+    const expected = `
+  DATA temp1 TYPE voided.
+  DATA ls_msg LIKE temp1.
+  ls_msg = temp1.`;
+
+    testFix(abap, expected);
   });
 
 });
