@@ -1973,7 +1973,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Searches for expressions where extra parentheses can safely be removed\nTags: SingleFile\nhttps://rules.abaplint.org/many_parentheses"
+              "description": "Searches for expressions where extra parentheses can safely be removed\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/many_parentheses"
             },
             "max_one_method_parameter_per_line": {
               "anyOf": [

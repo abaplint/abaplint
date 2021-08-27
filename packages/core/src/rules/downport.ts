@@ -19,6 +19,7 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {VoidType} from "../abap/types/basic";
+import {Config} from "../config";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -126,8 +127,13 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (this.highReg !== undefined) {
       return;
     }
+
     // use default configuration, ie. default target version
-    // todo: consider globalConstants, globalMacros, errorNamespace?
+    const highConfig = Config.getDefault().get();
+    const lowConfig = this.lowReg.getConfig().get();
+    highConfig.syntax.errorNamespace = lowConfig.syntax.errorNamespace;
+    highConfig.syntax.globalConstants = lowConfig.syntax.globalConstants;
+    highConfig.syntax.globalMacros = lowConfig.syntax.globalMacros;
     this.highReg = new Registry();
 
     for (const o of this.lowReg.getObjects()) {

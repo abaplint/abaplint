@@ -674,4 +674,21 @@ DATA(sdf) = temp1.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("downport, voided via RETURNING", async () => {
+    const issues = await findIssues(`
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    METHODS read RETURNING VALUE(rs_voided) TYPE voided.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    DATA(sdf) = read( ).
+  ENDMETHOD.
+  METHOD read.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
+
 });
