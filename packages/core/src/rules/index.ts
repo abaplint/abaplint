@@ -64,7 +64,7 @@ export * from "./local_class_naming";
 export * from "./local_testclass_location";
 export * from "./local_variable_names";
 export * from "./main_file_contents";
-export * from "./many_parenthesis";
+export * from "./many_parentheses";
 export * from "./max_one_method_parameter_per_line";
 export * from "./max_one_statement";
 export * from "./message_exists";
