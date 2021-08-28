@@ -20,6 +20,7 @@ import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {VoidType} from "../abap/types/basic";
 import {Config} from "../config";
+import {Token} from "../abap/1_lexer/tokens/_token";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -49,6 +50,7 @@ Current rules:
 * LOOP AT method_call( ) is outlined
 * VALUE # with structure fields
 * VALUE # with internal table lines
+* Table Expressions[ index ] are outlined
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -205,12 +207,62 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    // todo, line_exists() should be replaced before this call
+    found = this.replaceTableExpression(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     // todo, add more rules here
 
     return undefined;
   }
 
 //////////////////////////////////////////
+
+  private replaceTableExpression(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    for (const fieldChain of node.findAllExpressionsRecursive(Expressions.FieldChain)) {
+      const tableExpression = fieldChain.findDirectExpression(Expressions.TableExpression);
+      if (tableExpression === undefined) {
+        continue;
+      }
+      if (tableExpression.getChildren().length > 3) {
+// for now, only support the INDEX scenario
+        continue;
+      }
+
+      let pre = "";
+      let startToken: Token | undefined = undefined;
+      for (const child of fieldChain.getChildren()) {
+        if (startToken === undefined) {
+          startToken = child.getFirstToken();
+        } else if (child === tableExpression) {
+          break;
+        }
+        pre += child.concatTokens();
+      }
+      if (startToken === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      const firstToken = node.getFirstToken();
+      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${pre}.
+${indentation}READ TABLE ${pre} INDEX ${tableExpression.findFirstExpression(Expressions.Source)?.concatTokens()} INTO ${uniqueName}.
+${indentation}IF sy-subrc <> 0.
+${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+${indentation}ENDIF.
+${indentation}`);
+      const fix2 = EditHelper.replaceRange(lowFile, startToken.getStart(), tableExpression.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, node.getFirstToken(), "Outline table expression", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
 
   private outlineDataSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
     // outlines "DATA(ls_msg) = temp1.", note that this does not need to look at types

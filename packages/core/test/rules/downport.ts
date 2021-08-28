@@ -782,4 +782,39 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("Table expression, by index", async () => {
+    const abap = `FORM bar.
+  rv_lognumber = lt_lognumbers[ 1 ]-lognumber.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA temp1 LIKE LINE OF lt_lognumbers.
+  READ TABLE lt_lognumbers INDEX 1 INTO temp1.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  rv_lognumber = temp1-lognumber.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it.skip("line_exists()", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ table_line = 123 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
+  IF sy-subrc = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });
