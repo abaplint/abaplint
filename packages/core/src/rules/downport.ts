@@ -207,6 +207,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    // todo, line_exists() should be replaced before this call
     found = this.replaceTableExpression(high, lowFile, highSyntax);
     if (found) {
       return found;

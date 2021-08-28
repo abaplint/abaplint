@@ -799,4 +799,22 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.skip("line_exists()", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ table_line = 123 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
+  IF sy-subrc = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });
