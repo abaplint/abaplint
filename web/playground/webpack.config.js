@@ -46,7 +46,10 @@ module.exports = ({mode} = {mode: "development"}) => ({
       },
       {
         test: /\.ttf$/,
-        use: ["file-loader"],
+        type: "asset/resource",
+        generator: {
+          filename: "[name][ext]",
+        },
       },
       {
         test: /\.tsx?$/,
