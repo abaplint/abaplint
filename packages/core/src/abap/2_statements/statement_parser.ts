@@ -11,6 +11,7 @@ import {IStatementResult} from "./statement_result";
 import {Token} from "../1_lexer/tokens/_token";
 import {IABAPLexerResult} from "../1_lexer/lexer_result";
 import {ExpandMacros} from "./expand_macros";
+import {Pragma} from "../1_lexer/tokens";
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
@@ -199,16 +200,21 @@ export class StatementParser {
     let statement = input;
 
     const length = input.getChildren().length;
-    const isPunctuation = input.getLastToken() instanceof Tokens.Punctuation;
+    const lastToken = input.getLastToken();
+    const isPunctuation = lastToken instanceof Tokens.Punctuation;
 
     if (length === 1 && isPunctuation) {
       const tokens = statement.getTokens();
       statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
-// if the statement contains more than STATEMENT_MAX_TOKENS tokens, just give up
-    } else if (length > STATEMENT_MAX_TOKENS && statement.get() instanceof Unknown) {
-      statement = input;
-    } else if (statement.get() instanceof Unknown && isPunctuation) {
-      statement = this.match(statement);
+    } else if (statement.get() instanceof Unknown) {
+      if (isPunctuation) {
+        statement = this.match(statement);
+      } else if (length > STATEMENT_MAX_TOKENS) {
+        // if the statement contains more than STATEMENT_MAX_TOKENS tokens, just give up
+        statement = input;
+      } else if (length === 1 && lastToken instanceof Pragma) {
+        statement = new StatementNode(new Empty(), undefined, [lastToken]);
+      }
     }
 
     return statement;
