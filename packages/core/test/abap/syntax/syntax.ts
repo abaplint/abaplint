@@ -5129,6 +5129,22 @@ READ TABLE lt_map WITH KEY blah = iv_tag TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(`ComponentChain, not a structure`);
   });
 
+  it("shift in byte mode should produce syntax error", () => {
+    const abap = `
+    DATA lv_temp TYPE string.
+    SHIFT lv_temp BY 1 PLACES LEFT IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Shift, Target not hex like`);
+  });
+
+  it("shift in byte mode, ok", () => {
+    const abap = `
+    DATA lv_temp TYPE xstring.
+    SHIFT lv_temp BY 1 PLACES LEFT IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
