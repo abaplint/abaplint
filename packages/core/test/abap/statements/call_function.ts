@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src";
 
 const tests = [
   "CALL FUNCTION 'DDIF_TTYP_GET'.",
@@ -276,3 +277,11 @@ const tests = [
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);
+
+const versionsFail = [
+  {abap: `CALL FUNCTION 'Z_ABAPGIT_SERIALIZE_PACKAGE'
+  EXPORTING
+    iv_package = lo_repo->get_package( ).`, ver: Version.v702},
+];
+
+statementVersionFail(versionsFail, "APPEND");

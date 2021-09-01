@@ -16,11 +16,6 @@ export class ReadTable implements StatementSyntax {
 
     const sources = node.findDirectExpressions(Expressions.Source);
 
-    const components = node.findDirectExpression(Expressions.ComponentCompareSimple);
-    if (components !== undefined) {
-      new ComponentCompareSimple().runSyntax(components, scope, filename);
-    }
-
     let firstSource = node.findDirectExpression(Expressions.SimpleSource2);
     if (firstSource === undefined) {
       firstSource = sources[0];
@@ -36,6 +31,11 @@ export class ReadTable implements StatementSyntax {
     let rowType: AbstractType = sourceType;
     if (rowType instanceof TableType) {
       rowType = rowType.getRowType();
+    }
+
+    const components = node.findDirectExpression(Expressions.ComponentCompareSimple);
+    if (components !== undefined) {
+      new ComponentCompareSimple().runSyntax(components, scope, filename, rowType);
     }
 
     const indexSource = node.findExpressionAfterToken("INDEX");

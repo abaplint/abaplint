@@ -9,11 +9,15 @@ export class ComponentChain {
       return context;
     }
 
+    const name = node.getFirstToken().getStr();
+
     if (!(context instanceof StructureType)) {
+      if (name.toUpperCase() === "TABLE_LINE") {
+        return;
+      }
       throw new Error("ComponentChain, not a structure");
     }
 
-    const name = node.getFirstToken().getStr();
     const ret = context.getComponentByName(name);
     if (ret === undefined) {
       throw new Error("Component \"" + name + "\" not found in structure");

@@ -1,8 +1,7 @@
-import {AnyType, CharacterType, CLikeType, DataReference, DateType, GenericObjectReferenceType, IntegerType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, DataReference, DateType, GenericObjectReferenceType, HexType, IntegerType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 
 export class TypeUtils {
-  // public static isHexLike, todo
 
   public static isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
@@ -24,6 +23,26 @@ export class TypeUtils {
         || type instanceof PackedType
         || type instanceof TimeType
         || type instanceof CharacterType) {
+      return true;
+    }
+    return false;
+  }
+
+  public static isHexLike(type: AbstractType | undefined): boolean {
+    if (type === undefined) {
+      return false;
+    } else if (type instanceof StructureType) {
+      for (const c of type.getComponents()) {
+        if (this.isHexLike(c.type) === false) {
+          return false;
+        }
+      }
+      return true;
+    } else if (type instanceof XStringType
+        || type instanceof HexType
+        || type instanceof VoidType
+        || type instanceof AnyType
+        || type instanceof UnknownType) {
       return true;
     }
     return false;
