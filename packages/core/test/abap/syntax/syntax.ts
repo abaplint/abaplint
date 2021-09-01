@@ -5101,6 +5101,14 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("READ TABLE, INDEX must be simple");
   });
 
+  it("READ TABLE, table_line, ok", () => {
+    const abap = `
+  DATA lt_body TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  READ TABLE lt_body WITH KEY table_line = 'foobar' TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("field BLAH is not part of structure", () => {
     const abap = `
 TYPES: BEGIN OF ty_bar,
