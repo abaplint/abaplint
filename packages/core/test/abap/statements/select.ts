@@ -265,6 +265,11 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
 
   `SELECT DISTINCT ( mestyp ) INTO CORRESPONDING FIELDS OF TABLE @lt_edimsg FROM edimsg.`,
   `SELECT ( mestyp ) INTO CORRESPONDING FIELDS OF TABLE @lt_edimsg FROM edimsg.`,
+
+  `SELECT monster_number, name
+    FROM ztmonster_header
+    WHERE eas_days + sanity_percentage > 100
+    INTO TABLE @DATA(old_sane_monster_list).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

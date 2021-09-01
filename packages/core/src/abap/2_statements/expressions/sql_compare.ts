@@ -1,4 +1,4 @@
-import {ver, seq, tok, starPrio, alt, optPrio, altPrio, Expression} from "../combi";
+import {ver, seq, tok, starPrio, alt, optPrio, altPrio, Expression, plusPrio} from "../combi";
 import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from ".";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -28,7 +28,9 @@ export class SQLCompare extends Expression {
 
     const builtin = ver(Version.v751, seq(alt("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
-    const rett = seq(altPrio(builtin, SQLFieldName),
+    const arith = ver(Version.v750, seq(SQLFieldName, plusPrio(seq(altPrio("+", "-"), SQLFieldName))));
+
+    const rett = seq(altPrio(builtin, arith, SQLFieldName),
                      altPrio(seq(SQLCompareOperator, altPrio(sub, source)),
                              inn,
                              like,
