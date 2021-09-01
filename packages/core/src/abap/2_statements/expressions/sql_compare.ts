@@ -28,7 +28,7 @@ export class SQLCompare extends Expression {
 
     const builtin = ver(Version.v751, seq(alt("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
-    const arith = ver(Version.v750, seq(SQLFieldName, plusPrio(seq(altPrio("+", "-"), SQLFieldName))));
+    const arith = ver(Version.v750, seq(SQLFieldName, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName))));
 
     const rett = seq(altPrio(builtin, arith, SQLFieldName),
                      altPrio(seq(SQLCompareOperator, altPrio(sub, source)),
