@@ -272,6 +272,17 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
     INTO TABLE @DATA(old_sane_monster_list).`,
 
   `SELECT SINGLE 1 + 1 FROM ztab INTO @DATA(sdf).`,
+
+  `SELECT 'SICF'              AS  main_object,
+src~icf_name && src~icfparguid          AS main_obj_name,
+src~icf_langu         AS language,
+src~icf_docu          AS description,
+'icfdocu' AS txttab
+FROM icfdocu AS src
+APPENDING CORRESPONDING FIELDS OF TABLE @ta_result
+WHERE icf_docu IN @search_range
+ AND icf_langu     LIKE @language.`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
