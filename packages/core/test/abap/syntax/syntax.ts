@@ -5121,6 +5121,14 @@ READ TABLE lt_map WITH KEY blah = iv_tag TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(`Component "blah" not found in structure`);
   });
 
+  it("field MOO is not part of structure", () => {
+    const abap = `
+  FIELD-SYMBOLS <bar> TYPE ANY TABLE.
+  READ TABLE <bar> WITH KEY moo = 2 TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`ComponentChain, not a structure`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
