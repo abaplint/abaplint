@@ -5101,6 +5101,18 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("READ TABLE, INDEX must be simple");
   });
 
+  it("field BLAH is not part of structure", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+    tag TYPE string,
+  END OF ty_bar.
+DATA lt_map TYPE STANDARD TABLE OF ty_bar.
+DATA iv_tag TYPE string.
+READ TABLE lt_map WITH KEY blah = iv_tag TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Component "blah" not found in structure`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
