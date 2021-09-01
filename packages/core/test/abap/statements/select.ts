@@ -270,6 +270,8 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
     FROM ztmonster_header
     WHERE eas_days + sanity_percentage > 100
     INTO TABLE @DATA(old_sane_monster_list).`,
+
+  `SELECT SINGLE 1 + 1 FROM ztab INTO @DATA(sdf).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

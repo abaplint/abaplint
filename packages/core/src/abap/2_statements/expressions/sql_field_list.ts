@@ -15,14 +15,18 @@ export class SQLFieldList extends Expression {
 
     const as = seq("AS", Field);
 
+    const field = altPrio(SQLAggregation,
+                          SQLCase,
+                          SQLFunction,
+                          SQLPath,
+                          SQLFieldName,
+                          abap,
+                          Constant);
+
+    const arith = ver(Version.v740sp05, plusPrio(seq(altPrio("+", "-", "*", "/"), field)));
+
     return altPrio("*",
                    Dynamic,
-                   plusPrio(seq(altPrio(SQLAggregation,
-                                        SQLCase,
-                                        SQLFunction,
-                                        SQLPath,
-                                        SQLFieldName,
-                                        abap,
-                                        Constant), optPrio(as), comma)));
+                   plusPrio(seq(field, optPrio(arith), optPrio(as), comma)));
   }
 }
