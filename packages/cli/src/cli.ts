@@ -12,6 +12,8 @@ import {ApackDependencyProvider} from "./apack_dependency_provider";
 import {applyFixes} from "./fixes";
 import {Rename} from "./rename";
 
+const GENERIC_ERROR = "generic_error";
+
 class Progress implements IProgress {
   private bar: ProgressBar;
 
@@ -197,7 +199,7 @@ async function run() {
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
       const message = error.toString() + " " + error.stack?.split("\n")[1]?.trim();
-      const issue = Issue.atPosition(file, new Position(1, 1), message, "error");
+      const issue = Issue.atPosition(file, new Position(1, 1), message, GENERIC_ERROR);
       issues = [issue];
     }
 
@@ -225,7 +227,11 @@ run().then(({output, issues}) => {
   if (output.length > 0) {
     process.stdout.write(output, () => {
       if (issues.length > 0) {
-        process.exit(1);
+        if (issues[0].getKey() === GENERIC_ERROR) {
+          process.exit(2); // eg. "git" does not exist in system
+        } else {
+          process.exit(1);
+        }
       } else {
         process.exit();
       }
@@ -235,5 +241,5 @@ run().then(({output, issues}) => {
   }
 }).catch((err) => {
   console.log(err);
-  process.exit(1);
+  process.exit(2);
 });

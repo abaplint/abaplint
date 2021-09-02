@@ -2217,6 +2217,17 @@
               ],
               "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax, Whitespace, SingleFile\nhttps://rules.abaplint.org/parser_missing_space"
             },
+            "pragma_placement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PragmaPlacementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Place pragmas at end of statements\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_placement"
+            },
             "prefer_inline": {
               "anyOf": [
                 {
@@ -4116,6 +4127,23 @@
         "forbidden"
       ],
       "type": "string"
+    },
+    "PragmaPlacementConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
     },
     "PreferInlineConf": {
       "additionalProperties": false,
