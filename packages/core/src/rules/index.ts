@@ -87,6 +87,7 @@ export * from "./omit_receiving";
 export * from "./parser_702_chaining";
 export * from "./parser_error";
 export * from "./parser_missing_space";
+export * from "./pragma_placement";
 export * from "./prefer_inline";
 export * from "./prefer_is_not";
 export * from "./prefer_raise_exception_new";
