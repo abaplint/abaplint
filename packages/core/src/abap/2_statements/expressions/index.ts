@@ -70,6 +70,7 @@ export * from "./form_raising";
 export * from "./form_tables";
 export * from "./form_using";
 export * from "./fstarget";
+export * from "./function_exporting";
 export * from "./function_name";
 export * from "./function_parameters";
 export * from "./include_name";
