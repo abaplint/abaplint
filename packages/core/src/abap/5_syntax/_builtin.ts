@@ -220,7 +220,7 @@ export class BuiltIn {
     const ret: TypedIdentifier[] = this.buildSY();
 
     const id = new TokenIdentifier(new Position(1, 1), "abap_bool");
-    ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1)));
+    ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1, "ABAP_BOOL")));
 
     return ret;
   }
