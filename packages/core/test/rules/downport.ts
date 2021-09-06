@@ -17,7 +17,7 @@ function buildConfig(): IConfiguration {
 }
 
 function testFix(input: string, expected: string, extraFiles?: IFile[]) {
-  testRuleFixSingle(input, expected, new Downport(), buildConfig(), extraFiles);
+  testRuleFixSingle(input, expected, new Downport(), buildConfig(), extraFiles, false);
 }
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
@@ -827,6 +827,26 @@ ENDFORM.`;
         END OF temp1.
   DATA lt_t001w TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
   SELECT werks, bwkey FROM t001w INTO TABLE @lt_t001w.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, basic remove , and @", async () => {
+    const abap = `FORM bar.
+  DATA: BEGIN OF ls_t001w,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF ls_t001w.
+  SELECT SINGLE werks, bwkey FROM t001w INTO @ls_t001w WHERE werks = '123'.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA: BEGIN OF ls_t001w,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF ls_t001w.
+  SELECT SINGLE werks bwkey FROM t001w INTO ls_t001w WHERE werks = '123'.
 ENDFORM.`;
 
     testFix(abap, expected);

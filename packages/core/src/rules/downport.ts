@@ -21,6 +21,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
+import {WAt} from "../abap/1_lexer/tokens";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -52,6 +53,7 @@ Current rules:
 * VALUE # with internal table lines
 * Table Expressions[ index ] are outlined
 * SELECT INTO @DATA definitions are outlined
+* SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -68,6 +70,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   public initialize(reg: IRegistry) {
     this.lowReg = reg;
+    if (this.lowReg.getConfig().getVersion() === Version.v702) {
+      this.initHighReg();
+    }
     return this;
   }
 
@@ -81,7 +86,6 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return ret;
     }
 
-    this.initHighReg();
     const highObj = this.highReg.getObject(lowObj.getType(), lowObj.getName());
     if (highObj === undefined || !(highObj instanceof ABAPObject)) {
       return ret;
@@ -127,10 +131,6 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   /** clones the orginal repository into highReg, and parses it with higher language version */
   private initHighReg() {
-    if (this.highReg !== undefined) {
-      return;
-    }
-
     // use default configuration, ie. default target version
     const highConfig = Config.getDefault().get();
     const lowConfig = this.lowReg.getConfig().get();
@@ -163,7 +163,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.downportSelect(low, high, lowFile, highSyntax);
+    found = this.downportSelectInline(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.downportSQLExtras(low, high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -226,7 +231,50 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
 //////////////////////////////////////////
 
-  private downportSelect(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+  private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+    // todo: update + modify + insert + delete + select loop
+    if (!(high.get() instanceof Statements.Select)) {
+      return undefined;
+    }
+
+    let fix: IEdit | undefined = undefined;
+    const addFix = (token: Token) => {
+      const add = EditHelper.deleteToken(lowFile, token);
+      if (fix === undefined) {
+        fix = add;
+      } else {
+        fix = EditHelper.merge(fix, add);
+      }
+    };
+
+    const candidates = [high.findAllExpressionsRecursive(Expressions.SQLTarget),
+      high.findAllExpressionsRecursive(Expressions.SQLSource),
+      high.findAllExpressionsRecursive(Expressions.SQLSourceSimple)].flat();
+    for (const c of candidates) {
+      if (c.getFirstToken() instanceof WAt) {
+        addFix(c.getFirstToken());
+      }
+    }
+
+    for (const fieldList of high.findAllExpressionsRecursive(Expressions.SQLFieldList)) {
+      for (const token of fieldList.getDirectTokens()) {
+        if (token.getStr() === ",") {
+          addFix(token);
+        }
+      }
+    }
+
+    if (fix === undefined) {
+      return undefined;
+    } else {
+      return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove \" and ,", this.getMetadata().key, this.conf.severity, fix);
+    }
+  }
+
+  private downportSelectInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
     if (!(low.get() instanceof Unknown)
         || !(high.get() instanceof Statements.Select)) {
