@@ -51,6 +51,7 @@ Current rules:
 * VALUE # with structure fields
 * VALUE # with internal table lines
 * Table Expressions[ index ] are outlined
+* SELECT INTO @DATA definitions are outlined
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -233,7 +234,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
 // as first step outline the @DATA, note that void types are okay, as long the field names are specified
-    const found = this.downportSelectInline(low, high, lowFile, highSyntax);
+    let found = this.downportSelectSingleInline(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+    found = this.downportSelectTableInline(low, high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -241,7 +246,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     return undefined;
   }
 
-  private downportSelectInline(_low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private downportSelectSingleInline(_low: StatementNode, high: StatementNode,
+                                     lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
     const targets = high.findFirstExpression(Expressions.SQLIntoStructure)?.findDirectExpressions(Expressions.SQLTarget) || [];
     if (targets.length !== 1) {
       return undefined;
@@ -274,6 +280,49 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
     const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA: BEGIN OF ${name},
 ${fieldDefinitions}${indentation}      END OF ${name}.
+${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private downportSelectTableInline(_low: StatementNode, high: StatementNode,
+                                    lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    const targets = high.findFirstExpression(Expressions.SQLIntoTable)?.findDirectExpressions(Expressions.SQLTarget) || [];
+    if (targets.length !== 1) {
+      return undefined;
+    }
+    const inlineData = targets[0].findFirstExpression(Expressions.InlineData);
+    if (inlineData === undefined) {
+      return undefined;
+    }
+
+    const sqlFrom = high.findAllExpressions(Expressions.SQLFromSource);
+    if (sqlFrom.length !== 1) {
+      return undefined;
+    }
+    const tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
+    if (tableName === undefined) {
+      return undefined;
+    }
+
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
+    if (fieldList === undefined) {
+      return undefined;
+    }
+    let fieldDefinitions = "";
+    for (const f of fieldList.findDirectExpressions(Expressions.SQLFieldName)) {
+      const fieldName = f.concatTokens();
+      fieldDefinitions += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `TYPES: BEGIN OF ${uniqueName},
+${fieldDefinitions}${indentation}      END OF ${uniqueName}.
+${indentation}DATA ${name} TYPE STANDARD TABLE OF ${uniqueName} WITH DEFAULT KEY.
 ${indentation}`);
     const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
     const fix = EditHelper.merge(fix2, fix1);
