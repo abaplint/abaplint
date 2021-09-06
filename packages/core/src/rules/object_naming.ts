@@ -8,9 +8,9 @@ import {NameValidator} from "../utils/name_validator";
 
 export class ObjectNamingConf extends NamingRuleConfig {
   /** The pattern for global class names */
-  public clas: string = "^ZC(L|X)\\_";
+  public clas: string = "^ZC(L|X)";
   /** The pattern for global interface names */
-  public intf: string = "^ZIF\\_";
+  public intf: string = "^ZIF";
   /** The pattern for program (report) names */
   public prog: string = "^Z";
   /** The pattern for function group names */
