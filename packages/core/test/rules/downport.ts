@@ -799,6 +799,22 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("SELECT SINGLE, outline @DATA, basic", async () => {
+    const abap = `FORM bar.
+  SELECT SINGLE werks, bwkey FROM t001w INTO @DATA(ls_t001w) WHERE werks = '123'.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA: BEGIN OF ls_t001w,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF ls_t001w.
+  SELECT SINGLE werks, bwkey FROM t001w INTO @ls_t001w WHERE werks = '123'.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
   it.skip("line_exists()", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

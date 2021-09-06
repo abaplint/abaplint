@@ -162,6 +162,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.downportSelect(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineLoop(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -219,6 +224,62 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   }
 
 //////////////////////////////////////////
+
+  private downportSelect(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    if (!(low.get() instanceof Unknown)
+        || !(high.get() instanceof Statements.Select)) {
+      return undefined;
+    }
+
+// as first step outline the @DATA, note that void types are okay, as long the field names are specified
+    const found = this.downportSelectInline(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    return undefined;
+  }
+
+  private downportSelectInline(_low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    const targets = high.findFirstExpression(Expressions.SQLIntoStructure)?.findDirectExpressions(Expressions.SQLTarget) || [];
+    if (targets.length !== 1) {
+      return undefined;
+    }
+    const inlineData = targets[0].findFirstExpression(Expressions.InlineData);
+    if (inlineData === undefined) {
+      return undefined;
+    }
+
+    const sqlFrom = high.findAllExpressions(Expressions.SQLFromSource);
+    if (sqlFrom.length !== 1) {
+      return undefined;
+    }
+    const tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
+    if (tableName === undefined) {
+      return undefined;
+    }
+
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
+    if (fieldList === undefined) {
+      return undefined;
+    }
+    let fieldDefinitions = "";
+    for (const f of fieldList.findDirectExpressions(Expressions.SQLFieldName)) {
+      const fieldName = f.concatTokens();
+      fieldDefinitions += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
+    }
+
+    const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA: BEGIN OF ${name},
+${fieldDefinitions}${indentation}      END OF ${name}.
+${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
+  }
 
   private replaceTableExpression(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
