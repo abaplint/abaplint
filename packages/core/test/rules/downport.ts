@@ -453,7 +453,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("CONV", async () => {
+  it("CONV xstring", async () => {
     const abap = `
     DATA len TYPE i.
     len = xstrlen( CONV xstring( |AA| ) ).`;
@@ -463,6 +463,24 @@ ENDFORM.`;
     DATA temp1 TYPE xstring.
     temp1 = |AA|.
     len = xstrlen( temp1 ).`;
+
+    testFix(abap, expected);
+  });
+
+  it("CONV d", async () => {
+    const abap = `
+    DATA char8 TYPE c LENGTH 8.
+    DATA bar TYPE d.
+    char8 = '20210101'.
+    bar = CONV d( char8 ).`;
+
+    const expected = `
+    DATA char8 TYPE c LENGTH 8.
+    DATA bar TYPE d.
+    char8 = '20210101'.
+    DATA temp1 TYPE d.
+    temp1 = char8.
+    bar = temp1.`;
 
     testFix(abap, expected);
   });
