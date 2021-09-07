@@ -852,6 +852,19 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("SELECT, single field into @DATA", async () => {
+    const abap = `FORM bar.
+  SELECT SINGLE field FROM tab INTO @DATA(bar).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA bar TYPE tab-field.
+  SELECT SINGLE field FROM tab INTO @bar.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
   it.skip("line_exists()", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

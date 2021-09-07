@@ -319,15 +319,21 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (fieldList === undefined) {
       return undefined;
     }
-    let fieldDefinitions = "";
-    for (const f of fieldList.findDirectExpressions(Expressions.SQLFieldName)) {
-      const fieldName = f.concatTokens();
-      fieldDefinitions += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
+    let fieldDefinition = "";
+    const fields = fieldList.findDirectExpressions(Expressions.SQLFieldName);
+    const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
+    if (fields.length === 1) {
+      fieldDefinition = `DATA ${name} TYPE ${tableName}-${fields[0].concatTokens()}.`;
+    } else {
+      for (const f of fields) {
+        const fieldName = f.concatTokens();
+        fieldDefinition += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
+      }
+      fieldDefinition = `DATA: BEGIN OF ${name},
+${fieldDefinition}${indentation}      END OF ${name}.`;
     }
 
-    const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
-    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA: BEGIN OF ${name},
-${fieldDefinitions}${indentation}      END OF ${name}.
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `${fieldDefinition}
 ${indentation}`);
     const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
     const fix = EditHelper.merge(fix2, fix1);
