@@ -72,7 +72,8 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
   });
 }
 
-export function testRuleFixSingle(input: string, expected: string, rule: IRule, conf?: IConfiguration, extraFiles?: IFile[]) {
+export function testRuleFixSingle(
+  input: string, expected: string, rule: IRule, conf?: IConfiguration, extraFiles?: IFile[], noIssuesAfter = true) {
   const reg = new Registry(conf).addFile(new MemoryFile("zfoo.prog.abap", input));
   for (const f of extraFiles || []) {
     reg.addFile(f);
@@ -85,12 +86,14 @@ export function testRuleFixSingle(input: string, expected: string, rule: IRule, 
   expect(fix).to.not.equal(undefined, "Fix should exist");
   applyEditSingle(reg, fix!);
 
-  // console.dir(reg.getFirstObject()?.getFiles()[0].getRaw());
-
   reg.parse();
+//  console.dir(reg.getFirstObject()?.getFiles()[0].getRaw());
+
   issues = rule.initialize(reg).run(reg.getFirstObject()!);
-  // console.dir(issues);
-  expect(issues.length).to.equal(0, "after fix, no issue expected");
+//  console.dir(issues);
+  if (noIssuesAfter === true) {
+    expect(issues.length).to.equal(0, "after fix, no issue expected");
+  }
   const output = reg.getFirstObject()!.getFiles()[0];
   expect(output.getRaw()).to.equal(expected);
 }
