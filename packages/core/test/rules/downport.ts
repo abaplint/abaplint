@@ -67,7 +67,7 @@ ENDFORM.`;
 
     const expected = `FROM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
-  FIELD-SYMBOL <lv_row> LIKE LINE OF lt_rows.
+  FIELD-SYMBOLS <lv_row> LIKE LINE OF lt_rows.
   LOOP AT lt_rows ASSIGNING <lv_row>.
   ENDLOOP.
 ENDFORM.`;
@@ -446,7 +446,7 @@ ENDFORM.`;
 
     const expected = `
   DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-  FIELD-SYMBOL <lv_row> LIKE LINE OF lt_rows.
+  FIELD-SYMBOLS <lv_row> LIKE LINE OF lt_rows.
   LOOP AT lt_rows ASSIGNING <lv_row>.
   ENDLOOP.`;
 
