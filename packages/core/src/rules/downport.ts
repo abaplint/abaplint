@@ -173,7 +173,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.outlineLoop(high, lowFile, highSyntax);
+    found = this.outlineLoopInput(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineLoopTarget(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -480,7 +485,7 @@ ${indentation}`);
     return;
   }
 
-  private outlineLoop(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+  private outlineLoopInput(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
     if (!(node.get() instanceof Statements.Loop)) {
       return undefined;
@@ -503,6 +508,46 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP input", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private outlineLoopTarget(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+// also allows outlining of voided types
+    if (!(node.get() instanceof Statements.Loop)) {
+      return undefined;
+    }
+
+    const sourceName = node.findDirectExpression(Expressions.SimpleSource2)?.concatTokens();
+    if (sourceName === undefined) {
+      return undefined;
+    }
+
+    const concat = node.concatTokens();
+    if (concat.includes(" REFERENCE INTO ")) {
+      return undefined;
+    }
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+
+    const dataTarget = node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    if (dataTarget) {
+      const targetName = dataTarget.findDirectExpression(Expressions.TargetField)?.concatTokens() || "DOWNPORT_ERROR";
+      const code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+      const fix2 = EditHelper.replaceRange(lowFile, dataTarget.getFirstToken().getStart(), dataTarget.getLastToken().getEnd(), targetName);
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP data target", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    const fsTarget = node.findDirectExpression(Expressions.FSTarget)?.findDirectExpression(Expressions.InlineFS);
+    if (fsTarget) {
+      const targetName = fsTarget.findDirectExpression(Expressions.TargetFieldSymbol)?.concatTokens() || "DOWNPORT_ERROR";
+      const code = `FIELD-SYMBOL ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+      const fix2 = EditHelper.replaceRange(lowFile, fsTarget.getFirstToken().getStart(), fsTarget.getLastToken().getEnd(), targetName);
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP fs target", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
   }
 
   private outlineValue(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

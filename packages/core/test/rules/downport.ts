@@ -39,11 +39,13 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(0);
   });
 
+// todo, this example can actually be implemented?
   it("try downport voided value", async () => {
     const issues = await findIssues("DATA(bar) = VALUE asdf( ).");
     expect(issues.length).to.equal(1);
   });
 
+// todo, this example can actually be implemented?
   it("try downport unknown type", async () => {
     const issues = await findIssues("DATA(bar) = VALUE zfoobar( ).");
     expect(issues.length).to.equal(1);
@@ -56,13 +58,38 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it("try downporting voided LOOP", async () => {
-    const abap = `
+  it("downport voided LOOP fs", async () => {
+    const abap = `FROM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   LOOP AT lt_rows ASSIGNING FIELD-SYMBOL(<lv_row>).
-  ENDLOOP.`;
-    const issues = await findIssues(abap);
-    expect(issues.length).to.equal(1);
+  ENDLOOP.
+ENDFORM.`;
+
+    const expected = `FROM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  FIELD-SYMBOL <lv_row> LIKE LINE OF lt_rows.
+  LOOP AT lt_rows ASSIGNING <lv_row>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("downport voided LOOP data", async () => {
+    const abap = `FROM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  LOOP AT lt_rows INTO DATA(moo).
+  ENDLOOP.
+ENDFORM.`;
+
+    const expected = `FROM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  DATA moo LIKE LINE OF lt_rows.
+  LOOP AT lt_rows INTO moo.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
   });
 
   it("Use CREATE OBJECT instead of NEW", async () => {
@@ -419,7 +446,7 @@ ENDFORM.`;
 
     const expected = `
   DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-  FIELD-SYMBOLS <lv_row> TYPE string.
+  FIELD-SYMBOL <lv_row> LIKE LINE OF lt_rows.
   LOOP AT lt_rows ASSIGNING <lv_row>.
   ENDLOOP.`;
 
