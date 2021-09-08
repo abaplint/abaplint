@@ -70,6 +70,7 @@
     "dependencies": {
         "fast-xml-parser": "^3.19.0",
         "json5": "^2.2.0",
+        "vscode-languageserver-protocol": "^3.16.0",
         "vscode-languageserver-types": "^3.16.0"
     }
 }
