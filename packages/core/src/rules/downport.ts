@@ -705,7 +705,6 @@ ${indentation}`);
   }
 
   private outlineConv(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
-
     for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
       if (i.getFirstToken().getStr().toUpperCase() !== "CONV") {
         continue;
@@ -854,6 +853,9 @@ ${indentation}`);
           }
         }
 
+        if (cdef && cdef.getMethodDefinitions === undefined) {
+          return undefined; // something wrong
+        }
         const importing = cdef?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
         if (importing) {
           extra += " EXPORTING " + importing + " = " + source;

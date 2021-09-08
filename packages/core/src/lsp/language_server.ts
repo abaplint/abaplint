@@ -1,4 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
+import * as SemanticProtocol from "vscode-languageserver-protocol/lib/common/protocol.semanticTokens";
 import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {Diagnostics} from "./diagnostics";
@@ -7,7 +8,7 @@ import {PrettyPrinter} from "../pretty_printer/pretty_printer";
 import {Definition} from "./definition";
 import {Rename} from "./rename";
 import {Highlight} from "./highlight";
-import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICodeActionParams} from "./_interfaces";
+import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICodeActionParams, ITextDocumentRange} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 import {CodeActions} from "./code_actions";
 import {IRegistry} from "../_iregistry";
@@ -102,6 +103,23 @@ export class LanguageServer {
   public references(params: ITextDocumentPositionParams): LServer.Location[] {
     return new References(this.reg).references(params);
   }
+
+  // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensLegend
+  public semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
+    // todo
+    // https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#semantic-token-scope-map
+    return {
+      tokenTypes: [],
+      tokenModifiers: [],
+    };
+  }
+
+  // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensRangeParams
+  public semanticTokensRange(_range: ITextDocumentRange): SemanticProtocol.SemanticTokens {
+    // todo
+    return {data: []};
+  }
+
 
 ////////////////////////////////////////
 //  ______      _

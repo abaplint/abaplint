@@ -20,3 +20,9 @@ export interface ICodeActionParams {
 export interface IDocumentSymbolParams {
   textDocument: LServer.TextDocumentIdentifier;
 }
+
+export interface ITextDocumentRange {
+  textDocument: LServer.TextDocumentIdentifier;
+  start: LServer.Position;
+  end: LServer.Position;
+}
