@@ -6,12 +6,17 @@ import {IObject, IRegistry, Objects, Visibility} from "..";
 import {InfoConstant} from "../abap/4_file_information/_abap_file_information";
 
 export interface DomainClassMapping {
+  /** Domain name. The domain must have fixed values. */
   domain: string,
+  /** Class name */
   class: string,
+  /** Ensure the type of the constant is an exact match of the domain name. */
   useExactType: boolean
 }
 
+/** Checks that constants are in sync with domain fixed values */
 export class CosntantClassesConf extends BasicRuleConfig {
+  /** Specify a list of domain-class pairs which will be validated */
   public mapping: DomainClassMapping[];
 }
 
