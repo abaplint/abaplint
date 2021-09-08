@@ -107,6 +107,7 @@ export class LanguageServer {
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensLegend
   public semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
     // todo
+    // https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#semantic-token-scope-map
     return {
       tokenTypes: [],
       tokenModifiers: [],
