@@ -5,6 +5,7 @@ import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 
 export class Domain extends AbstractObject {
+
   private parsedXML: {
     description?: string,
     datatype?: string,
@@ -66,6 +67,10 @@ export class Domain extends AbstractObject {
     };
     const end = Date.now();
     return {updated: true, runtime: end - start};
+  }
+
+  public getFixedValues(): string[] {
+    return ["not", "yet", "implemented"];
   }
 
 }

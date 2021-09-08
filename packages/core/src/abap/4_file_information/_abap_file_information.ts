@@ -51,9 +51,18 @@ export interface InfoInterfaceDefinition {
   interfaces: readonly InfoImplementing[];
   methods: readonly InfoMethodDefinition[];
   aliases: readonly InfoAlias[],
+  constants: readonly InfoConstant[],
 // todo, constants
 // todo, types
   attributes: readonly InfoAttribute[];
+}
+
+export interface InfoConstant {
+  identifier: Identifier;
+  name: string,
+  typeName: string,
+  visibility: Visibility,
+  value: string
 }
 
 export interface InfoAlias {
