@@ -853,6 +853,9 @@ ${indentation}`);
           }
         }
 
+        if (cdef && cdef.getMethodDefinitions === undefined) {
+          return undefined; // something wrong
+        }
         const importing = cdef?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
         if (importing) {
           extra += " EXPORTING " + importing + " = " + source;
