@@ -16,7 +16,7 @@ jobs:
         fetch-depth: 0
     - uses: actions/setup-node@v2
       with:
-        node-version: '12.x'
+        node-version: '14.x'
 
     - name: compile
       run: |
@@ -30,7 +30,7 @@ jobs:
 
     - name: run
       env:
-        REPOS: '["abapGit/abapGit", "abapGit/abapgit-review-example", "larshp/abapNTLM", "abapinho/abapTimeMachine", "larshp/abapOpenChecks", "SAP/abap-file-formats", "abapGit/CI", "abapGit/ci_tools", "abap-observability-tools/abap-metrics-provider", "abapGit/background_modes", "abapGit/ADT_Backend", "sbcgua/text2tab", "open-abap/open-abap", "FreHu/abap-turtle-graphics", "sbcgua/mockup_loader", "SAP/code-pal-for-abap", "abaplint/deps", "larshp/abapGitServer", "larshp/abapPGP", "Sumu-Ning/AES", "abaplint/abaplint-sci-client", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx", "sbcgua/abap-string-map", "sbcgua/ajson", "larshp/abap-wasm"]'
+        REPOS: '["abapGit/abapGit", "abapGit/abapgit-review-example", "ABAP-Logger/ABAP-Logger", "larshp/abapNTLM", "abapinho/abapTimeMachine", "larshp/abapOpenChecks", "SAP/abap-file-formats", "abapGit/CI", "abapGit/ci_tools", "abap-observability-tools/abap-metrics-provider", "abapGit/background_modes", "abapGit/ADT_Backend", "sbcgua/text2tab", "open-abap/open-abap", "FreHu/abap-turtle-graphics", "sbcgua/mockup_loader", "SAP/code-pal-for-abap", "abaplint/deps", "larshp/abapGitServer", "larshp/abapPGP", "Sumu-Ning/AES", "abaplint/abaplint-sci-client", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx", "sbcgua/abap-string-map", "sbcgua/ajson", "larshp/abap-wasm"]'
       run: |
         cd .. && cd ..
         ls -salh
@@ -43,6 +43,7 @@ jobs:
     - run: echo ${{ steps.findPr.outputs.pr }}
 
     - name: Find Comment
+      if: steps.findPr.outputs.pr != ''
       uses: peter-evans/find-comment@v1
       id: fc
       with:
@@ -52,6 +53,7 @@ jobs:
     - run: echo ${{ steps.fc.outputs.comment-id }}
 
     - name: Build body from file
+      if: steps.findPr.outputs.pr != ''
       id: get-comment-body
       run: |
         cd .. && cd ..
@@ -61,7 +63,9 @@ jobs:
         body="${body//$'\n'/'%0A'}"
         body="${body//$'\r'/'%0D'}"
         echo ::set-output name=body::$body
+
     - name: Create comment
+      if: steps.findPr.outputs.pr != ''
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
       with:

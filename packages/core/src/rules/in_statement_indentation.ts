@@ -12,6 +12,8 @@ import {Position} from "../position";
 import {ABAPFile} from "../abap/abap_file";
 
 export class InStatementIndentationConf extends BasicRuleConfig {
+  /** Additional indent for first statement of blocks */
+  public blockStatements: number = 2;
   /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
 }
@@ -24,15 +26,20 @@ export class InStatementIndentation extends ABAPRule {
     return {
       key: "in_statement_indentation",
       title: "In-statement indentation",
-      // eslint-disable-next-line max-len
-      shortDescription: `Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.`,
+      shortDescription: "Checks alignment within statements which span multiple lines.",
+      extendedInformation: `Lines following the first line should be indented once (2 spaces).
+      
+For block declaration statements, lines after the first should be indented an additional time (default: +2 spaces)
+to distinguish them better from code within the block.`,
       badExample: `IF 1 = 1
   AND 2 = 2.
-  WRITE 'hello'.
+  WRITE 'hello' &&
+  'world'.
 ENDIF.`,
       goodExample: `IF 1 = 1
     AND 2 = 2.
-  WRITE 'hello'.
+  WRITE 'hello' &&
+    'world'.
 ENDIF.`,
       tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
@@ -84,6 +91,7 @@ ENDIF.`,
           || type instanceof Statements.Do
           || type instanceof Statements.At
           || type instanceof Statements.Catch
+          || type instanceof Statements.Case
           || type instanceof Statements.When
           || type instanceof Statements.Cleanup
           || type instanceof Statements.Loop
@@ -91,7 +99,7 @@ ENDIF.`,
           || type instanceof Statements.Else
           || type instanceof Statements.ElseIf
           || type instanceof Statements.MethodImplementation) {
-        expected = expected + 2;
+        expected = expected + this.conf.blockStatements;
       }
       for (const t of tokens) {
         if (t.getRow() === beginLine) {

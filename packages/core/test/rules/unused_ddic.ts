@@ -192,4 +192,201 @@ describe("Rule: unused_ddic", () => {
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("DTEL used from local method definition", async () => {
+    const zunused = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZUSEDPROG</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const prog = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      RETURNING VALUE(ref) TYPE zusedprog.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const files = [new MemoryFile(`zusedprog.dtel.xml`, zunused), new MemoryFile(`zprog.prog.abap`, prog)];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("DTEL used from global method definition", async () => {
+    const zunused = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZUSEDPROG</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const prog = `CLASS zcl_bar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    METHODS bar
+      RETURNING VALUE(ref) TYPE zusedprog.
+ENDCLASS.
+
+CLASS zcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const files = [new MemoryFile(`zusedprog.dtel.xml`, zunused), new MemoryFile(`zcl_bar.clas.abap`, prog)];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TABL referenced via field", async () => {
+    const dtel = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZUSED</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const tabl = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTABL</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>structure</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD</FIELDNAME>
+     <ROLLNAME>ZUSED</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const abap = `DATA bar TYPE ztabl-field.`;
+
+    const files = [
+      new MemoryFile(`ztabl.tabl.xml`, tabl),
+      new MemoryFile(`zprogabc.prog.abap`, abap),
+      new MemoryFile(`zused.dtel.xml`, dtel),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TABL referenced via EXPORT", async () => {
+    const tabl = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTABL</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <CLIDEP>X</CLIDEP>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZTABL</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>MANDT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>MANDT</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>RELID</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>ID</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000060</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000030</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const abap = `FIELD-SYMBOLS <bar> TYPE any.
+EXPORT foo = <bar>
+  TO DATABASE ztabl(aa)
+  ID 'HELLO'.`;
+
+    const files = [
+      new MemoryFile(`ztabl.tabl.xml`, tabl),
+      new MemoryFile(`zprogabc.prog.abap`, abap),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

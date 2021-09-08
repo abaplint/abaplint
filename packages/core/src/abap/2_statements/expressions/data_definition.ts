@@ -4,18 +4,13 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class DataDefinition extends Expression {
   public getRunnable(): IStatementRunnable {
-
-    const initial = seq("INITIAL SIZE", Expressions.Integer);
-
     const simple = opt(per("READ-ONLY",
                            Expressions.Type,
                            Expressions.Length,
                            Expressions.Decimals,
                            Expressions.Value));
 
-    const table = seq(Expressions.TypeTable,
-                      opt("READ-ONLY"),
-                      opt(initial));
+    const table = seq(Expressions.TypeTable, opt("READ-ONLY"));
 
     return seq(Expressions.DefinitionName,
                opt(Expressions.ConstantFieldLength),

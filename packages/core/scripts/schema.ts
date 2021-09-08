@@ -25,6 +25,7 @@ import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
 import {CommentedCodeConf} from "../src/rules/commented_code";
 import {ConstructorVisibilityPublicConf} from "../src/rules/constructor_visibility_public";
 import {ContainsTabConf} from "../src/rules/contains_tab";
+import {CyclicOOConf} from "../src/rules/cyclic_oo";
 import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
 import {DangerousStatementConf} from "../src/rules/dangerous_statement";
 import {DbOperationInLoopConf} from "../src/rules/db_operation_in_loop";
@@ -65,7 +66,7 @@ import {LocalClassNamingConf} from "../src/rules/local_class_naming";
 import {LocalTestclassLocationConf} from "../src/rules/local_testclass_location";
 import {LocalVariableNamesConf} from "../src/rules/local_variable_names";
 import {MainFileContentsConf} from "../src/rules/main_file_contents";
-import {ManyParenthesisConf} from "../src/rules/many_parenthesis";
+import {ManyParenthesesConf} from "../src/rules/many_parentheses";
 import {MaxOneMethodParameterPerLineConf} from "../src/rules/max_one_method_parameter_per_line";
 import {MaxOneStatementConf} from "../src/rules/max_one_statement";
 import {MessageExistsConf} from "../src/rules/message_exists";
@@ -88,6 +89,7 @@ import {OmitReceivingConf} from "../src/rules/omit_receiving";
 import {Parser702ChainingConf} from "../src/rules/parser_702_chaining";
 import {ParserErrorConf} from "../src/rules/parser_error";
 import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
+import {PragmaPlacementConf} from "../src/rules/pragma_placement";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
@@ -169,6 +171,7 @@ export interface IConfig {
     "commented_code"?: CommentedCodeConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
+    "cyclic_oo"?: CyclicOOConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
     "db_operation_in_loop"?: DbOperationInLoopConf | boolean,
@@ -209,7 +212,7 @@ export interface IConfig {
     "local_testclass_location"?: LocalTestclassLocationConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
-    "many_parenthesis"?: ManyParenthesisConf | boolean,
+    "many_parentheses"?: ManyParenthesesConf | boolean,
     "max_one_method_parameter_per_line"?: MaxOneMethodParameterPerLineConf | boolean,
     "max_one_statement"?: MaxOneStatementConf | boolean,
     "message_exists"?: MessageExistsConf | boolean,
@@ -232,6 +235,7 @@ export interface IConfig {
     "parser_702_chaining"?: Parser702ChainingConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
+    "pragma_placement"?: PragmaPlacementConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,

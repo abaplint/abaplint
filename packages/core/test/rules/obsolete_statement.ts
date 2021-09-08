@@ -58,6 +58,18 @@ END OF li_order.`, cnt: 1, fix: false},
   {abap: "EXIT.", cnt: 0},
   {abap: "EXIT FROM SQL.", cnt: 1, fix: false},
   {abap: "EXIT FROM STEP-LOOP.", cnt: 0},
+
+  {abap: "SORT foo BY <fs>.", cnt: 1, fix: false},
+  {abap: "SORT foo BY (bar).", cnt: 0, fix: false},
+
+  {abap: `call transformation (lv_name)
+    objects (lt_obj)
+    source xml lv_xml
+    result xml rv_res.`, cnt: 1},
+  {abap: `call transformation (lv_name)
+    parameters (lt_par)
+    source xml lv_xml
+    result xml rv_res.`, cnt: 0},
 ];
 
 testRule(tests, ObsoleteStatement);

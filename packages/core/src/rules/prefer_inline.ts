@@ -47,8 +47,12 @@ Move statment is not a cast(?=)
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-inline-to-up-front-declarations`,
       tags: [RuleTag.Styleguide, RuleTag.Upport, RuleTag.Experimental, RuleTag.Quickfix],
-      badExample: `DATA foo TYPE i.\nfoo = 2.`,
-      goodExample: `DATA(foo) = 2.`,
+      badExample: `DATA foo TYPE i.
+foo = 2.
+DATA percentage TYPE decfloat34.
+percentage = ( comment_number / abs_statement_number ) * 100.`,
+      goodExample: `DATA(foo) = 2.
+DATA(percentage) = CONV decfloat34( comment_number / abs_statement_number ) * 100.`,
     };
   }
 

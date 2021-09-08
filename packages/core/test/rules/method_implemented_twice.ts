@@ -109,4 +109,25 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("defined twice, interface", async () => {
+    const abap = `
+INTERFACE if_ixml_node.
+  METHODS:
+    append_child IMPORTING new_child TYPE REF TO if_ixml_element,
+    append_child IMPORTING child TYPE REF TO if_ixml_node.
+ENDINTERFACE.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("interface, ok", async () => {
+    const abap = `
+INTERFACE if_ixml_node.
+  METHODS:
+    append_child IMPORTING child TYPE REF TO if_ixml_node.
+ENDINTERFACE.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

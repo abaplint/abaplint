@@ -79,9 +79,14 @@ DATA(fsdf) = xsdbool( foo <> bar ).`,
         continue;
       }
 
-      const bodyTarget = bodyStatement.findFirstExpression(Expressions.Target)?.concatTokens();
+      let bodyTarget = bodyStatement.findFirstExpression(Expressions.Target)?.concatTokens();
+      if (bodyTarget?.startsWith("DATA(")) {
+        bodyTarget = bodyTarget.substr(5, bodyTarget.length - 6);
+      }
       const elseTarget = elseStatement.findFirstExpression(Expressions.Target)?.concatTokens();
-      if (bodyTarget === undefined || elseTarget === undefined || bodyTarget.toUpperCase() !== elseTarget.toUpperCase()) {
+      if (bodyTarget === undefined
+          || elseTarget === undefined
+          || bodyTarget.toUpperCase() !== elseTarget.toUpperCase()) {
         continue;
       }
 

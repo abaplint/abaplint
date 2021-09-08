@@ -34,6 +34,7 @@ export class InlineLoopDefinition {
       }
       const identifier = new TypedIdentifier(target.getFirstToken(), filename, rowType, [IdentifierMeta.InlineDefinition]);
       scope.addReference(target.getFirstToken(), identifier, ReferenceType.DataWriteReference, filename);
+      scope.addReference(target.getFirstToken(), identifier, ReferenceType.DataReadReference, filename);
       scope.addIdentifier(identifier);
     }
 

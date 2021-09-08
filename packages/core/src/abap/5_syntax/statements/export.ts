@@ -16,5 +16,13 @@ export class Export implements StatementSyntax {
       new Target().runSyntax(t, scope, filename);
     }
 
+    const databaseName = node.findExpressionAfterToken("DATABASE");
+    if (databaseName) {
+      const found = scope.getDDIC()?.lookupTableOrView(databaseName.concatTokens());
+      if (found) {
+        scope.getDDICReferences().addUsing(scope.getParentObj(), found.object);
+      }
+    }
+
   }
 }

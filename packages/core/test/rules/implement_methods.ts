@@ -38,15 +38,6 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("local class, implementation part not found", async () => {
-    const contents =
-    `REPORT zrep.
-     CLASS lcl_foobar DEFINITION.
-     ENDCLASS.`;
-    const issues = await runMulti([{filename: "zrep.prog.abap", contents}]);
-    expect(issues.length).to.equals(1);
-  });
-
   it("normal class, missing implementation", async () => {
     const contents =
     `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -434,6 +425,29 @@ CLASS clas IMPLEMENTATION.
     WRITE int.
   ENDMETHOD.
 ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("no class implementations needed", async () => {
+    const prog = `
+CLASS zcl_mockup_loader_stub_base DEFINITION.
+ENDCLASS.
+
+CLASS lcl_mockup_loader_stub_final DEFINITION FINAL
+  INHERITING FROM zcl_mockup_loader_stub_base.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("no class implementations needed, simple", async () => {
+    const prog = `
+CLASS zcl_mockup_loader_stub_base DEFINITION.
+ENDCLASS.
+`;
     const issues = await runMulti([
       {filename: "zfoobar.prog.abap", contents: prog}]);
     expect(issues[0]?.getMessage()).to.equals(undefined);

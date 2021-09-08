@@ -20,10 +20,12 @@ export class NewObject {
     if (typeName === undefined) {
       throw new Error("NewObject, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
-      scope.addReference(typeToken, targetType.getIdentifier(), ReferenceType.InferredType, filename);
+      const clas = scope.findClassDefinition(targetType.getIdentifierName());
+      if (clas) {
+        scope.addReference(typeToken, clas, ReferenceType.InferredType, filename);
+      }
       ret = targetType;
 
-      const clas = scope.findClassDefinition(targetType.getIdentifierName());
       if (clas?.isAbstract() === true) {
         throw new Error(clas.getName() + " is abstract, cannot be instantiated");
       }

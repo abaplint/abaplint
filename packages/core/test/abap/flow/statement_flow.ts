@@ -1,14 +1,21 @@
 import {expect} from "chai";
 import {ABAPFile} from "../../../src/abap/abap_file";
-import {dump, StatementFlow} from "../../../src/abap/flow/statement_flow";
+import {StatementFlow, StatementFlowPath} from "../../../src/abap/flow/statement_flow";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Registry} from "../../../src/registry";
 
+function dump(flows: StatementFlowPath[]): string {
+  const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
+  return ret + "]";
+}
+
 async function build(abap: string) {
   const reg = new Registry();
-  reg.addFile(new MemoryFile("zstatement_flow.prog.abap", abap));
+  reg.addFile(new MemoryFile("zstatement_flow.prog.abap", "FORM moo.\n" + abap + "\nENDFORM.\n"));
   await reg.parseAsync();
+  const issues = reg.findIssues().filter(i => i.getKey() === "parser_error");
+  expect(issues[0]?.getMessage()).to.equal(undefined);
   const obj = reg.getFirstObject()! as ABAPObject;
   const file = obj.getABAPFiles()[0] as ABAPFile | undefined;
   const stru = file?.getStructure();
@@ -16,21 +23,19 @@ async function build(abap: string) {
   return new StatementFlow().build(stru!);
 }
 
-describe.skip("statement_flow", () => {
+describe("statement_flow", () => {
   it("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
     const res = await build(abap);
     expect(dump(res)).to.equal("[[Write]]");
   });
 
-  it("FORM with two WRITEs", async () => {
+  it("two WRITEs", async () => {
     const abap = `
-    FORM moo.
-      WRITE 'hello'.
-      WRITE 'world'.
-    ENDFORM.`;
+    WRITE 'hello'.
+    WRITE 'world'.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[Form,Write,Write]]");
+    expect(dump(res)).to.equal("[[Write,Write]]");
   });
 
   it("IF", async () => {
@@ -66,26 +71,22 @@ describe.skip("statement_flow", () => {
     expect(dump(res)).to.equal("[[If,Write],[If,ElseIf,Data],[If,ElseIf,Else,Data]]");
   });
 
-  it("FORM with CHECK", async () => {
+  it("CHECK", async () => {
     const abap = `
-    FORM moo.
-      WRITE 'hello'.
-      CHECK a = b.
-      WRITE 'world'.
-    ENDFORM.`;
+    WRITE 'hello'.
+    CHECK a = b.
+    WRITE 'world'.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[Form,Write,Check],[Form,Write,Check,Write]]");
+    expect(dump(res)).to.equal("[[Write,Check],[Write,Check,Write]]");
   });
 
-  it("FORM with RETURN", async () => {
+  it("RETURN", async () => {
     const abap = `
-    FORM moo.
-      WRITE 'hello'.
-      RETURN.
-      WRITE 'world'.
-    ENDFORM.`;
+    WRITE 'hello'.
+    RETURN.
+    WRITE 'world'.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[Form,Write,Return]]");
+    expect(dump(res)).to.equal("[[Write,Return]]");
   });
 
   it("IF with RETURN", async () => {
@@ -98,15 +99,34 @@ describe.skip("statement_flow", () => {
     expect(dump(res)).to.equal("[[If,Return],[If]]");
   });
 
-  it("FORM with IF", async () => {
+  it("IF", async () => {
     const abap = `
-    FORM bar.
-      IF foo = bar.
-        WRITE 'world'.
-      ENDIF.
-      DATA bar.
-    ENDFORM.`;
+    IF foo = bar.
+      WRITE 'world'.
+    ENDIF.
+    DATA bar.`;
     const res = await build(abap);
-    expect(dump(res)).to.equal("[[Form,If,Write,Data],[Form,If,Data]]");
+    expect(dump(res)).to.equal("[[If,Write,Data],[If,Data]]");
+  });
+
+  it("LOOP", async () => {
+    const abap = `
+    LOOP AT bar INTO foo.
+      WRITE 'world'.
+    ENDLOOP.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
+  });
+
+  it("LOOP with nested IF", async () => {
+    const abap = `
+    LOOP AT bar INTO foo.
+      ADD 2 to bar.
+      IF 1 = 2.
+        WRITE moo.
+      ENDIF.
+    ENDLOOP.`;
+    const res = await build(abap);
+    expect(dump(res)).to.equal("[[Loop,Add,If,Write],[Loop,Add,If],[Loop,Add,If,Write,Add,If,Write],[Loop,Add,If,Write,Add,If],[Loop,Add,If,Add,If,Write],[Loop,Add,If,Add,If],[Loop]]");
   });
 });

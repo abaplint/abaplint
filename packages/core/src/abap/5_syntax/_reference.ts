@@ -4,6 +4,7 @@ export enum ReferenceType {
   /** for classes and interface references */
   ObjectOrientedReference = "ObjectOrientedReference",
   ObjectOrientedVoidReference = "ObjectOrientedVoidReference",
+  ObjectOrientedUnknownReference = "ObjectOrientedUnknownReference",
 
   TableReference = "TableReference",
   TableVoidReference = "TableVoidReference",

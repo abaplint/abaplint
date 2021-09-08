@@ -129,7 +129,7 @@ export class UnusedVariables implements IRule {
             || node.getIdentifier().stype === ScopeType.Program
             || node.getIdentifier().stype === ScopeType.Form)
           && this.isUsed(vars[name], node) === false) {
-        const message = "Variable \"" + vars[name].getName() + "\" not used";
+        const message = "Variable \"" + name.toLowerCase() + "\" not used";
 
         const statement = this.findStatement(vars[name]);
         if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {

@@ -52,7 +52,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.importing,
-          type: param.TYP,
+          type: param.TYP || param.DBFIELD,
         });
       }
     }
@@ -65,7 +65,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.changing,
-          type: param.TYP,
+          type: param.TYP || param.DBFIELD,
         });
       }
     }
@@ -78,7 +78,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.exporting,
-          type: param.TYP,
+          type: param.TYP || param.DBFIELD,
         });
       }
     }

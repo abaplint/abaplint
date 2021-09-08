@@ -7,6 +7,7 @@ import {testRuleFixSingle} from "./_utils";
 import {IConfiguration} from "../../src/_config";
 import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
+import {IFile} from "../../src/files/_ifile";
 
 function buildConfig(): IConfiguration {
   const conf = Config.getDefault().get();
@@ -15,8 +16,8 @@ function buildConfig(): IConfiguration {
   return conf702;
 }
 
-function testFix(input: string, expected: string) {
-  testRuleFixSingle(input, expected, new Downport(), buildConfig());
+function testFix(input: string, expected: string, extraFiles?: IFile[]) {
+  testRuleFixSingle(input, expected, new Downport(), buildConfig(), extraFiles, false);
 }
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
@@ -38,18 +39,57 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(0);
   });
 
+// todo, this example can actually be implemented?
   it("try downport voided value", async () => {
     const issues = await findIssues("DATA(bar) = VALUE asdf( ).");
     expect(issues.length).to.equal(1);
   });
 
-  it("try downporting voided LOOP", async () => {
-    const abap = `
+// todo, this example can actually be implemented?
+  it("try downport unknown type", async () => {
+    const issues = await findIssues("DATA(bar) = VALUE zfoobar( ).");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("try downport unknown type, 2", async () => {
+    const issues = await findIssues(`
+    TYPES ty_bar TYPE STANDARD TABLE OF zfoobar WITH DEFAULT KEY.
+    DATA(bar) = VALUE ty_bar( ).`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("downport voided LOOP fs", async () => {
+    const abap = `FROM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   LOOP AT lt_rows ASSIGNING FIELD-SYMBOL(<lv_row>).
-  ENDLOOP.`;
-    const issues = await findIssues(abap);
-    expect(issues.length).to.equal(1);
+  ENDLOOP.
+ENDFORM.`;
+
+    const expected = `FROM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  FIELD-SYMBOLS <lv_row> LIKE LINE OF lt_rows.
+  LOOP AT lt_rows ASSIGNING <lv_row>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("downport voided LOOP data", async () => {
+    const abap = `FROM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  LOOP AT lt_rows INTO DATA(moo).
+  ENDLOOP.
+ENDFORM.`;
+
+    const expected = `FROM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  DATA moo LIKE LINE OF lt_rows.
+  LOOP AT lt_rows INTO moo.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
   });
 
   it("Use CREATE OBJECT instead of NEW", async () => {
@@ -331,9 +371,29 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("EMPTY KEY", async () => {
+  it("EMPTY KEY quick fix", async () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.`;
     const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, structured", async () => {
+    const abap = `TYPES:
+  BEGIN OF ty_line,
+    origin TYPE voided,
+    pedime TYPE STANDARD TABLE OF string WITH EMPTY KEY,
+  END OF ty_line.`;
+    const expected = `TYPES:
+  BEGIN OF ty_line,
+    origin TYPE voided,
+    pedime TYPE STANDARD TABLE OF string WITH DEFAULT KEY,
+  END OF ty_line.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, voided", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF voided WITH EMPTY KEY.`;
+    const expected = `DATA tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.`;
     testFix(abap, expected);
   });
 
@@ -386,14 +446,14 @@ ENDFORM.`;
 
     const expected = `
   DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-  FIELD-SYMBOLS <lv_row> TYPE string.
+  FIELD-SYMBOLS <lv_row> LIKE LINE OF lt_rows.
   LOOP AT lt_rows ASSIGNING <lv_row>.
   ENDLOOP.`;
 
     testFix(abap, expected);
   });
 
-  it("CONV", async () => {
+  it("CONV xstring", async () => {
     const abap = `
     DATA len TYPE i.
     len = xstrlen( CONV xstring( |AA| ) ).`;
@@ -403,6 +463,24 @@ ENDFORM.`;
     DATA temp1 TYPE xstring.
     temp1 = |AA|.
     len = xstrlen( temp1 ).`;
+
+    testFix(abap, expected);
+  });
+
+  it("CONV d", async () => {
+    const abap = `
+    DATA char8 TYPE c LENGTH 8.
+    DATA bar TYPE d.
+    char8 = '20210101'.
+    bar = CONV d( char8 ).`;
+
+    const expected = `
+    DATA char8 TYPE c LENGTH 8.
+    DATA bar TYPE d.
+    char8 = '20210101'.
+    DATA temp1 TYPE d.
+    temp1 = char8.
+    bar = temp1.`;
 
     testFix(abap, expected);
   });
@@ -570,7 +648,7 @@ ENDFORM.`;
 
     const expected = `
     DATA txt_table TYPE STANDARD TABLE OF string.
-    DATA inline_txt_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA inline_txt_table LIKE txt_table.
     inline_txt_table = txt_table.`;
 
     testFix(abap, expected);
@@ -591,7 +669,7 @@ TYPES: BEGIN OF ty_struct,
   txt TYPE string,
 END OF ty_struct.
 DATA struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
-DATA inline_struct_table TYPE STANDARD TABLE OF ty_struct WITH DEFAULT KEY.
+DATA inline_struct_table LIKE struct_table.
 inline_struct_table = struct_table.`;
 
     testFix(abap, expected);
@@ -650,6 +728,202 @@ DATA temp1 TYPE ty.
 APPEND 1 TO temp1.
 APPEND 2 TO temp1.
 DATA(sdf) = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("downport, generic field symbol types", async () => {
+    const issues = await findIssues(`
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<fs>).
+  ENDLOOP.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("downport, voided via RETURNING", async () => {
+    const issues = await findIssues(`
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    METHODS read RETURNING VALUE(rs_voided) TYPE voided.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    DATA(sdf) = read( ).
+  ENDMETHOD.
+  METHOD read.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("downport, append #, with ddic table type", async () => {
+    const abap = `FORM bar.
+  DATA tab TYPE ztab.
+  APPEND VALUE #( msg = sy-msgv1 ) TO tab.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA tab TYPE ztab.
+  DATA temp1 TYPE ZROW.
+  temp1-msg = sy-msgv1.
+  APPEND temp1 TO tab.
+ENDFORM.`;
+
+    const zrow = new MemoryFile("zrow.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZROW</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>row</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>MSG</FIELDNAME>
+     <ROLLNAME>MSGV1</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    const ztab = new MemoryFile("ztab.ttyp.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTAB</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZROW</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <DATATYPE>STRU</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>tab</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    testFix(abap, expected, [ztab, zrow]);
+  });
+
+  it("Outline, even though its voided", async () => {
+    const abap = `
+  DATA temp1 TYPE voided.
+  DATA(ls_msg) = temp1.`;
+
+    const expected = `
+  DATA temp1 TYPE voided.
+  DATA ls_msg LIKE temp1.
+  ls_msg = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("Table expression, by index", async () => {
+    const abap = `FORM bar.
+  rv_lognumber = lt_lognumbers[ 1 ]-lognumber.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA temp1 LIKE LINE OF lt_lognumbers.
+  READ TABLE lt_lognumbers INDEX 1 INTO temp1.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  rv_lognumber = temp1-lognumber.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT SINGLE, outline @DATA, basic", async () => {
+    const abap = `FORM bar.
+  SELECT SINGLE werks, bwkey FROM t001w INTO @DATA(ls_t001w) WHERE werks = '123'.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA: BEGIN OF ls_t001w,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF ls_t001w.
+  SELECT SINGLE werks, bwkey FROM t001w INTO @ls_t001w WHERE werks = '123'.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, outline @DATA, table", async () => {
+    const abap = `FORM bar.
+  SELECT werks, bwkey FROM t001w INTO TABLE @DATA(lt_t001w).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF temp1,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF temp1.
+  DATA lt_t001w TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+  SELECT werks, bwkey FROM t001w INTO TABLE @lt_t001w.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, basic remove , and @", async () => {
+    const abap = `FORM bar.
+  DATA: BEGIN OF ls_t001w,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF ls_t001w.
+  SELECT SINGLE werks, bwkey FROM t001w INTO @ls_t001w WHERE werks = '123'.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA: BEGIN OF ls_t001w,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF ls_t001w.
+  SELECT SINGLE werks bwkey FROM t001w INTO ls_t001w WHERE werks = '123'.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, single field into @DATA", async () => {
+    const abap = `FORM bar.
+  SELECT SINGLE field FROM tab INTO @DATA(bar).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA bar TYPE tab-field.
+  SELECT SINGLE field FROM tab INTO @bar.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it.skip("line_exists()", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ table_line = 123 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
+  IF sy-subrc = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
 
     testFix(abap, expected);
   });

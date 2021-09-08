@@ -111,7 +111,7 @@ export class FieldChain {
       const name = token.getStr();
       const found = scope.findVariable(name);
       if (found === undefined) {
-        throw new Error(name + " not found, findTop");
+        throw new Error("\"" + name + "\" not found, findTop");
       }
       if (type) {
         scope.addReference(token, found, type, filename);

@@ -5,20 +5,21 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ExpressionNode, TokenNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper} from "../edit_helper";
 
-export class ManyParenthesisConf extends BasicRuleConfig {
+export class ManyParenthesesConf extends BasicRuleConfig {
 }
 
-export class ManyParenthesis extends ABAPRule {
+export class ManyParentheses extends ABAPRule {
 
-  private conf = new ManyParenthesisConf();
+  private conf = new ManyParenthesesConf();
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "many_parenthesis",
-      title: "Too many parenthesis",
-      shortDescription: `Searches for expressions where extra parenthesis can safely be removed`,
-      tags: [RuleTag.SingleFile],
+      key: "many_parentheses",
+      title: "Too many parentheses",
+      shortDescription: `Searches for expressions where extra parentheses can safely be removed`,
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `
 IF ( destination IS INITIAL ).
 ENDIF.
@@ -38,7 +39,7 @@ ENDIF.
     return this.conf;
   }
 
-  public setConfig(conf: ManyParenthesisConf) {
+  public setConfig(conf: ManyParenthesesConf) {
     this.conf = conf;
   }
 
@@ -60,8 +61,11 @@ ENDIF.
         continue;
       }
       if (cond[0].getChildren().length === 1) {
-        const message = "Too many parenthesis, simple";
-        const issue = Issue.atToken(file, sub.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+        const message = "Too many parentheses, simple";
+        const fixText = sub.getChildren()[1].concatTokens();
+        const fix = EditHelper.replaceRange(file, sub.getFirstToken().getStart(), sub.getLastToken().getEnd(), fixText);
+
+        const issue = Issue.atToken(file, sub.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }
@@ -97,7 +101,7 @@ ENDIF.
     }
 
     if (comparator !== "" && comparator !== "MIXED") {
-      const message = "Too many parenthesis, complex";
+      const message = "Too many parentheses, complex";
       const issue = Issue.atToken(file, cond.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
       issues.push(issue);
     }

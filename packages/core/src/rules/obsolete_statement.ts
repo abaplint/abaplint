@@ -9,7 +9,9 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {Version} from "../version";
 import {EditHelper, IEdit} from "../edit_helper";
 import {IStatement} from "../abap/2_statements/statements/_statement";
-import {StatementNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode} from "../abap/nodes";
+import {SourceFieldSymbol} from "../abap/2_statements/expressions";
+
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
   /** Check for REFRESH statement */
@@ -54,6 +56,10 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public freeMemory: boolean = true;
   /** Checks for EXIT FROM SQL */
   public exitFromSQL: boolean = true;
+  /** Checks for SORT itab BY <fs> */
+  public sortByFS: boolean = true;
+  /** Checks for CALL TRANSFORMATION OBJECTS */
+  public callTransformation: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -96,7 +102,11 @@ PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
 SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm
 SELECT COUNT(*) is considered okay
 
-FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree_mem_id_obsolete.htm`,
+FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree_mem_id_obsolete.htm
+
+SORT BY FS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsort_itab_obsolete.htm
+
+CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_objects.htm`,
     };
   }
 
@@ -256,6 +266,24 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
         const concat = staNode.concatTokens().toUpperCase();
         if (concat === "EXIT FROM SQL.") {
           const issue = Issue.atStatement(file, staNode, "Statement \"EXIT FROM SQL\" is obsolete", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+      }
+
+      if (this.conf.sortByFS && sta instanceof Statements.Sort) {
+        const afterBy = staNode.findExpressionAfterToken("BY");
+
+        if (afterBy instanceof ExpressionNode && afterBy.get() instanceof SourceFieldSymbol) {
+          const issue = Issue.atStatement(file, staNode, "Statement \"SORT itab BY <fs>\" is obsolete", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+      }
+
+      if (this.conf.callTransformation && sta instanceof Statements.CallTransformation) {
+        const objects = staNode.findExpressionAfterToken("OBJECTS");
+
+        if (objects) {
+          const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of OBJECTS", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }

@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {getStatements} from "./_utils";
-import {MacroCall, Unknown} from "../../src/abap/2_statements/statements/_statement";
+import {Empty, MacroCall, Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import {Write, Data, InsertDatabase} from "../../src/abap/2_statements/statements";
 import {defaultVersion, Version} from "../../src/version";
@@ -100,6 +100,16 @@ describe("statement parser", () => {
     const statements = getStatements(abap, Version.Cloud);
     expect(statements.length).to.equal(1);
     expect(statements[0].get()).to.be.instanceof(InsertDatabase);
+  });
+
+  it("dangling pragma, should be empty statement", () => {
+    const abap = "WRITE foobar. ##PRAGMA";
+
+    const statements = getStatements(abap);
+    expect(statements.length).to.equal(2);
+    expect(statements[0].get()).to.be.instanceof(Write);
+    expect(statements[1].get()).to.be.instanceof(Empty);
+    expect(statements[1].getPragmas().length).to.equal(1);
   });
 
 });

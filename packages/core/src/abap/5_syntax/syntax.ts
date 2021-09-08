@@ -128,6 +128,8 @@ import {SetHandler} from "./statements/set_handler";
 import {Wait} from "./statements/wait";
 import {Shift} from "./statements/shift";
 import {SetBit} from "./statements/set_bit";
+import {ModifyScreen} from "./statements/modify_screen";
+import {DeleteCluster} from "./statements/delete_cluster";
 
 // -----------------------------------
 
@@ -167,11 +169,13 @@ if (Object.keys(map).length === 0) {
   addToMap(new Split());
   addToMap(new CallFunction());
   addToMap(new DeleteInternal());
+  addToMap(new DeleteCluster());
   addToMap(new Clear());
   addToMap(new Receive());
   addToMap(new GetBit());
   addToMap(new ClassLocalFriends());
   addToMap(new Select());
+  addToMap(new ModifyScreen());
   addToMap(new InsertInternal());
   addToMap(new Pack());
   addToMap(new Unpack());
@@ -438,8 +442,6 @@ export class SyntaxLogic {
         || s instanceof Statements.EndClass
         || s instanceof Statements.EndInterface) {
       this.scope.pop(node.getLastToken().getEnd());
-//    } else {
-//      console.dir(name + " unhandled");
     }
   }
 

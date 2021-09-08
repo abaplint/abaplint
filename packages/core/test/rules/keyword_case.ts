@@ -59,7 +59,7 @@ _bar.`, cnt: 0},
   {abap: `write BAR.`, cnt: 1},
   {abap: `
 LOOP AT SCREEN INTO DATA(wa).
-  MODIFY screen FROM wa.
+  MODIFY SCREEN FROM wa.
 ENDLOOP.`, cnt: 0},
   {abap: `
 LOOP AT SCREEN INTO DATA(wa).
@@ -76,6 +76,11 @@ SELECT mandt, mtext
   FROM t000
   GROUP BY mandt, mtext, ort01, mwaer
   ORDER BY mwaer.`, cnt: 0},
+  {abap: `SELECT FROM vekp
+    FIELDS exidv
+    FOR ALL ENTRIES IN @lt_hus
+    WHERE vekp~exidv = @lt_hus-package_no
+    INTO TABLE @DATA(lt_sub_vekp).`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);

@@ -625,6 +625,34 @@
       ],
       "type": "object"
     },
+    "CyclicOOConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "skip": {
+          "description": "List of object names to skip, must be full upper case name",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "skip"
+      ],
+      "type": "object"
+    },
     "CyclomaticComplexityConf": {
       "additionalProperties": false,
       "properties": {
@@ -1485,6 +1513,17 @@
               ],
               "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
             },
+            "cyclic_oo": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CyclicOOConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds cyclic OO references\nhttps://rules.abaplint.org/cyclic_oo"
+            },
             "cyclomatic_complexity": {
               "anyOf": [
                 {
@@ -1780,7 +1819,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/in_statement_indentation"
+              "description": "Checks alignment within statements which span multiple lines.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -1925,16 +1964,16 @@
               ],
               "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
             },
-            "many_parenthesis": {
+            "many_parentheses": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/ManyParenthesisConf"
+                  "$ref": "#/definitions/ManyParenthesesConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "Searches for expressions where extra parenthesis can safely be removed\nTags: SingleFile\nhttps://rules.abaplint.org/many_parenthesis"
+              "description": "Searches for expressions where extra parentheses can safely be removed\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/many_parentheses"
             },
             "max_one_method_parameter_per_line": {
               "anyOf": [
@@ -1989,7 +2028,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks relating to method length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
+              "description": "Checks relating to method/form length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
             },
             "method_overwrites_builtin": {
               "anyOf": [
@@ -2178,6 +2217,17 @@
               ],
               "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax, Whitespace, SingleFile\nhttps://rules.abaplint.org/parser_missing_space"
             },
+            "pragma_placement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PragmaPlacementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Place pragmas at end of statements\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_placement"
+            },
             "prefer_inline": {
               "anyOf": [
                 {
@@ -2209,7 +2259,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+              "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_raise_exception_new"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -2484,7 +2534,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Uncaught Exception\n\n      Does not report any issues if the code contains syntax errors\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+              "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
             },
             "unknown_types": {
               "anyOf": [
@@ -2904,6 +2954,10 @@
     "InStatementIndentationConf": {
       "additionalProperties": false,
       "properties": {
+        "blockStatements": {
+          "description": "Additional indent for first statement of blocks",
+          "type": "number"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -2921,6 +2975,7 @@
         }
       },
       "required": [
+        "blockStatements",
         "ignoreExceptions"
       ],
       "type": "object"
@@ -3106,6 +3161,10 @@
     "LineBreakMultipleParametersConf": {
       "additionalProperties": false,
       "properties": {
+        "count": {
+          "description": "Amount of allowed parameters on one line",
+          "type": "number"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -3118,6 +3177,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "count"
+      ],
       "type": "object"
     },
     "LineBreakStyleConf": {
@@ -3340,7 +3402,7 @@
       },
       "type": "object"
     },
-    "ManyParenthesisConf": {
+    "ManyParenthesesConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -3428,8 +3490,12 @@
     "MethodLengthConf": {
       "additionalProperties": false,
       "properties": {
+        "checkForms": {
+          "description": "Option to check forms.",
+          "type": "boolean"
+        },
         "errorWhenEmpty": {
-          "description": "Checks for empty methods.",
+          "description": "Checks for empty methods/forms.",
           "type": "boolean"
         },
         "exclude": {
@@ -3448,14 +3514,15 @@
           "description": "Problem severity"
         },
         "statements": {
-          "description": "Maximum method length in statements",
+          "description": "Maximum method/form length in statements.",
           "type": "number"
         }
       },
       "required": [
         "statements",
         "errorWhenEmpty",
-        "ignoreTestClasses"
+        "ignoreTestClasses",
+        "checkForms"
       ],
       "type": "object"
     },
@@ -3842,6 +3909,10 @@
           "description": "Check for ADD statement",
           "type": "boolean"
         },
+        "callTransformation": {
+          "description": "Checks for CALL TRANSFORMATION OBJECTS",
+          "type": "boolean"
+        },
         "communication": {
           "description": "Checks for COMMUNICATION",
           "type": "boolean"
@@ -3921,6 +3992,10 @@
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         },
+        "sortByFS": {
+          "description": "Checks for SORT itab BY <fs>",
+          "type": "boolean"
+        },
         "subtract": {
           "description": "Check for SUBTRACT statement",
           "type": "boolean"
@@ -3955,7 +4030,9 @@
         "pack",
         "selectWithoutInto",
         "freeMemory",
-        "exitFromSQL"
+        "exitFromSQL",
+        "sortByFS",
+        "callTransformation"
       ],
       "type": "object"
     },
@@ -4050,6 +4127,23 @@
         "forbidden"
       ],
       "type": "string"
+    },
+    "PragmaPlacementConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
     },
     "PreferInlineConf": {
       "additionalProperties": false,

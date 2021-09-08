@@ -17,7 +17,7 @@ export class UnusedDDIC implements IRule {
       key: "unused_ddic",
       title: "Unused DDIC",
       shortDescription: `Checks the usage of DDIC objects`,
-      extendedInformation: `Objects checked: DOMA + DTEL`,
+      extendedInformation: `Objects checked: DOMA + DTEL + TABL + TTYP + VIEW`,
       tags: [],
     };
   }
@@ -37,6 +37,9 @@ export class UnusedDDIC implements IRule {
 
   public run(obj: IObject): Issue[] {
     if (obj instanceof Objects.Domain
+        || obj instanceof Objects.TableType
+        || obj instanceof Objects.View
+        || obj instanceof Objects.Table
         || obj instanceof Objects.DataElement) {
       return this.check(obj);
     }

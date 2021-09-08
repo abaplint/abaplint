@@ -9,7 +9,7 @@ let map = {};
 for (let r of repos) {
   map[r] = {};
 
-  childProcess.execSync("git clone --recurse-submodules https://github.com/" + r + ".git");
+  childProcess.execSync("git clone --depth=1 --recurse-submodules https://github.com/" + r + ".git");
 
   let folder = r.split("/")[1];
 
@@ -68,6 +68,9 @@ for (let name in map) {
     }
     let urlFile = i.file.split("/").splice(1).join("/");
     let url = "https://github.com/" + name + "/blob/main/" + urlFile + "#L" + i.start.row;
+    i.description = i.description.replace(/~/g, "\\~");
+    i.description = i.description.replace(/</g, "\\<");
+    i.description = i.description.replace(/>/g, "\\>");
     issues += "[`" + i.file + ":" + i.start.row + "`](" + url + "): " + i.description + "(" + i.key + ")\n"
   }
 }

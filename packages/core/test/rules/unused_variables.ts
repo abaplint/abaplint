@@ -918,4 +918,56 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("REDUCE", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         value TYPE i,
+       END OF ty_bar.
+DATA value_requests TYPE STANDARD TABLE OF ty_bar WITH EMPTY KEY.
+DATA value TYPE i.
+
+DATA(result) = REDUCE int2(
+  INIT x = 0
+  FOR value_request IN value_requests
+  WHERE ( value = value )
+  NEXT x = x + 1 ).
+WRITE result.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("variable used in voided method call", async () => {
+    const abap = `
+DATA bar TYPE i.
+cl_voided=>void( bar = bar ).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CALL TRANSFORMATION", async () => {
+    const abap = `
+  DATA lv_name TYPE string.
+  DATA lv_xml TYPE string.
+  DATA rv_res TYPE string.
+
+  CALL TRANSFORMATION (lv_name)
+      SOURCE XML lv_xml
+      RESULT XML rv_res.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CALL TRANSFORMATION, 2", async () => {
+    const abap = `
+  DATA lv_name TYPE string.
+  DATA lv_xml TYPE string.
+  DATA rv_res TYPE string.
+
+  CALL TRANSFORMATION (lv_name)
+      SOURCE foo = lv_xml
+      RESULT XML rv_res.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

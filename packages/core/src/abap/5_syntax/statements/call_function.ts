@@ -21,6 +21,9 @@ export class CallFunction implements StatementSyntax {
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
+    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
+      new Source().runSyntax(s, scope, filename);
+    }
     for (const t of node.findAllExpressions(Expressions.Target)) {
       new Target().runSyntax(t, scope, filename);
     }

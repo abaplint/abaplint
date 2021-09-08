@@ -8,11 +8,12 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
-import {Identifier} from "../1_lexer/tokens/identifier";
+import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
 import {TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
+import {FieldSub, TypeTableKey} from "../2_statements/expressions";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -46,7 +47,12 @@ export class BasicTypes {
       }
     }
 
-// todo: DDIC types
+    const lookup = this.scope.getDDIC().lookupNoVoid(name);
+    const id = lookup?.object?.getIdentifier();
+    if (id && lookup?.type) {
+      return new TypedIdentifier(id.getToken(), id.getFilename(), lookup.type);
+    }
+
     return undefined;
   }
 
@@ -147,70 +153,9 @@ export class BasicTypes {
     }
 
     const chainText = typeName.concatTokens().toUpperCase();
-    switch (chainText) {
-      case "STRING":
-        return new Types.StringType();
-      case "XSTRING":
-        return new Types.XStringType();
-      case "D":
-        return new Types.DateType();
-      case "T":
-        return new Types.TimeType();
-      case "XSEQUENCE":
-        return new Types.XSequenceType();
-      case "CLIKE":
-        return new Types.CLikeType();
-      case "ANY":
-        return new Types.AnyType();
-      case "SIMPLE":
-        return new Types.SimpleType();
-      case "%_C_POINTER":
-        return new Types.HexType(8);
-      case "TABLE":
-        return new Types.TableType(new Types.AnyType(), {withHeader: false});
-      case "DATA":
-        return new Types.AnyType();
-      case "NUMERIC":
-        return new Types.NumericGenericType();
-      case "UTCLONG": // todo, take version into account
-        return new Types.UTCLongType();
-      case "DECFLOAT16":
-        return new Types.DecFloat16Type();
-      case "DECFLOAT34":
-        return new Types.DecFloat34Type();
-      case "CSEQUENCE":
-        return new Types.CSequenceType();
-      case "I":
-      case "INT8": // todo, take version into account
-        return new Types.IntegerType();
-      case "F":
-        return new Types.FloatType();
-      case "P":
-        if (length && decimals) {
-          return new Types.PackedType(length, decimals);
-        } else if (length) {
-          return new Types.PackedType(length, 0);
-        } else {
-          return new Types.PackedType(1, 0);
-        }
-      case "C":
-        if (length) {
-          return new Types.CharacterType(length);
-        } else {
-          return new Types.CharacterType(1);
-        }
-      case "X":
-        if (length) {
-          return new Types.HexType(length);
-        } else {
-          return new Types.HexType(1);
-        }
-      case "N":
-        if (length) {
-          return new Types.NumericType(length);
-        } else {
-          return new Types.NumericType(1);
-        }
+    const f = this.scope.getDDIC().lookupBuiltinType(chainText, length, decimals);
+    if (f !== undefined) {
+      return f;
     }
 
     const typ = this.scope.findType(chainText);
@@ -259,7 +204,7 @@ export class BasicTypes {
     }
     let name = nameExpr.getFirstToken();
     if (nameExpr.countTokens() > 1) { // workaround for names with dashes
-      name = new Identifier(name.getStart(), nameExpr.concatTokens());
+      name = new TokenIdentifier(name.getStart(), nameExpr.concatTokens());
     }
 
     const found = this.parseType(node);
@@ -285,9 +230,18 @@ export class BasicTypes {
     } else if (text.includes(" HASHED TABLE ")) {
       type = TableAccessType.hashed;
     }
+    const keyFields: string[] = [];
+    if (type) {
+      const keys = node.findFirstExpression(TypeTableKey);
+      for (const k of keys?.findDirectExpressions(FieldSub) || []) {
+        keyFields.push(k.concatTokens().toUpperCase());
+      }
+    }
     const options: Types.ITableOptions = {
       withHeader: text.includes("WITH HEADER LINE"),
       type: type,
+      isUnique: text.includes("WITH UNIQUE"),
+      keyFields: keyFields,
     };
 
     let found: AbstractType | undefined = undefined;
@@ -536,11 +490,12 @@ export class BasicTypes {
       const found = this.scope.findType(subs[0]);
       foundType = found?.getType();
       if (foundType === undefined) {
-        const f = this.scope.getDDIC().lookupTableOrView(subs[0]).type;
-        if (f instanceof TypedIdentifier) {
-          foundType = f.getType();
+        const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
+        this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), f.object);
+        if (f.type instanceof TypedIdentifier) {
+          foundType = f.type.getType();
         } else {
-          foundType = f;
+          foundType = f.type;
         }
       } else {
         this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);

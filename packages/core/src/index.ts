@@ -47,6 +47,7 @@ import {Visibility} from "./abap/4_file_information/visibility";
 import {Identifier} from "./abap/4_file_information/_identifier";
 import {Severity} from "./severity";
 import {IMethodDefinition} from "./abap/types/_method_definition";
+import {DDLParser} from "./ddl/ddl_parser";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -60,7 +61,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
-  IMethodDefinition,
+  IMethodDefinition, DDLParser,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   IRenameSettings, Info, Visibility, Severity};
