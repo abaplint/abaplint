@@ -28,6 +28,7 @@ const tests = [
   "REPLACE 'AA' LENGTH 2 WITH something INTO target.",
   "REPLACE 'foo' IN TABLE lt_tab WITH `` REPLACEMENT LINE lv_index.",
   "REPLACE FIRST OCCURENCE OF lv_var IN lv_in WITH lv_with.",
+  "REPLACE ALL OCCURRENCES OF PCRE `sdf` IN str WITH ``.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);

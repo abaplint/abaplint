@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, per, plus, optPrio} from "../combi";
+import {seq, opt, alt, per, plus, optPrio, ver} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class Find implements IStatement {
 
@@ -31,7 +32,7 @@ export class Find implements IStatement {
 
     const ret = seq("FIND",
                     opt(alt("FIRST OCCURRENCE OF", "ALL OCCURRENCES OF")),
-                    opt(alt("REGEX", "SUBSTRING")),
+                    opt(alt("REGEX", "SUBSTRING", ver(Version.v755, "PCRE"))),
                     Source,
                     "IN",
                     before,

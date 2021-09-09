@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, per} from "../combi";
+import {seq, alt, opt, per, ver} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class Replace implements IStatement {
 
@@ -16,7 +17,7 @@ export class Replace implements IStatement {
                         Source);
 
     const source = seq(opt("OF"),
-                       opt(alt("REGEX", "SUBSTRING")),
+                       opt(alt("REGEX", "SUBSTRING", ver(Version.v755, "PCRE"))),
                        Source);
 
     const cas = alt("IGNORING CASE", "RESPECTING CASE");

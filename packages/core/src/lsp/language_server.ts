@@ -14,6 +14,7 @@ import {CodeActions} from "./code_actions";
 import {IRegistry} from "../_iregistry";
 import {References} from "./references";
 import {Implementation} from "./implementation";
+import {SemanticHighlighting} from "./semantic";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/main/versions/protocol-2-x.md#range
@@ -105,19 +106,13 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensLegend
-  public semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
-    // todo
-    // https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#semantic-token-scope-map
-    return {
-      tokenTypes: [],
-      tokenModifiers: [],
-    };
+  public static semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
+    return SemanticHighlighting.semanticTokensLegend();
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensRangeParams
-  public semanticTokensRange(_range: ITextDocumentRange): SemanticProtocol.SemanticTokens {
-    // todo
-    return {data: []};
+  public semanticTokensRange(range: ITextDocumentRange): SemanticProtocol.SemanticTokens {
+    return new SemanticHighlighting(this.reg).semanticTokensRange(range);
   }
 
 
