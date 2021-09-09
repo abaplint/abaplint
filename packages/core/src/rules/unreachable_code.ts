@@ -54,8 +54,7 @@ export class UnreachableCode extends ABAPRule {
         continue;
       }
       if (exit === true) {
-        const token = node.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+        const issue = Issue.atStatement(file, node, this.getMessage(), this.getMetadata().key, this.conf.severity);
         output.push(issue);
         exit = false;
       }

@@ -8,21 +8,19 @@ export class ABAPSemanticTokensDeltaProvider implements monaco.languages.Documen
   }
 
   public getLegend(): monaco.languages.SemanticTokensLegend {
-    console.dir("getLegend Semantic Tokens");
-    return new LanguageServer(this.reg).semanticTokensLegend();
+    return LanguageServer.semanticTokensLegend();
   }
 
   public provideDocumentRangeSemanticTokens(model: monaco.editor.ITextModel, range: monaco.Range, token: monaco.CancellationToken):
   monaco.languages.ProviderResult<monaco.languages.SemanticTokens> {
-    console.dir("provideDocumentRangeSemanticTokens");
-    console.dir(range);
-    new LanguageServer(this.reg).semanticTokensRange({
+    const result = new LanguageServer(this.reg).semanticTokensRange({
       textDocument: {uri: model.uri.toString()},
-      start: {line: range.startLineNumber - 1, character: range.startColumn - 1},
-      end: {line: range.endLineNumber - 1, character: range.endColumn - 1},
+      start: {line: range.startLineNumber, character: range.startColumn},
+      end: {line: range.endLineNumber, character: range.endColumn},
     });
 
-    const data = new Uint32Array();
+    const data = Uint32Array.from(result.data);
+
     return {data};
   }
 
