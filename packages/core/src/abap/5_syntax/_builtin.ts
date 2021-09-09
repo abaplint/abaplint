@@ -131,6 +131,8 @@ export class BuiltIn {
 
     const ret: IBuiltinMethod[] = [];
 
+    // todo: "pcre" vs "regex", only one of these parameters are allowed
+    // todo: "pcre", only possible from 755
     ret.push({name: "ABS", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "ACOS", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "ASIN", mandatory: {"val": new FloatType()}, return: new FloatType()});
@@ -145,22 +147,22 @@ export class BuiltIn {
     ret.push({name: "CMIN", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val9": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "CONCAT_LINES_OF", mandatory: {"table": new TableType(new AnyType(), {withHeader: false})}, optional: {"sep": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "CONDENSE", mandatory: {"val": new StringType()}, optional: {"del": new StringType(), "from": new StringType(), "to": new StringType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "CONTAINS", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "CONTAINS", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
     ret.push({name: "CONTAINS_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
     ret.push({name: "CONTAINS_ANY_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
     ret.push({name: "COS", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "COSH", mandatory: {"val": new FloatType()}, return: new FloatType()});
-    ret.push({name: "COUNT", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "COUNT_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "COUNT_ANY_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "COUNT", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "COUNT_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "COUNT_ANY_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "DBMAXLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "DISTANCE", mandatory: {"val1": new StringType(), "val2": new StringType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "ESCAPE", mandatory: {"val": new StringType(), "format": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "EXP", mandatory: {"val": new FloatType()}, return: new FloatType()});
-    ret.push({name: "FIND", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "FIND", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "FIND_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "FIND_ANY_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
-    ret.push({name: "FIND_END", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "FIND_END", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "FLOOR", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FRAC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FROM_MIXED", mandatory: {"val": new StringType()}, optional: {"case": new CharacterType(1), "sep": new IntegerType(), "min": new IntegerType()}, return: new StringType(), version: Version.v702});
@@ -171,13 +173,13 @@ export class BuiltIn {
     ret.push({name: "LINES", mandatory: {"val": new TableType(new AnyType(), {withHeader: false})}, return: new IntegerType()});
     ret.push({name: "LOG", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "LOG10", mandatory: {"val": new FloatType()}, return: new FloatType()});
-    ret.push({name: "MATCH", mandatory: {"val": new StringType(), "regex": new StringType()}, optional: {"case": new CharacterType(1), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "MATCHES", mandatory: {"val": new StringType(), "regex": new IntegerType()}, optional: {"case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "MATCH", mandatory: {"val": new StringType()}, optional: {"case": new CharacterType(1), "regex": new StringType(), "pcre": new StringType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "MATCHES", mandatory: {"val": new StringType()}, optional: {"case": new CharacterType(1), "regex": new StringType(), "pcre": new StringType(), "off": new IntegerType(), "len": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
     ret.push({name: "NMAX", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val8": new StringType(), "val9": new StringType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "NMIN", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val8": new StringType(), "val9": new StringType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "NUMOFCHAR", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "REPEAT", mandatory: {"val": new StringType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "REPLACE", mandatory: {"val": new StringType(), "with": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "REPLACE", mandatory: {"val": new StringType(), "with": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "RESCALE", mandatory: {"val": new FloatType()}, optional: {"dec": new IntegerType(), "prec": new IntegerType(), "mode": new IntegerType()}, return: new FloatType(), version: Version.v702});
     ret.push({name: "REVERSE", mandatory: {"val": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "ROUND", mandatory: {"val": new FloatType()}, optional: {"dec": new IntegerType(), "prec": new IntegerType(), "mode": new IntegerType()}, return: new IntegerType(), version: Version.v702});
@@ -190,10 +192,10 @@ export class BuiltIn {
     ret.push({name: "SQRT", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "STRLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "SUBSTRING", mandatory: {"val": new StringType()}, optional: {"off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "SUBSTRING_AFTER", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "SUBSTRING_BEFORE", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "SUBSTRING_FROM", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "SUBSTRING_TO", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_AFTER", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_BEFORE", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_FROM", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_TO", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "pcre": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "TAN", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "TANH", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "TO_LOWER", mandatory: {"val": new StringType()}, return: new StringType(), version: Version.v702});

@@ -1,11 +1,13 @@
 import * as SemanticProtocol from "vscode-languageserver-protocol/lib/common/protocol.semanticTokens";
-import {VirtualPosition} from "..";
+import {VirtualPosition, Position} from "../position";
 import {Comment, Punctuation, String, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle} from "../abap/1_lexer/tokens";
 import {TokenNodeRegex} from "../abap/nodes";
-import {Position} from "../position";
+import * as Statements from "../abap/2_statements/statements";
 import {IRegistry} from "../_iregistry";
 import {ITextDocumentRange} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
+
+const SOURCE_ABAP = "source.abap";
 
 interface Token {
   line: number,
@@ -39,6 +41,8 @@ export class SemanticHighlighting {
     if (SemanticHighlighting.tokenTypes.length === 0) {
       SemanticHighlighting.tokenTypeMap = {};
 
+      SemanticHighlighting.tokenTypeMap[SOURCE_ABAP] = SemanticHighlighting.tokenTypes.length;
+      SemanticHighlighting.tokenTypes.push(SOURCE_ABAP);
       for (const t in SemanticProtocol.SemanticTokenTypes) {
         SemanticHighlighting.tokenTypeMap[t] = SemanticHighlighting.tokenTypes.length;
         SemanticHighlighting.tokenTypes.push(t);
@@ -57,25 +61,41 @@ export class SemanticHighlighting {
 
     const tokens: Token[] = [];
     for (const s of file.getStatements()) {
-      if (s.getFirstToken().getStart().isAfter(rangeEndPosition)) {
+      if (s.getFirstToken().getStart() instanceof VirtualPosition) {
+        continue;
+      } else if (s.getFirstToken().getStart().isAfter(rangeEndPosition)) {
         break;
       } else if (s.getLastToken().getEnd().isBefore(rangeStartPosition)) {
         continue;
-      } else if (s.getFirstToken().getStart() instanceof VirtualPosition) {
-        continue;
       }
+      const statementInstance = s.get();
       for (const t of s.getTokenNodes()) {
-        let tokenType = SemanticProtocol.SemanticTokenTypes.keyword;
-        if (t.get() instanceof String
-            || t.get() instanceof StringTemplate
-            || t.get() instanceof StringTemplateBegin
-            || t.get() instanceof StringTemplateEnd
-            || t.get() instanceof StringTemplateMiddle) {
+        const tokenInstance = t.get();
+        let tokenType: string = SemanticProtocol.SemanticTokenTypes.keyword;
+        if (tokenInstance instanceof Punctuation) {
+          tokenType = SOURCE_ABAP;
+        } else if (statementInstance instanceof Statements.Public
+            || statementInstance instanceof Statements.Private
+            || statementInstance instanceof Statements.Protected
+            || statementInstance instanceof Statements.ClassDefinition
+            || statementInstance instanceof Statements.ClassImplementation
+            || statementInstance instanceof Statements.MethodImplementation
+            || statementInstance instanceof Statements.EndMethod
+            || statementInstance instanceof Statements.InterfaceDef
+            || statementInstance instanceof Statements.EndInterface
+            || statementInstance instanceof Statements.Form
+            || statementInstance instanceof Statements.EndForm) {
+          tokenType = SemanticProtocol.SemanticTokenTypes.struct;
+        } else if (tokenInstance instanceof String
+            || tokenInstance instanceof StringTemplate
+            || tokenInstance instanceof StringTemplateBegin
+            || tokenInstance instanceof StringTemplateEnd
+            || tokenInstance instanceof StringTemplateMiddle) {
           tokenType = SemanticProtocol.SemanticTokenTypes.string;
-        } else if (t.get() instanceof Comment) {
+        } else if (tokenInstance instanceof Comment) {
           tokenType = SemanticProtocol.SemanticTokenTypes.comment;
-        } else if (t instanceof TokenNodeRegex || t.get() instanceof Punctuation) {
-          tokenType = SemanticProtocol.SemanticTokenTypes.method;
+        } else if (t instanceof TokenNodeRegex) {
+          tokenType = SOURCE_ABAP;
         }
         const token = t.getFirstToken();
 
