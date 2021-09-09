@@ -106,4 +106,20 @@ ENDCASE.`));
     expect(output[0].getStructure()).to.not.equal(undefined);
   });
 
+  it("parsing, should not crash", async () => {
+    const abap = `
+CLASS lcl_client DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_apc_wsp_client.
+ENDCLASS.
+
+CLASS lcl_client IMPLEMENTATION.
+  method
+ENDCLASS.`;
+
+    const files = [new MemoryFile("macrointype.prog.abap", abap)];
+
+    new ABAPParser(defaultVersion, []).parse(files);
+  });
+
 });

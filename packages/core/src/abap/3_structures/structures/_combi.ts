@@ -102,6 +102,16 @@ class Alternative implements IStructureRunnable {
     let count = 0;
     let countError = "";
 
+    if (statements.length === 0) {
+      return {
+        matched: [],
+        unmatched: statements,
+        error: true,
+        errorDescription: countError,
+        errorMatched: count,
+      };
+    }
+
     const token = statements[0].getFirstToken().getStr().toUpperCase();
     for (const i of this.map[token] || []) {
       const match = i.run(statements, parent);
