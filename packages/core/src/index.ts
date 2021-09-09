@@ -4,6 +4,7 @@ import {Version} from "./version";
 import {Registry} from "./registry";
 import {MethodLengthStats, IMethodLengthResult} from "./utils/method_length_stats";
 import {LanguageServer} from "./lsp/language_server";
+import * as LanguageServerTypes from "./lsp/_interfaces";
 import {Artifacts} from "./abap/artifacts";
 import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
@@ -61,7 +62,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
-  IMethodDefinition, DDLParser,
+  IMethodDefinition, DDLParser, LanguageServerTypes,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   IRenameSettings, Info, Visibility, Severity};
