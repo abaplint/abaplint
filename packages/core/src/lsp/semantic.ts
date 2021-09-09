@@ -60,7 +60,6 @@ export class SemanticHighlighting {
         continue;
       }
       for (const t of s.getTokenNodes()) {
-        console.dir(t);
         let tokenType = SemanticProtocol.SemanticTokenTypes.keyword;
         if (t.get() instanceof String
             || t.get() instanceof StringTemplate
