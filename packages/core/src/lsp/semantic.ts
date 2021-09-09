@@ -7,6 +7,8 @@ import {IRegistry} from "../_iregistry";
 import {ITextDocumentRange} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 
+const SOURCE_ABAP = "source.abap";
+
 interface Token {
   line: number,
   startChar: number,
@@ -39,6 +41,8 @@ export class SemanticHighlighting {
     if (SemanticHighlighting.tokenTypes.length === 0) {
       SemanticHighlighting.tokenTypeMap = {};
 
+      SemanticHighlighting.tokenTypeMap[SOURCE_ABAP] = SemanticHighlighting.tokenTypes.length;
+      SemanticHighlighting.tokenTypes.push(SOURCE_ABAP);
       for (const t in SemanticProtocol.SemanticTokenTypes) {
         SemanticHighlighting.tokenTypeMap[t] = SemanticHighlighting.tokenTypes.length;
         SemanticHighlighting.tokenTypes.push(t);
@@ -57,15 +61,15 @@ export class SemanticHighlighting {
 
     const tokens: Token[] = [];
     for (const s of file.getStatements()) {
-      if (s.getFirstToken().getStart().isAfter(rangeEndPosition)) {
+      if (s.getFirstToken().getStart() instanceof VirtualPosition) {
+        continue;
+      } else if (s.getFirstToken().getStart().isAfter(rangeEndPosition)) {
         break;
       } else if (s.getLastToken().getEnd().isBefore(rangeStartPosition)) {
         continue;
-      } else if (s.getFirstToken().getStart() instanceof VirtualPosition) {
-        continue;
       }
       for (const t of s.getTokenNodes()) {
-        let tokenType = SemanticProtocol.SemanticTokenTypes.keyword;
+        let tokenType: string = SemanticProtocol.SemanticTokenTypes.keyword;
         if (t.get() instanceof String
             || t.get() instanceof StringTemplate
             || t.get() instanceof StringTemplateBegin
@@ -75,7 +79,7 @@ export class SemanticHighlighting {
         } else if (t.get() instanceof Comment) {
           tokenType = SemanticProtocol.SemanticTokenTypes.comment;
         } else if (t instanceof TokenNodeRegex || t.get() instanceof Punctuation) {
-          tokenType = SemanticProtocol.SemanticTokenTypes.method;
+          tokenType = SOURCE_ABAP;
         }
         const token = t.getFirstToken();
 
