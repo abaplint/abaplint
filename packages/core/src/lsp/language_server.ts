@@ -106,8 +106,8 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensLegend
-  public semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
-    return new SemanticHighlighting(this.reg).semanticTokensLegend();
+  public static semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
+    return SemanticHighlighting.semanticTokensLegend();
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensRangeParams

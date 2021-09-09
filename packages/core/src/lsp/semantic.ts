@@ -22,6 +22,20 @@ export class SemanticHighlighting {
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
+    SemanticHighlighting.initLegend();
+  }
+
+  public static semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
+    // https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#semantic-token-scope-map
+    // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokenTypes
+    this.initLegend();
+    return {
+      tokenTypes: SemanticHighlighting.tokenTypes,
+      tokenModifiers: [],
+    };
+  }
+
+  private static initLegend() {
     if (SemanticHighlighting.tokenTypes.length === 0) {
       SemanticHighlighting.tokenTypeMap = {};
 
@@ -30,15 +44,6 @@ export class SemanticHighlighting {
         SemanticHighlighting.tokenTypes.push(t);
       }
     }
-  }
-
-  public semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
-    // https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#semantic-token-scope-map
-    // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokenTypes
-    return {
-      tokenTypes: SemanticHighlighting.tokenTypes,
-      tokenModifiers: [],
-    };
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#textDocument_semanticTokens

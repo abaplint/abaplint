@@ -8,8 +8,7 @@ export class ABAPSemanticTokensDeltaProvider implements monaco.languages.Documen
   }
 
   public getLegend(): monaco.languages.SemanticTokensLegend {
-    console.dir("getLegend Semantic Tokens");
-    return new LanguageServer(this.reg).semanticTokensLegend();
+    return LanguageServer.semanticTokensLegend();
   }
 
   public provideDocumentRangeSemanticTokens(model: monaco.editor.ITextModel, range: monaco.Range, token: monaco.CancellationToken):
