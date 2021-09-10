@@ -12,6 +12,7 @@ import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes/statement_node";
+import * as Statements from "../abap/2_statements/statements";
 import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
@@ -204,10 +205,12 @@ export class UnusedVariables implements IRule {
     }
 
     const statement = EditHelper.findStatement(v.getToken(), file);
-    if (statement) {
+    if (statement === undefined) {
+      return undefined;
+    } else if (statement.get() instanceof Statements.FunctionModule) {
+      return undefined; // function module parameters are not part of the code
+    } else {
       return EditHelper.deleteStatement(file, statement);
     }
-
-    return undefined;
   }
 }
