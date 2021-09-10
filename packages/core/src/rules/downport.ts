@@ -452,6 +452,10 @@ ${indentation}`);
       return undefined;
     } else if (!(source.getFirstChild()?.get() instanceof Expressions.FieldChain)) {
       return undefined;
+    } else if (source.findFirstExpression(Expressions.FieldOffset)) {
+      return undefined;
+    } else if (source.findFirstExpression(Expressions.FieldLength)) {
+      return undefined;
     }
 
     const targetName = target.findFirstExpression(Expressions.TargetField)?.concatTokens();
