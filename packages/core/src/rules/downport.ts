@@ -446,7 +446,11 @@ ${indentation}`);
     }
 
     const source = node.findFirstExpression(Expressions.Source);
-    if (!(source?.getFirstChild()?.get() instanceof Expressions.FieldChain)) {
+    if (source === undefined) {
+      return undefined;
+    } else if (source.getChildren().length !== 1) {
+      return undefined;
+    } else if (!(source.getFirstChild()?.get() instanceof Expressions.FieldChain)) {
       return undefined;
     }
 

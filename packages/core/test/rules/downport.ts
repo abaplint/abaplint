@@ -910,6 +910,19 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("Outline, via type inference", async () => {
+    const abap = `DATA mv_hex TYPE xstring.
+DATA(lv_topbit) = mv_hex(1) MOD 128.`;
+
+    const expected = `DATA mv_hex TYPE xstring.
+DATA lv_topbit TYPE i.
+lv_topbit = mv_hex(1) MOD 128.`;
+
+    testFix(abap, expected);
+  });
+
+// ---------------------
+
   it.skip("line_exists()", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
