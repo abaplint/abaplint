@@ -8,6 +8,7 @@ import {ITextDocumentRange} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 
 const SOURCE_ABAP = "source.abap";
+const BLOCK_ABAP = "sstorage.type.block.abap";
 
 interface Token {
   line: number,
@@ -43,6 +44,8 @@ export class SemanticHighlighting {
 
       SemanticHighlighting.tokenTypeMap[SOURCE_ABAP] = SemanticHighlighting.tokenTypes.length;
       SemanticHighlighting.tokenTypes.push(SOURCE_ABAP);
+      SemanticHighlighting.tokenTypeMap[BLOCK_ABAP] = SemanticHighlighting.tokenTypes.length;
+      SemanticHighlighting.tokenTypes.push(BLOCK_ABAP);
       for (const t in SemanticProtocol.SemanticTokenTypes) {
         SemanticHighlighting.tokenTypeMap[t] = SemanticHighlighting.tokenTypes.length;
         SemanticHighlighting.tokenTypes.push(t);
@@ -81,11 +84,12 @@ export class SemanticHighlighting {
             || statementInstance instanceof Statements.ClassImplementation
             || statementInstance instanceof Statements.MethodImplementation
             || statementInstance instanceof Statements.EndMethod
+            || statementInstance instanceof Statements.EndClass
             || statementInstance instanceof Statements.InterfaceDef
             || statementInstance instanceof Statements.EndInterface
             || statementInstance instanceof Statements.Form
             || statementInstance instanceof Statements.EndForm) {
-          tokenType = SemanticProtocol.SemanticTokenTypes.struct;
+          tokenType = BLOCK_ABAP;
         } else if (tokenInstance instanceof String
             || tokenInstance instanceof StringTemplate
             || tokenInstance instanceof StringTemplateBegin

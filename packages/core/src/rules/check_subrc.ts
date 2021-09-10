@@ -37,13 +37,7 @@ If sy-dbcnt is checked after database statements, it is considered okay.
 
 If IS ASSIGNED is checked after assigning, it is considered okay.
 
-Following FIND statements are considered okay if subrc is not checked,
-FIND with MATCH COUNT
-FIND with MATCH LENGTH
-FIND with RESULTS
-FIND with SUBMATCHES
-FIND with MATCH OFFSET
-FIND with MATCH LINE`,
+FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
       tags: [RuleTag.SingleFile],
       pseudoComment: "EC CI_SUBRC",
       pragma: "##SUBRC_OK",
@@ -134,7 +128,8 @@ FIND with MATCH LINE`,
 ////////////////
 
   private isExemptedFind(s: StatementNode): boolean {
-    return s.findDirectExpression(Expressions.Target) !== undefined;
+// see https://github.com/abaplint/abaplint/issues/2130
+    return s.concatTokens().includes(" MATCH COUNT ") === true;
   }
 
   private checksDbcnt(index: number, statements: readonly StatementNode[]): boolean {

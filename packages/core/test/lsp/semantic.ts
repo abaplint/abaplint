@@ -12,7 +12,7 @@ describe("LSP, semantic highlighting", () => {
     const reg = new Registry().addFile(file).parse();
     const tokenInformation = new SemanticHighlighting(reg).semanticTokensRange(
       {textDocument: {uri: filename}, start: {line: 0, character: 0}, end: {line: 0, character: 15}});
-    expect(tokenInformation.data).to.eql([0, 0, 5, 16, 0, 0, 6, 7, 19, 0, 0, 7, 1, 0, 0]);
+    expect(tokenInformation.data).to.eql([0, 0, 5, 17, 0, 0, 6, 7, 20, 0, 0, 7, 1, 0, 0]);
   });
 
 });
