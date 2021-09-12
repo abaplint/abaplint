@@ -13,9 +13,13 @@ export class ComponentChain {
 
     if (!(context instanceof StructureType)) {
       if (name.toUpperCase() === "TABLE_LINE") {
-        return;
+        return context;
       }
       throw new Error("ComponentChain, not a structure");
+    }
+
+    if (name.toUpperCase() === "TABLE_LINE") {
+      return context;
     }
 
     const ret = context.getComponentByName(name);

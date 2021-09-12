@@ -5145,6 +5145,22 @@ READ TABLE lt_map WITH KEY blah = iv_tag TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, read structured table with table_line", () => {
+    const abap = `
+TYPES: BEGIN OF ty_tab,
+  a TYPE string,
+  b TYPE string,
+  END OF ty_tab.
+DATA itab TYPE TABLE OF ty_tab.
+DATA wa TYPE ty_tab.
+READ TABLE itab TRANSPORTING NO FIELDS WITH TABLE KEY table_line = wa.
+IF sy-subrc = 0.
+  WRITE 'FOUND'.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
