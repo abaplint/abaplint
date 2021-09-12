@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.78.8",
+    "version": "2.78.9",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -65,10 +65,10 @@
         "c8": "^7.9.0",
         "source-map-support": "^0.5.20",
         "ts-json-schema-generator": "^0.95.0",
-        "typescript": "^4.4.2"
+        "typescript": "^4.4.3"
     },
     "dependencies": {
-        "fast-xml-parser": "^3.19.0",
+        "fast-xml-parser": "^3.20.0",
         "json5": "^2.2.0",
         "vscode-languageserver-protocol": "^3.16.0",
         "vscode-languageserver-types": "^3.16.0"

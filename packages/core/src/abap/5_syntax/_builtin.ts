@@ -243,11 +243,11 @@ export class BuiltIn {
     ret.push(this.buildConstant("%_NEWLINE"));
     ret.push(this.buildConstant("%_VERTICAL_TAB"));
 
-    ret.push(this.buildConstant("abap_false", new CharacterType(1), "' '"));
-    ret.push(this.buildConstant("abap_true", new CharacterType(1), "'X'"));
-    ret.push(this.buildConstant("abap_undefined", new CharacterType(1), "'-'"));
-    ret.push(this.buildConstant("abap_off", new CharacterType(1), "' '"));
-    ret.push(this.buildConstant("abap_on", new CharacterType(1), "'X'"));
+    ret.push(this.buildConstant("abap_false", new CharacterType(1, "ABAP_BOOL"), "' '"));
+    ret.push(this.buildConstant("abap_true", new CharacterType(1, "ABAP_BOOL"), "'X'"));
+    ret.push(this.buildConstant("abap_undefined", new CharacterType(1, "ABAP_BOOL"), "'-'"));
+    ret.push(this.buildConstant("abap_off", new CharacterType(1, "ABAP_BOOL"), "' '"));
+    ret.push(this.buildConstant("abap_on", new CharacterType(1, "ABAP_BOOL"), "'X'"));
 
     ret.push(this.buildConstant("col_background", new IntegerType(), "0"));
     ret.push(this.buildConstant("col_heading", new IntegerType(), "1"));
