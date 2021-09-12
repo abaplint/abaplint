@@ -8,7 +8,7 @@ import {ITextDocumentRange} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 
 const SOURCE_ABAP = "source.abap";
-const BLOCK_ABAP = "sstorage.type.block.abap";
+const BLOCK_ABAP = "storage.type.block.abap";
 
 interface Token {
   line: number,

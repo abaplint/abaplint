@@ -11,7 +11,11 @@ export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const sources = node.findDirectExpressions(Expressions.Source);
     const firstSource = sources[0];
-    const sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : new VoidType("DynamicAssign");
+    let sourceType = new Source().runSyntax(firstSource, scope, filename);
+
+    if (sourceType === undefined || node.findDirectExpression(Expressions.Dynamic)) {
+      sourceType = new VoidType("DynamicAssign");
+    }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, scope, filename);

@@ -5161,6 +5161,22 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, infer type from dynamic chain", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD bar.
+    ASSIGN me->('foo') TO FIELD-SYMBOL(<bar>).
+    <bar> = abap_true.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
