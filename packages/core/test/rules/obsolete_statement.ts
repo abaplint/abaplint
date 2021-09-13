@@ -86,9 +86,9 @@ async function findIssues(abap: string, version?: Version): Promise<readonly Iss
 
 describe("test obsolete_statements rule - versions", () => {
   it("no issues", async () => {
-    const issue1 = await findIssues("FIND REGEX 'foo' IN 'bar'", Version.v754);
+    const issue1 = await findIssues("FIND REGEX 'foo' IN 'bar'.", Version.v754);
     expect(issue1.length).to.equal(0);
-    const issue2 = await findIssues("FIND PRCE 'foo' IN 'bar'", Version.v754);
+    const issue2 = await findIssues("FIND PRCE 'foo' IN 'bar'.", Version.v754);
     expect(issue2.length).to.equal(0);
 
     const issue3 = await findIssues("REPLACE ALL OCCURRENCES OF REGEX 'foo' IN bar WITH 'test'.", Version.v754);
@@ -98,9 +98,9 @@ describe("test obsolete_statements rule - versions", () => {
   });
 
   it("issues", async () => {
-    const issue1 = await findIssues("FIND REGEX 'foo' IN 'bar'", Version.v755);
+    const issue1 = await findIssues("FIND REGEX 'foo' IN 'bar'.", Version.v755);
     expect(issue1.length).to.equal(1);
-    const issue2 = await findIssues("FIND PRCE 'foo' IN 'bar'", Version.v755);
+    const issue2 = await findIssues("FIND PRCE 'foo' IN 'bar'.", Version.v755);
     expect(issue2.length).to.equal(0);
 
     const issue3 = await findIssues("REPLACE ALL OCCURRENCES OF REGEX 'foo' IN bar WITH 'test'.", Version.v755);
