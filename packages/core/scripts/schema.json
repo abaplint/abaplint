@@ -4991,6 +4991,7 @@
     },
     "Version": {
       "enum": [
+        "open-abap",
         "v700",
         "v702",
         "v740sp02",

@@ -10,7 +10,7 @@ export class Wait implements IStatement {
     const up = seq("UP TO", Source, "SECONDS");
 
     const channels = "MESSAGING CHANNELS";
-    const push = ver(Version.v750, "PUSH CHANNELS");
+    const push = ver(Version.v750, "PUSH CHANNELS", Version.OpenABAP);
     const tasks = "ASYNCHRONOUS TASKS";
 
     const type = seq("FOR", per(channels, push, tasks));
