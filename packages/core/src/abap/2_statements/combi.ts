@@ -124,8 +124,8 @@ class Token implements IStatementRunnable {
   public railroad() {
     let text = this.name;
 
+    const toke: any = Tokens;
     for (const token in Tokens) {
-      const toke: any = Tokens;
       if (token.toUpperCase() === this.name && toke[token].railroad) {
         text = toke[token].railroad();
         break;
@@ -158,8 +158,10 @@ class Vers implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    if (Combi.getVersion() >= this.version
-        || Combi.getVersion() === Version.Cloud) {
+    const version = Combi.getVersion();
+    if (version === Version.OpenABAP) {
+      return [];
+    } else if (version >= this.version || version === Version.Cloud) {
       return this.runnable.run(r);
     } else {
       return [];

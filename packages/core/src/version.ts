@@ -1,4 +1,5 @@
 export enum Version {
+  OpenABAP = "v001-open-abap", // as 702, but with some extra new language features
   v700 = "v700",
   v702 = "v702",
   v740sp02 = "v740sp02",
@@ -11,7 +12,6 @@ export enum Version {
   v754 = "v754",
   v755 = "v755",
   Cloud = "Cloud", // Steampunk, SAP BTP ABAP Environment
-  OpenABAP = "open-abap",
 }
 
 export const defaultVersion = Version.v755;
