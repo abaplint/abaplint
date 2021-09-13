@@ -146,11 +146,13 @@ class Token implements IStatementRunnable {
 class Vers implements IStatementRunnable {
 
   private readonly version: Version;
+  private readonly or: Version | undefined;
   private readonly runnable: IStatementRunnable;
 
-  public constructor(version: Version, runnable: IStatementRunnable) {
+  public constructor(version: Version, runnable: IStatementRunnable, or?: Version) {
     this.version = version;
     this.runnable = runnable;
+    this.or = or;
   }
 
   public listKeywords(): string[] {
@@ -159,8 +161,10 @@ class Vers implements IStatementRunnable {
 
   public run(r: Result[]): Result[] {
     const version = Combi.getVersion();
-    if (version === Version.OpenABAP) {
+    if (version === Version.OpenABAP && version >= Version.v702) {
       return [];
+    } else if (this.or && version === this.or) {
+      return this.runnable.run(r);
     } else if (version >= this.version || version === Version.Cloud) {
       return this.runnable.run(r);
     } else {
@@ -173,8 +177,12 @@ class Vers implements IStatementRunnable {
   }
 
   public railroad() {
+    let text: string = this.version;
+    if (this.or) {
+      text += " or " + this.or;
+    }
     return "Railroad.Sequence(Railroad.Comment(\"" +
-      this.version +
+      text +
       "\", {}), " +
       this.runnable.railroad() +
       ")";
@@ -984,8 +992,8 @@ export function plus(first: InputType): IStatementRunnable {
 export function plusPrio(first: InputType): IStatementRunnable {
   return new PlusPriority(map(first));
 }
-export function ver(version: Version, first: InputType): IStatementRunnable {
-  return new Vers(version, map(first));
+export function ver(version: Version, first: InputType, or?: Version): IStatementRunnable {
+  return new Vers(version, map(first), or);
 }
 export function verNot(version: Version, first: InputType): IStatementRunnable {
   return new VersNot(version, map(first));
