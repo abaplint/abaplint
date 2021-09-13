@@ -152,8 +152,8 @@ export class ABAPFileInformation implements IABAPFileInformation {
       aliases.push(...this.parseAliases(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
       const constants = this.parseConstants(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
-      constants.push(...this.parseConstants(found.findFirstStructure(Structures.PublicSection), Visibility.Protected));
-      constants.push(...this.parseConstants(found.findFirstStructure(Structures.PublicSection), Visibility.Private));
+      constants.push(...this.parseConstants(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      constants.push(...this.parseConstants(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
       const containsGlobal = found.findFirstExpression(Expressions.ClassGlobal);
