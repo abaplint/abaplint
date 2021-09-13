@@ -85,7 +85,7 @@ async function findIssues(abap: string, version?: Version): Promise<readonly Iss
 }
 
 describe("test obsolete_statements rule - versions", () => {
-  it("no issues", async () => {
+  it("statements no issues", async () => {
     const issue1 = await findIssues("FIND REGEX 'foo' IN 'bar'.", Version.v754);
     expect(issue1.length).to.equal(0);
     const issue2 = await findIssues("FIND PRCE 'foo' IN 'bar'.", Version.v754);
@@ -97,7 +97,16 @@ describe("test obsolete_statements rule - versions", () => {
     expect(issue4.length).to.equal(0);
   });
 
-  it("issues", async () => {
+  it("methods no issues", async () => {
+    const issue1 = await findIssues("cl_abap_regex=>create_posix( foo ).", Version.v754);
+    expect(issue1.length).to.equal(0);
+    const issue2 = await findIssues("cl_abap_regex=>create_pcre( foo ).", Version.v754);
+    expect(issue2.length).to.equal(0);
+    const issue3 = await findIssues("cl_abap_matcher=>contains_posix( foo ).", Version.v754);
+    expect(issue3.length).to.equal(0);
+  });
+
+  it("statements issues", async () => {
     const issue1 = await findIssues("FIND REGEX 'foo' IN 'bar'.", Version.v755);
     expect(issue1.length).to.equal(1);
     const issue2 = await findIssues("FIND PRCE 'foo' IN 'bar'.", Version.v755);
@@ -107,6 +116,15 @@ describe("test obsolete_statements rule - versions", () => {
     expect(issue3.length).to.equal(1);
     const issue4 = await findIssues("REPLACE ALL OCCURRENCES OF PRCE 'foo' IN bar WITH 'test'.", Version.v755);
     expect(issue4.length).to.equal(0);
+  });
+
+  it("methods issues", async () => {
+    const issue1 = await findIssues("cl_abap_regex=>create_posix( foo ).", Version.v755);
+    expect(issue1.length).to.equal(1);
+    const issue2 = await findIssues("cl_abap_regex=>create_pcre( foo ).", Version.v755);
+    expect(issue2.length).to.equal(0);
+    const issue3 = await findIssues("cl_abap_matcher=>contains_posix( foo ).", Version.v755);
+    expect(issue3.length).to.equal(1);
   });
 });
 

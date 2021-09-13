@@ -292,13 +292,36 @@ POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.ht
         }
       }
 
-      if (configVersion >= Version.v755 && this.conf.regex &&
-        (sta instanceof Statements.Find || sta instanceof Statements.Replace)) {
-        const concat = staNode.concatTokens().toUpperCase();
+      if (configVersion >= Version.v755 && this.conf.regex) {
+        if (sta instanceof Statements.Find || sta instanceof Statements.Replace) {
+          const concat = staNode.concatTokens().toUpperCase();
 
-        if (concat.includes("REGEX")) {
-          const issue = Issue.atStatement(file, staNode, "REGEX obsolete, use PCRE", this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
+          if (concat.includes("REGEX")) {
+            const issue = Issue.atStatement(file, staNode, "REGEX obsolete, use PCRE", this.getMetadata().key, this.conf.severity);
+            issues.push(issue);
+          }
+        }
+        else {
+          const classNameExpression = staNode.findAllExpressions(Expressions.ClassName);
+          const methodNameExpression = staNode.findAllExpressions(Expressions.MethodName);
+
+          if (classNameExpression.length !== 0 && methodNameExpression.length !== 0) {
+            const className = classNameExpression[0].concatTokens();
+            const methodName = methodNameExpression[0].concatTokens();
+
+            if (className === "cl_abap_regex") {
+              if (methodName === "create_posix") {
+                const issue = Issue.atStatement(file, staNode, "create_posix obsolete, use create_pcre", this.getMetadata().key, this.conf.severity);
+                issues.push(issue);
+              }
+            }
+            else if (className === "cl_abap_matcher") {
+              if (methodName.includes("posix")) {
+                const issue = Issue.atStatement(file, staNode, "posix methods obsolete, use pcre methods", this.getMetadata().key, this.conf.severity);
+                issues.push(issue);
+              }
+            }
+          }
         }
       }
     }
