@@ -160,12 +160,16 @@ class Vers implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const version = Combi.getVersion();
-    if (version === Version.OpenABAP && version >= Version.v702) {
-      return [];
-    } else if (this.or && version === this.or) {
+    const targetVersion = Combi.getVersion();
+    if (this.or && targetVersion === this.or) {
       return this.runnable.run(r);
-    } else if (version >= this.version || version === Version.Cloud) {
+    } else if (targetVersion === Version.OpenABAP) {
+      if (this.version > Version.v702) {
+        return [];
+      } else {
+        return this.runnable.run(r);
+      }
+    } else if (targetVersion >= this.version || targetVersion === Version.Cloud) {
       return this.runnable.run(r);
     } else {
       return [];
