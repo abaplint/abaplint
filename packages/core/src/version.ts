@@ -1,5 +1,5 @@
 export enum Version {
-  OpenABAP = "v001-open-abap", // as 702, but with some extra new language features
+  OpenABAP = "open-abap", // as 702, but with some extra new language features
   v700 = "v700",
   v702 = "v702",
   v740sp02 = "v740sp02",
