@@ -47,7 +47,9 @@ export class ConstantClasses implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
-    if (this.conf && obj instanceof Objects.Domain) {
+    if (this.conf &&
+      this.conf instanceof ConstantClassesConf &&
+      this.conf.mapping && obj instanceof Objects.Domain) {
       const configEntry = this.conf.mapping.find(x => x.domain.toUpperCase() === obj.getName());
       if (!configEntry) {
         return [];
