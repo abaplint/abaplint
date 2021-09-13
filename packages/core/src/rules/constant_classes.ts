@@ -15,13 +15,13 @@ export interface DomainClassMapping {
 }
 
 /** Checks that constants are in sync with domain fixed values */
-export class CosntantClassesConf extends BasicRuleConfig {
+export class ConstantClassesConf extends BasicRuleConfig {
   /** Specify a list of domain-class pairs which will be validated */
   public mapping: DomainClassMapping[];
 }
 
 export class ConstantClasses implements IRule {
-  private conf = new CosntantClassesConf();
+  private conf = new ConstantClassesConf();
   private reg: IRegistry;
 
   public getMetadata(): IRuleMetadata {
@@ -42,19 +42,19 @@ export class ConstantClasses implements IRule {
     return this.conf;
   }
 
-  public setConfig(conf: CosntantClassesConf) {
+  public setConfig(conf: ConstantClassesConf) {
     this.conf = conf;
   }
 
   public run(obj: IObject): Issue[] {
-    if (obj instanceof Objects.Domain) {
-      const configEntry = this.conf.mapping.find(x => x.domain === obj.getName());
+    if (this.conf && obj instanceof Objects.Domain) {
+      const configEntry = this.conf.mapping.find(x => x.domain.toUpperCase() === obj.getName());
       if (!configEntry) {
         return [];
       }
 
       const classWithConstants = this.reg.getObject("CLAS", configEntry?.class);
-      if(!classWithConstants){
+      if (!classWithConstants) {
         // one issue on the domain, "constant class is missing"
         // quickfix will implement the whole class
         return [];
@@ -68,7 +68,8 @@ export class ConstantClasses implements IRule {
         return [];
       }
 
-      const domainValues: string[] = obj.getFixedValues();
+      const domainValueInfo = obj.getFixedValues();
+      const domainValues = domainValueInfo.map(x => x.value);
       const issues: Issue[] = [];
 
       if (obj.getFixedValues().length === 0) {
@@ -87,10 +88,10 @@ export class ConstantClasses implements IRule {
           Issue.atStatement(
             classContents,
             classContents.getStatements()[0],
-            `Missing constants for ${domainValues.length} domain values of ${configEntry.domain}`,
+            `Missing constants for ${domainValueInfo.length} domain values of ${configEntry.domain}`,
             this.getMetadata().key,
             this.conf.severity));
-            // quickfix will add all constants
+        // quickfix will add all constants
       }
 
       for (const constant of constants) {
@@ -109,7 +110,7 @@ export class ConstantClasses implements IRule {
           // quickfix will move constant
         }
 
-        if (!domainValues.includes(constant.name)) {
+        if (!domainValues.includes(constant.value)) {
           issues.push(this.issueAtConstant(
             constant,
             `Extra constant ${constant.name} found which is not present in domain ${configEntry.domain}`));
@@ -117,13 +118,13 @@ export class ConstantClasses implements IRule {
         }
       }
 
-      for (const domainValue of domainValues) {
-        if (!def.constants.find(x => x.name === domainValue)) {
+      for (const d of domainValueInfo) {
+        if (!def.constants.find(c => c.value === d.value)) {
           issues.push(
             Issue.atStatement(
               classContents,
               classContents.getStatements()[0],
-              `Missing constant for ${domainValue} (domain ${configEntry.domain})`,
+              `Missing constant for ${d} (domain ${configEntry.domain})`,
               this.getMetadata().key,
               this.conf.severity));
           // quickfix will add constant

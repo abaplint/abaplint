@@ -69,7 +69,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
     return this.forms;
   }
 
-///////////////////////
+  ///////////////////////
 
   private parse(structure: StructureNode | undefined): void {
     if (structure === undefined) {
@@ -92,11 +92,12 @@ export class ABAPFileInformation implements IABAPFileInformation {
       this.implementations.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
-        methods});
+        methods,
+      });
     }
 
     for (const statement of structure.findAllStructures(Structures.Form)) {
-        // FORMs can contain a dash in the name
+      // FORMs can contain a dash in the name
       const pos = statement.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
       const name = statement.findFirstExpression(Expressions.FormName)!.concatTokens();
       const nameToken = new Tokens.Identifier(pos, name);
@@ -176,7 +177,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
     }
   }
 
-///////////////////
+  ///////////////////
 
   private getImplementing(input: StructureNode): InfoImplementing[] {
     const ret: InfoImplementing[] = [];
@@ -240,14 +241,14 @@ export class ABAPFileInformation implements IABAPFileInformation {
 
     const results: InfoConstant[] = [];
     for (const constant of node.findAllStatements(Statements.Constant)) {
-      const name = constant.findFirstExpression(Expressions.SimpleName)!.getFirstToken();
-      const value = constant.findFirstExpression(Expressions.Value)!.getFirstToken();
-      const typeName = constant.findFirstExpression(Expressions.TypeName)!.getFirstToken();
+      const name = constant.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
+      const typeName = constant.findFirstExpression(Expressions.TypeName);
+      const value = constant.findFirstExpression(Expressions.Value);
 
       results.push({
-        name: name.getStr(),
-        typeName: typeName.getStr(),
-        value: value.getStr(),
+        name: name!.getStr(),
+        typeName: typeName ? typeName.getFirstToken().getStr() : "",
+        value: value ? value.getFirstToken().getStr() : "",
         identifier: new Identifier(name, this.filename),
         visibility,
       });
