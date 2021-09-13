@@ -130,8 +130,9 @@ export class Config implements IConfiguration {
       return; // handled in getVersion
     }
     let match = false;
+    const vers: any = Version;
     for (const v in Version) {
-      if (v === this.config.syntax.version) {
+      if (vers[v] === this.config.syntax.version) {
         match = true;
         break;
       }

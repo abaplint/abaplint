@@ -19,8 +19,8 @@ export class ArtifactsObjects {
 
   private static buildObjectMap() {
     this.objectMap = [];
+    const list: any = Objects;
     for (const key in Objects) {
-      const list: any = Objects;
       if (typeof list[key] === "function") {
         const obj = new list[key]("DUMMY_NAME");
         this.objectMap[obj.getType()] = list[key];

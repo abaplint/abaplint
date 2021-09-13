@@ -70,7 +70,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   public initialize(reg: IRegistry) {
     this.lowReg = reg;
-    if (this.lowReg.getConfig().getVersion() === Version.v702) {
+    const version = this.lowReg.getConfig().getVersion();
+    if (version === Version.v702 || version === Version.OpenABAP) {
       this.initHighReg();
     }
     return this;
@@ -80,7 +81,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const ret: Issue[] = [];
     this.counter = 1;
 
-    if (this.lowReg.getConfig().getVersion() !== Version.v702) {
+    const version = this.lowReg.getConfig().getVersion();
+    if (version !== Version.v702 && version !== Version.OpenABAP) {
       return ret;
     } else if (!(lowObj instanceof ABAPObject)) {
       return ret;
