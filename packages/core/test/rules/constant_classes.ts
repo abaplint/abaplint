@@ -54,7 +54,7 @@ describe("rule, constant classes", () => {
     </abapGit>
     `;
 
-  it.only("no constants implemented", async () => {
+  it("no constants implemented", async () => {
     const abap = `
     CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
       PUBLIC SECTION.
