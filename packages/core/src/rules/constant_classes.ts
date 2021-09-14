@@ -1,9 +1,9 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPFile} from "../abap/abap_file";
 import {IObject, IRegistry, Objects, Visibility} from "..";
 import {InfoConstant} from "../abap/4_file_information/_abap_file_information";
+import {Class} from "../objects";
 
 export interface DomainClassMapping {
   /** Domain name. The domain must have fixed values. */
@@ -55,15 +55,17 @@ export class ConstantClasses implements IRule {
         return [];
       }
 
-      const classWithConstants = this.reg.getObject("CLAS", configEntry?.class);
+      const classWithConstants = this.reg.getObject("CLAS", configEntry?.class) as Class | undefined;
       if (!classWithConstants) {
         // one issue on the domain, "constant class is missing"
         // quickfix will implement the whole class
         return [];
       }
-      const classContents = classWithConstants?.getFiles()[0] as ABAPFile;
-      const info = classContents.getInfo();
-      const def = info.getClassDefinitionByName(configEntry.class);
+      const classContents = classWithConstants.getMainABAPFile();
+      if (classContents === undefined) {
+        return [];
+      }
+      const def = classWithConstants.getClassDefinition();
       if (!def) {
         // this issue is checked by rule implement_methods.
         // we will not issue errors that all constants are missing until there is a class implementation

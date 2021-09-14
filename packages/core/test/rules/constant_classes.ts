@@ -54,11 +54,11 @@ describe("rule, constant classes", () => {
     </abapGit>
     `;
 
-  it("no constants implemented", async () => {
+  it.only("no constants implemented", async () => {
     const abap = `
     CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
       PUBLIC SECTION.
-        
+
     ENDCLASS.
     CLASS zcl_greek_letters IMPLEMENTATION.
     ENDCLASS.`;
