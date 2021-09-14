@@ -49,7 +49,10 @@ ENDIF.`,
       return [];
     }
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    const vers = this.reg.getConfig().getVersion();
+    if (vers === Version.OpenABAP) {
+      return [];
+    } else if (vers < Version.v740sp02 && vers !== Version.Cloud) {
       return [];
     }
 
