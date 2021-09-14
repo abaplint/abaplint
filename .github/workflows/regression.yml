@@ -8,7 +8,7 @@ on:
 jobs:
   regression:
     # Check if the event is not triggered by a fork, this is stupid but its github
-    if: github.ref != 'refs/heads/main'
+    if: github.ref != 'refs/heads/main' && github.repository == 'abaplint/abaplint'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
