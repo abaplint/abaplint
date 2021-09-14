@@ -4038,6 +4038,10 @@
           "description": "Check for REFRESH statement",
           "type": "boolean"
         },
+        "regex": {
+          "description": "Check for POSIX REGEX usage",
+          "type": "boolean"
+        },
         "requested": {
           "description": "Checks for usages of IS REQUESTED",
           "type": "boolean"
@@ -4094,7 +4098,8 @@
         "freeMemory",
         "exitFromSQL",
         "sortByFS",
-        "callTransformation"
+        "callTransformation",
+        "regex"
       ],
       "type": "object"
     },
@@ -5065,6 +5070,7 @@
         "v753",
         "v754",
         "v755",
+        "v756",
         "Cloud"
       ],
       "type": "string"

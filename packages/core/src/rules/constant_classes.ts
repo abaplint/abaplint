@@ -29,7 +29,7 @@ export class ConstantClasses implements IRule {
       key: "constant_classes",
       title: "Validate constant classes",
       shortDescription: `Checks that a class contains exactly the constants corresponding to a domain's fixed values.`,
-      tags: [RuleTag.Syntax, RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.Syntax, RuleTag.Styleguide, RuleTag.Experimental],
     };
   }
 
