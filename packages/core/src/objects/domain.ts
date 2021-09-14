@@ -4,12 +4,20 @@ import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 
+export interface DomainValue {
+  language: string,
+  value: string,
+  description: string
+}
+
 export class Domain extends AbstractObject {
+
   private parsedXML: {
     description?: string,
     datatype?: string,
     length?: string,
     decimals?: string,
+    values?: DomainValue[],
   } | undefined;
   private parsedType: AbstractType | undefined;
 
@@ -58,14 +66,32 @@ export class Domain extends AbstractObject {
     }
 
     const dd01v = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD01V;
+    const dd07v_tab = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD07V_TAB?.DD07V;
+    const values: DomainValue[] = [];
+    if (dd07v_tab) {
+      for (const ddo7v of dd07v_tab) {
+        const value: DomainValue = {
+          description: ddo7v?.DDTEXT,
+          value: ddo7v?.DOMVALUE_L,
+          language: ddo7v?.DDLANGUAGE,
+        };
+        values.push(value);
+      }
+    }
+
     this.parsedXML = {
       description: dd01v?.DDTEXT,
       datatype: dd01v?.DATATYPE,
       length: dd01v?.LENG,
       decimals: dd01v?.DECIMALS,
+      values: values,
     };
     const end = Date.now();
     return {updated: true, runtime: end - start};
+  }
+
+  public getFixedValues() {
+    return this.parsedXML?.values ?? [];
   }
 
 }

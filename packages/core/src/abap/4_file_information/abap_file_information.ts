@@ -1,7 +1,7 @@
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition, InfoImplementing} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition, InfoImplementing, InfoConstant} from "./_abap_file_information";
 import {StructureNode, StatementNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
@@ -69,7 +69,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
     return this.forms;
   }
 
-///////////////////////
+  ///////////////////////
 
   private parse(structure: StructureNode | undefined): void {
     if (structure === undefined) {
@@ -92,11 +92,12 @@ export class ABAPFileInformation implements IABAPFileInformation {
       this.implementations.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
-        methods});
+        methods,
+      });
     }
 
     for (const statement of structure.findAllStructures(Structures.Form)) {
-        // FORMs can contain a dash in the name
+      // FORMs can contain a dash in the name
       const pos = statement.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
       const name = statement.findFirstExpression(Expressions.FormName)!.concatTokens();
       const nameToken = new Tokens.Identifier(pos, name);
@@ -117,7 +118,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       const methods = this.parseMethodDefinition(found, Visibility.Public);
       const attributes = this.parseAttributes(found, Visibility.Public);
       const aliases = this.parseAliases(found, Visibility.Public);
-
+      const constants = this.parseConstants(found, Visibility.Public);
       const g = i.findDirectExpression(Expressions.ClassGlobal);
 
       this.interfaces.push({
@@ -128,6 +129,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         interfaces: this.getImplementing(found),
         aliases,
         methods,
+        constants,
         attributes,
       });
     }
@@ -149,6 +151,10 @@ export class ABAPFileInformation implements IABAPFileInformation {
       aliases.push(...this.parseAliases(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
       aliases.push(...this.parseAliases(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
+      const constants = this.parseConstants(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      constants.push(...this.parseConstants(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      constants.push(...this.parseConstants(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
+
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
       const containsGlobal = found.findFirstExpression(Expressions.ClassGlobal);
       const concat = found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase();
@@ -166,11 +172,12 @@ export class ABAPFileInformation implements IABAPFileInformation {
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
         aliases,
         attributes,
+        constants,
       });
     }
   }
 
-///////////////////
+  ///////////////////
 
   private getImplementing(input: StructureNode): InfoImplementing[] {
     const ret: InfoImplementing[] = [];
@@ -225,6 +232,33 @@ export class ABAPFileInformation implements IABAPFileInformation {
     }
 
     return ret;
+  }
+
+  private parseConstants(node: StructureNode | undefined, visibility: Visibility): InfoConstant[] {
+    if (node === undefined) {
+      return [];
+    }
+
+    const results: InfoConstant[] = [];
+    for (const constant of node.findAllStatements(Statements.Constant)) {
+      const name = constant.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
+      const typeName = constant.findFirstExpression(Expressions.TypeName);
+
+      // VALUE `const_value` -> `const_value`
+      const literal = constant.findFirstExpression(Expressions.Value)?.getTokens()[1].getStr() ?? "``";
+      // `const_value` -> const_value
+      const value = literal.slice(1, literal?.length - 1);
+
+      results.push({
+        name: name!.getStr(),
+        typeName: typeName ? typeName.getFirstToken().getStr() : "",
+        value: value,
+        identifier: new Identifier(name, this.filename),
+        visibility,
+      });
+    }
+
+    return results;
   }
 
   private parseAttributes(node: StructureNode | undefined, visibility: Visibility): InfoAttribute[] {

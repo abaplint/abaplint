@@ -97,4 +97,63 @@ describe("Domain, parse main xml", () => {
     expect(type).to.be.instanceof(BasicTypes.PackedType);
   });
 
+  it("Has fixed values", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD01V>
+        <DOMNAME>GREEK_LETTERS</DOMNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <DATATYPE>CHAR</DATATYPE>
+        <LENG>000010</LENG>
+        <OUTPUTLEN>000010</OUTPUTLEN>
+        <VALEXI>X</VALEXI>
+        <DDTEXT>Greek letters</DDTEXT>
+        <DOMMASTER>E</DOMMASTER>
+       </DD01V>
+       <DD07V_TAB>
+        <DD07V>
+         <DOMNAME>GREEK_LETTERS</DOMNAME>
+         <VALPOS>0001</VALPOS>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <DOMVALUE_L>ALPHA</DOMVALUE_L>
+         <DDTEXT>Alpha</DDTEXT>
+        </DD07V>
+        <DD07V>
+         <DOMNAME>GREEK_LETTERS</DOMNAME>
+         <VALPOS>0002</VALPOS>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <DOMVALUE_L>BETA</DOMVALUE_L>
+         <DDTEXT>Beta</DDTEXT>
+        </DD07V>
+        <DD07V>
+         <DOMNAME>GREEK_LETTERS</DOMNAME>
+         <VALPOS>0003</VALPOS>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <DOMVALUE_L>GAMMA</DOMVALUE_L>
+         <DDTEXT>Gamma</DDTEXT>
+        </DD07V>
+        <DD07V>
+         <DOMNAME>GREEK_LETTERS</DOMNAME>
+         <VALPOS>0004</VALPOS>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <DOMVALUE_L>DELTA</DOMVALUE_L>
+         <DDTEXT>Delta</DDTEXT>
+        </DD07V>
+       </DD07V_TAB>
+      </asx:values>
+     </asx:abap>
+    </abapGit>
+    `;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    const values = doma.getFixedValues().map(x => x.value);
+    expect(values).to.contain("ALPHA");
+    expect(values).to.contain("BETA");
+    expect(values).to.contain("GAMMA");
+    expect(values).to.contain("DELTA");
+  });
+
 });
