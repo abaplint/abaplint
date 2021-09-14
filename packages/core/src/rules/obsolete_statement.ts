@@ -60,6 +60,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public sortByFS: boolean = true;
   /** Checks for CALL TRANSFORMATION OBJECTS */
   public callTransformation: boolean = true;
+  /** Check for POSIX REGEX usage */
+  public regex: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -106,7 +108,9 @@ FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree
 
 SORT BY FS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsort_itab_obsolete.htm
 
-CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_objects.htm`,
+CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_objects.htm
+
+POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.htm`,
     };
   }
 
@@ -285,6 +289,39 @@ CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.5
         if (objects) {
           const issue = Issue.atStatement(file, staNode, "Use PARAMETERS instead of OBJECTS", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
+        }
+      }
+
+      if (configVersion >= Version.v756 && this.conf.regex) {
+        if (sta instanceof Statements.Find || sta instanceof Statements.Replace) {
+          const concat = staNode.concatTokens().toUpperCase();
+
+          if (concat.includes("REGEX")) {
+            const issue = Issue.atStatement(file, staNode, "REGEX obsolete, use PCRE", this.getMetadata().key, this.conf.severity);
+            issues.push(issue);
+          }
+        }
+        else {
+          const classNameExpression = staNode.findAllExpressions(Expressions.ClassName);
+          const methodNameExpression = staNode.findAllExpressions(Expressions.MethodName);
+
+          if (classNameExpression.length !== 0 && methodNameExpression.length !== 0) {
+            const className = classNameExpression[0].concatTokens();
+            const methodName = methodNameExpression[0].concatTokens();
+
+            if (className === "cl_abap_regex") {
+              if (methodName === "create_posix") {
+                const issue = Issue.atStatement(file, staNode, "create_posix obsolete, use create_pcre", this.getMetadata().key, this.conf.severity);
+                issues.push(issue);
+              }
+            }
+            else if (className === "cl_abap_matcher") {
+              if (methodName.includes("posix")) {
+                const issue = Issue.atStatement(file, staNode, "posix methods obsolete, use pcre methods", this.getMetadata().key, this.conf.severity);
+                issues.push(issue);
+              }
+            }
+          }
         }
       }
     }
