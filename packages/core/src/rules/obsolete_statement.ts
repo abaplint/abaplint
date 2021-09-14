@@ -292,7 +292,7 @@ POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.ht
         }
       }
 
-      if (configVersion >= Version.v755 && this.conf.regex) {
+      if (configVersion >= Version.v756 && this.conf.regex) {
         if (sta instanceof Statements.Find || sta instanceof Statements.Replace) {
           const concat = staNode.concatTokens().toUpperCase();
 
