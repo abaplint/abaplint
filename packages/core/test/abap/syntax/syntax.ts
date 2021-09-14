@@ -5177,6 +5177,21 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, csequence is char like", () => {
+    const abap = `
+CLASS lcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    METHODS test EXPORTING ev_foo TYPE csequence.
+ENDCLASS.
+CLASS lcl_foobar IMPLEMENTATION.
+  METHOD test.
+    SHIFT ev_foo LEFT DELETING LEADING space.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

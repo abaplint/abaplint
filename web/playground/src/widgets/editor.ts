@@ -75,7 +75,7 @@ export class EditorWidget extends Widget {
       this.editor = monaco.editor.create(this.node, {
         model: this.model,
         theme: "vs-dark",
-        "semanticHighlighting.enabled": true,
+//        "semanticHighlighting.enabled": true,
         lightbulb: {
           enabled: true,
         },
