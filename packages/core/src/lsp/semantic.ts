@@ -85,7 +85,7 @@ export class SemanticHighlighting {
             || statementInstance instanceof Statements.MethodImplementation
             || statementInstance instanceof Statements.EndMethod
             || statementInstance instanceof Statements.EndClass
-            || statementInstance instanceof Statements.InterfaceDef
+            || statementInstance instanceof Statements.Interface
             || statementInstance instanceof Statements.EndInterface
             || statementInstance instanceof Statements.Form
             || statementInstance instanceof Statements.EndForm) {
