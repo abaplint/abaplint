@@ -74,7 +74,7 @@ describe("rule, constant classes", () => {
     rule.setConfig(config);
     const issues = rule.initialize(reg).run(reg.getFirstObject()!);
 
-    expect(issues.length).to.equals(1);
+    expect(issues.length).to.equals(4);
   });
 
   it("not enough constants implemented", async () => {
@@ -186,7 +186,7 @@ describe("rule, constant classes", () => {
     CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
       PUBLIC SECTION.
         CONSTANTS: alpha TYPE string VALUE \`ALPHA\`,
-                   beta TYPE string VALUE \`BETA\`,
+                   beta  TYPE string VALUE \`BETA\`,
                    gamma TYPE string VALUE \`GAMMA\`,
                    delta TYPE string VALUE \`DELTA\`.
     ENDCLASS.
@@ -205,6 +205,46 @@ describe("rule, constant classes", () => {
     const issues = rule.initialize(reg).run(reg.getFirstObject()!);
 
     expect(issues.length).to.equals(0);
+  });
+
+  it("all constants implemented (wrong type)", async () => {
+    const abap = `
+    CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
+      PUBLIC SECTION.
+        CONSTANTS: alpha TYPE greek_letters VALUE \`ALPHA\`,
+                   beta  TYPE string VALUE \`BETA\`,
+                   gamma TYPE string VALUE \`GAMMA\`,
+                   delta TYPE greek_letters VALUE \`DELTA\`.
+    ENDCLASS.
+    CLASS zcl_greek_letters IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("greek_letters.doma.xml", doma));
+    const config = new ConstantClassesConf();
+    config.mapping = [
+      {domain: "greek_letters", class: "zcl_greek_letters", useExactType: true},
+    ];
+    reg.addFile(new MemoryFile("zcl_greek_letters.clas.abap", abap));
+    await reg.parseAsync();
+    const rule = new ConstantClasses();
+    rule.setConfig(config);
+    const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+
+    expect(issues.length).to.equals(2);
+  });
+
+  it("implementing class does not exist", async () => {
+    const reg = new Registry().addFile(new MemoryFile("greek_letters.doma.xml", doma));
+    const config = new ConstantClassesConf();
+    config.mapping = [
+      {domain: "greek_letters", class: "zcl_greek_letters", useExactType: true},
+    ];
+    await reg.parseAsync();
+    const rule = new ConstantClasses();
+    rule.setConfig(config);
+    const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+
+    expect(issues.length).to.equals(1);
   });
 
 

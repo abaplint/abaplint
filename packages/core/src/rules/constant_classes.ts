@@ -50,12 +50,12 @@ export class ConstantClasses implements IRule {
     if (this.conf &&
       this.conf instanceof ConstantClassesConf &&
       this.conf.mapping && obj instanceof Objects.Domain) {
-      const configEntry = this.conf.mapping.find(x => x.domain.toUpperCase() === obj.getName());
+      const configEntry = this.conf.mapping.find(x => x.domain.toUpperCase() === obj.getName().toUpperCase());
       if (!configEntry) {
         return [];
       }
 
-      const classWithConstants = this.reg.getObject("CLAS", configEntry?.class) as Class | undefined;
+      const classWithConstants = this.reg.getObject("CLAS", configEntry?.class.toUpperCase()) as Class | undefined;
       if (!classWithConstants) {
         // one issue on the domain, "constant class is missing"
         // quickfix will implement the whole class
@@ -86,19 +86,8 @@ export class ConstantClasses implements IRule {
             this.getMetadata().key,
             this.conf.severity));
       }
-      const constants = def.constants;
-      if (!constants) {
-        issues.push(
-          Issue.atStatement(
-            classContents,
-            classContents.getStatements()[0],
-            `Missing constants for ${domainValueInfo.length} domain values of ${configEntry.domain}`,
-            this.getMetadata().key,
-            this.conf.severity));
-        // quickfix will add all constants
-      }
 
-      for (const constant of constants) {
+      for (const constant of def.constants) {
 
         if (configEntry.useExactType && constant.typeName !== configEntry.domain) {
           issues.push(this.issueAtConstant(

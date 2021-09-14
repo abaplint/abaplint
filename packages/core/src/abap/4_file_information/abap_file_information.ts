@@ -243,12 +243,16 @@ export class ABAPFileInformation implements IABAPFileInformation {
     for (const constant of node.findAllStatements(Statements.Constant)) {
       const name = constant.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       const typeName = constant.findFirstExpression(Expressions.TypeName);
-      const value = constant.findFirstExpression(Expressions.Value);
+
+      // VALUE `const_value` -> `const_value`
+      const literal = constant.findFirstExpression(Expressions.Value)?.getTokens()[1].getStr() ?? "``";
+      // `const_value` -> const_value
+      const value = literal.slice(1, literal?.length - 1);
 
       results.push({
         name: name!.getStr(),
         typeName: typeName ? typeName.getFirstToken().getStr() : "",
-        value: value ? value.getFirstToken().getStr() : "",
+        value: value,
         identifier: new Identifier(name, this.filename),
         visibility,
       });

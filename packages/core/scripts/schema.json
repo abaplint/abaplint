@@ -584,6 +584,34 @@
       ],
       "type": "object"
     },
+    "ConstantClassesConf": {
+      "additionalProperties": false,
+      "description": "Checks that constants are in sync with domain fixed values",
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "mapping": {
+          "description": "Specify a list of domain-class pairs which will be validated",
+          "items": {
+            "$ref": "#/definitions/DomainClassMapping"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "mapping"
+      ],
+      "type": "object"
+    },
     "ConstructorVisibilityPublicConf": {
       "additionalProperties": false,
       "properties": {
@@ -792,6 +820,29 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "DomainClassMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "class": {
+          "description": "Class name",
+          "type": "string"
+        },
+        "domain": {
+          "description": "Domain name. The domain must have fixed values.",
+          "type": "string"
+        },
+        "useExactType": {
+          "description": "Ensure the type of the constant is an exact match of the domain name.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "domain",
+        "class",
+        "useExactType"
+      ],
       "type": "object"
     },
     "DoubleSpaceConf": {
@@ -1490,6 +1541,17 @@
                 }
               ],
               "description": "Detects usage of commented out code.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/commented_code"
+            },
+            "constant_classes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstantClassesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that constants are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
             },
             "constructor_visibility_public": {
               "anyOf": [
