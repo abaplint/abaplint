@@ -57,9 +57,13 @@ export class ConstantClasses implements IRule {
 
       const classWithConstants = this.reg.getObject("CLAS", configEntry?.class.toUpperCase()) as Class | undefined;
       if (!classWithConstants) {
-        // one issue on the domain, "constant class is missing"
+        return [Issue.atIdentifier(
+          obj.getIdentifier()!,
+          `Constant class pattern implementation ${configEntry.class} missing for domain ${configEntry.domain}`,
+          this.getMetadata().key,
+          this.conf.severity)];
+
         // quickfix will implement the whole class
-        return [];
       }
       const classContents = classWithConstants.getMainABAPFile();
       if (classContents === undefined) {
