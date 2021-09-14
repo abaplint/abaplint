@@ -11,6 +11,7 @@ export enum Version {
   v753 = "v753",
   v754 = "v754",
   v755 = "v755",
+  v756 = "v756",
   Cloud = "Cloud", // Steampunk, SAP BTP ABAP Environment
 }
 
