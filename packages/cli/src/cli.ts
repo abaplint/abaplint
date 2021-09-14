@@ -70,7 +70,8 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
   const parsed = JSON5.parse(json);
-  if (Object.keys(Version).some(v => v === parsed.syntax.version) === false) {
+  const vers: any = Version;
+  if (Object.keys(Version).some(v => vers[v] === parsed.syntax.version) === false) {
     throw "Error: Unknown version in abaplint.json";
   }
 
