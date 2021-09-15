@@ -14,7 +14,7 @@ export interface DomainClassMapping {
   useExactType: boolean
 }
 
-/** Checks that constants are in sync with domain fixed values */
+/** Checks that constants classes are in sync with domain fixed values */
 export class ConstantClassesConf extends BasicRuleConfig {
   /** Specify a list of domain-class pairs which will be validated */
   public mapping: DomainClassMapping[];
@@ -29,6 +29,8 @@ export class ConstantClasses implements IRule {
       key: "constant_classes",
       title: "Validate constant classes",
       shortDescription: `Checks that a class contains exactly the constants corresponding to a domain's fixed values.`,
+      extendedInformation:
+        `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-enumeration-classes-to-constants-interfaces`,
       tags: [RuleTag.Syntax, RuleTag.Styleguide, RuleTag.Experimental],
     };
   }
@@ -47,9 +49,9 @@ export class ConstantClasses implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
-    if (this.conf &&
-      this.conf instanceof ConstantClassesConf &&
-      this.conf.mapping && obj instanceof Objects.Domain) {
+    if (this.conf
+        && this.conf.mapping
+        && obj instanceof Objects.Domain) {
       const configEntry = this.conf.mapping.find(x => x.domain.toUpperCase() === obj.getName().toUpperCase());
       if (!configEntry) {
         return [];

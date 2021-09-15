@@ -247,5 +247,4 @@ describe("rule, constant classes", () => {
     expect(issues.length).to.equals(1);
   });
 
-
 });

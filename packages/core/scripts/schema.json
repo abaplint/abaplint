@@ -586,7 +586,7 @@
     },
     "ConstantClassesConf": {
       "additionalProperties": false,
-      "description": "Checks that constants are in sync with domain fixed values",
+      "description": "Checks that constants classes are in sync with domain fixed values",
       "properties": {
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
@@ -1551,7 +1551,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that constants are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
+              "description": "Checks that constants classes are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
             },
             "constructor_visibility_public": {
               "anyOf": [
