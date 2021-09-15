@@ -207,6 +207,86 @@ describe("rule, constant classes", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("domain name constant (correct)", async () => {
+    const abap = `
+    CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
+      PUBLIC SECTION.
+        CONSTANTS domain_name TYPE domname VALUE \`GREEK_LETTERS\`.
+        CONSTANTS: alpha TYPE string VALUE \`ALPHA\`,
+                   beta  TYPE string VALUE \`BETA\`,
+                   gamma TYPE string VALUE \`GAMMA\`,
+                   delta TYPE string VALUE \`DELTA\`.
+    ENDCLASS.
+    CLASS zcl_greek_letters IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("greek_letters.doma.xml", doma));
+    const config = new ConstantClassesConf();
+    config.mapping = [
+      {domain: "greek_letters", class: "zcl_greek_letters", useExactType: false, constantForDomainName: "domain_name"},
+    ];
+    reg.addFile(new MemoryFile("zcl_greek_letters.clas.abap", abap));
+    await reg.parseAsync();
+    const rule = new ConstantClasses();
+    rule.setConfig(config);
+    const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+
+    expect(issues.length).to.equals(0);
+  });
+
+  it("domain name constant (misspelled)", async () => {
+    const abap = `
+    CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
+      PUBLIC SECTION.
+        CONSTANTS domain_name TYPE domname VALUE \`GEEK_LETTERS\`.
+        CONSTANTS: alpha TYPE string VALUE \`ALPHA\`,
+                   beta  TYPE string VALUE \`BETA\`,
+                   gamma TYPE string VALUE \`GAMMA\`,
+                   delta TYPE string VALUE \`DELTA\`.
+    ENDCLASS.
+    CLASS zcl_greek_letters IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("greek_letters.doma.xml", doma));
+    const config = new ConstantClassesConf();
+    config.mapping = [
+      {domain: "greek_letters", class: "zcl_greek_letters", useExactType: false, constantForDomainName: "domain_name"},
+    ];
+    reg.addFile(new MemoryFile("zcl_greek_letters.clas.abap", abap));
+    await reg.parseAsync();
+    const rule = new ConstantClasses();
+    rule.setConfig(config);
+    const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+
+    expect(issues.length).to.equals(1);
+  });
+
+  it("domain name constant (missing)", async () => {
+    const abap = `
+    CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
+      PUBLIC SECTION.
+        CONSTANTS: alpha TYPE string VALUE \`ALPHA\`,
+                   beta  TYPE string VALUE \`BETA\`,
+                   gamma TYPE string VALUE \`GAMMA\`,
+                   delta TYPE string VALUE \`DELTA\`.
+    ENDCLASS.
+    CLASS zcl_greek_letters IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("greek_letters.doma.xml", doma));
+    const config = new ConstantClassesConf();
+    config.mapping = [
+      {domain: "greek_letters", class: "zcl_greek_letters", useExactType: false, constantForDomainName: "domain_name"},
+    ];
+    reg.addFile(new MemoryFile("zcl_greek_letters.clas.abap", abap));
+    await reg.parseAsync();
+    const rule = new ConstantClasses();
+    rule.setConfig(config);
+    const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+
+    expect(issues.length).to.equals(1);
+  });
+
   it("all constants implemented (wrong type)", async () => {
     const abap = `
     CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
@@ -214,7 +294,7 @@ describe("rule, constant classes", () => {
         CONSTANTS: alpha TYPE greek_letters VALUE \`ALPHA\`,
                    beta  TYPE string VALUE \`BETA\`,
                    gamma TYPE string VALUE \`GAMMA\`,
-                   delta TYPE greek_letters VALUE \`DELTA\`.
+                   delta TYPE string VALUE \`DELTA\`.
     ENDCLASS.
     CLASS zcl_greek_letters IMPLEMENTATION.
     ENDCLASS.`;
@@ -230,7 +310,33 @@ describe("rule, constant classes", () => {
     rule.setConfig(config);
     const issues = rule.initialize(reg).run(reg.getFirstObject()!);
 
-    expect(issues.length).to.equals(2);
+    expect(issues.length).to.equals(3);
+  });
+
+  it("all constants implemented (wrong type, case mismatch)", async () => {
+    const abap = `
+    CLASS zcl_greek_letters DEFINITION PUBLIC CREATE PRIVATE.
+      PUBLIC SECTION.
+        CONSTANTS: alpha TYPE greek_letters VALUE \`ALPHA\`,
+                   beta  TYPE string VALUE \`BETA\`,
+                   gamma TYPE greek_letters VALUE \`GAMMA\`,
+                   delta TYPE GREEK_LETTERS VALUE \`DELTA\`.
+    ENDCLASS.
+    CLASS zcl_greek_letters IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("greek_letters.doma.xml", doma));
+    const config = new ConstantClassesConf();
+    config.mapping = [
+      {domain: "greek_letters", class: "zcl_greek_letters", useExactType: true},
+    ];
+    reg.addFile(new MemoryFile("zcl_greek_letters.clas.abap", abap));
+    await reg.parseAsync();
+    const rule = new ConstantClasses();
+    rule.setConfig(config);
+    const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+
+    expect(issues.length).to.equals(1);
   });
 
   it("implementing class does not exist", async () => {
