@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {StructureType} from "../../types/basic";
+import {StructureType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "./source";
@@ -26,6 +26,11 @@ export class FieldAssignment {
     let type: AbstractType | undefined = undefined;
     if (targetType instanceof StructureType) {
       type = targetType.getComponentByName(name);
+      if (type === undefined && targetType.containsVoid() === false) {
+        throw new Error(`field ${name} does not exist in structure`);
+      }
+    } else if (targetType instanceof VoidType) {
+      type = targetType;
     }
 
     new Source().runSyntax(s, scope, filename, type);

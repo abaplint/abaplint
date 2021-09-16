@@ -5192,6 +5192,30 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("expect error, field not in structure", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_type,
+             field TYPE i,
+           END OF ty_type.
+    METHODS run.
+    METHODS bar IMPORTING foo TYPE ty_type.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    bar( VALUE #( something_very_wrong_bad = 2 ) ).
+  ENDMETHOD.
+
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("something_very_wrong_bad");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
