@@ -11,7 +11,10 @@ export interface DomainClassMapping {
   /** Class name */
   class: string,
   /** Ensure the type of the constant is an exact match of the domain name. */
-  useExactType: boolean
+  useExactType?: boolean,
+  /** Specify additional constant name containing the domain name (optional).
+   * A domain name constant is preferable to using a hardcoded value as the usage can be located by a where-used-list */
+  constantForDomainName?: string,
 }
 
 /** Checks that constants classes are in sync with domain fixed values */
@@ -50,8 +53,8 @@ export class ConstantClasses implements IRule {
 
   public run(obj: IObject): Issue[] {
     if (this.conf
-        && this.conf.mapping
-        && obj instanceof Objects.Domain) {
+      && this.conf.mapping
+      && obj instanceof Objects.Domain) {
       const configEntry = this.conf.mapping.find(x => x.domain.toUpperCase() === obj.getName().toUpperCase());
       if (!configEntry) {
         return [];
@@ -93,9 +96,25 @@ export class ConstantClasses implements IRule {
             this.conf.severity));
       }
 
+      // later we will raise an issue if we did not find it
+      let domainNameConstantFound = false;
+
       for (const constant of def.constants) {
 
-        if (configEntry.useExactType && constant.typeName !== configEntry.domain) {
+        if (configEntry.constantForDomainName
+          && constant.name === configEntry.constantForDomainName) {
+          // we require the constant value to be uppercase just in case
+          // in the config it does not matter
+          if (constant.value !== configEntry.domain.toLocaleUpperCase()) {
+            issues.push(this.issueAtConstant(
+              constant,
+              `Constant value ${constant.value} must match domain name ${configEntry.domain} `));
+          }
+          domainNameConstantFound = true;
+          continue;
+        }
+
+        if (configEntry.useExactType && constant.typeName.toLowerCase() !== configEntry.domain.toLowerCase()) {
           issues.push(this.issueAtConstant(
             constant,
             `Use exact type ${configEntry.domain} instead of ${constant.typeName}`));
@@ -123,11 +142,21 @@ export class ConstantClasses implements IRule {
             Issue.atStatement(
               classContents,
               classContents.getStatements()[0],
-              `Missing constant for ${d} (domain ${configEntry.domain})`,
+              `Missing constant for ${d.value} (domain ${configEntry.domain})`,
               this.getMetadata().key,
               this.conf.severity));
           // quickfix will add constant
         }
+      }
+
+      if (configEntry.constantForDomainName && !domainNameConstantFound) {
+        issues.push(
+          Issue.atStatement(
+            classContents,
+            classContents.getStatements()[0],
+            `Missing constant ${configEntry.constantForDomainName} for name of domain ${configEntry.domain}`,
+            this.getMetadata().key,
+            this.conf.severity));
       }
       return issues;
 
