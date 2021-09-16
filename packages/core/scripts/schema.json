@@ -829,6 +829,10 @@
           "description": "Class name",
           "type": "string"
         },
+        "constantForDomainName": {
+          "description": "Specify additional constant name containing the domain name (optional). A domain name constant is preferable to using a hardcoded value as the usage can be located by a where-used-list",
+          "type": "string"
+        },
         "domain": {
           "description": "Domain name. The domain must have fixed values.",
           "type": "string"
@@ -840,8 +844,7 @@
       },
       "required": [
         "domain",
-        "class",
-        "useExactType"
+        "class"
       ],
       "type": "object"
     },
