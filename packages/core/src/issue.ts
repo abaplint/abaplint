@@ -107,7 +107,7 @@ export class Issue {
     });
   }
 
-  private constructor(data: IIssueData) {
+  public constructor(data: IIssueData) {
     this.data = data;
 
     if (this.data.start instanceof VirtualPosition) {
@@ -120,6 +120,10 @@ export class Issue {
     } else if (this.data.end.getCol() < 1) {
       throw new Error("issue, end col < 1");
     }
+  }
+
+  public getData(): IIssueData {
+    return this.data;
   }
 
   public getMessage(): string {
