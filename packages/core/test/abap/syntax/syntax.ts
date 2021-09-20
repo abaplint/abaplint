@@ -5216,6 +5216,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("something_very_wrong_bad");
   });
 
+  it("expect error, parameter not supplied in constructor call, via NEW", () => {
+    const abap = `
+CLASS lcl_stream DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING iv_str TYPE string.
+    METHODS take_matching RETURNING VALUE(ro_stream) TYPE REF TO lcl_stream.
+ENDCLASS.
+
+CLASS lcl_stream IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+
+  METHOD take_matching.
+    ro_stream = NEW #( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("must be supplied");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
