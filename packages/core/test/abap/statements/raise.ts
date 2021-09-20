@@ -16,6 +16,7 @@ const tests = [
   "RAISE EXCEPTION TYPE cx_error MESSAGE e004(clas) EXPORTING previous = lx_error.",
   "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZZZ' NUMBER '001' WITH <fs>-value.",
   "RAISE EXCEPTION TYPE zcx_error MESSAGE s123(c$).",
+  "RAISE EXCEPTION NEW zcx_excel( i_message = 'Worksheet not found.').",
   "RAISE exc.",
 ];
 
