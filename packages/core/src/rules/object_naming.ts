@@ -2,53 +2,53 @@ import {Issue} from "../issue";
 import {NamingRuleConfig} from "./_naming_rule_config";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
-import {IRule, RuleTag} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import * as Objects from "../objects";
 import {NameValidator} from "../utils/name_validator";
 
 export class ObjectNamingConf extends NamingRuleConfig {
-  /** The pattern for global class names */
-  public clas: string = "^ZC(L|X)";
-  /** The pattern for global interface names */
-  public intf: string = "^ZIF";
-  /** The pattern for program (report) names */
-  public prog: string = "^Z";
-  /** The pattern for function group names */
-  public fugr: string = "^Z";
-  /** The pattern for DDIC table names */
-  public tabl: string = "^Z";
-  /** The pattern for DDIC table type names */
-  public ttyp: string = "^Z";
-  /** The pattern for data element names */
-  public dtel: string = "^Z";
-  /** The pattern for domain names */
-  public doma: string = "^Z";
-  /** The pattern for message class names */
-  public msag: string = "^Z";
-  /** The pattern for transaction names */
-  public tran: string = "^Z";
-  /** The pattern for lock object names */
-  public enqu: string = "^EZ";
-  /** The pattern for authorization object names */
-  public auth: string = "^Z";
-  /** The pattern for package interface names */
-  public pinf: string = "^Z";
-  /** The pattern for idoc names */
-  public idoc: string = "^Z";
-  /** The pattern for transformation names */
-  public xslt: string = "^Z";
-  /** The pattern for smartform names */
-  public ssfo: string = "^Z";
-  /** The pattern for smartstyle names */
-  public ssst: string = "^Z";
-  /** The pattern for search helps */
-  public shlp: string = "^Z";
+  /** The regex pattern for global class names */
+  public clas?: string = "^ZC(L|X)";
+  /** The regex pattern for global interface names */
+  public intf?: string = "^ZIF";
+  /** The regex pattern for program (report) names */
+  public prog?: string = "^Z";
+  /** The regex pattern for function group names */
+  public fugr?: string = "^Z";
+  /** The regex pattern for DDIC table names */
+  public tabl?: string = "^Z";
+  /** The regex pattern for DDIC table type names */
+  public ttyp?: string = "^Z";
+  /** The regex pattern for data element names */
+  public dtel?: string = "^Z";
+  /** The regex pattern for domain names */
+  public doma?: string = "^Z";
+  /** The regex pattern for message class names */
+  public msag?: string = "^Z";
+  /** The regex pattern for transaction names */
+  public tran?: string = "^Z";
+  /** The regex pattern for lock object names */
+  public enqu?: string = "^EZ";
+  /** The regex pattern for authorization object names */
+  public auth?: string = "^Z";
+  /** The regex pattern for package interface names */
+  public pinf?: string = "^Z";
+  /** The regex pattern for idoc names */
+  public idoc?: string = "^Z";
+  /** The regex pattern for transformation names */
+  public xslt?: string = "^Z";
+  /** The regex pattern for smartform names */
+  public ssfo?: string = "^Z";
+  /** The regex pattern for smartstyle names */
+  public ssst?: string = "^Z";
+  /** The regex pattern for search helps */
+  public shlp?: string = "^Z";
 }
 
 export class ObjectNaming implements IRule {
   private conf = new ObjectNamingConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "object_naming",
       title: "Object naming conventions",
@@ -83,42 +83,44 @@ export class ObjectNaming implements IRule {
       this.conf.patternKind = "required";
     }
 
+    const defaults = new ObjectNamingConf();
+
     if (obj instanceof Objects.Class) {
-      pattern = this.getConfig().clas;
+      pattern = this.getConfig().clas || defaults.clas!;
     } else if (obj instanceof Objects.Interface) {
-      pattern = this.getConfig().intf;
+      pattern = this.getConfig().intf || defaults.intf!;
     } else if (obj instanceof Objects.Program) {
-      pattern = this.getConfig().prog;
+      pattern = this.getConfig().prog || defaults.prog!;
     } else if (obj instanceof Objects.FunctionGroup) {
-      pattern = this.getConfig().fugr;
+      pattern = this.getConfig().fugr || defaults.fugr!;
     } else if (obj instanceof Objects.Table) {
-      pattern = this.getConfig().tabl;
+      pattern = this.getConfig().tabl || defaults.tabl!;
     } else if (obj instanceof Objects.TableType) {
-      pattern = this.getConfig().ttyp;
+      pattern = this.getConfig().ttyp || defaults.ttyp!;
     } else if (obj instanceof Objects.DataElement) {
-      pattern = this.getConfig().dtel;
+      pattern = this.getConfig().dtel || defaults.dtel!;
     } else if (obj instanceof Objects.Domain) {
-      pattern = this.getConfig().doma;
+      pattern = this.getConfig().doma || defaults.doma!;
     } else if (obj instanceof Objects.Transaction) {
-      pattern = this.getConfig().tran;
+      pattern = this.getConfig().tran || defaults.tran!;
     } else if (obj instanceof Objects.LockObject) {
-      pattern = this.getConfig().enqu;
+      pattern = this.getConfig().enqu || defaults.enqu!;
     } else if (obj instanceof Objects.AuthorizationObject) {
-      pattern = this.getConfig().auth;
+      pattern = this.getConfig().auth || defaults.auth!;
     } else if (obj instanceof Objects.PackageInterface) {
-      pattern = this.getConfig().pinf;
+      pattern = this.getConfig().pinf || defaults.pinf!;
     } else if (obj instanceof Objects.MessageClass) {
-      pattern = this.getConfig().msag;
+      pattern = this.getConfig().msag || defaults.msag!;
     } else if (obj instanceof Objects.Idoc) {
-      pattern = this.getConfig().idoc;
+      pattern = this.getConfig().idoc || defaults.idoc!;
     } else if (obj instanceof Objects.Transformation) {
-      pattern = this.getConfig().xslt;
+      pattern = this.getConfig().xslt || defaults.xslt!;
     } else if (obj instanceof Objects.SmartForm) {
-      pattern = this.getConfig().ssfo;
+      pattern = this.getConfig().ssfo || defaults.ssfo!;
     } else if (obj instanceof Objects.SmartStyle) {
-      pattern = this.getConfig().ssst;
+      pattern = this.getConfig().ssst || defaults.ssst!;
     } else if (obj instanceof Objects.SearchHelp) {
-      pattern = this.getConfig().shlp;
+      pattern = this.getConfig().shlp || defaults.shlp!;
     }
 
     if (pattern === "") {

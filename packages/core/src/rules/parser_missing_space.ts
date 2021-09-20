@@ -7,6 +7,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
+// todo: this rule needs refactoring
+
 export class ParserMissingSpaceConf extends BasicRuleConfig {
 }
 
@@ -53,20 +55,23 @@ This rule makes sure the spaces are consistently required across the language.`,
   private missingSpace(statement: StatementNode): Position | undefined {
 
     const found = statement.findAllExpressionsMulti([Expressions.CondSub, Expressions.SQLCond,
-      Expressions.ValueBody, Expressions.Cond, Expressions.ComponentCond, Expressions.MethodCallParam], true);
+      Expressions.ValueBody, Expressions.NewObject, Expressions.Cond, Expressions.ComponentCond, Expressions.MethodCallParam], true);
     let pos: Position | undefined = undefined;
     for (const f of found) {
-      if (f.get() instanceof Expressions.CondSub) {
+      const type = f.get();
+      if (type instanceof Expressions.CondSub) {
         pos = this.checkCondSub(f);
-      } else if (f.get() instanceof Expressions.ValueBody) {
+      } else if (type instanceof Expressions.ValueBody) {
         pos = this.checkValueBody(f);
-      } else if (f.get() instanceof Expressions.Cond) {
+      } else if (type instanceof Expressions.Cond) {
         pos = this.checkCond(f);
-      } else if (f.get() instanceof Expressions.ComponentCond) {
+      } else if (type instanceof Expressions.ComponentCond) {
         pos = this.checkComponentCond(f);
-      } else if (f.get() instanceof Expressions.SQLCond) {
+      } else if (type instanceof Expressions.SQLCond) {
         pos = this.checkSQLCond(f);
-      } else if (f.get() instanceof Expressions.MethodCallParam) {
+      } else if (type instanceof Expressions.NewObject) {
+        pos = this.checkNewObject(f);
+      } else if (type instanceof Expressions.MethodCallParam) {
         pos = this.checkMethodCallParam(f);
       }
 
@@ -99,6 +104,21 @@ This rule makes sure the spaces are consistently required across the language.`,
         }
       }
     }
+    return undefined;
+  }
+
+  private checkNewObject(cond: ExpressionNode): Position | undefined {
+    const children = cond.getChildren();
+
+    {
+      const first = children[children.length - 2].getLastToken();
+      const second = children[children.length - 1].getFirstToken();
+      if (first.getRow() === second.getRow()
+          && first.getEnd().getCol() === second.getStart().getCol()) {
+        return second.getStart();
+      }
+    }
+
     return undefined;
   }
 

@@ -83,6 +83,7 @@ export class NewObject {
     const helper = new ObjectOriented(scope);
     // eslint-disable-next-line prefer-const
     let {method} = helper.searchMethodName(def, "CONSTRUCTOR");
+    const requiredParameters = method?.getParameters().getRequiredParameters() || [];
 
     const source = node.findDirectExpression(Expressions.Source);
     const parameters = node.findDirectExpression(Expressions.ParameterListS);
@@ -99,8 +100,9 @@ export class NewObject {
         throw new Error("NewObject, no parameters for constructor found, " + name);
       }
       new MethodParameters().checkExporting(parameters, scope, method, filename);
+    } else if (requiredParameters.length > 0) {
+      throw new Error(`constructor parameter "${requiredParameters[0].getName()}" must be supplied` + name);
     }
-    // else: no paramters, and the constructor always exist
   }
 
   private defaultImportingType(method: IMethodDefinition | undefined) {
