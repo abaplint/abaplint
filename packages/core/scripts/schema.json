@@ -3844,23 +3844,23 @@
       "additionalProperties": false,
       "properties": {
         "auth": {
-          "description": "The pattern for authorization object names",
+          "description": "The regex pattern for authorization object names",
           "type": "string"
         },
         "clas": {
-          "description": "The pattern for global class names",
+          "description": "The regex pattern for global class names",
           "type": "string"
         },
         "doma": {
-          "description": "The pattern for domain names",
+          "description": "The regex pattern for domain names",
           "type": "string"
         },
         "dtel": {
-          "description": "The pattern for data element names",
+          "description": "The regex pattern for data element names",
           "type": "string"
         },
         "enqu": {
-          "description": "The pattern for lock object names",
+          "description": "The regex pattern for lock object names",
           "type": "string"
         },
         "exclude": {
@@ -3871,11 +3871,11 @@
           "type": "array"
         },
         "fugr": {
-          "description": "The pattern for function group names",
+          "description": "The regex pattern for function group names",
           "type": "string"
         },
         "idoc": {
-          "description": "The pattern for idoc names",
+          "description": "The regex pattern for idoc names",
           "type": "string"
         },
         "ignoreNames": {
@@ -3893,11 +3893,11 @@
           "type": "array"
         },
         "intf": {
-          "description": "The pattern for global interface names",
+          "description": "The regex pattern for global interface names",
           "type": "string"
         },
         "msag": {
-          "description": "The pattern for message class names",
+          "description": "The regex pattern for message class names",
           "type": "string"
         },
         "patternKind": {
@@ -3905,11 +3905,11 @@
           "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
         },
         "pinf": {
-          "description": "The pattern for package interface names",
+          "description": "The regex pattern for package interface names",
           "type": "string"
         },
         "prog": {
-          "description": "The pattern for program (report) names",
+          "description": "The regex pattern for program (report) names",
           "type": "string"
         },
         "severity": {
@@ -3917,54 +3917,34 @@
           "description": "Problem severity"
         },
         "shlp": {
-          "description": "The pattern for search helps",
+          "description": "The regex pattern for search helps",
           "type": "string"
         },
         "ssfo": {
-          "description": "The pattern for smartform names",
+          "description": "The regex pattern for smartform names",
           "type": "string"
         },
         "ssst": {
-          "description": "The pattern for smartstyle names",
+          "description": "The regex pattern for smartstyle names",
           "type": "string"
         },
         "tabl": {
-          "description": "The pattern for DDIC table names",
+          "description": "The regex pattern for DDIC table names",
           "type": "string"
         },
         "tran": {
-          "description": "The pattern for transaction names",
+          "description": "The regex pattern for transaction names",
           "type": "string"
         },
         "ttyp": {
-          "description": "The pattern for DDIC table type names",
+          "description": "The regex pattern for DDIC table type names",
           "type": "string"
         },
         "xslt": {
-          "description": "The pattern for transformation names",
+          "description": "The regex pattern for transformation names",
           "type": "string"
         }
       },
-      "required": [
-        "clas",
-        "intf",
-        "prog",
-        "fugr",
-        "tabl",
-        "ttyp",
-        "dtel",
-        "doma",
-        "msag",
-        "tran",
-        "enqu",
-        "auth",
-        "pinf",
-        "idoc",
-        "xslt",
-        "ssfo",
-        "ssst",
-        "shlp"
-      ],
       "type": "object"
     },
     "ObsoleteStatementConf": {
