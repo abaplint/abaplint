@@ -25,6 +25,9 @@ const tests = [
   {abap: `SELECT * FROM t100 WHERE ( msgnr BETWEEN '001' AND '010' OR msgnr = '050' ).`, cnt: 0},
   {abap: "LOOP AT tab WHERE ( field EQ 'B' ).", cnt: 0},
   {abap: "LOOP AT tab WHERE ( field EQ 'B').", cnt: 1},
+  {abap: "RAISE EXCEPTION NEW zcx_excel( i_message = 'Worksheet not found.' ).", cnt: 0},
+  {abap: "RAISE EXCEPTION NEW zcx_excel( i_message = 'Worksheet not found.').", cnt: 1},
+  {abap: "RAISE EXCEPTION NEW zcx_excel( i_message).", cnt: 1},
 ];
 
 testRule(tests, ParserMissingSpace);
