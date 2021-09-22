@@ -53,6 +53,7 @@ Current rules:
 * VALUE # with internal table lines
 * Table Expressions[ index ] are outlined
 * SELECT INTO @DATA definitions are outlined
+* Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
@@ -161,6 +162,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     let found = this.emptyKey(high, lowFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.stringTemplateAlpha(high, lowFile);
     if (found) {
       return found;
     }
@@ -492,7 +498,53 @@ ${indentation}`);
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
     }
 
-    return;
+    return undefined;
+  }
+
+  // must be very simple string templates, like "|{ ls_line-no ALPHA = IN }|"
+  private stringTemplateAlpha(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(node.get() instanceof Statements.Move)) {
+      return undefined;
+    }
+    const topSource = node.findDirectExpression(Expressions.Source);
+    if (topSource === undefined || topSource.getChildren().length !== 1) {
+      return undefined;
+    }
+    const child = topSource.getFirstChild()! as ExpressionNode;
+    if (!(child.get() instanceof Expressions.StringTemplate)) {
+      return undefined;
+    }
+    const templateTokens = child.getChildren();
+    if (templateTokens.length !== 3
+        || templateTokens[0].getFirstToken().getStr() !== "|{"
+        || templateTokens[2].getFirstToken().getStr() !== "}|") {
+      return undefined;
+    }
+    const templateSource = child.findDirectExpression(Expressions.StringTemplateSource);
+    const formatting = templateSource?.findDirectExpression(Expressions.StringTemplateFormatting)?.concatTokens();
+    let functionName = "";
+    switch (formatting) {
+      case "ALPHA = IN":
+        functionName = "CONVERSION_EXIT_ALPHA_INPUT";
+        break;
+      case "ALPHA = OUT":
+        functionName = "CONVERSION_EXIT_ALPHA_OUTPUT";
+        break;
+      default:
+        return undefined;
+    }
+
+    const source = templateSource?.findDirectExpression(Expressions.Source)?.concatTokens();
+    const topTarget = node.findDirectExpression(Expressions.Target)?.concatTokens();
+
+    const code = `CALL FUNCTION '${functionName}'
+  EXPORTING
+    input  = ${source}
+  IMPORTING
+    output = ${topTarget}.`;
+    const fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), code);
+
+    return Issue.atToken(lowFile, node.getFirstToken(), "Downport ALPHA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private outlineLoopInput(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
