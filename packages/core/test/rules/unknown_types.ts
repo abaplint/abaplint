@@ -1443,4 +1443,19 @@ ENDCLASS.`;
     expect(issues.length).to.equals(1);
   });
 
+  it.only("ok, LIKE LINE OF foo-sub-bar", () => {
+    const abap = `
+TYPES:
+  BEGIN OF ty_message,
+    BEGIN OF sub,
+      lines TYPE STANDARD TABLE OF string WITH DEFAULT KEY,
+    END OF sub,
+  END OF ty_message.
+DATA is_message TYPE ty_message.
+DATA ls_line LIKE LINE OF is_message-sub-lines.`;
+    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
