@@ -101,15 +101,12 @@ export class BasicTypes {
 
       while (children.length > 0) {
         const child = children.shift()!;
-//        console.dir(child);
 
         if (child.getFirstToken().getStr() === "-") {
           if (type instanceof Types.VoidType) {
             return type;
           }
         } else if (child.concatTokens() === "[]") {
-//          console.dir("KLIKE");
-//          console.dir(type);
           if (type instanceof Types.TableType) {
             type = new TableType(type.getRowType(), {withHeader: false});
           }
@@ -142,12 +139,6 @@ export class BasicTypes {
     }
 
     if (!type) {
-      /*
-      if (this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(fullName) === false) {
-        this.scope.addReference(children[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
-        return new Types.VoidType(fullName);
-      }
-      */
       return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName2");
     }
 
