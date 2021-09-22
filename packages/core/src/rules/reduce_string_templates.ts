@@ -41,14 +41,16 @@ export class ReduceStringTemplates extends ABAPRule {
     }
 
     for (const template of structure.findAllExpressions(Expressions.StringTemplate)) {
-      for (const source of template.findDirectExpressions(Expressions.Source)) {
-        for (const second of source.findDirectExpressions(Expressions.StringTemplate)) {
-          issues.push(Issue.atToken(file, second.getFirstToken(), "Nested string templates, reduce", this.getMetadata().key, this.conf.severity));
-        }
+      for (const ts of template.findAllExpressions(Expressions.StringTemplateSource)) {
+        for (const source of ts.findDirectExpressions(Expressions.Source)) {
+          for (const second of source.findDirectExpressions(Expressions.StringTemplate)) {
+            issues.push(Issue.atToken(file, second.getFirstToken(), "Nested string templates, reduce", this.getMetadata().key, this.conf.severity));
+          }
 
-        for (const constant of source.findDirectExpressions(Expressions.Constant)) {
-          for (const constantString of constant.findDirectExpressions(Expressions.ConstantString)) {
-            issues.push(Issue.atToken(file, constantString.getFirstToken(), "Constant string in text template, reduce", this.getMetadata().key, this.conf.severity));
+          for (const constant of source.findDirectExpressions(Expressions.Constant)) {
+            for (const constantString of constant.findDirectExpressions(Expressions.ConstantString)) {
+              issues.push(Issue.atToken(file, constantString.getFirstToken(), "Constant string in text template, reduce", this.getMetadata().key, this.conf.severity));
+            }
           }
         }
       }

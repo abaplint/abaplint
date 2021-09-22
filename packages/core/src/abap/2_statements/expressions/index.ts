@@ -165,6 +165,7 @@ export * from "./sql_source_simple";
 export * from "./sql_source";
 export * from "./sql_target";
 export * from "./string_template_formatting";
+export * from "./string_template_source";
 export * from "./string_template";
 export * from "./super_class_name";
 export * from "./switch_body";
