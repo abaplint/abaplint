@@ -3,6 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
+import {xmlToArray} from "../xml_utils";
 
 export interface DomainValue {
   language: string,
@@ -66,17 +67,15 @@ export class Domain extends AbstractObject {
     }
 
     const dd01v = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD01V;
-    const dd07v_tab = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD07V_TAB?.DD07V;
+    const dd07v_tab = xmlToArray(parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD07V_TAB?.DD07V);
     const values: DomainValue[] = [];
-    if (dd07v_tab) {
-      for (const ddo7v of dd07v_tab) {
-        const value: DomainValue = {
-          description: ddo7v?.DDTEXT,
-          value: ddo7v?.DOMVALUE_L,
-          language: ddo7v?.DDLANGUAGE,
-        };
-        values.push(value);
-      }
+    for (const ddo7v of dd07v_tab) {
+      const value: DomainValue = {
+        description: ddo7v?.DDTEXT,
+        value: ddo7v?.DOMVALUE_L,
+        language: ddo7v?.DDLANGUAGE,
+      };
+      values.push(value);
     }
 
     this.parsedXML = {

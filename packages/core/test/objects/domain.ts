@@ -156,4 +156,67 @@ describe("Domain, parse main xml", () => {
     expect(values).to.contain("DELTA");
   });
 
+  it("Single value", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD01V>
+        <DOMNAME>GREEK_LETTERS</DOMNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <DATATYPE>CHAR</DATATYPE>
+        <LENG>000010</LENG>
+        <OUTPUTLEN>000010</OUTPUTLEN>
+        <VALEXI>X</VALEXI>
+        <DDTEXT>Greek letters</DDTEXT>
+        <DOMMASTER>E</DOMMASTER>
+       </DD01V>
+       <DD07V_TAB>
+        <DD07V>
+         <DOMNAME>GREEK_LETTERS</DOMNAME>
+         <VALPOS>0001</VALPOS>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <DOMVALUE_L>ALPHA</DOMVALUE_L>
+         <DDTEXT>Alpha</DDTEXT>
+        </DD07V>
+       </DD07V_TAB>
+      </asx:values>
+     </asx:abap>
+    </abapGit>
+    `;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    const values = doma.getFixedValues().map(x => x.value);
+    expect(values).to.contain("ALPHA");
+  });
+
+  it("empty values array", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD01V>
+        <DOMNAME>GREEK_LETTERS</DOMNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <DATATYPE>CHAR</DATATYPE>
+        <LENG>000010</LENG>
+        <OUTPUTLEN>000010</OUTPUTLEN>
+        <VALEXI>X</VALEXI>
+        <DDTEXT>Greek letters</DDTEXT>
+        <DOMMASTER>E</DOMMASTER>
+       </DD01V>
+       <DD07V_TAB>
+       </DD07V_TAB>
+      </asx:values>
+     </asx:abap>
+    </abapGit>
+    `;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    const values = doma.getFixedValues().map(x => x.value);
+    expect(values.length).to.equal(0);
+  });
+
 });
