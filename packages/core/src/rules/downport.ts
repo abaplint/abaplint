@@ -534,14 +534,15 @@ ${indentation}`);
         return undefined;
     }
 
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
     const source = templateSource?.findDirectExpression(Expressions.Source)?.concatTokens();
     const topTarget = node.findDirectExpression(Expressions.Target)?.concatTokens();
 
     const code = `CALL FUNCTION '${functionName}'
-  EXPORTING
-    input  = ${source}
-  IMPORTING
-    output = ${topTarget}.`;
+${indentation}  EXPORTING
+${indentation}    input  = ${source}
+${indentation}  IMPORTING
+${indentation}    output = ${topTarget}.`;
     const fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), code);
 
     return Issue.atToken(lowFile, node.getFirstToken(), "Downport ALPHA", this.getMetadata().key, this.conf.severity, fix);

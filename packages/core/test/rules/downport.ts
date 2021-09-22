@@ -943,7 +943,7 @@ lv_topbit = mv_hex+1.`;
     testFix(abap, expected);
   });
 
-  it.only("downport, ALPHA = IN", async () => {
+  it("downport, ALPHA = IN", async () => {
     const abap = `temp2-ebelp = |{ ls_line-no ALPHA = IN }|.`;
 
     const expected = `CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
