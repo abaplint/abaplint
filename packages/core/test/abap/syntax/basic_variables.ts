@@ -75,7 +75,7 @@ function expectConstantCharacter(identifier: TypedIdentifier | undefined, value:
 
 /////////////////////////////////////
 
-describe("Syntax - Basic Types", () => {
+describe("Basic Types", () => {
 
   it("nothing", () => {
     const abap = "WRITE foobar.";

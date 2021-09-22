@@ -68,20 +68,21 @@ export class BasicTypes {
     if (chain === undefined) {
       chain = node.findFirstExpression(Expressions.FieldSub);
     }
-    const fullName = chain?.concatTokens();
-    const children = chain?.getChildren();
-
-    if (children === undefined) {
-      return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
-    } else if (chain === undefined) {
+    if (chain === undefined) {
       throw new Error("resolveLikeName, chain undefined");
+    }
+    const fullName = chain.concatTokens();
+    const children = [...chain.getChildren()];
+
+    if (children.length === 0) {
+      return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
     }
 
     let type: AbstractType | undefined = undefined;
     if (children[1] && ( children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
       type = new FieldChain().runSyntax(chain, this.scope, this.filename, ReferenceType.TypeReference);
     } else {
-      const name = children[0].getFirstToken().getStr();
+      const name = children.shift()!.getFirstToken().getStr();
       const found = this.scope.findVariable(name);
       type = found?.getType();
 
@@ -89,53 +90,64 @@ export class BasicTypes {
         this.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
       }
 
-      if (type instanceof TableType && chain.getLastChild()?.get() instanceof Expressions.TableBody) {
-        type = new TableType(type.getRowType(), {withHeader: false});
-      } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
-        type = type.getRowType();
-      } else if (type === undefined) {
+      if (type === undefined) {
         type = this.scope.getDDIC().lookupNoVoid(name)?.type;
       }
 
-      // todo, this only looks up one level, reuse field_chain.ts?
-      if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
-        if (type instanceof Types.StructureType) {
-          const sub = type.getComponentByName(children[2].getFirstToken().getStr());
-          if (sub) {
-            return sub;
+      if (type === undefined && this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(name) === false) {
+        this.scope.addReference(chain.getChildren()[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
+        return new Types.VoidType(name);
+      }
+
+      while (children.length > 0) {
+        const child = children.shift()!;
+//        console.dir(child);
+
+        if (child.getFirstToken().getStr() === "-") {
+          if (type instanceof Types.VoidType) {
+            return type;
           }
-          return new Types.UnknownType("Type error, field not part of structure " + fullName);
-        } else if (type instanceof Types.VoidType) {
-          return type;
-        } else if (type instanceof Types.TableType
-            && type.isWithHeader() === true
-            && type.getRowType() instanceof Types.VoidType) {
-          return type.getRowType();
-        } else if (type instanceof Types.TableType
-            && type.isWithHeader() === true) {
-          const rowType = type.getRowType();
-          if (rowType instanceof Types.StructureType) {
-            const sub = rowType.getComponentByName(children[2].getFirstToken().getStr());
-            if (sub) {
-              return sub;
-            }
+        } else if (child.concatTokens() === "[]") {
+//          console.dir("KLIKE");
+//          console.dir(type);
+          if (type instanceof Types.TableType) {
+            type = new TableType(type.getRowType(), {withHeader: false});
           }
-          return new Types.UnknownType("Type error, field not part of structure " + fullName);
-        } else {
-          if (this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(name) === false) {
-            this.scope.addReference(children[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
-            return new Types.VoidType(name);
+        } else { // field name
+          let sub: AbstractType | undefined = undefined;
+          if (type instanceof Types.TableType) {
+            type = type.getRowType();
           }
-          return new Types.UnknownType("Type error, not a structure type " + name);
+          if (type instanceof Types.StructureType) {
+            sub = type.getComponentByName(child.getFirstToken().getStr());
+          }
+          if (sub === undefined) {
+            return new Types.UnknownType("Type error, field not part of structure " + fullName);
+          }
+          type = sub;
         }
+      }
+
+      if (type instanceof Types.VoidType) {
+        return type;
+      } else if (type instanceof TableType
+          && type.isWithHeader()
+          && headerLogic === true) {
+        type = type.getRowType();
+      } else if (type instanceof Types.TableType
+          && type.isWithHeader() === true
+          && type.getRowType() instanceof Types.VoidType) {
+        return type.getRowType();
       }
     }
 
     if (!type) {
+      /*
       if (this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(fullName) === false) {
         this.scope.addReference(children[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
         return new Types.VoidType(fullName);
       }
+      */
       return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName2");
     }
 

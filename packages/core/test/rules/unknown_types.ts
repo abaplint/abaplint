@@ -67,14 +67,14 @@ DATA ls_tadir TYPE ztadir.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("LIKE ddic allowed in PROGs", () => {
+  it("LIKE ddic allowed in PROGs, 1", () => {
     const abap = `DATA foo LIKE voided-rcode.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equals(0);
   });
 
-  it("LIKE ddic allowed in PROGs", () => {
+  it("LIKE ddic allowed in PROGs, 2", () => {
     const abap = `DATA foo LIKE voided.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
@@ -1443,7 +1443,7 @@ ENDCLASS.`;
     expect(issues.length).to.equals(1);
   });
 
-  it.only("ok, LIKE LINE OF foo-sub-bar", () => {
+  it("ok, LIKE LINE OF is_message-sub-lines", () => {
     const abap = `
 TYPES:
   BEGIN OF ty_message,
