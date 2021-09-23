@@ -943,6 +943,18 @@ lv_topbit = mv_hex+1.`;
     testFix(abap, expected);
   });
 
+  it("downport, ALPHA = IN", async () => {
+    const abap = `temp2-ebelp = |{ ls_line-no ALPHA = IN }|.`;
+
+    const expected = `CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+  EXPORTING
+    input  = ls_line-no
+  IMPORTING
+    output = temp2-ebelp.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
