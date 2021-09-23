@@ -31,10 +31,11 @@ export class AvoidUse extends ABAPRule {
       key: "avoid_use",
       title: "Avoid use of certain statements",
       shortDescription: `Detects usage of certain statements.`,
-      extendedInformation: `
-DEFAULT KEY: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-default-key
+      extendedInformation: `DEFAULT KEY: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-default-key
 
 Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
+
+STATICS: use CLASS-DATA instead
 
 DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
