@@ -3,7 +3,6 @@ import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {IObject} from "./_iobject";
 
@@ -47,12 +46,13 @@ export class View extends AbstractObject {
         continue;
       }
       const lookup = ddic.lookupTableOrView(field.TABNAME);
+      let found = lookup.type;
       if (lookup.object) {
         references.push(lookup.object);
       }
-      let found = lookup.type;
-      if (found instanceof TypedIdentifier) {
-        found = found.getType();
+      if (field.VIEWFIELD === ".APPEND") {
+// it is already expanded in the abapGit xml
+        continue;
       }
       if (found instanceof Types.StructureType) {
         const s = found.getComponentByName(field.FIELDNAME);
