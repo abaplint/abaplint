@@ -42,7 +42,7 @@ export class View extends AbstractObject {
     const references: IObject[] = [];
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
-      if (field.VIEWFIELD === "*") {
+      if (field.VIEWFIELD === "*" || field.VIEWFIELD === "-") {
         // ignore, this is a special case of old style .INCLUDE
         continue;
       }
