@@ -22,11 +22,9 @@ export class ExitOrCheck extends ABAPRule {
       title: "Find EXIT or CHECK outside loops",
       shortDescription: `Detects usages of EXIT or CHECK statements outside of loops.
 Use RETURN to leave procesing blocks instead.`,
-      extendedInformation: `
-https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenleave_processing_blocks.htm
+      extendedInformation: `https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenleave_processing_blocks.htm
 https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abapcheck_processing_blocks.htm
-https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-return
-`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-return`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
