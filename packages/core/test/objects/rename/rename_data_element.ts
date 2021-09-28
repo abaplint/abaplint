@@ -5,7 +5,7 @@ import {Registry} from "../../../src/registry";
 
 describe("Rename Data Element", () => {
 
-  it.only("DTEL, no references, just the object", () => {
+  it("DTEL, no references, just the object", () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
