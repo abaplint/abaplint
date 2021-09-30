@@ -5145,7 +5145,7 @@ READ TABLE lt_map WITH KEY blah = iv_tag TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("sy-pdest", () => {
+  it("sy-pdest", () => {
     const abap = `
     WRITE sy-pdest.`;
     const issues = runProgram(abap);
