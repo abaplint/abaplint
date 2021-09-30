@@ -207,10 +207,9 @@ export class UnusedVariables implements IRule {
     const statement = EditHelper.findStatement(v.getToken(), file);
     if (statement === undefined) {
       return undefined;
-    } else if (statement.get() instanceof Statements.FunctionModule) {
-      return undefined; // function module parameters are not part of the code
-    } else {
+    } else if (statement.get() instanceof Statements.Data) {
       return EditHelper.deleteStatement(file, statement);
     }
+    return undefined;
   }
 }

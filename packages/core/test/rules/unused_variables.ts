@@ -53,6 +53,13 @@ describe("Rule: unused_variables, single file", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("SELECT", async () => {
+    const abap = "SELECT * FROM bar INTO TABLE @DATA(sdf).";
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getFix()).to.equal(undefined);
+  });
+
   it("pragma should suppress issue", async () => {
     const abap = "DATA foo ##NEEDED.";
     const issues = await runSingle(abap);
