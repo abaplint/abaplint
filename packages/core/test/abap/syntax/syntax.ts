@@ -5145,6 +5145,13 @@ READ TABLE lt_map WITH KEY blah = iv_tag TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("sy-pdest", () => {
+    const abap = `
+    WRITE sy-pdest.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, read structured table with table_line", () => {
     const abap = `
 TYPES: BEGIN OF ty_tab,

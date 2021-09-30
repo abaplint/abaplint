@@ -298,6 +298,7 @@ export class BuiltIn {
     components.push({name: "index", type: new IntegerType()});
     components.push({name: "langu", type: new CharacterType(1)});
     components.push({name: "ldbpg", type: new CharacterType(40)});
+    components.push({name: "pdest", type: new CharacterType(4)});
     components.push({name: "lilli", type: new IntegerType()});
     components.push({name: "linct", type: new IntegerType()});
     components.push({name: "linno", type: new IntegerType()});
