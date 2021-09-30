@@ -1,6 +1,8 @@
 import {RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver-types";
 import {MemoryFile} from "../../files/memory_file";
 import {IRegistry} from "../../_iregistry";
+import {RenameDataElement} from "./rename_data_element";
+import {RenameDomain} from "./rename_domain";
 import {RenameGlobalClass} from "./rename_global_class";
 import {RenameGlobalInterface} from "./rename_global_interface";
 import {ObjectRenamer} from "./_object_renamer";
@@ -49,6 +51,10 @@ export class Renamer {
     switch (type) {
       case "CLAS":
         return new RenameGlobalClass(this.reg);
+      case "DTEL":
+        return new RenameDataElement(this.reg);
+      case "DOMA":
+        return new RenameDomain(this.reg);
       case "INTF":
         return new RenameGlobalInterface(this.reg);
       default:

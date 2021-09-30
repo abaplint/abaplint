@@ -20,7 +20,7 @@ export interface DomainClassMapping {
 /** Checks that constants classes are in sync with domain fixed values */
 export class ConstantClassesConf extends BasicRuleConfig {
   /** Specify a list of domain-class pairs which will be validated */
-  public mapping: DomainClassMapping[];
+  public mapping: DomainClassMapping[] = [];
 }
 
 export class ConstantClasses implements IRule {

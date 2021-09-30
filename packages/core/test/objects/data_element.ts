@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataElement} from "../../src/objects";
-import {CharacterType, UnknownType, HexType, VoidType, StringType, PackedType} from "../../src/abap/types/basic";
+import {CharacterType, UnknownType, HexType, VoidType, StringType, PackedType, FloatingPointType} from "../../src/abap/types/basic";
 
 describe("Data element, parse main xml", () => {
 
@@ -185,6 +185,42 @@ describe("Data element, parse main xml", () => {
     const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(PackedType);
+  });
+
+  it("FLTP", async () => {
+    const dtelxml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD04V>
+        <ROLLNAME>ZEXCEL_STYLE_COLOR_TINT</ROLLNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <HEADLEN>22</HEADLEN>
+        <SCRLEN1>10</SCRLEN1>
+        <SCRLEN2>15</SCRLEN2>
+        <SCRLEN3>20</SCRLEN3>
+        <DDTEXT>Tint</DDTEXT>
+        <REPTEXT>Tint</REPTEXT>
+        <SCRTEXT_S>Tint</SCRTEXT_S>
+        <SCRTEXT_M>Tint</SCRTEXT_M>
+        <SCRTEXT_L>Tint</SCRTEXT_L>
+        <DTELMASTER>E</DTELMASTER>
+        <DATATYPE>FLTP</DATATYPE>
+        <LENG>000016</LENG>
+        <DECIMALS>000016</DECIMALS>
+        <OUTPUTLEN>000022</OUTPUTLEN>
+       </DD04V>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zexcel_style_color_tint.dtel.xml", dtelxml));
+
+    await reg.parseAsync();
+    const dtel = reg.getFirstObject()! as DataElement;
+    const type = dtel.parseType(reg);
+    expect(type).to.be.instanceof(FloatingPointType);
   });
 
 });

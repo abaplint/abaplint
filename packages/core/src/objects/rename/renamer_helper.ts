@@ -8,7 +8,7 @@ import {VirtualPosition} from "../../position";
 import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../_abap_object";
 import {AbstractObject} from "../_abstract_object";
-
+import {IObject} from "../_iobject";
 
 export class RenamerHelper {
   private readonly reg: IRegistry;
@@ -45,11 +45,12 @@ export class RenamerHelper {
 
     const tag = xmlTag.toUpperCase();
     const search = "<" + tag + ">" + oldName.toUpperCase() + "</" + tag + ">";
+    const length = tag.length + 2;
     const rows = xml.getRawRows();
     for (let i = 0; i < rows.length; i++) {
       const index = rows[i].indexOf(search);
       if (index >= 0) {
-        const range = Range.create(i, index + 9, i, index + oldName.length + 9);
+        const range = Range.create(i, index + length, i, index + oldName.length + length);
         changes.push(
           TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
       }
@@ -58,7 +59,7 @@ export class RenamerHelper {
     return changes;
   }
 
-  public renameFiles(obj: ABAPObject, oldName: string, name: string): RenameFile[] {
+  public renameFiles(obj: IObject, oldName: string, name: string): RenameFile[] {
     const list: RenameFile[] = [];
 
     const newName = name.toLowerCase().replace(/\//g, "#");
