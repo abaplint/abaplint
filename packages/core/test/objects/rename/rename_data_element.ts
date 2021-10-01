@@ -44,7 +44,7 @@ describe("Rename Data Element", () => {
     }
   });
 
-  it.skip("DTEL, referenced from PROG", () => {
+  it("DTEL, referenced from PROG", () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
