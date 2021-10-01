@@ -12,5 +12,5 @@ export interface IDDICReferences {
   addUsing(obj: IObject, using: IObjectAndToken | undefined): void;
   clear(obj: IObject): void;
   listUsing(obj: IObject): readonly IObjectAndToken[];
-  listWhereUsed(obj: IObject): {type: string, name: string}[];
+  listWhereUsed(obj: IObject): IObjectAndToken[];
 }

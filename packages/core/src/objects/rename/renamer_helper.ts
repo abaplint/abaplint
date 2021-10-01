@@ -35,6 +35,12 @@ export class RenamerHelper {
     return this.replaceRefs(refs, oldName, newName).reverse();
   }
 
+  public renameDDICReferences(obj: IObject, _oldName: string, _newName: string): TextDocumentEdit[] {
+    const used = this.reg.getDDICReferences().listWhereUsed(obj);
+    console.dir(used);
+    return [];
+  }
+
   public buildXMLFileEdits(clas: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
     const xml = clas.getXMLFile();

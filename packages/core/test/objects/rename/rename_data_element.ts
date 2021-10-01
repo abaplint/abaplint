@@ -70,12 +70,15 @@ describe("Rename Data Element", () => {
  </asx:abap>
 </abapGit>`;
 
-    const prog = `DATA bar TYPE zbar.`;
+    const prog = `REPORT zprog_rename_dtel.
+DATA bar TYPE zbar.`;
 
     const reg = new Registry().addFiles([
       new MemoryFile("zbar.dtel.xml", xml),
       new MemoryFile("zprog_rename_dtel.prog.abap", prog),
     ]).parse();
+
+    reg.findIssues(); // hmm, this builds the ddic references
 
     new Renamer(reg).rename("DTEL", "zbar", "foo");
 
@@ -84,7 +87,8 @@ describe("Rename Data Element", () => {
       if (f.getFilename() === "foo.dtel.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
       } else if (f.getFilename() === "zprog_rename_dtel.prog.abap") {
-        expect(f.getRaw()).to.equal(`DATA bar TYPE foo.`);
+        expect(f.getRaw()).to.equal(`REPORT zprog_rename_dtel.
+DATA bar TYPE foo.`);
       } else {
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }
