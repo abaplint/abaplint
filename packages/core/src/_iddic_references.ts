@@ -4,6 +4,7 @@ import {Token} from "./abap/1_lexer/tokens/_token";
 export interface IObjectAndToken {
   object?: IObject;
   token?: Token;
+  filename?: string;
 }
 
 export interface IDDICReferences {
