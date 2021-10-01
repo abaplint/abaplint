@@ -185,7 +185,7 @@ export class BasicTypes {
 
     const ddic = this.scope.getDDIC().lookup(chainText);
     if (ddic) {
-      this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), ddic.object);
+      this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), {object: ddic.object});
       if (ddic.type instanceof TypedIdentifier) {
         this.scope.addReference(typeName.getFirstToken(), ddic.type, ReferenceType.TypeReference, this.filename);
       } else if (ddic.type instanceof VoidType) {
@@ -494,7 +494,7 @@ export class BasicTypes {
       foundType = found?.getType();
       if (foundType === undefined) {
         const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
-        this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), f.object);
+        this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), {object: f.object});
         if (f.type instanceof TypedIdentifier) {
           foundType = f.type.getType();
         } else {

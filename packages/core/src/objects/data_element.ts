@@ -2,8 +2,8 @@ import {AbstractObject} from "./_abstract_object";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {IRegistry} from "../_iregistry";
 import {DDIC, ILookupResult} from "../ddic";
-import {IObject} from "./_iobject";
 import * as Types from "../abap/types/basic";
+import {IObjectAndToken} from "../_iddic_references";
 
 export class DataElement extends AbstractObject {
   private parsedXML: {
@@ -35,7 +35,7 @@ export class DataElement extends AbstractObject {
   }
 
   public parseType(reg: IRegistry): AbstractType {
-    const references: IObject[] = [];
+    const references: IObjectAndToken[] = [];
 
     let lookup: ILookupResult | undefined = undefined;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
@@ -64,7 +64,7 @@ export class DataElement extends AbstractObject {
     }
 
     if (lookup.object) {
-      references.push(lookup.object);
+      references.push({object: lookup.object});
     }
     reg.getDDICReferences().setUsing(this, references);
     return lookup.type;
