@@ -39,6 +39,10 @@ export class RenamerHelper {
     const changes: TextDocumentEdit[] = [];
     const used = this.reg.getDDICReferences().listWhereUsed(obj);
 
+    /*
+    console.dir(obj);
+    console.dir(used);
+    */
     for (const u of used) {
       if (u.token === undefined || u.filename === undefined) {
         continue;

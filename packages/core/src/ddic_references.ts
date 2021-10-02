@@ -47,10 +47,10 @@ export class DDICReferences implements IDDICReferences {
     }
   }
 
-  public listWhereUsed(obj: IObject): IObjectAndToken[] {
+  public listWhereUsed(obj: IObject) {
     // todo, add reverse index, this is slow
 
-    const ret: IObjectAndToken[] = [];
+    const ret = [];
     const searchName = obj.getName().toUpperCase();
     const searchType = obj.getType();
 
@@ -58,7 +58,7 @@ export class DDICReferences implements IDDICReferences {
       for (const type in this.index[name]) {
         for (const f of this.index[name][type]) {
           if (f.object && f.object.getType() === searchType && f.object.getName() === searchName) {
-            ret.push(f);
+            ret.push({type, name, token: f.token, filename: f.filename});
             break; // current outermost loop
           }
         }

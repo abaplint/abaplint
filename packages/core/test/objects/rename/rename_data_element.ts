@@ -95,7 +95,7 @@ DATA bar TYPE foo.`);
     }
   });
 
-  it.only("DTEL, referenced from TABL", () => {
+  it.skip("DTEL, referenced from TABL", () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -146,7 +146,7 @@ DATA bar TYPE foo.`);
 
     const reg = new Registry().addFiles([
       new MemoryFile("zbar.dtel.xml", xml),
-      new MemoryFile("ztabl.tabl.abap", tabl),
+      new MemoryFile("ztabl.tabl.xml", tabl),
     ]).parse();
 
     reg.findIssues(); // hmm, this builds the ddic references
