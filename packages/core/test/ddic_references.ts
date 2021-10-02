@@ -20,7 +20,7 @@ describe("DDIC References", () => {
     const ref = get();
     const obj1 = new Domain("DOMA1");
     const obj2 = new Domain("DOMA2");
-    ref.setUsing(obj1, [obj2]);
+    ref.setUsing(obj1, [{object: obj2}]);
     expect(ref.listUsing(obj1).length).to.equal(1);
     expect(ref.listWhereUsed(obj2).length).to.equal(1);
   });

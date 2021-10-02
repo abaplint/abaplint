@@ -35,6 +35,25 @@ export class RenamerHelper {
     return this.replaceRefs(refs, oldName, newName).reverse();
   }
 
+  public renameDDICReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const used = this.reg.getDDICReferences().listWhereUsed(obj);
+
+    for (const u of used) {
+      if (u.token === undefined || u.filename === undefined) {
+        continue;
+      }
+      const range = Range.create(
+        u.token.getStart().getRow() - 1,
+        u.token.getStart().getCol() - 1,
+        u.token.getStart().getRow() - 1,
+        u.token.getStart().getCol() - 1 + oldName.length);
+      changes.push(
+        TextDocumentEdit.create({uri: u.filename, version: 1}, [TextEdit.replace(range, newName.toLowerCase())]));
+    }
+    return changes;
+  }
+
   public buildXMLFileEdits(clas: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
     const xml = clas.getXMLFile();

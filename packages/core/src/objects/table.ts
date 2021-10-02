@@ -6,7 +6,7 @@ import {DDIC} from "../ddic";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference} from "../abap/types/basic";
-import {IObject} from "./_iobject";
+import {IObjectAndToken} from "../_iddic_references";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -87,7 +87,7 @@ export class Table extends AbstractObject {
       }
     }
 
-    const references: IObject[] = [];
+    const references: IObjectAndToken[] = [];
     const components: Types.IStructureComponent[] = [];
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
@@ -96,7 +96,7 @@ export class Table extends AbstractObject {
         const lookup = ddic.lookupDataElement(field.ROLLNAME);
         components.push({name: field.FIELDNAME, type: lookup.type});
         if (lookup.object) {
-          references.push(lookup.object);
+          references.push({object: lookup.object});
         }
       } else if (field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP") { // incude or append structure
         if (field.PRECFIELD === undefined) {
@@ -105,7 +105,7 @@ export class Table extends AbstractObject {
         const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         let found = lookup.type;
         if (lookup.object) {
-          references.push(lookup.object);
+          references.push({object: lookup.object});
         }
         if (found instanceof TypedIdentifier) {
           found = found.getType();
@@ -133,7 +133,7 @@ export class Table extends AbstractObject {
         const lookup = ddic.lookupTableOrView(field.ROLLNAME);
         components.push({name: field.FIELDNAME, type: lookup.type});
         if (lookup.object) {
-          references.push(lookup.object);
+          references.push({object: lookup.object});
         }
       } else if (comptype === "R") {
         if (field.ROLLNAME === undefined) {
@@ -147,14 +147,14 @@ export class Table extends AbstractObject {
           const lookup = ddic.lookupObject(field.ROLLNAME);
           components.push({name: field.FIELDNAME, type: lookup.type});
           if (lookup.object) {
-            references.push(lookup.object);
+            references.push({object: lookup.object});
           }
         }
       } else if (comptype === "L") {
         const lookup = ddic.lookupTableType(field.ROLLNAME);
         components.push({name: field.FIELDNAME, type: lookup.type});
         if (lookup.object) {
-          references.push(lookup.object);
+          references.push({object: lookup.object});
         }
       } else if (comptype === "") { // built in
         const datatype = field.DATATYPE;

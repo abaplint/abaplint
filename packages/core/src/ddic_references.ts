@@ -1,10 +1,10 @@
 import {IObject} from "./objects/_iobject";
-import {IDDICReferences} from "./_iddic_references";
+import {IDDICReferences, IObjectAndToken} from "./_iddic_references";
 
 export class DDICReferences implements IDDICReferences {
-  private readonly index: { [name: string]: { [type: string]: IObject[] } } = {};
+  private readonly index: { [name: string]: { [type: string]: IObjectAndToken[] } } = {};
 
-  public setUsing(obj: IObject, using: IObject[]): void {
+  public setUsing(obj: IObject, using: IObjectAndToken[]): void {
     const newName = obj.getName().toUpperCase();
     const newType = obj.getType();
 
@@ -14,7 +14,7 @@ export class DDICReferences implements IDDICReferences {
     this.index[newName][newType] = using;
   }
 
-  public addUsing(obj: IObject, using: IObject | undefined) {
+  public addUsing(obj: IObject, using: IObjectAndToken | undefined) {
     if (using === undefined) {
       return;
     }
@@ -35,7 +35,7 @@ export class DDICReferences implements IDDICReferences {
     this.setUsing(obj, []);
   }
 
-  public listUsing(obj: IObject): readonly IObject[] {
+  public listUsing(obj: IObject): readonly IObjectAndToken[] {
     const newName = obj.getName().toUpperCase();
     const newType = obj.getType();
 
@@ -47,18 +47,18 @@ export class DDICReferences implements IDDICReferences {
     }
   }
 
-  public listWhereUsed(obj: IObject): {type: string, name: string}[] {
+  public listWhereUsed(obj: IObject): IObjectAndToken[] {
     // todo, add reverse index, this is slow
 
-    const ret: {type: string, name: string}[] = [];
+    const ret: IObjectAndToken[] = [];
     const searchName = obj.getName().toUpperCase();
     const searchType = obj.getType();
 
     for (const name in this.index) {
       for (const type in this.index[name]) {
         for (const f of this.index[name][type]) {
-          if (f.getType() === searchType && f.getName() === searchName) {
-            ret.push({type, name});
+          if (f.object && f.object.getType() === searchType && f.object.getName() === searchName) {
+            ret.push(f);
             break; // current outermost loop
           }
         }

@@ -15,7 +15,7 @@ export class DeleteCluster implements StatementSyntax {
     if (databaseName) {
       const found = scope.getDDIC()?.lookupTableOrView(databaseName.concatTokens());
       if (found) {
-        scope.getDDICReferences().addUsing(scope.getParentObj(), found.object);
+        scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found.object});
       }
     }
 

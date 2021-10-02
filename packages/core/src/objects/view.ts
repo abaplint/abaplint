@@ -4,7 +4,7 @@ import {xmlToArray} from "../xml_utils";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {IObject} from "./_iobject";
+import {IObjectAndToken} from "../_iddic_references";
 
 export class View extends AbstractObject {
   private parsedData: {
@@ -38,7 +38,7 @@ export class View extends AbstractObject {
     }
 
     const components: Types.IStructureComponent[] = [];
-    const references: IObject[] = [];
+    const references: IObjectAndToken[] = [];
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
       if (field.VIEWFIELD === "*" || field.VIEWFIELD === "-") {
@@ -48,7 +48,7 @@ export class View extends AbstractObject {
       const lookup = ddic.lookupTableOrView(field.TABNAME);
       let found = lookup.type;
       if (lookup.object) {
-        references.push(lookup.object);
+        references.push({object: lookup.object});
       }
       if (field.VIEWFIELD === ".APPEND") {
 // it is already expanded in the abapGit xml

@@ -3,7 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
-import {IObject} from "./_iobject";
+import {IObjectAndToken} from "../_iddic_references";
 
 export class TableType extends AbstractObject {
   private parsedXML: {
@@ -39,7 +39,7 @@ export class TableType extends AbstractObject {
 
     const ddic = new DDIC(reg);
 
-    const references: IObject[] = [];
+    const references: IObjectAndToken[] = [];
     let type: AbstractType;
     if (this.parsedXML === undefined || this.parsedXML === {}) {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
@@ -47,25 +47,25 @@ export class TableType extends AbstractObject {
       const lookup = ddic.lookupTableOrView(this.parsedXML.rowtype);
       type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
       if (lookup.object) {
-        references.push(lookup.object);
+        references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "E") {
       const lookup = ddic.lookupDataElement(this.parsedXML.rowtype);
       type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
       if (lookup.object) {
-        references.push(lookup.object);
+        references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "L") {
       const lookup = ddic.lookupTableType(this.parsedXML.rowtype);
       type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
       if (lookup.object) {
-        references.push(lookup.object);
+        references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
       const lookup = ddic.lookupObject(this.parsedXML.rowtype);
       type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
       if (lookup.object) {
-        references.push(lookup.object);
+        references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "") {
       if (this.parsedXML.datatype === undefined) {
