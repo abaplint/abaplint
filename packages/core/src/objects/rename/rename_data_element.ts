@@ -21,7 +21,8 @@ export class RenameDataElement implements ObjectRenamer {
     const helper = new RenamerHelper(this.reg);
     changes = changes.concat(helper.buildXMLFileEdits(obj, "ROLLNAME", oldName, newName));
     changes = changes.concat(helper.renameFiles(obj, oldName, newName));
-    changes = changes.concat(helper.renameDDICReferences(obj, oldName, newName));
+    changes = changes.concat(helper.renameDDICCodeReferences(obj, oldName, newName));
+    changes = changes.concat(helper.renameDDICTABLReferences(obj, oldName, newName));
 
     return {
       documentChanges: changes,

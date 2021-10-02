@@ -1,4 +1,5 @@
 import {Range, RenameFile, TextDocumentEdit, TextEdit} from "vscode-languageserver-types";
+import {Table} from "../table";
 import {ReferenceType} from "../..";
 import {Identifier} from "../../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../../abap/5_syntax/syntax";
@@ -35,14 +36,10 @@ export class RenamerHelper {
     return this.replaceRefs(refs, oldName, newName).reverse();
   }
 
-  public renameDDICReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
+  public renameDDICCodeReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
     const used = this.reg.getDDICReferences().listWhereUsed(obj);
 
-    /*
-    console.dir(obj);
-    console.dir(used);
-    */
     for (const u of used) {
       if (u.token === undefined || u.filename === undefined) {
         continue;
@@ -58,9 +55,27 @@ export class RenamerHelper {
     return changes;
   }
 
-  public buildXMLFileEdits(clas: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
+  public renameDDICTABLReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
-    const xml = clas.getXMLFile();
+    const used = this.reg.getDDICReferences().listWhereUsed(obj);
+
+    for (const u of used) {
+      if (u.type !== "TABL") {
+        continue;
+      }
+      const tabl = this.reg.getObject(u.type, u.name) as Table | undefined;
+      if (tabl === undefined) {
+        continue;
+      }
+
+      changes.push(...this.buildXMLFileEdits(tabl, "ROLLNAME", oldName, newName));
+    }
+    return changes;
+  }
+
+  public buildXMLFileEdits(object: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const xml = object.getXMLFile();
 
     if (xml === undefined) {
       return [];

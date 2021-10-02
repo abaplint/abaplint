@@ -95,7 +95,7 @@ DATA bar TYPE foo.`);
     }
   });
 
-  it.skip("DTEL, referenced from TABL", () => {
+  it("DTEL, referenced from TABL", () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -157,7 +157,7 @@ DATA bar TYPE foo.`);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "foo.dtel.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
-      } else if (f.getFilename() === "ztabl.tabl.abap") {
+      } else if (f.getFilename() === "ztabl.tabl.xml") {
         expect(f.getRaw()).to.include(`<ROLLNAME>FOO</ROLLNAME>`);
       } else {
         expect(1).to.equal(f.getFilename(), "unexpected file");
