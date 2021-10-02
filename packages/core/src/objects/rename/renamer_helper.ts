@@ -10,6 +10,7 @@ import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../_abap_object";
 import {AbstractObject} from "../_abstract_object";
 import {IObject} from "../_iobject";
+import {DataElement} from "../data_element";
 
 export class RenamerHelper {
   private readonly reg: IRegistry;
@@ -69,6 +70,24 @@ export class RenamerHelper {
       }
 
       changes.push(...this.buildXMLFileEdits(tabl, "ROLLNAME", oldName, newName));
+    }
+    return changes;
+  }
+
+  public renameDDICDTELReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const used = this.reg.getDDICReferences().listWhereUsed(obj);
+
+    for (const u of used) {
+      if (u.type !== "DTEL") {
+        continue;
+      }
+      const tabl = this.reg.getObject(u.type, u.name) as DataElement | undefined;
+      if (tabl === undefined) {
+        continue;
+      }
+
+      changes.push(...this.buildXMLFileEdits(tabl, "DOMNAME", oldName, newName));
     }
     return changes;
   }

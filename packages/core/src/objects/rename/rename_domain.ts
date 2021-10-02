@@ -21,6 +21,7 @@ export class RenameDomain implements ObjectRenamer {
     const helper = new RenamerHelper(this.reg);
     changes = changes.concat(helper.buildXMLFileEdits(obj, "DOMNAME", oldName, newName));
     changes = changes.concat(helper.renameFiles(obj, oldName, newName));
+    changes = changes.concat(helper.renameDDICDTELReferences(obj, oldName, newName));
 
     return {
       documentChanges: changes,
