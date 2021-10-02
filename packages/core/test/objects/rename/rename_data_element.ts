@@ -71,7 +71,8 @@ describe("Rename Data Element", () => {
 </abapGit>`;
 
     const prog = `REPORT zprog_rename_dtel.
-DATA bar TYPE zbar.`;
+DATA bar1 TYPE zbar.
+DATA bar2 TYPE zbar.`;
 
     const reg = new Registry().addFiles([
       new MemoryFile("zbar.dtel.xml", xml),
@@ -88,7 +89,8 @@ DATA bar TYPE zbar.`;
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
       } else if (f.getFilename() === "zprog_rename_dtel.prog.abap") {
         expect(f.getRaw()).to.equal(`REPORT zprog_rename_dtel.
-DATA bar TYPE foo.`);
+DATA bar1 TYPE foo.
+DATA bar2 TYPE foo.`);
       } else {
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }
