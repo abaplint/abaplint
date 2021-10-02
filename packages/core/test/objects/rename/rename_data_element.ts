@@ -167,4 +167,71 @@ DATA bar2 TYPE foo.`);
     }
   });
 
+  it("DTEL, referenced from TTYP", () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZBAR</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>testing</DDTEXT>
+    <REPTEXT>testing</REPTEXT>
+    <SCRTEXT_S>testing</SCRTEXT_S>
+    <SCRTEXT_M>testing</SCRTEXT_M>
+    <SCRTEXT_L>testing</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZEXCEL_T_STYLE_COLOR_ARGB</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZBAR</ROWTYPE>
+    <ROWKIND>E</ROWKIND>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000008</LENG>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>Table of  RGB colors</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zbar.dtel.xml", xml),
+      new MemoryFile("zttyp.ttyp.xml", ttyp),
+    ]).parse();
+
+    reg.findIssues(); // hmm, this builds the ddic references
+
+    new Renamer(reg).rename("DTEL", "zbar", "foo");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "foo.dtel.xml") {
+        expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
+      } else if (f.getFilename() === "zttyp.ttyp.xml") {
+        expect(f.getRaw()).to.include(`<ROWTYPE>FOO</ROWTYPE>`);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });
