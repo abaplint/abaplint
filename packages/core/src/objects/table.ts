@@ -159,7 +159,7 @@ export class Table extends AbstractObject {
       } else if (comptype === "") { // built in
         const datatype = field.DATATYPE;
         if (datatype === undefined) {
-          throw new Error("Expected DATATYPE");
+          throw new Error("Expected DATATYPE, while parsing TABL " + this.getName());
         }
         const length = field.LENG ? field.LENG : field.INTLEN;
         components.push({
