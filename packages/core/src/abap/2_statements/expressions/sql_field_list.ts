@@ -22,7 +22,6 @@ export class SQLFieldList extends Expression {
                           SQLFieldName,
                           abap,
                           Constant);
-
     const sub = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), optPrio(tok(WParenLeftW)), field, optPrio(tok(WParenRightW))));
     const arith = ver(Version.v740sp05, sub);
 

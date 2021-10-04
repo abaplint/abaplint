@@ -1,5 +1,7 @@
+import {SQLAggregation, SQLFunction, SQLPath} from ".";
 import {Version} from "../../../version";
-import {Expression, ver, alt, seq, plus, optPrio, opt} from "../combi";
+import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
+import {Expression, ver, alt, seq, plus, tok, optPrio, opt, altPrio, starPrio, plusPrio} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {Constant} from "./constant";
 import {SQLCond} from "./sql_cond";
@@ -8,7 +10,16 @@ import {SQLSource} from "./sql_source";
 
 export class SQLCase extends Expression {
   public getRunnable(): IStatementRunnable {
-    const when = seq("WHEN", alt(Constant, SQLCond), "THEN", SQLSource);
+
+    const field = altPrio(SQLAggregation,
+                          SQLCase,
+                          SQLFunction,
+                          SQLPath,
+                          SQLFieldName,
+                          Constant);
+    const sub = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), optPrio(tok(WParenLeftW)), field, optPrio(tok(WParenRightW))));
+
+    const when = seq("WHEN", alt(Constant, SQLCond), "THEN", altPrio(SQLAggregation, SQLSource), starPrio(sub));
     const els = seq("ELSE", SQLSource);
 
     return ver(Version.v740sp05, seq("CASE", opt(SQLFieldName), plus(when), optPrio(els), "END"));

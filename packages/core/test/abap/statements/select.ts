@@ -284,6 +284,17 @@ WHERE icf_docu IN @search_range
   `SELECT kbetr * ( 1 ) FROM a950 INTO TABLE @tm_data.`,
   `SELECT kbetr * ( -1 ) FROM a950 INTO TABLE @tm_data.`,
 //  `SELECT kbetr * ( 1 + 1 ) FROM a950 INTO TABLE @tm_data.`,
+
+  `SELECT mwskz AS tax_code,
+CASE shkzg
+  WHEN 'H' THEN ABS( hwbas )
+  WHEN 'S' THEN ABS( hwbas ) * -1
+END AS tax_base_amount_lc
+FROM bset
+WHERE bukrs = @is_doc_key-company_code
+ORDER BY tax_code
+INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
