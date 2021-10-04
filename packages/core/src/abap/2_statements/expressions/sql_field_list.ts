@@ -23,11 +23,10 @@ export class SQLFieldList extends Expression {
                           abap,
                           Constant);
 
-    const arith = ver(Version.v740sp05, plusPrio(seq(altPrio("+", "-", "*", "/"), field)));
-    const concat = ver(Version.v740sp05, plusPrio(seq("&&", field)));
+    const arith = ver(Version.v740sp05, plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), field)));
 
     return altPrio("*",
                    Dynamic,
-                   plusPrio(seq(field, optPrio(concat), optPrio(arith), optPrio(as), comma)));
+                   plusPrio(seq(field, optPrio(arith), optPrio(as), comma)));
   }
 }
