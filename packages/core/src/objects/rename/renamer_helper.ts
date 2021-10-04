@@ -59,9 +59,11 @@ export class RenamerHelper {
   public renameDDICTABLReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
     const used = this.reg.getDDICReferences().listWhereUsed(obj);
+    const handled: {[name: string]: boolean} = {};
 
     for (const u of used) {
-      if (u.type !== "TABL") {
+      if (u.type !== "TABL" || handled[u.name.toUpperCase()] === true) {
+        // a TABL might reference the object multiple times, but they are all fixes in one call to buildXMLFileEdits
         continue;
       }
       const tabl = this.reg.getObject(u.type, u.name) as Table | undefined;
@@ -70,6 +72,7 @@ export class RenamerHelper {
       }
 
       changes.push(...this.buildXMLFileEdits(tabl, "ROLLNAME", oldName, newName));
+      handled[u.name.toUpperCase()] = true;
     }
     return changes;
   }
@@ -88,6 +91,24 @@ export class RenamerHelper {
       }
 
       changes.push(...this.buildXMLFileEdits(tabl, "DOMNAME", oldName, newName));
+    }
+    return changes;
+  }
+
+  public renameDDICTTYPReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const used = this.reg.getDDICReferences().listWhereUsed(obj);
+
+    for (const u of used) {
+      if (u.type !== "TTYP") {
+        continue;
+      }
+      const tabl = this.reg.getObject(u.type, u.name) as DataElement | undefined;
+      if (tabl === undefined) {
+        continue;
+      }
+
+      changes.push(...this.buildXMLFileEdits(tabl, "ROWTYPE", oldName, newName));
     }
     return changes;
   }

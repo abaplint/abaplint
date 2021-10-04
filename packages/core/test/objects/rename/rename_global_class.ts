@@ -150,4 +150,65 @@ ENDCLASS.`;
     }
   });
 
+  it("CLAS, with usage in TABL", () => {
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS ZCL_FOO IMPLEMENTATION.
+ENDCLASS.`;
+    const tabl = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZEXCEL_S_DRAWINGS</TABNAME>
+    <TABCLASS>INTTAB</TABCLASS>
+    <EXCLASS>4</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>DRAWING</FIELDNAME>
+     <ROLLNAME>ZCL_FOO</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <DATATYPE>REF</DATATYPE>
+     <MASK>  REF RC</MASK>
+     <COMPTYPE>R</COMPTYPE>
+     <REFTYPE>C</REFTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>DRAWING2</FIELDNAME>
+     <ROLLNAME>ZCL_FOO</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <DATATYPE>REF</DATATYPE>
+     <MASK>  REF RC</MASK>
+     <COMPTYPE>R</COMPTYPE>
+     <REFTYPE>C</REFTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcl_foo.clas.abap", clas),
+      new MemoryFile("zfoo.tabl.xml", tabl),
+    ]).parse();
+
+    new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "cl_foo.clas.abap") {
+        const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS cl_foo IMPLEMENTATION.
+ENDCLASS.`;
+        expect(f.getRaw()).to.equal(expected);
+      } else if (f.getFilename() === "zfoo.tabl.xml") {
+        expect(f.getRaw()).to.include(`<ROLLNAME>CL_FOO</ROLLNAME>`);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });

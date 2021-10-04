@@ -59,7 +59,6 @@ export class DDICReferences implements IDDICReferences {
         for (const f of this.index[name][type]) {
           if (f.object && f.object.getType() === searchType && f.object.getName() === searchName) {
             ret.push({type, name, token: f.token, filename: f.filename});
-            break; // current outermost loop
           }
         }
       }
