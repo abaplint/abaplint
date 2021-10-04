@@ -121,14 +121,11 @@ const tests = [
   "  WHERE status = ' '\n" +
   "  ORDER BY change ASCENDING.",
 
-  // todo
-  /*
   "SELECT SINGLE field1, field2\n" +
   "  INTO (@<ls_data>-field1, @<ls_data>-field2)\n" +
   "  FROM ztable\n" +
   "  WHERE matnr = @<ls_data>-matnr\n" +
   "  AND werks = @<ls_data>-werks.",
-*/
 
   "SELECT field FROM table INTO TABLE @DATA(lt_result) WHERE moo IN ( @gc_foo , @gc_bar ).",
   "SELECT kunnr APPENDING CORRESPONDING FIELDS OF TABLE lt_record FROM tab WHERE field = a_field.",
@@ -282,6 +279,21 @@ FROM icfdocu AS src
 APPENDING CORRESPONDING FIELDS OF TABLE @ta_result
 WHERE icf_docu IN @search_range
  AND icf_langu     LIKE @language.`,
+
+  `SELECT kbetr * 1 FROM a950 INTO TABLE @tm_data.`,
+  `SELECT kbetr * ( 1 ) FROM a950 INTO TABLE @tm_data.`,
+  `SELECT kbetr * ( -1 ) FROM a950 INTO TABLE @tm_data.`,
+//  `SELECT kbetr * ( 1 + 1 ) FROM a950 INTO TABLE @tm_data.`,
+
+  `SELECT mwskz AS tax_code,
+CASE shkzg
+  WHEN 'H' THEN ABS( hwbas )
+  WHEN 'S' THEN ABS( hwbas ) * -1
+END AS tax_base_amount_lc
+FROM bset
+WHERE bukrs = @is_doc_key-company_code
+ORDER BY tax_code
+INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`,
 
 ];
 

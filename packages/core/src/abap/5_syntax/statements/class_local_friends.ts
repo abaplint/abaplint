@@ -14,6 +14,8 @@ export class ClassLocalFriends implements StatementSyntax {
       const def = scope.findClassDefinition(name);
       if (def) {
         scope.addReference(token, def, ReferenceType.ObjectOrientedReference, filename);
+      } else {
+        throw new Error(`Class ${name.toUpperCase()} not found`);
       }
     }
 
