@@ -284,9 +284,9 @@ WHERE icf_docu IN @search_range
  AND icf_langu     LIKE @language.`,
 
   `SELECT kbetr * 1 FROM a950 INTO TABLE @tm_data.`,
-//  `SELECT kbetr * ( 1 ) FROM a950 INTO TABLE @tm_data.`,
+  `SELECT kbetr * ( 1 ) FROM a950 INTO TABLE @tm_data.`,
+  `SELECT kbetr * ( -1 ) FROM a950 INTO TABLE @tm_data.`,
 //  `SELECT kbetr * ( 1 + 1 ) FROM a950 INTO TABLE @tm_data.`,
-//  `SELECT kbetr * ( -1 ) FROM a950 INTO TABLE @tm_data.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
