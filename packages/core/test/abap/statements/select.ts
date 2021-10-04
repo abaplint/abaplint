@@ -121,14 +121,11 @@ const tests = [
   "  WHERE status = ' '\n" +
   "  ORDER BY change ASCENDING.",
 
-  // todo
-  /*
   "SELECT SINGLE field1, field2\n" +
   "  INTO (@<ls_data>-field1, @<ls_data>-field2)\n" +
   "  FROM ztable\n" +
   "  WHERE matnr = @<ls_data>-matnr\n" +
   "  AND werks = @<ls_data>-werks.",
-*/
 
   "SELECT field FROM table INTO TABLE @DATA(lt_result) WHERE moo IN ( @gc_foo , @gc_bar ).",
   "SELECT kunnr APPENDING CORRESPONDING FIELDS OF TABLE lt_record FROM tab WHERE field = a_field.",
