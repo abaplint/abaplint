@@ -16,10 +16,11 @@ module.exports = ({mode} = {mode: "development"}) => ({
     globalObject: "self",
   },
   devServer: {
-    contentBase: path.join(__dirname, "public"),
+    static: {
+      directory: path.join(__dirname, "public"),
+    },
     open: true,
     hot: true,
-    inline: true,
   },
   resolve: {
     fallback: {
