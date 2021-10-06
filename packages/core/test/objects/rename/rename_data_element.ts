@@ -71,6 +71,8 @@ describe("Rename Data Element", () => {
 </abapGit>`;
 
     const prog = `REPORT zprog_rename_dtel.
+CONSTANTS c1 TYPE zbarbar VALUE 'A'. "#EC NOTEXT
+CONSTANTS c2 TYPE zbarbar VALUE 'A'. "#EC NOTEXT
 DATA bar1 TYPE zbarbar.
 DATA bar2 TYPE zbarbar.`;
 
@@ -89,6 +91,8 @@ DATA bar2 TYPE zbarbar.`;
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
       } else if (f.getFilename() === "zprog_rename_dtel.prog.abap") {
         expect(f.getRaw()).to.equal(`REPORT zprog_rename_dtel.
+CONSTANTS c1 TYPE foo VALUE 'A'. "#EC NOTEXT
+CONSTANTS c2 TYPE foo VALUE 'A'. "#EC NOTEXT
 DATA bar1 TYPE foo.
 DATA bar2 TYPE foo.`);
       } else {
@@ -228,6 +232,73 @@ DATA bar2 TYPE foo.`);
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
       } else if (f.getFilename() === "zttyp.ttyp.xml") {
         expect(f.getRaw()).to.include(`<ROWTYPE>FOO</ROWTYPE>`);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
+  it("DTEL, referenced from class in PROG", () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZBARBAR</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>testing</DDTEXT>
+    <REPTEXT>testing</REPTEXT>
+    <SCRTEXT_S>testing</SCRTEXT_S>
+    <SCRTEXT_M>testing</SCRTEXT_M>
+    <SCRTEXT_L>testing</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const prog = `REPORT zprog_rename_dtel.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS c1 TYPE zbarbar VALUE 'A'. "#EC NOTEXT
+    DATA bar1 TYPE zbarbar.
+    CONSTANTS c2 TYPE zbarbar VALUE 'A'. "#EC NOTEXT
+    DATA bar2 TYPE zbarbar.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zbarbar.dtel.xml", xml),
+      new MemoryFile("zprog_rename_dtel.prog.abap", prog),
+    ]).parse();
+
+    reg.findIssues(); // hmm, this builds the ddic references
+
+    new Renamer(reg).rename("DTEL", "zbarbar", "foo");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "foo.dtel.xml") {
+        expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
+      } else if (f.getFilename() === "zprog_rename_dtel.prog.abap") {
+        expect(f.getRaw()).to.equal(`REPORT zprog_rename_dtel.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS c1 TYPE foo VALUE 'A'. "#EC NOTEXT
+    DATA bar1 TYPE foo.
+    CONSTANTS c2 TYPE foo VALUE 'A'. "#EC NOTEXT
+    DATA bar2 TYPE foo.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`);
       } else {
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }
