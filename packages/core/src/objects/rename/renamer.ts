@@ -26,6 +26,7 @@ export class Renamer {
     }
 
     this.apply(edits);
+    this.reg.findIssues(); // hmm, this builds the ddic references
   }
 
   /** Builds edits, but does not apply to registry, used by LSP */

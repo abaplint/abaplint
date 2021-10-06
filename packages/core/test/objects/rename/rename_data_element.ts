@@ -305,4 +305,89 @@ ENDCLASS.`);
     }
   });
 
+  it("two DTEL, referenced from INTF", () => {
+    const xmlbarbar = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZBARBAR</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>testing</DDTEXT>
+    <REPTEXT>testing</REPTEXT>
+    <SCRTEXT_S>testing</SCRTEXT_S>
+    <SCRTEXT_M>testing</SCRTEXT_M>
+    <SCRTEXT_L>testing</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const xmlfoofoo = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZFOOFOO</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>testing</DDTEXT>
+    <REPTEXT>testing</REPTEXT>
+    <SCRTEXT_S>testing</SCRTEXT_S>
+    <SCRTEXT_M>testing</SCRTEXT_M>
+    <SCRTEXT_L>testing</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const intf = `INTERFACE zif_excel_sheet_properties PUBLIC.
+  DATA hidden TYPE zbarbar.
+  DATA show_zeros TYPE zfoofoo.
+ENDINTERFACE.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zbarbar.dtel.xml", xmlbarbar),
+      new MemoryFile("zfoofoo.dtel.xml", xmlfoofoo),
+      new MemoryFile("zif_excel_sheet_properties.intf.abap", intf),
+    ]).parse();
+
+    reg.findIssues(); // hmm, this builds the ddic references
+
+    const renamer = new Renamer(reg);
+    renamer.rename("DTEL", "zfoofoo", "foo");
+    renamer.rename("DTEL", "zbarbar", "bar");
+
+    expect(reg.getObjectCount()).to.equal(3);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "foo.dtel.xml") {
+        expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
+      } else if (f.getFilename() === "bar.dtel.xml") {
+        expect(f.getRaw().includes("<ROLLNAME>BAR</ROLLNAME>")).to.equal(true);
+      } else if (f.getFilename() === "zif_excel_sheet_properties.intf.abap") {
+        expect(f.getRaw()).to.equal(`INTERFACE zif_excel_sheet_properties PUBLIC.
+  DATA hidden TYPE bar.
+  DATA show_zeros TYPE foo.
+ENDINTERFACE.`);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });
