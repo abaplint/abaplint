@@ -81,6 +81,19 @@ SELECT mandt, mtext
     FOR ALL ENTRIES IN @lt_hus
     WHERE vekp~exidv = @lt_hus-package_no
     INTO TABLE @DATA(lt_sub_vekp).`, cnt: 0},
+
+  {abap: `SELECT mwskz AS tax_code,
+    CASE shkzg
+      WHEN 'H' THEN ABS( fwste )
+      WHEN 'S' THEN ABS( fwste ) * -1
+    END AS tax_amount_dc
+FROM bset
+WHERE bukrs = @is_doc_key-company_code
+ AND gjahr = @is_doc_key-fiscal_year
+ AND belnr = @is_doc_key-document_number
+ORDER BY tax_code
+INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`, cnt: 0},
+
 ];
 
 testRule(tests, KeywordCase);
