@@ -5,6 +5,8 @@ import {RenameDataElement} from "./rename_data_element";
 import {RenameDomain} from "./rename_domain";
 import {RenameGlobalClass} from "./rename_global_class";
 import {RenameGlobalInterface} from "./rename_global_interface";
+import {RenameTable} from "./rename_table";
+import {RenameTableType} from "./rename_table_type";
 import {ObjectRenamer} from "./_object_renamer";
 
 export class Renamer {
@@ -56,6 +58,10 @@ export class Renamer {
         return new RenameDataElement(this.reg);
       case "DOMA":
         return new RenameDomain(this.reg);
+      case "TABL":
+        return new RenameTable(this.reg);
+      case "TTYP":
+        return new RenameTableType(this.reg);
       case "INTF":
         return new RenameGlobalInterface(this.reg);
       default:
