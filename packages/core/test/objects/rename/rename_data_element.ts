@@ -50,7 +50,7 @@ describe("Rename Data Element", () => {
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <DD04V>
-    <ROLLNAME>ZBAR</ROLLNAME>
+    <ROLLNAME>ZBARBAR</ROLLNAME>
     <DDLANGUAGE>E</DDLANGUAGE>
     <HEADLEN>55</HEADLEN>
     <SCRLEN1>10</SCRLEN1>
@@ -71,17 +71,17 @@ describe("Rename Data Element", () => {
 </abapGit>`;
 
     const prog = `REPORT zprog_rename_dtel.
-DATA bar1 TYPE zbar.
-DATA bar2 TYPE zbar.`;
+DATA bar1 TYPE zbarbar.
+DATA bar2 TYPE zbarbar.`;
 
     const reg = new Registry().addFiles([
-      new MemoryFile("zbar.dtel.xml", xml),
+      new MemoryFile("zbarbar.dtel.xml", xml),
       new MemoryFile("zprog_rename_dtel.prog.abap", prog),
     ]).parse();
 
     reg.findIssues(); // hmm, this builds the ddic references
 
-    new Renamer(reg).rename("DTEL", "zbar", "foo");
+    new Renamer(reg).rename("DTEL", "zbarbar", "foo");
 
     expect(reg.getObjectCount()).to.equal(2);
     for (const f of reg.getFiles()) {
