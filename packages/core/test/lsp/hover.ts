@@ -314,19 +314,19 @@ ENDFORM.`;
      </asx:abap>
     </abapGit>`;
 
-    const abap = `DATA foo TYPE zddic.`;
+    const abap = `REPORT zfoo.
+DATA foo TYPE zddic.`;
     const dtel = new MemoryFile("zddic.dtel.xml", xml);
     const file = new MemoryFile("zfoo.prog.abap", abap);
     const reg = new Registry().addFiles([file, dtel]).parse();
-    const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 6));
+    reg.findIssues();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 1, 6));
     expect(hoverVariable).to.not.equal(undefined, "variable");
     expect(hoverVariable?.value).to.contain("ZDDIC");
-    /*
-    const hoverDDIC = new Hover(reg).find(buildPosition(file, 0, 15));
+
+    const hoverDDIC = new Hover(reg).find(buildPosition(file, 1, 15));
     expect(hoverDDIC).to.not.equal(undefined, "ddic");
-    expect(hoverDDIC?.value).to.contain("ddic");
     expect(hoverDDIC?.value).to.contain("ZDDIC");
-    */
   });
 
   it("Hover method definition name", () => {

@@ -114,6 +114,14 @@ export class LSPLookup {
       return {hover: value, definition, definitionId: refs[0].resolved, scope: bottomScope};
     }
 
+    const ddicRefs = reg.getDDICReferences().listByFilename(cursor.identifier.getFilename(), cursor.identifier.getStart().getRow());
+    for (const d of ddicRefs) {
+      if (d.object && d.token && d.token.getStart().equals(cursor.identifier.getStart())) {
+        const hover = `DDIC: ${d.object.getType()} ${d.object.getName()}`;
+        return {hover, scope: bottomScope};
+      }
+    }
+
     return undefined;
   }
 
