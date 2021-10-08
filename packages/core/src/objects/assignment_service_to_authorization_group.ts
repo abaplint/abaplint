@@ -8,7 +8,7 @@ export class AssignmentServiceToAuthorizationGroup extends AbstractObject {
 
   public getAllowedNaming() {
     return { // todo, verify
-      maxLength: 30,
+      maxLength: 32,
       allowNamespace: true,
     };
   }

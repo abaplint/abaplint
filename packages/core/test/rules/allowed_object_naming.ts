@@ -78,4 +78,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("SUSH, okay", async () => {
+    const issues = await findIssues("1611324d464e377dc17f29f6dede51ht.sush.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });
