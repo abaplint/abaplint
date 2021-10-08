@@ -6,7 +6,6 @@ import * as Tokens from "../abap/1_lexer/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
 import {LSPLookup} from "./_lookup";
 
-
 export class Hover {
   private readonly reg: IRegistry;
 
@@ -15,7 +14,6 @@ export class Hover {
   }
 
   public find(pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
-
     const file = LSPUtils.getABAPFile(this.reg, pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
