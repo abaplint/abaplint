@@ -956,13 +956,17 @@ lv_topbit = mv_hex+1.`;
   });
 
   it.skip("COND #", async () => {
-    const abap = `field = COND #( WHEN foo = bar THEN 2 ELSE 3 ).`;
+// todo: the InferredType qualified name is not set for builtin types
+    const abap = `DATA field TYPE i.
+field = COND #( WHEN 'a' = 'b' THEN 2 ELSE 3 ).`;
 
-    const expected = `IF foo = bar.
-  field = 2.
+    const expected = `DATA temp1 TYPE i.
+IF 'a' = 'b'.
+  temp1 = 2.
 ELSE.
-  field = 3.
-ENDIF.`;
+  temp1 = 3.
+ENDIF.
+field = temp1.`;
 
     testFix(abap, expected);
   });
