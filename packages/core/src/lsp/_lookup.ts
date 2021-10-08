@@ -94,14 +94,21 @@ export class LSPLookup {
       return {hover, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
+    let hoverValue = "";
+    const ddicRefs = reg.getDDICReferences().listByFilename(cursor.identifier.getFilename(), cursor.identifier.getStart().getRow());
+    for (const d of ddicRefs) {
+      if (d.object && d.token && d.token.getStart().equals(cursor.identifier.getStart())) {
+        hoverValue += `DDIC: ${d.object.getType()} ${d.object.getName()}`;
+      }
+    }
+
     const refs = this.searchReferences(bottomScope, cursor.token);
     if (refs.length > 0) {
-      let value = "";
       for (const ref of refs) {
-        if (value !== "") {
-          value += "\n_________________\n";
+        if (hoverValue !== "") {
+          hoverValue += "\n_________________\n";
         }
-        value += this.referenceHover(ref, bottomScope, reg);
+        hoverValue += this.referenceHover(ref, bottomScope, reg);
       }
 
       let definition: LServer.Location | undefined = undefined;
@@ -111,17 +118,12 @@ export class LSPLookup {
           definition = undefined;
         }
       }
-      return {hover: value, definition, definitionId: refs[0].resolved, scope: bottomScope};
+      return {hover: hoverValue, definition, definitionId: refs[0].resolved, scope: bottomScope};
     }
 
-    const ddicRefs = reg.getDDICReferences().listByFilename(cursor.identifier.getFilename(), cursor.identifier.getStart().getRow());
-    for (const d of ddicRefs) {
-      if (d.object && d.token && d.token.getStart().equals(cursor.identifier.getStart())) {
-        const hover = `DDIC: ${d.object.getType()} ${d.object.getName()}`;
-        return {hover, scope: bottomScope};
-      }
+    if (hoverValue !== "") {
+      return {hover: hoverValue, scope: bottomScope};
     }
-
     return undefined;
   }
 
