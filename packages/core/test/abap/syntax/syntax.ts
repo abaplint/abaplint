@@ -5252,6 +5252,20 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Class ZCL_OAPI_MAIN not found");
   });
 
+  it("CALL METHOD, expect method not found error", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+
+  DATA out TYPE REF TO lcl_bar.
+  CALL METHOD out->something( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("SOMETHING");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

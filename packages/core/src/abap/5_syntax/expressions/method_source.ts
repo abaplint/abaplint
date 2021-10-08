@@ -6,6 +6,7 @@ import {MethodCallChain} from "./method_call_chain";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
+import {ObjectOriented} from "../_object_oriented";
 
 export class MethodSource {
 
@@ -21,11 +22,16 @@ export class MethodSource {
       if (context instanceof ObjectReferenceType) {
         const id = context.getIdentifier();
         if (id instanceof ClassDefinition) {
-          const method = id.getMethodDefinitions().getByName(last.concatTokens());
+          const methodName = last.concatTokens().toUpperCase();
+          const helper = new ObjectOriented(scope);
+          const {method: foundMethod} = helper.searchMethodName(id, methodName);
+          if (foundMethod === undefined && methodName !== "CONSTRUCTOR") {
+            throw new Error(`MethodSource, method not found \"${methodName}\"`);
+          }
           const extra: IReferenceExtras = {
             ooName: id.getName(),
             ooType: "CLAS"};
-          scope.addReference(last.getFirstToken(), method, ReferenceType.MethodReference, filename, extra);
+          scope.addReference(last.getFirstToken(), foundMethod, ReferenceType.MethodReference, filename, extra);
         }
       } else if (context instanceof VoidType) {
         return;

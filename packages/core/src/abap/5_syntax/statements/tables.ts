@@ -19,7 +19,7 @@ export class Tables implements StatementSyntax {
 
     const found = scope.getDDIC()?.lookupTableOrView(name);
     if (found) {
-      scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found.object});
+      scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found.object, filename: filename, token: nameToken});
       scope.addIdentifier(new TypedIdentifier(nameToken, filename, found.type));
       return;
     }

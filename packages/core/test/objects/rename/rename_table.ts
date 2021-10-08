@@ -5,8 +5,7 @@ import {Registry} from "../../../src/registry";
 
 describe("Rename TABL", () => {
 
-  it("TABL, no references, just the object", () => {
-    const xml = `<?xml version="1.0" encoding="utf-8"?>
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
@@ -54,16 +53,38 @@ describe("Rename TABL", () => {
  </asx:abap>
 </abapGit>`;
 
+  it("TABL, no references, just the object", () => {
     const reg = new Registry().addFiles([
       new MemoryFile("zabapgit_unit_t2.tabl.xml", xml),
     ]).parse();
-
     new Renamer(reg).rename("TABL", "zabapgit_unit_t2", "foo");
-
     expect(reg.getObjectCount()).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("foo.tabl.xml");
       expect(f.getRaw().includes("<TABNAME>FOO</TABNAME>")).to.equal(true);
+    }
+  });
+
+  it("TABL, referenced via dash", () => {
+    const prog = `REPORT zprog_rename_tabl.
+DATA bar2 TYPE zabapgit_unit_t2-name.`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zabapgit_unit_t2.tabl.xml", xml),
+      new MemoryFile("zprog_rename_tabl.prog.abap", prog),
+    ]).parse();
+    reg.findIssues(); // hmm, this builds the ddic references
+    new Renamer(reg).rename("TABL", "zabapgit_unit_t2", "foo");
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "foo.tabl.xml") {
+        expect(f.getFilename()).to.equal("foo.tabl.xml");
+        expect(f.getRaw().includes("<TABNAME>FOO</TABNAME>")).to.equal(true);
+      } else if (f.getFilename() === "zprog_rename_tabl.prog.abap") {
+        expect(f.getRaw()).to.equal(`REPORT zprog_rename_tabl.
+DATA bar2 TYPE foo-name.`);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
     }
   });
 
