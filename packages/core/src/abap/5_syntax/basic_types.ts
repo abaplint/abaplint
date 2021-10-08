@@ -438,7 +438,6 @@ export class BasicTypes {
   // todo, rewrite this method
   private resolveTypeChain(expr: ExpressionNode): AbstractType | undefined {
     const chainText = expr.concatTokens().toUpperCase();
-
     if (chainText.includes("=>") === false && chainText.includes("-") === false) {
       return undefined;
     }
@@ -495,7 +494,8 @@ export class BasicTypes {
       foundType = found?.getType();
       if (foundType === undefined) {
         const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
-        this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), {object: f.object});
+        this.scope.getDDICReferences().addUsing(this.scope.getParentObj(),
+                                                {object: f.object, filename: this.filename, token: expr.getFirstToken()});
         if (f.type instanceof TypedIdentifier) {
           foundType = f.type.getType();
         } else {
