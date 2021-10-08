@@ -955,6 +955,18 @@ lv_topbit = mv_hex+1.`;
     testFix(abap, expected);
   });
 
+  it.skip("COND #", async () => {
+    const abap = `field = COND #( WHEN foo = bar THEN 2 ELSE 3 ).`;
+
+    const expected = `IF foo = bar.
+  field = 2.
+ELSE.
+  field = 3.
+ENDIF.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
