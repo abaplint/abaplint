@@ -661,6 +661,21 @@ ${indentation}    output = ${topTarget}.`;
       const loopTarget = loop.findFirstExpression(Expressions.TargetField)?.concatTokens();
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTarget}).\n`;
 
+      const next = reduceBody.findDirectExpression(Expressions.ReduceNext);
+      if (next === undefined) {
+        continue;
+      }
+      for (const n of next.getChildren()) {
+        if (n.concatTokens().toUpperCase() === "NEXT") {
+          continue;
+        } else if (n.concatTokens() === "=") {
+          body += " = ";
+        } else if (n.get() instanceof Expressions.Field) {
+          body += indentation + "  " + n.concatTokens();
+        } else if (n.get() instanceof Expressions.Source) {
+          body += n.concatTokens() + ".\n";
+        }
+      }
 
       body += indentation + `ENDLOOP.\n`;
       body += indentation + `${uniqueName} = ${name}.\n`;

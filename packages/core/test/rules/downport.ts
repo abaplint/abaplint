@@ -999,7 +999,7 @@ field = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("REDUCE", async () => {
+  it("REDUCE", async () => {
     const abap = `point_data = REDUCE string(
   INIT res = ||
   FOR point IN params-points
