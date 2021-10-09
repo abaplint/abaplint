@@ -738,6 +738,24 @@ DATA(sdf) = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("VALUE with LET", async () => {
+    const abap = `
+TYPES: BEGIN OF params,
+         foo TYPE i,
+       END OF params.
+DATA(parameters) = VALUE params(
+  LET distance = 10 IN
+  foo = distance ).`;
+
+    const expected = `
+TYPES: BEGIN OF params,
+         foo TYPE i,
+       END OF params.
+sdf`;
+
+    testFix(abap, expected);
+  });
+
   it("downport, generic field symbol types", async () => {
     const issues = await findIssues(`
   FIELD-SYMBOLS <tab> TYPE ANY TABLE.
