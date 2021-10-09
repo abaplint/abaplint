@@ -377,6 +377,12 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("EMPTY KEY quick fix, lower case", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF i WITH empty key.`;
+    const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT key.`;
+    testFix(abap, expected);
+  });
+
   it("EMPTY KEY quick fix, structured", async () => {
     const abap = `TYPES:
   BEGIN OF ty_line,
@@ -955,12 +961,12 @@ lv_topbit = mv_hex+1.`;
     testFix(abap, expected);
   });
 
-  it.skip("COND #", async () => {
-// todo: the InferredType qualified name is not set for builtin types
+  it("COND #", async () => {
     const abap = `DATA field TYPE i.
 field = COND #( WHEN 'a' = 'b' THEN 2 ELSE 3 ).`;
 
-    const expected = `DATA temp1 TYPE i.
+    const expected = `DATA field TYPE i.
+DATA temp1 TYPE i.
 IF 'a' = 'b'.
   temp1 = 2.
 ELSE.

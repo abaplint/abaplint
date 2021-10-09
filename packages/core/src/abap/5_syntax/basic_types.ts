@@ -14,6 +14,8 @@ import {TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
 import {FieldSub, TypeTableKey} from "../2_statements/expressions";
+import {BuiltIn} from "./_builtin";
+import {Position} from "../../position";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -51,6 +53,11 @@ export class BasicTypes {
     const id = lookup?.object?.getIdentifier();
     if (id && lookup?.type) {
       return new TypedIdentifier(id.getToken(), id.getFilename(), lookup.type);
+    }
+
+    const builtin = this.scope.getDDIC().lookupBuiltinType(name);
+    if (builtin) {
+      return new TypedIdentifier(new TokenIdentifier(new Position(1, 1), name), BuiltIn.filename, builtin);
     }
 
     return undefined;
