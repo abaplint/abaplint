@@ -7,6 +7,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {InlineFieldDefinition} from "./inline_field_definition";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {ScopeType} from "../_scope_type";
+import {ReduceNext} from "./reduce_next";
 
 export class ReduceBody {
   public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string): AbstractType | undefined {
@@ -25,6 +26,10 @@ export class ReduceBody {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.ReduceNext)) {
+      new ReduceNext().runSyntax(s, scope, filename);
     }
 
     if (scope.getType() === ScopeType.For) {

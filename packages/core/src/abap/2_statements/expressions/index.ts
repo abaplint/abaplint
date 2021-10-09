@@ -125,6 +125,7 @@ export * from "./read_table_target";
 export * from "./receive_parameters";
 export * from "./redefinition";
 export * from "./reduce_body";
+export * from "./reduce_next";
 export * from "./report_name";
 export * from "./select_loop";
 export * from "./select";

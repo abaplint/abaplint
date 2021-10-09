@@ -738,6 +738,28 @@ DATA(sdf) = temp1.`;
     testFix(abap, expected);
   });
 
+  it("VALUE with LET", async () => {
+    const abap = `
+TYPES: BEGIN OF params,
+         foo TYPE i,
+       END OF params.
+DATA(parameters) = VALUE params(
+  LET distance = 10 IN
+  foo = distance ).`;
+
+    const expected = `
+TYPES: BEGIN OF params,
+         foo TYPE i,
+       END OF params.
+DATA temp1 TYPE params.
+DATA distance TYPE i.
+distance = 10.
+temp1-foo = distance.
+DATA(parameters) = temp1.`;
+
+    testFix(abap, expected);
+  });
+
   it("downport, generic field symbol types", async () => {
     const issues = await findIssues(`
   FIELD-SYMBOLS <tab> TYPE ANY TABLE.
@@ -973,6 +995,23 @@ ELSE.
   temp1 = 3.
 ENDIF.
 field = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("REDUCE", async () => {
+    const abap = `point_data = REDUCE string(
+  INIT res = ||
+  FOR point IN params-points
+  NEXT res = res && |moo| ).`;
+
+    const expected = `DATA temp1 TYPE string.
+DATA(res) = ||.
+LOOP AT params-points INTO DATA(point).
+  res = res && |moo|.
+ENDLOOP.
+temp1 = res.
+point_data = temp1.`;
 
     testFix(abap, expected);
   });
