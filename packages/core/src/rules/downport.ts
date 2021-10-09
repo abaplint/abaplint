@@ -23,6 +23,8 @@ import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
 
+// todo: refactor each sub-rule to new classes
+
 export class DownportConf extends BasicRuleConfig {
 }
 
@@ -47,6 +49,7 @@ Current rules:
 * FIELD-SYMBOL() definitions are outlined
 * CONV is outlined
 * COND is outlined
+* REDUCE is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 * LOOP AT method_call( ) is outlined
@@ -193,6 +196,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.outlineValue(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineReduce(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -614,6 +622,57 @@ ${indentation}    output = ${topTarget}.`;
       const fix2 = EditHelper.replaceRange(lowFile, fsTarget.getFirstToken().getStart(), fsTarget.getLastToken().getEnd(), targetName);
       const fix = EditHelper.merge(fix2, fix1);
       return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP fs target", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private outlineReduce(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
+      const firstToken = i.getFirstToken();
+      if (firstToken.getStr().toUpperCase() !== "REDUCE") {
+        continue;
+      }
+
+      const type = this.findType(i, lowFile, highSyntax);
+      if (type === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      let body = "";
+      let name = "";
+
+      const reduceBody = i.findDirectExpression(Expressions.ReduceBody);
+      if (reduceBody === undefined) {
+        continue;
+      }
+
+      for (const init of reduceBody.findDirectExpressions(Expressions.InlineFieldDefinition)) {
+        name = init.getFirstToken().getStr();
+        body += indentation + `DATA(${name}) = ${reduceBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
+      }
+      const loop = reduceBody.findFirstExpression(Expressions.InlineLoopDefinition);
+      if (loop === undefined) {
+        continue;
+      }
+      const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
+      const loopTarget = loop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTarget}).\n`;
+
+
+      body += indentation + `ENDLOOP.\n`;
+      body += indentation + `${uniqueName} = ${name}.\n`;
+
+      const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
+        body +
+        indentation;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, firstToken, "Downport REDUCE", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;

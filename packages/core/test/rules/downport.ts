@@ -999,6 +999,23 @@ field = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("REDUCE", async () => {
+    const abap = `point_data = REDUCE string(
+  INIT res = ||
+  FOR point IN params-points
+  NEXT res = res && |moo| ).`;
+
+    const expected = `DATA temp1 TYPE string.
+DATA(res) = ||.
+LOOP AT params-points INTO DATA(point).
+  res = res && |moo|.
+ENDLOOP.
+temp1 = res.
+point_data = temp1.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
