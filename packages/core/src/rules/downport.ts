@@ -620,7 +620,6 @@ ${indentation}    output = ${topTarget}.`;
   }
 
   private outlineValue(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
-
     for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
       const firstToken = i.getFirstToken();
       if (firstToken.getStr().toUpperCase() !== "VALUE") {
@@ -651,11 +650,11 @@ ${indentation}    output = ${topTarget}.`;
             added = true;
           }
           body += indentation + structureName + "-" + b.concatTokens() + ".\n";
-        }
-        if (b.get() instanceof Expressions.Source) {
+        } else if (b.get() instanceof Expressions.Source) {
           structureName = b.concatTokens();
-        }
-        if (b.concatTokens() === ")") {
+        } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.Let) {
+          body += this.outlineLet(b, indentation, highSyntax, lowFile);
+        } else if (b.concatTokens() === ")") {
           body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
         }
       }
@@ -668,10 +667,39 @@ ${indentation}    output = ${topTarget}.`;
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, firstToken, "Downport VALUE", this.getMetadata().key, this.conf.severity, fix);
-
     }
 
     return undefined;
+  }
+
+  private outlineLet(node: ExpressionNode, indentation: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string {
+    let ret = "";
+    for (const f of node.findDirectExpressions(Expressions.InlineFieldDefinition)) {
+      const c = f.getFirstChild();
+      if (c === undefined) {
+        continue;
+      }
+      const name = c.concatTokens().toLowerCase();
+
+      const spag = highSyntax.spaghetti.lookupPosition(c.getFirstToken().getStart(), lowFile.getFilename());
+      if (spag === undefined) {
+        continue;
+      }
+
+      const found = spag.findVariable(name);
+      if (found === undefined) {
+        continue;
+      }
+      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
+
+      ret += indentation + "DATA " + name + ` TYPE ${type}.\n`;
+
+      const source = node.findFirstExpression(Expressions.Source);
+      if (source) {
+        ret += indentation + name + ` = ${source.concatTokens()}.\n`;
+      }
+    }
+    return ret;
   }
 
   private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {

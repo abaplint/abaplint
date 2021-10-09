@@ -738,7 +738,7 @@ DATA(sdf) = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("VALUE with LET", async () => {
+  it("VALUE with LET", async () => {
     const abap = `
 TYPES: BEGIN OF params,
          foo TYPE i,
@@ -751,7 +751,11 @@ DATA(parameters) = VALUE params(
 TYPES: BEGIN OF params,
          foo TYPE i,
        END OF params.
-sdf`;
+DATA temp1 TYPE params.
+DATA distance TYPE i.
+distance = 10.
+temp1-foo = distance.
+DATA(parameters) = temp1.`;
 
     testFix(abap, expected);
   });
