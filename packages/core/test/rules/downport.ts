@@ -764,7 +764,7 @@ ENDCLASS.`);
 ENDFORM.`;
     const expected = `FORM bar.
   DATA tab TYPE ztab.
-  DATA temp1 TYPE ZROW.
+  DATA temp1 TYPE zrow.
   temp1-msg = sy-msgv1.
   APPEND temp1 TO tab.
 ENDFORM.`;

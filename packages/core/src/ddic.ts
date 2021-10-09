@@ -68,13 +68,13 @@ export class DDIC {
   public lookupBuiltinType(name: string, length?: number, decimals?: number): AbstractType | undefined {
     switch (name) {
       case "STRING":
-        return new Types.StringType();
+        return new Types.StringType(name);
       case "XSTRING":
-        return new Types.XStringType();
+        return new Types.XStringType(name);
       case "D":
-        return new Types.DateType();
+        return new Types.DateType(name);
       case "T":
-        return new Types.TimeType();
+        return new Types.TimeType(name);
       case "XSEQUENCE":
         return new Types.XSequenceType();
       case "CLIKE":
@@ -101,9 +101,9 @@ export class DDIC {
         return new Types.CSequenceType();
       case "I":
       case "INT8": // todo, take version into account
-        return new Types.IntegerType();
+        return new Types.IntegerType(name);
       case "F":
-        return new Types.FloatType();
+        return new Types.FloatType(name);
       case "P":
         if (length && decimals) {
           return new Types.PackedType(length, decimals);
