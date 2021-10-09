@@ -377,6 +377,12 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("EMPTY KEY quick fix, lower case", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF i WITH empty key.`;
+    const expected = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT key.`;
+    testFix(abap, expected);
+  });
+
   it("EMPTY KEY quick fix, structured", async () => {
     const abap = `TYPES:
   BEGIN OF ty_line,

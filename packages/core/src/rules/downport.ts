@@ -492,7 +492,7 @@ ${indentation}`);
       }
       i = key;
       const concat = i.concatTokens();
-      if (concat.includes("WITH EMPTY KEY") === false) {
+      if (concat.toUpperCase().includes("WITH EMPTY KEY") === false) {
         continue;
       }
       const token = i.findDirectTokenByText("EMPTY");
