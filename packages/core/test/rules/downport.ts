@@ -764,7 +764,7 @@ ENDCLASS.`);
 ENDFORM.`;
     const expected = `FORM bar.
   DATA tab TYPE ztab.
-  DATA temp1 TYPE ZROW.
+  DATA temp1 TYPE zrow.
   temp1-msg = sy-msgv1.
   APPEND temp1 TO tab.
 ENDFORM.`;
@@ -951,6 +951,22 @@ lv_topbit = mv_hex+1.`;
     input  = ls_line-no
   IMPORTING
     output = temp2-ebelp.`;
+
+    testFix(abap, expected);
+  });
+
+  it.skip("COND #", async () => {
+// todo: the InferredType qualified name is not set for builtin types
+    const abap = `DATA field TYPE i.
+field = COND #( WHEN 'a' = 'b' THEN 2 ELSE 3 ).`;
+
+    const expected = `DATA temp1 TYPE i.
+IF 'a' = 'b'.
+  temp1 = 2.
+ELSE.
+  temp1 = 3.
+ENDIF.
+field = temp1.`;
 
     testFix(abap, expected);
   });

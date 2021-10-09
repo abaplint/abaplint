@@ -676,7 +676,7 @@ ${indentation}    output = ${topTarget}.`;
     }
     const firstToken = expr.getFirstToken();
 
-    const concat = expr.concatTokens();
+    const concat = expr.concatTokens().toLowerCase();
     if (concat !== "#") {
       return concat;
     }
@@ -700,7 +700,7 @@ ${indentation}    output = ${topTarget}.`;
       return undefined;
     }
 
-    return inferred.getType().getQualifiedName();
+    return inferred.getType().getQualifiedName()?.toLowerCase();
   }
 
   private outlineFS(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -721,7 +721,7 @@ ${indentation}    output = ${topTarget}.`;
       } else if (found.getType() instanceof VoidType) {
         return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
       }
-      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
+      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
 
       const code = `FIELD-SYMBOLS ${name} TYPE ${type}.\n` +
         " ".repeat(node.getFirstToken().getStart().getCol() - 1);
@@ -753,7 +753,7 @@ ${indentation}    output = ${topTarget}.`;
       } else if (found.getType() instanceof VoidType) {
         return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
       }
-      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName() : found.getType().toABAP();
+      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
 
       const code = `DATA ${name} TYPE ${type}.\n` +
         " ".repeat(node.getFirstToken().getStart().getCol() - 1);
