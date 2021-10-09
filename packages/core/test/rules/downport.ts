@@ -955,12 +955,12 @@ lv_topbit = mv_hex+1.`;
     testFix(abap, expected);
   });
 
-  it.skip("COND #", async () => {
-// todo: the InferredType qualified name is not set for builtin types
+  it("COND #", async () => {
     const abap = `DATA field TYPE i.
 field = COND #( WHEN 'a' = 'b' THEN 2 ELSE 3 ).`;
 
-    const expected = `DATA temp1 TYPE i.
+    const expected = `DATA field TYPE i.
+DATA temp1 TYPE i.
 IF 'a' = 'b'.
   temp1 = 2.
 ELSE.

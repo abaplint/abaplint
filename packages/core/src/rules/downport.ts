@@ -2,7 +2,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Unknown} from "../abap/2_statements/statements/_statement";
-import {ExpressionNode, StatementNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IEdit, EditHelper} from "../edit_helper";
@@ -46,6 +46,7 @@ Current rules:
 * DATA() definitions are outlined, opposite of https://rules.abaplint.org/prefer_inline/
 * FIELD-SYMBOL() definitions are outlined
 * CONV is outlined
+* COND is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 * LOOP AT method_call( ) is outlined
@@ -202,6 +203,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.outlineConv(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineCond(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -767,6 +773,65 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
+  private outlineCond(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
+      if (i.getFirstToken().getStr().toUpperCase() !== "COND") {
+        continue;
+      }
+
+      const body = i.findDirectExpression(Expressions.CondBody);
+      if (body === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const type = this.findType(i, lowFile, highSyntax);
+      const indent = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      const bodyCode = this.buildCondBody(body, uniqueName, indent);
+
+      const abap = `DATA ${uniqueName} TYPE ${type}.\n` + bodyCode;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, i.getFirstToken(), "Downport COND", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private buildCondBody(body: ExpressionNode, uniqueName: string, indent: string) {
+    let code = indent;
+
+    for (const c of body.getChildren()) {
+      if (c instanceof TokenNode) {
+        switch (c.getFirstToken().getStr().toUpperCase()) {
+          case "WHEN":
+            code += "IF ";
+            break;
+          case "THEN":
+            code += ".\n";
+            break;
+          case "ELSE":
+            code += indent + "ELSE.\n";
+            break;
+          default:
+            throw "buildCondBody, unexpected token";
+        }
+      } else if (c.get() instanceof Expressions.Cond) {
+        code += c.concatTokens();
+      } else if (c.get() instanceof Expressions.Source) {
+        code += indent + "  " + uniqueName + " = " + c.concatTokens() + ".\n";
+      } else {
+        throw "buildCondBody, unexpected expression";
+      }
+    }
+    code += indent + "ENDIF.\n";
+
+    code += indent;
+    return code;
+  }
+
   private outlineConv(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
       if (i.getFirstToken().getStr().toUpperCase() !== "CONV") {
@@ -780,11 +845,11 @@ ${indentation}    output = ${topTarget}.`;
 
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const type = this.findType(i, lowFile, highSyntax);
+      const indent = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1) +
-        `${uniqueName} = ${body}.\n` +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+        indent + `${uniqueName} = ${body}.\n` +
+        indent;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
