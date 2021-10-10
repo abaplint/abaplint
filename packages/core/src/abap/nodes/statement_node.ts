@@ -220,7 +220,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
       } else if (child.get() instanceof type) {
         ret.push(child);
       }
-      ret.push(...child.findAllExpressions(type));
+      ret.push(...child.findAllExpressionsRecursive(type));
     }
     return ret;
   }
