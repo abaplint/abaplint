@@ -186,6 +186,19 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return undefined;
   }
 
+  public findAllExpressionsRecursive(type: new () => IStatementRunnable): readonly ExpressionNode[] {
+    const ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        continue;
+      } else if (child.get() instanceof type) {
+        ret.push(child);
+      }
+      ret.push(...child.findAllExpressionsRecursive(type));
+    }
+    return ret;
+  }
+
   public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {

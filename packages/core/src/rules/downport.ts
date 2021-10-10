@@ -700,7 +700,8 @@ ${indentation}    output = ${topTarget}.`;
   }
 
   private outlineValue(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
-    for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
+    const allSources = node.findAllExpressionsRecursive(Expressions.Source);
+    for (const i of allSources) {
       const firstToken = i.getFirstToken();
       if (firstToken.getStr().toUpperCase() !== "VALUE") {
         continue;

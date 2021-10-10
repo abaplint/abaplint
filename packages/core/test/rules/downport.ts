@@ -1063,7 +1063,7 @@ new_height = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("nested VALUE # returning", async () => {
+  it("nested VALUE # returning", async () => {
     const abap = `CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
     METHODS method1
@@ -1084,7 +1084,26 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
 
-    const expected = `sdfds`;
+    const expected = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1
+      IMPORTING input TYPE i.
+    METHODS method2
+      IMPORTING foo        TYPE i
+      RETURNING VALUE(val) TYPE i.
+    METHODS impl.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+  METHOD impl.
+    DATA temp1 TYPE i.
+    method1( method2( temp1 ) ).
+  ENDMETHOD.
+ENDCLASS.`;
 
     testFix(abap, expected);
   });
