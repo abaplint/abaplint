@@ -1063,6 +1063,32 @@ new_height = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("nested VALUE # returning", async () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1
+      IMPORTING input TYPE i.
+    METHODS method2
+      IMPORTING foo        TYPE i
+      RETURNING VALUE(val) TYPE i.
+    METHODS impl.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+  METHOD impl.
+    method1( method2( VALUE #( ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `sdfds`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
