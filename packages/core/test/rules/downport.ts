@@ -103,6 +103,12 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("quick fix, Use CREATE OBJECT instead of NEW, lower case", async () => {
+    const abap = "foo = new #( ).";
+    const expected = "CREATE OBJECT foo.";
+    testFix(abap, expected);
+  });
+
   it("test position of quick fix is second line", async () => {
     const abap = "DATA foo TYPE REF TO object.\nfoo = NEW #( ).";
     const expected = "DATA foo TYPE REF TO object.\nCREATE OBJECT foo.";

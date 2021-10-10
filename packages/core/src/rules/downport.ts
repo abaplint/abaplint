@@ -1020,7 +1020,9 @@ ${indentation}    output = ${topTarget}.`;
     const source = node.findDirectExpression(Expressions.Source);
 
     let fix: IEdit | undefined = undefined;
-    if (node.get() instanceof Statements.Move && source && source.concatTokens().startsWith("NEW ")) {
+    if (node.get() instanceof Statements.Move
+        && source
+        && source.getFirstToken().getStr().toUpperCase() === "NEW") {
       const target = node.findDirectExpression(Expressions.Target);
       const found = source?.findFirstExpression(Expressions.NewObject);
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
@@ -1045,11 +1047,11 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       const type = this.findType(found, lowFile, highSyntax);
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
       const data = `DATA ${name} TYPE REF TO ${type}.\n` +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1) +
-        abap + "\n" +
-        " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+        indentation + abap + "\n" +
+        indentation;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), data);
       const fix2 = EditHelper.replaceRange(lowFile, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
       fix = EditHelper.merge(fix2, fix1);
