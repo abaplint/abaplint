@@ -705,15 +705,23 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
+      const valueBody = i.findDirectExpression(Expressions.ValueBody);
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-
-      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      let indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
+
+      const loop = valueBody?.findFirstExpression(Expressions.InlineLoopDefinition);
+      if (loop) {
+        const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
+        const loopTargetFieldSymbol = loop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
+        body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
+        indentation += "  ";
+      }
 
       let structureName = uniqueName;
       let added = false;
       let data = "";
-      for (const b of i.findDirectExpression(Expressions.ValueBody)?.getChildren() || []) {
+      for (const b of valueBody?.getChildren() || []) {
         if (b.concatTokens() === "(" && added === false) {
           structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
           data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
@@ -731,6 +739,11 @@ ${indentation}    output = ${topTarget}.`;
         } else if (b.concatTokens() === ")") {
           body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
         }
+      }
+
+      if (loop) {
+        indentation = indentation.substr(2);
+        body += indentation + `ENDLOOP.\n`;
       }
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +

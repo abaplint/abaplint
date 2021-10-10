@@ -1022,7 +1022,7 @@ point_data = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("VALUE with FOR field symbol loop, tabular", async () => {
+  it("VALUE with FOR field symbol loop, tabular", async () => {
     const abap = `TYPES: BEGIN OF ty_turtles,
     field TYPE i,
   END OF ty_turtles.
@@ -1031,7 +1031,17 @@ DATA turtles TYPE tt_turtles.
 DATA new_height TYPE tt_turtles.
 new_height = VALUE #( FOR <x> IN turtles ( <x> ) ).`;
 
-    const expected = `sdfs`;
+    const expected = `TYPES: BEGIN OF ty_turtles,
+    field TYPE i,
+  END OF ty_turtles.
+TYPES tt_turtles TYPE STANDARD TABLE OF ty_turtles WITH DEFAULT KEY.
+DATA turtles TYPE tt_turtles.
+DATA new_height TYPE tt_turtles.
+DATA temp1 TYPE tt_turtles.
+LOOP AT turtles ASSIGNING FIELD-SYMBOL(<x>).
+  APPEND <x> TO temp1.
+ENDLOOP.
+new_height = temp1.`;
 
     testFix(abap, expected);
   });
