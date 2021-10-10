@@ -84,7 +84,7 @@ ENDIF.
       if (c instanceof TokenNode) {
         current = c.get().getStr().toUpperCase();
       } else if (c instanceof ExpressionNode && c.get() instanceof Expressions.CondSub) {
-        if (c.getFirstToken().getStr() === "NOT") {
+        if (c.getFirstToken().getStr().toUpperCase() === "NOT") {
           return [];
         }
         const i = c.findDirectExpression(Expressions.Cond);
