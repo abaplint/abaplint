@@ -129,7 +129,7 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
 
   private isExemptedFind(s: StatementNode): boolean {
 // see https://github.com/abaplint/abaplint/issues/2130
-    return s.concatTokens().includes(" MATCH COUNT ") === true;
+    return s.concatTokens().toUpperCase().includes(" MATCH COUNT ") === true;
   }
 
   private checksDbcnt(index: number, statements: readonly StatementNode[]): boolean {

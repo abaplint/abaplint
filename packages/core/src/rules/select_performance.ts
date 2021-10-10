@@ -73,7 +73,7 @@ SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
       if (this.conf.endSelect) {
         for (const s of stru.findAllStructures(Structures.Select) || []) {
           const select = s.findDirectStatement(Statements.SelectLoop);
-          if (select === undefined || select.concatTokens().includes("PACKAGE SIZE")) {
+          if (select === undefined || select.concatTokens().toUpperCase().includes("PACKAGE SIZE")) {
             continue;
           }
           const message = "Avoid use of ENDSELECT";
