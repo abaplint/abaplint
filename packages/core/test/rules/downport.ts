@@ -1022,6 +1022,23 @@ point_data = temp1.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE, field symbol", async () => {
+    const abap = `point_data = REDUCE string(
+  INIT res = ||
+  FOR <point> IN params-points
+  NEXT res = res && |moo| ).`;
+
+    const expected = `DATA temp1 TYPE string.
+DATA(res) = ||.
+LOOP AT params-points ASSIGNING FIELD-SYMBOL(<point>).
+  res = res && |moo|.
+ENDLOOP.
+temp1 = res.
+point_data = temp1.`;
+
+    testFix(abap, expected);
+  });
+
   it("VALUE with FOR field symbol loop, tabular", async () => {
     const abap = `TYPES: BEGIN OF ty_turtles,
     field TYPE i,

@@ -658,8 +658,14 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
       const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
-      const loopTarget = loop.findFirstExpression(Expressions.TargetField)?.concatTokens();
-      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTarget}).\n`;
+      const loopTargetField = loop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+      if (loopTargetField) {
+        body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
+      }
+      if (loopTargetField === undefined) {
+        const loopTargetFieldSymbol = loop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
+        body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
+      }
 
       const next = reduceBody.findDirectExpression(Expressions.ReduceNext);
       if (next === undefined) {
