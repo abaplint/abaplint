@@ -788,7 +788,7 @@ ${indentation}    output = ${topTarget}.`;
 
       ret += indentation + "DATA " + name + ` TYPE ${type}.\n`;
 
-      const source = node.findFirstExpression(Expressions.Source);
+      const source = f.findFirstExpression(Expressions.Source);
       if (source) {
         ret += indentation + name + ` = ${source.concatTokens()}.\n`;
       }

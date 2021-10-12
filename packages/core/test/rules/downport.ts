@@ -766,6 +766,31 @@ DATA(parameters) = temp1.`;
     testFix(abap, expected);
   });
 
+  it("VALUE with multiple LET", async () => {
+    const abap = `
+TYPES: BEGIN OF params,
+         foo TYPE i,
+       END OF params.
+DATA(parameters) = VALUE params(
+  LET distance = 10
+  rotation = 25 IN
+  foo = distance ).`;
+
+    const expected = `
+TYPES: BEGIN OF params,
+         foo TYPE i,
+       END OF params.
+DATA temp1 TYPE params.
+DATA distance TYPE i.
+distance = 10.
+DATA rotation TYPE i.
+rotation = 25.
+temp1-foo = distance.
+DATA(parameters) = temp1.`;
+
+    testFix(abap, expected);
+  });
+
   it("downport, generic field symbol types", async () => {
     const issues = await findIssues(`
   FIELD-SYMBOLS <tab> TYPE ANY TABLE.
