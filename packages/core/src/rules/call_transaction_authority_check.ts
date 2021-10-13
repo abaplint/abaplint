@@ -23,9 +23,9 @@ export class CallTransactionAuthorityCheck extends ABAPRule {
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Security],
       badExample: `CALL TRANSACTION 'FOO'.`,
       goodExample: `TRY.
-      CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.
-    CATCH cx_sy_authorization_error.
-  ENDTRY.`,
+    CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.
+  CATCH cx_sy_authorization_error.
+ENDTRY.`,
     };
   }
 
@@ -43,7 +43,7 @@ export class CallTransactionAuthorityCheck extends ABAPRule {
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
     const currentVersion = this.reg.getConfig().getVersion();
-    if (currentVersion !== Version.Cloud && currentVersion < this.MINIMUM_VERSION) {
+    if (currentVersion < this.MINIMUM_VERSION) {
       return [];
     }
     const issues: Issue[] = [];

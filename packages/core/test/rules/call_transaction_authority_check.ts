@@ -31,11 +31,6 @@ describe("Rule: call transaction with-authority check, version dependent", () =>
     expect(issues.length).to.equal(1);
   });
 
-  it("No auth check, Cloud: issue", async () => {
-    const issues = await findIssues("CALL TRANSACTION 'ZFOO' AND SKIP FIRST SCREEN.", Version.Cloud);
-    expect(issues.length).to.equal(1);
-  });
-
   it("Auth check, v740sp02 : no issue", async () => {
     const issues = await findIssues("CALL TRANSACTION 'ZFOO' WITH AUTHORITY-CHECK.", Version.v740sp02);
     expect(issues.length).to.equal(0);
