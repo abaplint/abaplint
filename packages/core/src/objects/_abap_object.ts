@@ -13,8 +13,8 @@ export abstract class ABAPObject extends AbstractObject {
   protected texts: ITextElements | undefined;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
 
-  abstract getSequencedFiles(): readonly ABAPFile[];
-  abstract getDescription(): string | undefined;
+  public abstract getSequencedFiles(): readonly ABAPFile[];
+  public abstract getDescription(): string | undefined;
 
   public constructor(name: string) {
     super(name);
