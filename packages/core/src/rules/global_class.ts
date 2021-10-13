@@ -62,6 +62,15 @@ export class GlobalClass extends ABAPRule {
       }
     }
 
+    for (const impl of file.getInfo().listInterfaceDefinitions()) {
+      if (file.getFilename().match(/\.intf\.abap$/)
+          && obj instanceof Objects.Interface
+          && impl.identifier.getName().toUpperCase() !== obj.getName().toUpperCase()) {
+        const issue = Issue.atIdentifier(impl.identifier, "Interface implementation name must match filename", this.getMetadata().key, this.conf.severity);
+        output.push(issue);
+      }
+    }
+
     for (const intf of file.getInfo().listInterfaceDefinitions()) {
       if (intf.isLocal && obj instanceof Objects.Interface && file.getFilename().match(/\.intf\.abap$/)) {
         const issue = Issue.atIdentifier(intf.identifier, "Global interface must be global", this.getMetadata().key, this.conf.severity);
