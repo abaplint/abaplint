@@ -43,7 +43,8 @@ ENDTRY.`,
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
     const currentVersion = this.reg.getConfig().getVersion();
-    if (currentVersion < this.MINIMUM_VERSION) {
+    // Cloud version does not support CALL TRANSACTION
+    if (currentVersion < this.MINIMUM_VERSION || currentVersion === Version.Cloud) {
       return [];
     }
     const issues: Issue[] = [];

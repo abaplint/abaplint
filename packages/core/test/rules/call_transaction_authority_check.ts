@@ -36,4 +36,9 @@ describe("Rule: call transaction with-authority check, version dependent", () =>
     expect(issues.length).to.equal(0);
   });
 
+  it("No Auth check, Cloud : no issue, CALL TRANSACTION not possible", async () => {
+    const issues = await findIssues("CALL TRANSACTION 'ZFOO' WITH AUTHORITY-CHECK.", Version.Cloud);
+    expect(issues.length).to.equal(0);
+  });
+
 });
