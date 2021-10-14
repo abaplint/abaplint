@@ -10,8 +10,8 @@ export abstract class AbstractType {
     return this.qualifiedName;
   }
 
-  abstract toText(level: number): string;
-  abstract toABAP(): string;
-  abstract isGeneric(): boolean;
-  abstract containsVoid(): boolean;
+  public abstract toText(level: number): string;
+  public abstract toABAP(): string;
+  public abstract isGeneric(): boolean;
+  public abstract containsVoid(): boolean;
 }

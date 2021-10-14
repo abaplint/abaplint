@@ -15,7 +15,7 @@ export abstract class AbstractObject implements IObject {
 
   public abstract getType(): string;
   public abstract getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
-  abstract getDescription(): string | undefined;
+  public abstract getDescription(): string | undefined;
 
   public constructor(name: string) {
     this.name = name;

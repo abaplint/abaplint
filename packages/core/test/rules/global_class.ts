@@ -51,4 +51,12 @@ endclass.`);
     const issues = await run(file);
     expect(issues.length).to.equal(2);
   });
+
+  it("intf must match filename", async () => {
+    const file = new MemoryFile("zif_aff_oo_types_v1.intf.abap", `
+INTERFACE zif_oo_aff_types_v1 PUBLIC.
+ENDINTERFACE.`);
+    const issues = await run(file);
+    expect(issues.length).to.equal(1);
+  });
 });
