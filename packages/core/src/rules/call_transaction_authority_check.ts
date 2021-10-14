@@ -5,12 +5,14 @@ import * as Statements from "../abap/2_statements/statements";
 import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
 import {ABAPObject} from "../objects/_abap_object";
+import {Version} from "../version";
 
 export class CallTransactionAuthorityCheckConf extends BasicRuleConfig {
 }
 export class CallTransactionAuthorityCheck extends ABAPRule {
 
   private conf = new CallTransactionAuthorityCheckConf();
+  private readonly MINIMUM_VERSION = Version.v740sp02;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -20,7 +22,10 @@ export class CallTransactionAuthorityCheck extends ABAPRule {
       extendedInformation: `https://docs.abapopenchecks.org/checks/54/`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Security],
       badExample: `CALL TRANSACTION 'FOO'.`,
-      goodExample: `CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.`,
+      goodExample: `TRY.
+    CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.
+  CATCH cx_sy_authorization_error.
+ENDTRY.`,
     };
   }
 
@@ -37,6 +42,11 @@ export class CallTransactionAuthorityCheck extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
+    const currentVersion = this.reg.getConfig().getVersion();
+    // Cloud version does not support CALL TRANSACTION
+    if (currentVersion < this.MINIMUM_VERSION || currentVersion === Version.Cloud) {
+      return [];
+    }
     const issues: Issue[] = [];
 
     if (obj.getType() === "INTF") {
