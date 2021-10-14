@@ -130,6 +130,7 @@ import {Shift} from "./statements/shift";
 import {SetBit} from "./statements/set_bit";
 import {ModifyScreen} from "./statements/modify_screen";
 import {DeleteCluster} from "./statements/delete_cluster";
+import {Unassign} from "./statements/unassign";
 
 // -----------------------------------
 
@@ -201,6 +202,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Message());
   addToMap(new SystemCall());
   addToMap(new GetTime());
+  addToMap(new Unassign());
   addToMap(new GetParameter());
   addToMap(new Format());
   addToMap(new WhenType());

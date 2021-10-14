@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class GlobalClassConf extends BasicRuleConfig {
@@ -12,14 +12,20 @@ export class GlobalClassConf extends BasicRuleConfig {
 export class GlobalClass extends ABAPRule {
   private conf = new GlobalClassConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "global_class",
       title: "Global class checks",
       shortDescription: `Checks related to global classes.
+
 * global classes must be in own files
+
 * file names must match class name
+
+* file names must match interface name
+
 * global classes must be global definitions
+
 * global interfaces must be global definitions`,
       tags: [RuleTag.Syntax],
     };
@@ -58,6 +64,15 @@ export class GlobalClass extends ABAPRule {
           && obj instanceof Objects.Class
           && impl.identifier.getName().toUpperCase() !== obj.getName().toUpperCase()) {
         const issue = Issue.atIdentifier(impl.identifier, "Class implementation name must match filename", this.getMetadata().key, this.conf.severity);
+        output.push(issue);
+      }
+    }
+
+    for (const impl of file.getInfo().listInterfaceDefinitions()) {
+      if (file.getFilename().match(/\.intf\.abap$/)
+          && obj instanceof Objects.Interface
+          && impl.identifier.getName().toUpperCase() !== obj.getName().toUpperCase()) {
+        const issue = Issue.atIdentifier(impl.identifier, "Interface implementation name must match filename", this.getMetadata().key, this.conf.severity);
         output.push(issue);
       }
     }
