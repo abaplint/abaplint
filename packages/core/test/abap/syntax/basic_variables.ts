@@ -61,7 +61,7 @@ function expectCharacter(identifier: TypedIdentifier | undefined, length: number
   expect(type.getLength()).to.equal(length);
 }
 
-function expectConstantString(identifier: TypedIdentifier | undefined, value: string) {
+function expectConstantString(identifier: TypedIdentifier | undefined, value: string | undefined) {
   expectString(identifier);
   expect(identifier!.getValue()).to.equal(value);
   expect(identifier!.getMeta()).to.include(IdentifierMeta.ReadOnly);
@@ -151,7 +151,7 @@ describe("Basic Types", () => {
   it("CONSTANTS TYPE string IS INITIAL", () => {
     const abap = "CONSTANTS foo TYPE string VALUE IS INITIAL.";
     const identifier = resolveVariable(abap, "foo");
-    expectConstantString(identifier, "");
+    expectConstantString(identifier, undefined);
   });
 
   it("CONSTANTS TYPE string VALUE moo", () => {

@@ -186,6 +186,29 @@ describe("Objects, class, getAttributes", () => {
     expect(attr.getConstants()[0].getVisibility()).to.equal(Visibility.Public);
   });
 
+  it("test, VALUE IS INITIAL", () => {
+    const abap = `
+    CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+    PUBLIC SECTION.
+      TYPES:
+        BEGIN OF ty_dummy,
+          tdate TYPE d,
+        END OF ty_dummy.
+      CONSTANTS c_dummy TYPE ty_dummy VALUE IS INITIAL.
+    ENDCLASS.
+    CLASS zcl_foobar IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    const attr = def!.getAttributes();
+    expect(attr).to.not.equal(undefined);
+    expect(attr.getConstants().length).to.equal(1);
+    expect(attr.getConstants()[0].getName()).to.equal("c_dummy");
+    expect(attr.getConstants()[0].getValue()).to.equal(undefined);
+  });
+
   it("test, positive, static", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.\n" +
     "  PUBLIC SECTION.\n" +
