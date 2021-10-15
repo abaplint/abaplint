@@ -634,7 +634,7 @@ export class BasicTypes {
     }
 
     if (val.concatTokens().toUpperCase() === "VALUE IS INITIAL") {
-      return "";
+      return undefined;
     }
 
     const constant = val.findFirstExpression(Expressions.Constant);
