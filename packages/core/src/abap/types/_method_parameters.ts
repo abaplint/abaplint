@@ -10,6 +10,7 @@ export interface IMethodParameters {
   getOptional(): readonly string[];
   getReturning(): TypedIdentifier | undefined;
   getExceptions(): readonly string[];
+  getFilename(): string;
   getDefaultImporting(): string | undefined;
   getParameterDefault(parameter: string): ExpressionNode | undefined;
 }
