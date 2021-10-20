@@ -44,6 +44,10 @@ export class MethodParameters implements IMethodParameters {
     this.parse(node, scope, filename);
   }
 
+  public getFilename(): string {
+    return this.filename;
+  }
+
   public getOptional(): string[] {
     return this.optional;
   }
