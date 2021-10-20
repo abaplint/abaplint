@@ -11,6 +11,8 @@ import {ReferenceType} from "../_reference";
 import {FieldOffset} from "./field_offset";
 import {FieldLength} from "./field_length";
 import {TableExpression} from "./table_expression";
+import {Dereference as DereferenceExpression} from "../../2_statements/expressions";
+import {Dereference} from "./dereference";
 
 export class FieldChain {
 
@@ -69,6 +71,8 @@ export class FieldChain {
             && !(context instanceof VoidType)) {
           throw new Error("Not a object reference, field chain");
         }
+      } else if (current.get() instanceof DereferenceExpression) {
+        context = new Dereference().runSyntax(context);
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode
