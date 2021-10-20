@@ -18,6 +18,7 @@ function runMulti(files: {filename: string, contents: string}[], name: string): 
     reg.addFile(new MemoryFile(file.filename, file.contents));
   }
   reg.parse();
+//  console.dir(reg.findIssues());
 
   const obj = reg.getFirstObject() as ABAPObject;
   const filename = files[0].filename;
