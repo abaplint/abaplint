@@ -83,4 +83,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("SOTS, okay", async () => {
+    const issues = await findIssues("ztest-dash-dash.sotr.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });

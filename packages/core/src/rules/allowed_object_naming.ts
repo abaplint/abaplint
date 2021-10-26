@@ -43,7 +43,7 @@ export class AllowedObjectNaming implements IRule {
       if (obj.getName().match(/^\/[A-Z_\d]{3,8}\/$/i) === null) {
         message = "Name not allowed";
       }
-    } else if (obj.getName().match(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_\d<> ]+$/i) === null) {
+    } else if (obj.getName().match(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_-\d<> ]+$/i) === null) {
       message = "Name not allowed";
     }
 
