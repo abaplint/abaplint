@@ -87,9 +87,11 @@ export class DangerousStatement extends ABAPRule {
         issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity));
       }
 
-      message = this.findDynamicSQL(statementNode);
-      if (message) {
-        issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity));
+      if (this.conf.deleteDynpro) {
+        message = this.findDynamicSQL(statementNode);
+        if (message) {
+          issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity));
+        }
       }
     }
 
