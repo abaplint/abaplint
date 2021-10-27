@@ -716,6 +716,10 @@
         "deleteTextpool": {
           "type": "boolean"
         },
+        "dynamicSQL": {
+          "description": "Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -767,7 +771,8 @@
         "deleteReport",
         "deleteTextpool",
         "deleteDynpro",
-        "importDynpro"
+        "importDynpro",
+        "dynamicSQL"
       ],
       "type": "object"
     },

@@ -1,9 +1,11 @@
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {StatementNode} from "../abap/nodes";
 
 export class DangerousStatementConf extends BasicRuleConfig {
   /** Detects execSQL (dynamic SQL) */
@@ -21,6 +23,8 @@ export class DangerousStatementConf extends BasicRuleConfig {
   public deleteTextpool: boolean = true;
   public deleteDynpro: boolean = true;
   public importDynpro: boolean = true;
+  /** Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY */
+  public dynamicSQL: boolean = true;
 }
 
 export class DangerousStatement extends ABAPRule {
@@ -32,6 +36,7 @@ export class DangerousStatement extends ABAPRule {
       key: "dangerous_statement",
       title: "Dangerous statement",
       shortDescription: `Detects potentially dangerous statements`,
+      extendedInformation: `Dynamic SQL: Typically ABAP logic does not need dynamic SQL`,
       tags: [RuleTag.SingleFile, RuleTag.Security],
     };
   }
@@ -81,9 +86,31 @@ export class DangerousStatement extends ABAPRule {
       if (message) {
         issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity));
       }
+
+      if (this.conf.dynamicSQL) {
+        message = this.findDynamicSQL(statementNode);
+        if (message) {
+          issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity));
+        }
+      }
     }
 
     return issues;
+  }
+
+  private findDynamicSQL(statementNode: StatementNode): string | undefined {
+    const statement = statementNode.get();
+    if (statement instanceof Statements.UpdateDatabase
+        || statement instanceof Statements.Select
+        || statement instanceof Statements.SelectLoop
+        || statement instanceof Statements.InsertDatabase
+        || statement instanceof Statements.ModifyDatabase
+        || statement instanceof Statements.DeleteDatabase) {
+      if (statementNode.findFirstExpression(Expressions.Dynamic)) {
+        return "Dynamic SQL";
+      }
+    }
+    return undefined;
   }
 
 }
