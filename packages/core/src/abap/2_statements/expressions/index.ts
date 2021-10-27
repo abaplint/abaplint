@@ -15,6 +15,7 @@ export * from "./class_friends";
 export * from "./class_global";
 export * from "./class_name";
 export * from "./color";
+export * from "./find_type";
 export * from "./compare_operator";
 export * from "./compare";
 export * from "./component_chain_simple";

@@ -111,6 +111,10 @@ describe("test obsolete_statements rule - versions", () => {
     expect(issue1.length).to.equal(1);
     const issue2 = await findIssues("FIND PRCE 'foo' IN 'bar'.", Version.v756);
     expect(issue2.length).to.equal(0);
+    /*
+    const issue22 = await findIssues("FIND PCRE sibling_regex IN substring MATCH OFFSET DATA(end_off).", Version.v756);
+    expect(issue22.length).to.equal(0);
+    */
 
     const issue3 = await findIssues("REPLACE ALL OCCURRENCES OF REGEX 'foo' IN bar WITH 'test'.", Version.v756);
     expect(issue3.length).to.equal(1);
