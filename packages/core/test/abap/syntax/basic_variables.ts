@@ -1759,4 +1759,18 @@ DATA tab TYPE SORTED TABLE OF type WITH UNIQUE KEY int char.`;
     expect(type.getOptions().keyFields).to.have.all.members(["INT", "CHAR"]);
   });
 
+  it("type from type group", () => {
+    const typegroup = `
+TYPES: BEGIN OF abap_componentdescr,
+         name TYPE string,
+       END OF abap_componentdescr.`;
+    const prog = `CONSTANTS c_val TYPE abap_componentdescr-name VALUE 'sdf'.`;
+    const type = runMulti(
+      [{filename: "abap.type.abap", contents: typegroup},
+        {filename: "zfoobar.prog.abap", contents: prog}],
+      "c_val");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.StringType);
+  });
+
 });
