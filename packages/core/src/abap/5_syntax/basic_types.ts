@@ -186,7 +186,7 @@ export class BasicTypes {
 
     const type = this.scope.findTypePoolType(chainText);
     if (type) {
-      this.scope.addReference(typeName.getFirstToken(), typ, ReferenceType.TypeReference, this.filename);
+//      this.scope.addReference(typeName.getFirstToken(), type, ReferenceType.TypeReference, this.filename);
       return type;
     }
 
@@ -500,14 +500,23 @@ export class BasicTypes {
       const found = this.scope.findType(subs[0]);
       foundType = found?.getType();
       if (foundType === undefined) {
-        const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
-        this.scope.getDDICReferences().addUsing(this.scope.getParentObj(),
-                                                {object: f.object, filename: this.filename, token: expr.getFirstToken()});
-        if (f.type instanceof TypedIdentifier) {
-          foundType = f.type.getType();
-        } else {
-          foundType = f.type;
+        const typePoolType = this.scope.findTypePoolType(subs[0]);
+        if (typePoolType) {
+//          this.scope.addReference(typeName.getFirstToken(), typePoolType, ReferenceType.TypeReference, this.filename);
+          foundType = typePoolType;
         }
+
+        if (foundType === undefined) {
+          const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
+          this.scope.getDDICReferences().addUsing(this.scope.getParentObj(),
+                                                  {object: f.object, filename: this.filename, token: expr.getFirstToken()});
+          if (f.type instanceof TypedIdentifier) {
+            foundType = f.type.getType();
+          } else {
+            foundType = f.type;
+          }
+        }
+
       } else {
         this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
       }

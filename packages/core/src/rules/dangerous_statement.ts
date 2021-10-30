@@ -36,7 +36,8 @@ export class DangerousStatement extends ABAPRule {
       key: "dangerous_statement",
       title: "Dangerous statement",
       shortDescription: `Detects potentially dangerous statements`,
-      extendedInformation: `Dynamic SQL: Typically ABAP logic does not need dynamic SQL`,
+      extendedInformation: `Dynamic SQL: Typically ABAP logic does not need dynamic SQL,
+dynamic SQL can potentially create SQL injection problems`,
       tags: [RuleTag.SingleFile, RuleTag.Security],
     };
   }
