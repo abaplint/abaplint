@@ -75,6 +75,15 @@ describe("statement_flow", () => {
     expect(dumpFlow(res)).to.equal("[[Write,Check],[Write,Check,Write]]");
   });
 
+  it("ASSERT", async () => {
+    const abap = `
+    WRITE 'hello'.
+    ASSERT a = b.
+    WRITE 'world'.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Write,Assert],[Write,Assert,Write]]");
+  });
+
   it("RETURN", async () => {
     const abap = `
     WRITE 'hello'.

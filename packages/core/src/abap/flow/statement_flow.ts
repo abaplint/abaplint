@@ -5,10 +5,13 @@ import {IStatement} from "../2_statements/statements/_statement";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
-// Branching: IF, LOOP, DO, WHILE, CASE, CASE TYPE OF, TRY, ON, SELECT(loop), WITH, PROVIDE
-//            CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
+// Loop branching: LOOP, DO, WHILE,SELECT(loop), WITH, PROVIDE
 //
-// Exits: RETURN, EXIT, ASSERT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
+// Branching: IF, CASE, CASE TYPE OF, TRY, ON, CATCH SYSTEM-EXCEPTIONS, AT
+//
+// Conditional exits: CHECK, ASSERT
+//
+// Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
 //
 // Not handled? INCLUDE + malplaced macro calls
 
@@ -91,8 +94,8 @@ export class StatementFlow {
           flows.forEach(f => f.statements.push(firstChild));
 //          current.push(firstChild);
 //          console.dir("push: " + firstChild.constructor.name);
-          if (firstChild.get() instanceof Statements.Check) {
-            // todo
+          if (firstChild.get() instanceof Statements.Check
+              || firstChild.get() instanceof Statements.Assert) {
             const after = children.slice(i + 1, children.length);
             for (const b of this.traverseBody(after)) {
               for (const f of [...flows]) {
