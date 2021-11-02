@@ -239,4 +239,16 @@ ENDCASE.`;
     expect(dumpFlow(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case]]");
   });
 
+  it.skip("Basic TRY-CATCH", async () => {
+    const abap = `
+TRY.
+  WRITE boo.
+  call( ).
+CATCH foobar.
+  foo = 2.
+ENDTRY.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("sdfsd");
+  });
+
 });

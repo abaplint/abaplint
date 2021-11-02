@@ -150,6 +150,17 @@ export class StatementFlow {
           console.dir("any, todo, " + c.constructor.name + ", " + c.get().constructor.name);
         }
       }
+    } else if (type instanceof Structures.Try) {
+// worst case: any statement in the body can raise the exception, the exceptions might be dynamic or no check
+/*
+      const tr = n.getFirstStatement()!;
+
+      let bodyFlows = this.traverseBody(findBody(n));
+
+      n.findDirectStructures(Structures.Catch)
+      */
+
+//      flows.push(...bodyFlows);
     } else if (type instanceof Structures.If) {
       const collect = [n.findDirectStatement(Statements.If)!];
       let bodyFlows = this.traverseBody(findBody(n));
@@ -178,6 +189,25 @@ export class StatementFlow {
       const cas = n.getFirstStatement()!;
       let othersFound = false;
       for (const w of n.findDirectStructures(Structures.When)) {
+        const first = w.getFirstStatement();
+        if (first === undefined) {
+          continue;
+        }
+        if (first.get() instanceof Statements.WhenOthers) {
+          othersFound = true;
+        }
+
+        let bodyFlows = this.traverseBody(findBody(w));
+        bodyFlows = bodyFlows.map(b => {return {statements: [cas, first, ...b.statements]};});
+        flows.push(...bodyFlows);
+      }
+      if (othersFound === false) {
+        flows.push({statements: [cas]});
+      }
+    } else if (type instanceof Structures.CaseType) {
+      const cas = n.getFirstStatement()!;
+      let othersFound = false;
+      for (const w of n.findDirectStructures(Structures.WhenType)) {
         const first = w.getFirstStatement();
         if (first === undefined) {
           continue;
