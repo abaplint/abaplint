@@ -8,6 +8,8 @@ import {IStatement} from "../2_statements/statements/_statement";
 // Branching: IF, LOOP, DO, WHILE, CASE, TRY, ON, SELECT(loop), CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
 //
 // Exits: RETURN, EXIT, ASSERT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
+//
+// Not handled? INCLUDE
 
 // todo: RETURN inside structures?
 
@@ -175,8 +177,11 @@ export class StatementFlow {
       } else {
         flows.push({statements: [...collect]});
       }
-    } else if (type instanceof Structures.Loop) {
-      const loop = n.findDirectStatement(Statements.Loop)!;
+    } else if (type instanceof Structures.Loop
+        || type instanceof Structures.While
+        || type instanceof Structures.Select
+        || type instanceof Structures.Do) {
+      const loop = n.getFirstStatement()!;
       const bodyFlows = this.traverseBody(findBody(n));
       for (const b of bodyFlows) {
         flows.push({statements: [loop, ...b.statements]});
@@ -190,6 +195,7 @@ export class StatementFlow {
       flows.push({statements: [loop]});
       flows = pruneByStatement(flows, Statements.Exit);
       flows = pruneByStatement(flows, Statements.Continue);
+      flows = pruneByStatement(flows, Statements.Return);
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }

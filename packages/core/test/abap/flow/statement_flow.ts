@@ -135,6 +135,24 @@ describe("statement_flow", () => {
     expect(dumpFlow(res)).to.equal("[[If,Exit],[If]]");
   });
 
+  it("IF and top level RETURN", async () => {
+    const abap = `
+    IF foo = bar.
+      RETURN.
+      WRITE sdfds.
+    ENDIF.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[If,Return],[If]]");
+  });
+
+  it("top level RETURN", async () => {
+    const abap = `
+      RETURN.
+      WRITE sdfds.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Return]]");
+  });
+
   it("LOOP with nested IF + EXIT", async () => {
     const abap = `
     LOOP AT bar INTO foo.
@@ -156,4 +174,43 @@ describe("statement_flow", () => {
     const res = await buildFORM(abap);
     expect(dumpFlow(res)).to.equal("[[Loop,If,Continue],[Loop,If],[Loop,If,If,Continue],[Loop,If,If],[Loop]]");
   });
+
+  it("LOOP with nested IF + RETURN", async () => {
+    const abap = `
+    LOOP AT bar INTO foo.
+      IF 1 = 2.
+        RETURN.
+      ENDIF.
+    ENDLOOP.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Loop,If,Return],[Loop,If],[Loop,If,If,Return],[Loop,If,If],[Loop]]");
+  });
+
+  it("Basic DO", async () => {
+    const abap = `
+    DO 200 TIMES.
+      WRITE moo.
+    ENDDO.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Do,Write],[Do,Write,Write],[Do]]");
+  });
+
+  it("Basic WHILE", async () => {
+    const abap = `
+    WHILE foo = bar.
+      WRITE moo.
+    ENDWHILE.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[While,Write],[While,Write,Write],[While]]");
+  });
+
+  it("Basic SELECT loop", async () => {
+    const abap = `
+    SELECT foo FROM bar INTO moo.
+      WRITE moo.
+    ENDSELECT.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[SelectLoop,Write],[SelectLoop,Write,Write],[SelectLoop]]");
+  });
+
 });
