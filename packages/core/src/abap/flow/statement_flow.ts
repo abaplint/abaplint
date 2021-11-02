@@ -76,6 +76,10 @@ export class StatementFlow {
     for (const f of forms) {
       ret.push(...this.traverseBody(findBody(f)));
     }
+    const methods = stru.findAllStructures(Structures.Method);
+    for (const f of methods) {
+      ret.push(...this.traverseBody(findBody(f)));
+    }
     return ret;
   }
 
