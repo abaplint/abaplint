@@ -5,7 +5,8 @@ import {IStatement} from "../2_statements/statements/_statement";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
-// Branching: IF, LOOP, DO, WHILE, CASE, TRY, ON, SELECT(loop), CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
+// Branching: IF, LOOP, DO, WHILE, CASE, CASE TYPE OF, TRY, ON, SELECT(loop), WITH, PROVIDE
+//            CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
 //
 // Exits: RETURN, EXIT, ASSERT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
 //
@@ -179,6 +180,8 @@ export class StatementFlow {
       }
     } else if (type instanceof Structures.Loop
         || type instanceof Structures.While
+        || type instanceof Structures.With
+        || type instanceof Structures.Provide
         || type instanceof Structures.Select
         || type instanceof Structures.Do) {
       const loop = n.getFirstStatement()!;
