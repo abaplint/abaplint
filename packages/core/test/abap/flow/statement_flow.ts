@@ -1,14 +1,9 @@
 import {expect} from "chai";
 import {ABAPFile} from "../../../src/abap/abap_file";
-import {StatementFlow, StatementFlowPath} from "../../../src/abap/flow/statement_flow";
+import {StatementFlow, dumpFlow} from "../../../src/abap/flow/statement_flow";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Registry} from "../../../src/registry";
-
-function dump(flows: StatementFlowPath[]): string {
-  const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
-  return ret + "]";
-}
 
 async function buildFORM(abap: string) {
   const reg = new Registry();
@@ -27,7 +22,7 @@ describe("statement_flow", () => {
   it("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[Write]]");
+    expect(dumpFlow(res)).to.equal("[[Write]]");
   });
 
   it("two WRITEs", async () => {
@@ -35,7 +30,7 @@ describe("statement_flow", () => {
     WRITE 'hello'.
     WRITE 'world'.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[Write,Write]]");
+    expect(dumpFlow(res)).to.equal("[[Write,Write]]");
   });
 
   it("IF", async () => {
@@ -44,7 +39,7 @@ describe("statement_flow", () => {
       WRITE sdfds.
     ENDIF.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[If,Write],[If]]");
+    expect(dumpFlow(res)).to.equal("[[If,Write],[If]]");
   });
 
   it("IF, ELSE", async () => {
@@ -55,7 +50,7 @@ describe("statement_flow", () => {
       DATA moo.
     ENDIF.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[If,Write],[If,Else,Data]]");
+    expect(dumpFlow(res)).to.equal("[[If,Write],[If,Else,Data]]");
   });
 
   it("IF, ELSEIF, ELSE", async () => {
@@ -68,7 +63,7 @@ describe("statement_flow", () => {
       DATA moo.
     ENDIF.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[If,Write],[If,ElseIf,Data],[If,ElseIf,Else,Data]]");
+    expect(dumpFlow(res)).to.equal("[[If,Write],[If,ElseIf,Data],[If,ElseIf,Else,Data]]");
   });
 
   it("CHECK", async () => {
@@ -77,7 +72,7 @@ describe("statement_flow", () => {
     CHECK a = b.
     WRITE 'world'.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[Write,Check],[Write,Check,Write]]");
+    expect(dumpFlow(res)).to.equal("[[Write,Check],[Write,Check,Write]]");
   });
 
   it("RETURN", async () => {
@@ -86,7 +81,7 @@ describe("statement_flow", () => {
     RETURN.
     WRITE 'world'.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[Write,Return]]");
+    expect(dumpFlow(res)).to.equal("[[Write,Return]]");
   });
 
   it("IF with RETURN", async () => {
@@ -96,7 +91,7 @@ describe("statement_flow", () => {
       WRITE 'world'.
     ENDIF.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[If,Return],[If]]");
+    expect(dumpFlow(res)).to.equal("[[If,Return],[If]]");
   });
 
   it("IF", async () => {
@@ -106,7 +101,7 @@ describe("statement_flow", () => {
     ENDIF.
     DATA bar.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[If,Write,Data],[If,Data]]");
+    expect(dumpFlow(res)).to.equal("[[If,Write,Data],[If,Data]]");
   });
 
   it("LOOP", async () => {
@@ -115,7 +110,7 @@ describe("statement_flow", () => {
       WRITE 'world'.
     ENDLOOP.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
+    expect(dumpFlow(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
   });
 
   it("LOOP with nested IF", async () => {
@@ -127,6 +122,38 @@ describe("statement_flow", () => {
       ENDIF.
     ENDLOOP.`;
     const res = await buildFORM(abap);
-    expect(dump(res)).to.equal("[[Loop,Add,If,Write],[Loop,Add,If],[Loop,Add,If,Write,Add,If,Write],[Loop,Add,If,Write,Add,If],[Loop,Add,If,Add,If,Write],[Loop,Add,If,Add,If],[Loop]]");
+    expect(dumpFlow(res)).to.equal("[[Loop,Add,If,Write],[Loop,Add,If],[Loop,Add,If,Write,Add,If,Write],[Loop,Add,If,Write,Add,If],[Loop,Add,If,Add,If,Write],[Loop,Add,If,Add,If],[Loop]]");
+  });
+
+  it("IF, top level EXIT", async () => {
+    const abap = `
+    IF foo = bar.
+      EXIT.
+      WRITE sdfds.
+    ENDIF.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[If,Exit],[If]]");
+  });
+
+  it("LOOP with nested IF + EXIT", async () => {
+    const abap = `
+    LOOP AT bar INTO foo.
+      IF 1 = 2.
+        EXIT.
+      ENDIF.
+    ENDLOOP.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Loop,If,Exit],[Loop,If],[Loop,If,If,Exit],[Loop,If,If],[Loop]]");
+  });
+
+  it("LOOP with nested IF + CONTINUE", async () => {
+    const abap = `
+    LOOP AT bar INTO foo.
+      IF 1 = 2.
+        CONTINUE.
+      ENDIF.
+    ENDLOOP.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Loop,If,Continue],[Loop,If],[Loop,If,If,Continue],[Loop,If,If],[Loop]]");
   });
 });

@@ -1,6 +1,7 @@
 import {StatementNode, StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
+import {IStatement} from "../2_statements/statements/_statement";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
@@ -14,10 +15,54 @@ export type StatementFlowPath = {
   statements: StatementNode[];
 };
 
+export function dumpFlow(flows: StatementFlowPath[]): string {
+  const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
+  return ret + "]";
+}
+
 function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
   return f.findDirectStructure(Structures.Body)?.getChildren() || [];
 //function findBody(f: StructureNode): StructureNode | undefined {
 //  return f.findDirectStructure(Structures.Body);
+}
+
+function removeDuplicates(flows: StatementFlowPath[]): StatementFlowPath[] {
+  const result: StatementFlowPath[] = [];
+  for (const f of flows) {
+    let duplicate = false;
+    for (const r of result) {
+      if (f.statements.length !== r.statements.length) {
+        continue;
+      }
+
+      duplicate = true;
+      for (let index = 0; index < f.statements.length; index++) {
+        if (f.statements[index] !== r.statements[index]) {
+          duplicate = false;
+          break;
+        }
+      }
+    }
+    if (duplicate === false) {
+      result.push(f);
+    }
+  }
+  return result;
+}
+
+function pruneByStatement(flows: StatementFlowPath[], type: new () => IStatement): StatementFlowPath[] {
+  const result: StatementFlowPath[] = [];
+  for (const f of flows) {
+    const nodes: StatementNode[] = [];
+    for (const n of f.statements) {
+      nodes.push(n);
+      if (n.get() instanceof type) {
+        break;
+      }
+    }
+    result.push({statements: nodes});
+  }
+  return removeDuplicates(result);
 }
 
 export class StatementFlow {
@@ -54,6 +99,8 @@ export class StatementFlow {
               }
             }
             break;
+          } else if (firstChild.get() instanceof Statements.Exit) {
+            break;
           } else if (firstChild.get() instanceof Statements.Return) {
             break;
           }
@@ -80,7 +127,7 @@ export class StatementFlow {
   }
 
   private traverseStructure(n: StructureNode | undefined): StatementFlowPath[] {
-    const flows: StatementFlowPath[] = [];
+    let flows: StatementFlowPath[] = [];
     if (n === undefined) {
       return flows;
     }
@@ -136,10 +183,13 @@ export class StatementFlow {
       }
       for (const b1 of bodyFlows) {
         for (const b2 of bodyFlows) {
-          flows.push({statements: [loop, ...b1.statements, ...b2.statements]});
+          const add = [loop, ...b1.statements, ...b2.statements];
+          flows.push({statements: add});
         }
       }
       flows.push({statements: [loop]});
+      flows = pruneByStatement(flows, Statements.Exit);
+      flows = pruneByStatement(flows, Statements.Continue);
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }
