@@ -178,12 +178,17 @@ export class StatementFlow {
       const cas = n.getFirstStatement()!;
       let othersFound = false;
       for (const w of n.findDirectStructures(Structures.When)) {
-        if (w.getFirstStatement()?.get() instanceof Statements.WhenOthers) {
+        const first = w.getFirstStatement();
+        if (first === undefined) {
+          continue;
+        }
+        if (first.get() instanceof Statements.WhenOthers) {
           othersFound = true;
         }
 
-// todo
-
+        let bodyFlows = this.traverseBody(findBody(w));
+        bodyFlows = bodyFlows.map(b => {return {statements: [cas, first, ...b.statements]};});
+        flows.push(...bodyFlows);
       }
       if (othersFound === false) {
         flows.push({statements: [cas]});

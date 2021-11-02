@@ -213,7 +213,7 @@ describe("statement_flow", () => {
     expect(dumpFlow(res)).to.equal("[[SelectLoop,Write],[SelectLoop,Write,Write],[SelectLoop]]");
   });
 
-  it.skip("Basic CASE loop", async () => {
+  it("Basic CASE loop", async () => {
     const abap = `
 CASE foobar.
   WHEN 1.
@@ -224,7 +224,19 @@ CASE foobar.
     call( ).
 ENDCASE.`;
     const res = await buildFORM(abap);
-    expect(dumpFlow(res)).to.equal("sdf");
+    expect(dumpFlow(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case,WhenOthers,Call]]");
+  });
+
+  it("CASE without OTHERS", async () => {
+    const abap = `
+CASE foobar.
+  WHEN 1.
+    WRITE 'hello'.
+  WHEN 2.
+    foo = bar.
+ENDCASE.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case]]");
   });
 
 });
