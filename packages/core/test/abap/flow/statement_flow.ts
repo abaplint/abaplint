@@ -239,7 +239,7 @@ ENDCASE.`;
     expect(dumpFlow(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case]]");
   });
 
-  it.skip("Basic TRY-CATCH", async () => {
+  it("Basic TRY-CATCH", async () => {
     const abap = `
 TRY.
   WRITE boo.
@@ -248,7 +248,24 @@ CATCH foobar.
   foo = 2.
 ENDTRY.`;
     const res = await buildFORM(abap);
-    expect(dumpFlow(res)).to.equal("sdfsd");
+    expect(dumpFlow(res)).to.equal("[[Try,Write],[Try,Write,Call],[Try,Write,Catch,Move],[Try,Write,Call,Catch,Move]]");
+  });
+
+  it("empty TRY-CATCH", async () => {
+    const abap = `
+TRY.
+ENDTRY.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Try]]");
+  });
+
+  it("empty TRY-CATCH", async () => {
+    const abap = `
+TRY.
+CATCH foobar.
+ENDTRY.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("[[Try],[Try,Catch]]");
   });
 
 });

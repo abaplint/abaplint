@@ -152,15 +152,34 @@ export class StatementFlow {
       }
     } else if (type instanceof Structures.Try) {
 // worst case: any statement in the body can raise the exception, the exceptions might be dynamic or no check
-/*
-      const tr = n.getFirstStatement()!;
+      const firstTry = n.getFirstStatement()!;
 
-      let bodyFlows = this.traverseBody(findBody(n));
+      const allPossibleBody: StatementFlowPath[] = [];
+      for (const b of this.traverseBody(findBody(n))) {
+        const nodes: StatementNode[] = [];
+        for (const n of b.statements) {
+          nodes.push(n);
+          allPossibleBody.push({statements: [firstTry, ...nodes]});
+        }
+      }
+      if (allPossibleBody.length === 0) {
+        allPossibleBody.push({statements: [firstTry]});
+      }
+      flows.push(...allPossibleBody);
 
-      n.findDirectStructures(Structures.Catch)
-      */
-
-//      flows.push(...bodyFlows);
+      for (const c of n.findDirectStructures(Structures.Catch)) {
+        const firstCatch = c.getFirstStatement()!;
+        const catchBodies = this.traverseBody(findBody(c));
+        for (const bodyFlow of allPossibleBody) {
+          for (const catchFlow of catchBodies) {
+            flows.push({statements: [...bodyFlow.statements, firstCatch, ...catchFlow.statements]});
+          }
+          if (catchBodies.length === 0) {
+            flows.push({statements: [...bodyFlow.statements, firstCatch]});
+          }
+        }
+      }
+// TODO, handle CLEANUP
     } else if (type instanceof Structures.If) {
       const collect = [n.findDirectStatement(Statements.If)!];
       let bodyFlows = this.traverseBody(findBody(n));
