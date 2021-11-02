@@ -10,9 +10,7 @@ import {IStatement} from "../2_statements/statements/_statement";
 //
 // Exits: RETURN, EXIT, ASSERT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
 //
-// Not handled? INCLUDE
-
-// todo: RETURN inside structures?
+// Not handled? INCLUDE + malplaced macro calls
 
 export type StatementFlowPath = {
   statements: StatementNode[];
@@ -25,8 +23,6 @@ export function dumpFlow(flows: StatementFlowPath[]): string {
 
 function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
   return f.findDirectStructure(Structures.Body)?.getChildren() || [];
-//function findBody(f: StructureNode): StructureNode | undefined {
-//  return f.findDirectStructure(Structures.Body);
 }
 
 function removeDuplicates(flows: StatementFlowPath[]): StatementFlowPath[] {
@@ -67,6 +63,8 @@ function pruneByStatement(flows: StatementFlowPath[], type: new () => IStatement
   }
   return removeDuplicates(result);
 }
+
+////////////////////////////////////////////////////////////////
 
 export class StatementFlow {
   public build(stru: StructureNode): StatementFlowPath[] {
@@ -121,7 +119,6 @@ export class StatementFlow {
           }
 //          console.dir(dump(n));
           flows = n;
-//          found.forEach(fo => flows.forEach(f => f.statements.push(...fo.statements)));
         }
       }
     }
@@ -143,7 +140,6 @@ export class StatementFlow {
       bodyFlows = bodyFlows.map(a => {return {statements: [formst, ...a.statements]};});
       flows.push(...bodyFlows);
     } else if (type instanceof Structures.Any) {
-      // TODO TODO
       for (const c of n.getChildren()) {
 //        console.dir("yep");
         if (c instanceof StructureNode && c.get() instanceof Structures.Form) {
@@ -177,6 +173,20 @@ export class StatementFlow {
         flows.push(...bodyFlows);
       } else {
         flows.push({statements: [...collect]});
+      }
+    } else if (type instanceof Structures.Case) {
+      const cas = n.getFirstStatement()!;
+      let othersFound = false;
+      for (const w of n.findDirectStructures(Structures.When)) {
+        if (w.getFirstStatement()?.get() instanceof Statements.WhenOthers) {
+          othersFound = true;
+        }
+
+// todo
+
+      }
+      if (othersFound === false) {
+        flows.push({statements: [cas]});
       }
     } else if (type instanceof Structures.Loop
         || type instanceof Structures.While

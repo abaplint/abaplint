@@ -213,4 +213,18 @@ describe("statement_flow", () => {
     expect(dumpFlow(res)).to.equal("[[SelectLoop,Write],[SelectLoop,Write,Write],[SelectLoop]]");
   });
 
+  it.skip("Basic CASE loop", async () => {
+    const abap = `
+CASE foobar.
+  WHEN 1.
+    WRITE 'hello'.
+  WHEN 2.
+    foo = bar.
+  WHEN OTHERS.
+    call( ).
+ENDCASE.`;
+    const res = await buildFORM(abap);
+    expect(dumpFlow(res)).to.equal("sdf");
+  });
+
 });
