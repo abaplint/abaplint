@@ -1001,4 +1001,21 @@ ENDINTERFACE.`;
     expect(hover?.value).to.contain("Extra");
   });
 
+  it("Hover, voided exception class", () => {
+    const abap = `CLASS test DEFINITION FINAL.
+  PUBLIC SECTION.
+    METHODS blah RAISING cx_static_check.
+ENDCLASS.
+CLASS test IMPLEMENTATION.
+  METHOD blah.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 30));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("ObjectOrientedVoidReference");
+    expect(hover?.value).to.contain("Extra");
+  });
+
 });
