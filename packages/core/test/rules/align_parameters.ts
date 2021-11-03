@@ -232,4 +232,20 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("NEW, error", async () => {
+    const abap = `foo = NEW #(
+    p_kind    = c_error
+        p_test    = c_my_name ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("NEW, fixed", async () => {
+    const abap = `foo = NEW #(
+          p_kind = c_error
+          p_test = c_my_name ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
