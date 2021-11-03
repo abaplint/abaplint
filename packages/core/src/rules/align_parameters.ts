@@ -9,6 +9,7 @@ import {StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
 import {Statements} from "..";
 
+
 export class AlignParametersConf extends BasicRuleConfig {
 }
 
