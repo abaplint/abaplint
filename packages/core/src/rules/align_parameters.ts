@@ -5,15 +5,15 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Position} from "../position";
-import {ExpressionNode, StructureNode} from "../abap/nodes";
+import {ExpressionNode, StructureNode, TokenNode} from "../abap/nodes";
 
 export class AlignParametersConf extends BasicRuleConfig {
 }
 
 interface IParameterData {
-  left: ExpressionNode;
+  left: ExpressionNode | TokenNode;
   eq: Position;
-  right: ExpressionNode;
+  right: ExpressionNode | TokenNode;
 }
 
 interface ICandidate {
@@ -27,7 +27,7 @@ export class AlignParameters extends ABAPRule {
     return {
       key: "align_parameters",
       title: "Align Parameters",
-      shortDescription: `Checks for aligned parameters in method calls, function module calls, VALUE constructors.`,
+      shortDescription: `Checks for aligned parameters in function module calls.`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
@@ -58,30 +58,95 @@ export class AlignParameters extends ABAPRule {
 
     const candidates: ICandidate[] = [];
     candidates.push(...this.functionParameterCandidates(stru));
-    /*
+    /* TODO,
     stru.findAllExpressionsRecursive(Expressions.MethodCallParam);
     stru.findAllExpressionsRecursive(Expressions.MethodParameters);
     stru.findAllExpressionsRecursive(Expressions.ValueBody);
     */
 
+    for (const c of candidates) {
+      const i = this.checkCandidate(c, file);
+      if (i) {
+        issues.push(i);
+      }
+    }
+
     return issues;
+  }
+
+  private checkCandidate(candidate: ICandidate, file: ABAPFile): Issue | undefined {
+    if (candidate.parameters.length === 0) {
+      return undefined;
+    }
+
+    let expectedEqualsColumn = 0;
+    for (const p of candidate.parameters) {
+      const currentCol = p.left.getLastToken().getCol() + p.left.getLastToken().getStr().length + 1;
+      if (currentCol > expectedEqualsColumn) {
+        expectedEqualsColumn = currentCol;
+      }
+    }
+
+    for (const p of candidate.parameters) {
+      if (p.eq.getCol() !== expectedEqualsColumn) {
+        const pos = candidate.parameters[0].eq;
+        const message = "Align parameters to column " + expectedEqualsColumn;
+        return Issue.atPosition(file, pos, message, this.getMetadata().key);
+      }
+    }
+
+    return undefined;
   }
 
   private functionParameterCandidates(stru: StructureNode): ICandidate[] {
     const candidates: ICandidate[] = [];
     for (const fp of stru.findAllExpressionsRecursive(Expressions.FunctionParameters)) {
-      const exp = fp.findDirectExpression(Expressions.FunctionExporting);
-      if (exp) {
-        continue; // TODO
+      const parameters: IParameterData[] = [];
+
+      for (const p of fp.findAllExpressions(Expressions.FunctionExportingParameter)) {
+        const children = p.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
       }
 
-      /*
-      for (const pt of fp.findDirectExpressions(Expressions.ParameterListT)) {
-
+      for (const list of fp.findDirectExpressions(Expressions.ParameterListT)) {
+        for (const pt of list.findDirectExpressions(Expressions.ParameterT)) {
+          const children = pt.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
       }
 
-      fp.findDirectExpression(Expressions.ParameterListExceptions)
-      */
+      const list = fp.findDirectExpression(Expressions.ParameterListExceptions);
+      if (list) {
+        for (const pt of list.findDirectExpressions(Expressions.ParameterException)) {
+          const children = pt.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+      }
+
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
     }
     return candidates;
   }

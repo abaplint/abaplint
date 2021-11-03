@@ -18,7 +18,7 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("call function, issue", async () => {
+  it("call function, issue", async () => {
     const abap = `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo = 2
@@ -32,6 +32,12 @@ describe("Rule: align_parameters", () => {
   EXPORTING
     foo       = 2
     parameter = 3.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("call function, no parameters", async () => {
+    const abap = `CALL FUNCTION 'FOOBAR'.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(0);
   });

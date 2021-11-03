@@ -1345,7 +1345,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for aligned parameters in method calls, function module calls, VALUE constructors.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/align_parameters"
+              "description": "Checks for aligned parameters in function module calls.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/align_parameters"
             },
             "allowed_object_naming": {
               "anyOf": [
