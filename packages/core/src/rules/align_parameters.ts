@@ -7,11 +7,11 @@ import {ABAPFile} from "../abap/abap_file";
 import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
+import {Statements} from "..";
 
 // todo, NEW #()
 // todo, RaiseEvent
 // todo, CREATE OBJECT
-// todo, RAISE
 
 export class AlignParametersConf extends BasicRuleConfig {
 }
@@ -85,6 +85,7 @@ foo = VALUE #(
     candidates.push(...this.functionParameterCandidates(stru));
     candidates.push(...this.methodCallParamCandidates(stru));
     candidates.push(...this.valueBodyCandidates(stru));
+    candidates.push(...this.raiseExceptionCandidates(stru));
 
     for (const c of candidates) {
       const i = this.checkCandidate(c, file);
@@ -130,6 +131,31 @@ foo = VALUE #(
       }
       for (const fs of fieldAssignments) {
         const children = fs.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
+    }
+
+    return candidates;
+  }
+
+  private raiseExceptionCandidates(stru: StructureNode): ICandidate[] {
+    const candidates: ICandidate[] = [];
+
+    for (const raise of stru.findAllStatements(Statements.Raise)) {
+      const parameters: IParameterData[] = [];
+      const param = raise.findDirectExpression(Expressions.ParameterListS);
+      for (const p of param?.getChildren() || []) {
+        const children = p.getChildren();
         if (children.length < 3) {
           continue; // unexpected
         }

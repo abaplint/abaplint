@@ -166,4 +166,38 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("RAISE EXCEPTION 1, ok", async () => {
+    const abap = `RAISE EXCEPTION lx_root.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE EXCEPTION 2, ok", async () => {
+    const abap = `RAISE RESUMABLE EXCEPTION TYPE zcx_foobar.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE EXCEPTION 2, ok", async () => {
+    const abap = `RAISE EXCEPTION TYPE lcx_exception EXPORTING iv_text = lv_text.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE EXCEPTION, error", async () => {
+    const abap = `RAISE EXCEPTION TYPE lcx_exception EXPORTING
+    iv_text = lv_text
+      foo = bar.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("RAISE EXCEPTION, fixed", async () => {
+    const abap = `RAISE EXCEPTION TYPE lcx_exception EXPORTING
+      iv_text = lv_text
+      foo     = bar.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
