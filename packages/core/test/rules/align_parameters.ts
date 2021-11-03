@@ -150,4 +150,20 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("VALUE, problem", async () => {
+    const abap = `foo = VALUE #(
+      foo = bar
+          moo = 2 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("VALUE, fixed", async () => {
+    const abap = `foo = VALUE #(
+      foo = bar
+      moo = 2 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -28,7 +28,7 @@ export class AlignParameters extends ABAPRule {
     return {
       key: "align_parameters",
       title: "Align Parameters",
-      shortDescription: `Checks for vertially aligned parameters in function module calls and method calls.`,
+      shortDescription: `Checks for vertially aligned parameters in function module calls, method calls and VALUE constructors.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters
 
 Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
@@ -71,10 +71,7 @@ foobar( moo   = 1
     const candidates: ICandidate[] = [];
     candidates.push(...this.functionParameterCandidates(stru));
     candidates.push(...this.methodCallParamCandidates(stru));
-
-    /* TODO,
-    stru.findAllExpressionsRecursive(Expressions.ValueBody);
-    */
+    candidates.push(...this.valueBodyCandidates(stru));
 
     for (const c of candidates) {
       const i = this.checkCandidate(c, file);
@@ -108,6 +105,34 @@ foobar( moo   = 1
     }
 
     return undefined;
+  }
+
+  private valueBodyCandidates(stru: StructureNode): ICandidate[] {
+    const candidates: ICandidate[] = [];
+
+    for (const vb of stru.findAllExpressionsRecursive(Expressions.ValueBody)) {
+      const parameters: IParameterData[] = [];
+      const fieldAssignments = vb.findDirectExpressions(Expressions.FieldAssignment);
+      if (fieldAssignments.length <= 1) {
+        continue;
+      }
+      for (const fs of fieldAssignments) {
+        const children = fs.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
+    }
+
+    return candidates;
   }
 
   private methodCallParamCandidates(stru: StructureNode): ICandidate[] {
