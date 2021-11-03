@@ -18,6 +18,9 @@ describe("LSP, statement flow", () => {
       ENDMETHOD.
       METHOD method2.
         DATA foo.
+        IF 2 = 1.
+          WRITE 'sdf'.
+        ENDIF.
       ENDMETHOD.
     ENDCLASS.
     `;
@@ -25,8 +28,14 @@ describe("LSP, statement flow", () => {
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
     const dump = new LanguageServer(reg).dumpStatementFlows({uri: file.getFilename()});
-    expect(dump).to.equal(`[[Write],
-[Data]]`);
+    expect(dump).to.equal(`METHOD method1
+[Write]
+
+METHOD method2
+[Data,If,Write]
+
+METHOD method2
+[Data,If]\n\n`);
   });
 
 });

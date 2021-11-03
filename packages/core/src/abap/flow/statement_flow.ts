@@ -1,6 +1,7 @@
 import {StatementNode, StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
 import {IStatement} from "../2_statements/statements/_statement";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
@@ -21,10 +22,20 @@ import {IStatement} from "../2_statements/statements/_statement";
 // TODO: RAISE
 
 export type StatementFlowPath = {
+  description?: string,
   statements: StatementNode[];
 };
 
-export function dumpFlow(flows: StatementFlowPath[]): string {
+export function dumpFlowsWithDescription(flows: StatementFlowPath[]): string {
+  let ret = "";
+  for (const f of flows) {
+    ret += f.description + "\n";
+    ret += "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]\n\n";
+  }
+  return ret;
+}
+
+export function dumpFlows(flows: StatementFlowPath[]): string {
   const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
   return ret + "]";
 }
@@ -79,11 +90,17 @@ export class StatementFlow {
     const ret: StatementFlowPath[] = [];
     const forms = stru.findAllStructures(Structures.Form);
     for (const f of forms) {
-      ret.push(...this.traverseBody(findBody(f)));
+      let body = this.traverseBody(findBody(f));
+      const formName = f.findFirstExpression(Expressions.FormName)?.concatTokens();
+      body = body.map((b) => {return {description: "FORM " + formName, statements: b.statements};});
+      ret.push(...body);
     }
     const methods = stru.findAllStructures(Structures.Method);
     for (const f of methods) {
-      ret.push(...this.traverseBody(findBody(f)));
+      let body = this.traverseBody(findBody(f));
+      const methodName = f.findFirstExpression(Expressions.MethodName)?.concatTokens();
+      body = body.map((b) => {return {description: "METHOD " + methodName, statements: b.statements};});
+      ret.push(...body);
     }
     return ret;
   }
