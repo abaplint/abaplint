@@ -1345,7 +1345,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for vertially aligned parameters in function module calls, method calls and VALUE constructors.\nTags: SingleFile, Whitespace, Styleguide\nhttps://rules.abaplint.org/align_parameters"
+              "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide\nhttps://rules.abaplint.org/align_parameters"
             },
             "allowed_object_naming": {
               "anyOf": [

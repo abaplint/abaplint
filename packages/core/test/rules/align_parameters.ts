@@ -166,4 +166,86 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("RAISE EXCEPTION 1, ok", async () => {
+    const abap = `RAISE EXCEPTION lx_root.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE EXCEPTION 2, ok", async () => {
+    const abap = `RAISE RESUMABLE EXCEPTION TYPE zcx_foobar.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE EXCEPTION 2, ok", async () => {
+    const abap = `RAISE EXCEPTION TYPE lcx_exception EXPORTING iv_text = lv_text.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE EXCEPTION, error", async () => {
+    const abap = `RAISE EXCEPTION TYPE lcx_exception EXPORTING
+    iv_text = lv_text
+      foo = bar.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("RAISE EXCEPTION, fixed", async () => {
+    const abap = `RAISE EXCEPTION TYPE lcx_exception EXPORTING
+      iv_text = lv_text
+      foo     = bar.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CREATE OBJECT, error", async () => {
+    const abap = `CREATE OBJECT ei_page TYPE lcl_gui_page_commit
+      EXPORTING io_repo  = mo_repo
+      io_stage = mo_stage.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("CREATE OBJECT, fixed", async () => {
+    const abap = `CREATE OBJECT ei_page TYPE lcl_gui_page_commit
+      EXPORTING io_repo  = mo_repo
+                io_stage = mo_stage.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE EVENT, error", async () => {
+    const abap = `RAISE EVENT message EXPORTING
+    p_kind    = c_error
+        p_test    = c_my_name.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("RAISE EVENT, fixed", async () => {
+    const abap = `RAISE EVENT message EXPORTING
+        p_kind = c_error
+        p_test = c_my_name.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("NEW, error", async () => {
+    const abap = `foo = NEW #(
+    p_kind    = c_error
+        p_test    = c_my_name ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("NEW, fixed", async () => {
+    const abap = `foo = NEW #(
+          p_kind = c_error
+          p_test = c_my_name ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

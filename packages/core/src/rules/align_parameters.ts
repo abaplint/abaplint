@@ -7,11 +7,8 @@ import {ABAPFile} from "../abap/abap_file";
 import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
+import {Statements} from "..";
 
-// todo, NEW #()
-// todo, RaiseEvent
-// todo, CREATE OBJECT
-// todo, RAISE
 
 export class AlignParametersConf extends BasicRuleConfig {
 }
@@ -33,8 +30,17 @@ export class AlignParameters extends ABAPRule {
     return {
       key: "align_parameters",
       title: "Align Parameters",
-      shortDescription: `Checks for vertially aligned parameters in function module calls, method calls and VALUE constructors.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters
+      shortDescription: `Checks for vertially aligned parameters`,
+      extendedInformation: `Checks:
+* function module calls
+* method calls
+* VALUE constructors
+* NEW constructors
+* RAISE EXCEPTION statements
+* CREATE OBJECT statements
+* RAISE EVENT statements
+
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters
 
 Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
 
@@ -85,6 +91,8 @@ foo = VALUE #(
     candidates.push(...this.functionParameterCandidates(stru));
     candidates.push(...this.methodCallParamCandidates(stru));
     candidates.push(...this.valueBodyCandidates(stru));
+    candidates.push(...this.raiseAndCreateCandidates(stru));
+    candidates.push(...this.newCandidates(stru));
 
     for (const c of candidates) {
       const i = this.checkCandidate(c, file);
@@ -111,13 +119,59 @@ foo = VALUE #(
 
     for (const p of candidate.parameters) {
       if (p.eq.getCol() !== expectedEqualsColumn) {
-        const pos = candidate.parameters[0].eq;
         const message = "Align parameters to column " + expectedEqualsColumn;
-        return Issue.atPosition(file, pos, message, this.getMetadata().key);
+        return Issue.atPosition(file, p.eq, message, this.getMetadata().key);
       }
     }
 
     return undefined;
+  }
+
+  private newCandidates(stru: StructureNode): ICandidate[] {
+    const candidates: ICandidate[] = [];
+
+    for (const vb of stru.findAllExpressionsRecursive(Expressions.NewObject)) {
+      const parameters: IParameterData[] = [];
+
+      const fieldAssignments = vb.findDirectExpressions(Expressions.FieldAssignment);
+      if (fieldAssignments.length >= 2) {
+        for (const fs of fieldAssignments) {
+          const children = fs.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+        if (parameters.length > 0) {
+          candidates.push({parameters});
+          continue;
+        }
+      }
+
+      const list = vb.findDirectExpression(Expressions.ParameterListS);
+      if (list) {
+        for (const c of list.getChildren()) {
+          const children = c.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+        if (parameters.length > 0) {
+          candidates.push({parameters});
+        }
+      }
+    }
+
+    return candidates;
   }
 
   private valueBodyCandidates(stru: StructureNode): ICandidate[] {
@@ -131,6 +185,34 @@ foo = VALUE #(
       }
       for (const fs of fieldAssignments) {
         const children = fs.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
+    }
+
+    return candidates;
+  }
+
+  private raiseAndCreateCandidates(stru: StructureNode): ICandidate[] {
+    const candidates: ICandidate[] = [];
+
+    const statements = stru.findAllStatements(Statements.Raise);
+    statements.push(...stru.findAllStatements(Statements.CreateObject));
+    statements.push(...stru.findAllStatements(Statements.RaiseEvent));
+    for (const raise of statements) {
+      const parameters: IParameterData[] = [];
+      const param = raise.findDirectExpression(Expressions.ParameterListS);
+      for (const p of param?.getChildren() || []) {
+        const children = p.getChildren();
         if (children.length < 3) {
           continue; // unexpected
         }
