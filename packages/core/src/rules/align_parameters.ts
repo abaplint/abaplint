@@ -111,9 +111,8 @@ foo = VALUE #(
 
     for (const p of candidate.parameters) {
       if (p.eq.getCol() !== expectedEqualsColumn) {
-        const pos = candidate.parameters[0].eq;
         const message = "Align parameters to column " + expectedEqualsColumn;
-        return Issue.atPosition(file, pos, message, this.getMetadata().key);
+        return Issue.atPosition(file, p.eq, message, this.getMetadata().key);
       }
     }
 
