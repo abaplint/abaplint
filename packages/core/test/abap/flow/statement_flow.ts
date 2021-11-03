@@ -257,7 +257,7 @@ CATCH foobar.
   foo = 2.
 ENDTRY.`;
     const res = await buildFORM(abap);
-    expect(dumpFlow(res)).to.equal("[[Try,Write],[Try,Write,Call],[Try,Write,Catch,Move],[Try,Write,Call,Catch,Move]]");
+    expect(dumpFlow(res)).to.equal("[[Try,Write,Call],[Try,Write,Call,Catch,Move]]");
   });
 
   it("empty TRY-CATCH", async () => {

@@ -15,6 +15,11 @@ import {IStatement} from "../2_statements/statements/_statement";
 //
 // Not handled? INCLUDE + malplaced macro calls
 
+/////////////////////////////////////
+
+// TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
+// TODO: RAISE
+
 export type StatementFlowPath = {
   statements: StatementNode[];
 };
@@ -158,17 +163,11 @@ export class StatementFlow {
         }
       }
     } else if (type instanceof Structures.Try) {
-// worst case: any statement in the body can raise the exception, the exceptions might be dynamic or no check
+// TODO: this does not take exceptions into account
       const firstTry = n.getFirstStatement()!;
 
-      const allPossibleBody: StatementFlowPath[] = [];
-      for (const b of this.traverseBody(findBody(n))) {
-        const nodes: StatementNode[] = [];
-        for (const n of b.statements) {
-          nodes.push(n);
-          allPossibleBody.push({statements: [firstTry, ...nodes]});
-        }
-      }
+      let allPossibleBody = this.traverseBody(findBody(n));
+      allPossibleBody = allPossibleBody.map(b => {return {statements: [firstTry, ...b.statements]};});
       if (allPossibleBody.length === 0) {
         allPossibleBody.push({statements: [firstTry]});
       }
