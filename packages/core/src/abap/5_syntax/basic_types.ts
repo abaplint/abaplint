@@ -479,6 +479,8 @@ export class BasicTypes {
     // lookup in local and global scope
         const obj = this.scope.findObjectDefinition(className);
         if (obj === undefined && this.scope.getDDIC().inErrorNamespace(className) === false) {
+          this.scope.addReference(expr.getFirstToken(), undefined,
+                                  ReferenceType.ObjectOrientedVoidReference, this.filename, {ooName: className.toUpperCase()});
           return new Types.VoidType(className);
         } else if (obj === undefined) {
           return new Types.UnknownType("Could not resolve top " + className + ", resolveTypeChain");
