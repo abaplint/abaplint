@@ -151,7 +151,10 @@ foo = VALUE #(
   private raiseAndCreateCandidates(stru: StructureNode): ICandidate[] {
     const candidates: ICandidate[] = [];
 
-    for (const raise of stru.findAllStatements(Statements.Raise).concat(stru.findAllStatements(Statements.CreateObject))) {
+    const statements = stru.findAllStatements(Statements.Raise);
+    statements.push(...stru.findAllStatements(Statements.CreateObject));
+    statements.push(...stru.findAllStatements(Statements.RaiseEvent));
+    for (const raise of statements) {
       const parameters: IParameterData[] = [];
       const param = raise.findDirectExpression(Expressions.ParameterListS);
       for (const p of param?.getChildren() || []) {

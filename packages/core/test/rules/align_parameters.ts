@@ -216,4 +216,20 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("RAISE EVENT, error", async () => {
+    const abap = `RAISE EVENT message EXPORTING
+    p_kind    = c_error
+        p_test    = c_my_name.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("RAISE EVENT, fixed", async () => {
+    const abap = `RAISE EVENT message EXPORTING
+        p_kind = c_error
+        p_test = c_my_name.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
