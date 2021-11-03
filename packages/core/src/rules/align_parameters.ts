@@ -41,14 +41,22 @@ Also https://rules.abaplint.org/max_one_method_parameter_per_line/ can help alig
     parameter = 3.
 
 foobar( moo = 1
-  param = 1 ).`,
+  param = 1 ).
+
+foo = VALUE #(
+    foo = bar
+        moo = 2 ).`,
       goodExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo       = 2
     parameter = 3.
 
 foobar( moo   = 1
-        param = 1 ).`,
+        param = 1 ).
+
+foo = VALUE #(
+    foo = bar
+    moo = 2 ).`,
     };
   }
 
