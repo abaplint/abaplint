@@ -1018,4 +1018,14 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("Extra");
   });
 
+  it("Hover, voided class or interface via type", () => {
+    const abap = `DATA properties TYPE if_aff_chko_v1=>ty_main.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 25));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("ObjectOrientedVoidReference");
+    expect(hover?.value).to.contain("Extra");
+  });
+
 });

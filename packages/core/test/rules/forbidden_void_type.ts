@@ -19,6 +19,7 @@ const tests2: TestRuleType = [
   {abap: `cl_abapgit_2fa_github_auth=>bar( ).`, cnt: 1},
   {abap: `SELECT SINGLE * FROM table_someth INTO @DATA(bar).`, cnt: 1},
   {abap: `TRY. CATCH cx_aff_something. ENDTRY.`, cnt: 1},
+  {abap: `DATA properties TYPE if_aff_chko_v1=>ty_main.`, cnt: 1},
   {abap: `CLASS test DEFINITION FINAL.
   PUBLIC SECTION.
     METHODS blah RAISING cx_aff_root.
@@ -27,5 +28,5 @@ ENDCLASS.`, cnt: 1},
 ];
 
 const config = new ForbiddenVoidTypeConf();
-config.check = ["^datum$", "^cl_abapgit", "^table_someth$", "^cx_aff_"];
+config.check = ["^datum$", "^cl_abapgit", "^table_someth$", "^cx_aff_", "^if_aff_"];
 testRule(tests2, ForbiddenVoidType, config);
