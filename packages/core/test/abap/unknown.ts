@@ -8,6 +8,7 @@ describe("unknown statements", () => {
     "asdf.",
     "asdf",
     "asdf asdf.",
+    "REPLACE REGEX 'ab' IN SECTION LENGTH 2 OF 'error' WITH 'bar'.",
     "METHODS run RETURNING str TYPE string.", // VALUE is missing
   ];
 
