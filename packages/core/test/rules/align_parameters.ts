@@ -42,4 +42,22 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("method, no parameters", async () => {
+    const abap = `foobar( ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("method, single source parameter", async () => {
+    const abap = `foobar( 1 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("method, single named source parameter", async () => {
+    const abap = `foobar( moo = 1 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
