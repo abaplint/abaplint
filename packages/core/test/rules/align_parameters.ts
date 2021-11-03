@@ -80,6 +80,52 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("method, unaligned EXPORTING, expect issue", async () => {
+    const abap = `foobar( EXPORTING moo = 1
+      bar = 1 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("method, EXPORTING, fixed", async () => {
+    const abap = `foobar(
+      EXPORTING moo = 1
+                bar = 1 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("method, unaligned IMPORTING, expect issue", async () => {
+    const abap = `foobar( IMPORTING moo = var1
+      bar = var2 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("method, IMPORTING, fixed", async () => {
+    const abap = `foobar(
+      IMPORTING moo = var1
+                bar = var2 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("method, EXCEPTIONS", async () => {
+    const abap = `foobar( EXCEPTIONS moo = 1
+      bar = 2 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("method, EXCEPTIONS, fixed", async () => {
+    const abap = `foobar(
+      EXCEPTIONS
+        moo = 1
+        bar = 2 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it.skip("CALL METHOD, unaligned, expect issue", async () => {
     const abap = `CALL METHOD foo EXPORTING moo = 1
       bar = 1.`;

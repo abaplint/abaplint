@@ -125,7 +125,60 @@ foobar( moo   = 1
         });
       }
 
-//      mcp.findDirectExpression(Expressions.MethodParameters)
+      const mp = mcp.findDirectExpression(Expressions.MethodParameters);
+      if (mp) {
+        for (const p of mp.findDirectExpression(Expressions.ParameterListS)?.getChildren() || []) {
+          const children = p.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+
+        for (const l of mp.findDirectExpressions(Expressions.ParameterListT)) {
+          for (const p of l.findDirectExpressions(Expressions.ParameterT) || []) {
+            const children = p.getChildren();
+            if (children.length < 3) {
+              continue; // unexpected
+            }
+            parameters.push({
+              left: children[0],
+              eq: children[1].getFirstToken().getStart(),
+              right: children[2],
+            });
+          }
+        }
+
+        const rec = mp.findDirectExpression(Expressions.ParameterT);
+        if (rec) {
+          const children = rec.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+
+
+        for (const ex of mp.findDirectExpression(Expressions.ParameterListExceptions)?.getChildren() || []) {
+          const children = ex.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+      }
 
       if (parameters.length > 0) {
         candidates.push({parameters});
