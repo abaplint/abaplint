@@ -136,6 +136,19 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return ret;
   }
 
+  public findAllExpressionsRecursive(type: new () => IStatementRunnable): ExpressionNode[] {
+    const ret: ExpressionNode[] = [];
+
+    for (const child of this.getChildren()) {
+      if (child instanceof StatementNode) {
+        ret.push(...child.findAllExpressionsRecursive(type));
+      } else {
+        ret.push(...child.findAllExpressionsRecursive(type));
+      }
+    }
+    return ret;
+  }
+
   public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
     const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
