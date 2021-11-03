@@ -15,6 +15,7 @@ import {IRegistry} from "../_iregistry";
 import {References} from "./references";
 import {Implementation} from "./implementation";
 import {SemanticHighlighting} from "./semantic";
+import {dumpFlow, StatementFlow} from "../abap/flow/statement_flow";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/main/versions/protocol-2-x.md#range
@@ -140,6 +141,18 @@ export class LanguageServer {
 
   public listWritePositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
     return new Highlight(this.reg).listWritePositions(textDocument);
+  }
+
+  public dumpStatementFlows(textDocument: LServer.TextDocumentIdentifier): string {
+    const file = LSPUtils.getABAPFile(this.reg, textDocument.uri);
+    if (file === undefined) {
+      return "file not found";
+    }
+    const stru = file.getStructure();
+    if (stru === undefined) {
+      return "empty structure";
+    }
+    return dumpFlow(new StatementFlow().build(stru)).replace(/\],\[/, "],\n[");
   }
 
 }

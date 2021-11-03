@@ -26,6 +26,23 @@
       ],
       "type": "object"
     },
+    "AlignParametersConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AllowedObjectNamingConf": {
       "additionalProperties": false,
       "properties": {
@@ -1318,6 +1335,17 @@
                 }
               ],
               "description": "Various checks regarding abapdoc.\nBase rule checks for existence of abapdoc for public class methods and all interface methods.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc"
+            },
+            "align_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AlignParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for aligned parameters in function module calls.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/align_parameters"
             },
             "allowed_object_naming": {
               "anyOf": [

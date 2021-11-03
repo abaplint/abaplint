@@ -1,30 +1,88 @@
 import {StatementNode, StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
+import {IStatement} from "../2_statements/statements/_statement";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
-// Branching: IF, LOOP, DO, WHILE, CASE, TRY, ON, SELECT(loop), CATCH(remember CLEANUP), CATCH SYSTEM-EXCEPTIONS, AT, CHECK, PROVIDE
+// Loop branching: LOOP, DO, WHILE,SELECT(loop), WITH, PROVIDE
 //
-// Exits: RETURN, EXIT, ASSERT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
+// Branching: IF, CASE, CASE TYPE OF, TRY, ON, CATCH SYSTEM-EXCEPTIONS, AT
+//
+// Conditional exits: CHECK, ASSERT
+//
+// Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
+//
+// Not handled? INCLUDE + malplaced macro calls
 
-// todo: RETURN inside structures?
+/////////////////////////////////////
+
+// TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
+// TODO: RAISE
 
 export type StatementFlowPath = {
   statements: StatementNode[];
 };
 
+export function dumpFlow(flows: StatementFlowPath[]): string {
+  const ret = "[" + flows.map(f => "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]").join(",");
+  return ret + "]";
+}
+
 function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
   return f.findDirectStructure(Structures.Body)?.getChildren() || [];
-//function findBody(f: StructureNode): StructureNode | undefined {
-//  return f.findDirectStructure(Structures.Body);
 }
+
+function removeDuplicates(flows: StatementFlowPath[]): StatementFlowPath[] {
+  const result: StatementFlowPath[] = [];
+  for (const f of flows) {
+    let duplicate = false;
+    for (const r of result) {
+      if (f.statements.length !== r.statements.length) {
+        continue;
+      }
+
+      duplicate = true;
+      for (let index = 0; index < f.statements.length; index++) {
+        if (f.statements[index] !== r.statements[index]) {
+          duplicate = false;
+          break;
+        }
+      }
+    }
+    if (duplicate === false) {
+      result.push(f);
+    }
+  }
+  return result;
+}
+
+function pruneByStatement(flows: StatementFlowPath[], type: new () => IStatement): StatementFlowPath[] {
+  const result: StatementFlowPath[] = [];
+  for (const f of flows) {
+    const nodes: StatementNode[] = [];
+    for (const n of f.statements) {
+      nodes.push(n);
+      if (n.get() instanceof type) {
+        break;
+      }
+    }
+    result.push({statements: nodes});
+  }
+  return removeDuplicates(result);
+}
+
+////////////////////////////////////////////////////////////////
 
 export class StatementFlow {
   public build(stru: StructureNode): StatementFlowPath[] {
     const ret: StatementFlowPath[] = [];
     const forms = stru.findAllStructures(Structures.Form);
     for (const f of forms) {
+      ret.push(...this.traverseBody(findBody(f)));
+    }
+    const methods = stru.findAllStructures(Structures.Method);
+    for (const f of methods) {
       ret.push(...this.traverseBody(findBody(f)));
     }
     return ret;
@@ -45,14 +103,16 @@ export class StatementFlow {
           flows.forEach(f => f.statements.push(firstChild));
 //          current.push(firstChild);
 //          console.dir("push: " + firstChild.constructor.name);
-          if (firstChild.get() instanceof Statements.Check) {
-            // todo
+          if (firstChild.get() instanceof Statements.Check
+              || firstChild.get() instanceof Statements.Assert) {
             const after = children.slice(i + 1, children.length);
             for (const b of this.traverseBody(after)) {
               for (const f of [...flows]) {
                 flows.push({statements: [...f.statements, ...b.statements]});
               }
             }
+            break;
+          } else if (firstChild.get() instanceof Statements.Exit) {
             break;
           } else if (firstChild.get() instanceof Statements.Return) {
             break;
@@ -71,7 +131,6 @@ export class StatementFlow {
           }
 //          console.dir(dump(n));
           flows = n;
-//          found.forEach(fo => flows.forEach(f => f.statements.push(...fo.statements)));
         }
       }
     }
@@ -80,7 +139,7 @@ export class StatementFlow {
   }
 
   private traverseStructure(n: StructureNode | undefined): StatementFlowPath[] {
-    const flows: StatementFlowPath[] = [];
+    let flows: StatementFlowPath[] = [];
     if (n === undefined) {
       return flows;
     }
@@ -93,7 +152,6 @@ export class StatementFlow {
       bodyFlows = bodyFlows.map(a => {return {statements: [formst, ...a.statements]};});
       flows.push(...bodyFlows);
     } else if (type instanceof Structures.Any) {
-      // TODO TODO
       for (const c of n.getChildren()) {
 //        console.dir("yep");
         if (c instanceof StructureNode && c.get() instanceof Structures.Form) {
@@ -104,6 +162,30 @@ export class StatementFlow {
           console.dir("any, todo, " + c.constructor.name + ", " + c.get().constructor.name);
         }
       }
+    } else if (type instanceof Structures.Try) {
+// TODO: this does not take exceptions into account
+      const firstTry = n.getFirstStatement()!;
+
+      let allPossibleBody = this.traverseBody(findBody(n));
+      allPossibleBody = allPossibleBody.map(b => {return {statements: [firstTry, ...b.statements]};});
+      if (allPossibleBody.length === 0) {
+        allPossibleBody.push({statements: [firstTry]});
+      }
+      flows.push(...allPossibleBody);
+
+      for (const c of n.findDirectStructures(Structures.Catch)) {
+        const firstCatch = c.getFirstStatement()!;
+        const catchBodies = this.traverseBody(findBody(c));
+        for (const bodyFlow of allPossibleBody) {
+          for (const catchFlow of catchBodies) {
+            flows.push({statements: [...bodyFlow.statements, firstCatch, ...catchFlow.statements]});
+          }
+          if (catchBodies.length === 0) {
+            flows.push({statements: [...bodyFlow.statements, firstCatch]});
+          }
+        }
+      }
+// TODO, handle CLEANUP
     } else if (type instanceof Structures.If) {
       const collect = [n.findDirectStatement(Statements.If)!];
       let bodyFlows = this.traverseBody(findBody(n));
@@ -128,18 +210,65 @@ export class StatementFlow {
       } else {
         flows.push({statements: [...collect]});
       }
-    } else if (type instanceof Structures.Loop) {
-      const loop = n.findDirectStatement(Statements.Loop)!;
+    } else if (type instanceof Structures.Case) {
+      const cas = n.getFirstStatement()!;
+      let othersFound = false;
+      for (const w of n.findDirectStructures(Structures.When)) {
+        const first = w.getFirstStatement();
+        if (first === undefined) {
+          continue;
+        }
+        if (first.get() instanceof Statements.WhenOthers) {
+          othersFound = true;
+        }
+
+        let bodyFlows = this.traverseBody(findBody(w));
+        bodyFlows = bodyFlows.map(b => {return {statements: [cas, first, ...b.statements]};});
+        flows.push(...bodyFlows);
+      }
+      if (othersFound === false) {
+        flows.push({statements: [cas]});
+      }
+    } else if (type instanceof Structures.CaseType) {
+      const cas = n.getFirstStatement()!;
+      let othersFound = false;
+      for (const w of n.findDirectStructures(Structures.WhenType)) {
+        const first = w.getFirstStatement();
+        if (first === undefined) {
+          continue;
+        }
+        if (first.get() instanceof Statements.WhenOthers) {
+          othersFound = true;
+        }
+
+        let bodyFlows = this.traverseBody(findBody(w));
+        bodyFlows = bodyFlows.map(b => {return {statements: [cas, first, ...b.statements]};});
+        flows.push(...bodyFlows);
+      }
+      if (othersFound === false) {
+        flows.push({statements: [cas]});
+      }
+    } else if (type instanceof Structures.Loop
+        || type instanceof Structures.While
+        || type instanceof Structures.With
+        || type instanceof Structures.Provide
+        || type instanceof Structures.Select
+        || type instanceof Structures.Do) {
+      const loop = n.getFirstStatement()!;
       const bodyFlows = this.traverseBody(findBody(n));
       for (const b of bodyFlows) {
         flows.push({statements: [loop, ...b.statements]});
       }
       for (const b1 of bodyFlows) {
         for (const b2 of bodyFlows) {
-          flows.push({statements: [loop, ...b1.statements, ...b2.statements]});
+          const add = [loop, ...b1.statements, ...b2.statements];
+          flows.push({statements: add});
         }
       }
       flows.push({statements: [loop]});
+      flows = pruneByStatement(flows, Statements.Exit);
+      flows = pruneByStatement(flows, Statements.Continue);
+      flows = pruneByStatement(flows, Statements.Return);
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }

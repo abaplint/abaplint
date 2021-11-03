@@ -1,8 +1,7 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {Try, Catch} from "../abap/3_structures/structures";
+import {Try, Catch, Cleanup} from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Cleanup} from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -45,7 +44,7 @@ export class TryWithoutCatch extends ABAPRule {
     const tries = stru.findAllStructures(Try);
 
     for (const t of tries) {
-      const clean = t.findDirectStatements(Cleanup);
+      const clean = t.findDirectStructures(Cleanup);
       const c = t.findDirectStructures(Catch);
       if (c.length === 0 && clean.length === 0) {
         const issue = Issue.atToken(file, t.getFirstToken(), this.getMessage(), this.getMetadata().key, this.conf.severity);
