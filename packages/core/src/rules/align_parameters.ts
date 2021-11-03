@@ -34,7 +34,7 @@ export class AlignParameters extends ABAPRule {
 Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
 
 Also https://rules.abaplint.org/max_one_method_parameter_per_line/ can help aligning parameter syntax`,
-      tags: [RuleTag.SingleFile, RuleTag.Styleguide],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo = 2
