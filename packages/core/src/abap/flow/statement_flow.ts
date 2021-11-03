@@ -29,10 +29,9 @@ export type StatementFlowPath = {
 export function dumpFlowsWithDescription(flows: StatementFlowPath[]): string {
   let ret = "";
   for (const f of flows) {
-    ret += f.description + "\n";
-    ret += "[" + f.statements.map(b => b?.get().constructor.name).join(",") + "]\n\n";
+    ret += f.description + ": [" + f.statements.map(b => b?.get().constructor.name).join(",") + "]\n";
   }
-  return ret;
+  return ret.trim();
 }
 
 export function dumpFlows(flows: StatementFlowPath[]): string {
