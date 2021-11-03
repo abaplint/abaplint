@@ -28,6 +28,7 @@ export class AlignParameters extends ABAPRule {
       key: "align_parameters",
       title: "Align Parameters",
       shortDescription: `Checks for aligned parameters in function module calls.`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
