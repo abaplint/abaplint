@@ -13,7 +13,7 @@ export class Replace implements IStatement {
                         "SECTION",
                         per(offset, length),
                         "OF",
-                        Source);
+                        Target);
 
     const source = seq(opt("OF"), FindType, Source);
 
