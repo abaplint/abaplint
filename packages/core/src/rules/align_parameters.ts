@@ -5,15 +5,16 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Position} from "../position";
-import {ExpressionNode, StructureNode, TokenNode} from "../abap/nodes";
+import {StructureNode} from "../abap/nodes";
+import {INode} from "../abap/nodes/_inode";
 
 export class AlignParametersConf extends BasicRuleConfig {
 }
 
 interface IParameterData {
-  left: ExpressionNode | TokenNode;
+  left: INode;
   eq: Position;
-  right: ExpressionNode | TokenNode;
+  right: INode;
 }
 
 interface ICandidate {
@@ -27,17 +28,23 @@ export class AlignParameters extends ABAPRule {
     return {
       key: "align_parameters",
       title: "Align Parameters",
-      shortDescription: `Checks for aligned parameters in function module calls.`,
+      shortDescription: `Checks for vertially aligned parameters in function module calls and method calls.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo = 2
-    parameter = 3.`,
+    parameter = 3.
+
+foobar( moo = 1
+  param = 1 ).`,
       goodExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo       = 2
-    parameter = 3.`,
+    parameter = 3.
+
+foobar( moo   = 1
+        param = 1 ).`,
     };
   }
 
@@ -59,9 +66,10 @@ export class AlignParameters extends ABAPRule {
 
     const candidates: ICandidate[] = [];
     candidates.push(...this.functionParameterCandidates(stru));
+    candidates.push(...this.methodCallParamCandidates(stru));
+
     /* TODO,
-    stru.findAllExpressionsRecursive(Expressions.MethodCallParam);
-    stru.findAllExpressionsRecursive(Expressions.MethodParameters);
+    stru.findAllExpressionsRecursive(MethodCallBody with direct Expressions.MethodParameters);
     stru.findAllExpressionsRecursive(Expressions.ValueBody);
     */
 
@@ -97,6 +105,34 @@ export class AlignParameters extends ABAPRule {
     }
 
     return undefined;
+  }
+
+  private methodCallParamCandidates(stru: StructureNode): ICandidate[] {
+    const candidates: ICandidate[] = [];
+
+    for (const mcp of stru.findAllExpressionsRecursive(Expressions.MethodCallParam)) {
+      const parameters: IParameterData[] = [];
+
+      for (const param of mcp.findDirectExpression(Expressions.ParameterListS)?.getChildren() || []) {
+        const children = param.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+
+//      mcp.findDirectExpression(Expressions.MethodParameters)
+
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
+    }
+
+    return candidates;
   }
 
   private functionParameterCandidates(stru: StructureNode): ICandidate[] {
