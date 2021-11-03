@@ -66,7 +66,11 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
       this.raising.push(name);
       const clas = scope.findClassDefinition(name);
       if (clas) {
-        scope.addReference(token, clas, ReferenceType.ObjectOrientedReference, filename);
+        scope.addReference(token, clas, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
+        scope.addReference(token, clas, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+      } else {
+        scope.addReference(token, clas, ReferenceType.ObjectOrientedUnknownReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
       }
     }
 

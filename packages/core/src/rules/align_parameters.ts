@@ -5,15 +5,21 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Position} from "../position";
-import {ExpressionNode, StructureNode, TokenNode} from "../abap/nodes";
+import {StructureNode} from "../abap/nodes";
+import {INode} from "../abap/nodes/_inode";
+
+// todo, NEW #()
+// todo, RaiseEvent
+// todo, CREATE OBJECT
+// todo, RAISE
 
 export class AlignParametersConf extends BasicRuleConfig {
 }
 
 interface IParameterData {
-  left: ExpressionNode | TokenNode;
+  left: INode;
   eq: Position;
-  right: ExpressionNode | TokenNode;
+  right: INode;
 }
 
 interface ICandidate {
@@ -27,17 +33,35 @@ export class AlignParameters extends ABAPRule {
     return {
       key: "align_parameters",
       title: "Align Parameters",
-      shortDescription: `Checks for aligned parameters in function module calls.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters`,
-      tags: [RuleTag.SingleFile, RuleTag.Styleguide],
+      shortDescription: `Checks for vertially aligned parameters in function module calls, method calls and VALUE constructors.`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters
+
+Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
+
+Also https://rules.abaplint.org/max_one_method_parameter_per_line/ can help aligning parameter syntax`,
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo = 2
-    parameter = 3.`,
+    parameter = 3.
+
+foobar( moo = 1
+  param = 1 ).
+
+foo = VALUE #(
+    foo = bar
+        moo = 2 ).`,
       goodExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo       = 2
-    parameter = 3.`,
+    parameter = 3.
+
+foobar( moo   = 1
+        param = 1 ).
+
+foo = VALUE #(
+    foo = bar
+    moo = 2 ).`,
     };
   }
 
@@ -59,11 +83,8 @@ export class AlignParameters extends ABAPRule {
 
     const candidates: ICandidate[] = [];
     candidates.push(...this.functionParameterCandidates(stru));
-    /* TODO,
-    stru.findAllExpressionsRecursive(Expressions.MethodCallParam);
-    stru.findAllExpressionsRecursive(Expressions.MethodParameters);
-    stru.findAllExpressionsRecursive(Expressions.ValueBody);
-    */
+    candidates.push(...this.methodCallParamCandidates(stru));
+    candidates.push(...this.valueBodyCandidates(stru));
 
     for (const c of candidates) {
       const i = this.checkCandidate(c, file);
@@ -97,6 +118,115 @@ export class AlignParameters extends ABAPRule {
     }
 
     return undefined;
+  }
+
+  private valueBodyCandidates(stru: StructureNode): ICandidate[] {
+    const candidates: ICandidate[] = [];
+
+    for (const vb of stru.findAllExpressionsRecursive(Expressions.ValueBody)) {
+      const parameters: IParameterData[] = [];
+      const fieldAssignments = vb.findDirectExpressions(Expressions.FieldAssignment);
+      if (fieldAssignments.length <= 1) {
+        continue;
+      }
+      for (const fs of fieldAssignments) {
+        const children = fs.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
+    }
+
+    return candidates;
+  }
+
+  private methodCallParamCandidates(stru: StructureNode): ICandidate[] {
+    const candidates: ICandidate[] = [];
+
+    for (const mcp of stru.findAllExpressionsRecursive(Expressions.MethodCallParam)) {
+      const parameters: IParameterData[] = [];
+
+      for (const param of mcp.findDirectExpression(Expressions.ParameterListS)?.getChildren() || []) {
+        const children = param.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+
+      const mp = mcp.findDirectExpression(Expressions.MethodParameters);
+      if (mp) {
+        for (const p of mp.findDirectExpression(Expressions.ParameterListS)?.getChildren() || []) {
+          const children = p.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+
+        for (const l of mp.findDirectExpressions(Expressions.ParameterListT)) {
+          for (const p of l.findDirectExpressions(Expressions.ParameterT) || []) {
+            const children = p.getChildren();
+            if (children.length < 3) {
+              continue; // unexpected
+            }
+            parameters.push({
+              left: children[0],
+              eq: children[1].getFirstToken().getStart(),
+              right: children[2],
+            });
+          }
+        }
+
+        const rec = mp.findDirectExpression(Expressions.ParameterT);
+        if (rec) {
+          const children = rec.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+
+
+        for (const ex of mp.findDirectExpression(Expressions.ParameterListExceptions)?.getChildren() || []) {
+          const children = ex.getChildren();
+          if (children.length < 3) {
+            continue; // unexpected
+          }
+          parameters.push({
+            left: children[0],
+            eq: children[1].getFirstToken().getStart(),
+            right: children[2],
+          });
+        }
+      }
+
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
+    }
+
+    return candidates;
   }
 
   private functionParameterCandidates(stru: StructureNode): ICandidate[] {
