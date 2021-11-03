@@ -8,6 +8,11 @@ import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
 
+// todo, NEW #()
+// todo, RaiseEvent
+// todo, CREATE OBJECT
+// todo, RAISE
+
 export class AlignParametersConf extends BasicRuleConfig {
 }
 
