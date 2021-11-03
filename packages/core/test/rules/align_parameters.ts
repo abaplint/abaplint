@@ -135,11 +135,11 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("CALL METHOD, unaligned, expect issue", async () => {
+  it("CALL METHOD, unaligned, expect issue", async () => {
     const abap = `CALL METHOD foo EXPORTING moo = 1
       bar = 1.`;
     const issues = await findIssues(abap);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(0);
   });
 
   it("CALL METHOD, fixed", async () => {

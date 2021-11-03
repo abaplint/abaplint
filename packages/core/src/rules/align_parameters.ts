@@ -29,7 +29,11 @@ export class AlignParameters extends ABAPRule {
       key: "align_parameters",
       title: "Align Parameters",
       shortDescription: `Checks for vertially aligned parameters in function module calls and method calls.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters
+
+Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
+
+Also https://rules.abaplint.org/max_one_method_parameter_per_line/ can help aligning parameter syntax`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
@@ -69,7 +73,6 @@ foobar( moo   = 1
     candidates.push(...this.methodCallParamCandidates(stru));
 
     /* TODO,
-    stru.findAllExpressionsRecursive(MethodCallBody with direct Expressions.MethodParameters);
     stru.findAllExpressionsRecursive(Expressions.ValueBody);
     */
 
