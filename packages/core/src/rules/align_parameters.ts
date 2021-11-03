@@ -85,7 +85,7 @@ foo = VALUE #(
     candidates.push(...this.functionParameterCandidates(stru));
     candidates.push(...this.methodCallParamCandidates(stru));
     candidates.push(...this.valueBodyCandidates(stru));
-    candidates.push(...this.raiseExceptionCandidates(stru));
+    candidates.push(...this.raiseAndCreateCandidates(stru));
 
     for (const c of candidates) {
       const i = this.checkCandidate(c, file);
@@ -148,10 +148,10 @@ foo = VALUE #(
     return candidates;
   }
 
-  private raiseExceptionCandidates(stru: StructureNode): ICandidate[] {
+  private raiseAndCreateCandidates(stru: StructureNode): ICandidate[] {
     const candidates: ICandidate[] = [];
 
-    for (const raise of stru.findAllStatements(Statements.Raise)) {
+    for (const raise of stru.findAllStatements(Statements.Raise).concat(stru.findAllStatements(Statements.CreateObject))) {
       const parameters: IParameterData[] = [];
       const param = raise.findDirectExpression(Expressions.ParameterListS);
       for (const p of param?.getChildren() || []) {

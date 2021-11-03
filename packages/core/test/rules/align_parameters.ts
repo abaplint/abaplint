@@ -200,4 +200,20 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("CREATE OBJECT, error", async () => {
+    const abap = `CREATE OBJECT ei_page TYPE lcl_gui_page_commit
+      EXPORTING io_repo  = mo_repo
+      io_stage = mo_stage.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("CREATE OBJECT, fixed", async () => {
+    const abap = `CREATE OBJECT ei_page TYPE lcl_gui_page_commit
+      EXPORTING io_repo  = mo_repo
+                io_stage = mo_stage.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
