@@ -214,10 +214,15 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,Add,If,Write],[Loop,Add,If],[Loop,Add,If,Write,Add,If,Write],[Loop,Add,If,Write,Add,If],[Loop,Add,If,Add,If,Write],[Loop,Add,If,Add,If],[Loop]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Loop:3,5" -> "Add:4,7";
+"Loop:3,5" -> "end#1";
+"If:5,7" -> "Write:6,9";
+"If:5,7" -> "Loop:3,5";
+"start#1" -> "Loop:3,5";
+"Add:4,7" -> "If:5,7";
+"Write:6,9" -> "Loop:3,5";`);
   });
 
   it("IF, top level EXIT", async () => {
@@ -228,10 +233,12 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Exit],[If]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "Exit:4,7";
+"If:3,5" -> "end#1";
+"Exit:4,7" -> "end#1";
+"start#1" -> "If:3,5";`);
   });
 
   it("IF and top level RETURN", async () => {

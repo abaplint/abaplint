@@ -58,6 +58,7 @@ export class StatementFlow2 {
             graph.addEdge(name, procedureEnd);
           } else if (firstChild.get() instanceof Statements.Exit) {
             graph.addEdge(name, procedureEnd);
+            return graph;
           } else if (firstChild.get() instanceof Statements.Return) {
             graph.addEdge(name, procedureEnd);
             return graph;
