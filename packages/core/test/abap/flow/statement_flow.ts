@@ -196,10 +196,12 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Loop:3,5" -> "Write:4,7";
+"Loop:3,5" -> "end#1";
+"start#1" -> "Loop:3,5";
+"Write:4,7" -> "Loop:3,5";`);
   });
 
   it("LOOP with nested IF", async () => {

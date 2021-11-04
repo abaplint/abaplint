@@ -127,6 +127,19 @@ export class StatementFlow2 {
       } else {
         graph.addEdge(ifName, graph.getEnd());
       }
+    } else if (type instanceof Structures.Loop
+      || type instanceof Structures.While
+      || type instanceof Structures.With
+      || type instanceof Structures.Provide
+      || type instanceof Structures.Select
+      || type instanceof Structures.Do) {
+      const loopName = buildName(n.getFirstStatement()!);
+      const sub = this.traverseBody(findBody(n), procedureEnd);
+
+      graph.addEdge(current, loopName);
+      graph.addGraph(loopName, sub);
+      graph.addEdge(sub.getEnd(), loopName);
+      graph.addEdge(loopName, graph.getEnd());
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }
