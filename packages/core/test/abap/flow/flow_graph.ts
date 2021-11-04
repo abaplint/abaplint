@@ -14,6 +14,9 @@ describe("FlowGraph", () => {
 
     expect(graph.listSources("to")).to.deep.equal(["from"]);
     expect(graph.listTargets("to")).to.deep.equal([]);
+
+    graph.removeEdge("from", "to");
+    expect(graph.listEdges()).to.deep.equal([]);
   });
 
 });

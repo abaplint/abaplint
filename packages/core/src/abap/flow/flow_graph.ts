@@ -24,6 +24,16 @@ export class FlowGraph {
     this.edges[from][to] = true;
   }
 
+  public removeEdge(from: string, to: string) {
+    if (this.edges[from] === undefined) {
+      return;
+    }
+    delete this.edges[from][to];
+    if (Object.keys(this.edges[from]).length === 0) {
+      delete this.edges[from];
+    }
+  }
+
   public listEdges() {
     const list: {from: string, to: string}[] = [];
     for (const from of Object.keys(this.edges)) {
