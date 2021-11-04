@@ -45,8 +45,11 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Write]]");
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toJSON()).to.equal(`{"start#1":{"Write:3,5":true},"Write:3,5":{"Write:4,5":true},"Write:4,5":{"end#1":true}}`);
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "Write:3,5";
+"Write:3,5" -> "Write:4,5";
+"Write:4,5" -> "end#1";`);
   });
 
   it("IF", async () => {
@@ -56,6 +59,7 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Write],[If]]");
+
     const res2 = await buildFORM2(abap);
     expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "end#2";
 "If:3,5" -> "Write:4,7";
@@ -72,6 +76,14 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Write],[If,Else,Data]]");
+
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "Else:5,5";
+"If:3,5" -> "Write:4,7";
+"start#1" -> "If:3,5";
+"Write:4,7" -> "end#2";
+"Else:5,5" -> "Data:6,7";
+"Data:6,7" -> "end#2";`);
   });
 
   it("IF, ELSEIF, ELSE", async () => {

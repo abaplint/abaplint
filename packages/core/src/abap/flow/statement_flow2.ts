@@ -99,7 +99,19 @@ export class StatementFlow2 {
       graph.addEdge(current, ifName);
       graph.addGraph(ifName, sub);
       graph.addEdge(sub.getEnd(), graph.getEnd());
-      graph.addEdge(ifName, graph.getEnd());
+
+      const els = n.findDirectStructure(Structures.Else);
+      const elsest = els?.findDirectStatement(Statements.Else);
+      if (els && elsest) {
+        const elseName = buildName(elsest);
+        const sub = this.traverseBody(findBody(els));
+
+        graph.addEdge(ifName, elseName);
+        graph.addGraph(elseName, sub);
+        graph.addEdge(sub.getEnd(), graph.getEnd());
+      } else {
+        graph.addEdge(ifName, graph.getEnd());
+      }
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }
