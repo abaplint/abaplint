@@ -249,10 +249,12 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Return],[If]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "Return:4,7";
+"If:3,5" -> "end#1";
+"Return:4,7" -> "end#1";
+"start#1" -> "If:3,5";`);
   });
 
   it("top level RETURN", async () => {
