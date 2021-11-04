@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {ABAPFile} from "../../../src/abap/abap_file";
 import {StatementFlow, dumpFlows} from "../../../src/abap/flow/statement_flow";
+import {StatementFlow2} from "../../../src/abap/flow/statement_flow2";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Registry} from "../../../src/registry";
@@ -18,6 +19,19 @@ async function buildFORM(abap: string) {
   return new StatementFlow().build(stru!);
 }
 
+async function buildFORM2(abap: string) {
+  const reg = new Registry();
+  reg.addFile(new MemoryFile("zstatement_flow.prog.abap", "FORM moo.\n" + abap + "\nENDFORM.\n"));
+  await reg.parseAsync();
+  const issues = reg.findIssues().filter(i => i.getKey() === "parser_error");
+  expect(issues[0]?.getMessage()).to.equal(undefined);
+  const obj = reg.getFirstObject()! as ABAPObject;
+  const file = obj.getABAPFiles()[0] as ABAPFile | undefined;
+  const stru = file?.getStructure();
+  expect(stru).to.not.equal(undefined);
+  return new StatementFlow2().build(stru!);
+}
+
 describe("statement_flow", () => {
   it("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
@@ -31,6 +45,8 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Write]]");
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toJSON()).to.equal(`{"start#1":{"Write:3":true},"Write:3":{"Write:4":true},"Write:4":{"end#1":true}}`);
   });
 
   it("IF", async () => {
@@ -40,6 +56,10 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Write],[If]]");
+    /*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+    */
   });
 
   it("IF, ELSE", async () => {
