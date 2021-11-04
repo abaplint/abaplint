@@ -30,7 +30,7 @@ export class StatementFlow2 {
 //      const methodName = f.findFirstExpression(Expressions.MethodName)?.concatTokens();
       ret.push(this.traverseBody(findBody(f)));
     }
-    return ret;
+    return ret.map(f => f.reduce());
   }
 
   private traverseBody(children: readonly (StatementNode | StructureNode)[]): FlowGraph {
