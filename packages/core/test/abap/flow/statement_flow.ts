@@ -308,10 +308,14 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,If,Return],[Loop,If],[Loop,If,If,Return],[Loop,If,If],[Loop]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Loop:3,5" -> "end#1";
+"Loop:3,5" -> "If:4,7";
+"If:4,7" -> "Return:5,9";
+"If:4,7" -> "Loop:3,5";
+"Return:5,9" -> "end#1";
+"start#1" -> "Loop:3,5";`);
   });
 
   it("Basic DO", async () => {
@@ -321,10 +325,12 @@ describe("statement_flow", () => {
     ENDDO.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Do,Write],[Do,Write,Write],[Do]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Do:3,5" -> "Write:4,7";
+"Do:3,5" -> "end#1";
+"start#1" -> "Do:3,5";
+"Write:4,7" -> "Do:3,5";`);
   });
 
   it("Basic WHILE", async () => {
@@ -334,10 +340,12 @@ describe("statement_flow", () => {
     ENDWHILE.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[While,Write],[While,Write,Write],[While]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"While:3,5" -> "Write:4,7";
+"While:3,5" -> "end#1";
+"start#1" -> "While:3,5";
+"Write:4,7" -> "While:3,5";`);
   });
 
   it("Basic SELECT loop", async () => {
@@ -347,10 +355,12 @@ describe("statement_flow", () => {
     ENDSELECT.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[SelectLoop,Write],[SelectLoop,Write,Write],[SelectLoop]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"SelectLoop:3,5" -> "Write:4,7";
+"SelectLoop:3,5" -> "end#1";
+"start#1" -> "SelectLoop:3,5";
+"Write:4,7" -> "SelectLoop:3,5";`);
   });
 
   it("Basic CASE loop", async () => {
