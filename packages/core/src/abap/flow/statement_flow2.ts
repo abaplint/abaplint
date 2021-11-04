@@ -89,24 +89,37 @@ export class StatementFlow2 {
       return graph;
     }
 
-    const current = graph.getStart();
+    let current = graph.getStart();
 
     const type = n.get();
     if (type instanceof Structures.If) {
       const ifName = buildName(n.findDirectStatement(Statements.If)!);
       const sub = this.traverseBody(findBody(n));
-
       graph.addEdge(current, ifName);
       graph.addGraph(ifName, sub);
       graph.addEdge(sub.getEnd(), graph.getEnd());
+      current = ifName;
+
+      for (const e of n.findDirectStructures(Structures.ElseIf)) {
+        const elseifst = e.findDirectStatement(Statements.ElseIf);
+        if (elseifst === undefined) {
+          continue;
+        }
+
+        const elseIfName = buildName(elseifst);
+        const sub = this.traverseBody(findBody(e));
+        graph.addEdge(current, elseIfName);
+        graph.addGraph(elseIfName, sub);
+        graph.addEdge(sub.getEnd(), graph.getEnd());
+        current = elseIfName;
+      }
 
       const els = n.findDirectStructure(Structures.Else);
       const elsest = els?.findDirectStatement(Statements.Else);
       if (els && elsest) {
         const elseName = buildName(elsest);
         const sub = this.traverseBody(findBody(els));
-
-        graph.addEdge(ifName, elseName);
+        graph.addEdge(current, elseName);
         graph.addGraph(elseName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
       } else {

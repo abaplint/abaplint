@@ -97,6 +97,17 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Write],[If,ElseIf,Data],[If,ElseIf,Else,Data]]");
+
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "ElseIf:5,5";
+"If:3,5" -> "Write:4,7";
+"ElseIf:5,5" -> "Else:7,5";
+"ElseIf:5,5" -> "Data:6,7";
+"start#1" -> "If:3,5";
+"Write:4,7" -> "end#2";
+"Data:6,7" -> "end#2";
+"Else:7,5" -> "Data:8,7";
+"Data:8,7" -> "end#2";`);
   });
 
   it("CHECK", async () => {
