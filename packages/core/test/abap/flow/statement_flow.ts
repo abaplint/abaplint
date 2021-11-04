@@ -133,10 +133,13 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Assert],[Write,Assert,Write]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "Write:3,5";
+"Write:3,5" -> "Assert:4,5";
+"Assert:4,5" -> "end#1";
+"Assert:4,5" -> "Write:5,5";
+"Write:5,5" -> "end#1";`);
   });
 
   it("RETURN", async () => {
@@ -146,10 +149,11 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Return]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "Write:3,5";
+"Write:3,5" -> "Return:4,5";
+"Return:4,5" -> "end#1";`);
   });
 
   it("IF with RETURN", async () => {

@@ -60,6 +60,7 @@ export class StatementFlow2 {
             graph.addEdge(name, procedureEnd);
           } else if (firstChild.get() instanceof Statements.Return) {
             graph.addEdge(name, procedureEnd);
+            break;
           }
         } else if(firstChild instanceof StructureNode) {
 //          console.dir("firstch: " + firstChild.get().constructor.name);
