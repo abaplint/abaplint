@@ -263,10 +263,10 @@ describe("statement_flow", () => {
       WRITE sdfds.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Return]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "Return:3,7";
+"Return:3,7" -> "end#1";`);
   });
 
   it("LOOP with nested IF + EXIT", async () => {
