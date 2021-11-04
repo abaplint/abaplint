@@ -41,6 +41,15 @@ export class FlowGraph {
     return list;
   }
 
+  public listNodes() {
+    const set = new Set<string>();
+    for (const l of this.listEdges()) {
+      set.add(l.from);
+      set.add(l.to);
+    }
+    return set;
+  }
+
   public hasEdges(): boolean {
     return Object.keys(this.edges).length > 0;
   }
