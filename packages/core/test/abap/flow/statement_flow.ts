@@ -61,10 +61,10 @@ describe("statement_flow", () => {
     expect(dumpFlows(res)).to.equal("[[If,Write],[If]]");
 
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "end#2";
-"If:3,5" -> "Write:4,7";
+    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "Write:4,7";
+"If:3,5" -> "end#1";
 "start#1" -> "If:3,5";
-"Write:4,7" -> "end#2";`);
+"Write:4,7" -> "end#1";`);
   });
 
   it("IF, ELSE", async () => {
@@ -81,9 +81,9 @@ describe("statement_flow", () => {
     expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "Else:5,5";
 "If:3,5" -> "Write:4,7";
 "start#1" -> "If:3,5";
-"Write:4,7" -> "end#2";
+"Write:4,7" -> "end#1";
 "Else:5,5" -> "Data:6,7";
-"Data:6,7" -> "end#2";`);
+"Data:6,7" -> "end#1";`);
   });
 
   it("IF, ELSEIF, ELSE", async () => {
@@ -104,10 +104,10 @@ describe("statement_flow", () => {
 "ElseIf:5,5" -> "Else:7,5";
 "ElseIf:5,5" -> "Data:6,7";
 "start#1" -> "If:3,5";
-"Write:4,7" -> "end#2";
-"Data:6,7" -> "end#2";
+"Write:4,7" -> "end#1";
+"Data:6,7" -> "end#1";
 "Else:7,5" -> "Data:8,7";
-"Data:8,7" -> "end#2";`);
+"Data:8,7" -> "end#1";`);
   });
 
   it("CHECK", async () => {
@@ -164,10 +164,12 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Return],[If]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "Return:4,7";
+"If:3,5" -> "end#1";
+"Return:4,7" -> "end#1";
+"start#1" -> "If:3,5";`);
   });
 
   it("IF", async () => {
@@ -178,10 +180,13 @@ describe("statement_flow", () => {
     DATA bar.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Write,Data],[If,Data]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"If:3,5" -> "Write:4,7";
+"If:3,5" -> "Data:6,5";
+"Data:6,5" -> "end#1";
+"start#1" -> "If:3,5";
+"Write:4,7" -> "Data:6,5";`);
   });
 
   it("LOOP", async () => {

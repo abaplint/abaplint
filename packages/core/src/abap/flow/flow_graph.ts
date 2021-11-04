@@ -1,7 +1,7 @@
 export class FlowGraph {
   private edges: {[from: string]: {[to: string]: boolean}};
   private readonly start: string;
-  private end: string;
+  private readonly end: string;
 
   public constructor(counter: number) {
     this.edges = {};
@@ -107,18 +107,34 @@ export class FlowGraph {
       }
       const sources = this.listSources(node);
       const targets = this.listTargets(node);
-      if (sources.length === 1 && targets.length === 1) {
-        this.removeEdge(sources[0], node);
-        this.removeEdge(node, targets[0]);
-        this.addEdge(sources[0], targets[0]);
+      if (sources.length > 0 && targets.length > 0) {
+        // hash node in the middle of the graph
+        for (const s of sources) {
+          this.removeEdge(s, node);
+        }
+        for (const t of targets) {
+          this.removeEdge(node, t);
+        }
+        for (const s of sources) {
+          for (const t of targets) {
+            this.addEdge(s, t);
+          }
+        }
+      }
+
+      if (node.startsWith("end#") && sources.length === 0) {
+        for (const t of targets) {
+          this.removeEdge(node, t);
+        }
       }
     }
-
+/*
     const endSources = this.listSources(this.getEnd());
     if (endSources.length === 1 && endSources[0].startsWith("end#")) {
       this.removeEdge(endSources[0], this.getEnd());
       this.end = endSources[0];
     }
+    */
     return this;
   }
 }
