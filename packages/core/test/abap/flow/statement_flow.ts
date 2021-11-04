@@ -117,10 +117,13 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Check],[Write,Check,Write]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "Write:3,5";
+"Write:3,5" -> "Check:4,5";
+"Check:4,5" -> "end#1";
+"Check:4,5" -> "Write:5,5";
+"Write:5,5" -> "end#1";`);
   });
 
   it("ASSERT", async () => {
