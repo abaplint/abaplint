@@ -46,7 +46,7 @@ describe("statement_flow", () => {
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Write]]");
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toJSON()).to.equal(`{"start#1":{"Write:3":true},"Write:3":{"Write:4":true},"Write:4":{"end#1":true}}`);
+    expect(res2[0].toJSON()).to.equal(`{"start#2":{"Write:3":true},"Write:3":{"Write:4":true},"Write:4":{"end#2":true}}`);
   });
 
   it("IF", async () => {
