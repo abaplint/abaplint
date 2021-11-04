@@ -46,7 +46,7 @@ describe("statement_flow", () => {
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Write]]");
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toJSON()).to.equal(`{"start#2":{"Write:3":true},"Write:3":{"Write:4":true},"Write:4":{"end#2":true}}`);
+    expect(res2[0].toJSON()).to.equal(`{"start#1":{"Write:3,5":true},"Write:3,5":{"Write:4,5":true},"Write:4,5":{"end#1":true}}`);
   });
 
   it("IF", async () => {
@@ -56,10 +56,15 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Write],[If]]");
-    /*
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-    */
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "start#2";
+"start#2" -> "If:3,5";
+"If:3,5" -> "start#3";
+"If:3,5" -> "end#2";
+"start#3" -> "Write:4,7";
+"Write:4,7" -> "end#3";
+"end#3" -> "end#2";
+"end#2" -> "end#1";`);
   });
 
   it("IF, ELSE", async () => {

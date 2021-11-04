@@ -1,14 +1,12 @@
 export class FlowGraph {
-  private static counter = 1;
   private edges: {[from: string]: {[to: string]: boolean}};
   private readonly start: string;
   private readonly end: string;
 
-  public constructor() {
+  public constructor(counter: number) {
     this.edges = {};
-    this.start = "start#" + FlowGraph.counter;
-    this.end = "end#" + FlowGraph.counter;
-    FlowGraph.counter++;
+    this.start = "start#" + counter;
+    this.end = "end#" + counter;
   }
 
   public getStart(): string {
@@ -42,7 +40,7 @@ export class FlowGraph {
       set.add(l.from);
       set.add(l.to);
     }
-    return set;
+    return Array.from(set.values());
   }
 
   public hasEdges(): boolean {
@@ -68,6 +66,26 @@ export class FlowGraph {
     for (const l of this.listEdges()) {
       graph += `"${l.from}" -> "${l.to}";\n`;
     }
-    return graph;
+    return graph.trim();
+  }
+
+  public listSources(node: string): string[] {
+    const set = new Set<string>();
+    for (const l of this.listEdges()) {
+      if (node === l.to) {
+        set.add(l.from);
+      }
+    }
+    return Array.from(set.values());
+  }
+
+  public listTargets(node: string): string[] {
+    const set = new Set<string>();
+    for (const l of this.listEdges()) {
+      if (node === l.from) {
+        set.add(l.to);
+      }
+    }
+    return Array.from(set.values());
   }
 }

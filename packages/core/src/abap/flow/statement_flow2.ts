@@ -8,12 +8,17 @@ function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] 
 }
 
 function buildName(statement: StatementNode): string {
-  return statement.get().constructor.name + ":" + statement.getFirstToken().getRow();
+  // note: there might be multiple statements on the same line
+  return statement.get().constructor.name +
+    ":" + statement.getFirstToken().getRow() +
+    "," + statement.getFirstToken().getCol();
 }
 
 export class StatementFlow2 {
+  private counter = 0;
 
   public build(stru: StructureNode): FlowGraph[] {
+    this.counter = 1;
     const ret: FlowGraph[] = [];
     const forms = stru.findAllStructures(Structures.Form);
     for (const f of forms) {
@@ -29,7 +34,7 @@ export class StatementFlow2 {
   }
 
   private traverseBody(children: readonly (StatementNode | StructureNode)[]): FlowGraph {
-    const graph = new FlowGraph();
+    const graph = new FlowGraph(this.counter++);
     if (children.length === 0) {
       return graph;
     }
@@ -56,7 +61,7 @@ export class StatementFlow2 {
             break;
           }
         } else if(firstChild instanceof StructureNode) {
-          console.dir("firstch: " + firstChild.get().constructor.name);
+//          console.dir("firstch: " + firstChild.get().constructor.name);
           const sub = this.traverseStructure(firstChild);
           current = graph.addGraph(current, sub);
 //          console.dir("found: " + dump(found));
@@ -79,7 +84,7 @@ export class StatementFlow2 {
   }
 
   private traverseStructure(n: StructureNode | undefined): FlowGraph {
-    const graph = new FlowGraph();
+    const graph = new FlowGraph(this.counter++);
     if (n === undefined) {
       return graph;
     }
