@@ -117,6 +117,10 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Check],[Write,Check,Write]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("ASSERT", async () => {
@@ -126,6 +130,10 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Assert],[Write,Assert,Write]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("RETURN", async () => {
@@ -135,6 +143,10 @@ describe("statement_flow", () => {
     WRITE 'world'.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Write,Return]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("IF with RETURN", async () => {
@@ -145,6 +157,10 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Return],[If]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("IF", async () => {
@@ -155,6 +171,10 @@ describe("statement_flow", () => {
     DATA bar.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Write,Data],[If,Data]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("LOOP", async () => {
@@ -164,6 +184,10 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("LOOP with nested IF", async () => {
@@ -176,6 +200,10 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,Add,If,Write],[Loop,Add,If],[Loop,Add,If,Write,Add,If,Write],[Loop,Add,If,Write,Add,If],[Loop,Add,If,Add,If,Write],[Loop,Add,If,Add,If],[Loop]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("IF, top level EXIT", async () => {
@@ -186,6 +214,10 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Exit],[If]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("IF and top level RETURN", async () => {
@@ -196,6 +228,10 @@ describe("statement_flow", () => {
     ENDIF.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[If,Return],[If]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("top level RETURN", async () => {
@@ -204,6 +240,10 @@ describe("statement_flow", () => {
       WRITE sdfds.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Return]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("LOOP with nested IF + EXIT", async () => {
@@ -215,6 +255,10 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,If,Exit],[Loop,If],[Loop,If,If,Exit],[Loop,If,If],[Loop]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("LOOP with nested IF + CONTINUE", async () => {
@@ -226,6 +270,10 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,If,Continue],[Loop,If],[Loop,If,If,Continue],[Loop,If,If],[Loop]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("LOOP with nested IF + RETURN", async () => {
@@ -237,6 +285,10 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,If,Return],[Loop,If],[Loop,If,If,Return],[Loop,If,If],[Loop]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("Basic DO", async () => {
@@ -246,6 +298,10 @@ describe("statement_flow", () => {
     ENDDO.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Do,Write],[Do,Write,Write],[Do]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("Basic WHILE", async () => {
@@ -255,6 +311,10 @@ describe("statement_flow", () => {
     ENDWHILE.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[While,Write],[While,Write,Write],[While]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("Basic SELECT loop", async () => {
@@ -264,6 +324,10 @@ describe("statement_flow", () => {
     ENDSELECT.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[SelectLoop,Write],[SelectLoop,Write,Write],[SelectLoop]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("Basic CASE loop", async () => {
@@ -278,6 +342,10 @@ CASE foobar.
 ENDCASE.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case,WhenOthers,Call]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("CASE without OTHERS", async () => {
@@ -290,6 +358,10 @@ CASE foobar.
 ENDCASE.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("Basic TRY-CATCH", async () => {
@@ -302,6 +374,10 @@ CATCH foobar.
 ENDTRY.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Try,Write,Call],[Try,Write,Call,Catch,Move]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("empty TRY-CATCH", async () => {
@@ -310,6 +386,10 @@ TRY.
 ENDTRY.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Try]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
   it("empty TRY-CATCH", async () => {
@@ -319,6 +399,10 @@ CATCH foobar.
 ENDTRY.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Try],[Try,Catch]]");
+/*
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toDigraph()).to.equal(`sdfds`);
+*/
   });
 
 });
