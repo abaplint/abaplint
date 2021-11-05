@@ -977,4 +977,12 @@ cl_voided=>void( bar = bar ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("DELETE REPORT", async () => {
+    const abap = `
+  DATA gv_prog TYPE string.
+  DELETE REPORT gv_prog.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
