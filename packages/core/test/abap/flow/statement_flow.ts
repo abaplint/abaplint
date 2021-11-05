@@ -242,8 +242,8 @@ describe("statement_flow", () => {
 "Loop:3,5" -> "If:4,7";
 "If:4,7" -> "Exit:5,9";
 "If:4,7" -> "Loop:3,5";
-"Exit:5,9" -> "Loop:3,5";
-"start#1" -> "Loop:3,5";`);
+"start#1" -> "Loop:3,5";
+"Exit:5,9" -> "end#1";`);
   });
 
   it("LOOP with nested IF + CONTINUE", async () => {
@@ -416,9 +416,9 @@ ENDTRY.`;
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Exit:4,7";
 "Loop:3,5" -> "Write:7,5";
-"Exit:4,7" -> "Loop:3,5";
 "Write:7,5" -> "end#1";
-"start#1" -> "Loop:3,5";`);
+"start#1" -> "Loop:3,5";
+"Exit:4,7" -> "Write:7,5";`);
   });
 
   it("LOOP with CONTINUE", async () => {
@@ -435,6 +435,16 @@ ENDTRY.`;
 "Continue:4,7" -> "Loop:3,5";
 "Write:7,5" -> "end#1";
 "start#1" -> "Loop:3,5";`);
+  });
+
+  it("Chained statement", async () => {
+    const abap = `
+    DATA: foo, bar.`;
+
+    const res2 = await buildFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Data:3,11";
+"Data:3,11" -> "Data:3,16";
+"Data:3,16" -> "end#1";`);
   });
 
 });
