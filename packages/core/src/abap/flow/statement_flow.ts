@@ -21,7 +21,7 @@ import {FlowGraph} from "./flow_graph";
 // TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
 // TODO: RAISE
 
-export class StatementFlow2 {
+export class StatementFlow {
   private counter = 0;
 
   public build(stru: StructureNode): FlowGraph[] {

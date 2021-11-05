@@ -15,7 +15,7 @@ import {IRegistry} from "../_iregistry";
 import {References} from "./references";
 import {Implementation} from "./implementation";
 import {SemanticHighlighting} from "./semantic";
-import {StatementFlow2} from "../abap/flow/statement_flow2";
+import {StatementFlow} from "../abap/flow/statement_flow";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/main/versions/protocol-2-x.md#range
@@ -152,7 +152,7 @@ export class LanguageServer {
     if (stru === undefined) {
       return "empty structure";
     }
-    const graphs = new StatementFlow2().build(stru);
+    const graphs = new StatementFlow().build(stru);
     const wiz = graphs.map(g => g.toDigraph());
     return JSON.stringify(wiz);
   }
