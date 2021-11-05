@@ -141,6 +141,28 @@ export class StatementFlow2 {
       graph.addGraph(loopName, sub);
       graph.addEdge(sub.getEnd(), loopName);
       graph.addEdge(loopName, graph.getEnd());
+    } else if (type instanceof Structures.Case) {
+      const caseName = buildName(n.getFirstStatement()!);
+      graph.addEdge(current, caseName);
+      let othersFound = false;
+      for (const w of n.findDirectStructures(Structures.When)) {
+        const first = w.getFirstStatement();
+        if (first === undefined) {
+          continue;
+        }
+        if (first.get() instanceof Statements.WhenOthers) {
+          othersFound = true;
+        }
+        const firstName = buildName(first);
+
+        const sub = this.traverseBody(findBody(w), procedureEnd);
+        graph.addEdge(caseName, firstName);
+        graph.addGraph(firstName, sub);
+        graph.addEdge(sub.getEnd(), graph.getEnd());
+      }
+      if (othersFound === false) {
+        graph.addEdge(caseName, graph.getEnd());
+      }
     } else {
       console.dir("todo, " + n.get().constructor.name);
     }

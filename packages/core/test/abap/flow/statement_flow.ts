@@ -278,10 +278,14 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,If,Exit],[Loop,If],[Loop,If,If,Exit],[Loop,If,If],[Loop]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Loop:3,5" -> "end#1";
+"Loop:3,5" -> "If:4,7";
+"If:4,7" -> "Exit:5,9";
+"If:4,7" -> "Loop:3,5";
+"Exit:5,9" -> "end#1";
+"start#1" -> "Loop:3,5";`);
   });
 
   it("LOOP with nested IF + CONTINUE", async () => {
@@ -293,10 +297,14 @@ describe("statement_flow", () => {
     ENDLOOP.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Loop,If,Continue],[Loop,If],[Loop,If,If,Continue],[Loop,If,If],[Loop]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Loop:3,5" -> "end#1";
+"Loop:3,5" -> "If:4,7";
+"If:4,7" -> "Continue:5,9";
+"If:4,7" -> "Loop:3,5";
+"start#1" -> "Loop:3,5";
+"Continue:5,9" -> "Loop:3,5";`);
   });
 
   it("LOOP with nested IF + RETURN", async () => {
@@ -375,10 +383,18 @@ CASE foobar.
 ENDCASE.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case,WhenOthers,Call]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Case:3,1" -> "When:4,3";
+"Case:3,1" -> "When:6,3";
+"Case:3,1" -> "WhenOthers:8,3";
+"start#1" -> "Case:3,1";
+"When:4,3" -> "Write:5,5";
+"Write:5,5" -> "end#1";
+"When:6,3" -> "Move:7,5";
+"Move:7,5" -> "end#1";
+"WhenOthers:8,3" -> "Call:9,5";
+"Call:9,5" -> "end#1";`);
   });
 
   it("CASE without OTHERS", async () => {
@@ -391,10 +407,16 @@ CASE foobar.
 ENDCASE.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Case:3,1" -> "When:4,3";
+"Case:3,1" -> "When:6,3";
+"Case:3,1" -> "end#1";
+"start#1" -> "Case:3,1";
+"When:4,3" -> "Write:5,5";
+"Write:5,5" -> "end#1";
+"When:6,3" -> "Move:7,5";
+"Move:7,5" -> "end#1";`);
   });
 
   it("Basic TRY-CATCH", async () => {
