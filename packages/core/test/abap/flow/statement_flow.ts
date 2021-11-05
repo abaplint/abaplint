@@ -429,10 +429,15 @@ CATCH foobar.
 ENDTRY.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Try,Write,Call],[Try,Write,Call,Catch,Move]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"Write:4,3" -> "Call:5,3";
+"start#1" -> "Try:3,1";
+"Try:3,1" -> "Write:4,3";
+"Call:5,3" -> "Catch:6,1";
+"Call:5,3" -> "end#1";
+"Catch:6,1" -> "Move:7,3";
+"Move:7,3" -> "end#1";`);
   });
 
   it("empty TRY-CATCH", async () => {
@@ -441,10 +446,10 @@ TRY.
 ENDTRY.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Try]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "Try:3,1";
+"Try:3,1" -> "end#1";`);
   });
 
   it("empty TRY-CATCH", async () => {
@@ -454,10 +459,12 @@ CATCH foobar.
 ENDTRY.`;
     const res = await buildFORM(abap);
     expect(dumpFlows(res)).to.equal("[[Try],[Try,Catch]]");
-/*
+
     const res2 = await buildFORM2(abap);
-    expect(res2[0].toDigraph()).to.equal(`sdfds`);
-*/
+    expect(res2[0].toDigraph()).to.equal(`"start#1" -> "Try:3,1";
+"Try:3,1" -> "Catch:4,1";
+"Try:3,1" -> "end#1";
+"Catch:4,1" -> "end#1";`);
   });
 
 });
