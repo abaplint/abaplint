@@ -1,23 +1,9 @@
 import {expect} from "chai";
 import {ABAPFile} from "../../../src/abap/abap_file";
-import {StatementFlow, dumpFlows} from "../../../src/abap/flow/statement_flow";
 import {StatementFlow2} from "../../../src/abap/flow/statement_flow2";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Registry} from "../../../src/registry";
-
-async function buildFORM(abap: string) {
-  const reg = new Registry();
-  reg.addFile(new MemoryFile("zstatement_flow.prog.abap", "FORM moo.\n" + abap + "\nENDFORM.\n"));
-  await reg.parseAsync();
-  const issues = reg.findIssues().filter(i => i.getKey() === "parser_error");
-  expect(issues[0]?.getMessage()).to.equal(undefined);
-  const obj = reg.getFirstObject()! as ABAPObject;
-  const file = obj.getABAPFiles()[0] as ABAPFile | undefined;
-  const stru = file?.getStructure();
-  expect(stru).to.not.equal(undefined);
-  return new StatementFlow().build(stru!);
-}
 
 async function buildFORM2(abap: string) {
   const reg = new Registry();
@@ -35,16 +21,16 @@ async function buildFORM2(abap: string) {
 describe("statement_flow", () => {
   it("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Write]]");
+
+    const res2 = await buildFORM2(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:2,1";
+"Write:2,1" -> "end#1";`);
   });
 
   it("two WRITEs", async () => {
     const abap = `
     WRITE 'hello'.
     WRITE 'world'.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Write,Write]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:3,5";
@@ -57,8 +43,6 @@ describe("statement_flow", () => {
     IF foo = bar.
       WRITE sdfds.
     ENDIF.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[If,Write],[If]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Write:4,7";
@@ -74,8 +58,6 @@ describe("statement_flow", () => {
     ELSE.
       DATA moo.
     ENDIF.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[If,Write],[If,Else,Data]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Else:5,5";
@@ -95,8 +77,6 @@ describe("statement_flow", () => {
     ELSE.
       DATA moo.
     ENDIF.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[If,Write],[If,ElseIf,Data],[If,ElseIf,Else,Data]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "ElseIf:5,5";
@@ -115,8 +95,6 @@ describe("statement_flow", () => {
     WRITE 'hello'.
     CHECK a = b.
     WRITE 'world'.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Write,Check],[Write,Check,Write]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:3,5";
@@ -131,8 +109,6 @@ describe("statement_flow", () => {
     WRITE 'hello'.
     ASSERT a = b.
     WRITE 'world'.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Write,Assert],[Write,Assert,Write]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:3,5";
@@ -147,8 +123,6 @@ describe("statement_flow", () => {
     WRITE 'hello'.
     RETURN.
     WRITE 'world'.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Write,Return]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:3,5";
@@ -162,8 +136,6 @@ describe("statement_flow", () => {
       RETURN.
       WRITE 'world'.
     ENDIF.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[If,Return],[If]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Return:4,7";
@@ -178,8 +150,6 @@ describe("statement_flow", () => {
       WRITE 'world'.
     ENDIF.
     DATA bar.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[If,Write,Data],[If,Data]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Write:4,7";
@@ -194,8 +164,6 @@ describe("statement_flow", () => {
     LOOP AT bar INTO foo.
       WRITE 'world'.
     ENDLOOP.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Loop,Write],[Loop,Write,Write],[Loop]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Write:4,7";
@@ -212,8 +180,6 @@ describe("statement_flow", () => {
         WRITE moo.
       ENDIF.
     ENDLOOP.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Loop,Add,If,Write],[Loop,Add,If],[Loop,Add,If,Write,Add,If,Write],[Loop,Add,If,Write,Add,If],[Loop,Add,If,Add,If,Write],[Loop,Add,If,Add,If],[Loop]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Add:4,7";
@@ -231,8 +197,6 @@ describe("statement_flow", () => {
       EXIT.
       WRITE sdfds.
     ENDIF.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[If,Exit],[If]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Exit:4,7";
@@ -247,8 +211,6 @@ describe("statement_flow", () => {
       RETURN.
       WRITE sdfds.
     ENDIF.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[If,Return],[If]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Return:4,7";
@@ -261,8 +223,6 @@ describe("statement_flow", () => {
     const abap = `
       RETURN.
       WRITE sdfds.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Return]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Return:3,7";
@@ -276,8 +236,6 @@ describe("statement_flow", () => {
         EXIT.
       ENDIF.
     ENDLOOP.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Loop,If,Exit],[Loop,If],[Loop,If,If,Exit],[Loop,If,If],[Loop]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
@@ -295,8 +253,6 @@ describe("statement_flow", () => {
         CONTINUE.
       ENDIF.
     ENDLOOP.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Loop,If,Continue],[Loop,If],[Loop,If,If,Continue],[Loop,If,If],[Loop]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
@@ -314,8 +270,6 @@ describe("statement_flow", () => {
         RETURN.
       ENDIF.
     ENDLOOP.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Loop,If,Return],[Loop,If],[Loop,If,If,Return],[Loop,If,If],[Loop]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
@@ -331,8 +285,6 @@ describe("statement_flow", () => {
     DO 200 TIMES.
       WRITE moo.
     ENDDO.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Do,Write],[Do,Write,Write],[Do]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Do:3,5" -> "Write:4,7";
@@ -346,8 +298,6 @@ describe("statement_flow", () => {
     WHILE foo = bar.
       WRITE moo.
     ENDWHILE.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[While,Write],[While,Write,Write],[While]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"While:3,5" -> "Write:4,7";
@@ -361,8 +311,6 @@ describe("statement_flow", () => {
     SELECT foo FROM bar INTO moo.
       WRITE moo.
     ENDSELECT.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[SelectLoop,Write],[SelectLoop,Write,Write],[SelectLoop]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"SelectLoop:3,5" -> "Write:4,7";
@@ -381,8 +329,6 @@ CASE foobar.
   WHEN OTHERS.
     call( ).
 ENDCASE.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case,WhenOthers,Call]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Case:3,1" -> "When:4,3";
@@ -405,8 +351,6 @@ CASE foobar.
   WHEN 2.
     foo = bar.
 ENDCASE.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Case,When,Write],[Case,When,Move],[Case]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Case:3,1" -> "When:4,3";
@@ -427,8 +371,6 @@ TRY.
 CATCH foobar.
   foo = 2.
 ENDTRY.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Try,Write,Call],[Try,Write,Call,Catch,Move]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Write:4,3" -> "Call:5,3";
@@ -444,8 +386,6 @@ ENDTRY.`;
     const abap = `
 TRY.
 ENDTRY.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Try]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Try:3,1";
@@ -457,8 +397,6 @@ ENDTRY.`;
 TRY.
 CATCH foobar.
 ENDTRY.`;
-    const res = await buildFORM(abap);
-    expect(dumpFlows(res)).to.equal("[[Try],[Try,Catch]]");
 
     const res2 = await buildFORM2(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Try:3,1";
