@@ -25,6 +25,7 @@ import {Token} from "../1_lexer/tokens/_token";
 interface IContext {
   procedureEnd: string;
   loopStart?: string;
+  loopEnd?: string;
 }
 
 export class StatementFlow {
@@ -104,9 +105,8 @@ export class StatementFlow {
             graph.addEdge(name, context.loopStart);
             return graph;
           } else if (firstChild.get() instanceof Statements.Exit) {
-            if (context.loopStart) {
-              // hmm, perhaps this should hit loop end instead?
-              graph.addEdge(name, context.loopStart);
+            if (context.loopEnd) {
+              graph.addEdge(name, context.loopEnd);
             } else {
               graph.addEdge(name, context.procedureEnd);
             }
@@ -175,7 +175,7 @@ export class StatementFlow {
       || type instanceof Structures.Select
       || type instanceof Structures.Do) {
       const loopName = this.buildName(n.getFirstStatement()!);
-      const sub = this.traverseBody(this.findBody(n), {...context, loopStart: loopName});
+      const sub = this.traverseBody(this.findBody(n), {...context, loopStart: loopName, loopEnd: graph.getEnd()});
 
       graph.addEdge(current, loopName);
       graph.addGraph(loopName, sub);
