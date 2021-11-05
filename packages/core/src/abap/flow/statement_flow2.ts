@@ -4,16 +4,22 @@ import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {FlowGraph} from "./flow_graph";
 
-function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
-  return f.findDirectStructure(Structures.Body)?.getChildren() || [];
-}
+// Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
+//
+// Loop branching: LOOP, DO, WHILE,SELECT(loop), WITH, PROVIDE
+//
+// Branching: IF, CASE, CASE TYPE OF, TRY, ON, CATCH SYSTEM-EXCEPTIONS, AT
+//
+// Conditional exits: CHECK, ASSERT
+//
+// Exits: RETURN, EXIT, RAISE(not RESUMABLE), MESSAGE(type E and A?), CONTINUE, REJECT, RESUME, STOP
+//
+// Not handled? INCLUDE + malplaced macro calls
 
-function buildName(statement: StatementNode): string {
-  // note: there might be multiple statements on the same line
-  return statement.get().constructor.name +
-    ":" + statement.getFirstToken().getRow() +
-    "," + statement.getFirstToken().getCol();
-}
+/////////////////////////////////////
+
+// TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
+// TODO: RAISE
 
 export class StatementFlow2 {
   private counter = 0;
@@ -24,7 +30,7 @@ export class StatementFlow2 {
     for (const f of forms) {
       const formName = "FORM " + f.findFirstExpression(Expressions.FormName)?.concatTokens();
       this.counter = 1;
-      const graph = this.traverseBody(findBody(f), "end#1", undefined);
+      const graph = this.traverseBody(this.findBody(f), "end#1", undefined);
       graph.setLabel(formName);
       ret.push(graph);
     }
@@ -32,11 +38,22 @@ export class StatementFlow2 {
     for (const f of methods) {
       const methodName = "METHOD " + f.findFirstExpression(Expressions.MethodName)?.concatTokens();
       this.counter = 1;
-      const graph = this.traverseBody(findBody(f), "end#1", undefined);
+      const graph = this.traverseBody(this.findBody(f), "end#1", undefined);
       graph.setLabel(methodName);
       ret.push(graph);
     }
     return ret.map(f => f.reduce());
+  }
+
+  private findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
+    return f.findDirectStructure(Structures.Body)?.getChildren() || [];
+  }
+
+  private buildName(statement: StatementNode): string {
+    // note: there might be multiple statements on the same line
+    return statement.get().constructor.name +
+      ":" + statement.getFirstToken().getRow() +
+      "," + statement.getFirstToken().getCol();
   }
 
   private traverseBody(children: readonly (StatementNode | StructureNode)[],
@@ -53,7 +70,7 @@ export class StatementFlow2 {
       if (c.get() instanceof Structures.Normal) {
         const firstChild = c.getFirstChild(); // "Normal" only has one child
         if (firstChild instanceof StatementNode) {
-          const name = buildName(firstChild);
+          const name = this.buildName(firstChild);
           graph.addEdge(current, name);
           current = name;
           if (firstChild.get() instanceof Statements.Check) {
@@ -100,8 +117,8 @@ export class StatementFlow2 {
 
     const type = n.get();
     if (type instanceof Structures.If) {
-      const ifName = buildName(n.findDirectStatement(Statements.If)!);
-      const sub = this.traverseBody(findBody(n), procedureEnd, loopStart);
+      const ifName = this.buildName(n.findDirectStatement(Statements.If)!);
+      const sub = this.traverseBody(this.findBody(n), procedureEnd, loopStart);
       graph.addEdge(current, ifName);
       graph.addGraph(ifName, sub);
       graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -113,8 +130,8 @@ export class StatementFlow2 {
           continue;
         }
 
-        const elseIfName = buildName(elseifst);
-        const sub = this.traverseBody(findBody(e), procedureEnd, loopStart);
+        const elseIfName = this.buildName(elseifst);
+        const sub = this.traverseBody(this.findBody(e), procedureEnd, loopStart);
         graph.addEdge(current, elseIfName);
         graph.addGraph(elseIfName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -124,8 +141,8 @@ export class StatementFlow2 {
       const els = n.findDirectStructure(Structures.Else);
       const elsest = els?.findDirectStatement(Statements.Else);
       if (els && elsest) {
-        const elseName = buildName(elsest);
-        const sub = this.traverseBody(findBody(els), procedureEnd, loopStart);
+        const elseName = this.buildName(elsest);
+        const sub = this.traverseBody(this.findBody(els), procedureEnd, loopStart);
         graph.addEdge(current, elseName);
         graph.addGraph(elseName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -138,24 +155,24 @@ export class StatementFlow2 {
       || type instanceof Structures.Provide
       || type instanceof Structures.Select
       || type instanceof Structures.Do) {
-      const loopName = buildName(n.getFirstStatement()!);
-      const sub = this.traverseBody(findBody(n), procedureEnd, loopName);
+      const loopName = this.buildName(n.getFirstStatement()!);
+      const sub = this.traverseBody(this.findBody(n), procedureEnd, loopName);
 
       graph.addEdge(current, loopName);
       graph.addGraph(loopName, sub);
       graph.addEdge(sub.getEnd(), loopName);
       graph.addEdge(loopName, graph.getEnd());
     } else if (type instanceof Structures.Try) {
-      const tryName = buildName(n.getFirstStatement()!);
+      const tryName = this.buildName(n.getFirstStatement()!);
 
-      const body = this.traverseBody(findBody(n), procedureEnd, loopStart);
+      const body = this.traverseBody(this.findBody(n), procedureEnd, loopStart);
       graph.addEdge(current, tryName);
       graph.addGraph(tryName, body);
       graph.addEdge(body.getEnd(), graph.getEnd());
 
       for (const c of n.findDirectStructures(Structures.Catch)) {
-        const catchName = buildName(c.getFirstStatement()!);
-        const catchBody = this.traverseBody(findBody(c), procedureEnd, loopStart);
+        const catchName = this.buildName(c.getFirstStatement()!);
+        const catchBody = this.traverseBody(this.findBody(c), procedureEnd, loopStart);
 // TODO: this does not take exceptions into account
         graph.addEdge(body.getEnd(), catchName);
         graph.addGraph(catchName, catchBody);
@@ -163,7 +180,7 @@ export class StatementFlow2 {
       }
 // TODO, handle CLEANUP
     } else if (type instanceof Structures.Case) {
-      const caseName = buildName(n.getFirstStatement()!);
+      const caseName = this.buildName(n.getFirstStatement()!);
       graph.addEdge(current, caseName);
       let othersFound = false;
       for (const w of n.findDirectStructures(Structures.When)) {
@@ -174,9 +191,9 @@ export class StatementFlow2 {
         if (first.get() instanceof Statements.WhenOthers) {
           othersFound = true;
         }
-        const firstName = buildName(first);
+        const firstName = this.buildName(first);
 
-        const sub = this.traverseBody(findBody(w), procedureEnd, loopStart);
+        const sub = this.traverseBody(this.findBody(w), procedureEnd, loopStart);
         graph.addEdge(caseName, firstName);
         graph.addGraph(firstName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -185,7 +202,7 @@ export class StatementFlow2 {
         graph.addEdge(caseName, graph.getEnd());
       }
     } else if (type instanceof Structures.CaseType) {
-      const caseName = buildName(n.getFirstStatement()!);
+      const caseName = this.buildName(n.getFirstStatement()!);
       graph.addEdge(current, caseName);
       let othersFound = false;
       for (const w of n.findDirectStructures(Structures.WhenType)) {
@@ -196,9 +213,9 @@ export class StatementFlow2 {
         if (first.get() instanceof Statements.WhenOthers) {
           othersFound = true;
         }
-        const firstName = buildName(first);
+        const firstName = this.buildName(first);
 
-        const sub = this.traverseBody(findBody(w), procedureEnd, loopStart);
+        const sub = this.traverseBody(this.findBody(w), procedureEnd, loopStart);
         graph.addEdge(caseName, firstName);
         graph.addGraph(firstName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
