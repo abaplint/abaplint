@@ -20,7 +20,7 @@ describe("FlowGraph", () => {
 labelloc="t";
 label="hello world";
 graph [fontname = "helvetica"];
-node [fontname = "helvetica"];
+node [fontname = "helvetica", shape="box"];
 edge [fontname = "helvetica"];
 "from" -> "to";
 }`);

@@ -437,4 +437,14 @@ ENDTRY.`;
 "start#1" -> "Loop:3,5";`);
   });
 
+  it("Chained statement", async () => {
+    const abap = `
+    DATA: foo, bar.`;
+
+    const res2 = await buildFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Data:3,11";
+"Data:3,11" -> "Data:3,16";
+"Data:3,16" -> "end#1";`);
+  });
+
 });

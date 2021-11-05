@@ -89,7 +89,7 @@ export class FlowGraph {
 labelloc="t";
 label="${this.label}";
 graph [fontname = "helvetica"];
-node [fontname = "helvetica"];
+node [fontname = "helvetica", shape="box"];
 edge [fontname = "helvetica"];
 ${this.toTextEdges()}
 }`;
