@@ -2,6 +2,7 @@ export class FlowGraph {
   private edges: {[from: string]: {[to: string]: boolean}};
   private readonly start: string;
   private readonly end: string;
+  private label = "undefined";
 
   public constructor(counter: number) {
     this.edges = {};
@@ -71,12 +72,27 @@ export class FlowGraph {
     return JSON.stringify(this.edges);
   }
 
-  public toDigraph(): string {
+  public toTextEdges(): string {
     let graph = "";
     for (const l of this.listEdges()) {
       graph += `"${l.from}" -> "${l.to}";\n`;
     }
     return graph.trim();
+  }
+
+  public setLabel(label: string) {
+    this.label = label;
+  }
+
+  public toDigraph(): string {
+    return `digraph G {
+labelloc="t";
+label="${this.label}";
+graph [fontname = "helvetica"];
+node [fontname = "helvetica"];
+edge [fontname = "helvetica"];
+${this.toTextEdges()}
+}`;
   }
 
   public listSources(node: string): string[] {
@@ -128,13 +144,7 @@ export class FlowGraph {
         }
       }
     }
-/*
-    const endSources = this.listSources(this.getEnd());
-    if (endSources.length === 1 && endSources[0].startsWith("end#")) {
-      this.removeEdge(endSources[0], this.getEnd());
-      this.end = endSources[0];
-    }
-    */
+
     return this;
   }
 }

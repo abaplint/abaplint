@@ -1,6 +1,7 @@
 import {StructureNode, StatementNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
 import {FlowGraph} from "./flow_graph";
 
 function findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
@@ -21,20 +22,25 @@ export class StatementFlow2 {
     const ret: FlowGraph[] = [];
     const forms = stru.findAllStructures(Structures.Form);
     for (const f of forms) {
-//      const formName = f.findFirstExpression(Expressions.FormName)?.concatTokens();
+      const formName = "FORM " + f.findFirstExpression(Expressions.FormName)?.concatTokens();
       this.counter = 1;
-      ret.push(this.traverseBody(findBody(f), "end#1"));
+      const graph = this.traverseBody(findBody(f), "end#1", undefined);
+      graph.setLabel(formName);
+      ret.push(graph);
     }
     const methods = stru.findAllStructures(Structures.Method);
     for (const f of methods) {
-//      const methodName = f.findFirstExpression(Expressions.MethodName)?.concatTokens();
+      const methodName = "METHOD " + f.findFirstExpression(Expressions.MethodName)?.concatTokens();
       this.counter = 1;
-      ret.push(this.traverseBody(findBody(f), "end#1"));
+      const graph = this.traverseBody(findBody(f), "end#1", undefined);
+      graph.setLabel(methodName);
+      ret.push(graph);
     }
     return ret.map(f => f.reduce());
   }
 
-  private traverseBody(children: readonly (StatementNode | StructureNode)[], procedureEnd: string): FlowGraph {
+  private traverseBody(children: readonly (StatementNode | StructureNode)[],
+                       procedureEnd: string, loopStart: string | undefined): FlowGraph {
     const graph = new FlowGraph(this.counter++);
     if (children.length === 0) {
       graph.addEdge(graph.getStart(), graph.getEnd());
@@ -50,18 +56,31 @@ export class StatementFlow2 {
           const name = buildName(firstChild);
           graph.addEdge(current, name);
           current = name;
-          if (firstChild.get() instanceof Statements.Check
-              || firstChild.get() instanceof Statements.Assert) {
+          if (firstChild.get() instanceof Statements.Check) {
+            if (loopStart) {
+              graph.addEdge(name, loopStart);
+            } else {
+              graph.addEdge(name, procedureEnd);
+            }
+          } else if (firstChild.get() instanceof Statements.Assert) {
             graph.addEdge(name, procedureEnd);
+          } else if (firstChild.get() instanceof Statements.Continue && loopStart) {
+            graph.addEdge(name, loopStart);
+            return graph;
           } else if (firstChild.get() instanceof Statements.Exit) {
-            graph.addEdge(name, procedureEnd);
+            if (loopStart) {
+              // hmm, perhaps this should hit loop end instead?
+              graph.addEdge(name, loopStart);
+            } else {
+              graph.addEdge(name, procedureEnd);
+            }
             return graph;
           } else if (firstChild.get() instanceof Statements.Return) {
             graph.addEdge(name, procedureEnd);
             return graph;
           }
         } else if(firstChild instanceof StructureNode) {
-          const sub = this.traverseStructure(firstChild, procedureEnd);
+          const sub = this.traverseStructure(firstChild, procedureEnd, loopStart);
           current = graph.addGraph(current, sub);
         }
       }
@@ -71,7 +90,7 @@ export class StatementFlow2 {
     return graph;
   }
 
-  private traverseStructure(n: StructureNode | undefined, procedureEnd: string): FlowGraph {
+  private traverseStructure(n: StructureNode | undefined, procedureEnd: string, loopStart: string | undefined): FlowGraph {
     const graph = new FlowGraph(this.counter++);
     if (n === undefined) {
       return graph;
@@ -82,7 +101,7 @@ export class StatementFlow2 {
     const type = n.get();
     if (type instanceof Structures.If) {
       const ifName = buildName(n.findDirectStatement(Statements.If)!);
-      const sub = this.traverseBody(findBody(n), procedureEnd);
+      const sub = this.traverseBody(findBody(n), procedureEnd, loopStart);
       graph.addEdge(current, ifName);
       graph.addGraph(ifName, sub);
       graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -95,7 +114,7 @@ export class StatementFlow2 {
         }
 
         const elseIfName = buildName(elseifst);
-        const sub = this.traverseBody(findBody(e), procedureEnd);
+        const sub = this.traverseBody(findBody(e), procedureEnd, loopStart);
         graph.addEdge(current, elseIfName);
         graph.addGraph(elseIfName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -106,7 +125,7 @@ export class StatementFlow2 {
       const elsest = els?.findDirectStatement(Statements.Else);
       if (els && elsest) {
         const elseName = buildName(elsest);
-        const sub = this.traverseBody(findBody(els), procedureEnd);
+        const sub = this.traverseBody(findBody(els), procedureEnd, loopStart);
         graph.addEdge(current, elseName);
         graph.addGraph(elseName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -120,7 +139,7 @@ export class StatementFlow2 {
       || type instanceof Structures.Select
       || type instanceof Structures.Do) {
       const loopName = buildName(n.getFirstStatement()!);
-      const sub = this.traverseBody(findBody(n), procedureEnd);
+      const sub = this.traverseBody(findBody(n), procedureEnd, loopName);
 
       graph.addEdge(current, loopName);
       graph.addGraph(loopName, sub);
@@ -129,14 +148,14 @@ export class StatementFlow2 {
     } else if (type instanceof Structures.Try) {
       const tryName = buildName(n.getFirstStatement()!);
 
-      const body = this.traverseBody(findBody(n), procedureEnd);
+      const body = this.traverseBody(findBody(n), procedureEnd, loopStart);
       graph.addEdge(current, tryName);
       graph.addGraph(tryName, body);
       graph.addEdge(body.getEnd(), graph.getEnd());
 
       for (const c of n.findDirectStructures(Structures.Catch)) {
         const catchName = buildName(c.getFirstStatement()!);
-        const catchBody = this.traverseBody(findBody(c), procedureEnd);
+        const catchBody = this.traverseBody(findBody(c), procedureEnd, loopStart);
 // TODO: this does not take exceptions into account
         graph.addEdge(body.getEnd(), catchName);
         graph.addGraph(catchName, catchBody);
@@ -157,7 +176,7 @@ export class StatementFlow2 {
         }
         const firstName = buildName(first);
 
-        const sub = this.traverseBody(findBody(w), procedureEnd);
+        const sub = this.traverseBody(findBody(w), procedureEnd, loopStart);
         graph.addEdge(caseName, firstName);
         graph.addGraph(firstName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
@@ -179,7 +198,7 @@ export class StatementFlow2 {
         }
         const firstName = buildName(first);
 
-        const sub = this.traverseBody(findBody(w), procedureEnd);
+        const sub = this.traverseBody(findBody(w), procedureEnd, loopStart);
         graph.addEdge(caseName, firstName);
         graph.addGraph(firstName, sub);
         graph.addEdge(sub.getEnd(), graph.getEnd());
