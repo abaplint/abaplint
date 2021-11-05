@@ -126,11 +126,13 @@ import {StatementSyntax} from "./_statement_syntax";
 import {CallTransaction} from "./statements/call_transaction";
 import {SetHandler} from "./statements/set_handler";
 import {Wait} from "./statements/wait";
+import {DeleteReport} from "./statements/delete_report";
 import {Shift} from "./statements/shift";
 import {SetBit} from "./statements/set_bit";
 import {ModifyScreen} from "./statements/modify_screen";
 import {DeleteCluster} from "./statements/delete_cluster";
 import {Unassign} from "./statements/unassign";
+import {InsertTextpool} from "./statements/insert_textpool";
 
 // -----------------------------------
 
@@ -160,8 +162,10 @@ if (Object.keys(map).length === 0) {
   addToMap(new SetPFStatus());
   addToMap(new SetTitlebar());
   addToMap(new Submit());
+  addToMap(new InsertTextpool());
   addToMap(new ReadTable());
   addToMap(new SyntaxCheck());
+  addToMap(new DeleteReport());
   addToMap(new Import());
   addToMap(new Collect());
   addToMap(new Export());

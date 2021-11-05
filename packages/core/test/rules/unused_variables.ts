@@ -977,4 +977,21 @@ cl_voided=>void( bar = bar ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("DELETE REPORT", async () => {
+    const abap = `
+  DATA gv_prog TYPE string.
+  DELETE REPORT gv_prog.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT TEXTPOOL", async () => {
+    const abap = `
+    DATA gv_prog TYPE string.
+    DATA gt_tpool TYPE textpool_table.
+    INSERT TEXTPOOL gv_name FROM gt_tpool.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
