@@ -132,6 +132,7 @@ import {SetBit} from "./statements/set_bit";
 import {ModifyScreen} from "./statements/modify_screen";
 import {DeleteCluster} from "./statements/delete_cluster";
 import {Unassign} from "./statements/unassign";
+import {InsertTextpool} from "./statements/insert_textpool";
 
 // -----------------------------------
 
@@ -161,6 +162,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new SetPFStatus());
   addToMap(new SetTitlebar());
   addToMap(new Submit());
+  addToMap(new InsertTextpool());
   addToMap(new ReadTable());
   addToMap(new SyntaxCheck());
   addToMap(new DeleteReport());
