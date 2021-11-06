@@ -97,11 +97,12 @@ export class UnusedVariables implements IRule {
   private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
 
-    if (node.getIdentifier().stype === ScopeType.OpenSQL) {
+    const stype = node.getIdentifier().stype;
+    if (stype === ScopeType.OpenSQL) {
       return [];
     }
 
-    if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+    if (stype !== ScopeType.BuiltIn) {
       ret.push(...this.checkNode(node, obj));
     }
 
@@ -116,6 +117,7 @@ export class UnusedVariables implements IRule {
     const ret: Issue[] = [];
 
     const vars = node.getData().vars;
+    const stype = node.getIdentifier().stype;
     for (const name in vars) {
       if (this.conf.skipNames?.length > 0
           && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
@@ -127,8 +129,8 @@ export class UnusedVariables implements IRule {
         // todo, workaround for "me" and "super", these should somehow be typed to built-in
         continue;
       } else if ((obj.containsFile(vars[name].getFilename())
-            || node.getIdentifier().stype === ScopeType.Program
-            || node.getIdentifier().stype === ScopeType.Form)
+            || stype === ScopeType.Program
+            || stype === ScopeType.Form)
           && this.isUsed(vars[name], node) === false) {
         const message = "Variable \"" + name.toLowerCase() + "\" not used";
 

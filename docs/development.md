@@ -2,9 +2,11 @@
 
 ## Setup
 
-Run `npm run inst && npm test && npm run link-local` in the root folder to install, test and link everything.
+Run `npm run install && npm test && npm run link-local` in the root folder to install, test and link everything.
 
 In the `packages/core/ folder `npm run test:only` will run unit tests without linting and more.
+
+Node 16 is required for development
 
 ## Debugging
 

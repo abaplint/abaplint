@@ -44,9 +44,8 @@ export class References {
     let ret: Identifier[] = [];
 
     // todo, this first assumes that the identifier is a variable?
-    if (node.getIdentifier().stype === ScopeType.Method
-        || node.getIdentifier().stype === ScopeType.FunctionModule
-        || node.getIdentifier().stype === ScopeType.Form) {
+    const stype = node.getIdentifier().stype;
+    if (stype === ScopeType.Method || stype === ScopeType.FunctionModule || stype === ScopeType.Form) {
       ret = this.findReferences(node, identifier);
     }
     if (ret.length > 1 && exitAfterFound === true) {
@@ -86,16 +85,18 @@ export class References {
     const ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+      const upper = identifier.getName().toUpperCase();
+
       // this is for finding the definitions
       const vars = node.getData().vars;
-      const vid = vars[identifier.getName().toUpperCase()];
+      const vid = vars[upper];
       if (vid?.equals(identifier)) {
         ret.push(vid);
       }
 
       // this is for finding the definitions
       const types = node.getData().types;
-      const tid = types[identifier.getName().toUpperCase()];
+      const tid = types[upper];
       if (tid?.equals(identifier)) {
         ret.push(tid);
       }

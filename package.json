@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "description": "Linter for ABAP",
     "scripts": {
-        "inst": "npm install && cd packages/core/ && npm install && cd ../../ && cd ./packages/cli/ && npm install && cd ../../ && cd ./packages/monaco/ && npm install && cd ../../ ",
+        "install": "npm install && cd packages/core/ && npm install && cd ../../ && cd ./packages/cli/ && npm install && cd ../../ && cd ./packages/monaco/ && npm install && cd ../../ ",
         "test": "cd packages/core/ && npm test && cd ../../ && cd ./packages/cli/ && npm test && cd ../../ && cd ./packages/monaco/ && npm test && cd ../../",
         "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
         "web.rules": "cd web/rules && npm install && npm test && cd ../../",
