@@ -106,8 +106,10 @@ export class UnusedVariables implements IRule {
       ret.push(...this.checkNode(node, obj));
     }
 
-    for (const c of node.getChildren()) {
-      ret.push(...this.traverse(c, obj));
+    if (stype !== ScopeType.Form && stype !== ScopeType.Method) {
+      for (const c of node.getChildren()) {
+        ret.push(...this.traverse(c, obj));
+      }
     }
 
     return ret;
