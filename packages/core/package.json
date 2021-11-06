@@ -1,26 +1,19 @@
 {
     "name": "@abaplint/core",
-    "version": "2.80.7",
+    "version": "2.80.8",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
     "scripts": {
         "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
         "lint:fix": "eslint src/**/*.ts test/**/*.ts --format unix --fix",
-        "compile": "tsc",
-        "postcompile": "sh scripts/version.sh",
-        "pretest": "npm run compile",
-        "test": "mocha --timeout 1000",
+        "compile": "tsc && sh scripts/version.sh",
+        "test": "npm run compile && mocha --timeout 1000 && npm run lint && npm run schema && api-extractor run",
         "test:only": "npm run compile && mocha",
         "test:parallel": "npm run compile && mocha --timeout 1000 --parallel --reporter dot",
-        "posttest": "npm run lint && npm run schema && api-extractor run",
-        "prepublishOnly": "rm -rf build && npm run test",
-        "precoverage": "npm run compile",
-        "coverage": "c8 mocha",
-        "postcoverage": "c8 report --reporter=html",
-        "preschema": "node scripts/schema.js > scripts/schema.ts",
-        "schema": "ts-json-schema-generator --tsconfig tsconfig_schema.json --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
-        "postschema": "node scripts/schema_post.js"
+        "coverage": "npm run compile && c8 mocha && c8 report --reporter=html",
+        "schema": "node scripts/schema.js > scripts/schema.ts && ts-json-schema-generator --tsconfig tsconfig_schema.json --jsDoc extended --path scripts/schema.ts > scripts/schema.json && node scripts/schema_post.js",
+        "publish:patch": "npm --no-git-tag-version version patch && rm -rf build && npm run test && npm publish --access public"
     },
     "mocha": {
         "recursive": true,
