@@ -8,11 +8,9 @@
     "scripts": {
         "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
         "compile": "tsc",
-        "pretest": "npm run compile",
-        "test": "mocha",
-        "posttest": "npm run lint && npm run webpack",
+        "test": "npm run compile && mocha && npm run lint && npm run webpack",
         "webpack": "webpack --progress",
-        "prepublishOnly": "rm -rf build && npm run test"
+        "publish:patch": "npm --no-git-tag-version version patch && rm -rf build && npm install && npm run test && npm publish --access public"
     },
     "mocha": {
         "recursive": true,

@@ -13,7 +13,7 @@ jobs:
       with:
         node-version: '16'
     - name: npm install
-      run: npm install
+      run: npm run inst
     - name: npm test
       run: npm test
     - name: abaplint --version
