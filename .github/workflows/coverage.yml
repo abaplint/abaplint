@@ -14,7 +14,7 @@ jobs:
         node-version: '16'
     - name: Run npm steps
       run: |
-        npm run inst
+        npm run install
         cd packages
         cd core
         npm run coverage
