@@ -11,9 +11,9 @@ jobs:
         fetch-depth: 1
     - uses: actions/setup-node@v2
       with:
-        node-version: '14.x'
+        node-version: '16'
     - name: npm install
-      run: npm install
+      run: npm run inst
     - name: npm test
       run: npm test
     - name: npm run web.playground

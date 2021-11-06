@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "description": "Linter for ABAP",
     "scripts": {
-        "postinstall": "cd packages/core/ && npm install && cd ../../ && cd ./packages/cli/ && npm install && cd ../../ && cd ./packages/monaco/ && npm install && cd ../../ ",
+        "inst": "npm install && cd packages/core/ && npm install && cd ../../ && cd ./packages/cli/ && npm install && cd ../../ && cd ./packages/monaco/ && npm install && cd ../../ ",
         "test": "cd packages/core/ && npm test && cd ../../ && cd ./packages/cli/ && npm test && cd ../../ && cd ./packages/monaco/ && npm test && cd ../../",
         "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
         "web.rules": "cd web/rules && npm install && npm test && cd ../../",
@@ -30,7 +30,7 @@
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.3.0",
         "@typescript-eslint/parser": "^5.3.0",
-        "eslint": "^8.1.0",
+        "eslint": "^8.2.0",
         "eslint-plugin-import": "^2.25.2",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "typescript": "^4.4.4",

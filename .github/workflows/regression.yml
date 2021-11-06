@@ -16,17 +16,17 @@ jobs:
         fetch-depth: 0
     - uses: actions/setup-node@v2
       with:
-        node-version: '14.x'
+        node-version: '16'
 
     - name: compile
       run: |
         cp .github/regression/run.js ../../run.js
-        npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
+        npm run inst && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
         rm -rf packages/cli/build/ && rm -rf packages/core/build/
         git checkout -f main
         git reset --hard
         git status
-        npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
+        npm run inst && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
 
     - name: run
       env:

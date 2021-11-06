@@ -6,7 +6,7 @@
   "typings": "build/index.d.ts",
   "scripts": {
     "test": "tsc",
-    "prepublishOnly": "rm -rf build && npm run test"
+    "publish:patch": "npm --no-git-tag-version version patch && rm -rf build && npm install && npm run test && npm publish --access public"
   },
   "author": "Lars Hvam Petersen",
   "license": "MIT",
