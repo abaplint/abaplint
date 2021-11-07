@@ -5273,6 +5273,13 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("<foobar>");
   });
 
+  it("GET CURSOR FIELD, field not found", () => {
+    const abap = "GET CURSOR FIELD result.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("result");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
