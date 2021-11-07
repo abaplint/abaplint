@@ -7,13 +7,15 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
-import {Interface} from "../objects";
+import {Interface, Program} from "../objects";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
-import {References} from "../lsp/references";
+import {Identifier} from "../abap/4_file_information/_identifier";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes/statement_node";
 import * as Statements from "../abap/2_statements/statements";
 import {Comment} from "../abap/2_statements/statements/_statement";
+import {ReferenceType} from "../abap/5_syntax/_reference";
+
 
 export class UnusedVariablesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive
@@ -22,9 +24,46 @@ export class UnusedVariablesConf extends BasicRuleConfig {
   public skipNames: string[] = [];
 }
 
+class WorkArea {
+  private readonly workarea: {id: TypedIdentifier, count: number}[] = [];
+
+  public push(id: TypedIdentifier, count = 1) {
+    for (const w of this.workarea) {
+      if (id.equals(w.id)) {
+        return;
+      }
+    }
+    this.workarea.push({id, count});
+  }
+
+  public removeIfExists(id: Identifier | undefined): void {
+    if (id === undefined) {
+      return;
+    }
+    for (let i = 0; i < this.workarea.length; i++) {
+      if (id.equals(this.workarea[i].id)) {
+        this.workarea[i].count--;
+        if (this.workarea[i].count === 0) {
+          this.workarea.splice(i, 1);
+        }
+        return;
+      }
+    }
+  }
+
+  public get() {
+    return this.workarea;
+  }
+
+  public count(): number {
+    return this.workarea.length;
+  }
+}
+
 export class UnusedVariables implements IRule {
   private conf = new UnusedVariablesConf();
   private reg: IRegistry;
+  private workarea: WorkArea;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -33,11 +72,11 @@ export class UnusedVariables implements IRule {
       shortDescription: `Checks for unused variables and constants`,
       extendedInformation: `WARNING: slow
 
-      Experimental, might give false positives. Skips event parameters.
+Experimental, might give false positives. Skips event parameters.
 
-      Note that this currently does not work if the source code uses macros.
+Note that this currently does not work if the source code uses macros.
 
-      Unused variables are not reported if the object contains syntax errors.`,
+Unused variables are not reported if the object contains syntax errors. Errors found in INCLUDES are reported for the main program.`,
       tags: [RuleTag.Quickfix],
       pragma: "##NEEDED",
       pseudoComment: "EC NEEDED",
@@ -73,77 +112,101 @@ export class UnusedVariables implements IRule {
       return [];
     }
 
-    const results = this.traverse(syntax.spaghetti.getTop(), obj);
+    this.workarea = new WorkArea();
+    const top = syntax.spaghetti.getTop();
+    this.buildWorkarea(top, obj);
 
-    // remove duplicates, quick and dirty
-    const deduplicated: Issue[] = [];
-    for (const result of results) {
-      let cont = false;
-      for (const d of deduplicated) {
-        if (result.getStart().equals(d.getStart())) {
-          cont = true;
-          break;
+    if (this.workarea.count() === 0) {
+      return this.buildIssues(obj); // exit early if all types are used
+    }
+    this.findUses(top, obj);
+
+    for (const o of this.reg.getObjects()) {
+      if (o === obj) {
+        continue;
+      } else if (o instanceof ABAPObject) {
+        if (this.reg.isDependency(o)) {
+          continue; // do not search in dependencies
+        }
+        const syntax = new SyntaxLogic(this.reg, o).run();
+        this.findUses(syntax.spaghetti.getTop(), o);
+        if (this.workarea.count() === 0) {
+          return this.buildIssues(obj); // exit early if all types are used
         }
       }
-      if (cont === true) {
-        continue;
-      }
-      deduplicated.push(result);
     }
 
-    return deduplicated;
+    return this.buildIssues(obj);
   }
 
-  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
-    const ret: Issue[] = [];
+  private findUses(node: ISpaghettiScopeNode, obj: ABAPObject): void {
 
-    const stype = node.getIdentifier().stype;
-    if (stype === ScopeType.OpenSQL) {
-      return [];
-    }
-
-    if (stype !== ScopeType.BuiltIn) {
-      ret.push(...this.checkNode(node, obj));
+    for (const r of node.getData().references) {
+      if (r.referenceType === ReferenceType.DataReadReference
+          || r.referenceType === ReferenceType.DataWriteReference
+          || r.referenceType === ReferenceType.TypeReference) {
+        this.workarea.removeIfExists(r.resolved);
+      }
     }
 
     for (const c of node.getChildren()) {
-      ret.push(...this.traverse(c, obj));
+      this.findUses(c, obj);
     }
-
-    return ret;
   }
 
-  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
-    const ret: Issue[] = [];
-
-    const vars = node.getData().vars;
+  private buildWorkarea(node: ISpaghettiScopeNode, obj: ABAPObject): void {
     const stype = node.getIdentifier().stype;
-    for (const name in vars) {
-      if (this.conf.skipNames?.length > 0
-          && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
-        continue;
-      }
-      if (name === "ME"
-          || name === "SUPER"
-          || vars[name].getMeta().includes(IdentifierMeta.EventParameter)) {
-        // todo, workaround for "me" and "super", these should somehow be typed to built-in
-        continue;
-      } else if ((obj.containsFile(vars[name].getFilename())
-            || stype === ScopeType.Program
-            || stype === ScopeType.Form)
-          && this.isUsed(vars[name], node) === false) {
-        const message = "Variable \"" + name.toLowerCase() + "\" not used";
 
-        const statement = this.findStatement(vars[name]);
-        if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
+    if (stype === ScopeType.OpenSQL) {
+      return;
+    }
+
+    for (const c of node.getChildren()) {
+      this.buildWorkarea(c, obj);
+    }
+
+    if (stype !== ScopeType.BuiltIn) {
+      const vars = node.getData().vars;
+      for (const name in vars) {
+        const meta = vars[name].getMeta();
+        if (this.conf.skipNames?.length > 0
+            && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
           continue;
-        } else if (this.suppressedbyPseudo(statement, vars[name], obj)) {
+        } else if (name === "ME"
+            || name === "SUPER"
+            || meta.includes(IdentifierMeta.EventParameter)) {
+          // todo, workaround for "me" and "super", these should somehow be typed to built-in
           continue;
         }
-
-        const fix = this.buildFix(vars[name], obj);
-        ret.push(Issue.atIdentifier(vars[name], message, this.getMetadata().key, this.conf.severity, fix));
+        const isInline = meta.includes(IdentifierMeta.InlineDefinition);
+        this.workarea.push(vars[name], isInline ? 2 : 1);
       }
+    }
+  }
+
+  private buildIssues(obj: ABAPObject): Issue[] {
+    const ret: Issue[] = [];
+
+    for (const w of this.workarea.get()) {
+      const filename = w.id.getFilename();
+      if (this.reg.isFileDependency(filename) === true) {
+        continue;
+      } else if (obj instanceof Program === false && obj.containsFile(filename) === false) {
+        continue;
+      }
+
+      const statement = this.findStatement(w.id);
+      if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
+        continue;
+      } else if (this.suppressedbyPseudo(statement, w.id, obj)) {
+        continue;
+      }
+
+      const name = w.id.getName();
+      const message = "Variable \"" + name.toLowerCase() + "\" not used";
+
+      const fix = this.buildFix(w.id, obj);
+      ret.push(Issue.atIdentifier(w.id, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
     return ret;
@@ -170,16 +233,6 @@ export class UnusedVariables implements IRule {
     }
 
     return false;
-  }
-
-  private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
-    const isInline = id.getMeta().includes(IdentifierMeta.InlineDefinition);
-    const found = new References(this.reg).search(id, node, true, isInline === false);
-    if (isInline === true) {
-      return found.length > 2; // inline definitions are always written to
-    } else {
-      return found.length > 1;
-    }
   }
 
   private findStatement(v: TypedIdentifier): StatementNode | undefined {

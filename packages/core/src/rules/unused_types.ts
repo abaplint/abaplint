@@ -44,6 +44,7 @@ class WorkArea {
   }
 }
 
+/*
 function removeDuplicates(list: readonly TypedIdentifier[]): readonly TypedIdentifier[] {
   const deduplicated: TypedIdentifier[] = [];
   for (const result of list) {
@@ -61,6 +62,7 @@ function removeDuplicates(list: readonly TypedIdentifier[]): readonly TypedIdent
   }
   return deduplicated;
 }
+*/
 
 export class UnusedTypesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
@@ -116,7 +118,9 @@ export class UnusedTypes implements IRule {
     }
 
     for (const o of this.reg.getObjects()) {
-      if (o instanceof ABAPObject) {
+      if (o === obj) {
+        continue;
+      } else if (o instanceof ABAPObject) {
         if (this.reg.isDependency(o)) {
           continue; // do not search in dependencies
         }
@@ -130,7 +134,7 @@ export class UnusedTypes implements IRule {
 
     // what is left is unused
     const ret: Issue[] = [];
-    for (const t of removeDuplicates(this.workarea.get())) {
+    for (const t of this.workarea.get()) {
       const message = "Type \"" + t.getName() + "\" not used";
 
       const file = obj.getABAPFileByName(t.getFilename());

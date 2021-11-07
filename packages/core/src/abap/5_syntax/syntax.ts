@@ -133,6 +133,7 @@ import {ModifyScreen} from "./statements/modify_screen";
 import {DeleteCluster} from "./statements/delete_cluster";
 import {Unassign} from "./statements/unassign";
 import {InsertTextpool} from "./statements/insert_textpool";
+import {GetCursor} from "./statements/get_cursor";
 
 // -----------------------------------
 
@@ -154,6 +155,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Move());
   addToMap(new GetBadi());
   addToMap(new CallBadi());
+  addToMap(new GetCursor());
   addToMap(new Replace());
   addToMap(new TruncateDataset());
   addToMap(new Assert());

@@ -164,6 +164,23 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("class attribute referenced", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    METHODS m1.
+    DATA field TYPE string.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD m1.
+    WRITE field.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("method call on object reference", async () => {
     const abap = `
   DATA: lo_zip TYPE REF TO cl_abap_zip.
