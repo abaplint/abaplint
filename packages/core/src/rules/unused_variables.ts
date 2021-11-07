@@ -189,9 +189,9 @@ Unused variables are not reported if the object contains syntax errors. Errors f
 
     for (const w of this.workarea.get()) {
       const filename = w.id.getFilename();
-      if (obj.containsFile(filename) === false
-          && this.reg.isFileDependency(filename) === false
-          && obj instanceof Program === false) {
+      if (this.reg.isFileDependency(filename) === true) {
+        continue;
+      } else if (obj instanceof Program === false && obj.containsFile(filename) === false) {
         continue;
       }
 
