@@ -157,6 +157,10 @@ Unused variables are not reported if the object contains syntax errors. Errors f
   private buildWorkarea(node: ISpaghettiScopeNode, obj: ABAPObject): void {
     const stype = node.getIdentifier().stype;
 
+    if (stype === ScopeType.OpenSQL) {
+      return;
+    }
+
     for (const c of node.getChildren()) {
       this.buildWorkarea(c, obj);
     }
