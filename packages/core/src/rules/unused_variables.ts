@@ -188,7 +188,9 @@ Unused variables are not reported if the object contains syntax errors. Errors f
     const ret: Issue[] = [];
 
     for (const w of this.workarea.get()) {
-      if (obj.containsFile(w.id.getFilename()) === false
+      const filename = w.id.getFilename();
+      if (obj.containsFile(filename) === false
+          && this.reg.isFileDependency(filename) === false
           && obj instanceof Program === false) {
         continue;
       }
