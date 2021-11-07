@@ -118,7 +118,9 @@ export class UnusedTypes implements IRule {
     }
 
     for (const o of this.reg.getObjects()) {
-      if (o instanceof ABAPObject) {
+      if (o === obj) {
+        continue;
+      } else if (o instanceof ABAPObject) {
         if (this.reg.isDependency(o)) {
           continue; // do not search in dependencies
         }

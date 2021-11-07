@@ -40,6 +40,7 @@ export class References {
     return locs.map(LSPUtils.identiferToLocation);
   }
 
+// todo, cleanup this mehtod, some of the method parameters are not used anymore?
   public search(identifier: Identifier, node: ISpaghettiScopeNode, exitAfterFound = false, removeDuplicates = true): Identifier[] {
     let ret: Identifier[] = [];
 
