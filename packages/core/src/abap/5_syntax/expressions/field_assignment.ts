@@ -13,8 +13,8 @@ export class FieldAssignment {
     filename: string,
     targetType: AbstractType | undefined): void {
 
-    const name = node.findDirectExpression(Expressions.FieldSub)?.concatTokens();
-    if (name === undefined) {
+    const fieldSub = node.findDirectExpression(Expressions.FieldSub);
+    if (fieldSub === undefined) {
       throw new Error("FieldAssignment, FieldSub node not found");
     }
 
@@ -25,10 +25,17 @@ export class FieldAssignment {
 
     let type: AbstractType | undefined = undefined;
     if (targetType instanceof StructureType) {
-      type = targetType.getComponentByName(name);
-      if (type === undefined && targetType.containsVoid() === false) {
-        throw new Error(`field ${name} does not exist in structure`);
+      let context: AbstractType | undefined = targetType;
+      for (const c of fieldSub.getChildren()) {
+        const text = c.concatTokens();
+        if (text !== "-" && context instanceof StructureType) {
+          context = context.getComponentByName(text);
+          if (context === undefined && targetType.containsVoid() === false) {
+            throw new Error(`field ${text} does not exist in structure`);
+          }
+        }
       }
+      type = context;
     } else if (targetType instanceof VoidType) {
       type = targetType;
     }

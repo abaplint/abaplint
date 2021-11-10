@@ -3134,7 +3134,7 @@ START-OF-SELECTION.
         obj      = NEW #( ) ).
   ENDFORM.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
   it("raise exception type not found", () => {
@@ -5278,6 +5278,20 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include("result");
+  });
+
+  it("deep structure in value assignment", () => {
+    const abap = `
+TYPES:
+  BEGIN OF ty_foo,
+    BEGIN OF a,
+      c TYPE c,
+      i TYPE i,
+    END OF a,
+  END OF ty_foo.
+DATA(ls_foo) = VALUE ty_foo( a-c = 'X' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
 // todo, static method cannot access instance attributes
