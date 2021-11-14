@@ -294,14 +294,13 @@ FROM bset
 WHERE bukrs = @is_doc_key-company_code
 ORDER BY tax_code
 INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`,
-
 ];
 
 statementType(tests, "SELECT", Statements.Select);
 
 const versions = [
   {abap: "SELECT field, uuid( ) AS uuid FROM table INTO TABLE @DATA(result).", ver: Version.v754},
-  {abap: "SELECT SINGLE abs( field ) FROM ztable INTO @DATA(sdfsd).", ver: Version.v751},
+  {abap: "SELECT SINGLE abs( field ) FROM ztable INTO @DATA(sdfsd).", ver: Version.v740sp05},
   {abap: `SELECT FROM ztable
     FIELDS
     CASE status
