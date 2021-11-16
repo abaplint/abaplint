@@ -133,7 +133,8 @@ DATA(percentage) = CONV decfloat34( comment_number / abs_statement_number ) * 10
           || statementType instanceof Statements.Catch
           || statementType instanceof Statements.ReadTable
           || statementType instanceof Statements.Loop)
-          || writeStatement?.concatTokens()?.includes("?=")) {
+          || writeStatement?.concatTokens()?.includes("?=")
+          || writeStatement?.concatTokens()?.includes(" #(")) {
         continue;
       }
 
