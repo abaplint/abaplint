@@ -30,6 +30,9 @@ export class MethodImplementation implements StatementSyntax {
     scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, filename);
 
     scope.addList(methodDefinition.getParameters().getAll());
+    if (methodDefinition.isStatic() === false) {
+      scope.addList(classDefinition.getAttributes().getInstance());
+    }
 
     for (const i of helper.findInterfaces(classDefinition)) {
       if (methodName.toUpperCase().startsWith(i.name.toUpperCase() + "~") === false) {

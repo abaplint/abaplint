@@ -5294,7 +5294,7 @@ DATA(ls_foo) = VALUE ty_foo( a-c = 'X' ).`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("static method cannot access instance variables, expect error", () => {
+  it("static method cannot access instance variables, expect error", () => {
     const abap = `
 CLASS lcl_poc DEFINITION.
   PUBLIC SECTION.
