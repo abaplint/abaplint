@@ -5294,6 +5294,28 @@ DATA(ls_foo) = VALUE ty_foo( a-c = 'X' ).`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.only("static method cannot access instance variables, expect error", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS publish.
+  PRIVATE SECTION.
+    DATA gv_token TYPE string.
+    CLASS-DATA var TYPE string.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+  METHOD publish.
+    WRITE gv_token.
+    WRITE var.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.contain("gv_token");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
