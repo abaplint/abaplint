@@ -242,6 +242,20 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("Dont inline, type infered", async () => {
+    const issues = await findIssues(`
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+
+  FORM bar.
+    DATA lo_x TYPE REF TO lcl_bar.
+    lo_x = NEW #( ).
+  ENDFORM.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 ////////////////////
 
   it.skip("Dont inline, type P, this will change the type?", async () => {

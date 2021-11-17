@@ -2216,6 +2216,17 @@
               ],
               "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
+            "no_chained_assignment": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoChainedAssignmentConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_chained_assignment"
+            },
             "no_public_attributes": {
               "anyOf": [
                 {
@@ -2644,6 +2655,17 @@
                 }
               ],
               "description": "Enables check for unknown data types, respects errorNamespace\nTags: Syntax\nhttps://rules.abaplint.org/unknown_types"
+            },
+            "unnecessary_chaining": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryChainingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_chaining"
             },
             "unreachable_code": {
               "anyOf": [
@@ -3825,6 +3847,29 @@
       ],
       "type": "string"
     },
+    "NoChainedAssignmentConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "onlyConstants": {
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "onlyConstants"
+      ],
+      "type": "object"
+    },
     "NoPublicAttributesConf": {
       "additionalProperties": false,
       "properties": {
@@ -4879,6 +4924,29 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "UnnecessaryChainingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "onlyConstants": {
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "onlyConstants"
+      ],
       "type": "object"
     },
     "UnreachableCodeConf": {
