@@ -7,7 +7,6 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class NoChainedAssignmentConf extends BasicRuleConfig {
-  public onlyConstants: boolean = false;
 }
 
 export class NoChainedAssignment extends ABAPRule {
