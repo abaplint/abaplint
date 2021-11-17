@@ -21,7 +21,7 @@ export class NoChainedAssignment extends ABAPRule {
       shortDescription: `Find chained assingments and reports issues`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-chain-assignments`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
-      badExample: `var1 = var2 = var3..`,
+      badExample: `var1 = var2 = var3.`,
       goodExample: `var2 = var3.
 var1 = var3.`,
     };

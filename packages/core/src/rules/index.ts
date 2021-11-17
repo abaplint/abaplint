@@ -120,6 +120,7 @@ export * from "./type_form_parameters";
 export * from "./types_naming";
 export * from "./uncaught_exception";
 export * from "./unknown_types";
+export * from "./unnessesary_chaining";
 export * from "./unreachable_code";
 export * from "./unsecure_fae";
 export * from "./unused_ddic";
