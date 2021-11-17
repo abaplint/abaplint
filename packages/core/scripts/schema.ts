@@ -82,6 +82,7 @@ import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
 import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
+import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
 import {ObjectNamingConf} from "../src/rules/object_naming";
@@ -121,6 +122,7 @@ import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
+import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
 import {UnsecureFAEConf} from "../src/rules/unsecure_fae";
 import {UnusedDDICConf} from "../src/rules/unused_ddic";
@@ -230,6 +232,7 @@ export interface IConfig {
     "names_no_dash"?: NamesNoDashConf | boolean,
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
+    "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "object_naming"?: ObjectNamingConf | boolean,
@@ -269,6 +272,7 @@ export interface IConfig {
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
+    "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
     "unsecure_fae"?: UnsecureFAEConf | boolean,
     "unused_ddic"?: UnusedDDICConf | boolean,

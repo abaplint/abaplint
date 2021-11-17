@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/cli",
-    "version": "2.80.10",
+    "version": "2.81.0",
     "description": "abaplint - Command Line Interface",
     "bin": {
         "abaplint": "./abaplint"
@@ -10,6 +10,7 @@
         "compile": "tsc",
         "test": "npm run compile && mocha && npm run lint && npm run webpack",
         "webpack": "webpack --progress",
+        "publish:minor": "npm --no-git-tag-version version minor && rm -rf build && npm install && npm run test && npm publish --access public",
         "publish:patch": "npm --no-git-tag-version version patch && rm -rf build && npm install && npm run test && npm publish --access public"
     },
     "mocha": {
@@ -36,7 +37,7 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@abaplint/core": "^2.80.10",
+        "@abaplint/core": "^2.81.0",
         "@types/chai": "^4.2.22",
         "@types/glob": "^7.2.0",
         "@types/minimist": "^1.2.2",
