@@ -5332,6 +5332,23 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.only("shadowing, ok", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PUBLIC SECTION.
+    DATA var TYPE string.
+    METHODS publish.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+  METHOD publish.
+    DATA var TYPE string.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
