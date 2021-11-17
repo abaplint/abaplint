@@ -5332,7 +5332,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("shadowing, ok", () => {
+  it("shadowing, ok", () => {
     const abap = `
 CLASS lcl_poc DEFINITION.
   PUBLIC SECTION.

@@ -13,33 +13,28 @@ export class MethodImplementation implements StatementSyntax {
     const className = scope.getName();
     const methodToken = node.findFirstExpression(Expressions.MethodName)!.getFirstToken();
     const methodName = methodToken?.getStr();
-    scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
 
     const classDefinition = scope.findClassDefinition(className);
     if (classDefinition === undefined) {
-      scope.pop(node.getLastToken().getEnd());
+//      scope.pop(node.getLastToken().getEnd());
       throw new Error("Class definition for \"" + className + "\" not found");
     }
 
     const {method: methodDefinition} = helper.searchMethodName(classDefinition, methodName);
     if (methodDefinition === undefined) {
-      scope.pop(node.getLastToken().getEnd());
+//      scope.pop(node.getLastToken().getEnd());
       throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
-    scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, filename);
-
-    const parameters = methodDefinition.getParameters().getAll();
-    scope.addList(parameters);
     if (methodDefinition.isStatic() === false) {
-      for (const attribute of classDefinition.getAttributes().getInstance()) {
-        try {
-          scope.addIdentifier(attribute);
-        } catch (error) {
-          continue; // there might be method parameters shadowing instace attributes
-        }
-      }
+      scope.push(ScopeType.MethodInstance, methodName, node.getFirstToken().getStart(), filename);
+      scope.addList(classDefinition.getAttributes().getInstance());
     }
+
+    scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
+
+    scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, filename);
+    scope.addList(methodDefinition.getParameters().getAll());
 
     for (const i of helper.findInterfaces(classDefinition)) {
       if (methodName.toUpperCase().startsWith(i.name.toUpperCase() + "~") === false) {

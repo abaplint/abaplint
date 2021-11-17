@@ -446,10 +446,14 @@ export class SyntaxLogic {
 
     } else if (s instanceof Statements.EndForm
         || s instanceof Statements.EndFunction
-        || s instanceof Statements.EndMethod
         || s instanceof Statements.EndClass
         || s instanceof Statements.EndInterface) {
       this.scope.pop(node.getLastToken().getEnd());
+    } else if (s instanceof Statements.EndMethod) {
+      this.scope.pop(node.getLastToken().getEnd());
+      if (this.scope.getType() === ScopeType.MethodInstance) {
+        this.scope.pop(node.getLastToken().getEnd());
+      }
     }
   }
 
