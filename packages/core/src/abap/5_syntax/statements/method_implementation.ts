@@ -29,9 +29,16 @@ export class MethodImplementation implements StatementSyntax {
 
     scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, filename);
 
-    scope.addList(methodDefinition.getParameters().getAll());
+    const parameters = methodDefinition.getParameters().getAll();
+    scope.addList(parameters);
     if (methodDefinition.isStatic() === false) {
-      scope.addList(classDefinition.getAttributes().getInstance());
+      for (const attribute of classDefinition.getAttributes().getInstance()) {
+        try {
+          scope.addIdentifier(attribute);
+        } catch (error) {
+          continue; // there might be method parameters shadowing instace attributes
+        }
+      }
     }
 
     for (const i of helper.findInterfaces(classDefinition)) {
