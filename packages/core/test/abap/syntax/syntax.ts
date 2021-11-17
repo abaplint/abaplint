@@ -5349,6 +5349,39 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.only("LIKE variable that is not visible, ok", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PRIVATE SECTION.
+    DATA var TYPE string.
+    CLASS-METHODS publish.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+  METHOD publish.
+    DATA foo LIKE var.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it.only("Error, overlapping names", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PRIVATE SECTION.
+    TYPES var TYPE i.
+    DATA var TYPE string.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.contain("var");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
