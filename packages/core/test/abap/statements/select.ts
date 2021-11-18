@@ -318,6 +318,14 @@ LEFT OUTER JOIN z4tmonster_bdata AS item
 WHERE z4t_order_items~order_number EQ @is_order_item-order_number
 AND   z4t_order_items~order_item   EQ @is_order_item-order_item ).`,
 
+  `SELECT
+concat( monster_number, replace( sdf, dfdsfs , name ) )
+AS monster_description,
+length( weapon ) AS weapon_length
+FROM z4t_monster_head
+WHERE hat_size = @( helper_function->hat_size_of_the_day( ) )
+INTO TABLE @DATA(evilized_monster_weapons).`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
