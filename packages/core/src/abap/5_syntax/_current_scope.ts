@@ -82,6 +82,27 @@ export class CurrentScope {
     this.current.getData().types[upper] = type;
   }
 
+  public addExtraLikeType(type: TypedIdentifier | undefined) {
+    if (type === undefined) {
+      return;
+    }
+    this.addExtraLikeTypeNamed(type.getName(), type);
+  }
+
+  public addExtraLikeTypeNamed(name: string, type: TypedIdentifier | undefined) {
+    if (type === undefined) {
+      return;
+    }
+    if (this.current === undefined) {
+      return;
+    }
+    const upper = name.toUpperCase();
+    if (this.current.getData().extraLikeTypes[upper] !== undefined) {
+      throw new Error(`Type name "${name}" already defined`);
+    }
+    this.current.getData().extraLikeTypes[upper] = type;
+  }
+
   public addClassDefinition(c: IClassDefinition) {
     this.current?.getData().cdefs.push(c);
   }
@@ -292,6 +313,13 @@ export class CurrentScope {
       return undefined;
     }
     return this.current?.findType(name);
+  }
+
+  public findExtraLikeType(name: string | undefined): TypedIdentifier | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+    return this.current?.findExtraLikeType(name);
   }
 
   public findVariable(name: string | undefined): TypedIdentifier | undefined {

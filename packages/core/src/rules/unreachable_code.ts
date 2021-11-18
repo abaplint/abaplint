@@ -69,6 +69,10 @@ export class UnreachableCode extends ABAPRule {
     if (s instanceof Statements.Submit && n.findFirstExpression(Expressions.AndReturn) === undefined) {
       return true;
     } else if (s instanceof Statements.Leave && n.findFirstExpression(Expressions.AndReturn) === undefined) {
+      const concat = n.concatTokens();
+      if (concat.includes(" TO LIST-PROCESSING")) {
+        return false;
+      }
       return true;
     } else if (s instanceof Statements.Return
         || s instanceof Statements.Continue

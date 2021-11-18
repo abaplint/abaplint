@@ -35,8 +35,11 @@ export class ClassImplementation implements StatementSyntax {
     helper.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
     scope.addList(classAttributes.getConstants());
-    scope.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
-    scope.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
+    scope.addList(classAttributes.getStatic());
+
+    for (const i of classAttributes.getInstance()) {
+      scope.addExtraLikeType(i);
+    }
 
     const implemented = helper.fromSuperClass(classDefinition);
     helper.fromInterfaces(classDefinition, implemented);

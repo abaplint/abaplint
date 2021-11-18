@@ -5294,6 +5294,94 @@ DATA(ls_foo) = VALUE ty_foo( a-c = 'X' ).`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("static method cannot access instance variables, expect error", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS publish.
+  PRIVATE SECTION.
+    DATA gv_token TYPE string.
+    CLASS-DATA var TYPE string.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+  METHOD publish.
+    WRITE gv_token.
+    WRITE var.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.contain("gv_token");
+  });
+
+  it("shadowing parameter, ok", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PUBLIC SECTION.
+    DATA var TYPE string.
+    METHODS publish IMPORTING var TYPE i.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+  METHOD publish.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("shadowing, ok", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PUBLIC SECTION.
+    DATA var TYPE string.
+    METHODS publish.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+  METHOD publish.
+    DATA var TYPE string.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("LIKE variable that is not visible, ok", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PRIVATE SECTION.
+    DATA var TYPE string.
+    CLASS-METHODS publish.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+  METHOD publish.
+    DATA foo LIKE var.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it.skip("Error, overlapping names", () => {
+    const abap = `
+CLASS lcl_poc DEFINITION.
+  PRIVATE SECTION.
+    TYPES var TYPE i.
+    DATA var TYPE string.
+ENDCLASS.
+
+CLASS lcl_poc IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.contain("var");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

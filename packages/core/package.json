@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.81.0",
+    "version": "2.81.1",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -55,7 +55,7 @@
         "c8": "^7.10.0",
         "source-map-support": "^0.5.20",
         "ts-json-schema-generator": "^0.97.0",
-        "typescript": "^4.4.4"
+        "typescript": "^4.5.2"
     },
     "dependencies": {
         "fast-xml-parser": "^3.21.1",

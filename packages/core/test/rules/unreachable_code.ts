@@ -32,6 +32,12 @@ ENDFORM.`, cnt: 1},
   {abap: `LEAVE TO LIST-PROCESSING AND RETURN TO SCREEN 0.
           WRITE moo.`, cnt: 0},
 
+  {abap: `FORM foo.
+  WRITE 'hello'.
+  LEAVE TO LIST-PROCESSING.
+  WRITE 'world'.
+ENDFORM.`, cnt: 0},
+
   {abap: `CASE sy-subrc.
 WHEN 0.
 WHEN 2.

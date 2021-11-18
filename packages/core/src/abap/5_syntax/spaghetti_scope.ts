@@ -17,6 +17,7 @@ abstract class ScopeData {
       idefs: [],
       forms: [],
       types: {},
+      extraLikeTypes: {},
       deferred: [],
       references: [],
     };
@@ -156,6 +157,21 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
       const data = search.getData();
       if (data.types[upper]) {
         return data.types[upper];
+      }
+      search = search.getParent();
+    }
+
+    return undefined;
+  }
+
+  public findExtraLikeType(name: string): TypedIdentifier | undefined {
+    let search: SpaghettiScopeNode | undefined = this;
+
+    const upper = name.toUpperCase();
+    while (search !== undefined) {
+      const data = search.getData();
+      if (data.extraLikeTypes[upper]) {
+        return data.extraLikeTypes[upper];
       }
       search = search.getParent();
     }

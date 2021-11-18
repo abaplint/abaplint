@@ -90,8 +90,13 @@ export class BasicTypes {
       type = new FieldChain().runSyntax(chain, this.scope, this.filename, ReferenceType.TypeReference);
     } else {
       const name = children.shift()!.getFirstToken().getStr();
-      const found = this.scope.findVariable(name);
+      let found = this.scope.findVariable(name);
       type = found?.getType();
+
+      if (found === undefined) {
+        found = this.scope.findExtraLikeType(name);
+        type = found?.getType();
+      }
 
       if (found) {
         this.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.filename);

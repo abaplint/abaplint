@@ -5,7 +5,6 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class UnnecessaryChainingConf extends BasicRuleConfig {
-  public onlyConstants: boolean = false;
 }
 
 export class UnnecessaryChaining extends ABAPRule {

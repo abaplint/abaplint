@@ -3857,17 +3857,11 @@
           },
           "type": "array"
         },
-        "onlyConstants": {
-          "type": "boolean"
-        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
-      "required": [
-        "onlyConstants"
-      ],
       "type": "object"
     },
     "NoPublicAttributesConf": {
@@ -4936,17 +4930,11 @@
           },
           "type": "array"
         },
-        "onlyConstants": {
-          "type": "boolean"
-        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
-      "required": [
-        "onlyConstants"
-      ],
       "type": "object"
     },
     "UnreachableCodeConf": {
