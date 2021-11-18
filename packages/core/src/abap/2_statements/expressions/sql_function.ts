@@ -21,7 +21,8 @@ export class SQLFunction extends Expression {
     const div = ver(Version.v740sp05, seq("div", tok(ParenLeftW), param, ",", param, tok(WParenRightW)));
     const mod = ver(Version.v740sp05, seq("mod", tok(ParenLeftW), param, ",", param, tok(WParenRightW)));
     const cast = ver(Version.v750, seq("cast", tok(ParenLeftW), param, "AS", castTypes, tok(WParenRightW)));
+    const coalesce = ver(Version.v740sp05, seq("coalesce", tok(ParenLeftW), param, ",", param, tok(WParenRightW)));
 
-    return altPrio(uuid, abs, ceil, floor, cast, div, mod);
+    return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce);
   }
 }

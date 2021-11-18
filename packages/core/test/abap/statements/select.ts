@@ -301,6 +301,23 @@ AS scariness_ratio
 FROM z4t_monster_head
 INTO TABLE @DATA(scariness_table).`,
 
+  `SELECT SINGLE paymentterms
+FROM z4tmonster_bdata
+INTO @DATA(payment_terms)
+WHERE ordernumber EQ @is_order_item-order_number
+AND   itemnumber  EQ (
+SELECT
+coalesce( item~itemnumber , header~itemnumber )
+FROM z4t_order_items
+LEFT OUTER JOIN z4tmonster_bdata AS header
+ON header~ordernumber = z4t_order_items~order_number AND
+   header~itemnumber  = @lc_header_posnr
+LEFT OUTER JOIN z4tmonster_bdata AS item
+  ON item~ordernumber = z4t_order_items~order_number AND
+     item~itemnumber  = z4t_order_items~order_item
+WHERE z4t_order_items~order_number EQ @is_order_item-order_number
+AND   z4t_order_items~order_item   EQ @is_order_item-order_item ).`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
