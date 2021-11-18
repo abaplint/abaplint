@@ -294,6 +294,13 @@ FROM bset
 WHERE bukrs = @is_doc_key-company_code
 ORDER BY tax_code
 INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`,
+
+  `SELECT name, monster_number,
+CAST( strength AS FLTP ) / CAST( sanity_percentage AS FLTP )
+AS scariness_ratio
+FROM z4t_monster_head
+INTO TABLE @DATA(scariness_table).`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
