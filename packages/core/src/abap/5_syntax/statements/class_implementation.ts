@@ -37,6 +37,10 @@ export class ClassImplementation implements StatementSyntax {
     scope.addList(classAttributes.getConstants());
     scope.addList(classAttributes.getStatic());
 
+    for (const i of classAttributes.getInstance()) {
+      scope.addExtraLikeType(i);
+    }
+
     const implemented = helper.fromSuperClass(classDefinition);
     helper.fromInterfaces(classDefinition, implemented);
   }

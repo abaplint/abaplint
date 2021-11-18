@@ -25,6 +25,8 @@ export interface IScopeVariable {
 export interface IScopeData {
   vars: {[name: string]: TypedIdentifier};
   types: {[name: string]: TypedIdentifier};
+  // static methods can type LIKE instance variables that are not visible
+  extraLikeTypes: {[name: string]: TypedIdentifier};
 
   deferred: Token[];
 

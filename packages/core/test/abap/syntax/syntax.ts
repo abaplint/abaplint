@@ -5349,7 +5349,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("LIKE variable that is not visible, ok", () => {
+  it("LIKE variable that is not visible, ok", () => {
     const abap = `
 CLASS lcl_poc DEFINITION.
   PRIVATE SECTION.
@@ -5366,7 +5366,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("Error, overlapping names", () => {
+  it.skip("Error, overlapping names", () => {
     const abap = `
 CLASS lcl_poc DEFINITION.
   PRIVATE SECTION.
