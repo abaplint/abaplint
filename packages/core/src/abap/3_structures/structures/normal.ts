@@ -122,6 +122,7 @@ export class Normal implements IStructure {
                sta(Statements.Leave),
                sta(Statements.LoadReport),
                sta(Statements.Local),
+               sta(Statements.With),
                sta(Statements.LogPoint),
                sta(Statements.Message),
                sta(Statements.ModifyLine),
