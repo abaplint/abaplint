@@ -155,7 +155,7 @@ export class LSPLookup {
     if (ref.resolved) {
       name = "```" + ref.resolved.getName() + "```";
     }
-    let ret = "Resolved Reference: " + ref.referenceType + " " + name;
+    let ret = `${ref.referenceType} ${name}`;
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.ooName) {
       let cdef: IClassDefinition | IInterfaceDefinition | undefined = scope.findClassDefinition(ref.extra.ooName);

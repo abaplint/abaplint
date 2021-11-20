@@ -2,28 +2,29 @@ import {Identifier} from "../4_file_information/_identifier";
 
 export enum ReferenceType {
   /** for classes and interface references */
-  ObjectOrientedReference = "ObjectOrientedReference",
-  ObjectOrientedVoidReference = "ObjectOrientedVoidReference",
-  ObjectOrientedUnknownReference = "ObjectOrientedUnknownReference",
+  ObjectOrientedReference = "Object",
+  ObjectOrientedVoidReference = "Object (void)",
+  ObjectOrientedUnknownReference = "Object (unknown)",
 
-  TableReference = "TableReference",
-  TableVoidReference = "TableVoidReference",
+  TableReference = "Table",
+  TableVoidReference = "Table (void)",
 
-  MethodReference = "MethodReference",
-  BuiltinMethodReference = "BuiltinMethodReference",
-  MethodImplementationReference = "MethodImplementationReference",
+  MethodReference = "Method",
+  BuiltinMethodReference = "Builtin Method",
+  MethodImplementationReference = "Method Implementation",
 
-  TypeReference = "TypeReference",
-  BuiltinTypeReference = "BuiltinTypeReference",
-  VoidType = "VoidType",
-  InferredType = "InferredType",
+  TypeReference = "Type",
+  BuiltinTypeReference = "Builtin Type",
+  VoidType = "Type (void)",
+  InferredType = "Inferred Type",
 
-  FormReference = "FormReference",
-//  FormVoidReference = "FormReference",
+  FormReference = "Form",
+//  FormVoidReference = "Form (void)",
 
-  DataReadReference = "DataReadReference",
-  DataWriteReference = "DataWriteReference",
+  DataReadReference = "Read From",
+  DataWriteReference = "Write To",
 }
+
 
 export interface IReferenceExtras {
   ooName?: string,
