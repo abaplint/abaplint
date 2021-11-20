@@ -3,11 +3,11 @@ import {Identifier} from "../4_file_information/_identifier";
 export enum ReferenceType {
   /** for classes and interface references */
   ObjectOrientedReference = "Object",
-  ObjectOrientedVoidReference = "Object (void)",
-  ObjectOrientedUnknownReference = "Object (unknown)",
+  ObjectOrientedVoidReference = "Object (Void)",
+  ObjectOrientedUnknownReference = "Object (Unknown)",
 
   TableReference = "Table",
-  TableVoidReference = "Table (void)",
+  TableVoidReference = "Table (Void)",
 
   MethodReference = "Method",
   BuiltinMethodReference = "Builtin Method",
@@ -15,7 +15,7 @@ export enum ReferenceType {
 
   TypeReference = "Type",
   BuiltinTypeReference = "Builtin Type",
-  VoidType = "Type (void)",
+  VoidType = "Type (Void)",
   InferredType = "Inferred Type",
 
   FormReference = "Form",

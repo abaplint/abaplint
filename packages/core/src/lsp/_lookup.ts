@@ -52,40 +52,44 @@ export class LSPLookup {
     const clas = bottomScope.findClassDefinition(cursor.token.getStr());
     if (clas && clas.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(clas);
-      return {hover: "Class definition, " + cursor.token.getStr(),
+      return {
+        hover: "Class Definition, " + cursor.token.getStr(),
         definition: found,
         definitionId: clas,
         implementation: undefined,
-        scope: bottomScope};
+        scope: bottomScope,
+      };
     }
 
     const intf = bottomScope.findInterfaceDefinition(cursor.token.getStr());
     if (intf && intf.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(intf);
-      return {hover: "Interface definition, " + cursor.token.getStr(),
+      return {
+        hover: "Interface Definition, " + cursor.token.getStr(),
         definition: found,
         definitionId: intf,
         implementation: undefined,
-        scope: bottomScope};
+        scope: bottomScope,
+      };
     }
 
     const type = bottomScope.findType(cursor.token.getStr());
     if (type !== undefined && type.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(type);
-      const hover = "Type definition, " + cursor.token.getStr() + "\n\n" + this.dumpType(type);
+      const hover = "Type Definition, " + cursor.token.getStr() + "\n\n" + this.dumpType(type);
       return {hover, definition: found, definitionId: type, scope: bottomScope};
     }
 
     const method = this.findMethodDefinition(cursor, bottomScope);
     if (method !== undefined && method.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(method);
-      const hover = "Method definition \"" + method.getName() + "\"";
+      const hover = "Method Definition \"" + method.getName() + "\"";
       return {hover, definition: found, definitionId: method, scope: bottomScope};
     }
 
     const variable = bottomScope.findVariable(cursor.token.getStr());
     if (variable !== undefined && variable.getStart().equals(cursor.token.getStart())) {
-      const hover = "Variable definition\n\n" + this.dumpType(variable);
+      const hover = "Variable Definition\n\n" + this.dumpType(variable);
 
       let location: LServer.Location | undefined = undefined;
       if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
@@ -127,7 +131,7 @@ export class LSPLookup {
     return undefined;
   }
 
-////////////////////////////////////////////
+  ////////////////////////////////////////////
 
   private static dumpType(variable: TypedIdentifier): string {
     let value = variable.toText() + "\n\nType: " + variable.getType().toText(0);
@@ -138,13 +142,13 @@ export class LSPLookup {
       value = value + "\n\nMeta: " + variable.getMeta().join(", ");
     }
     if (variable.getType().containsVoid() === true) {
-      value = value + "\n\nContains void types";
+      value = value + "\n\nContains Void types";
     }
     if (variable.getType().getQualifiedName()) {
-      value = value + "\n\nQualified type name: ```" + variable.getType().getQualifiedName() + "```";
+      value = value + "\n\nQualified Type Name: ```" + variable.getType().getQualifiedName() + "```";
     }
     if (variable.getType().isGeneric() === true) {
-      value = value + "\n\nIs generic type";
+      value = value + "\n\nIs Generic Type";
     }
 
     return value;
@@ -172,6 +176,10 @@ export class LSPLookup {
       ret += "\n\n" + this.hoverMethod(ref.position.getName(), cdef);
     } else if (ref.resolved instanceof TypedIdentifier) {
       ret += "\n\n" + this.dumpType(ref.resolved);
+    }
+
+    if (ref.resolved) {
+      ret += "\n\n(Resolved)";
     }
 
     if (ref.extra !== undefined && Object.keys(ref.extra).length > 0) {
@@ -262,7 +270,7 @@ export class LSPLookup {
 
   private static findMethodDefinition(found: ICursorData, scope: ISpaghettiScopeNode): Identifier | undefined {
     if (scope.getIdentifier().stype !== ScopeType.ClassDefinition
-        || !(found.snode.get() instanceof Statements.MethodDef)) {
+      || !(found.snode.get() instanceof Statements.MethodDef)) {
       return undefined;
     }
 
@@ -277,7 +285,7 @@ export class LSPLookup {
 
     // check the cursor is at the right token
     if (nameToken.getStart().getCol() !== found.token.getStart().getCol()
-        || nameToken.getStart().getRow() !== found.token.getStart().getRow()) {
+      || nameToken.getStart().getRow() !== found.token.getStart().getRow()) {
       return undefined;
     }
 
@@ -298,7 +306,7 @@ export class LSPLookup {
     // check the cursor is at the right token
     const token = name.getFirstToken();
     if (token.getStart().getCol() !== found.token.getStart().getCol()
-        || token.getStart().getRow() !== found.token.getStart().getRow()) {
+      || token.getStart().getRow() !== found.token.getStart().getRow()) {
       return undefined;
     }
 
@@ -315,10 +323,10 @@ export class LSPLookup {
       return undefined;
     }
 
-// check the cursor is at the right token
+    // check the cursor is at the right token
     const token = name.getFirstToken();
     if (token.getStart().getCol() !== found.token.getStart().getCol()
-        || token.getStart().getRow() !== found.token.getStart().getRow()) {
+      || token.getStart().getRow() !== found.token.getStart().getRow()) {
       return undefined;
     }
 
