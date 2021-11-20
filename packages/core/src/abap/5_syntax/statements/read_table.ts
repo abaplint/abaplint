@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType, IntegerType} from "../../types/basic";
+import {VoidType, TableType, IntegerType, DataReference} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
@@ -13,7 +13,7 @@ import {TypeUtils} from "../_type_utils";
 
 export class ReadTable implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-
+    const concat = node.concatTokens().toUpperCase();
     const sources = node.findDirectExpressions(Expressions.Source);
 
     let firstSource = node.findDirectExpression(Expressions.SimpleSource2);
@@ -63,6 +63,10 @@ export class ReadTable implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.ReadTableTarget);
     if (target) {
+      if (concat.includes(" REFERENCE INTO ")) {
+        rowType = new DataReference(rowType);
+      }
+
       const inline = target.findFirstExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, rowType);
@@ -89,7 +93,6 @@ export class ReadTable implements StatementSyntax {
       }
     }
 
-    const concat = node.concatTokens().toUpperCase();
     if (target === undefined && concat.includes(" TRANSPORTING NO FIELDS ") === false) {
       // if sourceType is void, assume its with header
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {

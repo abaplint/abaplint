@@ -49,4 +49,47 @@ describe("Apply fixes", () => {
     expect(result).to.equal(``);
   });
 
+  it("test 4, more overlapping fixes", () => {
+    const abap = `FORM foo.
+  DATA:
+    lv_key              TYPE string,
+    lv_branch           TYPE string,
+    lv_selected_commit  TYPE string,
+    lv_commit_short_sha TYPE string,
+    lv_text             TYPE string,
+    lv_class            TYPE string.
+
+  IF 1 = 2.
+    lv_key = |abc|.
+  ENDIF.
+  lv_branch = |abc|.
+  lv_selected_commit = |abc|.
+  lv_commit_short_sha = |abc|.
+  lv_text = |abc|.
+  lv_class = |abc|.
+ENDFORM.`;
+    const file = new MemoryFile("zfoobar.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const issues = reg.findIssues();
+
+    const jsonFiles: any = {};
+    jsonFiles[file.getFilename()] = file.getRaw();
+
+    const input = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
+    applyFixes(issues, reg, input);
+
+    const result = input.readFileSync("zfoobar.prog.abap").toString();
+    expect(result).to.equal(`FORM foo.
+
+
+  IF 1 = 2.
+    DATA(lv_key) = |abc|.
+  ENDIF.
+  DATA(lv_branch) = |abc|.
+  DATA(lv_selected_commit) = |abc|.
+  DATA(lv_commit_short_sha) = |abc|.
+  DATA(lv_text) = |abc|.
+  DATA(lv_class) = |abc|.
+ENDFORM.`);
+  });
 });

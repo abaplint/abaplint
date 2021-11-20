@@ -5382,6 +5382,18 @@ ENDCLASS.`;
     expect(message).to.contain("var");
   });
 
+  it("Infer type, READ TABLE REFERENCE INTO", () => {
+    const abap = `
+TYPES: BEGIN OF ty_node,
+         index TYPE i,
+       END OF ty_node.
+DATA lt_new_nodes TYPE STANDARD TABLE OF ty_node WITH EMPTY KEY.
+READ TABLE lt_new_nodes INDEX 1 REFERENCE INTO DATA(lr_new_node).
+lr_new_node->index = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

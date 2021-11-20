@@ -38,11 +38,11 @@ function possibleOverlap(edit: IEdit, list: IEdit[]): boolean {
           for (const list1 of e[file1]) {
             for (const list2 of edit[file2]) {
               if (list2.range.start.getRow() <= list1.range.start.getRow()
-                  && list2.range.end.getRow() >= list1.range.start.getRow() ) {
+                  && list2.range.end.getRow() >= list1.range.start.getRow()) {
                 return true;
               }
-              if (list2.range.start.getRow() <= list1.range.end.getRow()
-                  && list2.range.end.getRow() >= list1.range.end.getRow() ) {
+              if (list2.range.start.getRow() <= list1.range.start.getRow()
+                  && list2.range.end.getRow() >= list1.range.end.getRow()) {
                 return true;
               }
             }
