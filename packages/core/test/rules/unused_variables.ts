@@ -316,7 +316,7 @@ ENDCLASS.`;
 
   it("test, quickfix, chained first", async () => {
     testFix(`DATA: foo, bar.
-WRITE bar.`, `DATA:  bar.
+WRITE bar.`, `DATA: bar.
 WRITE bar.`);
   });
 

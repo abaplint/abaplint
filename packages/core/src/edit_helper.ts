@@ -157,10 +157,13 @@ export class EditHelper {
       }
     }
 
+    const colon = statement.getColon();
     if (statement.getLastToken().getStr() === "." && previousStatement) {
       const edit1 = EditHelper.replaceToken(file, previousStatement.getLastToken(), ".");
-      const edit2 = EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
+      const edit2 = EditHelper.deleteRange(file, previousStatement.getLastToken().getEnd(), statement.getLastToken().getEnd());
       return EditHelper.merge(edit1, edit2);
+    } else if (previousStatement === undefined && colon) {
+      return EditHelper.deleteRange(file, colon.getEnd(), statement.getLastToken().getEnd());
     } else {
       return EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
     }
