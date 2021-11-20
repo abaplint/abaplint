@@ -86,7 +86,7 @@ describe("LSP, hover", () => {
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 10));
     expect(hover).to.not.equal(undefined);
-    expect(hover!.value).to.contain("Type definition");
+    expect(hover!.value).to.contain("Type Definition");
   });
 
   it("resolved, typed", () => {
@@ -241,7 +241,7 @@ DATA bar.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 7));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("Type definition");
+    expect(hover?.value).to.contain("Type Definition");
   });
 
   it("Hover read reference", () => {
@@ -634,7 +634,7 @@ ENDCLASS.`;
 
     const hover1 = new Hover(reg).find(buildPosition(file, 15, 15));
     expect(hover1).to.not.equal(undefined);
-    expect(hover1?.value).to.contain("Reference", "hover1");
+    expect(hover1?.value).to.contain("Object", "hover1");
     expect(hover1?.value).to.contain("zif_test", "hover1");
   });
 
@@ -656,12 +656,12 @@ ENDCLASS.`;
 
     const hover1 = new Hover(reg).find(buildPosition(file, 7, 15));
     expect(hover1).to.not.equal(undefined);
-    expect(hover1?.value).to.contain("Reference", "hover1");
+    expect(hover1?.value).to.contain("Object", "hover1");
     expect(hover1?.value).to.contain("zcl_test", "hover1");
 
     const hover2 = new Hover(reg).find(buildPosition(file, 8, 10));
     expect(hover2).to.not.equal(undefined);
-    expect(hover2?.value).to.contain("Reference", "hover2");
+    expect(hover2?.value).to.contain("Object", "hover2");
     expect(hover2?.value).to.contain("zcl_test", "hover2");
   });
 
@@ -684,7 +684,7 @@ ENDCLASS.`;
 
     const hover1 = new Hover(reg).find(buildPosition(file, 7, 25));
     expect(hover1).to.not.equal(undefined);
-    expect(hover1?.value).to.contain("Reference", "hover1");
+    expect(hover1?.value).to.contain("Object", "hover1");
     expect(hover1?.value).to.contain("zif_bar1", "hover1");
   });
 
@@ -710,7 +710,7 @@ ENDIF.`;
 
     const hover1 = new Hover(reg).find(buildPosition(file, 13, 25));
     expect(hover1).to.not.equal(undefined);
-    expect(hover1?.value).to.contain("Reference", "hover1");
+    expect(hover1?.value).to.contain("Read From", "hover1");
     expect(hover1?.value).to.contain("lif_properties", "hover1");
   });
 
@@ -747,7 +747,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 16, 10));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`MethodReference`);
+    expect(hover?.value).to.contain(`Method`);
     expect(hover?.value).to.contain(`{"ooName":"zif_test","ooType":"INTF"}`);
   });
 
@@ -775,7 +775,7 @@ ENDFORM.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 17, 8));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`MethodReference`);
+    expect(hover?.value).to.contain(`Method`);
     expect(hover?.value).to.contain(`{"ooName":"zif_test","ooType":"INTF"}`);
   });
 
@@ -794,7 +794,7 @@ ENDFORM.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 6, 12));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`ObjectOrientedReference`);
+    expect(hover?.value).to.contain(`Object`);
   });
 
   it("hover, MethodImplementationReference", () => {
@@ -810,7 +810,7 @@ ENDCLASS.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 5, 10));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`MethodImplementationReference`);
+    expect(hover?.value).to.contain(`Method Implementation`);
   });
 
   it("hover, method reference via CALL METHOD", () => {
@@ -834,7 +834,7 @@ ENDFORM.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 14, 22));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`MethodReference`);
+    expect(hover?.value).to.contain(`Method`);
   });
 
   it("hover, expect one write reference", () => {
@@ -858,8 +858,8 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 12, 33));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`DataWriteReference`);
-    expect(hover?.value.split("DataWriteReference").length).to.equal(2);
+    expect(hover?.value).to.contain(`Write To`);
+    expect(hover?.value.split("Write To").length).to.equal(2);
   });
 
   it("hover interfaced interface", () => {
@@ -872,7 +872,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 3, 16));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`ObjectOrientedReference`);
+    expect(hover?.value).to.contain(`Object`);
   });
 
   it("hover voided interfaced interface", () => {
@@ -883,7 +883,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 1, 16));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`Void`);
+    expect(hover?.value).to.contain(`(Void)`);
   });
 
   it("hover voided TYPE sfdsfdsdsfds", () => {
@@ -892,7 +892,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 20));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`Void`);
+    expect(hover?.value).to.contain(`(Void)`);
   });
 
   it("hover voided TYPE arch_usr", () => {
@@ -901,7 +901,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 15));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`Void`);
+    expect(hover?.value).to.contain(`(Void)`);
   });
 
   it("hover voided structured TYPE", () => {
@@ -913,7 +913,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 1, 16));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`Void`);
+    expect(hover?.value).to.contain(`(Void)`);
   });
 
   it("hover, voided db table", () => {
@@ -922,7 +922,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 15));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain(`Void`);
+    expect(hover?.value).to.contain(`(Void)`);
   });
 
   it("hover, expect one void", () => {
@@ -932,8 +932,7 @@ START-OF-SELECTION.
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 22));
     expect(hover).to.not.equal(undefined);
-    const count = (hover?.value.match(/VoidType/g) || []).length;
-    expect(count).to.equal(1);
+    expect(hover?.value).to.contain("(Void)");
   });
 
   it("hover, static modifier", () => {
@@ -959,7 +958,7 @@ ENDCLASS.`;
     const reg = new Registry().addFiles([file, tabl]).parse();
     const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 22));
     expect(hoverVariable).to.not.equal(undefined);
-    expect(hoverVariable?.value).to.contain("TableReference");
+    expect(hoverVariable?.value).to.contain("Table");
   });
 
   it("Hover, nested interfaces", () => {
@@ -983,7 +982,7 @@ ENDCLASS.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 13, 13));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("ObjectOrientedReference");
+    expect(hover?.value).to.contain("Object");
   });
 
   it("Hover, implemented interface, check for extras", () => {
@@ -997,7 +996,7 @@ ENDINTERFACE.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 4, 15));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("ObjectOrientedReference");
+    expect(hover?.value).to.contain("Object");
     expect(hover?.value).to.contain("Extra");
   });
 
@@ -1014,7 +1013,7 @@ ENDCLASS.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 2, 30));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("ObjectOrientedVoidReference");
+    expect(hover?.value).to.contain("Object (Void)");
     expect(hover?.value).to.contain("Extra");
   });
 
@@ -1024,7 +1023,7 @@ ENDCLASS.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 25));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("ObjectOrientedVoidReference");
+    expect(hover?.value).to.contain("Object (Void)");
     expect(hover?.value).to.contain("Extra");
   });
 
