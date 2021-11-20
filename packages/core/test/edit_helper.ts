@@ -118,4 +118,48 @@ DATA: foo TYPE c, moo TYPE c, bar TYPE c.`, 1);
 DATA: foo TYPE c, bar TYPE c.`);
   });
 
+  it("deleteStatement, multiple chained, 1", async () => {
+    const result = testDeleteStatement(`
+DATA: foo.
+DATA: bar.
+DATA: moo.`, 1);
+    expect(result).to.equal(`
+DATA: foo.
+
+DATA: moo.`);
+  });
+
+  it("deleteStatement, multiple chained, 2", async () => {
+    const result = testDeleteStatement(`
+DATA: foo.
+DATA: sdf, bar.
+DATA: moo.`, 1);
+    expect(result).to.equal(`
+DATA: foo.
+DATA: bar.
+DATA: moo.`);
+  });
+
+  it("deleteStatement, multiple chained, 3", async () => {
+    const result = testDeleteStatement(`
+DATA: foo.
+DATA: sdf, bar.
+DATA: moo.`, 2);
+    expect(result).to.equal(`
+DATA: foo.
+DATA: sdf.
+DATA: moo.`);
+  });
+
+  it("deleteStatement, non chained", async () => {
+    const result = testDeleteStatement(`
+DATA foo.
+DATA: bar.
+DATA moo.`, 1);
+    expect(result).to.equal(`
+DATA foo.
+
+DATA moo.`);
+  });
+
 });
