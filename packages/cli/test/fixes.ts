@@ -49,7 +49,7 @@ describe("Apply fixes", () => {
     expect(result).to.equal(``);
   });
 
-  it.skip("test 4, more overlapping fixes", () => {
+  it("test 4, more overlapping fixes", () => {
     const abap = `FORM foo.
   DATA:
     lv_key              TYPE string,
@@ -79,6 +79,17 @@ ENDFORM.`;
     applyFixes(issues, reg, input);
 
     const result = input.readFileSync("zfoobar.prog.abap").toString();
-    expect(result).to.equal(`sdsdfsdfsdf`);
+    expect(result).to.equal(`FORM foo.
+
+
+  IF 1 = 2.
+    DATA(lv_key) = |abc|.
+  ENDIF.
+  DATA(lv_branch) = |abc|.
+  DATA(lv_selected_commit) = |abc|.
+  DATA(lv_commit_short_sha) = |abc|.
+  DATA(lv_text) = |abc|.
+  DATA(lv_class) = |abc|.
+ENDFORM.`);
   });
 });
