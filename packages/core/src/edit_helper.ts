@@ -124,26 +124,28 @@ export class EditHelper {
       return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
     }
 
-    // find statements part of chain
-    let chainCount = 0;
     let setPrevious = true;
+    let setNext = true;
     /** previous statement in the chain */
     let previousStatement: StatementNode | undefined = undefined;
+    /** next statement in the chain */
+    let nextStatement: StatementNode | undefined = undefined;
     for (const s of file.getStatements()) {
       const colon = s.getColon();
       if (colon === undefined) {
         continue;
       } else if (s === statement) {
         setPrevious = false;
+        setNext = true;
         continue;
-      } else if (colon.getStart().equals(scolon.getStart())) {
-        chainCount = chainCount + 1;
-      }
-      if (setPrevious === true) {
+      } else if (setPrevious === true) {
         previousStatement = s;
+      } else if (setNext === true) {
+        nextStatement = s;
+        break;
       }
     }
-    if (chainCount === 0) {
+    if (previousStatement === undefined && nextStatement === undefined) {
       // the statement to be deleted is the only one in the chain
       return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
     }
@@ -159,14 +161,27 @@ export class EditHelper {
 
     const colon = statement.getColon();
     if (statement.getLastToken().getStr() === "." && previousStatement) {
+// last statement in chain
       const edit1 = EditHelper.replaceToken(file, previousStatement.getLastToken(), ".");
       const edit2 = EditHelper.deleteRange(file, previousStatement.getLastToken().getEnd(), statement.getLastToken().getEnd());
       return EditHelper.merge(edit1, edit2);
-    } else if (previousStatement === undefined && colon) {
-      return EditHelper.deleteRange(file, colon.getEnd(), statement.getLastToken().getEnd());
+    } else if (previousStatement === undefined && colon && nextStatement) {
+// first statement in chain
+      return EditHelper.deleteRange(file, this.firstAfterColon(statement), this.firstAfterColon(nextStatement));
     } else {
-      return EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
+// middle statement
+      return EditHelper.deleteRange(file, startDelete, this.firstAfterColon(nextStatement!));
     }
+  }
+
+  public static firstAfterColon(statement: StatementNode): Position {
+    const colon = statement.getColon()!.getStart();
+    for (const t of statement.getTokens()) {
+      if (t.getStart().isAfter(colon)) {
+        return t.getStart();
+      }
+    }
+    throw new Error("firstAfterColon, emtpy statement?");
   }
 
   public static deleteToken(file: IFile, token: Token): IEdit {

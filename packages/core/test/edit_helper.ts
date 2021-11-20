@@ -90,8 +90,7 @@ line7`);
 DATA: foo TYPE c,
       bar TYPE c.`, 0);
     expect(result).to.equal(`
-DATA:` + `
-      bar TYPE c.`);
+DATA: bar TYPE c.`);
   });
 
   it("deleteStatement, last statement in chain, multi line", async () => {
@@ -100,6 +99,23 @@ DATA: foo TYPE c,
       bar TYPE c.`, 1);
     expect(result).to.equal(`
 DATA: foo TYPE c.`);
+  });
+
+  it("deleteStatement, middle statement in chain, multi line", async () => {
+    const result = testDeleteStatement(`
+DATA: foo TYPE c,
+      moo TYPE c,
+      bar TYPE c.`, 1);
+    expect(result).to.equal(`
+DATA: foo TYPE c,
+      bar TYPE c.`);
+  });
+
+  it("deleteStatement, middle statement in chain, single line", async () => {
+    const result = testDeleteStatement(`
+DATA: foo TYPE c, moo TYPE c, bar TYPE c.`, 1);
+    expect(result).to.equal(`
+DATA: foo TYPE c, bar TYPE c.`);
   });
 
 });
