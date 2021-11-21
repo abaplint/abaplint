@@ -160,6 +160,11 @@ ENDCLASS.`;
     const hover = new Hover(reg).find(buildPosition(file, 0, 16));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("Builtin");
+    expect(hover?.value).to.contain("CONDENSE");
+    expect(hover?.value).to.contain("val");
+    expect(hover?.value).to.contain("del");
+    expect(hover?.value).to.contain("from");
+    expect(hover?.value).to.contain("to");
   });
 
   it("hover class reference", () => {

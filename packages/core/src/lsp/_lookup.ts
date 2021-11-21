@@ -16,6 +16,7 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {Class, Interface} from "../objects";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {ABAPFile} from "../abap/abap_file";
+import {IMethodDefinition} from "..";
 
 export interface LSPLookupResult {
   /** in markdown */
@@ -176,6 +177,12 @@ export class LSPLookup {
       ret += "\n\n" + this.hoverMethod(ref.position.getName(), cdef);
     } else if (ref.resolved instanceof TypedIdentifier) {
       ret += "\n\n" + this.dumpType(ref.resolved);
+    } else if (ref.referenceType === ReferenceType.BuiltinMethodReference) {
+      const builtinDef = new BuiltIn().searchBuiltin(ref.resolved?.getName()?.toUpperCase());
+      if (builtinDef === undefined) {
+        return "Error: builtin method signature not found";
+      }
+      ret += "\n\n" + this.methodParameters(builtinDef);
     }
 
     if (ref.resolved) {
@@ -189,46 +196,55 @@ export class LSPLookup {
     return ret;
   }
 
-  private static hoverMethod(method: string, def: IClassDefinition | IInterfaceDefinition | undefined): string {
-    if (def === undefined) {
+  private static hoverMethod(method: string, classDef: IClassDefinition | IInterfaceDefinition | undefined): string {
+    if (classDef === undefined) {
       return "class not found";
     }
 
-    const mdef = def.getMethodDefinitions().getByName(method);
-    if (mdef === undefined) {
+    const methodDef = classDef.getMethodDefinitions().getByName(method);
+    if (methodDef === undefined) {
       return "method not found in definition";
     }
 
+    return this.methodParameters(methodDef);
+  }
+
+  private static methodParameters(methodDef: IMethodDefinition) {
     let ret = "";
-    if (mdef.getParameters().getImporting().length > 0) {
+    const parameters = methodDef.getParameters();
+
+    const importing = parameters.getImporting();
+    if (importing.length > 0) {
       ret += "IMPORTING\n";
-      for (const p of mdef.getParameters().getImporting()) {
+      for (const p of importing) {
         ret += this.singleParameter(p);
       }
     }
 
-    if (mdef.getParameters().getExporting().length > 0) {
+    const exporting = parameters.getExporting();
+    if (exporting.length > 0) {
       ret += "EXPORTING\n";
-      for (const p of mdef.getParameters().getExporting()) {
+      for (const p of exporting) {
         ret += this.singleParameter(p);
       }
     }
 
-    if (mdef.getParameters().getChanging().length > 0) {
+    const changing = parameters.getChanging();
+    if (changing.length > 0) {
       ret += "CHANGING\n";
-      for (const p of mdef.getParameters().getChanging()) {
+      for (const p of changing) {
         ret += this.singleParameter(p);
       }
     }
 
-    const r = mdef.getParameters().getReturning();
+    const r = parameters.getReturning();
     if (r) {
       ret += "RETURNING\n" + this.singleParameter(r);
     }
 
-    if (mdef.getRaising().length > 0) {
+    if (methodDef.getRaising().length > 0) {
       ret += "RAISING\n";
-      for (const p of mdef.getRaising()) {
+      for (const p of methodDef.getRaising()) {
         ret += "* " + p + "\n";
       }
     }
