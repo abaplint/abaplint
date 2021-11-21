@@ -41,7 +41,6 @@ export class ClassImplementation implements StatementSyntax {
       scope.addExtraLikeType(i);
     }
 
-    const implemented = helper.fromSuperClass(classDefinition);
-    helper.fromInterfaces(classDefinition, implemented);
+    helper.fromSuperClassesAndInterfaces(classDefinition);
   }
 }

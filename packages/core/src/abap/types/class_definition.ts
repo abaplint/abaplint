@@ -56,8 +56,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.parse(filename, scope);
 
     const helper = new ObjectOriented(scope);
-    const implemented = helper.fromSuperClass(this);
-    helper.fromInterfaces(this, implemented);
+    helper.fromSuperClassesAndInterfaces(this);
 
     this.attributes = new Attributes(this.node, this.filename, scope);
     this.types = this.attributes.getTypes();

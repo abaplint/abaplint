@@ -5415,6 +5415,29 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.skip("access instance variable from interface in static method, error", () => {
+    const abap = `
+INTERFACE lif.
+  DATA foobar TYPE i.
+ENDINTERFACE.
+
+CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    CLASS-METHODS bar.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
+  METHOD bar.
+    WRITE lif~foobar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.contain("foobar");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
