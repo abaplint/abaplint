@@ -139,9 +139,13 @@ export class EditHelper {
         setNext = true;
         continue;
       } else if (setPrevious === true) {
-        previousStatement = s;
+        if (scolon.getStart().equals(colon.getStart())) {
+          previousStatement = s;
+        }
       } else if (setNext === true) {
-        nextStatement = s;
+        if (scolon.getStart().equals(colon.getStart())) {
+          nextStatement = s;
+        }
         break;
       }
     }

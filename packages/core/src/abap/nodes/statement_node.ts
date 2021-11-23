@@ -238,7 +238,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
         }
       }
       if (before === ret.length || recursive === true) {
-        ret.push(...child.findAllExpressionsMulti(type));
+        ret.push(...child.findAllExpressionsMulti(type, recursive));
       }
     }
     return ret;

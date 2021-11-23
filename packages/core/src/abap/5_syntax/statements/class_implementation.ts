@@ -20,7 +20,6 @@ export class ClassImplementation implements StatementSyntax {
     if (classDefinition === undefined) {
       throw new Error("Class definition for \"" + className + "\" not found");
     }
-    const classAttributes = classDefinition.getAttributes();
 
     for (const t of classDefinition.getTypeDefinitions().getAll()) {
       scope.addType(t.type);
@@ -31,17 +30,15 @@ export class ClassImplementation implements StatementSyntax {
       scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
     }
     scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(classDefinition)));
-
     helper.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
+    const classAttributes = classDefinition.getAttributes();
     scope.addList(classAttributes.getConstants());
     scope.addList(classAttributes.getStatic());
-
     for (const i of classAttributes.getInstance()) {
       scope.addExtraLikeType(i);
     }
 
-    const implemented = helper.fromSuperClass(classDefinition);
-    helper.fromInterfaces(classDefinition, implemented);
+    helper.fromSuperClassesAndInterfaces(classDefinition);
   }
 }

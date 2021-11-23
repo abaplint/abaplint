@@ -28,6 +28,8 @@ const tests = [
   {abap: "RAISE EXCEPTION NEW zcx_excel( i_message = 'Worksheet not found.' ).", cnt: 0},
   {abap: "RAISE EXCEPTION NEW zcx_excel( i_message = 'Worksheet not found.').", cnt: 1},
   {abap: "RAISE EXCEPTION NEW zcx_excel( i_message).", cnt: 1},
+  {abap: "rv_empty = boolc( strlen( mv_str) = 0 ).", cnt: 1},
+  {abap: "rv_empty = boolc( strlen( mv_str ) = 0 ).", cnt: 0},
 ];
 
 testRule(tests, ParserMissingSpace);

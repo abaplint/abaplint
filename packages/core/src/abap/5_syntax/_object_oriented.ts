@@ -20,15 +20,6 @@ export class ObjectOriented {
     this.scope = scope;
   }
 
-  // returns list of interfaces implemented
-  public fromInterfaces(classDefinition: IClassDefinition, skip?: string[]): string[] {
-    const ignore: string[] = [];
-    for (const i of classDefinition.getImplementing()) {
-      ignore.push(...this.fromInterfaceByName(i.name, ignore.concat(skip || [])));
-    }
-    return ignore;
-  }
-
   private fromInterfaceByName(name: string, ignore: string[]): string[] {
     const idef = this.scope.findInterfaceDefinition(name);
     if (idef === undefined || ignore.includes(name.toUpperCase())) {
@@ -346,8 +337,13 @@ export class ObjectOriented {
     return csup;
   }
 
+  public fromSuperClassesAndInterfaces(child: IClassDefinition) {
+    const implemented = this.fromSuperClasses(child);
+    this.fromInterfaces(child, implemented);
+  }
+
   // returns list of interfaces implemented
-  public fromSuperClass(child: IClassDefinition): string[] {
+  private fromSuperClasses(child: IClassDefinition): string[] {
     let sup = child.getSuperClass();
     const ignore: string[] = [];
 
@@ -373,6 +369,15 @@ export class ObjectOriented {
       sup = cdef.getSuperClass();
     }
 
+    return ignore;
+  }
+
+  // returns list of interfaces implemented
+  private fromInterfaces(classDefinition: IClassDefinition, skip?: string[]): string[] {
+    const ignore: string[] = [];
+    for (const i of classDefinition.getImplementing()) {
+      ignore.push(...this.fromInterfaceByName(i.name, ignore.concat(skip || [])));
+    }
     return ignore;
   }
 
