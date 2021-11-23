@@ -10,6 +10,9 @@ const cases = [
     "    finish_timestamp TYPE timestampl,\n" +
     "  END OF statistics,\n" +
     "END OF ty_result."},
+  {abap: `TYPES: BEGIN OF foobar %_FINAL,
+  sdfs  TYPE i,
+END OF foobar.`},
 ];
 
 structureType(cases, new Types());

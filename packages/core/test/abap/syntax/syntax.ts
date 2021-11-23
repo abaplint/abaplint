@@ -5415,7 +5415,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("access instance variable from interface in static method, error", () => {
+  it.skip("access instance variable from interface in static method, error", () => {
     const abap = `
 INTERFACE lif.
   DATA foobar TYPE i.
