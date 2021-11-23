@@ -55,7 +55,8 @@ This rule makes sure the spaces are consistently required across the language.`,
   private missingSpace(statement: StatementNode): Position | undefined {
 
     const found = statement.findAllExpressionsMulti([Expressions.CondSub, Expressions.SQLCond,
-      Expressions.ValueBody, Expressions.NewObject, Expressions.Cond, Expressions.ComponentCond, Expressions.MethodCallParam], true);
+      Expressions.ValueBody, Expressions.NewObject, Expressions.Cond,
+      Expressions.ComponentCond, Expressions.MethodCallParam], true);
     let pos: Position | undefined = undefined;
     for (const f of found) {
       const type = f.get();
