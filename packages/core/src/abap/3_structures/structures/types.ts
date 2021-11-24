@@ -8,7 +8,11 @@ export class Types implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.TypeBegin),
-                    star(alt(sta(Statements.Type), sub(Types), sta(MacroCall), sta(Statements.IncludeType))),
+                    star(alt(sta(Statements.Type),
+                             sub(Types),
+                             sta(MacroCall),
+                             sta(Statements.Include),
+                             sta(Statements.IncludeType))),
                     sta(Statements.TypeEnd));
   }
 
