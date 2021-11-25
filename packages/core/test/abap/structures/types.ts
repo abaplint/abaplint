@@ -13,6 +13,13 @@ const cases = [
   {abap: `TYPES: BEGIN OF foobar %_FINAL,
   sdfs  TYPE i,
 END OF foobar.`},
+
+  {abap: `TYPES: BEGIN OF foobar,
+foo TYPE i.
+INCLUDE zsdfsd.
+TYPES: bar TYPE i.
+TYPES: END OF foobar.`},
+
 ];
 
 structureType(cases, new Types());
