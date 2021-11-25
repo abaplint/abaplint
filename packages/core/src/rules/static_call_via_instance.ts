@@ -52,7 +52,7 @@ export class StaticCallViaInstance extends ABAPRule {
       for (const s of staticMethodCalls) {
         if (s.equals(next!.getStart())) {
           const message = "Avoid calling static method via instance";
-          Issue.atToken(file, token, message, this.getMetadata().key);
+          issues.push(Issue.atToken(file, token, message, this.getMetadata().key));
           break;
         }
       }
