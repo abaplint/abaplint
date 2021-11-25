@@ -2568,6 +2568,17 @@
               ],
               "description": "Checks that statements start at tabstops.\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/start_at_tab"
             },
+            "static_call_via_instance": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StaticCallViaInstanceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Static method call via instance variable\nTags: Styleguide\nhttps://rules.abaplint.org/static_call_via_instance"
+            },
             "superclass_final": {
               "anyOf": [
                 {
@@ -4761,6 +4772,23 @@
       "type": "object"
     },
     "StartAtTabConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "StaticCallViaInstanceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

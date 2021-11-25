@@ -114,6 +114,7 @@ import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
 import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
 import {StartAtTabConf} from "../src/rules/start_at_tab";
+import {StaticCallViaInstanceConf} from "../src/rules/static_call_via_instance";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {SyModificationConf} from "../src/rules/sy_modification";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
@@ -264,6 +265,7 @@ export interface IConfig {
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
+    "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
