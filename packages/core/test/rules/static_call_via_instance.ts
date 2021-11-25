@@ -31,7 +31,7 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = await runSingle(abap);
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(1);
   });
 
   it("solved", async () => {
