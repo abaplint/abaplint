@@ -4,11 +4,15 @@ import {getTokens} from "../_utils";
 
 describe("lexer", () => {
 
-  it.skip("arrow whitespace", () => {
+  it("arrow whitespace", () => {
     const tokens = getTokens(") ->text");
     expect(tokens.length).to.equal(3);
-    console.dir(tokens[1]);
     expect(tokens[1]).to.be.instanceof(WInstanceArrow);
+  });
+
+  it("only one token, test it doesnt crash", () => {
+    const tokens = getTokens(".");
+    expect(tokens.length).to.equal(1);
   });
 
 });
