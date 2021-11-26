@@ -17,9 +17,8 @@ const tests = [
 
 describe("lexer types", () => {
   tests.forEach((test) => {
-    const tokens = Lexer.run(new MemoryFile("foo.abap", test.abap)).tokens;
-
     it("\"" + test.abap + "\" should be " + test.type["name"], () => {
+      const tokens = Lexer.run(new MemoryFile("foo.abap", test.abap)).tokens;
       expect(tokens.length).to.equals(1);
       expect(tokens[0].constructor["name"]).to.equals(test.type["name"]);
     });
