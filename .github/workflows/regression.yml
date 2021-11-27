@@ -24,7 +24,6 @@ jobs:
         npm run install && npm run link-local && npm test
         mkdir ../../abaplint_after
         cp packages/cli/build/cli.js ../../abaplint_after/
-        cp packages/cli/build/index.js ../../abaplint_after/
         rm -rf packages/cli/build/ && rm -rf packages/core/build/
         git checkout -f main
         git reset --hard

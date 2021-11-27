@@ -3,10 +3,10 @@
 .vscode/
 *.js.map
 build/*.tsbuildinfo
-build/scripts/*
-build/src/*
-!build/src/index.d.ts
 build/test/*
+build/src/cli.*
+build/src/**/*.d.ts
+!build/src/index.d.ts
 coverage/
 docs/*
 dump.json
@@ -19,8 +19,4 @@ src/*
 test/*
 tsconfig.json
 tslint.json
-web/*
 webpack.config.js
-worklist.txt
-zcl_foo.clas.abap
-zcl_foo.clas.abap

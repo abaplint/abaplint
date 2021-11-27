@@ -1,7 +1,10 @@
-import * as memfs from "memfs";
 import {Issue, IRegistry, applyEditList, IEdit, IProgress} from "@abaplint/core";
 
-export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: memfs.IFs, bar?: IProgress): readonly Issue[] {
+export interface MyFS {
+  writeFileSync(name: string, raw: string): void;
+}
+
+export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: MyFS, bar?: IProgress): readonly Issue[] {
   let changed: string[] = [];
   let iteration = 1;
   let issues = inputIssues;
@@ -54,7 +57,7 @@ function possibleOverlap(edit: IEdit, list: IEdit[]): boolean {
   return false;
 }
 
-function applyList(issues: readonly Issue[], reg: IRegistry, fs: memfs.IFs): string[] {
+function applyList(issues: readonly Issue[], reg: IRegistry, fs: MyFS): string[] {
 
   const edits: IEdit[] = [];
 

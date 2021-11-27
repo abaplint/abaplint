@@ -6,9 +6,7 @@ module.exports = {
   entry: {
     cli: {
       import: "./build/src/cli.js",
-      dependOn: "index",
     },
-    index: "./build/src/index.js",
   },
   mode: "development",
   target: "node",
