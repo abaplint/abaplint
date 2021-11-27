@@ -19,12 +19,12 @@ for (let r of repos) {
   }
 
   map[r].before_start = new Date();
-  childProcess.execSync("node ./abaplint_before/cli.js " + configFile + " -f json > output.json || true");
+  childProcess.execSync("node ./abaplint_before " + configFile + " -f json > output.json || true");
   map[r].before_end = new Date();
   map[r].before = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 
   map[r].after_start = new Date();
-  childProcess.execSync("node ./abaplint_after " + configFile + " -f json > output.json || true");
+  childProcess.execSync("node ./abaplint_after/cli.js " + configFile + " -f json > output.json || true");
   map[r].after_end = new Date();
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 
