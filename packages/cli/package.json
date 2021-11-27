@@ -5,7 +5,7 @@
     "bin": {
         "abaplint": "./abaplint"
     },
-    "main": "./build/index.js",
+    "main": "./build/src/index.js",
     "types": "./build/src/index.d.ts",
     "scripts": {
         "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
