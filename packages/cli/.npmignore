@@ -5,6 +5,7 @@
 build/*.tsbuildinfo
 build/scripts/*
 build/src/*
+!build/src/index.d.ts
 build/test/*
 coverage/
 docs/*
