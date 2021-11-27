@@ -23,7 +23,7 @@ export class FileOperations {
     return files;
   }
 
-  public static async loadFiles(compress: boolean, input: string[], bar: IProgress): Promise<IFile[]> {
+  public static async loadFiles(compress: boolean | undefined, input: string[], bar: IProgress): Promise<IFile[]> {
     const files: IFile[] = [];
 
     bar.set(input.length, "Reading files");

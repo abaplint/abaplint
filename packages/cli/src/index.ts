@@ -80,7 +80,7 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   };
 }
 
-async function loadDependencies(config: Config, compress: boolean, bar: IProgress, base: string): Promise<IFile[]> {
+async function loadDependencies(config: Config, compress: boolean | undefined, bar: IProgress, base: string): Promise<IFile[]> {
   let files: IFile[] = [];
 
   const deps = config.get().dependencies || [];
@@ -125,13 +125,13 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
 export type Arguments = {
   configFilename?: string,
   format: string,
-  compress: boolean,
-  parsingPerformance: boolean,
-  showHelp: boolean,
-  showVersion: boolean,
-  outputDefaultConfig: boolean,
-  runFix: boolean,
-  runRename: boolean,
+  compress?: boolean,
+  parsingPerformance?: boolean,
+  showHelp?: boolean,
+  showVersion?: boolean,
+  outputDefaultConfig?: boolean,
+  runFix?: boolean,
+  runRename?: boolean,
   outFormat?: string,
   outFile?: string,
 };
