@@ -11,13 +11,13 @@ if (parsed["f"] !== undefined || parsed["format"] !== undefined) {
 const arg: Arguments = {
   configFilename: parsed._[0],
   format,
-  compress: parsed["c"] ? true : false,
-  parsingPerformance: parsed["p"] ? true : false,
+  compress: parsed["c"],
+  parsingPerformance: parsed["p"],
   showHelp: parsed["h"] !== undefined || parsed["help"] !== undefined,
   showVersion: parsed["v"] !== undefined || parsed["version"] !== undefined,
   outputDefaultConfig: parsed["d"] !== undefined || parsed["default"] !== undefined,
-  runFix: parsed["fix"] !== undefined,
-  runRename: parsed["rename"] !== undefined,
+  runFix: parsed["fix"],
+  runRename: parsed["rename"],
   outFormat: parsed["outformat"],
   outFile: parsed["outfile"],
 };
