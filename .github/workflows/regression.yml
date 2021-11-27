@@ -29,7 +29,10 @@ jobs:
         git checkout -f main
         git reset --hard
         git status
-        npm run install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
+        npm run install && npm run link-local && npm test
+        mkdir ../../abaplint_before
+        cp packages/cli/build/cli.js ../../abaplint_before/
+        cp packages/cli/build/index.js ../../abaplint_before/
 
     - name: run
       env:
