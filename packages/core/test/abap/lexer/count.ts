@@ -92,11 +92,12 @@ describe("count_tokens", () => {
   ];
 
   tests.forEach((test) => {
-    const tokens = getTokens(test.abap);
     it("\"" + test.abap + "\" should have " + test.tokens.toString() + " tokens", () => {
+      const tokens = getTokens(test.abap);
       expect(tokens.length).to.equals(test.tokens);
     });
     it("\"" + test.abap + "\" position values should be positive", () => {
+      const tokens = getTokens(test.abap);
       for (const t of tokens) {
         expect(t.getCol()).to.be.greaterThan(0);
         expect(t.getRow()).to.be.greaterThan(0);

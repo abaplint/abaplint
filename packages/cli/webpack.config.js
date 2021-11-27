@@ -3,11 +3,17 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./build/src/cli.js",
+  entry: {
+    cli: {
+      import: "./build/src/cli.js",
+      dependOn: "index",
+    },
+    index: "./build/src/index.js",
+  },
   mode: "development",
   target: "node",
   output: {
-    filename: "bundle.js",
+    filename: "[name].js",
     path: path.resolve(__dirname, "build"),
   },
 };

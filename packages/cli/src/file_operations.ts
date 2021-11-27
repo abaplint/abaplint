@@ -48,7 +48,7 @@ export class FileOperations {
 // note that readFileSync is typically faster than async readFile,
 // https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
       const raw = fs.readFileSync(filename, "utf8");
-      if (compress) {
+      if (compress === true) {
 // todo, util.promisify(zlib.deflate) does not seem to work?
         files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
       } else {

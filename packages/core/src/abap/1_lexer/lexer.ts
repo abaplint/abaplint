@@ -117,7 +117,10 @@ export class Lexer {
       const row = this.stream.getRow();
 
       let whiteBefore = false;
-      const prev = this.stream.prevChar();
+      let prev = this.stream.prevChar();
+      if (s.length === 2) {
+        prev = this.stream.prevPrevChar().substr(0, 1);
+      }
       if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
         whiteBefore = true;
       }
