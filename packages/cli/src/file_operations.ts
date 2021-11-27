@@ -7,21 +7,12 @@ import {CompressedFile} from "./compressed_file";
 
 export class FileOperations {
 
-  public static deleteFolderRecursive(p: string) {
-    if (fs.existsSync(p) === false) {
+  public static deleteFolderRecursive(dir: string) {
+    if (fs.existsSync(dir) === false) {
       return;
     }
 
-    const files = fs.readdirSync(p);
-    for (const file of files) {
-      const curPath = p + path.sep + file;
-      if (fs.lstatSync(curPath).isDirectory()) {
-        this.deleteFolderRecursive(curPath);
-      } else {
-        fs.unlinkSync(curPath);
-      }
-    }
-    fs.rmdirSync(p);
+    fs.rmSync(dir, {recursive: true});
   }
 
   public static loadFileNames(arg: string, error = true): string[] {
