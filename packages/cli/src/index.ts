@@ -173,6 +173,7 @@ export async function run(arg: Arguments) {
 
   let output = "";
   let issues: Issue[] = [];
+  let reg: IRegistry | undefined = undefined;
 
   const progress: IProgress = new Progress();
 
@@ -187,7 +188,6 @@ export async function run(arg: Arguments) {
 
     let loaded: IFile[] = [];
     let deps: IFile[] = [];
-    let reg: IRegistry | undefined = undefined;
     const {config, base} = loadConfig(arg.configFilename);
     try {
       if (config.get().global.files === undefined) {
@@ -210,11 +210,11 @@ export async function run(arg: Arguments) {
     }
 
     let extra = "";
-    if (arg.runFix && reg) {
+    if (arg.runFix === true && reg) {
       // @ts-ignore
       issues = applyFixes(issues, reg, fs, progress);
       extra = "Fixes applied";
-    } else if (arg.runRename && reg) {
+    } else if (arg.runRename === true && reg) {
       if (issues.length === 0) {
         new Rename(reg).run(config, base);
         extra = "Renames applied";
@@ -226,5 +226,5 @@ export async function run(arg: Arguments) {
     output = out(issues, loaded.length, arg) + extra;
   }
 
-  return {output, issues};
+  return {output, issues, reg};
 }

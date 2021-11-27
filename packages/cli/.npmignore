@@ -12,8 +12,8 @@ dump.json
 foo.prog.abap
 npm-debug.log
 packages/*
-scripts/*
 sample/*
+scripts/*
 src/*
 test/*
 tsconfig.json
