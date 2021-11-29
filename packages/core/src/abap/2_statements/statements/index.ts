@@ -232,6 +232,8 @@ export * from "./format";
 export * from "./syntax_check";
 export * from "./aliases";
 export * from "./method_def";
+export * from "./type_mesh_begin";
+export * from "./type_mesh_end";
 export * from "./interface_def";
 export * from "./at_selection_screen";
 export * from "./include_type";
