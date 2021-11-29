@@ -7,10 +7,13 @@ import {StatementSyntax} from "../_statement_syntax";
 export class Select implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    const s = node.findDirectExpression(Expressions.Select);
-    if (s) {
-      new SelectExpression().runSyntax(s, scope, filename);
+    const selects = node.findDirectExpressions(Expressions.Select);
+    for (let i = 0; i < selects.length; i++) {
+      const last = i === selects.length - 1;
+      const s = selects[i];
+      new SelectExpression().runSyntax(s, scope, filename, last === false);
     }
+
 
   }
 }

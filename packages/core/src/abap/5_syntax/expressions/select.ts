@@ -10,7 +10,7 @@ import {SQLForAllEntries} from "./sql_for_all_entries";
 import {ScopeType} from "../_scope_type";
 
 export class Select {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, skipImplicitInto = false): void {
     const token = node.getFirstToken();
 
     const from = node.findDirectExpression(Expressions.SQLFrom);
@@ -33,7 +33,8 @@ export class Select {
       new Target().runSyntax(t, scope, filename);
     }
     // check implicit into, the target field is implict equal to the table name
-    if (node.findDirectExpression(Expressions.SQLIntoTable) === undefined
+    if (skipImplicitInto === false
+        && node.findDirectExpression(Expressions.SQLIntoTable) === undefined
         && node.findDirectExpression(Expressions.SQLIntoStructure) === undefined) {
       const fields = node.findFirstExpression(Expressions.SQLAggregation)?.concatTokens();
       const c = new RegExp(/^count\(\s*\*\s*\)$/, "i");

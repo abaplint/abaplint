@@ -63,8 +63,10 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   }
 
   // evil hack to get JSON5 working
-  // @ts-ignore
-  JSON5.parse = JSON5.default.parse;
+  if (JSON5.parse === undefined) {
+    // @ts-ignore
+    JSON5.parse = JSON5.default.parse;
+  }
 
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
@@ -166,10 +168,14 @@ function out(issues: Issue[], length: number, arg: Arguments): string {
 export async function run(arg: Arguments) {
 
   // evil hack to get JSON5 working
-  // @ts-ignore
-  JSON5.parse = JSON5.default.parse;
-  // @ts-ignore
-  JSON5.stringify = JSON5.default.stringify;
+  if (JSON5.parse === undefined) {
+    // @ts-ignore
+    JSON5.parse = JSON5.default.parse;
+  }
+  if (JSON5.stringify === undefined) {
+    // @ts-ignore
+    JSON5.stringify = JSON5.default.stringify;
+  }
 
   let output = "";
   let issues: Issue[] = [];

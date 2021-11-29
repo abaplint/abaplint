@@ -5415,6 +5415,16 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("SELECT UNION, voided tables", () => {
+    const abap = `
+  SELECT field1 FROM foo
+  UNION
+  SELECT field1 FROM bar
+  INTO TABLE @DATA(lt_event).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it.skip("access instance variable from interface in static method, error", () => {
     const abap = `
 INTERFACE lif.
