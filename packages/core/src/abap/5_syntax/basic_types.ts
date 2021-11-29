@@ -574,10 +574,11 @@ export class BasicTypes {
       if (obj === undefined) {
         if (this.scope.existsObject(name).found === true) {
           return undefined;
-        }
-        if (this.scope.getDDIC().inErrorNamespace(name) === true) {
+        } else if (this.scope.getDDIC().inErrorNamespace(name) === true) {
           throw new Error("resolveConstantValue, not found: " + name);
         } else {
+          this.scope.addReference(first.getFirstToken(), undefined,
+                                  ReferenceType.ObjectOrientedVoidReference, this.filename, {ooName: name.toUpperCase()});
           return undefined;
         }
       }

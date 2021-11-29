@@ -1032,4 +1032,14 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("Extra");
   });
 
+  it("Hover, voided default value as class or interface", () => {
+    const abap = `CONSTANTS foobar TYPE i VALUE if_moo=>constant.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 35));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Object (Void)");
+    expect(hover?.value).to.contain("IF_MOO");
+  });
+
 });
