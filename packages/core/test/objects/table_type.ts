@@ -3,6 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import * as Objects from "../../src/objects";
 import * as Types from "../../src/abap/types/basic";
+import {GenericObjectReferenceType} from "../../src/abap/types/basic";
 
 describe("Table Type, parse XML", () => {
 
@@ -167,6 +168,39 @@ describe("Table Type, parse XML", () => {
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
     expect(row.getQualifiedName()).to.equal(undefined);
+  });
+
+  it("OBJECT ref type", async () => {
+    const xml1 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTTYPOBJECT</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>OBJECT</ROWTYPE>
+    <ROWKIND>R</ROWKIND>
+    <DATATYPE>REF</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>object</DDTEXT>
+    <REFTYPE>O</REFTYPE>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zttypobject.ttyp.xml", xml1),
+    ]);
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Objects.TableType;
+
+    const type = tabl.parseType(reg);
+    expect(type).to.be.instanceof(Types.TableType);
+    const row = (type as Types.TableType).getRowType();
+    expect(row).to.be.instanceof(GenericObjectReferenceType);
   });
 
 });

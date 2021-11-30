@@ -4,6 +4,7 @@ import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {IObjectAndToken} from "../_iddic_references";
+import {GenericObjectReferenceType} from "../abap/types/basic";
 
 export class TableType extends AbstractObject {
   private parsedXML: {
@@ -61,6 +62,8 @@ export class TableType extends AbstractObject {
       if (lookup.object) {
         references.push({object: lookup.object});
       }
+    } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype === "OBJECT") {
+      type = new Types.TableType(new GenericObjectReferenceType(), {withHeader: false}, this.getName());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
       const lookup = ddic.lookupObject(this.parsedXML.rowtype);
       type = new Types.TableType(lookup.type, {withHeader: false}, this.getName());
