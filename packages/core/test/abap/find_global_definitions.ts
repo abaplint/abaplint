@@ -7,7 +7,7 @@ import {Interface} from "../../src/objects";
 
 describe("FindGlobalDefinitions", () => {
 
-  it("parsing, should not crash", async () => {
+  it("Count untyped constants from interface", async () => {
     const abap = `
 INTERFACE if_gobal PUBLIC.
   CONSTANTS field TYPE if_other=>id VALUE '1234'.
