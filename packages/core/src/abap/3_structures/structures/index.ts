@@ -14,6 +14,7 @@ export * from "./constants";
 export * from "./data";
 export * from "./define";
 export * from "./do";
+export * from "./type_mesh";
 export * from "./else";
 export * from "./elseif";
 export * from "./enhancement_section";

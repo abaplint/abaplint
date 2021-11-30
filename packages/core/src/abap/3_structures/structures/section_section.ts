@@ -7,6 +7,7 @@ import {Constants} from "./constants";
 import {TypeEnum} from "./type_enum";
 import {ClassData} from "./class_data";
 import {Data} from "./data";
+import {TypeMesh} from ".";
 
 export class SectionContents implements IStructure {
 
@@ -24,6 +25,7 @@ export class SectionContents implements IStructure {
                     sub(Types),
                     sub(Constants),
                     sub(TypeEnum),
+                    sub(TypeMesh),
                     sub(Data),
                     sub(ClassData),
                     sta(Statements.Type)));

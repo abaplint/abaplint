@@ -46,6 +46,15 @@ DEFINE _bar.
 END-OF-DEFINITION.
 _bar.`, cnt: 0},
 
+  {abap: `
+TYPES: BEGIN OF ty_structure,
+         field1 TYPE i,
+       END OF ty_structure.
+TYPES tab TYPE SORTED TABLE OF ty_structure WITH UNIQUE KEY field1.
+TYPES: BEGIN OF MESH mesh,
+         foo TYPE tab,
+       END OF MESH mesh.`, cnt: 0},
+
 ];
 
 testRule(tests, ParserError);

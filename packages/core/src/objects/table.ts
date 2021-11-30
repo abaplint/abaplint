@@ -126,9 +126,22 @@ export class Table extends AbstractObject {
           components.push({name: field.FIELDNAME, type: found});
         }
       } else if (comptype === "S" && field.FIELDNAME.startsWith(".INCLU-")) {
-        components.push({
-          name: field.FIELDNAME,
-          type: new Types.UnknownType("Table " + this.getName() + ", todo, group named INCLUDE")});
+        const lookup = ddic.lookupTableOrView(field.ROLLNAME);
+        if (lookup.object) {
+          references.push({object: lookup.object});
+        }
+        const found = lookup.type;
+        if (found instanceof Types.VoidType) {
+          // set the full structure to void
+          return found;
+        } else if (found instanceof Types.StructureType) {
+          const suffix = field.FIELDNAME.split("-")[1];
+          for (const c of found.getComponents()) {
+            components.push({name: c.name + suffix, type: c.type});
+          }
+        } else if (found instanceof Types.UnknownType) {
+          return found;
+        }
       } else if (comptype === "S") {
         const lookup = ddic.lookupTableOrView(field.ROLLNAME);
         components.push({name: field.FIELDNAME, type: lookup.type});

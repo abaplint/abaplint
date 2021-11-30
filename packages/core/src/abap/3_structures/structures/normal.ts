@@ -213,6 +213,7 @@ export class Normal implements IStructure {
                sub(Structures.Define),
                sub(Structures.TestInjection),
                sub(Structures.TestSeam),
+               sub(Structures.TypeMesh),
                sub(Structures.Provide),
                sub(Structures.CatchSystemExceptions),
                sub(Structures.At),

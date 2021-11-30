@@ -140,6 +140,8 @@ export class FieldChain {
         scope.addReference(classTok, found.id, found.type, filename);
         return new ObjectReferenceType(found.id);
       } else if (scope.getDDIC().inErrorNamespace(classNam) === false) {
+        scope.addReference(classTok, undefined,
+                           ReferenceType.ObjectOrientedVoidReference, filename, {ooName: classNam.toUpperCase()});
         return new VoidType(classNam);
       } else {
         throw new Error("Unknown class " + classNam);
