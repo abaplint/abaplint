@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
-import {StructureType, TableType, VoidType} from "../../src/abap/types/basic";
+import {GenericObjectReferenceType, StructureType, TableType, VoidType} from "../../src/abap/types/basic";
 import {Config} from "../../src/config";
 
 describe("Table, parse XML", () => {
@@ -638,6 +638,45 @@ describe("Table, parse XML", () => {
     expect(type).to.be.instanceof(StructureType);
     const stru = type as StructureType;
     expect(stru.getComponents().length).to.equal(3);
+  });
+
+  it("generic object reference type", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZREFOBJ</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>sdfsd</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>SDFSD</FIELDNAME>
+     <ROLLNAME>OBJECT</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <DATATYPE>REF</DATATYPE>
+     <MASK>  REF RO</MASK>
+     <COMPTYPE>R</COMPTYPE>
+     <REFTYPE>O</REFTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry().addFile(new MemoryFile("zrefobj.tabl.xml", xml));
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const fields = tabl.parseType(reg);
+    if (!(fields instanceof StructureType)) {
+      expect.fail();
+    }
+    const components = fields.getComponents();
+    expect(components.length).to.equal(1);
+    expect(components[0].type).to.be.instanceof(GenericObjectReferenceType);
   });
 
 });
