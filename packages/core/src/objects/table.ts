@@ -139,6 +139,8 @@ export class Table extends AbstractObject {
           for (const c of found.getComponents()) {
             components.push({name: c.name + suffix, type: c.type});
           }
+        } else if (found instanceof Types.UnknownType) {
+          return found;
         }
       } else if (comptype === "S") {
         const lookup = ddic.lookupTableOrView(field.ROLLNAME);
