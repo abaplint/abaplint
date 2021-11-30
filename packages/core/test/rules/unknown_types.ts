@@ -1458,24 +1458,4 @@ DATA ls_line LIKE LINE OF is_message-sub-lines.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("ok, type via aliased type in interface", () => {
-    const abap = `
-INTERFACE lif.
-  TYPES zoption TYPE i.
-ENDINTERFACE.
-
-CLASS lcl DEFINITION FINAL CREATE PROTECTED.
-  PUBLIC SECTION.
-    INTERFACES lif.
-    ALIASES zoption FOR lif~zoption.
-    TYPES moo TYPE zoption.
-ENDCLASS.
-
-CLASS lcl IMPLEMENTATION.
-ENDCLASS.`;
-    let issues = runMulti([{filename: "zprog.prog.abap", contents: abap}]);
-    issues = issues.filter(i => i.getKey() === key);
-    expect(issues[0]?.getMessage()).to.equals(undefined);
-  });
-
 });
