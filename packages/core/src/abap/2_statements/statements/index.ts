@@ -193,6 +193,7 @@ export * from "./endat";
 export * from "./endselect";
 export * from "./refresh";
 export * from "./shift";
+export * from "./type_mesh";
 export * from "./transfer";
 export * from "./subtract";
 export * from "./unassign";
