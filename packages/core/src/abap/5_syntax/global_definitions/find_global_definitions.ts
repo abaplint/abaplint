@@ -66,18 +66,20 @@ export class FindGlobalDefinitions {
 
 /////////////////////////////
 
-  private countUntyped(obj: Interface | Class): number {
+  public countUntyped(obj: Interface | Class): number {
     const def = obj.getDefinition();
     if (def === undefined) {
       return 1;
     }
 
-    // todo, count constants
     let count = 0;
     for (const t of def.getTypeDefinitions().getAll()) {
       count = count + this.count(t.type.getType());
     }
     for (const a of def.getAttributes().getAll()) {
+      count = count + this.count(a.getType());
+    }
+    for (const a of def.getAttributes().getConstants()) {
       count = count + this.count(a.getType());
     }
 

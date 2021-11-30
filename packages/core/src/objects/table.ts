@@ -5,7 +5,7 @@ import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {AnyType, DataReference} from "../abap/types/basic";
+import {AnyType, DataReference, GenericObjectReferenceType} from "../abap/types/basic";
 import {IObjectAndToken} from "../_iddic_references";
 
 export enum EnhancementCategory {
@@ -156,6 +156,10 @@ export class Table extends AbstractObject {
           components.push({
             name: field.FIELDNAME,
             type: new DataReference(new AnyType())});
+        } else if (field.ROLLNAME === "OBJECT") {
+          components.push({
+            name: field.FIELDNAME,
+            type: new GenericObjectReferenceType()});
         } else {
           const lookup = ddic.lookupObject(field.ROLLNAME);
           components.push({name: field.FIELDNAME, type: lookup.type});
