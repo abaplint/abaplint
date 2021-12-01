@@ -159,7 +159,7 @@ function displayHelp(): string {
 function out(issues: Issue[], length: number, arg: Arguments): string {
   const output = Formatter.format(issues, arg.format, length);
   if (arg.outFormat && arg.outFile) {
-    const fileContents = Formatter.format(issues, arg.outFile, length);
+    const fileContents = Formatter.format(issues, arg.outFormat, length);
     fs.writeFileSync(arg.outFile, fileContents, "utf-8");
   }
   return output;
