@@ -557,33 +557,44 @@ export class BasicTypes {
       throw new Error("resolveConstantValue");
     }
 
-    const first = expr.getFirstChild()!;
-    if (first.get() instanceof Expressions.Field) {
-      const token = first.getFirstToken();
-      const name = token.getStr();
-      const found = this.scope.findVariable(name);
+    const firstNode = expr.getFirstChild()!;
+    const firstToken = firstNode.getFirstToken();
+    const firstName = firstToken.getStr();
+    if (firstNode.get() instanceof Expressions.Field) {
+      const found = this.scope.findVariable(firstName);
       const val = found?.getValue();
       if (typeof val === "string") {
-        this.scope.addReference(token, found, ReferenceType.DataReadReference, this.filename);
+        this.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.filename);
         return val;
       }
       return undefined;
-    } else if (first.get() instanceof Expressions.ClassName) {
-      const name = first.getFirstToken().getStr();
-      const obj = this.scope.findObjectDefinition(name);
+    } else if (firstNode.get() instanceof Expressions.ClassName
+        && firstName.toLowerCase() === this.scope.getName().toLowerCase()
+        && (this.scope.getType() === ScopeType.Interface
+        || this.scope.getType() === ScopeType.ClassDefinition)) {
+      const children = expr.getChildren();
+      const token = children[2]?.getFirstToken();
+      const found = this.scope.findVariable(token.getStr());
+      const val = found?.getValue();
+      if (typeof val === "string") {
+        this.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.filename);
+        return val;
+      }
+      return undefined;
+    } else if (firstNode.get() instanceof Expressions.ClassName) {
+      const obj = this.scope.findObjectDefinition(firstName);
       if (obj === undefined) {
-        if (this.scope.existsObject(name).found === true) {
+        if (this.scope.existsObject(firstName).found === true) {
           return undefined;
-        } else if (this.scope.getDDIC().inErrorNamespace(name) === true) {
-          throw new Error("resolveConstantValue, not found: " + name);
+        } else if (this.scope.getDDIC().inErrorNamespace(firstName) === true) {
+          throw new Error("resolveConstantValue, not found: " + firstName);
         } else {
-          this.scope.addReference(first.getFirstToken(), undefined,
-                                  ReferenceType.ObjectOrientedVoidReference, this.filename, {ooName: name.toUpperCase()});
+          this.scope.addReference(firstNode.getFirstToken(), undefined,
+                                  ReferenceType.ObjectOrientedVoidReference, this.filename, {ooName: firstName.toUpperCase()});
           return undefined;
         }
       }
       const children = expr.getChildren();
-
       const token = children[2]?.getFirstToken();
       const attr = token.getStr();
       const c = new ObjectOriented(this.scope).searchConstantName(obj, attr);

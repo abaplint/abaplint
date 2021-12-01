@@ -5448,6 +5448,16 @@ ENDCLASS.`;
     expect(message).to.contain("foobar");
   });
 
+  it("cyclic constant to the interface itself", () => {
+    const abap = `
+INTERFACE lif_bar.
+  CONSTANTS err TYPE i VALUE 1.
+  CONSTANTS std TYPE i VALUE lif_bar=>err.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
