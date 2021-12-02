@@ -79,6 +79,8 @@ export class DDIC {
         return new Types.XSequenceType();
       case "CLIKE":
         return new Types.CLikeType();
+      case "DECFLOAT":
+        return new Types.DecFloatType();
       case "ANY":
         return new Types.AnyType();
       case "SIMPLE":
