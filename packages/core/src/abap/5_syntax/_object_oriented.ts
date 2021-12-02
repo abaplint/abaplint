@@ -10,6 +10,7 @@ import {ClassConstant} from "../types/class_constant";
 import {IEventDefinition} from "../types/_event_definition";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Visibility} from "../4_file_information/visibility";
+import {IAliases} from "../types/_aliases";
 
 // todo, think some of the public methods can be made private
 
@@ -55,6 +56,19 @@ export class ObjectOriented {
         const found = idef.getAttributes()!.findByName(comp.split("~")[1]);
         if (found) {
           this.scope.addNamedIdentifier(alias.getName(), found);
+        }
+      }
+    }
+  }
+
+  public addAliasedTypes(aliases: IAliases): void {
+    for (const alias of aliases.getAll()) {
+      const comp = alias.getComponent();
+      const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
+      if (idef) {
+        const found = idef.getTypeDefinitions()!.getByName(comp.split("~")[1]);
+        if (found) {
+          this.scope.addTypeNamed(alias.getName(), found);
         }
       }
     }
