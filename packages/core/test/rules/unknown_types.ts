@@ -1471,4 +1471,46 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("not_found");
   });
 
+  it("type in class method parameter via alias from interface", () => {
+    const abap = `INTERFACE lif.
+  TYPES moo TYPE i.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES ty_moo FOR lif~moo.
+    METHODS bar IMPORTING sdf TYPE ty_moo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("type to aliased type", () => {
+    const abap = `
+INTERFACE lif.
+  TYPES zoption TYPE i.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION FINAL CREATE PROTECTED.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES zoption FOR lif~zoption.
+    TYPES moo TYPE zoption.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+
 });
