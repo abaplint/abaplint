@@ -1773,4 +1773,11 @@ TYPES: BEGIN OF abap_componentdescr,
     expect(type!.getType()).to.be.instanceof(Basic.StringType);
   });
 
+  it("DECFLOAT", () => {
+    const abap = `FIELD-SYMBOLS <moo> TYPE decfloat.`;
+    const identifier = resolveVariable(abap, "<moo>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.DecFloatType);
+  });
+
 });

@@ -50,10 +50,29 @@ export class UnknownTypes implements IRule {
 
     const spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
 
-    return this.traverse(spaghetti.getTop());
+    const found = this.traverse(spaghetti.getTop());
+    return this.removeDuplicates(found);
   }
 
 /////////////////////
+
+  private removeDuplicates(list: Issue[]): Issue[] {
+    const deduplicated: Issue[] = [];
+    for (const result of list) {
+      let cont = false;
+      for (const d of deduplicated) {
+        if (result.getStart().equals(d.getStart())) {
+          cont = true;
+          break;
+        }
+      }
+      if (cont === true) {
+        continue;
+      }
+      deduplicated.push(result);
+    }
+    return deduplicated;
+  }
 
   private traverse(node: ISpaghettiScopeNode): Issue[] {
     const ret: Issue[] = [];
@@ -88,7 +107,14 @@ export class UnknownTypes implements IRule {
     }
 
     for (const v of node.getData().idefs) {
-      const found = this.checkInterface(v);
+      const found = this.checkMethodParameters(v);
+      if (found) {
+        const message = "Contains unknown, " + found.found;
+        ret.push(Issue.atIdentifier(found.id, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
+    for (const v of node.getData().cdefs) {
+      const found = this.checkMethodParameters(v);
       if (found) {
         const message = "Contains unknown, " + found.found;
         ret.push(Issue.atIdentifier(found.id, message, this.getMetadata().key, this.conf.severity));
@@ -102,7 +128,7 @@ export class UnknownTypes implements IRule {
     return ret;
   }
 
-  private checkInterface(idef: IInterfaceDefinition): {id: Identifier, found: string} | undefined {
+  private checkMethodParameters(idef: IInterfaceDefinition): {id: Identifier, found: string} | undefined {
     for (const m of idef.getMethodDefinitions()?.getAll() || []) {
       for (const p of m.getParameters().getAll()) {
         const found = this.containsUnknown(p.getType());
