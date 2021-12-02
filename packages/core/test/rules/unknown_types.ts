@@ -1458,4 +1458,17 @@ DATA ls_line LIKE LINE OF is_message-sub-lines.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("No class/method implementation but DEFAULT not found", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      IMPORTING
+        moo TYPE i DEFAULT not_found.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("not_found");
+  });
+
 });
