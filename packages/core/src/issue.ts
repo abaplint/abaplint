@@ -54,7 +54,8 @@ export class Issue {
     });
   }
 
-  public static atRowRange(file: IFile, row: number, startCol: number, endCol: number, message: string, key: string, severity?: Severity) {
+  public static atRowRange(file: IFile, row: number, startCol: number,
+                           endCol: number, message: string, key: string, severity?: Severity, fix?: IEdit) {
     const start = new Position(row, startCol);
     const end = new Position(row, endCol);
     severity = severity ?? Severity.Error;
@@ -64,6 +65,7 @@ export class Issue {
       key,
       start,
       end,
+      fix,
       severity,
     });
   }

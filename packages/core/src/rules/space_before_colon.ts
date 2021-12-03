@@ -1,4 +1,6 @@
+import {Position} from "../position";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper} from "../edit_helper";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -17,7 +19,7 @@ export class SpaceBeforeColon extends ABAPRule {
       title: "Space before colon",
       shortDescription: `Checks that there are no spaces in front of colons in chained statements.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/80/`,
-      tags: [RuleTag.Whitespace, RuleTag.SingleFile],
+      tags: [RuleTag.Whitespace, RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `DATA : foo TYPE string.`,
       goodExample: `DATA: foo TYPE string.`,
     };
@@ -47,10 +49,12 @@ export class SpaceBeforeColon extends ABAPRule {
       } else if (token.getStr() === ":"
           && prev.getRow() === token.getRow()
           && prev.getCol() + prev.getStr().length < token.getCol()) {
-        const issue = Issue.atRowRange(file, token.getRow(),
-                                       prev.getEnd().getCol(), token.getStart().getCol(),
-                                       this.getMessage(), this.getMetadata().key, this.conf.severity);
-//        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
+        const start = new Position(token.getRow(), prev.getEnd().getCol());
+        const end = new Position(token.getRow(), token.getStart().getCol());
+        const fix = EditHelper.deleteRange(file, start, end);
+        const issue = Issue.atRowRange(file, start.getRow(),
+                                       start.getCol(), end.getCol(),
+                                       this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
       prev = token;
