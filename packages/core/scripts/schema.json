@@ -2533,7 +2533,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that there are no spaces in front of colons in chained statements.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/space_before_colon"
+              "description": "Checks that there are no spaces in front of colons in chained statements.\nTags: Whitespace, SingleFile, Quickfix\nhttps://rules.abaplint.org/space_before_colon"
             },
             "space_before_dot": {
               "anyOf": [
