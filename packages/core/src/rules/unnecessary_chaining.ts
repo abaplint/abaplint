@@ -3,6 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper} from "../edit_helper";
 
 export class UnnecessaryChainingConf extends BasicRuleConfig {
 }
@@ -17,7 +18,7 @@ export class UnnecessaryChaining extends ABAPRule {
       title: "Unnecessary Chaining",
       shortDescription: `Find unnecessary chaining, all statements are checked`,
       extendedInformation: ``,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `WRITE: bar.`,
       goodExample: `WRITE bar.`,
     };
@@ -48,8 +49,9 @@ export class UnnecessaryChaining extends ABAPRule {
         continue;
       }
 
+      const fix = EditHelper.deleteRange(file, colon.getStart(), colon.getEnd());
       const message = "Unnecessary chaining";
-      const issue = Issue.atStatement(file, statements[i], message, this.getMetadata().key);
+      const issue = Issue.atStatement(file, statements[i], message, this.getMetadata().key, this.conf.severity, fix);
       issues.push(issue);
     }
 
