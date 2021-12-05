@@ -1,4 +1,5 @@
 import {AbstractObject} from "./_abstract_object";
+import {IAllowedNaming} from "./_iobject";
 
 export class Namespace extends AbstractObject {
 
@@ -6,10 +7,11 @@ export class Namespace extends AbstractObject {
     return "NSPC";
   }
 
-  public getAllowedNaming() {
+  public getAllowedNaming(): IAllowedNaming {
     return {
       maxLength: 10,
       allowNamespace: true,
+      customRegex: new RegExp(/^\/[A-Z_\d]{3,8}\/$/i),
     };
   }
 

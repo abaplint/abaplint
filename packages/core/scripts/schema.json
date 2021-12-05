@@ -2676,7 +2676,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_chaining"
+              "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
             },
             "unreachable_code": {
               "anyOf": [

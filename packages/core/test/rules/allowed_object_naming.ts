@@ -84,8 +84,18 @@ describe("Rule: allowed_object_naming", () => {
   });
 
   it("SOTS, okay", async () => {
-    const issues = await findIssues("ztest-dash-dash.sotr.xml");
+    const issues = await findIssues("ztest-dash-dash.sots.xml");
     expect(issues.length).to.equal(0);
+  });
+
+  it("W3MI, okay", async () => {
+    const issues = await findIssues("zfoo#1.w3mi.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("PROG, fail", async () => {
+    const issues = await findIssues("zfo-bar4.prog.xml");
+    expect(issues.length).to.equal(1);
   });
 
 });

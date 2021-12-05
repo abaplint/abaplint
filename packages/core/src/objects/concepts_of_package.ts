@@ -1,4 +1,5 @@
 import {AbstractObject} from "./_abstract_object";
+import {IAllowedNaming} from "./_iobject";
 
 export class ConceptsOfPackage extends AbstractObject {
 
@@ -6,10 +7,11 @@ export class ConceptsOfPackage extends AbstractObject {
     return "SOTS";
   }
 
-  public getAllowedNaming() {
+  public getAllowedNaming(): IAllowedNaming {
     return {
       maxLength: 30,
       allowNamespace: true,
+      customRegex: new RegExp(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_-\d<> ]+$/i),
     };
   }
 

@@ -33,17 +33,18 @@ export class AllowedObjectNaming implements IRule {
 
   public run(obj: IObject): Issue[] {
     const allowed = obj.getAllowedNaming();
+    const name = obj.getName();
     let message = "";
 
-    if (obj.getName().length > allowed.maxLength) {
+    if (name.length > allowed.maxLength) {
       message = "Name exceeds max length";
-    } else if (allowed.allowNamespace === false && obj.getName().indexOf("/") >= 0) {
+    } else if (allowed.allowNamespace === false && name.indexOf("/") >= 0) {
       message = "Namespace not allowed for object type";
-    } else if (obj.getType() === "NSPC") {
-      if (obj.getName().match(/^\/[A-Z_\d]{3,8}\/$/i) === null) {
+    } else if (allowed.customRegex !== undefined) {
+      if (name.match(allowed.customRegex) === null) {
         message = "Name not allowed";
       }
-    } else if (obj.getName().match(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_-\d<> ]+$/i) === null) {
+    } else if (name.match(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_\d<> ]+$/i) === null) {
       message = "Name not allowed";
     }
 
