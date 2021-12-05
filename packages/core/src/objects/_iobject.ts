@@ -3,9 +3,15 @@ import {Issue} from "../issue";
 import {Version} from "../version";
 import {Identifier} from "../abap/4_file_information/_identifier";
 
+export interface IAllowedNaming {
+  maxLength: number,
+  allowNamespace: boolean,
+  customRegex?: RegExp,
+}
+
 interface IArtifact {
   getType(): string;
-  getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
+  getAllowedNaming(): IAllowedNaming;
 }
 
 export interface IParseResult {

@@ -1011,4 +1011,15 @@ cl_voided=>void( bar = bar ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET BADI with filter", async () => {
+    const abap = `
+    CONSTANTS lc_command_init TYPE c LENGTH 4 VALUE 'INIT'.
+    DATA li_badi TYPE REF TO /mbtools/bc_command_badi.
+    GET BADI li_badi
+      FILTERS
+        command = lc_command_init.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

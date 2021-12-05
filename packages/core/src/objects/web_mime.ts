@@ -1,4 +1,5 @@
 import {AbstractObject} from "./_abstract_object";
+import {IAllowedNaming} from "./_iobject";
 
 export class WebMIME extends AbstractObject {
 
@@ -6,10 +7,11 @@ export class WebMIME extends AbstractObject {
     return "W3MI";
   }
 
-  public getAllowedNaming() {
+  public getAllowedNaming(): IAllowedNaming {
     return {
       maxLength: 40,
       allowNamespace: true,
+      customRegex: new RegExp(/^[A-Z_-\d/<> ]+$/i),
     };
   }
 

@@ -9,7 +9,7 @@ import {StatementSyntax} from "../_statement_syntax";
 export class GetBadi implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    for (const s of node.findDirectExpressions(Expressions.Source)) {
+    for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
 
