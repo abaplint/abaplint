@@ -5458,6 +5458,25 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("ENUM structure, ok", () => {
+    const abap = `
+  TYPES ty_object_type TYPE c LENGTH 4.
+  TYPES:
+    BEGIN OF ENUM ty_foo STRUCTURE unit BASE TYPE ty_object_type,
+      invalid VALUE IS INITIAL,
+      class   VALUE 'CLAS',
+    END OF ENUM ty_foo STRUCTURE unit.
+  TYPES:
+    BEGIN OF ENUM ty_bar STRUCTURE kind BASE TYPE ty_object_type,
+      invalid VALUE IS INITIAL,
+      method  VALUE 'METH',
+    END OF ENUM ty_bar STRUCTURE kind.
+  DATA foo TYPE ty_foo.
+  WRITE unit-invalid.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
