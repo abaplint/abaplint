@@ -6,6 +6,13 @@ const tests = [
   {abap: `WRITE: bar.`, cnt: 1},
   {abap: `WRITE bar.`, cnt: 0},
   {abap: `WRITE: bar, moo.`, cnt: 0},
+  {abap: `* comment`, cnt: 0},
+  {abap: `* comment
+* comment`, cnt: 0},
+  {abap: `TYPES: BEGIN OF t_test,
+  " comment will break this check
+   value  TYPE abap_bool,
+ END OF t_test.`, cnt: 0},
 ];
 
 testRule(tests, UnnecessaryChaining);

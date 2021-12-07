@@ -4,6 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class UnnecessaryChainingConf extends BasicRuleConfig {
 }
@@ -41,7 +42,16 @@ export class UnnecessaryChaining extends ABAPRule {
       if (colon === undefined) {
         continue;
       }
-      const next = statements[i + 1]?.getColon();
+
+      // find the next non Comment statement
+      let j = 1;
+      let nextStatement = statements[i + j];
+      while (nextStatement?.get() instanceof Comment) {
+        j++;
+        nextStatement = statements[i + j];
+      }
+
+      const next = nextStatement?.getColon();
       const prev = statements[i - 1]?.getColon();
       if (next !== undefined && colon.getStart().equals(next.getStart())) {
         continue;
