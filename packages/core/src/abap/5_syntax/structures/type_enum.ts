@@ -10,7 +10,7 @@ import {EnumType} from "../../types/basic/enum_type";
 
 export class TypeEnum {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): {values: TypedIdentifier[], types: TypedIdentifier[]} {
-    const values: TypedIdentifier[] = [];
+    let values: TypedIdentifier[] = [];
     const types: TypedIdentifier[] = [];
 
     if (!(node.get() instanceof Structures.TypeEnum)) {
@@ -66,6 +66,7 @@ export class TypeEnum {
           type: r.getType(),
         });
       }
+      values = [];
       const id = new TypedIdentifier(stru.getFirstToken(), filename, new StructureType(components), [IdentifierMeta.Enum]);
       values.push(id);
     }
