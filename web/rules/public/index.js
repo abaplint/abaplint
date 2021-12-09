@@ -5,6 +5,8 @@ function clickChip(_event, chip) {
     child.classList.toggle("chip-head");
     child.classList.toggle("chip-content");
   }
+  chip.classList.toggle("shadow1");
+  chip.classList.toggle("shadow2");
 
   if (search.has(chip.title)) {
     search.delete(chip.title);
