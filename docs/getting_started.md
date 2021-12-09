@@ -1,6 +1,6 @@
 # Getting Started
 
-Install [Node](https://nodejs.org), version 12 or above required
+Install [Node](https://nodejs.org), version 16 or above required
 
 [vscode](https://code.visualstudio.com/) with extension [abaplint](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint) is also recommended
 
