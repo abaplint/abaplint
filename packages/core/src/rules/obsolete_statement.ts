@@ -112,7 +112,9 @@ SORT BY FS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsort_
 
 CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_objects.htm
 
-POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.htm`,
+POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.htm
+
+OCCURENCES: check for OCCURENCES vs OCCURRENCES`,
     };
   }
 
