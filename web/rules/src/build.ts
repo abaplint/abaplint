@@ -54,7 +54,7 @@ function buildChips(json: any) {
     }
     if (count > 0) {
       html += `
-<div class="chip" title="${tag}">
+<div class="chip shadow1" title="${tag}">
   <div class="chip-head">${count}</div>
   <div class="chip-content">${icon}</div>
 </div>\n`;
