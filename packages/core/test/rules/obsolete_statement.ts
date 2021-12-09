@@ -28,6 +28,9 @@ const tests = [
   {abap: "lv_foo = 2.", cnt: 0},
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
 
+  {abap: "REPLACE ALL OCCURENCES OF ` ` IN plain_text WITH ''.", cnt: 1},
+  {abap: "REPLACE ALL OCCURRENCES OF ` ` IN plain_text WITH ''.", cnt: 0},
+
   {abap: "DATA tab LIKE foobar OCCURS 2.", cnt: 1, fix: false},
   {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 2, fix: false},
   {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1, fix: false},
