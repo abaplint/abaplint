@@ -4084,6 +4084,10 @@
           "description": "Check for MULTIPLY statement",
           "type": "boolean"
         },
+        "occurences": {
+          "description": "Check for OCCURENCES vs OCCURRENCES usage",
+          "type": "boolean"
+        },
         "occurs": {
           "description": "Checks for usages of OCCURS",
           "type": "boolean"
@@ -4165,7 +4169,8 @@
         "exitFromSQL",
         "sortByFS",
         "callTransformation",
-        "regex"
+        "regex",
+        "occurences"
       ],
       "type": "object"
     },

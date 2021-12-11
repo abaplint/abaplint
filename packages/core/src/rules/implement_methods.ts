@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
-import {Class, Interface} from "../objects";
+import {Class, Interface, Program} from "../objects";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
@@ -30,6 +30,7 @@ export class ImplementMethods extends ABAPRule {
       key: "implement_methods",
       title: "Implement methods",
       shortDescription: `Checks for abstract methods and methods from interfaces which need implementing.`,
+      extendedInformation: `INCLUDE programs are only checked in connection with their main programs.`,
       tags: [RuleTag.Syntax, RuleTag.Quickfix],
     };
   }
@@ -46,6 +47,8 @@ export class ImplementMethods extends ABAPRule {
     let ret: Issue[] = [];
 
     if (file.getStructure() === undefined) {
+      return [];
+    } else if (obj instanceof Program && obj.isInclude() === true) {
       return [];
     }
 
