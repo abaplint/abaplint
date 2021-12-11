@@ -453,4 +453,41 @@ ENDCLASS.
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("single include, no main program", async () => {
+    const prog = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_bar.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZINCLINTF</NAME>
+    <SUBC>I</SUBC>
+    <RLOAD>E</RLOAD>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>R</ID>
+     <ENTRY>include</ENTRY>
+     <LENGTH>7</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runMulti([
+      {filename: "zinclintf.prog.abap", contents: prog},
+      {filename: "zinclintf.prog.xml", contents: xml},
+    ]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
