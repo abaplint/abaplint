@@ -181,7 +181,7 @@ export class Table extends AbstractObject {
         const length = field.LENG ? field.LENG : field.INTLEN;
         components.push({
           name: field.FIELDNAME,
-          type: ddic.textToType(datatype, length, field.DECIMALS, this.getName())});
+          type: ddic.textToType(datatype, length, field.DECIMALS, this.getName() + "-" + field.FIELDNAME)});
       } else {
         components.push({
           name: field.FIELDNAME,
