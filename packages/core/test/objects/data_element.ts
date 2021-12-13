@@ -111,6 +111,7 @@ describe("Data element, parse main xml", () => {
     const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
+    expect(type.getQualifiedName()).to.equal("ZDTEL");
   });
 
   it("Reference to domain, outside namespace, expect void", async () => {
