@@ -43,14 +43,15 @@ export class Domain extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry): AbstractType {
+  public parseType(reg: IRegistry, parent?: string): AbstractType {
     if (this.parsedType) {
       return this.parsedType;
     } else if (this.parsedXML === undefined) {
       return new Types.UnknownType("Domain " + this.getName() + " parser error", this.getName());
     }
     const ddic = new DDIC(reg);
-    this.parsedType = ddic.textToType(this.parsedXML.datatype, this.parsedXML.length, this.parsedXML.decimals, this.getName(), false);
+    this.parsedType = ddic.textToType(this.parsedXML.datatype, this.parsedXML.length,
+                                      this.parsedXML.decimals, parent || this.getName(), parent !== undefined);
     return this.parsedType;
   }
 

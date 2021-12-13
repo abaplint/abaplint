@@ -34,6 +34,11 @@ export class DataElement extends AbstractObject {
     super.setDirty();
   }
 
+  public getDomainName(): string | undefined {
+    this.parse();
+    return this.parsedXML?.domname;
+  }
+
   public parseType(reg: IRegistry): AbstractType {
     const references: IObjectAndToken[] = [];
 
@@ -46,7 +51,7 @@ export class DataElement extends AbstractObject {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
           lookup = {type: new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName())};
         } else {
-          lookup = ddic.lookupDomain(this.parsedXML.domname);
+          lookup = ddic.lookupDomain(this.parsedXML.domname, this.getName());
         }
       } else if (this.parsedXML.refkind === "R") {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
