@@ -31,7 +31,7 @@ export class NoAliases extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    const message = "";
+    const message = "Do not use ALIASES";
     for (const stat of file.getStatements()) {
       if (stat.get() instanceof Statements.Aliases) {
         issues.push(Issue.atStatement(file, stat, message, this.getMetadata().key, this.conf.severity));

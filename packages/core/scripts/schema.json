@@ -2348,6 +2348,17 @@
               ],
               "description": "Place pragmas at end of statements\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_placement"
             },
+            "prefer_corresponding": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferCorrespondingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer corresponding( ) to MOVE-CORRESPONDING, from v740sp05 and up\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/prefer_corresponding"
+            },
             "prefer_inline": {
               "anyOf": [
                 {
@@ -4295,6 +4306,23 @@
       "type": "string"
     },
     "PragmaPlacementConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferCorrespondingConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
