@@ -26,7 +26,7 @@ export class FullyTypeConstants extends ABAPRule {
     };
   }
 
-  public getDescription(type: string): string {
+  private getDescription(type: string): string {
     return `Fully type ${type}, no implicit typing`;
   }
 

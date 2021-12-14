@@ -82,6 +82,7 @@ import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
 import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
+import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
@@ -233,6 +234,7 @@ export interface IConfig {
     "names_no_dash"?: NamesNoDashConf | boolean,
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
+    "no_aliases"?: NoAliasesConf | boolean,
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,

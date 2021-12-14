@@ -2216,6 +2216,17 @@
               ],
               "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
+            "no_aliases": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoAliasesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects use of the ALIAS statement\nTags: SingleFile\nhttps://rules.abaplint.org/no_aliases"
+            },
             "no_chained_assignment": {
               "anyOf": [
                 {
@@ -3857,6 +3868,23 @@
         "less"
       ],
       "type": "string"
+    },
+    "NoAliasesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
     },
     "NoChainedAssignmentConf": {
       "additionalProperties": false,
