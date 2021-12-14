@@ -282,6 +282,7 @@ const versionsFail = [
   {abap: `CALL FUNCTION 'Z_ABAPGIT_SERIALIZE_PACKAGE'
   EXPORTING
     iv_package = lo_repo->get_package( ).`, ver: Version.v702},
+  {abap: `CALL FUNCTION 'SDF' IN BACKGROUND UNIT foo.`, ver: Version.Cloud},
 ];
 
 statementVersionFail(versionsFail, "APPEND");

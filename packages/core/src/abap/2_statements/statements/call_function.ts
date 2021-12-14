@@ -11,7 +11,7 @@ export class CallFunction implements IStatement {
     const starting = seq("STARTING NEW TASK", SimpleSource2);
     const update = str("IN UPDATE TASK");
     const unit = seq("UNIT", Source);
-    const background = seq("IN BACKGROUND", alt("TASK", unit));
+    const background = verNot(Version.Cloud, seq("IN BACKGROUND", alt("TASK", unit)));
     const calling = seq("CALLING", MethodName, "ON END OF TASK");
     const performing = seq("PERFORMING", FormName, "ON END OF TASK");
     const separate = str("AS SEPARATE UNIT");
