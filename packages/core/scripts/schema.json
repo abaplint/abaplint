@@ -2883,7 +2883,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "list of files to exclude, case insensitive regex",
+          "description": "list of files to exclude, these files are not added when running syntax check or any other rules, case insensitive regex",
           "items": {
             "type": "string"
           },
@@ -2893,6 +2893,14 @@
         "files": {
           "description": "input files, glob format",
           "type": "string"
+        },
+        "noIssues": {
+          "description": "list of files to not report any issues for, case insensitive regex",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
         },
         "skipGeneratedFunctionGroups": {
           "type": "boolean"
