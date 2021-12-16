@@ -11,10 +11,14 @@ export interface IGlobalConfig {
   useApackDependencies?: boolean;
   /** Do not report any issues for includes without main programs */
   skipIncludesWithoutMain?: boolean;
-  /** list of files to exclude, case insensitive regex
+  /** list of files to exclude, these files are not added when running syntax check or any other rules, case insensitive regex
    * @uniqueItems true
   */
   exclude?: string[];
+  /** list of files to not report any issues for, case insensitive regex
+   * @uniqueItems true
+  */
+  noIssues?: string[];
 }
 
 export interface IDependency {

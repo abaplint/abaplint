@@ -320,11 +320,24 @@ describe("exclude list", () => {
     let registry = new Registry(config).addFile(file);
     let issues = registry.findIssues();
 
-
     registry = new Registry(config).addFile(file);
     issues = registry.findIssues();
     expect(issues.length).to.equal(0);
 
+  });
+
+  it("will not return parser issues globally noIssue files", () => {
+    const config = getConfig({"parser_error": true});
+    config.getGlobal().noIssues = ["foo.prog.abap"];
+
+    const file = new MemoryFile("foo.prog.abap", "BREAK-POINT.\nsdfdsfs");
+
+    let registry = new Registry(config).addFile(file);
+    let issues = registry.findIssues();
+
+    registry = new Registry(config).addFile(file);
+    issues = registry.findIssues();
+    expect(issues.length).to.equal(0);
   });
 
   it("will exclude issues based on the global exclude patterns", () => {

@@ -30,7 +30,7 @@ Exceptions are excluded from this rule.`,
     };
   }
 
-  public getDescription(name: string): string {
+  private getDescription(name: string): string {
     return "Public attributes are not allowed, attribute \"" + name + "\"";
   }
 

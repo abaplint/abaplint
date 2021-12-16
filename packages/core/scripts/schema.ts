@@ -82,6 +82,7 @@ import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
 import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
+import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
@@ -93,6 +94,7 @@ import {Parser702ChainingConf} from "../src/rules/parser_702_chaining";
 import {ParserErrorConf} from "../src/rules/parser_error";
 import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
 import {PragmaPlacementConf} from "../src/rules/pragma_placement";
+import {PreferCorrespondingConf} from "../src/rules/prefer_corresponding";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
@@ -233,6 +235,7 @@ export interface IConfig {
     "names_no_dash"?: NamesNoDashConf | boolean,
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
+    "no_aliases"?: NoAliasesConf | boolean,
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
@@ -244,6 +247,7 @@ export interface IConfig {
     "parser_error"?: ParserErrorConf | boolean,
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
     "pragma_placement"?: PragmaPlacementConf | boolean,
+    "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,

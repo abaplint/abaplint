@@ -2216,6 +2216,17 @@
               ],
               "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
+            "no_aliases": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoAliasesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects use of the ALIAS statement\nTags: SingleFile\nhttps://rules.abaplint.org/no_aliases"
+            },
             "no_chained_assignment": {
               "anyOf": [
                 {
@@ -2336,6 +2347,17 @@
                 }
               ],
               "description": "Place pragmas at end of statements\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_placement"
+            },
+            "prefer_corresponding": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferCorrespondingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer corresponding( ) to MOVE-CORRESPONDING, from v740sp05 and up\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/prefer_corresponding"
             },
             "prefer_inline": {
               "anyOf": [
@@ -2861,7 +2883,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "list of files to exclude, case insensitive regex",
+          "description": "list of files to exclude, these files are not added when running syntax check or any other rules, case insensitive regex",
           "items": {
             "type": "string"
           },
@@ -2871,6 +2893,14 @@
         "files": {
           "description": "input files, glob format",
           "type": "string"
+        },
+        "noIssues": {
+          "description": "list of files to not report any issues for, case insensitive regex",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
         },
         "skipGeneratedFunctionGroups": {
           "type": "boolean"
@@ -3858,6 +3888,23 @@
       ],
       "type": "string"
     },
+    "NoAliasesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "NoChainedAssignmentConf": {
       "additionalProperties": false,
       "properties": {
@@ -4267,6 +4314,23 @@
       "type": "string"
     },
     "PragmaPlacementConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferCorrespondingConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
