@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
-import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon} from "./common";
+import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon, singleFileIcon} from "./common";
 import {buildRule} from "./rule_page";
 import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
@@ -8,6 +8,7 @@ import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
 function buildChips(json: any) {
   let html = "";
+  let issued = 0;
   for (const tag in RuleTag) {
     let icon = "";
 
@@ -39,6 +40,9 @@ function buildChips(json: any) {
       case RuleTag.Quickfix:
         icon = quickfixIcon;
         break;
+      case RuleTag.SingleFile:
+        icon = singleFileIcon;
+        break;
       default:
         break;
     }
@@ -57,9 +61,15 @@ function buildChips(json: any) {
 <div class="chip shadow1" title="${tag}">
   <div class="chip-head">${count}</div>
   <div class="chip-content">${icon}</div>
-</div>\n`;
+</div>&nbsp;&nbsp;&nbsp;\n`;
+      issued++;
+    }
+
+    if (issued % 5 === 0) {
+      html += "<br><br>\n";
     }
   }
+
   return html;
 }
 
@@ -82,10 +92,8 @@ documentation as well as abaplint.json definitions which attempt to align abapli
 </form>
 </div>
 
-<h2>${json.length} Rules</h2>
+<h2><div id="rules_count" style="display: inline-block;">${json.length}</div> Rules</h2>
 ${buildChips(json)}
-<br>
-<br>
 <div id="rules">
 `;
 
