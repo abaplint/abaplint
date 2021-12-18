@@ -22,6 +22,14 @@ function clickChip(_event, chip) {
       }
     }
   }
+
+  let counter = 0;
+  for (const rule of document.getElementById("rules").children) {
+    if (rule.classList.contains("hidden") === false) {
+      counter++;
+    }
+  }
+  document.getElementById("rules_count").innerHTML = counter;
 }
 
 for (const chip of document.getElementsByClassName("chip")) {

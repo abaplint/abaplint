@@ -82,7 +82,7 @@ documentation as well as abaplint.json definitions which attempt to align abapli
 </form>
 </div>
 
-<h2>${json.length} Rules</h2>
+<h2><div id="rules_count" style="display: inline-block;">${json.length}</div> Rules</h2>
 ${buildChips(json)}
 <br>
 <br>
