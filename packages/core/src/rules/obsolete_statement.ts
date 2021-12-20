@@ -103,6 +103,8 @@ RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.ht
 
 PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
 
+MOVE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapmove_obs.htm
+
 SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm
 SELECT COUNT(*) is considered okay
 
