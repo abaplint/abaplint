@@ -7,7 +7,11 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {IRegistry} from "../_iregistry";
-import {TableAccessType, TableType} from "../abap/types/basic";
+import {StructureType, TableAccessType, TableType} from "../abap/types/basic";
+import {StatementNode} from "../abap/nodes";
+import {ABAPFile} from "../abap/abap_file";
+import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
+
 
 export class SelectAddOrderByConf extends BasicRuleConfig {
 }
@@ -74,15 +78,8 @@ If the target is a sorted/hashed table, no issue is reported`,
           continue;
         }
 
-        const target = s.findFirstExpression(Expressions.SQLIntoTable)?.findFirstExpression(Expressions.Target);
-        if (target) {
-          const start = target.getFirstToken().getStart();
-          const scope = spaghetti.lookupPosition(start, file.getFilename());
-          const type = scope?.findWriteReference(start)?.getType();
-          if (type instanceof TableType
-              && (type?.getAccessType() === TableAccessType.sorted || type?.getAccessType() === TableAccessType.hashed)) {
-            continue;
-          }
+        if (this.isTargetSortedOrHashed(s, spaghetti, file)) {
+          continue;
         }
 
         issues.push(Issue.atStatement(file, s, "Add ORDER BY", this.getMetadata().key, this.conf.severity));
@@ -90,6 +87,30 @@ If the target is a sorted/hashed table, no issue is reported`,
     }
 
     return issues;
+  }
+
+  private isTargetSortedOrHashed(s: StatementNode, spaghetti: ISpaghettiScope, file: ABAPFile): boolean {
+    const target = s.findFirstExpression(Expressions.SQLIntoTable)?.findFirstExpression(Expressions.Target);
+    if (target) {
+      const start = target.getFirstToken().getStart();
+      const scope = spaghetti.lookupPosition(start, file.getFilename());
+      let type = scope?.findWriteReference(start)?.getType();
+
+      const children = target.getChildren();
+      if (type instanceof StructureType && children.length >= 3 && children[1].concatTokens() === "-") {
+        const found = type.getComponentByName(children[2].concatTokens());
+        if (found === undefined) {
+          return false;
+        }
+        type = found;
+      }
+
+      if (type instanceof TableType
+          && (type?.getAccessType() === TableAccessType.sorted || type?.getAccessType() === TableAccessType.hashed)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
