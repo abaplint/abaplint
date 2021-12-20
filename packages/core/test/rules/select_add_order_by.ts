@@ -21,6 +21,11 @@ const tests = [
   {abap: `
   DATA itab2 TYPE SORTED TABLE OF string.
   SELECT text FROM t100 INTO TABLE @itab2.`, cnt: 0},
+  {abap: `
+DATA: BEGIN OF foo,
+        itab2 TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
+      END OF foo.
+SELECT text FROM t100 INTO TABLE @foo-itab2.`, cnt: 0},
 ];
 
 testRule(tests, SelectAddOrderBy);
