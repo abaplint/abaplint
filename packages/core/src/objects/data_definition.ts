@@ -28,6 +28,7 @@ export class DataDefinition extends AbstractObject {
   }
 
   public parseType(_reg: IRegistry): AbstractType {
+    // todo
     return new VoidType("DDLS:todo");
   }
 

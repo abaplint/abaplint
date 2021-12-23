@@ -28,6 +28,7 @@ export class Config implements IConfiguration {
       global: {
         files: "/src/**/*.*",
         exclude: [],
+        noIssues: [],
         skipGeneratedGatewayClasses: true,
         skipGeneratedPersistentClasses: true,
         skipGeneratedFunctionGroups: true,
