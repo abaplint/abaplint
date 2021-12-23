@@ -139,8 +139,9 @@ function renderMain() {
   document.getElementById("body").innerHTML =
     "<div>\n" +
     "<div id=\"mySidenav\" class=\"sidenav sidenav-print\">\n" +
-    "<h3>abaplint</h3>\n" +
+    "<h3>abaplint syntax diagrams</h3>\n" +
     "<input type=\"text\" id=\"filter\" oninput=\"javascript:inputChanged();\" onfocus=\"javascript:focusFilter()\" oncontextmenu=\"javascript:onRightClick();\" value=\"" + filter + "\"></input><br>\n" +
+    "Language: abap<br>\n" +
     "<br>\n" +
     "<b>Statements</b><br>\n" +
     "<div id=\"sidenav_statements\">Loading</div>\n" +
