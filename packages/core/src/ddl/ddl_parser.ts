@@ -3,7 +3,7 @@ import {ExpressionNode} from "../abap/nodes";
 import {IFile} from "../files/_ifile";
 import {defaultVersion} from "../version";
 import {DDLLexer} from "./ddl_lexer";
-import * as Expressions from "../abap/2_statements/expressions";
+import * as Expressions from "./expressions";
 
 export enum DDLKind {
   Structure = "structure",
