@@ -106,9 +106,6 @@ function renderSyntax(type, name) {
   html = html + found.svg + "<br>\n" +
     "<b>Using</b>: " + use.join(", ") + "<br>\n" +
     "<b>Used by</b>: " + by.join(", ") + "<br>\n";
-  if (type === "expression") {
-    html += `<a href="./${type}_${name}_WhereUsed.svg">Full WhereUsed</a><br>\n`;
-  }
 
   document.getElementById("body").innerHTML = html;
 }
