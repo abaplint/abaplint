@@ -19,11 +19,14 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
-  /*
-const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+  it("ending with colon", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
 define view zhvamfoocust as select from zhvam_cust {
-    key foo as sdfdsf
-};`
-*/
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
 
 });
