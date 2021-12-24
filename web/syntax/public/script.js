@@ -41,7 +41,7 @@ function renderList(filter, list) {
     if (!filter || i.name.toLowerCase().includes(filter.toLowerCase())) {
       ret = ret + "<div style=\"page-break-inside:avoid;\">" +
         "<u>" + i.name + "</u><br>" +
-        "<a href=\"#/" + i.type + "/" + i.name + "\"><img src=\"" + i.type + "_" + i.name + ".svg\"></a></div><br>";
+        "<a href=\"#/" + i.type + "/" + i.name + "\"><img src=\"abap/" + i.type + "_" + i.name + ".svg\"></a></div><br>";
     }
   }
   return ret;

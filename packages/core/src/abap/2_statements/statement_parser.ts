@@ -4,7 +4,7 @@ import * as Tokens from "../1_lexer/tokens";
 import {Version} from "../../version";
 import {IFile} from "../../files/_ifile";
 import {TokenNode, StatementNode} from "../nodes";
-import {Artifacts} from "../artifacts";
+import {ArtifactsABAP} from "../artifacts";
 import {Combi} from "./combi";
 import {Unknown, Empty, Comment, NativeSQL, IStatement} from "./statements/_statement";
 import {IStatementResult} from "./statement_result";
@@ -21,7 +21,7 @@ class StatementMap {
   public constructor() {
     this.map = {};
 
-    for (const stat of Artifacts.getStatements()) {
+    for (const stat of ArtifactsABAP.getStatements()) {
       const f = stat.getMatcher().first();
       if (f.length === 0) {
         throw new Error("StatementMap, first must have contents");

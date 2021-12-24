@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
-import fs from "fs";
 import Combi from "../../packages/core/build/src/abap/2_statements/combi.js";
-import {Artifacts} from "../../packages/core/build/src/abap/artifacts.js";
+import {ArtifactsABAP} from "../../packages/core/build/src/abap/artifacts.js";
 
 function sort(data) {
   const unique = data.filter((v, i, a) => { return a.indexOf(v) === i; });
@@ -16,22 +15,34 @@ function compareString(a, b) {
 
 export class Graph {
 
-  static run() {
-    return this.buildData();
-  }
-
-  static buildData() {
+  /*
+  static buildDDLData() {
     const res = {expressions: [], statements: [], structures: []};
 
     for (const expr of Artifacts.getExpressions()) {
       res.expressions.push(this.buildRunnable(new expr().constructor.name, "expression", new expr().getRunnable(), true));
     }
 
-    for (const stat of Artifacts.getStatements()) {
+    res.expressions.sort(compareString);
+    res.statements.sort(compareString);
+    res.structures.sort(compareString);
+
+    return res;
+  }
+  */
+
+  static buildABAPData() {
+    const res = {expressions: [], statements: [], structures: []};
+
+    for (const expr of ArtifactsABAP.getExpressions()) {
+      res.expressions.push(this.buildRunnable(new expr().constructor.name, "expression", new expr().getRunnable(), true));
+    }
+
+    for (const stat of ArtifactsABAP.getStatements()) {
       res.statements.push(this.buildRunnable(stat.constructor.name, "statement", stat.getMatcher(), false));
     }
 
-    for (const stru of Artifacts.getStructures()) {
+    for (const stru of ArtifactsABAP.getStructures()) {
       const str = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
         "Railroad.Diagram(" + stru.getMatcher().toRailroad() + ").toString();";
       const using = stru.getMatcher().getUsing();

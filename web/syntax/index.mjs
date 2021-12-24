@@ -14,7 +14,7 @@ mkdirSync(join(build, "abap"));
 mkdirSync(join(build, "ddl"));
 mkdirSync(join(build, "cds"));
 
-generate(Graph.run());
+generate(Graph.buildABAPData());
 
 copyFileSync(join(__dirname, "public", "index.html"), join(build, "index.html"));
 copyFileSync(join(__dirname, "public", "script.js"), join(build, "script.js"));

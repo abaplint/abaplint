@@ -46,7 +46,7 @@ function className(cla: any) {
   return cla.constructor.name;
 }
 
-export class Artifacts {
+export class ArtifactsABAP {
 
   public static getStructures(): IStructure[] {
     const ret: IStructure[] = [];

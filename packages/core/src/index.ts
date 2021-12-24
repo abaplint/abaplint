@@ -5,7 +5,7 @@ import {Registry} from "./registry";
 import {MethodLengthStats, IMethodLengthResult} from "./utils/method_length_stats";
 import {LanguageServer} from "./lsp/language_server";
 import * as LanguageServerTypes from "./lsp/_interfaces";
-import {Artifacts} from "./abap/artifacts";
+import {ArtifactsABAP} from "./abap/artifacts";
 import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IProgress} from "./progress";
@@ -56,7 +56,7 @@ import {DDLParser} from "./ddl/ddl_parser";
 // file used to build typings, index.d.ts
 export {MemoryFile, Issue, Config, Version, ReferenceType,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
-  Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
+  ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
