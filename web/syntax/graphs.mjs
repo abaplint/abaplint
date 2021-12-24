@@ -17,7 +17,7 @@ function compareString(a, b) {
 export class Graph {
 
   static run() {
-    this.writeFile(this.buildData());
+    return this.buildData();
   }
 
   static buildData() {
@@ -55,10 +55,6 @@ export class Graph {
       type: type,
       railroad: Combi.Combi.railroad(runnable, complex),
       using: sort(runnable.getUsing())};
-  }
-
-  static writeFile(data) {
-    fs.writeFileSync("./build/generated.json", JSON.stringify(data, undefined, 2), "utf8");
   }
 
 }

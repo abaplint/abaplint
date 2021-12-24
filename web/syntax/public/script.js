@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
-let json = {};
+let abapJson = {};
 
 function focusFilter() {
   document.getElementById("filter").select();
@@ -30,9 +30,9 @@ function renderSidenavList(list) {
 }
 
 function renderLeft() {
-  document.getElementById("sidenav_statements").innerHTML = renderSidenavList(json.statements);
-  document.getElementById("sidenav_expressions").innerHTML = renderSidenavList(json.expressions);
-  document.getElementById("sidenav_structures").innerHTML = renderSidenavList(json.structures);
+  document.getElementById("sidenav_statements").innerHTML = renderSidenavList(abapJson.statements);
+  document.getElementById("sidenav_expressions").innerHTML = renderSidenavList(abapJson.expressions);
+  document.getElementById("sidenav_structures").innerHTML = renderSidenavList(abapJson.structures);
 }
 
 function renderList(filter, list) {
@@ -50,17 +50,17 @@ function renderList(filter, list) {
 function renderRight(filter) {
   let html = "";
 
-  const statements = renderList(filter, json.statements);
+  const statements = renderList(filter, abapJson.statements);
   if (statements !== "") {
     html = "<div style=\"page-break-before: always;\"><h1>Statements</h1>" + statements + "</div>";
   }
 
-  const expressions = renderList(filter, json.expressions);
+  const expressions = renderList(filter, abapJson.expressions);
   if (expressions !== "") {
     html = html + "<div style=\"page-break-before: always;\"><h1>Expressions</h1>" + expressions + "</div>";
   }
 
-  const structures = renderList(filter, json.structures);
+  const structures = renderList(filter, abapJson.structures);
   if (structures !== "") {
     html = html + "<div style=\"page-break-before: always;\"><h1>Structures</h1>" + structures + "</div>";
   }
@@ -73,7 +73,7 @@ function renderSyntax(type, name) {
   let found = {};
   let prev = {};
   let next = {};
-  const list = json[type + "s"];
+  const list = abapJson[type + "s"];
   for(let index = 0; index < list.length; index++) {
     if (list[index].name === name) {
       found = list[index];
@@ -158,7 +158,7 @@ function renderMain() {
 
 function run() {
   window.onpopstate = Router.popstate;
-  json = data;
+  abapJson = abapData;
   Router.popstate();
 }
 

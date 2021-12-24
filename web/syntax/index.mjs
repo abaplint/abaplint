@@ -10,9 +10,11 @@ const __dirname = dirname(__filename);
 const build = join(__dirname, "build");
 rmSync(build, {recursive: true, force: true});
 mkdirSync(build);
+mkdirSync(join(build, "abap"));
+mkdirSync(join(build, "ddl"));
+mkdirSync(join(build, "cds"));
 
-Graph.run();
-generate();
+generate(Graph.run());
 
 copyFileSync(join(__dirname, "public", "index.html"), join(build, "index.html"));
 copyFileSync(join(__dirname, "public", "script.js"), join(build, "script.js"));

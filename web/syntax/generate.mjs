@@ -53,7 +53,7 @@ function generateSVG(input) {
   result = result.replace(/<svg /, "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
   result = result.replace(/<g transform/, css + "<g transform");
 
-  const target = folder + input.type + "_" + input.name + ".svg";
+  const target = folder + "abap/" + input.type + "_" + input.name + ".svg";
   writeFileSync(target, result, "utf8");
 
   return result;
@@ -84,9 +84,9 @@ function filename(name) {
   return name.replace(/(.)([A-Z])/, "$1_$2").toLowerCase() + ".ts";
 }
 
-function run() {
+function run(data) {
 
-  const file = JSON.parse(readFileSync(folder + "generated.json", "utf8"));
+  const file = data;
 
   for (const index in file.structures) {
     file.structures[index].svg = generateSVG(file.structures[index]);
@@ -107,7 +107,7 @@ function run() {
   return file;
 }
 
-export function generate() {
-  const json = run();
-  writeFileSync(folder + "data.json.js", "data = " + JSON.stringify(json, null, 2) + ";", "utf8");
+export function generate(data) {
+  const json = run(data);
+  writeFileSync(folder + "abap.json.js", "abapData = " + JSON.stringify(json, null, 2) + ";", "utf8");
 }
