@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import Combi from "../../packages/core/build/src/abap/2_statements/combi.js";
 import {ArtifactsABAP} from "../../packages/core/build/src/abap/artifacts.js";
+import {ArtifactsDDL} from "../../packages/core/build/src/ddl/artifacts.js";
+import {ArtifactsCDS} from "../../packages/core/build/src/cds/artifacts.js";
 
 function sort(data) {
   const unique = data.filter((v, i, a) => { return a.indexOf(v) === i; });
@@ -15,21 +17,29 @@ function compareString(a, b) {
 
 export class Graph {
 
-  /*
   static buildDDLData() {
     const res = {expressions: [], statements: [], structures: []};
 
-    for (const expr of Artifacts.getExpressions()) {
+    for (const expr of ArtifactsDDL.getExpressions()) {
       res.expressions.push(this.buildRunnable(new expr().constructor.name, "expression", new expr().getRunnable(), true));
     }
 
     res.expressions.sort(compareString);
-    res.statements.sort(compareString);
-    res.structures.sort(compareString);
 
     return res;
   }
-  */
+
+  static buildCDSData() {
+    const res = {expressions: [], statements: [], structures: []};
+
+    for (const expr of ArtifactsCDS.getExpressions()) {
+      res.expressions.push(this.buildRunnable(new expr().constructor.name, "expression", new expr().getRunnable(), true));
+    }
+
+    res.expressions.sort(compareString);
+
+    return res;
+  }
 
   static buildABAPData() {
     const res = {expressions: [], statements: [], structures: []};
