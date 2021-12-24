@@ -6,14 +6,18 @@ function focusFilter() {
   document.getElementById("filter").select();
 }
 
-function inputChanged() {
-  renderRight(document.getElementById("filter").value);
-  const value = document.getElementById("filter").value;
+function searchChanged() {
+  const v = document.getElementById("filter").value;
+  renderRight(v);
   let newUrl = window.location.pathname;
-  if (value !== "") {
-    newUrl = newUrl + "?filter=" + document.getElementById("filter").value;
+  if (v !== "") {
+    newUrl = newUrl + "?filter=" + v;
   }
   window.history.replaceState(null, document.title, newUrl);
+}
+
+function languageChanged(v) {
+  console.dir(v);
 }
 
 function setFilter(filter) {
@@ -124,7 +128,7 @@ class Router {
 
 function onRightClick() {
   document.getElementById("filter").value = "";
-  inputChanged();
+  searchChanged();
   window.event.returnValue = false;
 }
 
@@ -138,8 +142,14 @@ function renderMain() {
     "<div>\n" +
     "<div id=\"mySidenav\" class=\"sidenav sidenav-print\">\n" +
     "<h3>abaplint syntax diagrams</h3>\n" +
-    "<input type=\"text\" id=\"filter\" oninput=\"javascript:inputChanged();\" onfocus=\"javascript:focusFilter()\" oncontextmenu=\"javascript:onRightClick();\" value=\"" + filter + "\"></input><br>\n" +
-    "Language: abap<br>\n" +
+    `Language:
+    <select id="language" oninput=\"javascript:languageChanged(this.value);\">
+    <option value="abap">abap</option>
+    <option value="ddl">ddl</option>
+    <option value="cds">cds</option>
+    </select>
+    ` +
+    "<input type=\"text\" id=\"filter\" oninput=\"javascript:searchChanged();\" onfocus=\"javascript:focusFilter()\" oncontextmenu=\"javascript:onRightClick();\" value=\"" + filter + "\"></input><br>\n" +
     "<br>\n" +
     "<b>Statements</b><br>\n" +
     "<div id=\"sidenav_statements\">Loading</div>\n" +
@@ -154,7 +164,7 @@ function renderMain() {
 
   document.getElementById("filter").focus();
   renderLeft();
-  inputChanged();
+  searchChanged();
 }
 
 function run() {
