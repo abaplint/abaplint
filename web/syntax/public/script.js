@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 const languages = {};
-const currentLanguage = "abap";
+let currentLanguage = "abap";
 
 function focusFilter() {
   document.getElementById("filter").select();
@@ -17,7 +17,9 @@ function searchChanged() {
 }
 
 function languageChanged(v) {
-  console.dir(v);
+  currentLanguage = v;
+  renderRight();
+  renderLeft();
 }
 
 function setFilter(filter) {
@@ -30,14 +32,26 @@ function renderSidenavList(list) {
   for(const i of list) {
     html = html + "<a href=\"javascript:setFilter('" + i.name + "');\">" + i.name + "</a><br>";
   }
-
   return html;
 }
 
 function renderLeft() {
-  document.getElementById("sidenav_statements").innerHTML = renderSidenavList(languages[currentLanguage].statements);
-  document.getElementById("sidenav_expressions").innerHTML = renderSidenavList(languages[currentLanguage].expressions);
-  document.getElementById("sidenav_structures").innerHTML = renderSidenavList(languages[currentLanguage].structures);
+  let html = ``;
+
+  if (languages[currentLanguage].statements.length > 0) {
+    html += "<b>Statements</b><br>\n";
+    html += renderSidenavList(languages[currentLanguage].statements);
+  }
+  if (languages[currentLanguage].expressions.length > 0) {
+    html += "<b>Expressions</b><br>\n";
+    html += renderSidenavList(languages[currentLanguage].expressions);
+  }
+  if (languages[currentLanguage].structures.length > 0) {
+    html += "<b>Structures</b><br>\n";
+    html += renderSidenavList(languages[currentLanguage].structures);
+  }
+
+  document.getElementById("sidenav").innerHTML = html;
 }
 
 function renderList(filter, list) {
@@ -46,7 +60,7 @@ function renderList(filter, list) {
     if (!filter || i.name.toLowerCase().includes(filter.toLowerCase())) {
       ret = ret + "<div style=\"page-break-inside:avoid;\">" +
         "<u>" + i.name + "</u><br>" +
-        "<a href=\"#/" + i.type + "/" + i.name + "\"><img src=\"abap/" + i.type + "_" + i.name + ".svg\"></a></div><br>";
+        "<a href=\"#/" + i.type + "/" + i.name + "\"><img src=\"" + currentLanguage + "/" + i.type + "_" + i.name + ".svg\"></a></div><br>";
     }
   }
   return ret;
@@ -140,25 +154,18 @@ function renderMain() {
 
   document.getElementById("body").innerHTML =
     "<div>\n" +
-    "<div id=\"mySidenav\" class=\"sidenav sidenav-print\">\n" +
+    "<div class=\"sidenav sidenav-print\">\n" +
     "<h3>abaplint syntax diagrams</h3>\n" +
     `Language:
     <select id="language" oninput=\"javascript:languageChanged(this.value);\">
-    <option value="abap">abap</option>
-    <option value="ddl">ddl</option>
-    <option value="cds">cds</option>
+    <option value="abap"${currentLanguage === "abap" ? " selected" : ""}>abap</option>
+    <option value="ddl"${currentLanguage === "ddl" ? " selected" : ""}>ddl</option>
+    <option value="cds"${currentLanguage === "cds" ? " selected" : ""}>cds</option>
     </select>
     ` +
     "<input type=\"text\" id=\"filter\" oninput=\"javascript:searchChanged();\" onfocus=\"javascript:focusFilter()\" oncontextmenu=\"javascript:onRightClick();\" value=\"" + filter + "\"></input><br>\n" +
     "<br>\n" +
-    "<b>Statements</b><br>\n" +
-    "<div id=\"sidenav_statements\">Loading</div>\n" +
-    "<br>\n" +
-    "<b>Expressions</b><br>\n" +
-    "<div id=\"sidenav_expressions\">Loading</div>\n" +
-    "<br>\n" +
-    "<b>Structures</b><br>\n" +
-    "<div id=\"sidenav_structures\">Loading</div>\n" +
+    "<div id=\"sidenav\">Loading</div>\n" +
     "</div>\n" +
     "<div id=\"main\" class=\"main main-print\">Loading</div>";
 
