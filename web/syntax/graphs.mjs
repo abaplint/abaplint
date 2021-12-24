@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
-const fs = require("fs");
-const Combi = require("../../packages/core/build/src/abap/2_statements/combi");
-const Artifacts = require("../../packages/core/build/src/abap/artifacts").Artifacts;
+import fs from "fs";
+import Combi from "../../packages/core/build/src/abap/2_statements/combi.js";
+import {Artifacts} from "../../packages/core/build/src/abap/artifacts.js";
 
 function sort(data) {
   const unique = data.filter((v, i, a) => { return a.indexOf(v) === i; });
@@ -16,7 +14,7 @@ function compareString(a, b) {
   return 0;
 }
 
-class Graph {
+export class Graph {
 
   static run() {
     this.writeFile(this.buildData());
@@ -65,4 +63,3 @@ class Graph {
 
 }
 
-Graph.run();

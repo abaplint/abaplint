@@ -1,12 +1,10 @@
 /* eslint-disable no-eval */
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 
 // used for generating "syntax"
 
-const Railroad = require("railroad-diagrams");
-const fs = require("fs");
+import Railroad from "railroad-diagrams";
+import {writeFileSync, readFileSync} from "fs";
 
 const folder = "./build/";
 
@@ -56,7 +54,7 @@ function generateSVG(input) {
   result = result.replace(/<g transform/, css + "<g transform");
 
   const target = folder + input.type + "_" + input.name + ".svg";
-  fs.writeFileSync(target, result, "utf8");
+  writeFileSync(target, result, "utf8");
 
   return result;
 }
@@ -88,7 +86,7 @@ function filename(name) {
 
 function run() {
 
-  const file = JSON.parse(fs.readFileSync(folder + "generated.json", "utf8"));
+  const file = JSON.parse(readFileSync(folder + "generated.json", "utf8"));
 
   for (const index in file.structures) {
     file.structures[index].svg = generateSVG(file.structures[index]);
@@ -109,9 +107,7 @@ function run() {
   return file;
 }
 
-function generate() {
+export function generate() {
   const json = run();
-  fs.writeFileSync(folder + "data.json.js", "data = " + JSON.stringify(json, null, 2) + ";", "utf8");
+  writeFileSync(folder + "data.json.js", "data = " + JSON.stringify(json, null, 2) + ";", "utf8");
 }
-
-generate();
