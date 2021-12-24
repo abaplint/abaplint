@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
-let abapJson = {};
+const languages = {};
+const currentLanguage = "abap";
 
 function focusFilter() {
   document.getElementById("filter").select();
@@ -30,9 +31,9 @@ function renderSidenavList(list) {
 }
 
 function renderLeft() {
-  document.getElementById("sidenav_statements").innerHTML = renderSidenavList(abapJson.statements);
-  document.getElementById("sidenav_expressions").innerHTML = renderSidenavList(abapJson.expressions);
-  document.getElementById("sidenav_structures").innerHTML = renderSidenavList(abapJson.structures);
+  document.getElementById("sidenav_statements").innerHTML = renderSidenavList(languages[currentLanguage].statements);
+  document.getElementById("sidenav_expressions").innerHTML = renderSidenavList(languages[currentLanguage].expressions);
+  document.getElementById("sidenav_structures").innerHTML = renderSidenavList(languages[currentLanguage].structures);
 }
 
 function renderList(filter, list) {
@@ -50,17 +51,17 @@ function renderList(filter, list) {
 function renderRight(filter) {
   let html = "";
 
-  const statements = renderList(filter, abapJson.statements);
+  const statements = renderList(filter, languages[currentLanguage].statements);
   if (statements !== "") {
     html = "<div style=\"page-break-before: always;\"><h1>Statements</h1>" + statements + "</div>";
   }
 
-  const expressions = renderList(filter, abapJson.expressions);
+  const expressions = renderList(filter, languages[currentLanguage].expressions);
   if (expressions !== "") {
     html = html + "<div style=\"page-break-before: always;\"><h1>Expressions</h1>" + expressions + "</div>";
   }
 
-  const structures = renderList(filter, abapJson.structures);
+  const structures = renderList(filter, languages[currentLanguage].structures);
   if (structures !== "") {
     html = html + "<div style=\"page-break-before: always;\"><h1>Structures</h1>" + structures + "</div>";
   }
@@ -73,7 +74,7 @@ function renderSyntax(type, name) {
   let found = {};
   let prev = {};
   let next = {};
-  const list = abapJson[type + "s"];
+  const list = languages[currentLanguage][type + "s"];
   for(let index = 0; index < list.length; index++) {
     if (list[index].name === name) {
       found = list[index];
@@ -158,7 +159,9 @@ function renderMain() {
 
 function run() {
   window.onpopstate = Router.popstate;
-  abapJson = abapData;
+  languages["abap"] = abapData;
+  languages["ddl"] = ddlData;
+  languages["cds"] = cdsData;
   Router.popstate();
 }
 
