@@ -100,11 +100,13 @@ export class CDSLexer {
           col = 0;
           break;
         case ";":
+        case ":":
         case ",":
         case ".":
         case "{":
-        case ":":
         case "}":
+        case "(":
+        case ")":
         case "[":
         case "]":
           build = result.add(build, row, col);

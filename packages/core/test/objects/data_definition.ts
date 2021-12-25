@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
+import {StructureType} from "../../src/abap/types/basic";
 
 describe("Object: DDLS - Data Definition", () => {
 
@@ -40,6 +41,12 @@ define view ZAG_UNIT_TEST
     const ddls = reg.getFirstObject()! as DataDefinition;
     expect(ddls).to.not.equal(undefined);
     expect(ddls.getSQLViewName()).to.equal("ZAG_UNIT_TEST_V");
+
+    const type = ddls.parseType(reg);
+    expect(type).to.be.instanceof(StructureType);
+    if (type instanceof StructureType) {
+      expect(type.getComponents().length).to.equal(3);
+    }
   });
 
 });

@@ -115,4 +115,70 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("association", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from zhvam_cust
+association [1..1] to I_CalendarQuarter as _CalendarQuarter on $projection.CalendarQuarter = _CalendarQuarter.CalendarQuarter
+{
+  // sdfdsfjsl jfsdlkfds lkjfds fdslkfds lkjfds lkfs
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("numeric annotation value", () => {
+    const cds = `@AbapCatalog.buffering.numberOfKeyFields: 2
+define view zhvamfoocust as select from zhvam_cust
+{
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("decimal annotation value", () => {
+    const cds = `define view zhvamfoocust as select from zhvam_cust
+{
+  @Search.fuzzinessThreshold: 0.8
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("nested annotation value", () => {
+    const cds = `@Analytics: {dataExtraction.enabled: true}
+define view zhvamfoocust as select from zhvam_cust
+{
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("cast", () => {
+    const cds = `define view zhvamfoocust as select from zhvam_cust
+{
+  key cast(foo as bar) as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("where", () => {
+    const cds = `define view zhvamfoocust as select from zhvam_cust
+{
+  key foo as sdfdsf
+} WHERE foo.bar = 'A'`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
