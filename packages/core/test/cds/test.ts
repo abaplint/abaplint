@@ -115,4 +115,17 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("association", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from zhvam_cust
+association [1..1] to I_CalendarQuarter as _CalendarQuarter on $projection.CalendarQuarter = _CalendarQuarter.CalendarQuarter
+{
+  // sdfdsfjsl jfsdlkfds lkjfds fdslkfds lkjfds lkfs
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

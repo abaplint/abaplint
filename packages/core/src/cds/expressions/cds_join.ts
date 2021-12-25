@@ -4,6 +4,7 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSJoin extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq("INNER JOIN", CDSName);
+    const name = seq(CDSName, ".", CDSName);
+    return seq("INNER JOIN", CDSName, "ON", name, "=", name);
   }
 }
