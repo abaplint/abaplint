@@ -139,6 +139,17 @@ define view zhvamfoocust as select from zhvam_cust
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("decimal annotation value", () => {
+    const cds = `define view zhvamfoocust as select from zhvam_cust
+{
+  @Search.fuzzinessThreshold: 0.8
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("nested annotation value", () => {
     const cds = `@Analytics: {dataExtraction.enabled: true}
 define view zhvamfoocust as select from zhvam_cust

@@ -4,5 +4,7 @@ export * from "./cds_define_view";
 export * from "./cds_element";
 export * from "./cds_join";
 export * from "./cds_name";
+export * from "./cds_cast";
+export * from "./cds_function";
 export * from "./cds_select";
 export * from "./cds_where";
