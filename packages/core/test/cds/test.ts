@@ -171,4 +171,14 @@ define view zhvamfoocust as select from zhvam_cust
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("where", () => {
+    const cds = `define view zhvamfoocust as select from zhvam_cust
+{
+  key foo as sdfdsf
+} WHERE foo.bar = 'A'`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

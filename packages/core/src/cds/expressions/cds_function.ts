@@ -5,8 +5,10 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 export class CDSFunction extends Expression {
   public getRunnable(): IStatementRunnable {
     const input = alt(CDSName, regex(/^\d+$/));
-    const substring = seq("SUBSTRING", "(", input, ",", input, ",", input, ")");
     const coalesce = seq("COALESCE", "(", input, ",", input, ")");
-    return alt(substring, coalesce);
+    const concat = seq("CONCAT", "(", input, ",", input, ")");
+    const concat_with_space = seq("CONCAT_WITH_SPACE", "(", input, ",", input, ",", input, ")");
+    const substring = seq("SUBSTRING", "(", input, ",", input, ",", input, ")");
+    return alt(substring, coalesce, concat, concat_with_space);
   }
 }
