@@ -6,6 +6,7 @@ export class CDSWhere extends Expression {
   public getRunnable(): IStatementRunnable {
     const constant = regex(/^'[\w ]+'$/);
     const field = seq(CDSName, star(seq(".", CDSName)));
-    return seq("WHERE", field, "=", alt(constant, field));
+    const condition = seq(field, "=", alt(constant, field));
+    return seq("WHERE", condition, star(seq("AND", condition)));
   }
 }
