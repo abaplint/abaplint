@@ -69,4 +69,15 @@ define view ZAG_UNIT_TEST
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("numbers", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+    define view zhvamf3oocust as select from zhv3am_cust {
+        key fo3o as sdf3dsf,
+        cli3ent
+    };`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
