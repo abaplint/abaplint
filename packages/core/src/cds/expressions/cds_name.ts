@@ -3,6 +3,6 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSName extends Expression {
   public getRunnable(): IStatementRunnable {
-    return regex(/^[\w_]+$/);
+    return regex(/^\$?[\w_]+$/);
   }
 }

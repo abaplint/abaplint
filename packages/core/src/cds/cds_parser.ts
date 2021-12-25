@@ -10,6 +10,7 @@ import * as Expressions from "./expressions";
 export class CDSParser {
   public parse(file: IFile) {
     const tokens = CDSLexer.run(file);
+    // console.dir(tokens);
 
     const res = Combi.run(new Expressions.CDSDefineView(), tokens, defaultVersion);
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {

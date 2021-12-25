@@ -97,6 +97,8 @@ export class CDSLexer {
       }
     }
 
+    result.add(build, row, col);
+
     return result.get();
   }
 }
