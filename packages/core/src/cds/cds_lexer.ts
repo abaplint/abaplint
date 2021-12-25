@@ -6,31 +6,97 @@ import {Position} from "../position";
 // todo: Keywords must be all uppercase, all lowercase, or in lowercase with an
 // uppercase initial letter. Other mixes of uppercase and lowercase are not allowed
 
+class Stream {
+  private buffer: string;
+
+  public constructor(buffer: string) {
+    this.buffer = buffer;
+  }
+
+  public takeNext(): string {
+    const next = this.buffer.substring(0, 1);
+    this.buffer = this.buffer.substring(1);
+    return next;
+  }
+
+  public length(): number {
+    return this.buffer.length;
+  }
+}
+
+class Result {
+  private readonly result: Token[] = [];
+
+  public add(text: string, row: number, col: number): string {
+    if (text.length > 0) {
+      this.result.push(new Identifier(new Position(row, col), text));
+    }
+    return "";
+  }
+
+  public get() {
+    return this.result;
+  }
+}
+
+enum Mode {
+  Default,
+  String,
+}
+
 export class CDSLexer {
   public static run(file: IFile): Token[] {
-    const step1: string[] = [];
+    const result = new Result();
+    let mode = Mode.Default;
+    let row = 1;
+    let col = 1;
+    let build = "";
 
-    const lines = file.getRaw().replace(/\c/g, "").split("\n");
+    const stream = new Stream(file.getRaw());
 
-    for (const l of lines) {
-      step1.push(...l.split(" "));
-    }
+    while (stream.length() > 0) {
+      const next = stream.takeNext();
+      col++;
 
-    const step2: string[] = [];
-    for (const t of step1) {
-      if (t === "") {
+      if (mode === Mode.String) {
+        build += next;
+        if (next === "'") {
+          build = result.add(build, row, col);
+          mode = Mode.Default;
+        }
         continue;
-      } else if (t.endsWith(";")) {
-        step2.push(t.substr(0, t.length - 1));
-        step2.push(";");
-      } else if (t.endsWith(",")) {
-        step2.push(t.substr(0, t.length - 1));
-        step2.push(",");
-      } else {
-        step2.push(t);
+      }
+
+      switch (next) {
+        case "'":
+          mode = Mode.String;
+          build += next;
+          break;
+        case " ":
+          build = result.add(build, row, col);
+          break;
+        case "\n":
+          build = result.add(build, row, col);
+          row++;
+          col = 0;
+          break;
+        case ";":
+        case ",":
+        case ".":
+        case "{":
+        case ":":
+        case "}":
+        case "[":
+        case "]":
+          build = result.add(build, row, col);
+          result.add(next, row, col);
+          break;
+        default:
+          build += next;
+          break;
       }
     }
 
-    return step2.map(t => new Identifier(new Position(1, 1), t));
+    return result.get();
   }
 }

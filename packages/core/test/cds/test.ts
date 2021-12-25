@@ -13,7 +13,7 @@ define view zhvamfoocust as select from zhvam_cust {
 }`;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const result = CDSLexer.run(file);
-    expect(result.length).to.equal(15);
+    expect(result.length).to.equal(18);
 
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
@@ -75,6 +75,18 @@ define view ZAG_UNIT_TEST
         key fo3o as sdf3dsf,
         cli3ent
     };`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("single quoted text containing spaces", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+@EndUserText.label: 'foo bar hello world'
+define view zhvamfoocust as select from zhvam_cust {
+  key foo as sdfdsf,
+  sdfds
+};`;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
