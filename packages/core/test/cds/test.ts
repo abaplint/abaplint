@@ -181,4 +181,14 @@ define view zhvamfoocust as select from zhvam_cust
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("qualified name", () => {
+    const cds = `define view zhvamfoocust as select from zhvam_cust
+{
+  key zhvam_cust.foo as sdfdsf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
