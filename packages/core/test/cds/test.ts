@@ -92,4 +92,16 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("underscore in annotation value", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+@AccessControl.authorizationCheck: #NOT_ALLOWED
+define view zhvamfoocust as select from zhvam_cust {
+  key foo as sdfdsf,
+  sdfds
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
