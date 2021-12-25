@@ -1,4 +1,4 @@
-import {CDSName, CDSWhere} from ".";
+import {CDSSource, CDSWhere} from ".";
 import {Expression, seq, str, plus, star, opt} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
@@ -7,8 +7,7 @@ import {CDSJoin} from "./cds_join";
 
 export class CDSSelect extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(str("SELECT FROM"), CDSName,
-               opt(seq("AS", CDSName)),
+    return seq(str("SELECT FROM"), CDSSource,
                opt(CDSJoin),
                star(CDSAssociation),
                str("{"),

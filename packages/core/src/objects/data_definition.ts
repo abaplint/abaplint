@@ -2,7 +2,7 @@ import {ExpressionNode} from "../abap/nodes";
 import {IStructureComponent, StructureType, VoidType} from "../abap/types/basic";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CDSParser} from "../cds/cds_parser";
-import {CDSAs, CDSElement, CDSName} from "../cds/expressions";
+import {CDSAs, CDSElement, CDSName, CDSSource} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
@@ -11,6 +11,7 @@ export class DataDefinition extends AbstractObject {
   private sqlViewName: string | undefined = undefined;
   private parserError: boolean |undefined = undefined;
   private fieldNames: string[] = [];
+  private sources: {name: string, as: string | undefined}[] = [];
 
   public getType(): string {
     return "DDLS";
@@ -49,10 +50,15 @@ export class DataDefinition extends AbstractObject {
     }
   }
 
+  public listSources() {
+    return this.sources;
+  }
+
   public setDirty(): void {
     this.sqlViewName = undefined;
     this.parserError = undefined;
     this.fieldNames = [];
+    this.sources = [];
     super.setDirty();
   }
 
@@ -78,6 +84,7 @@ export class DataDefinition extends AbstractObject {
     const tree = new CDSParser().parse(this.findSourceFile());
     if (tree) {
       this.findFieldNames(tree);
+      this.findSources(tree);
     } else {
       this.parserError = true;
     }
@@ -97,6 +104,15 @@ export class DataDefinition extends AbstractObject {
         continue;
       }
       this.fieldNames.push(found?.concatTokens());
+    }
+  }
+
+  private findSources(tree: ExpressionNode) {
+    this.sources = [];
+    for (const e of tree.findAllExpressions(CDSSource)) {
+      const name = e.getFirstToken().getStr();
+      const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
+      this.sources.push({name, as});
     }
   }
 }
