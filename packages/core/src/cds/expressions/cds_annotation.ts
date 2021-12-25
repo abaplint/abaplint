@@ -15,7 +15,8 @@ export class CDSAnnotation extends Expression {
 
     const valueList = seq("[", value, star(seq(",", value)), "]");
 
-    const valueNested = seq("{", CDSName, star(seq(".", CDSName)), ":", value, "}");
+    const namedot = seq(CDSName, star(seq(".", CDSName)));
+    const valueNested = seq("{", namedot, ":", value, star(seq(",", namedot, ":", value)), "}");
 
     return seq(regex(/^@\w+$/), star(seq(".", regex(/^\w+$/))), opt(":"),
                opt(alt(valueList, valueNested, value)));
