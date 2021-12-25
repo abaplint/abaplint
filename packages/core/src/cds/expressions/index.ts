@@ -1,3 +1,4 @@
+export * from "./cds_as";
 export * from "./cds_annotation";
 export * from "./cds_association";
 export * from "./cds_define_view";

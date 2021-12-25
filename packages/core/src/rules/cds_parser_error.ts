@@ -37,9 +37,9 @@ export class CDSParserError implements IRule {
     const issues: Issue[] = [];
 
     if (o.getType() === "DDLS" && o instanceof DataDefinition) {
-      const result = o.temporaryParse();
+      const hasError = o.hasParserError();
       const file = o.findSourceFile();
-      if (result === undefined && file) {
+      if (hasError === true && file) {
         issues.push(Issue.atRow(file, 1, "CDS Parser error", this.getMetadata().key));
       }
     }
