@@ -3,6 +3,7 @@ import {expect} from "chai";
 import {CDSLexer} from "../../src/cds/cds_lexer";
 import {CDSParser} from "../../src/cds/cds_parser";
 import {ExpressionNode} from "../../src/abap/nodes";
+import {CDSName} from "../../src/cds/expressions";
 
 describe("CDS Parser", () => {
 
@@ -55,6 +56,20 @@ define view ZAG_UNIT_TEST
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it.skip("element annotation", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+    define view zhvamfoocust as select from zhvam_cust {
+        key foo as sdfdsf,
+        @Semantics.language
+        client
+    };`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+    console.dir(parsed?.concatTokens());
+    console.dir(parsed?.findAllExpressions(CDSName).map(i => i.concatTokens()));
   });
 
 });

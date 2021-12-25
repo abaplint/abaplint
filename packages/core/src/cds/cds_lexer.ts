@@ -23,6 +23,9 @@ export class CDSLexer {
       } else if (t.endsWith(";")) {
         step2.push(t.substr(0, t.length - 1));
         step2.push(";");
+      } else if (t.endsWith(",")) {
+        step2.push(t.substr(0, t.length - 1));
+        step2.push(",");
       } else {
         step2.push(t);
       }
