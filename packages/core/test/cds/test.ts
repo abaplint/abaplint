@@ -150,4 +150,14 @@ define view zhvamfoocust as select from zhvam_cust
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("cast", () => {
+    const cds = `define view zhvamfoocust as select from zhvam_cust
+{
+  key cast(foo as bar) as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
