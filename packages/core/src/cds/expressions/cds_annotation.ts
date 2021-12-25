@@ -8,6 +8,7 @@ export class CDSAnnotation extends Expression {
     const value = alt(regex(/^'[\w ]+'$/),
                       "true",
                       "false",
+                      regex(/^\d+$/),
                       regex(/^#\w+$/));
 
     const valueList = seq("[", value, star(seq(",", value)), "]");

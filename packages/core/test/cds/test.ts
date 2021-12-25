@@ -128,4 +128,15 @@ association [1..1] to I_CalendarQuarter as _CalendarQuarter on $projection.Calen
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("numeric annotation value", () => {
+    const cds = `@AbapCatalog.buffering.numberOfKeyFields: 2
+define view zhvamfoocust as select from zhvam_cust
+{
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
