@@ -19,6 +19,11 @@ class Stream {
     return next;
   }
 
+  public peekNext(): string {
+    const next = this.buffer.substring(0, 1);
+    return next;
+  }
+
   public length(): number {
     return this.buffer.length;
   }
@@ -42,6 +47,8 @@ class Result {
 enum Mode {
   Default,
   String,
+  SingleLineComment,
+  MultiLineComment,
 }
 
 export class CDSLexer {
@@ -56,6 +63,7 @@ export class CDSLexer {
 
     while (stream.length() > 0) {
       const next = stream.takeNext();
+      const nextNext = stream.peekNext();
       col++;
 
       if (mode === Mode.String) {
@@ -64,6 +72,17 @@ export class CDSLexer {
           build = result.add(build, row, col);
           mode = Mode.Default;
         }
+        continue;
+      }
+
+      if (mode === Mode.SingleLineComment) {
+        if (next === "\n") {
+          mode = Mode.Default;
+        }
+        continue;
+      } else if (mode === Mode.Default && next === "/" && nextNext === "/") {
+        mode = Mode.SingleLineComment;
+        build = result.add(build, row, col);
         continue;
       }
 
@@ -98,7 +117,6 @@ export class CDSLexer {
     }
 
     result.add(build, row, col);
-
     return result.get();
   }
 }

@@ -104,4 +104,15 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("single line comment", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from zhvam_cust {
+  // sdfdsfjsl jfsdlkfds lkjfds fdslkfds lkjfds lkfs
+  key foo as sdfdsf
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

@@ -8,7 +8,11 @@ import * as Expressions from "./expressions";
 // todo: the names of the ABAP + CDS + DDL expressions might overlap, if overlapping the singleton will fail
 
 export class CDSParser {
-  public parse(file: IFile) {
+  public parse(file: IFile | undefined) {
+    if (file === undefined) {
+      return undefined;
+    }
+
     const tokens = CDSLexer.run(file);
     // console.dir(tokens);
 

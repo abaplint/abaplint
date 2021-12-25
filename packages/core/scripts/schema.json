@@ -183,6 +183,23 @@
       },
       "type": "object"
     },
+    "CDSParserErrorConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CallTransactionAuthorityCheckConf": {
       "additionalProperties": false,
       "properties": {
@@ -1423,6 +1440,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cds_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "CDS parsing, experimental\nTags: Syntax, Experimental\nhttps://rules.abaplint.org/cds_parser_error"
             },
             "chain_mainly_declarations": {
               "anyOf": [
