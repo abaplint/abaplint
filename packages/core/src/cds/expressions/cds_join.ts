@@ -5,6 +5,6 @@ import {CDSCondition} from "./cds_condition";
 
 export class CDSJoin extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(opt(alt("INNER", "LEFT OUTER")), "JOIN", CDSSource, "ON", CDSCondition);
+    return seq(opt(alt("INNER", "LEFT OUTER", "LEFT OUTER TO ONE")), "JOIN", CDSSource, "ON", CDSCondition);
   }
 }

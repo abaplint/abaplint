@@ -18,6 +18,6 @@ export class CDSSelect extends Expression {
                str("}"),
                opt(CDSGroupBy),
                opt(CDSWhere),
-               opt(seq("UNION ALL", CDSSelect)));
+               opt(seq("UNION", opt("ALL"), CDSSelect)));
   }
 }

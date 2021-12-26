@@ -4,6 +4,7 @@ export * from "./cds_annotation_array";
 export * from "./cds_annotation_object";
 export * from "./cds_annotation_simple";
 export * from "./cds_annotation";
+export * from "./cds_arithmetics";
 export * from "./cds_as";
 export * from "./cds_association";
 export * from "./cds_cardinality";

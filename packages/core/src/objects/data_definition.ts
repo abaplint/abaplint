@@ -75,6 +75,8 @@ export class DataDefinition extends AbstractObject {
       return {updated: false, runtime: 0};
     }
 
+    const start = Date.now();
+
     this.sqlViewName = undefined;
     const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '(\w+)'/);
     if (match) {
@@ -89,8 +91,9 @@ export class DataDefinition extends AbstractObject {
       this.parserError = true;
     }
 
+    const end = Date.now();
     this.dirty = false;
-    return {updated: true, runtime: 0};
+    return {updated: true, runtime: end - start};
   }
 
   private findFieldNames(tree: ExpressionNode) {

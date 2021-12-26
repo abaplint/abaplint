@@ -1,11 +1,11 @@
-import {CDSCase, CDSCast, CDSName} from ".";
-import {alt, Expression, regex, seq, star} from "../../abap/2_statements/combi";
+import {CDSArithmetics, CDSCase, CDSCast, CDSName, CDSParameters, CDSString} from ".";
+import {alt, Expression, opt, regex, seq, star} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSFunction extends Expression {
   public getRunnable(): IStatementRunnable {
-    const qualified = seq(CDSName, star(seq(".", CDSName)));
-    const input = alt(qualified, regex(/^\d+$/), CDSCast, CDSFunction, CDSCase);
+    const qualified = seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters))));
+    const input = alt(qualified, regex(/^\d+$/), CDSCast, CDSFunction, CDSArithmetics, CDSCase, CDSString);
 
     const coalesce = seq("COALESCE", "(", input, ",", input, ")");
     const concat = seq("CONCAT", "(", input, ",", input, ")");

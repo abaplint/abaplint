@@ -125,6 +125,10 @@ export class CDSLexer {
         case ")":
         case "[":
         case "]":
+        case "+":
+        case "-":
+        case "*":
+        case "/":
           build = result.add(build, row, col);
           result.add(next, row, col);
           break;
