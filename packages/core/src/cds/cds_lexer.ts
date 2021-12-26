@@ -59,7 +59,7 @@ export class CDSLexer {
     let col = 1;
     let build = "";
 
-    const stream = new Stream(file.getRaw().replace(/\r/g, ""));
+    const stream = new Stream(file.getRaw().replace(/\r/g, "").replace(/\u00a0/g, " "));
 
     let next = "";
     while (stream.length() > 0) {

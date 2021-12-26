@@ -1,4 +1,4 @@
-import {CDSComposition, CDSSource, CDSWhere} from ".";
+import {CDSComposition, CDSGroupBy, CDSSource, CDSWhere} from ".";
 import {Expression, seq, str, plus, star, opt} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
@@ -11,10 +11,13 @@ export class CDSSelect extends Expression {
                star(CDSJoin),
                star(CDSComposition),
                star(CDSAssociation),
+               star(CDSComposition),
                str("{"),
                plus(CDSElement),
                star(seq(",", CDSElement)),
                str("}"),
-               opt(CDSWhere));
+               opt(CDSGroupBy),
+               opt(CDSWhere),
+               opt(seq("UNION ALL", CDSSelect)));
   }
 }

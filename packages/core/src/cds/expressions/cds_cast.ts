@@ -5,6 +5,6 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 export class CDSCast extends Expression {
   public getRunnable(): IStatementRunnable {
     const name = seq(CDSName, opt(seq(".", CDSName)));
-    return seq("CAST", "(", alt(name, CDSFunction, CDSCase, CDSString), "AS", CDSType, opt(seq("PRESERVING", "TYPE")), ")");
+    return seq("CAST", "(", alt(name, CDSFunction, CDSCase, CDSCast, CDSString), "AS", CDSType, opt(seq("PRESERVING", "TYPE")), ")");
   }
 }

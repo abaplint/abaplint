@@ -1,4 +1,4 @@
-import {CDSAnnotation, CDSCase, CDSName, CDSParameters} from ".";
+import {CDSAggregate, CDSAnnotation, CDSCase, CDSName, CDSParameters} from ".";
 import {alt, Expression, opt, optPrio, seq, star} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAs} from "./cds_as";
@@ -10,6 +10,7 @@ export class CDSElement extends Expression {
                optPrio("KEY"),
                alt(seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters)))),
                    CDSCast,
+                   CDSAggregate,
                    CDSCase),
                opt(CDSAs));
   }
