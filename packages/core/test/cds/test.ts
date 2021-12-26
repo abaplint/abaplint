@@ -202,6 +202,17 @@ define view zhvamfoocust as select from zhvam_cust
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("double nested annotation case", () => {
+    const cds = `@Analytics:{ dataExtraction: { enabled: true } }
+define view zhvamfoocust as select from zhvam_cust
+{
+  key zhvam_cust.foo as sdfdsf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("dash in text", () => {
     const cds = `@EndUserText.label: 'Status - Text'
 define view zhvamfoocust as select from zhvam_cust
@@ -226,6 +237,7 @@ define view zhvamfoocust as select from zhvam_cust
 
   it.skip("sdfdsf", () => {
     const cds = `
+
     `;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
