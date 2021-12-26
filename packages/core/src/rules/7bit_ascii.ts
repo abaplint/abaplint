@@ -16,7 +16,9 @@ export class SevenBitAscii implements IRule {
       key: "7bit_ascii",
       title: "Check for 7bit ascii",
       shortDescription: `Only allow characters from the 7bit ASCII set.`,
-      extendedInformation: `https://docs.abapopenchecks.org/checks/05/`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/05/
+
+Checkes files with extension ".abap" and ".asddls"`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -37,7 +39,8 @@ export class SevenBitAscii implements IRule {
     const output: Issue[] = [];
 
     for (const file of obj.getFiles()) {
-      if (file.getFilename().endsWith(".abap")) {
+      const filename = file.getFilename();
+      if (filename.endsWith(".abap") || filename.endsWith(".asddls")) {
         const rows = file.getRawRows();
 
         for (let i = 0; i < rows.length; i++) {

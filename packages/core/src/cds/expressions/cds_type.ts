@@ -1,8 +1,9 @@
+import {CDSName} from ".";
 import {Expression, opt, regex, seq} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
-export class CDSName extends Expression {
+export class CDSType extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(opt(":"), regex(/^\$?#?[\w_]+$/));
+    return seq(CDSName, opt(seq(".", CDSName)), opt(seq("(", regex(/\d+/), ")")));
   }
 }

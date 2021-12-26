@@ -5,7 +5,7 @@ import {CDSName} from "./cds_name";
 
 export class CDSDefineAbstract extends Expression {
   public getRunnable(): IStatementRunnable {
-    const field = seq(str("KEY"), CDSName, ":", CDSName, ";");
+    const field = seq(star(CDSAnnotation), str("KEY"), CDSName, ":", CDSName, ";");
     return seq(star(CDSAnnotation), str("DEFINE ABSTRACT ENTITY"), CDSName, str("{"),
                plus(field),
                str("}"), opt(";"));
