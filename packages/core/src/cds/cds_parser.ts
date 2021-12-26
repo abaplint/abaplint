@@ -16,7 +16,10 @@ export class CDSParser {
     const tokens = CDSLexer.run(file);
     // console.dir(tokens);
 
-    const res = Combi.run(new Expressions.CDSDefineView(), tokens, defaultVersion);
+    let res = Combi.run(new Expressions.CDSDefineView(), tokens, defaultVersion);
+    if (res === undefined || !(res[0] instanceof ExpressionNode)) {
+      res = Combi.run(new Expressions.CDSDefineAbstract(), tokens, defaultVersion);
+    }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
       return undefined;
     }

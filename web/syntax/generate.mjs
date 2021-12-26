@@ -52,6 +52,7 @@ function generateSVG(input, language) {
   let result = eval(input.railroad);
   result = result.replace(/<svg /, "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
   result = result.replace(/<g transform/, css + "<g transform");
+  result = result.replace(/:href="#\//g, ":href=\"#/" + language + "/");
 
   const target = folder + language + "/" + input.type + "_" + input.name + ".svg";
   writeFileSync(target, result, "utf8");
