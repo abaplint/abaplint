@@ -49,4 +49,31 @@ define view ZAG_UNIT_TEST
     }
   });
 
+  it("Get fields", async () => {
+    const source = `
+@AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Hello World'
+define view ZAG_UNIT_TEST
+  as select from tadir
+{
+  tadir.pgmid,
+  tadir.object,
+  tadir.obj_name
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zag_unit_test.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+
+    const type = ddls.parseType(reg);
+    expect(type).to.be.instanceof(StructureType);
+    if (type instanceof StructureType) {
+      expect(type.getComponents().length).to.equal(3);
+    }
+  });
+
 });

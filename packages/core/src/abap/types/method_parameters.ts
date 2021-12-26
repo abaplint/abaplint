@@ -134,10 +134,13 @@ export class MethodParameters implements IMethodParameters {
       const nameToken = node.findFirstExpression(Expressions.ClassName)?.getFirstToken();
       const ooName = nameToken?.getStr();
       const def = scope.findObjectDefinition(ooName);
+      const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(ooName);
       if (def) {
         scope.addReference(nameToken, def, ReferenceType.ObjectOrientedReference, filename);
+      } else if (doVoid && ooName) {
+        scope.addReference(nameToken, undefined, ReferenceType.ObjectOrientedVoidReference,
+                           this.filename, {ooName: ooName.toUpperCase()});
       }
-      const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(ooName);
 
       const eventName = node.findFirstExpression(Expressions.Field)?.getFirstToken().getStr();
       const event = new ObjectOriented(scope).searchEvent(def, eventName);
