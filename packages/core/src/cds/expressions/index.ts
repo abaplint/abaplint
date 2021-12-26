@@ -9,6 +9,7 @@ export * from "./cds_case";
 export * from "./cds_cast";
 export * from "./cds_composition";
 export * from "./cds_condition";
+export * from "./cds_type";
 export * from "./cds_with_parameters";
 export * from "./cds_define_abstract";
 export * from "./cds_define_view";

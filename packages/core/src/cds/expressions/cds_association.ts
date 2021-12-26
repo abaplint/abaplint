@@ -5,6 +5,6 @@ import {CDSCardinality} from "./cds_cardinality";
 
 export class CDSAssociation extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq("ASSOCIATION", opt(CDSCardinality), "TO", CDSName, opt(CDSAs), "ON", CDSCondition);
+    return seq("ASSOCIATION", opt(CDSCardinality), "TO", opt("PARENT"), CDSName, opt(CDSAs), "ON", CDSCondition);
   }
 }
