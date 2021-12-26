@@ -8,7 +8,7 @@ import {CDSJoin} from "./cds_join";
 export class CDSSelect extends Expression {
   public getRunnable(): IStatementRunnable {
     return seq(str("SELECT FROM"), CDSSource,
-               opt(CDSJoin),
+               star(CDSJoin),
                star(CDSComposition),
                star(CDSAssociation),
                str("{"),

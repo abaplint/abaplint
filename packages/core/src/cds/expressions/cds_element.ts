@@ -6,6 +6,9 @@ import {CDSCast} from "./cds_cast";
 
 export class CDSElement extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(star(CDSAnnotation), optPrio("KEY"), alt(seq(CDSName, opt(CDSParameters), opt(seq(".", CDSName))), CDSCast, CDSCase), optPrio(CDSAs));
+    return seq(star(CDSAnnotation),
+               optPrio("KEY"),
+               alt(seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters)))), CDSCast, CDSCase),
+               optPrio(CDSAs));
   }
 }

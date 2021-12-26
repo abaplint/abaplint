@@ -61,11 +61,14 @@ export class CDSLexer {
 
     const stream = new Stream(file.getRaw().replace(/\r/g, ""));
 
+    let next = "";
     while (stream.length() > 0) {
-      const next = stream.takeNext();
+      const prev = next;
+      next = stream.takeNext();
       const nextNext = stream.peekNext();
       col++;
 
+// string handling
       if (mode === Mode.String) {
         build += next;
         if (next === "'") {
@@ -75,6 +78,7 @@ export class CDSLexer {
         continue;
       }
 
+// single line comment handling
       if (mode === Mode.SingleLineComment) {
         if (next === "\n") {
           mode = Mode.Default;
@@ -82,6 +86,18 @@ export class CDSLexer {
         continue;
       } else if (mode === Mode.Default && next === "/" && nextNext === "/") {
         mode = Mode.SingleLineComment;
+        build = result.add(build, row, col);
+        continue;
+      }
+
+// multi line comment handling
+      if (mode === Mode.MultiLineComment) {
+        if (prev === "*" && next === "/") {
+          mode = Mode.Default;
+        }
+        continue;
+      } else if (mode === Mode.Default && next === "/" && nextNext === "*") {
+        mode = Mode.MultiLineComment;
         build = result.add(build, row, col);
         continue;
       }

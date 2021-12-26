@@ -247,10 +247,20 @@ define view zhvamfoocust as select from zhvam_cust
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("multi line comment", () => {
+    const cds = `
+    /*+[hideWarning] { "IDS" : [ "CARDINALITY_CHECK" ]  }       UserID is not key of sdfds*/
+    define abstract entity sdfdsfds
+    {
+      key TransportRequestID : trkorr;
+    }`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it.skip("sdfdsf", () => {
     const cds = `
-
-
 
     `;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
