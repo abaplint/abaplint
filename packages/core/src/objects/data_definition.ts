@@ -101,7 +101,8 @@ export class DataDefinition extends AbstractObject {
     for (const e of tree.findAllExpressions(CDSElement)) {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
-        found = e.findDirectExpression(CDSName);
+        const list = e.findDirectExpressions(CDSName);
+        found = list[list.length - 1];
       }
       if (found === undefined) {
         continue;
