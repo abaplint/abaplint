@@ -8,7 +8,9 @@ export class CDSElement extends Expression {
   public getRunnable(): IStatementRunnable {
     return seq(star(CDSAnnotation),
                optPrio("KEY"),
-               alt(seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters)))), CDSCast, CDSCase),
-               optPrio(CDSAs));
+               alt(seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters)))),
+                   CDSCast,
+                   CDSCase),
+               opt(CDSAs));
   }
 }

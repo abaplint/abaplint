@@ -261,7 +261,6 @@ define view zhvamfoocust as select from zhvam_cust
 
   it.skip("sdfdsf", () => {
     const cds = `
-
     `;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);

@@ -10,6 +10,11 @@ export class CDSFunction extends Expression {
     const concat = seq("CONCAT", "(", input, ",", input, ")");
     const concat_with_space = seq("CONCAT_WITH_SPACE", "(", input, ",", input, ",", input, ")");
     const substring = seq("SUBSTRING", "(", input, ",", input, ",", input, ")");
-    return alt(substring, coalesce, concat, concat_with_space);
+    const dats_is_valid = seq("DATS_IS_VALID", "(", input, ")");
+    const dats_days_between = seq("DATS_DAYS_BETWEEN", "(", input, ",", input, ")");
+    const dats_add_days = seq("DATS_ADD_DAYS", "(", input, ",", input, ",", input, ")");
+    const dats_add_months = seq("DATS_ADD_MONTHS", "(", input, ",", input, ",", input, ")");
+
+    return alt(substring, coalesce, concat, concat_with_space, dats_is_valid, dats_days_between, dats_add_days, dats_add_months);
   }
 }
