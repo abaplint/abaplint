@@ -1052,4 +1052,25 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("IF_FOOBAR");
   });
 
+  it("Hover, voided event handler class class", () => {
+    const abap = `CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS double_click_wb_navigation
+      FOR EVENT double_click OF cl_salv_events_table
+      IMPORTING row.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
+  METHOD double_click_wb_navigation.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 40));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Object (Void)");
+    expect(hover?.value).to.contain("Extra");
+  });
+
 });
