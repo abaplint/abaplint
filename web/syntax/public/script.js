@@ -60,7 +60,7 @@ function renderList(filter, list) {
     if (!filter || i.name.toLowerCase().includes(filter.toLowerCase())) {
       ret = ret + "<div style=\"page-break-inside:avoid;\">" +
         "<u>" + i.name + "</u><br>" +
-        "<a href=\"#/" + i.type + "/" + i.name + "\"><img src=\"" + currentLanguage + "/" + i.type + "_" + i.name + ".svg\"></a></div><br>";
+        "<a href=\"#/" + currentLanguage + "/" + i.type + "/" + i.name + "\"><img src=\"" + currentLanguage + "/" + i.type + "_" + i.name + ".svg\"></a></div><br>";
     }
   }
   return ret;
@@ -110,17 +110,17 @@ function renderSyntax(type, name) {
 
   html = html + "<a href=\"#\">Home</a><br>\n";
   if (prev) {
-    html = html + "<b>Prev</b>: <a href=\"#/" + type + "/" + prev.name + "\">" + prev.name + "</a><br>\n";
+    html = html + "<b>Prev</b>: <a href=\"#/" + currentLanguage + "/" + type + "/" + prev.name + "\">" + prev.name + "</a><br>\n";
   }
   if (next) {
-    html = html + "<b>Next</b>: <a href=\"#/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
+    html = html + "<b>Next</b>: <a href=\"#/" + currentLanguage + "/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
   }
 
 // html = html + "<a href=\"https://github.com/abaplint/abaplint/blob/master/src/packages/core/abap/" +
 // found.type + "s/" + found.filename + "\">Source</a><br>";
 
-  const use = found.using.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
-  const by = found.used_by.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
+  const use = found.using.map((e) => { return "<a href=\"#/" + currentLanguage + "/" + e + "\">" + e + "</a>"; });
+  const by = found.used_by.map((e) => { return "<a href=\"#/" + currentLanguage + "/" + e + "\">" + e + "</a>"; });
 
   html = html + found.svg + "<br>\n" +
     "<b>Using</b>: " + use.join(", ") + "<br>\n" +
@@ -135,7 +135,14 @@ class Router {
       renderMain();
     } else {
       const split = window.location.hash.split("/");
-      renderSyntax(split[1], split[2]);
+      if (split.length === 3) {
+        // backwards compatibility, default to abap language
+        currentLanguage = "abap";
+        renderSyntax(split[1], split[2]);
+      } else {
+        currentLanguage = split[1];
+        renderSyntax(split[2], split[3]);
+      }
     }
   }
 }
