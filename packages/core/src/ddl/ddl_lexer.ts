@@ -7,7 +7,7 @@ export class DDLLexer {
   public static run(file: IFile): Token[] {
     const step1: string[] = [];
 
-    const lines = file.getRaw().replace(/\c/g, "").split("\n");
+    const lines = file.getRaw().replace(/\r/g, "").split("\n");
 
     for (const l of lines) {
       if (l.startsWith("@")) {
