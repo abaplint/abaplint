@@ -7,11 +7,15 @@ import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
 
+type ParsedDataDefinition = {
+  sqlViewName: string | undefined;
+  fieldNames: string[];
+  sources: {name: string, as: string | undefined}[];
+};
+
 export class DataDefinition extends AbstractObject {
-  private sqlViewName: string | undefined = undefined;
-  private parserError: boolean |undefined = undefined;
-  private fieldNames: string[] = [];
-  private sources: {name: string, as: string | undefined}[] = [];
+  private parserError: boolean | undefined = undefined;
+  private parsedData: ParsedDataDefinition | undefined = undefined;
 
   public getType(): string {
     return "DDLS";
@@ -25,7 +29,7 @@ export class DataDefinition extends AbstractObject {
   }
 
   public getSQLViewName(): string | undefined {
-    return this.sqlViewName;
+    return this.parsedData?.sqlViewName;
   }
 
   public getDescription(): string | undefined {
@@ -36,11 +40,11 @@ export class DataDefinition extends AbstractObject {
   public parseType(_reg: IRegistry): AbstractType {
     this.parse();
 
-    if (this.fieldNames.length === 0) {
+    if (this.parsedData?.fieldNames.length === 0) {
       return new VoidType("DDLS:todo");
     } else {
       const components: IStructureComponent[] = [];
-      for (const f of this.fieldNames) {
+      for (const f of this.parsedData?.fieldNames || []) {
         components.push({
           name: f,
           type: new VoidType("DDLS:fieldname"),
@@ -51,14 +55,12 @@ export class DataDefinition extends AbstractObject {
   }
 
   public listSources() {
-    return this.sources;
+    return this.parsedData?.sources;
   }
 
   public setDirty(): void {
-    this.sqlViewName = undefined;
+    this.parsedData = undefined;
     this.parserError = undefined;
-    this.fieldNames = [];
-    this.sources = [];
     super.setDirty();
   }
 
@@ -77,10 +79,14 @@ export class DataDefinition extends AbstractObject {
 
     const start = Date.now();
 
-    this.sqlViewName = undefined;
+    this.parsedData = {
+      sqlViewName: undefined,
+      fieldNames: [],
+      sources: [],
+    };
     const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '(\w+)'/);
     if (match) {
-      this.sqlViewName = match[1].toUpperCase();
+      this.parsedData!.sqlViewName = match[1].toUpperCase();
     }
 
     const tree = new CDSParser().parse(this.findSourceFile());
@@ -96,8 +102,9 @@ export class DataDefinition extends AbstractObject {
     return {updated: true, runtime: end - start};
   }
 
+//////////
+
   private findFieldNames(tree: ExpressionNode) {
-    this.fieldNames = [];
     for (const e of tree.findAllExpressions(CDSElement)) {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
@@ -107,16 +114,15 @@ export class DataDefinition extends AbstractObject {
       if (found === undefined) {
         continue;
       }
-      this.fieldNames.push(found?.concatTokens());
+      this.parsedData!.fieldNames.push(found?.concatTokens());
     }
   }
 
   private findSources(tree: ExpressionNode) {
-    this.sources = [];
     for (const e of tree.findAllExpressions(CDSSource)) {
       const name = e.getFirstToken().getStr();
       const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
-      this.sources.push({name, as});
+      this.parsedData!.sources.push({name, as});
     }
   }
 }
