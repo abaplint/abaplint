@@ -2,7 +2,7 @@ import {ExpressionNode} from "../abap/nodes";
 import {IStructureComponent, StructureType, VoidType} from "../abap/types/basic";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CDSParser} from "../cds/cds_parser";
-import {CDSAs, CDSElement, CDSName, CDSSource} from "../cds/expressions";
+import {CDSAs, CDSElement, CDSName, CDSRelation, CDSSource} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
@@ -11,6 +11,7 @@ type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   fieldNames: string[];
   sources: {name: string, as: string | undefined}[];
+  relations: {name: string, as: string | undefined}[];
 };
 
 export class DataDefinition extends AbstractObject {
@@ -83,16 +84,15 @@ export class DataDefinition extends AbstractObject {
       sqlViewName: undefined,
       fieldNames: [],
       sources: [],
+      relations: [],
     };
-    const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '(\w+)'/);
-    if (match) {
-      this.parsedData!.sqlViewName = match[1].toUpperCase();
-    }
+
+    this.findSQLViewName();
 
     const tree = new CDSParser().parse(this.findSourceFile());
     if (tree) {
       this.findFieldNames(tree);
-      this.findSources(tree);
+      this.findSourcesAndRelations(tree);
     } else {
       this.parserError = true;
     }
@@ -103,6 +103,13 @@ export class DataDefinition extends AbstractObject {
   }
 
 //////////
+
+  private findSQLViewName(): void {
+    const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '(\w+)'/);
+    if (match) {
+      this.parsedData!.sqlViewName = match[1].toUpperCase();
+    }
+  }
 
   private findFieldNames(tree: ExpressionNode) {
     for (const e of tree.findAllExpressions(CDSElement)) {
@@ -118,11 +125,17 @@ export class DataDefinition extends AbstractObject {
     }
   }
 
-  private findSources(tree: ExpressionNode) {
+  private findSourcesAndRelations(tree: ExpressionNode) {
     for (const e of tree.findAllExpressions(CDSSource)) {
       const name = e.getFirstToken().getStr();
       const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
       this.parsedData!.sources.push({name, as});
+    }
+
+    for (const e of tree.findAllExpressions(CDSRelation)) {
+      const name = e.getFirstToken().getStr();
+      const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
+      this.parsedData!.relations.push({name, as});
     }
   }
 }

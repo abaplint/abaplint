@@ -20,6 +20,7 @@ export * from "./cds_group_by";
 export * from "./cds_join";
 export * from "./cds_name";
 export * from "./cds_parameters";
+export * from "./cds_relation";
 export * from "./cds_select";
 export * from "./cds_source";
 export * from "./cds_string";
