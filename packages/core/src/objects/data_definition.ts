@@ -31,6 +31,7 @@ export class DataDefinition extends AbstractObject {
   }
 
   public getSQLViewName(): string | undefined {
+    this.parse();
     return this.parsedData?.sqlViewName;
   }
 
@@ -57,6 +58,7 @@ export class DataDefinition extends AbstractObject {
   }
 
   public listSources() {
+    this.parse();
     return this.parsedData?.sources;
   }
 
@@ -99,9 +101,8 @@ export class DataDefinition extends AbstractObject {
       this.parserError = true;
     }
 
-    const end = Date.now();
     this.dirty = false;
-    return {updated: true, runtime: end - start};
+    return {updated: true, runtime: Date.now() - start};
   }
 
 //////////
