@@ -21,11 +21,11 @@ export class CheckComments extends ABAPRule {
       key: "check_comments",
       title: "Check Comments",
       shortDescription: `
-Various checks for comment usage.
+Various checks for comment usage.`,
+      extendedInformation: `
+* End of line comments. Comments starting with "#EC" or "##" are ignored
 
-* End of line comments. Comments starting with "#EC" or "##" are ignored`,
-      extendedInformation:
-        `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#put-comments-before-the-statement-they-relate-to`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#put-comments-before-the-statement-they-relate-to`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
