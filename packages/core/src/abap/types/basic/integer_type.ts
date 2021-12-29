@@ -16,4 +16,8 @@ export class IntegerType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.int4";
+  }
 }

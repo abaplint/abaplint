@@ -11,6 +11,20 @@ import {ABAPFile} from "../abap/abap_file";
 
 export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
+
+    const file = LSPUtils.getABAPFile(reg, textDocument.uri);
+    if (file === undefined) {
+      return "file not found";
+    } else {
+      return this.dumpABAP(file, reg, textDocument, position);
+    }
+  }
+
+/////////////////////////////////////////////////
+
+  private static dumpABAP(file: ABAPFile, reg: IRegistry, textDocument: LServer.TextDocumentIdentifier,
+                          position: LServer.Position): string {
+
     let content = "";
 
     content = `
@@ -24,10 +38,6 @@ export class Help {
       "<tt>" + textDocument.uri + " (" +
       (position.line + 1) + ", " +
       (position.character + 1) + ")</tt>";
-    const file = LSPUtils.getABAPFile(reg, textDocument.uri);
-    if (file === undefined) {
-      return content + "file not found";
-    }
 
     content = content + "<hr>";
     content = content + this.cursorInformation(reg, textDocument, position, file);
@@ -39,8 +49,6 @@ export class Help {
 
     return content;
   }
-
-/////////////////////////////////////////////////
 
   private static dumpInfo(file: ABAPFile): string {
     const info = file.getInfo();

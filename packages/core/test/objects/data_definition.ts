@@ -76,4 +76,61 @@ define view ZAG_UNIT_TEST
     }
   });
 
+  it("Get fields, associations are not fields", async () => {
+    const source = `
+@AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Hello World'
+define view ZAG_UNIT_TEST
+  as select from tadir
+  association [0..*] to zsdfdsfds as _assoc on _User.BusinessRoleUUID = $projection.BusinessRoleUUID
+{
+  tadir.pgmid,
+  tadir.object,
+  tadir.obj_name,
+  _assoc
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zag_unit_test.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+
+    const type = ddls.parseType(reg);
+    expect(type).to.be.instanceof(StructureType);
+    if (type instanceof StructureType) {
+      expect(type.getComponents().length).to.equal(3);
+    }
+  });
+
+  it("Get get field names", async () => {
+    const source = `
+define view C_FooBar as select from I_Bar {
+    @Search.defaultSearchElement : true
+    @ObjectModel.text.element: ['DateFunctionName']
+    key DateFunction,
+    @Search.defaultSearchElement : true
+    _Datefunction._DateFunctionText[1: Language = $session.system_language].DateFunctionName,
+    @Search.defaultSearchElement : true
+    _Datefunction._DateFunctionText[1: Language = $session.system_language].DateFunctionDescription,
+    DateFunctionStartDate,
+    DateFunctionEndDate
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zag_unit_test.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+
+    const type = ddls.parseType(reg);
+    expect(type).to.be.instanceof(StructureType);
+    if (type instanceof StructureType) {
+      const components = type.getComponents();
+      expect(components.length).to.equal(5);
+      expect(components[1].name).to.equal("DateFunctionName");
+    }
+  });
 });

@@ -64,4 +64,8 @@ export class TableType extends AbstractType {
   public containsVoid() {
     return this.rowType.containsVoid();
   }
+
+  public toCDS() {
+    return "abap.TODO_TABLE";
+  }
 }

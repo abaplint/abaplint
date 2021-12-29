@@ -16,4 +16,8 @@ export class XSequenceType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.TODO_XSEQUENCE";
+  }
 }

@@ -17,4 +17,8 @@ export class GenericObjectReferenceType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.TODO_GENERICOBJECTREF";
+  }
 }

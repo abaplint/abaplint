@@ -1483,7 +1483,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "\nVarious checks for comment usage.\n\n* End of line comments. Comments starting with \"#EC\" or \"##\" are ignored\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/check_comments"
+              "description": "\nVarious checks for comment usage.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/check_comments"
             },
             "check_ddic": {
               "anyOf": [

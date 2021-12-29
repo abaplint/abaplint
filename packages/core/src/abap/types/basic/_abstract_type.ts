@@ -12,6 +12,7 @@ export abstract class AbstractType {
 
   public abstract toText(level: number): string;
   public abstract toABAP(): string;
+  public abstract toCDS(): string;
   public abstract isGeneric(): boolean;
   public abstract containsVoid(): boolean;
 }
