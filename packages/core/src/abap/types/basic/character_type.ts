@@ -36,6 +36,6 @@ export class CharacterType extends AbstractType {
   }
 
   public toCDS() {
-    return "abap.char( " + this.getLength() +" )";
+    return "abap.char( " + this.getLength() + " )";
   }
 }
