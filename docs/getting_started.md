@@ -10,7 +10,7 @@ Run `abaplint` in a folder to check the contents
 
 A `abaplint.json` file can be added/adjusted to enable and disable [rules](https://rules.abaplint.org/), note that vscode knows the json schema for the configuration, so it provides intellisense when editing.
 
-## Starting Configuration
+## Starting On-Premise Configuration
 
 Suggest starting by running only the syntax check relevant rules, having this working will help expanding to more rules,
 
