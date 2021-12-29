@@ -9,7 +9,7 @@ import {IParseResult} from "./_iobject";
 
 export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
-  fields: {name: string, annotations: string[]}[];
+  fields: {key: boolean, name: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
   relations: {name: string, as: string | undefined}[];
@@ -132,6 +132,7 @@ export class DataDefinition extends AbstractObject {
       this.parsedData!.fields.push({
         name: name,
         annotations: annotations,
+        key: e.findDirectTokenByText("KEY") !== undefined,
       });
     }
   }

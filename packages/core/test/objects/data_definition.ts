@@ -128,12 +128,15 @@ define view C_FooBar as select from I_Bar {
     const parsed = ddls.getParsedData();
     expect(parsed?.fields.length).to.equal(5);
     expect(parsed?.fields[0].annotations.length).to.equal(2);
+    expect(parsed?.fields[0].key).to.equal(true);
+    expect(parsed?.fields[1].key).to.equal(false);
 
     const type = ddls.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
     if (type instanceof StructureType) {
       const components = type.getComponents();
       expect(components.length).to.equal(5);
+      expect(components[0].name).to.equal("DateFunction");
       expect(components[1].name).to.equal("DateFunctionName");
     }
   });
