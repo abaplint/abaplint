@@ -125,6 +125,10 @@ define view C_FooBar as select from I_Bar {
     const ddls = reg.getFirstObject()! as DataDefinition;
     expect(ddls).to.not.equal(undefined);
 
+    const parsed = ddls.getParsedData();
+    expect(parsed?.fields.length).to.equal(5);
+    expect(parsed?.fields[0].annotations.length).to.equal(2);
+
     const type = ddls.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
     if (type instanceof StructureType) {
