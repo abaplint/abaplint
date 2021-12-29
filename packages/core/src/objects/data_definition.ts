@@ -9,6 +9,7 @@ import {IParseResult} from "./_iobject";
 
 export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
+  definitionName: string | undefined;
   fields: {key: boolean, name: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
@@ -34,6 +35,11 @@ export class DataDefinition extends AbstractObject {
   public getSQLViewName(): string | undefined {
     this.parse();
     return this.parsedData?.sqlViewName;
+  }
+
+  public getDefinitionName(): string | undefined {
+    this.parse();
+    return this.parsedData?.definitionName;
   }
 
   public getDescription(): string | undefined {
@@ -78,6 +84,7 @@ export class DataDefinition extends AbstractObject {
 
     this.parsedData = {
       sqlViewName: undefined,
+      definitionName: undefined,
       fields: [],
       sources: [],
       relations: [],
@@ -89,6 +96,7 @@ export class DataDefinition extends AbstractObject {
 
     this.parsedData.tree = new CDSParser().parse(this.findSourceFile());
     if (this.parsedData.tree) {
+      this.parsedData.definitionName = this.parsedData.tree?.findFirstExpression(CDSName)?.getFirstToken().getStr();
       this.findSourcesAndRelations(this.parsedData.tree);
       this.findFieldNames(this.parsedData.tree);
     } else {

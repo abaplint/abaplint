@@ -139,5 +139,7 @@ define view C_FooBar as select from I_Bar {
       expect(components[0].name).to.equal("DateFunction");
       expect(components[1].name).to.equal("DateFunctionName");
     }
+
+    expect(ddls.getDefinitionName()).to.equal("C_FooBar");
   });
 });
