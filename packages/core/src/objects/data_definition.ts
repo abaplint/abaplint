@@ -1,18 +1,19 @@
 import {ExpressionNode} from "../abap/nodes";
-import {IStructureComponent, StructureType, VoidType} from "../abap/types/basic";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
+import {CDSDetermineTypes} from "../cds/cds_determine_types";
 import {CDSParser} from "../cds/cds_parser";
 import {CDSAs, CDSAssociation, CDSElement, CDSName, CDSRelation, CDSSource} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
 
-type ParsedDataDefinition = {
+export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   fields: {name: string}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
   relations: {name: string, as: string | undefined}[];
+  tree: ExpressionNode | undefined;
 };
 
 export class DataDefinition extends AbstractObject {
@@ -40,21 +41,10 @@ export class DataDefinition extends AbstractObject {
     return undefined;
   }
 
-  public parseType(_reg: IRegistry): AbstractType {
+  public parseType(reg: IRegistry): AbstractType {
     this.parse();
 
-    if (this.parsedData?.fields.length === 0) {
-      return new VoidType("DDLS:todo");
-    } else {
-      const components: IStructureComponent[] = [];
-      for (const f of this.parsedData?.fields || []) {
-        components.push({
-          name: f.name,
-          type: new VoidType("DDLS:fieldname"),
-        });
-      }
-      return new StructureType(components);
-    }
+    return new CDSDetermineTypes().parseType(reg, this.parsedData!);
   }
 
   public listSources() {
@@ -89,14 +79,15 @@ export class DataDefinition extends AbstractObject {
       sources: [],
       relations: [],
       associations: [],
+      tree: undefined,
     };
 
     this.findSQLViewName();
 
-    const tree = new CDSParser().parse(this.findSourceFile());
-    if (tree) {
-      this.findSourcesAndRelations(tree);
-      this.findFieldNames(tree);
+    this.parsedData.tree = new CDSParser().parse(this.findSourceFile());
+    if (this.parsedData.tree) {
+      this.findSourcesAndRelations(this.parsedData.tree);
+      this.findFieldNames(this.parsedData.tree);
     } else {
       this.parserError = true;
     }
