@@ -21,6 +21,7 @@ import * as Objects from "./objects";
 import {Token} from "./abap/1_lexer/tokens/_token";
 import * as Statements from "./abap/2_statements/statements";
 import * as Expressions from "./abap/2_statements/expressions";
+import * as ExpressionsCDS from "./cds/expressions";
 import * as Structures from "./abap/3_structures/structures";
 import * as Nodes from "./abap/nodes";
 import * as BasicTypes from "./abap/types/basic";
@@ -63,7 +64,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
-  IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser,
+  IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   IRenameSettings, Info, Visibility, Severity};
