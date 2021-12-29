@@ -18,6 +18,6 @@ export class UTCLongType extends AbstractType {
   }
 
   public toCDS() {
-    return "abap.TODO_UTCLONG";
+    return "abap.utcl";
   }
 }

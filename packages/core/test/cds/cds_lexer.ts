@@ -41,7 +41,7 @@ define view zhvamfoocust as select from zhvam_cust
     expect(result[12].getRow()).to.equal(4);
   });
 
-  it("basic 4", () => {
+  it("single line comment", () => {
     const cds = `@VDM.viewType: #BASIC // comment
 
 define view zhvamfoocust as select from zhvam_cust
@@ -53,6 +53,22 @@ define view zhvamfoocust as select from zhvam_cust
     expect(result.length).to.equal(16);
     expect(result[12].getStr()).to.equal("{");
     expect(result[12].getRow()).to.equal(4);
+  });
+
+  it("multi line comment", () => {
+    const cds = `@VDM.viewType: #BASIC /* comment
+sdfsd
+sdfsd */
+
+define view zhvamfoocust as select from zhvam_cust
+{
+  key foo
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const result = CDSLexer.run(file);
+    expect(result.length).to.equal(16);
+    expect(result[12].getStr()).to.equal("{");
+    expect(result[12].getRow()).to.equal(6);
   });
 
 });

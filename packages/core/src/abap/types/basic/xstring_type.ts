@@ -19,6 +19,6 @@ export class XStringType extends AbstractType {
   }
 
   public toCDS() {
-    return "abap.TODO_XSTRING";
+    return "abap.rawstring";
   }
 }

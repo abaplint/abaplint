@@ -18,6 +18,6 @@ export class StringType extends AbstractType {
   }
 
   public toCDS() {
-    return "abap.TODO_STRING";
+    return "abap.string";
   }
 }
