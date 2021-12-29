@@ -17,4 +17,8 @@ export class XStringType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.TODO_XSTRING";
+  }
 }

@@ -16,4 +16,8 @@ export class TimeType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.tims";
+  }
 }

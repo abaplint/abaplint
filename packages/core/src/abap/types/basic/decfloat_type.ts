@@ -16,4 +16,8 @@ export class DecFloatType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.fltp";
+  }
 }

@@ -30,4 +30,8 @@ export class HexType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.raw( " + this.getLength() + " )";
+  }
 }

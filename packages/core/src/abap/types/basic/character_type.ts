@@ -34,4 +34,8 @@ export class CharacterType extends AbstractType {
   public getIdentifier() {
     return undefined;
   }
+
+  public toCDS() {
+    return "abap.char( " + this.getLength() +" )";
+  }
 }

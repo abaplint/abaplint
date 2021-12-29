@@ -27,4 +27,8 @@ export class DataReference extends AbstractType {
   public containsVoid() {
     return this.type.containsVoid();
   }
+
+  public toCDS() {
+    return "abap.TODO_REFERENCE";
+  }
 }

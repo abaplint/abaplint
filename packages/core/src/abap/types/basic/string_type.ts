@@ -16,4 +16,8 @@ export class StringType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.TODO_STRING";
+  }
 }

@@ -16,4 +16,8 @@ export class DateType extends AbstractType {
   public containsVoid() {
     return false;
   }
+
+  public toCDS() {
+    return "abap.dats";
+  }
 }

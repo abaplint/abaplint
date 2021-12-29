@@ -33,4 +33,8 @@ export class ObjectReferenceType extends AbstractType {
   public getIdentifier(): Identifier {
     return this.identifier;
   }
+
+  public toCDS() {
+    return "abap.TODO_OBJECTREF";
+  }
 }

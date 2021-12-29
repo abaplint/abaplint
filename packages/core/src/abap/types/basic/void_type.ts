@@ -28,4 +28,8 @@ export class VoidType extends AbstractType {
   public containsVoid() {
     return true;
   }
+
+  public toCDS() {
+    return "abap.TODO_VOID";
+  }
 }
