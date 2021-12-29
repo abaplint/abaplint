@@ -93,7 +93,9 @@ export class CDSLexer {
 
 // multi line comment handling
       if (mode === Mode.MultiLineComment) {
-        if (prev === "*" && next === "/") {
+        if (next === "\n") {
+          row++;
+        } else if (prev === "*" && next === "/") {
           mode = Mode.Default;
         }
         continue;
