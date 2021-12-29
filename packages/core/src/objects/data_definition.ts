@@ -2,14 +2,14 @@ import {ExpressionNode} from "../abap/nodes";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CDSDetermineTypes} from "../cds/cds_determine_types";
 import {CDSParser} from "../cds/cds_parser";
-import {CDSAs, CDSAssociation, CDSElement, CDSName, CDSRelation, CDSSource} from "../cds/expressions";
+import {CDSAnnotation, CDSAs, CDSAssociation, CDSElement, CDSName, CDSRelation, CDSSource} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
 
 export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
-  fields: {name: string}[];
+  fields: {name: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
   relations: {name: string, as: string | undefined}[];
@@ -43,8 +43,11 @@ export class DataDefinition extends AbstractObject {
 
   public parseType(reg: IRegistry): AbstractType {
     this.parse();
-
     return new CDSDetermineTypes().parseType(reg, this.parsedData!);
+  }
+
+  public getParsedData() {
+    return this.parsedData;
   }
 
   public listSources() {
@@ -120,7 +123,16 @@ export class DataDefinition extends AbstractObject {
         a.name.toUpperCase() === name.toUpperCase() || a.as?.toUpperCase() === name.toUpperCase())) {
         continue;
       }
-      this.parsedData!.fields.push({name: name});
+
+      const annotations: string[] = [];
+      for (const a of e.findDirectExpressions(CDSAnnotation)) {
+        annotations.push(a.concatTokens());
+      }
+
+      this.parsedData!.fields.push({
+        name: name,
+        annotations: annotations,
+      });
     }
   }
 
