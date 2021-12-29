@@ -82,8 +82,9 @@ export class CDSLexer {
       if (mode === Mode.SingleLineComment) {
         if (next === "\n") {
           mode = Mode.Default;
+        } else {
+          continue;
         }
-        continue;
       } else if (mode === Mode.Default && next === "/" && nextNext === "/") {
         mode = Mode.SingleLineComment;
         build = result.add(build, row, col);
