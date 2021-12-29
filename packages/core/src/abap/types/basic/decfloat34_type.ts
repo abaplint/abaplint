@@ -18,6 +18,6 @@ export class DecFloat34Type extends AbstractType {
   }
 
   public toCDS() {
-    return "abap.TODO_DECFLOAT34";
+    return "abap.d34n";
   }
 }
