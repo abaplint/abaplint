@@ -38,7 +38,8 @@ export class Table extends AbstractObject {
       INTLEN?: string,
       DATATYPE?: string,
       DECIMALS?: string,
-      KEYFLAG?: string
+      KEYFLAG?: string,
+      GROUPNAME?: string,
     }[]} | undefined;
 
   public getType(): string {
@@ -111,8 +112,12 @@ export class Table extends AbstractObject {
           found = found.getType();
         }
         if (found instanceof Types.StructureType) {
-          for (const c of found.getComponents()) {
-            components.push({name: c.name, type: c.type});
+          if (field.GROUPNAME !== undefined) {
+            components.push({name: field.GROUPNAME, type: found});
+          } else {
+            for (const c of found.getComponents()) {
+              components.push({name: c.name, type: c.type});
+            }
           }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {
@@ -252,6 +257,7 @@ export class Table extends AbstractObject {
         DATATYPE: field.DATATYPE,
         DECIMALS: field.DECIMALS,
         KEYFLAG: field.KEYFLAG,
+        GROUPNAME: field.GROUPNAME,
       });
     }
   }

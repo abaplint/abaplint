@@ -679,4 +679,79 @@ describe("Table, parse XML", () => {
     expect(components[0].type).to.be.instanceof(GenericObjectReferenceType);
   });
 
+  it("GROUPNAME", async () => {
+    const xml1 = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZABAPLINT_STRUCTURE</TABNAME>
+        <DDLANGUAGE>D</DDLANGUAGE>
+        <TABCLASS>INTTAB</TABCLASS>
+        <LANGDEP>X</LANGDEP>
+        <DDTEXT>Structure with include</DDTEXT>
+        <EXCLASS>1</EXCLASS>
+       </DD02V>
+       <DD03P_TABLE>
+        <DD03P>
+         <FIELDNAME>.INCLUDE</FIELDNAME>
+         <ADMINFIELD>0</ADMINFIELD>
+         <PRECFIELD>ZABAPLINT_SUBSTRUCTURE</PRECFIELD>
+         <MASK>      S</MASK>
+         <DDTEXT>Substructure</DDTEXT>
+         <COMPTYPE>S</COMPTYPE>
+         <GROUPNAME>SUBSTRUC</GROUPNAME>
+        </DD03P>
+        <DD03P>
+         <FIELDNAME>FIELD3</FIELDNAME>
+         <ROLLNAME>CHAR1</ROLLNAME>
+         <ADMINFIELD>0</ADMINFIELD>
+         <COMPTYPE>E</COMPTYPE>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const xml2 = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZABAPLINT_SUBSTRUCTURE</TABNAME>
+        <DDLANGUAGE>D</DDLANGUAGE>
+        <TABCLASS>INTTAB</TABCLASS>
+        <DDTEXT>Substructure</DDTEXT>
+       </DD02V>
+       <DD03P_TABLE>
+        <DD03P>
+         <FIELDNAME>FIELD1</FIELDNAME>
+         <ROLLNAME>CHAR1</ROLLNAME>
+         <ADMINFIELD>0</ADMINFIELD>
+         <COMPTYPE>E</COMPTYPE>
+        </DD03P>
+        <DD03P>
+         <FIELDNAME>FIELD2</FIELDNAME>
+         <ROLLNAME>CHAR2</ROLLNAME>
+         <ADMINFIELD>0</ADMINFIELD>
+         <COMPTYPE>E</COMPTYPE>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zabaplint_structure.tabl.xml", xml1));
+    reg.addFile(new MemoryFile("zabaplint_substructure.tabl.xml", xml2));
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const fields = tabl.parseType(reg);
+    if (!(fields instanceof StructureType)) {
+      expect.fail();
+    }
+    const components = fields.getComponents();
+    expect(components.length).to.equal(2);
+    expect(components[0].name).to.equal("SUBSTRUC");
+  });
+
 });
