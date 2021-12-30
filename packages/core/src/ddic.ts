@@ -185,7 +185,7 @@ export class DDIC {
     const upper = name.toUpperCase();
     for (const obj of this.reg.getObjectsByType("DDLS")) {
       const ddls = obj as DataDefinition;
-      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName() === upper) {
+      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName()?.toUpperCase() === upper) {
         return {type: ddls.parseType(this.reg), object: obj};
       }
     }
@@ -243,7 +243,7 @@ export class DDIC {
     const upper = name.toUpperCase();
     for (const obj of this.reg.getObjectsByType("DDLS")) {
       const ddls = obj as DataDefinition;
-      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName() === upper) {
+      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName()?.toUpperCase() === upper) {
         return {type: ddls.parseType(this.reg), object: ddls};
       }
     }
@@ -265,7 +265,7 @@ export class DDIC {
     const upper = name.toUpperCase();
     for (const obj of this.reg.getObjectsByType("DDLS")) {
       const ddls = obj as DataDefinition;
-      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName() === upper) {
+      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName()?.toUpperCase() === upper) {
         return ddls;
       }
     }
