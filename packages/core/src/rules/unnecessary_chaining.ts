@@ -61,7 +61,7 @@ export class UnnecessaryChaining extends ABAPRule {
 
       const fix = EditHelper.deleteRange(file, colon.getStart(), colon.getEnd());
       const message = "Unnecessary chaining";
-      const issue = Issue.atStatement(file, statements[i], message, this.getMetadata().key, this.conf.severity, fix);
+      const issue = Issue.atToken(file, colon, message, this.getMetadata().key, this.conf.severity, fix);
       issues.push(issue);
     }
 
