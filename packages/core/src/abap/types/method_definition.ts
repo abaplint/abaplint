@@ -16,6 +16,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly abstract: boolean;
   private readonly static: boolean;
   private readonly raising: string[];
+  private readonly exceptions: string[];
 
 // todo: final flag
 
@@ -74,6 +75,13 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
       }
     }
 
+    this.exceptions = [];
+    for (const r of node.findDirectExpression(Expressions.MethodDefExceptions)?.findAllExpressions(Expressions.NamespaceSimpleName) || []) {
+      const token = r.getFirstToken();
+      const name = token.getStr();
+      this.exceptions.push(name);
+    }
+
     this.visibility = visibility;
     this.parameters = new MethodParameters(node, this.filename, scope);
   }
@@ -104,6 +112,10 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
   public getRaising(): readonly string[] {
     return this.raising;
+  }
+
+  public getExceptions(): readonly string[] {
+    return this.exceptions;
   }
 
 }
