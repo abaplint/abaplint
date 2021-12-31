@@ -93,6 +93,7 @@ export * from "./method_def_exporting";
 export * from "./method_def_importing";
 export * from "./method_def_raising";
 export * from "./method_def_returning";
+export * from "./method_def_exceptions";
 export * from "./method_name";
 export * from "./method_param_name";
 export * from "./method_param_optional";

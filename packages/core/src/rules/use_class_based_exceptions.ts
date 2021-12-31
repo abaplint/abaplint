@@ -2,6 +2,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
 
@@ -37,7 +38,7 @@ export class UseClassBasedExceptions extends ABAPRule {
     const issues: Issue[] = [];
 
     for (const s of file.getStructure()?.findAllStatements(Statements.MethodDef) || []) {
-      if (s.findDirectTokenByText("EXCEPTIONS")) {
+      if (s.findDirectExpression(Expressions.MethodDefExceptions)) {
         issues.push(Issue.atStatement(file, s, this.getMessage(), this.getMetadata().key));
       }
     }
