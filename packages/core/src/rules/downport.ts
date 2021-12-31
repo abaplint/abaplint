@@ -24,6 +24,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
 
 // todo: refactor each sub-rule to new classes?
+// todo: add configuration
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -60,6 +61,7 @@ Current rules:
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
+* RAISE EXCEPTION ... MESSAGE
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -167,6 +169,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     let found = this.partiallyImplemented(high, lowFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.raiseException(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -510,6 +517,58 @@ ${indentation}`);
       }
       const fix = EditHelper.deleteRange(lowFile, partially.getStart(), implemented.getEnd());
       return Issue.atToken(lowFile, partially, "Downport PARTIALLY IMPLEMENTED", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private raiseException(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+
+    /*
+    Note: IF_T100_DYN_MSG does not exist in 702, so this rule is mostly relevant for the transpiler
+
+    DATA foo LIKE if_t100_message=>t100key.
+    foo-msgid = 'ZHVAM'.
+    foo-msgno = '001'.
+    foo-attr1 = 'IF_T100_DYN_MSG~MSGV1'.
+    foo-attr2 = 'IF_T100_DYN_MSG~MSGV2'.
+    foo-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
+    foo-attr4 = 'IF_T100_DYN_MSG~MSGV4'.
+    DATA bar TYPE REF TO zcl_hvam_exception.
+    CREATE OBJECT bar EXPORTING textid = foo.
+    bar->if_t100_dyn_msg~msgty = 'E'.
+    bar->if_t100_dyn_msg~msgv1 = 'abc'.
+    bar->if_t100_dyn_msg~msgv2 = 'abc'.
+    bar->if_t100_dyn_msg~msgv3 = 'abc'.
+    bar->if_t100_dyn_msg~msgv4 = 'abc'.
+    RAISE EXCEPTION bar.
+    */
+
+    if (node.get() instanceof Statements.Raise) {
+      const startToken = node.findDirectTokenByText("ID");
+      if (startToken === undefined) {
+        return undefined;
+      }
+
+      const sources = node.findDirectExpressions(Expressions.Source);
+      const id = sources[0].concatTokens();
+      const number = sources[1].concatTokens();
+
+      const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
+
+      const uniqueName1 = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const uniqueName2 = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+
+      const abap = `DATA ${uniqueName1} LIKE if_t100_message=>t100key.
+${indentation}${uniqueName1}-msgid = ${id}.
+${indentation}${uniqueName1}-msgno = ${number}.
+${indentation}DATA ${uniqueName2} TYPE REF TO ${className}.
+${indentation}CREATE OBJECT ${uniqueName2} EXPORTING textid = ${uniqueName1}.
+${indentation}RAISE EXCEPTION ${uniqueName2}.`;
+
+      const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), abap);
+      return Issue.atToken(lowFile, startToken, "Downport RAISE MESSAGE", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;
