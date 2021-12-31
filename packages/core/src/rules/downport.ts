@@ -23,7 +23,7 @@ import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
 
-// todo: refactor each sub-rule to new classes
+// todo: refactor each sub-rule to new classes?
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -59,6 +59,7 @@ Current rules:
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
+* PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -165,7 +166,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return undefined;
     }
 
-    let found = this.emptyKey(high, lowFile);
+    let found = this.partiallyImplemented(high, lowFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.emptyKey(high, lowFile);
     if (found) {
       return found;
     }
@@ -489,6 +495,24 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, node.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private partiallyImplemented(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+
+    if (node.get() instanceof Statements.InterfaceDef) {
+      const partially = node.findDirectTokenByText("PARTIALLY");
+      if (partially === undefined) {
+        return undefined;
+      }
+      const implemented = node.findDirectTokenByText("IMPLEMENTED");
+      if (implemented === undefined) {
+        return undefined;
+      }
+      const fix = EditHelper.deleteRange(lowFile, partially.getStart(), implemented.getEnd());
+      return Issue.atToken(lowFile, partially, "Downport PARTIALLY IMPLEMENTED", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
   }
 
   private emptyKey(node: StatementNode, lowFile: ABAPFile): Issue | undefined {

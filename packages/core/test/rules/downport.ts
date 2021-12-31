@@ -1133,6 +1133,26 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("remove PARTIALLY IMPLEMENTED", async () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        INTERFACES lif_bar PARTIALLY IMPLEMENTED.
+    ENDCLASS.
+    CLASS lcl_class IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const expected = `
+    CLASS lcl_class DEFINITION.
+      PUBLIC SECTION.
+        INTERFACES lif_bar .
+    ENDCLASS.
+    CLASS lcl_class IMPLEMENTATION.
+    ENDCLASS.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
