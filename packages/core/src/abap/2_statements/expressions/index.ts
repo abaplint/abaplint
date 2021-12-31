@@ -116,6 +116,7 @@ export * from "./perform_changing";
 export * from "./perform_tables";
 export * from "./perform_using";
 export * from "./radio_group_name";
+export * from "./raise_with";
 export * from "./read_table_target";
 export * from "./receive_parameters";
 export * from "./redefinition";

@@ -1153,6 +1153,21 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("downport RAISE ... MESSAGE ID", async () => {
+    const abap = `
+RAISE EXCEPTION TYPE zcx_see MESSAGE ID 'ZSEE' NUMBER '001'.`;
+
+    const expected = `
+DATA temp1 LIKE if_t100_message=>t100key.
+temp1-msgid = 'ZSEE'.
+temp1-msgno = '001'.
+DATA temp2 TYPE REF TO zcx_see.
+CREATE OBJECT temp2 EXPORTING textid = temp1.
+RAISE EXCEPTION temp2.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
