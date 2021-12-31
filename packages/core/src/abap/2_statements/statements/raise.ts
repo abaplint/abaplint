@@ -1,27 +1,21 @@
 import {IStatement} from "./_statement";
 import {seq, alt, opt, ver, optPrio, altPrio} from "../combi";
 import {Version} from "../../../version";
-import {Source, Field, ParameterListS, ClassName, MessageSource, SimpleSource2} from "../expressions";
+import {Source, Field, ParameterListS, ClassName, MessageSource, SimpleSource2, RaiseWith} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Raise implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const wit = seq("WITH",
-                    Source,
-                    opt(Source),
-                    opt(Source),
-                    opt(Source));
-
     const mess = seq("MESSAGE",
                      MessageSource,
-                     opt(wit));
+                     opt(RaiseWith));
 
     const messid = seq("MESSAGE ID",
                        Source,
                        "NUMBER",
                        Source,
-                       optPrio(wit));
+                       optPrio(RaiseWith));
 
     const exporting = seq("EXPORTING", ParameterListS);
 

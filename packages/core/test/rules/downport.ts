@@ -1153,6 +1153,30 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it.skip("downport RAISE ... MESSAGE ID", async () => {
+    const abap = `
+RAISE EXCEPTION TYPE zcx_see MESSAGE ID 'ZSEE' NUMBER 001.`;
+
+    const expected = `
+DATA foo LIKE if_t100_message=>t100key.
+foo-msgid = 'ZHVAM'.
+foo-msgno = '001'.
+foo-attr1 = 'IF_T100_DYN_MSG~MSGV1'.
+foo-attr2 = 'IF_T100_DYN_MSG~MSGV2'.
+foo-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
+foo-attr4 = 'IF_T100_DYN_MSG~MSGV4'.
+DATA bar TYPE REF TO zcl_hvam_exception.
+CREATE OBJECT bar EXPORTING textid = foo.
+bar->if_t100_dyn_msg~msgty = 'E'.
+bar->if_t100_dyn_msg~msgv1 = 'abc'.
+bar->if_t100_dyn_msg~msgv2 = 'abc'.
+bar->if_t100_dyn_msg~msgv3 = 'abc'.
+bar->if_t100_dyn_msg~msgv4 = 'abc'.
+RAISE EXCEPTION bar.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
