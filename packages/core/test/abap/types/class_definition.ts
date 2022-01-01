@@ -183,4 +183,27 @@ ENDCLASS.`;
     expect(typeof value).to.equal("object");
   });
 
+  it("method, exceptions", () => {
+    const abap = `
+CLASS zcl_moo DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo
+      IMPORTING foo TYPE ty_http
+    EXCEPTIONS
+      HTTP_COMMUNICATION_FAILURE
+      HTTP_INVALID_STATE.
+ENDCLASS.
+CLASS zcl_moo IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.getMethodDefinitions()).to.not.equal(undefined);
+    const pub = def!.getMethodDefinitions().getByName("moo");
+    expect(pub).to.not.equal(undefined);
+    expect(pub!.getExceptions().length).to.equal(2);
+  });
+
 });
