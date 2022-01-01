@@ -15,7 +15,7 @@ export class SelectOption implements IStatement {
                     sourc,
                     opt(to));
 
-    const option = seq("OPTION", Field);
+    const option = seq("OPTION", alt("CP", Field));
     const sign = seq("SIGN", Field);
 
     const memory = seq("MEMORY ID", SimpleSource1);
