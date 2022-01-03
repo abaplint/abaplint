@@ -222,6 +222,20 @@ foo = VALUE #(
           right: children[2],
         });
       }
+
+      const ex = raise.findDirectExpression(Expressions.ParameterListExceptions);
+      for (const e of ex?.getChildren() || []) {
+        const children = e.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+
       if (parameters.length > 0) {
         candidates.push({parameters});
       }
