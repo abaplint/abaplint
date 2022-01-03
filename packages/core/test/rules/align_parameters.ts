@@ -248,4 +248,19 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("CREATE OBJECT, with exceptions, ok", async () => {
+    const abap = `CREATE OBJECT go_test
+  EXPORTING
+    i_parent          = abap_false
+    i_appl_events     = abap_true
+  EXCEPTIONS
+    error_cntl_create = 1
+    error_cntl_init   = 2
+    error_cntl_link   = 3
+    error_dp_create   = 4
+    OTHERS            = 5.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
