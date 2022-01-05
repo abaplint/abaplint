@@ -1168,6 +1168,24 @@ RAISE EXCEPTION temp2.`;
     testFix(abap, expected);
   });
 
+  it("APPEND, outline expression", async () => {
+    const abap = `
+FORM foo.
+  DATA input_letters TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  APPEND |sdfsd| TO input_letters.
+ENDFORM.`;
+
+    const expected = `
+FORM foo.
+  DATA input_letters TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE LINE OF input_letters.
+  temp1 = |sdfsd|.
+  APPEND temp1 TO input_letters.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
