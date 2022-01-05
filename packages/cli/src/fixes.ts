@@ -25,7 +25,7 @@ export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: My
 
   // always end the progress indicator at 100%
   while(iteration <= MAX_ITERATIONS) {
-    bar?.tick("Apply Fixes, iteration " + iteration + ", " + issues.length + " candidates");
+    bar?.tick("Fixes Applied");
     iteration++;
   }
 
