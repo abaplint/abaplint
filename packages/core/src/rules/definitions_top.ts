@@ -56,11 +56,11 @@ export class DefinitionsTop extends ABAPRule {
       return [];
     }
 
-    // one fix per file
-    this.fixed = false;
-
     const routines = structure.findAllStructures(Structures.Form).concat(structure.findAllStructures(Structures.Method));
     for (const r of routines) {
+      // one fix per routine
+      this.fixed = false;
+
       this.mode = DEFINITION;
       this.moveTo = r.getFirstStatement();
 
@@ -102,7 +102,7 @@ export class DefinitionsTop extends ABAPRule {
           || c.get() instanceof Statements.Static
           || c.get() instanceof Statements.FieldSymbol)) {
         if (this.mode === AFTER) {
-          // only one fix per file, as it reorders a lot
+          // only one fix per routine, as it reorders a lot
           let fix = undefined;
           if (this.fixed === false && this.moveTo) {
             fix = this.buildFix(file, c, this.moveTo);
