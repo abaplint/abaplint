@@ -447,7 +447,7 @@ ${indentation}`);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${target?.concatTokens()}.
-${indentation}${uniqueName} = ${source.concatTokens()}.\n`);
+${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
