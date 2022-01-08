@@ -1,7 +1,7 @@
 import {ABAPObject, ITextElements} from "./_abap_object";
 import {FunctionModuleDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
-import * as fastxmlparser from "fast-xml-parser";
+import {XMLParser} from "fast-xml-parser";
 import {ABAPFile} from "../abap/abap_file";
 
 export class FunctionGroup extends ABAPObject {
@@ -137,7 +137,7 @@ export class FunctionGroup extends ABAPObject {
         return {};
       }
 
-      const parsed = fastxmlparser.parse(found.getRaw(), {parseNodeValue: false, ignoreAttributes: true, trimValues: false});
+      const parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(found.getRaw());
       this.findTexts(parsed);
     }
 

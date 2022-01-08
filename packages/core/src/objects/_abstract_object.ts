@@ -1,6 +1,6 @@
 import {IFile} from "../files/_ifile";
 import {IObject, IParseResult} from "./_iobject";
-import * as fastxmlparser from "fast-xml-parser";
+import {XMLParser} from "fast-xml-parser";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import {Identifier} from "../abap/4_file_information/_identifier";
@@ -125,7 +125,7 @@ export abstract class AbstractObject implements IObject {
       return undefined;
     }
     try {
-      return fastxmlparser.parse(xml, {parseNodeValue: false, ignoreAttributes: true, trimValues: false});
+      return new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(xml);
     } catch {
       return undefined;
     }
