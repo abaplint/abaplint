@@ -1186,6 +1186,24 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("COND # inside string template", async () => {
+    const abap = `
+DATA input TYPE string.
+DATA(result) = |foo { COND #( WHEN input IS INITIAL THEN \`you\` ELSE input ) } bar|.`;
+
+    const expected = `
+DATA input TYPE string.
+DATA temp1 TYPE string.
+IF input IS INITIAL.
+  temp1 = \`you\`.
+ELSE.
+  temp1 = input.
+ENDIF.
+DATA(result) = |foo { temp1 } bar|.`;
+
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {

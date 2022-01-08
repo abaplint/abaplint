@@ -66,12 +66,15 @@ export class Source {
           const method = new BuiltIn().searchBuiltin(tok);
           scope.addReference(token, method, ReferenceType.BuiltinMethodReference, filename);
           new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
-          return new CharacterType(1);
+          return new CharacterType(1, "ABAP_BOOL");
         }
         case "REDUCE":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename);
+          if (foundType === undefined) {
+            this.addIfInferred(node, scope, filename, bodyType);
+          }
           return foundType ? foundType : bodyType;
         }
         case "SWITCH":
@@ -83,7 +86,11 @@ export class Source {
         case "COND":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          return new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename, foundType);
+          const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename, foundType);
+          if (foundType === undefined) {
+            this.addIfInferred(node, scope, filename, bodyType);
+          }
+          return foundType ? foundType : bodyType;
         }
         case "CONV":
         {
@@ -159,6 +166,26 @@ export class Source {
 
 ////////////////////////////////
 
+  private addIfInferred(
+    node: ExpressionNode,
+    scope: CurrentScope,
+    filename: string,
+    inferredType: AbstractType | undefined): void {
+
+    const basic = new BasicTypes(filename, scope);
+    const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
+    const typeToken = typeExpression?.getFirstToken();
+    const typeName = typeToken?.getStr();
+
+    if (typeName === "#" && inferredType) {
+      const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
+      if (found) {
+        scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
+      }
+    }
+
+  }
+
   private determineType(
     node: ExpressionNode,
     scope: CurrentScope,
@@ -166,7 +193,6 @@ export class Source {
     targetType: AbstractType | undefined): AbstractType | undefined {
 
     const basic = new BasicTypes(filename, scope);
-
     const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();

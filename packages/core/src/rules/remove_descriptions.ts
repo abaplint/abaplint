@@ -1,6 +1,6 @@
 import {IRule, IRuleMetadata} from "./_irule";
 import {Issue} from "../issue";
-import * as fastxmlparser from "fast-xml-parser";
+import {XMLParser} from "fast-xml-parser";
 import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -101,7 +101,7 @@ Consider using ABAP Doc for documentation.`,
   }
 
   private checkXML(xml: string, file: IFile) {
-    const parsed = fastxmlparser.parse(xml, {parseNodeValue: false, ignoreAttributes: true, trimValues: false});
+    const parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(xml);
 
     if (parsed === undefined || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
       return [];
