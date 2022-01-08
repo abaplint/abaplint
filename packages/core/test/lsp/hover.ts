@@ -285,6 +285,16 @@ bar = NEW #( ).`;
     expect(hover?.value).to.contain("lcl_bar");
   });
 
+  it("Hover inferred type, COND inside string template", () => {
+    const abap = `DATA input TYPE string.
+DATA(result) = |foo { COND #( WHEN input IS INITIAL THEN \`you\` ELSE input ) } bar|.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 27));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+  });
+
   it("Hover inferred row type", () => {
     const abap = `FORM bar.
   TYPES: BEGIN OF ty_stru,
