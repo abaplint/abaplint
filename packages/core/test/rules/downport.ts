@@ -1204,6 +1204,12 @@ DATA(result) = |foo { temp1 } bar|.`;
     testFix(abap, expected);
   });
 
+  it("INSERT, basic remove @", async () => {
+    const abap = `INSERT INTO opentest VALUES @ls_row.`;
+    const expected = `INSERT INTO opentest VALUES ls_row.`;
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
