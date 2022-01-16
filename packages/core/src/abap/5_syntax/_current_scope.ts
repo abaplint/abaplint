@@ -108,6 +108,9 @@ export class CurrentScope {
       return;
     }
     const name = c.getName().toUpperCase();
+    if (this.current.getData().cdefs[name] !== undefined) {
+      throw new Error(`Class "${name}" already defined`);
+    }
     this.current.getData().cdefs[name] = c;
   }
 
