@@ -40,6 +40,10 @@ describe("ICF service, parse XML", () => {
     expect(handlers).to.not.equal(undefined);
     expect(handlers!.length).to.equal(1);
     expect(handlers![0]).to.equal("ZCL_AGS_SICF");
+
+    const url = sicf.getURL();
+    expect(url).to.not.equal(undefined);
+    expect(url).to.equal("/sap/zabapgitserver/");
   });
 
 });

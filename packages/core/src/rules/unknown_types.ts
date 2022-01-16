@@ -76,8 +76,8 @@ export class UnknownTypes implements IRule {
 
   private traverse(node: ISpaghettiScopeNode): Issue[] {
     const ret: Issue[] = [];
-
-    for (const r of node.getData().references) {
+    const nodeData = node.getData();
+    for (const r of nodeData.references) {
       if (r.referenceType === ReferenceType.ObjectOrientedUnknownReference && r.extra?.ooName) {
         const message = r.extra.ooName + " unknown";
         ret.push(Issue.atIdentifier(r.position, message, this.getMetadata().key, this.conf.severity));
@@ -85,7 +85,7 @@ export class UnknownTypes implements IRule {
     }
 
     if (node.getIdentifier().stype !== ScopeType.ClassImplementation) {
-      const vars = node.getData().vars;
+      const vars = nodeData.vars;
       for (const name in vars) {
         const identifier = vars[name];
         const found = this.containsUnknown(identifier.getType());
@@ -95,7 +95,7 @@ export class UnknownTypes implements IRule {
         }
       }
 
-      const types = node.getData().types;
+      const types = nodeData.types;
       for (const name in types) {
         const identifier = types[name];
         const found = this.containsUnknown(identifier.getType());
@@ -106,14 +106,15 @@ export class UnknownTypes implements IRule {
       }
     }
 
-    for (const v of node.getData().idefs) {
+    for (const v of nodeData.idefs) {
       const found = this.checkMethodParameters(v);
       if (found) {
         const message = "Contains unknown, " + found.found;
         ret.push(Issue.atIdentifier(found.id, message, this.getMetadata().key, this.conf.severity));
       }
     }
-    for (const v of node.getData().cdefs) {
+    for (const name in nodeData.cdefs) {
+      const v = nodeData.cdefs[name];
       const found = this.checkMethodParameters(v);
       if (found) {
         const message = "Contains unknown, " + found.found;

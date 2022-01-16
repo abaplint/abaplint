@@ -55,6 +55,7 @@ TYPES: BEGIN OF MESH mesh,
          foo TYPE tab,
        END OF MESH mesh.`, cnt: 0},
 
+  {abap: `IF result IS ASSIGNED. ENDIF.`, cnt: 1},
 ];
 
 testRule(tests, ParserError);

@@ -13,9 +13,9 @@ abstract class ScopeData {
   public constructor() {
     this.data = {
       vars: {},
-      cdefs: [],
-      idefs: [],
-      forms: [],
+      cdefs: {},
+      idefs: [], // todo, refactor to object
+      forms: [], // todo, refactor to object
       types: {},
       extraLikeTypes: {},
       deferred: [],
@@ -91,10 +91,9 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
 
     const upper = name.toUpperCase();
     while (search !== undefined) {
-      for (const cdef of search.getData().cdefs) {
-        if (cdef.getName().toUpperCase() === upper) {
-          return cdef;
-        }
+      const c = search.getData().cdefs[upper];
+      if (c !== undefined) {
+        return c;
       }
       search = search.getParent();
     }
