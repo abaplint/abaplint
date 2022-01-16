@@ -14,8 +14,8 @@ abstract class ScopeData {
     this.data = {
       vars: {},
       cdefs: {},
-      idefs: [],
-      forms: [],
+      idefs: [], // todo, refactor to object
+      forms: [], // todo, refactor to object
       types: {},
       extraLikeTypes: {},
       deferred: [],
