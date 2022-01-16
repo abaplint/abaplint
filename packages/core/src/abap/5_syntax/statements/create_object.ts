@@ -5,7 +5,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {ReferenceType} from "../_reference";
-import {GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
+import {AnyType, GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 import {StatementSyntax} from "../_statement_syntax";
 import {IClassDefinition} from "../../types/_class_definition";
@@ -47,6 +47,7 @@ export class CreateObject implements StatementSyntax {
         if (found instanceof VoidType) {
           continue;
         } else if (!(found instanceof ObjectReferenceType)
+            && !(found instanceof AnyType)
             && !(found instanceof GenericObjectReferenceType)) {
           throw new Error("Target must be a object reference");
         } else if (found instanceof GenericObjectReferenceType && type === undefined) {
