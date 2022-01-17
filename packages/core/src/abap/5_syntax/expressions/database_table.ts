@@ -18,6 +18,7 @@ export class DatabaseTable {
       scope.addReference(token, undefined, ReferenceType.TableVoidReference, filename);
     } else {
       scope.addReference(token, found.getIdentifier(), ReferenceType.TableReference, filename);
+      scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found, token: token, filename: filename});
     }
   }
 }
