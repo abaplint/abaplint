@@ -2321,6 +2321,17 @@
               ],
               "description": "Omit the parameter name in single parameter calls\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/omit_parameter_name"
             },
+            "omit_preceding_zeros": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/OmitPrecedingZerosConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Omit preceding zeros from integer constants\nTags: SingleFile\nhttps://rules.abaplint.org/omit_preceding_zeros"
+            },
             "omit_receiving": {
               "anyOf": [
                 {
@@ -4250,6 +4261,23 @@
       "type": "object"
     },
     "OmitParameterNameConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "OmitPrecedingZerosConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

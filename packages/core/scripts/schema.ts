@@ -90,6 +90,7 @@ import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
 import {ObjectNamingConf} from "../src/rules/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {OmitParameterNameConf} from "../src/rules/omit_parameter_name";
+import {OmitPrecedingZerosConf} from "../src/rules/omit_preceding_zeros";
 import {OmitReceivingConf} from "../src/rules/omit_receiving";
 import {Parser702ChainingConf} from "../src/rules/parser_702_chaining";
 import {ParserErrorConf} from "../src/rules/parser_error";
@@ -244,6 +245,7 @@ export interface IConfig {
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "omit_parameter_name"?: OmitParameterNameConf | boolean,
+    "omit_preceding_zeros"?: OmitPrecedingZerosConf | boolean,
     "omit_receiving"?: OmitReceivingConf | boolean,
     "parser_702_chaining"?: Parser702ChainingConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
