@@ -3,6 +3,7 @@ export enum ScopeType {
   Dummy = "_dummy",
   Global = "_global",
   Program = "_program",
+  TypePool = "_type_pool",
   FunctionGroup = "_function_group",
 
   ClassDefinition = "class_definition",

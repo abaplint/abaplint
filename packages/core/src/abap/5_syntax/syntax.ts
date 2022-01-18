@@ -9,7 +9,7 @@ import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
-import {FunctionGroup, Program} from "../../objects";
+import {FunctionGroup, Program, TypePool} from "../../objects";
 import {Position} from "../../position";
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -329,6 +329,11 @@ export class SyntaxLogic {
           stype = ScopeType.FunctionGroup;
         }
         this.scope.push(stype, this.object.getName(), new Position(1, 1), main.getFilename());
+      }
+    } else if (this.object instanceof TypePool) {
+      const main = this.object.getMainABAPFile();
+      if (main !== undefined) {
+        this.scope.push(ScopeType.TypePool, this.object.getName(), new Position(1, 1), main.getFilename());
       }
     }
 

@@ -1780,16 +1780,16 @@ TYPES: BEGIN OF abap_componentdescr,
     expect(identifier?.getType()).to.be.instanceof(Basic.DecFloatType);
   });
 
-  it.only("type from type group, should have qualified name", () => {
+  it("type from type group, should have qualified name", () => {
     const typegroup = `
-TYPES abap_foo TYPE c LENGTH 1.`;
-    const prog = `DATA val TYPE abap_foo'.`;
+TYPES abap_foo TYPE c LENGTH 10.`;
+    const prog = `DATA val TYPE abap_foo.`;
     const type = runMulti(
       [{filename: "abap.type.abap", contents: typegroup},
         {filename: "zfoobar.prog.abap", contents: prog}],
       "val");
     expect(type).to.not.equal(undefined);
-    expect(type!.getType()).to.be.instanceof(Basic.StringType);
+    expect(type!.getType()).to.be.instanceof(Basic.CharacterType);
     expect(type!.getType().getQualifiedName()).to.equal("abap_foo");
   });
 

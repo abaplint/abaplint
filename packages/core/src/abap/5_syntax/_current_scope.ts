@@ -273,7 +273,7 @@ export class CurrentScope {
       return undefined;
     }
 
-    const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild();
+    const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild()?.getFirstChild();
 
     const found = spag?.findVariable(name);
     return found;
@@ -290,7 +290,7 @@ export class CurrentScope {
       return undefined;
     }
 
-    const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild();
+    const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild()?.getFirstChild();
 
     const found = spag?.findType(name)?.getType();
     return found;
@@ -393,6 +393,10 @@ export class CurrentScope {
       curr = curr.getParent();
     }
     return false;
+  }
+
+  public isTypePool(): boolean {
+    return this.current?.getIdentifier().filename.endsWith(".type.abap") === true || false;
   }
 
   public setAllowHeaderUse(name: string) {
