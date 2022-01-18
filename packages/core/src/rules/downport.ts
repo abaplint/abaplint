@@ -595,7 +595,15 @@ ${indentation}`);
 
       const sources = node.findDirectExpressions(Expressions.Source);
       const id = sources[0].concatTokens();
-      const number = sources[1].concatTokens();
+
+      const numberExpression = node.findExpressionAfterToken("NUMBER");
+      if (numberExpression === undefined) {
+        throw "downport raiseException, could not find number";
+      }
+      let number = numberExpression.concatTokens();
+      if (numberExpression.get() instanceof Expressions.MessageNumber) {
+        number = "'" + number + "'";
+      }
 
       const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
 
