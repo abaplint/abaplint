@@ -1181,6 +1181,21 @@ RAISE EXCEPTION temp2.`;
     testFix(abap, expected);
   });
 
+  it("downport RAISE ... MESSAGE ID unescaped variant", async () => {
+    const abap = `
+RAISE EXCEPTION TYPE zcx_foo MESSAGE ID 'ZFOO' NUMBER 002.`;
+
+    const expected = `
+DATA temp1 LIKE if_t100_message=>t100key.
+temp1-msgid = 'ZFOO'.
+temp1-msgno = '002'.
+DATA temp2 TYPE REF TO zcx_foo.
+CREATE OBJECT temp2 EXPORTING textid = temp1.
+RAISE EXCEPTION temp2.`;
+
+    testFix(abap, expected);
+  });
+
   it("APPEND, outline expression", async () => {
     const abap = `
 FORM foo.
