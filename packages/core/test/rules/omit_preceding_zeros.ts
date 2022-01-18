@@ -13,6 +13,9 @@ const tests = [
   {abap: "int = -001.", cnt: 1},
   {abap: "int = -1.", cnt: 0},
   {abap: "int = 123.", cnt: 0},
+  {abap: "RAISE EXCEPTION TYPE ycx_see MESSAGE ID 'YSEE' NUMBER 003.", cnt: 0},
+  {abap: "MESSAGE e001(abc) WITH lv_par1.", cnt: 0},
+  {abap: "MESSAGE ID sy-msgid TYPE sy-msgty NUMBER 001.", cnt: 0},
 ];
 
 testRule(tests, OmitPrecedingZeros);

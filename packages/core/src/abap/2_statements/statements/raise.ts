@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
 import {seq, alt, opt, ver, optPrio, altPrio} from "../combi";
 import {Version} from "../../../version";
-import {Source, Field, ParameterListS, ClassName, MessageSource, SimpleSource2, RaiseWith} from "../expressions";
+import {Source, Field, ParameterListS, ClassName, MessageSource, SimpleSource2, RaiseWith, MessageNumber} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Raise implements IStatement {
@@ -14,7 +14,7 @@ export class Raise implements IStatement {
     const messid = seq("MESSAGE ID",
                        Source,
                        "NUMBER",
-                       Source,
+                       altPrio(MessageNumber, Source),
                        optPrio(RaiseWith));
 
     const exporting = seq("EXPORTING", ParameterListS);

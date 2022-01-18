@@ -18,6 +18,8 @@ export class OmitPrecedingZeros extends ABAPRule {
       title: "Omit preceding zeros",
       shortDescription: `Omit preceding zeros from integer constants`,
       tags: [RuleTag.SingleFile],
+      badExample: `int = -001.`,
+      goodExample: `int = -1.`,
     };
   }
 
