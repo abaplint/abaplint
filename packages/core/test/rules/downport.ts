@@ -936,6 +936,19 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("SELECT star, outline @DATA, table", async () => {
+    const abap = `FORM bar.
+  SELECT * FROM t001w INTO TABLE @DATA(lt_t001w).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_t001w TYPE STANDARD TABLE OF t001w WITH DEFAULT KEY.
+  SELECT * FROM t001w INTO TABLE @lt_t001w.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
   it("SELECT, basic remove , and @", async () => {
     const abap = `FORM bar.
   DATA: BEGIN OF ls_t001w,
