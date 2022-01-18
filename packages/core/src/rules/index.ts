@@ -88,6 +88,7 @@ export * from "./no_yoda_conditions";
 export * from "./object_naming";
 export * from "./obsolete_statement";
 export * from "./omit_parameter_name";
+export * from "./omit_preceding_zeros";
 export * from "./omit_receiving";
 export * from "./parser_702_chaining";
 export * from "./parser_error";

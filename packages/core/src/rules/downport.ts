@@ -424,10 +424,16 @@ ${indentation}`);
 
     const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
-    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `TYPES: BEGIN OF ${uniqueName},
+
+    let fix1 = EditHelper.insertAt(lowFile, high.getStart(), `TYPES: BEGIN OF ${uniqueName},
 ${fieldDefinitions}${indentation}      END OF ${uniqueName}.
 ${indentation}DATA ${name} TYPE STANDARD TABLE OF ${uniqueName} WITH DEFAULT KEY.
 ${indentation}`);
+    if (fieldDefinitions === "") {
+      fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA ${name} TYPE STANDARD TABLE OF ${tableName} WITH DEFAULT KEY.
+${indentation}`);
+    }
+
     const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
     const fix = EditHelper.merge(fix2, fix1);
 

@@ -36,13 +36,13 @@ export class MethodLength implements IRule {
     };
   }
 
-  private getDescription(issueType: IssueType, actual: string): string {
+  private getDescription(issueType: IssueType, actual: string, type: string): string {
     switch (issueType) {
       case IssueType.EmptyMethod: {
-        return "Empty method/form";
+        return "Empty " + type;
       }
       case IssueType.MaxStatements: {
-        return "Reduce method/form length to max " + this.conf.statements + " statements, currently " + actual;
+        return "Reduce " + type + " length to max " + this.conf.statements + " statements, currently " + actual;
       }
       default: {
         return "";
@@ -64,18 +64,20 @@ export class MethodLength implements IRule {
 
   public run(obj: IObject): Issue[] {
     const methodStats = MethodLengthStats.run(obj);
-    const methodIssues = this.check(methodStats);
+    const methodIssues = this.check(methodStats, "METHOD");
 
     let formIssues: Issue[] = [];
     if (this.conf.checkForms) {
       const formStats = FormLengthStats.run(obj);
-      formIssues = this.check(formStats);
+      formIssues = this.check(formStats, "FORM");
     }
 
     return methodIssues.concat(formIssues);
   }
 
-  private check(stats: IMethodLengthResult[]) {
+// ***********************
+
+  private check(stats: IMethodLengthResult[], type: string) {
     const issues: Issue[] = [];
 
     for (const s of stats) {
@@ -84,12 +86,12 @@ export class MethodLength implements IRule {
         continue;
       }
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
-        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0"), this.getMetadata().key, this.conf.severity);
+        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0", type), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
         continue;
       }
       if (s.count > this.conf.statements) {
-        const message = this.getDescription(IssueType.MaxStatements, s.count.toString());
+        const message = this.getDescription(IssueType.MaxStatements, s.count.toString(), type);
         const issue = Issue.atPosition(s.file, s.pos, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
