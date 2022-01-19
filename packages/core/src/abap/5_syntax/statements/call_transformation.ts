@@ -11,7 +11,7 @@ import {StatementSyntax} from "../_statement_syntax";
 export class CallTransformation implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    for (const s of node.findAllExpressions(Expressions.Source)) {
+    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
       new Source().runSyntax(s, scope, filename);
     }
 
