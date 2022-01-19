@@ -3,8 +3,8 @@ import {AbstractType} from "./_abstract_type";
 export class DataReference extends AbstractType {
   private readonly type: AbstractType;
 
-  public constructor(type: AbstractType, name?: string) {
-    super(name);
+  public constructor(type: AbstractType, qualifiedName?: string) {
+    super(qualifiedName);
     this.type = type;
   }
 

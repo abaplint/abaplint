@@ -65,7 +65,7 @@ export class DDIC {
     return isException;
   }
 
-  public lookupBuiltinType(name: string, length?: number, decimals?: number): AbstractType | undefined {
+  public lookupBuiltinType(name: string, length?: number, decimals?: number, qualifiedName?: string): AbstractType | undefined {
     switch (name) {
       case "STRING":
         return new Types.StringType(name);
@@ -76,31 +76,31 @@ export class DDIC {
       case "T":
         return new Types.TimeType(name);
       case "XSEQUENCE":
-        return new Types.XSequenceType();
+        return new Types.XSequenceType(qualifiedName);
       case "CLIKE":
-        return new Types.CLikeType();
+        return new Types.CLikeType(qualifiedName);
       case "DECFLOAT":
-        return new Types.DecFloatType();
+        return new Types.DecFloatType(qualifiedName);
       case "ANY":
-        return new Types.AnyType();
+        return new Types.AnyType(qualifiedName);
       case "SIMPLE":
-        return new Types.SimpleType();
+        return new Types.SimpleType(qualifiedName);
       case "%_C_POINTER":
-        return new Types.HexType(8);
+        return new Types.HexType(8, qualifiedName);
       case "TABLE":
         return new Types.TableType(new Types.AnyType(), {withHeader: false});
       case "DATA":
-        return new Types.AnyType();
+        return new Types.AnyType(qualifiedName);
       case "NUMERIC":
-        return new Types.NumericGenericType();
+        return new Types.NumericGenericType(qualifiedName);
       case "UTCLONG": // todo, take version into account
-        return new Types.UTCLongType();
+        return new Types.UTCLongType(qualifiedName);
       case "DECFLOAT16":
-        return new Types.DecFloat16Type();
+        return new Types.DecFloat16Type(qualifiedName);
       case "DECFLOAT34":
-        return new Types.DecFloat34Type();
+        return new Types.DecFloat34Type(qualifiedName);
       case "CSEQUENCE":
-        return new Types.CSequenceType();
+        return new Types.CSequenceType(qualifiedName);
       case "I":
       case "INT8": // todo, take version into account
         return new Types.IntegerType(name);
@@ -108,29 +108,29 @@ export class DDIC {
         return new Types.FloatType(name);
       case "P":
         if (length && decimals) {
-          return new Types.PackedType(length, decimals);
+          return new Types.PackedType(length, decimals, qualifiedName);
         } else if (length) {
-          return new Types.PackedType(length, 0);
+          return new Types.PackedType(length, 0, qualifiedName);
         } else {
-          return new Types.PackedType(1, 0);
+          return new Types.PackedType(1, 0, qualifiedName);
         }
       case "C":
         if (length) {
-          return new Types.CharacterType(length);
+          return new Types.CharacterType(length, qualifiedName);
         } else {
-          return new Types.CharacterType(1);
+          return new Types.CharacterType(1, qualifiedName);
         }
       case "X":
         if (length) {
-          return new Types.HexType(length);
+          return new Types.HexType(length, qualifiedName);
         } else {
-          return new Types.HexType(1);
+          return new Types.HexType(1, qualifiedName);
         }
       case "N":
         if (length) {
-          return new Types.NumericType(length);
+          return new Types.NumericType(length, qualifiedName);
         } else {
-          return new Types.NumericType(1);
+          return new Types.NumericType(1, qualifiedName);
         }
     }
     return undefined;

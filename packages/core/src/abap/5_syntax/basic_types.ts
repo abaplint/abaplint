@@ -157,7 +157,9 @@ export class BasicTypes {
     return type;
   }
 
-  public resolveTypeName(typeName: ExpressionNode | undefined, length?: number, decimals?: number): AbstractType | undefined {
+  public resolveTypeName(typeName: ExpressionNode | undefined,
+                         length?: number, decimals?: number, name?: string): AbstractType | undefined {
+
     if (typeName === undefined) {
       return undefined;
     }
@@ -168,7 +170,7 @@ export class BasicTypes {
     }
 
     const chainText = typeName.concatTokens().toUpperCase();
-    const f = this.scope.getDDIC().lookupBuiltinType(chainText, length, decimals);
+    const f = this.scope.getDDIC().lookupBuiltinType(chainText, length, decimals, name);
     if (f !== undefined) {
       return f;
     }
@@ -223,7 +225,7 @@ export class BasicTypes {
       name = new TokenIdentifier(name.getStart(), nameExpr.concatTokens());
     }
 
-    const found = this.parseType(node);
+    const found = this.parseType(node, this.scope.isTypePool() ? name.getStr() : undefined);
     if (found) {
       return new TypedIdentifier(name, this.filename, found);
     }
@@ -367,7 +369,7 @@ export class BasicTypes {
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       }
-      return new Types.DataReference(type);
+      return new Types.DataReference(type, name);
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
         || text === "TYPE HASHED TABLE"
@@ -408,7 +410,7 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE REF TO ")) {
       found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {
-      found = this.resolveTypeName(typename, this.findLength(node), this.findDecimals(node));
+      found = this.resolveTypeName(typename, this.findLength(node), this.findDecimals(node), name);
 
       const concat = node.concatTokens().toUpperCase();
       if (found && concat.includes(" OCCURS ")) {
