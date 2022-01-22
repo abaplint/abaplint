@@ -256,4 +256,17 @@ DATA foo TYPE category.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("DATA BEGIN OF, and INCLUDE TYPE", async () => {
+    const abap = `
+  TYPES: BEGIN OF incl,
+  fieldname(30),
+  END OF incl.
+
+DATA BEGIN OF x031l.
+INCLUDE TYPE incl.
+DATA END OF x031l.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

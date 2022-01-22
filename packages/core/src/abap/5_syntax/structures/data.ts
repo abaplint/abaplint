@@ -7,6 +7,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import * as Basic from "../../types/basic";
 import {IStructureComponent} from "../../types/basic";
 import {Data as DataSyntax} from "../statements/data";
+import {ReferenceType} from "../_reference";
 
 export class Data {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
@@ -32,8 +33,10 @@ export class Data {
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
         // INCLUDES
-        const typeName = c.findFirstExpression(Expressions.TypeName)?.getFirstToken().getStr();
-        let found = scope.findType(typeName)?.getType();
+        const typeToken = c.findFirstExpression(Expressions.TypeName)?.getFirstToken();
+        const typeName = typeToken?.getStr();
+        const foundId = scope.findType(typeName);
+        let found = foundId?.getType();
         if (found === undefined) {
           const f = scope.getDDIC().lookupTableOrView(typeName).type;
           if (f instanceof TypedIdentifier) {
@@ -41,6 +44,8 @@ export class Data {
           } else {
             found = f;
           }
+        } else {
+          scope.addReference(typeToken, foundId, ReferenceType.TypeReference, filename);
         }
         if (found instanceof Basic.VoidType) {
           if (table === true) {
