@@ -9,8 +9,8 @@ export class StructureType extends AbstractType {
   private readonly indexed: {[index: string]: AbstractType};
   private readonly components: IStructureComponent[];
 
-  public constructor(components: IStructureComponent[], name?: string) {
-    super(name);
+  public constructor(components: IStructureComponent[], qualifiedName?: string) {
+    super(qualifiedName);
     if (components.length === 0) {
       throw new Error("Structure does not contain any components");
     }
@@ -19,7 +19,7 @@ export class StructureType extends AbstractType {
     for (const c of components) {
       const upper = c.name.toUpperCase();
       if (this.indexed[upper] !== undefined) {
-        throw new Error("Structure, duplicate field name \"" + upper + "\", " + name);
+        throw new Error("Structure, duplicate field name \"" + upper + "\", " + qualifiedName);
       }
       this.indexed[upper] = c.type;
     }

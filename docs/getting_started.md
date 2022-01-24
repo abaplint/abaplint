@@ -12,6 +12,8 @@ A `abaplint.json` file can be added/adjusted to enable and disable [rules](https
 
 ## Starting On-Premise Configuration
 
+Adjust `version` to your target version, plus if the development is inside a namespace, adjust the `errorNamespace` accordingly.
+
 Suggest starting by running only the syntax check relevant rules, having this working will help expanding to more rules,
 
 ```json

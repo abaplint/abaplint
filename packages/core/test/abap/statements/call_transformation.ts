@@ -1,4 +1,4 @@
-import {statementType} from "../_utils";
+import {statementExpectFail, statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -82,3 +82,14 @@ const tests = [
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);
+
+
+const fails = [
+  "CALL TRANSFORMATION id MOO.",
+  `CALL TRANSFORMATION id
+  SOURCE
+    data = <fs>
+    fields = list_key_fields( )
+  RESULT XML writer.`,
+];
+statementExpectFail(fails, "CALL TRANSFORMATION");

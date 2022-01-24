@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {seq, alt, per} from "../combi";
-import {Target, Source, Dynamic, NamespaceSimpleName, CallTransformationParameters, CallTransformationOptions} from "../expressions";
+import {Target, Dynamic, NamespaceSimpleName, CallTransformationParameters, CallTransformationOptions, SimpleSource3} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallTransformation implements IStatement {
@@ -11,7 +11,7 @@ export class CallTransformation implements IStatement {
     const parameters = seq("PARAMETERS", CallTransformationParameters);
     const objects = seq("OBJECTS", CallTransformationParameters);
 
-    const source2 = seq("XML", Source);
+    const source2 = seq("XML", SimpleSource3);
     const source = seq("SOURCE", alt(CallTransformationParameters, source2));
 
     const result2 = seq("XML", Target);
