@@ -1,7 +1,11 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {Registry, MemoryFile} from "@abaplint/core";
-import {applyFixes} from "../src/fixes";
+import {Registry, MemoryFile, Issue, IRegistry} from "@abaplint/core";
+import {ApplyFixes, MyFS} from "../src/fixes";
+
+function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: MyFS) {
+  new ApplyFixes().applyFixes(inputIssues, reg, fs);
+}
 
 describe("Apply fixes", () => {
   it("test 1", () => {
