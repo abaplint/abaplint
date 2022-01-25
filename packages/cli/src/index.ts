@@ -8,7 +8,7 @@ import {Issue, IProgress, IFile, Position, Config, Registry, Version, MemoryFile
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
-import {applyFixes} from "./fixes";
+import {ApplyFixes} from "./fixes";
 import {Rename} from "./rename";
 
 export const GENERIC_ERROR = "generic_error";
@@ -217,7 +217,7 @@ export async function run(arg: Arguments) {
 
     let extra = "";
     if (arg.runFix === true && reg) {
-      issues = applyFixes(issues, reg, fs, progress) as Issue[];
+      issues = new ApplyFixes().applyFixes(issues, reg, fs, progress) as Issue[];
       extra = "Fixes applied";
     } else if (arg.runRename === true && reg) {
       if (issues.length === 0) {
