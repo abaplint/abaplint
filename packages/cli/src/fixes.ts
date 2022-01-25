@@ -5,18 +5,20 @@ export interface MyFS {
 }
 
 export class ApplyFixes {
+  private readonly changedFiles: Set<string> = new Set<string>();
 
   public applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: MyFS, bar?: IProgress): readonly Issue[] {
     let changed: string[] = [];
     let iteration = 1;
     let issues = inputIssues;
+    this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
 
     bar?.set(MAX_ITERATIONS, "Apply Fixes");
     while(iteration <= MAX_ITERATIONS) {
       bar?.tick("Apply Fixes, iteration " + iteration + ", " + issues.length + " candidates");
 
-      changed = this.applyList(issues, reg, fs);
+      changed = this.applyList(issues, reg);
       if (changed.length === 0) {
         break;
       }
@@ -25,6 +27,8 @@ export class ApplyFixes {
       issues = reg.parse().findIssues();
     }
 
+    this.writeChangesToFS(fs, reg);
+
   // always end the progress indicator at 100%
     while(iteration <= MAX_ITERATIONS) {
       bar?.tick("Fixes Applied");
@@ -32,6 +36,16 @@ export class ApplyFixes {
     }
 
     return issues;
+  }
+
+  private writeChangesToFS(fs: MyFS, reg: IRegistry) {
+    for (const filename of this.changedFiles.values()) {
+      const file = reg.getFileByName(filename);
+      if (file === undefined) {
+        continue;
+      }
+      fs.writeFileSync(file.getFilename(), file.getRaw());
+    }
   }
 
   private possibleOverlap(edit: IEdit, list: IEdit[]): boolean {
@@ -59,7 +73,7 @@ export class ApplyFixes {
     return false;
   }
 
-  private applyList(issues: readonly Issue[], reg: IRegistry, fs: MyFS): string[] {
+  private applyList(issues: readonly Issue[], reg: IRegistry): string[] {
 
     const edits: IEdit[] = [];
 
@@ -77,11 +91,7 @@ export class ApplyFixes {
     const changed = applyEditList(reg, edits);
 
     for (const filename of changed) {
-      const file = reg.getFileByName(filename);
-      if (file === undefined) {
-        continue;
-      }
-      fs.writeFileSync(file.getFilename(), file.getRaw());
+      this.changedFiles.add(filename);
     }
     return changed;
 
