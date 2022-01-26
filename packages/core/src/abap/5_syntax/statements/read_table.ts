@@ -90,7 +90,8 @@ export class ReadTable implements StatementSyntax {
       if (t) {
         const targetType = new Target().runSyntax(t, scope, filename);
 
-        if (TypeUtils.isAssignable(sourceType, targetType) === false) {
+        if (sourceType instanceof TableType
+            && TypeUtils.isAssignable(sourceType.getRowType(), targetType) === false) {
           throw new Error("Incompatible types");
         }
 

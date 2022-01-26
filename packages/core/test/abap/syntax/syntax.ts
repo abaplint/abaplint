@@ -5517,6 +5517,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Incompatible");
   });
 
+  it("Read table, ok", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA ref TYPE i.
+  READ TABLE tab INTO ref INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
