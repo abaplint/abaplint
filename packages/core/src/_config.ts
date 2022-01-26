@@ -46,13 +46,15 @@ export interface ISyntaxSettings {
 }
 
 export interface IRenameSettings {
-  /** output folder */
-  output: string;
+  /** output folder, if value is empty or undefined the changes are written inline in the input folders */
+  output?: string;
   /** list of regex, matches filenames to be skipped, case insensitive
    * @uniqueItems true
   */
   skip?: string[];
-  /** List of rename patterns */
+  /** List of rename patterns
+   * @uniqueItems true
+  */
   patterns: {
     /** Object type, example "CLAS", regex, case insensitive */
     type: string,

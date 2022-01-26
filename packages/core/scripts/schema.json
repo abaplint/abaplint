@@ -2971,7 +2971,7 @@
       "additionalProperties": false,
       "properties": {
         "output": {
-          "description": "output folder",
+          "description": "output folder, if value is empty or undefined the changes are written inline in the input folders",
           "type": "string"
         },
         "patterns": {
@@ -2999,7 +2999,8 @@
             ],
             "type": "object"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "skip": {
           "description": "list of regex, matches filenames to be skipped, case insensitive",
@@ -3011,7 +3012,6 @@
         }
       },
       "required": [
-        "output",
         "patterns"
       ],
       "type": "object"
