@@ -1238,6 +1238,20 @@ DATA(result) = |foo { temp1 } bar|.`;
     testFix(abap, expected);
   });
 
+  it("COND nested in string template", async () => {
+    const abap = `DATA count TYPE i.
+DATA result TYPE string.
+result = |{ COND #( WHEN count = 0 THEN |bar| ) }|.`;
+    const expected = `DATA count TYPE i.
+DATA result TYPE string.
+DATA temp1 TYPE string.
+IF count = 0.
+  temp1 = |bar|.
+ENDIF.
+result = |{ temp1 }|.`;
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {

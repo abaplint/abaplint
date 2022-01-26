@@ -8,7 +8,7 @@ import {Source} from "./source";
 export class StringTemplate {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType {
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, scope, filename, new StringType("STRING"));
     }
 
     return new StringType();
