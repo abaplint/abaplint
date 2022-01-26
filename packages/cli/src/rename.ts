@@ -5,6 +5,8 @@ import {FileOperations} from "./file_operations";
 
 export class Rename {
   private readonly reg: abaplint.IRegistry;
+  private readonly deletedFiles: string[] = [];
+  private readonly addedFiles: abaplint.IFile[] = [];
 
   public constructor(reg: abaplint.IRegistry) {
     this.reg = reg;
@@ -18,7 +20,20 @@ export class Rename {
 
     this.skip(rconfig);
     this.rename(rconfig);
-    this.write(rconfig, base);
+    if (rconfig.output === undefined || rconfig.output === "") {
+      // write changes inline
+      this.deletedFiles.forEach(f => {
+        console.log("rm " + f);
+        fs.rmSync(f);
+      });
+      this.addedFiles.forEach(f => {
+        console.log("write " + f.getFilename());
+        fs.writeFileSync(f.getFilename(), f.getRaw());
+      });
+    } else {
+      // output full registry contents to output folder
+      this.write(rconfig, base);
+    }
   }
 
   ////////////////////////
@@ -57,9 +72,14 @@ export class Rename {
         if (!match) {
           continue;
         }
+
+        o.getFiles().forEach(f => this.deletedFiles.push(f.getFilename()));
+
         const newStr = o.getName().replace(regex, p.newName);
         console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
         renamer.rename(o.getType(), o.getName(), newStr);
+
+        o.getFiles().forEach(f => this.addedFiles.push(f));
       }
     }
   }
