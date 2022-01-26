@@ -34,7 +34,7 @@
         "eslint-plugin-import": "^2.25.4",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "typescript": "^4.5.5",
-        "chai": "^4.3.5",
+        "chai": "^4.3.6",
         "xml-js": "^1.6.11",
         "vscode-languageserver-types": "^3.16.0"
     }
