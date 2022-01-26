@@ -79,7 +79,8 @@ export class Rename {
         console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
         renamer.rename(o.getType(), o.getName(), newStr);
 
-        o.getFiles().forEach(f => this.addedFiles.push(f));
+        const newObject = this.reg.getObject(o.getType(), newStr);
+        newObject?.getFiles().forEach(f => this.addedFiles.push(f));
       }
     }
   }
