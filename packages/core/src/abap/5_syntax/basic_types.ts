@@ -307,7 +307,7 @@ export class BasicTypes {
       ], name);
       return new Types.TableType(structure, options);
     } else if (text.startsWith("LIKE RANGE OF ")) {
-      const sub = node.findFirstExpression(Expressions.FieldSub);
+      const sub = node.findFirstExpression(Expressions.SimpleFieldChain);
       found = this.resolveLikeName(sub);
       if (found === undefined) {
         return new Types.UnknownType("LIKE RANGE OF, could not resolve type");
