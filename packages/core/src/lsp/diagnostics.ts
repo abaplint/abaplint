@@ -37,6 +37,7 @@ export class Diagnostics {
         end: {line: issue.getEnd().getRow() - 1, character: issue.getEnd().getCol() - 1},
       },
       code: issue.getKey(),
+      codeDescription: {href: "https://rules.abaplint.org/" + issue.getKey() + "/"},
       message: issue.getMessage().toString(),
       source: "abaplint",
     };
