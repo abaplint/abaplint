@@ -58,16 +58,17 @@ export class ExpandMacros {
 
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
+      const type = statement.get();
 
-      if (statement.get() instanceof Statements.Define) {
+      if (type instanceof Statements.Define) {
         // todo, will this break if first token is a pragma?
         name = statement.getTokens()[1].getStr();
         contents = [];
       } else if (name) {
-        if (statement.get() instanceof Statements.EndOfDefinition) {
+        if (type instanceof Statements.EndOfDefinition) {
           this.macros.addMacro(name, contents);
           name = undefined;
-        } else if (!(statement.get() instanceof Comment)) {
+        } else if (!(type instanceof Comment)) {
           statements[i] = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
           contents.push(statements[i]);
         }
@@ -80,7 +81,8 @@ export class ExpandMacros {
     let containsUnknown = false;
 
     for (const statement of statements) {
-      if (statement.get() instanceof Unknown || statement.get() instanceof MacroCall) {
+      const type = statement.get();
+      if (type instanceof Unknown || type instanceof MacroCall) {
         const macroName = this.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
           result.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens())));
