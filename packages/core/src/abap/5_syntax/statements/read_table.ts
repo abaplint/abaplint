@@ -88,7 +88,12 @@ export class ReadTable implements StatementSyntax {
 
       const t = target.findFirstExpression(Expressions.Target);
       if (t) {
-        new Target().runSyntax(t, scope, filename);
+        const targetType = new Target().runSyntax(t, scope, filename);
+
+        if (TypeUtils.isAssignable(rowType, targetType) === false) {
+          throw new Error("Incompatible types");
+        }
+
         return;
       }
     }

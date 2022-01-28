@@ -89,6 +89,7 @@ const tests = [
   "DATA foo TYPE c %_PREDEFINED.",
   "DATA lt_attr_href LIKE SORTED TABLE OF ls_attr_href WITH NON-UNIQUE KEY val.",
   "data bar like range of foo.",
+  "DATA foo LIKE RANGE OF cl_abap_typedescr=>kind_elem.",
   "DATA list(250) OCCURS 0 WITH HEADER LINE.",
   "DATA complete_table LIKE SORTED TABLE OF zddic WITH HEADER LINE WITH UNIQUE KEY field1 field2.",
 ];

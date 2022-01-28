@@ -5508,6 +5508,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("Read simple table into ref, expect syntax error", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA ref TYPE REF TO object.
+  READ TABLE tab INTO ref INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible");
+  });
+
+  it("Read table, ok", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA ref TYPE i.
+  READ TABLE tab INTO ref INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
