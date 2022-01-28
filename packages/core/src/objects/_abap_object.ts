@@ -61,7 +61,7 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   public getMainABAPFile(): ABAPFile | undefined {
-    // todo, uris
+    // todo, uris, https://github.com/abaplint/abaplint/issues/673
     const search = this.getName().replace(/\//g, "#").toLowerCase() + "." + this.getType().toLowerCase() + ".abap";
     for (const file of this.getABAPFiles()) {
       if (file.getFilename().endsWith(search)) {
