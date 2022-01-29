@@ -110,13 +110,13 @@ export class EditorWidget extends Widget {
       this.editor.addAction({
         id: "abaplint.commandpalette",
         label: "Command Palette",
-        keybindings: [monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KEY_P],
+        keybindings: [monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KeyP],
         run: () => { this.editor!.trigger("", "editor.action.quickCommand", ""); },
       });
 
 // override Chrome default shortcuts
-      this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => { return undefined; });
-      this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_P, () => { return undefined; });
+      this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KeyS, () => { return undefined; });
+      this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KeyP, () => { return undefined; });
 
       updateMarkers(FileSystem.getRegistry(), this.model);
       this.activate();
