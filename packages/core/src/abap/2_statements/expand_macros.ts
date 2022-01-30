@@ -11,6 +11,7 @@ import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
 import {VirtualPosition} from "../../position";
 import {IRegistry} from "../../_iregistry";
+import {Program} from "../../objects/program";
 
 class Macros {
   private readonly macros: {[index: string]: StatementNode[]};
@@ -47,6 +48,7 @@ class Macros {
 
 export class ExpandMacros {
   private readonly macros: Macros;
+  private readonly globalMacros: readonly string[];
   private readonly version: Version;
   private readonly reg?: IRegistry;
 
@@ -54,6 +56,7 @@ export class ExpandMacros {
   public constructor(globalMacros: readonly string[], version: Version, reg?: IRegistry) {
     this.macros = new Macros(globalMacros);
     this.version = version;
+    this.globalMacros = globalMacros;
     this.reg = reg;
   }
 
@@ -72,9 +75,15 @@ export class ExpandMacros {
       } else if (type instanceof Statements.Include) {
         const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
         // todo, this does not take function module includes into account
-        // const prog =
-        this.reg?.getObject("PROG", includeName);
-//        console.dir(prog);
+        const prog = this.reg?.getObject("PROG", includeName) as Program | undefined;
+        if (prog) {
+          prog.parse(this.version, this.globalMacros, this.reg);
+          const main = prog.getMainABAPFile();
+          if (main) {
+            // slow, this copies everything,
+            this.find([...main.getStatements()]);
+          }
+        }
       } else if (name) {
         if (type instanceof Statements.EndOfDefinition) {
           this.macros.addMacro(name, contents);
