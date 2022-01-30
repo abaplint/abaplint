@@ -316,7 +316,7 @@ export class Registry implements IRegistry {
   // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     const config = this.getConfig();
-    const result = input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros);
+    const result = input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros, [], this);
     ParsingPerformance.push(input, result);
   }
 

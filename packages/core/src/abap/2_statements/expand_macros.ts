@@ -1,4 +1,5 @@
 import * as Statements from "./statements";
+import * as Expressions from "./expressions";
 import * as Tokens from "../1_lexer/tokens";
 import {MacroContent, Comment, Unknown, MacroCall} from "./statements/_statement";
 import {StatementNode} from "../nodes/statement_node";
@@ -9,6 +10,7 @@ import {StatementParser} from "./statement_parser";
 import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
 import {VirtualPosition} from "../../position";
+import {IRegistry} from "../../_iregistry";
 
 class Macros {
   private readonly macros: {[index: string]: StatementNode[]};
@@ -46,10 +48,13 @@ class Macros {
 export class ExpandMacros {
   private readonly macros: Macros;
   private readonly version: Version;
+  private readonly reg?: IRegistry;
 
-  public constructor(globalMacros: readonly string[], version: Version) {
+  // "reg" must be supplied if there are cross object macros via INCLUDE
+  public constructor(globalMacros: readonly string[], version: Version, reg?: IRegistry) {
     this.macros = new Macros(globalMacros);
     this.version = version;
+    this.reg = reg;
   }
 
   public find(statements: StatementNode[]) {
@@ -64,6 +69,11 @@ export class ExpandMacros {
         // todo, will this break if first token is a pragma?
         name = statement.getTokens()[1].getStr();
         contents = [];
+      } else if (type instanceof Statements.Include) {
+        const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
+        // todo, this does not take function module includes into account
+        const prog = this.reg?.getObject("PROG", includeName);
+        console.dir(prog);
       } else if (name) {
         if (type instanceof Statements.EndOfDefinition) {
           this.macros.addMacro(name, contents);
@@ -137,7 +147,7 @@ export class ExpandMacros {
     const file = new MemoryFile("expand_macros.abap.prog", str);
     const lexerResult = Lexer.run(file, statement.getFirstToken().getStart());
 
-    const result = new StatementParser(this.version).run([lexerResult], this.macros.listMacroNames());
+    const result = new StatementParser(this.version, this.reg).run([lexerResult], this.macros.listMacroNames());
     return result[0].statements;
   }
 

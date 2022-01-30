@@ -7,6 +7,7 @@ import {StructureParser} from "./3_structures/structure_parser";
 import {IABAPLexerResult} from "./1_lexer/lexer_result";
 import {ABAPFileInformation} from "./4_file_information/abap_file_information";
 import {ABAPFile} from "./abap_file";
+import {IRegistry} from "../_iregistry";
 
 export interface IABAPParserResult {
   issues: readonly Issue[],
@@ -19,10 +20,12 @@ export interface IABAPParserResult {
 export class ABAPParser {
   private readonly version: Version;
   private readonly globalMacros: readonly string[];
+  private readonly reg?: IRegistry;
 
-  public constructor(version?: Version, globalMacros?: readonly string[]) {
+  public constructor(version?: Version, globalMacros?: readonly string[], reg?: IRegistry) {
     this.version = version ? version : defaultVersion;
     this.globalMacros = globalMacros ? globalMacros : [];
+    this.reg = reg;
   }
 
   // files is input for a single object
@@ -39,7 +42,7 @@ export class ABAPParser {
 
 // 2: statements
     const b2 = Date.now();
-    const statementResult = new StatementParser(this.version).run(lexerResult, this.globalMacros);
+    const statementResult = new StatementParser(this.version, this.reg).run(lexerResult, this.globalMacros);
     const statementsRuntime = Date.now() - b2;
 
 // 3: structures

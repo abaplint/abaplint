@@ -12,6 +12,7 @@ import {Token} from "../1_lexer/tokens/_token";
 import {IABAPLexerResult} from "../1_lexer/lexer_result";
 import {ExpandMacros} from "./expand_macros";
 import {Pragma} from "../1_lexer/tokens";
+import {IRegistry} from "../../_iregistry";
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
@@ -83,17 +84,19 @@ class WorkArea {
 export class StatementParser {
   private static map: StatementMap;
   private readonly version: Version;
+  private readonly reg?: IRegistry;
 
-  public constructor(version: Version) {
+  public constructor(version: Version, reg?: IRegistry) {
     if (!StatementParser.map) {
       StatementParser.map = new StatementMap();
     }
     this.version = version;
+    this.reg = reg;
   }
 
   /** input is one full object */
   public run(input: readonly IABAPLexerResult[], globalMacros: readonly string[]): IStatementResult[] {
-    const macros = new ExpandMacros(globalMacros, this.version);
+    const macros = new ExpandMacros(globalMacros, this.version, this.reg);
 
     const wa = input.map(i => new WorkArea(i.file, i.tokens));
 
