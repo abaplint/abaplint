@@ -29,7 +29,7 @@ export abstract class AbstractObject implements IObject {
     return this.old;
   }
 
-  public parse(_version?: Version, _globalMacros?: readonly string[], _globalExclude?: readonly string[], _reg?: IRegistry): IParseResult {
+  public parse(_version?: Version, _globalMacros?: readonly string[], _reg?: IRegistry): IParseResult {
     return {updated: false, runtime: 0};
   }
 

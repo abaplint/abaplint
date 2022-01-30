@@ -33,7 +33,7 @@ export interface IObject extends IArtifact {
   /** returns true if the object was parsed, false if no changes since last parse
    * registry for global cross object macros
   */
-  parse(version?: Version, globalMacros?: readonly string[], globalExclude?: readonly string[], reg?: IRegistry): IParseResult;
+  parse(version?: Version, globalMacros?: readonly string[], reg?: IRegistry): IParseResult;
   getParsingIssues(): readonly Issue[];
 
   getFiles(): readonly IFile[];

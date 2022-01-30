@@ -4,7 +4,7 @@ import {Registry} from "../../src";
 
 describe("cross object macros", () => {
 
-  it.only("Stupid macros", () => {
+  it.skip("Stupid macros", () => {
     const file1 = new MemoryFile(`zcl_macro.clas.abap`, `CLASS zcl_macro DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PRIVATE SECTION.
     METHODS foobar.

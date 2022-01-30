@@ -27,7 +27,7 @@ export abstract class ABAPObject extends AbstractObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros?: readonly string[], _globalExclude?: string[], reg?: IRegistry): IParseResult {
+  public parse(version: Version, globalMacros?: readonly string[], reg?: IRegistry): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
     }

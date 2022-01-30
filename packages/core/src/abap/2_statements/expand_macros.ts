@@ -72,8 +72,9 @@ export class ExpandMacros {
       } else if (type instanceof Statements.Include) {
         const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
         // todo, this does not take function module includes into account
-        const prog = this.reg?.getObject("PROG", includeName);
-        console.dir(prog);
+        // const prog =
+        this.reg?.getObject("PROG", includeName);
+//        console.dir(prog);
       } else if (name) {
         if (type instanceof Statements.EndOfDefinition) {
           this.macros.addMacro(name, contents);
