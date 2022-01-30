@@ -2,6 +2,7 @@ import {IFile} from "../files/_ifile";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import {Identifier} from "../abap/4_file_information/_identifier";
+import {IRegistry} from "../_iregistry";
 
 export interface IAllowedNaming {
   maxLength: number,
@@ -29,8 +30,10 @@ export interface IObject extends IArtifact {
   setDirty(): void;
   isDirty(): boolean;
 
-  /** returns true if the object was parsed, false if no changes since last parse */
-  parse(version?: Version, globalMacros?: readonly string[], globalExclude?: readonly string[]): IParseResult;
+  /** returns true if the object was parsed, false if no changes since last parse
+   * registry for global cross object macros
+  */
+  parse(version?: Version, globalMacros?: readonly string[], reg?: IRegistry): IParseResult;
   getParsingIssues(): readonly Issue[];
 
   getFiles(): readonly IFile[];

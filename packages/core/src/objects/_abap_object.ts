@@ -5,6 +5,7 @@ import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {IParseResult} from "./_iobject";
 import {ABAPFile} from "../abap/abap_file";
+import {IRegistry} from "../_iregistry";
 
 export interface ITextElements {[key: string]: string}
 
@@ -26,13 +27,13 @@ export abstract class ABAPObject extends AbstractObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros?: readonly string[]): IParseResult {
+  public parse(version: Version, globalMacros?: readonly string[], reg?: IRegistry): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
     }
 
     const abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
-    const result = new ABAPParser(version, globalMacros).parse(abapFiles);
+    const result = new ABAPParser(version, globalMacros, reg).parse(abapFiles);
 
     this.parsed = result.output;
     this.old = result.issues;

@@ -13,6 +13,8 @@ const tests = [
   "CONSTANTS id3 VALUE '1122' LENGTH 2 TYPE x.",
   "CONSTANTS lc_price TYPE p DECIMALS 4 VALUE '0.01'.",
   "CONSTANTS lcv_foo TYPE string VALUE `a` & `b` & `c` & `d` & `e`.",
+  "CONSTANTS lcv_foo TYPE string VALUE `a` & `b`.",
+  "CONSTANTS lcv_foo TYPE string VALUE 'a' & 'b' & 'c' & 'd' & 'e'.",
   "CONSTANTS foo-bar TYPE c VALUE '1'.",
   "CONSTANTS foo TYPE c LENGTH 1 VALUE '1' %_PREDEFINED.",
 ];

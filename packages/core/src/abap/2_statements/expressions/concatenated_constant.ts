@@ -1,12 +1,10 @@
-import {seq, regex as reg, Expression, optPrio} from "../combi";
+import {seq, regex as reg, Expression, plusPrio, altPrio} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ConcatenatedConstant extends Expression {
   public getRunnable(): IStatementRunnable {
-    // todo: replace optPrio with plusPrio when its implemented, below is a workaround
-    return seq(reg(/^`.*`$/), "&", reg(/^`.*`$/),
-               optPrio(seq("&", reg(/^`.*`$/))),
-               optPrio(seq("&", reg(/^`.*`$/))),
-               optPrio(seq("&", reg(/^`.*`$/))));
+    const str = seq(reg(/^`.*`$/), plusPrio(seq("&", reg(/^`.*`$/))));
+    const char = seq(reg(/^'.*'$/), plusPrio(seq("&", reg(/^'.*'$/))));
+    return altPrio(str, char);
   }
 }

@@ -4,7 +4,7 @@ import {Registry} from "../../src";
 
 describe("cross object macros", () => {
 
-  it.skip("Stupid macros", () => {
+  it("Stupid macros", () => {
     const file1 = new MemoryFile(`zcl_macro.clas.abap`, `CLASS zcl_macro DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PRIVATE SECTION.
     METHODS foobar.
@@ -23,7 +23,6 @@ END-OF-DEFINITION.`);
     const reg = new Registry().addFiles([file1, file2, file3]);
     const issues = reg.findIssues().filter(i => i.getKey() === "parser_error");
 
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 

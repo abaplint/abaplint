@@ -6,6 +6,7 @@ import {Version} from "../version";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
 import {Position} from "../position";
+import {IRegistry} from "../_iregistry";
 
 export abstract class AbstractObject implements IObject {
   protected old: readonly Issue[];
@@ -28,7 +29,7 @@ export abstract class AbstractObject implements IObject {
     return this.old;
   }
 
-  public parse(_version?: Version, _globalMacros?: readonly string[]): IParseResult {
+  public parse(_version?: Version, _globalMacros?: readonly string[], _reg?: IRegistry): IParseResult {
     return {updated: false, runtime: 0};
   }
 
