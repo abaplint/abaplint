@@ -750,7 +750,7 @@ describe("Table, parse XML", () => {
       expect.fail();
     }
     const components = fields.getComponents();
-    expect(components.length).to.equal(2);
+    expect(components.length).to.equal(4);
     expect(components[0].name).to.equal("SUBSTRUC");
   });
 

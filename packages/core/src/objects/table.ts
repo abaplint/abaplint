@@ -114,10 +114,9 @@ export class Table extends AbstractObject {
         if (found instanceof Types.StructureType) {
           if (field.GROUPNAME !== undefined) {
             components.push({name: field.GROUPNAME, type: found});
-          } else {
-            for (const c of found.getComponents()) {
-              components.push({name: c.name, type: c.type});
-            }
+          }
+          for (const c of found.getComponents()) {
+            components.push({name: c.name, type: c.type});
           }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {

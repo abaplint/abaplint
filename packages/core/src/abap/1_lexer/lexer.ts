@@ -309,7 +309,11 @@ export class Lexer {
           && ahead !== "`") {
 // end of ping
         this.add();
-        this.m = Mode.Normal;
+        if (ahead === `"`) {
+          this.m = Mode.Comment;
+        } else {
+          this.m = Mode.Normal;
+        }
       } else if (this.m === Mode.Template
           && buf.length > 1
           && (current === "|" || current === "{")
