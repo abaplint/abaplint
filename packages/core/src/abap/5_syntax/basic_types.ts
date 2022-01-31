@@ -78,6 +78,9 @@ export class BasicTypes {
     if (chain === undefined) {
       throw new Error("resolveLikeName, chain undefined");
     }
+    if (chain === undefined) {
+      throw new Error("resolveLikeName, chain undefined");
+    }
     const fullName = chain.concatTokens();
     const children = [...chain.getChildren()];
 

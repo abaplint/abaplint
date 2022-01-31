@@ -5601,6 +5601,14 @@ ENDINTERFACE.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("LIKE RANGE OF local var", () => {
+    const abap = `
+    DATA report TYPE c LENGTH 1.
+    DATA ltr_report LIKE RANGE OF report.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
