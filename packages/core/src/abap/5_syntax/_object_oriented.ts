@@ -249,19 +249,27 @@ export class ObjectOriented {
       return undefined;
     }
 
+    const upper = name.toUpperCase();
     for (const a of def.getAttributes().getConstants()) {
-      if (a.getName().toUpperCase() === name.toUpperCase()) {
+      if (a.getName().toUpperCase() === upper) {
         return a;
       }
     }
 
     for (const a of def.getAliases().getAll()) {
-      if (a.getName().toUpperCase() === name.toUpperCase()) {
+      if (a.getName().toUpperCase() === upper) {
         const comp = a.getComponent();
         const res = this.searchConstantName(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
         if (res) {
           return res;
         }
+      }
+    }
+
+    if (name.includes("~")) {
+      const interfaceName = upper.split("~")[0];
+      if (def.getImplementing().some((a) => a.name.toUpperCase() === interfaceName)) {
+        return this.searchConstantName(this.scope.findInterfaceDefinition(interfaceName), name.split("~")[1]);
       }
     }
 

@@ -5609,6 +5609,24 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("interface constant referenced via class", () => {
+    const abap = `
+  INTERFACE lif.
+    CONSTANTS const TYPE i VALUE 2.
+  ENDINTERFACE.
+
+  CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      INTERFACES lif.
+  ENDCLASS.
+  CLASS lcl IMPLEMENTATION.
+  ENDCLASS.
+
+  WRITE lcl=>lif~const.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
