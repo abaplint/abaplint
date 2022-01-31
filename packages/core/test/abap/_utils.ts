@@ -98,7 +98,7 @@ export function structureType(cases: {abap: string, only?: boolean}[], expected:
 export function statementType(tests: any, description: string, type: any) {
   describe(description + " statement type", function() {
 // note that timeout() only works inside function()
-    this.timeout(250);
+    this.timeout(1000);
     tests.forEach((test: any) => {
       run(test, "\"" + test + "\" should be " + description, type);
     });
