@@ -1512,5 +1512,28 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("event defined in class, local handler for itself", () => {
+    const abap = `
+CLASS zcl_local_event DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    EVENTS created
+      EXPORTING
+        VALUE(name) TYPE string.
+    METHODS on_created
+      FOR EVENT created OF zcl_local_event
+      IMPORTING
+        !name.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS zcl_local_event IMPLEMENTATION.
+  METHOD on_created.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zcl_local_event.clas.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
 
 });

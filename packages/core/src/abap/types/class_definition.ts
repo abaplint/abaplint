@@ -62,12 +62,12 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.attributes = new Attributes(this.node, this.filename, scope);
     this.types = this.attributes.getTypes();
 
-    this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
-
     const events = this.node.findAllStatements(Statements.Events);
     for (const e of events) {
       this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope)); // todo, all these are not Public
     }
+
+    this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
 
     scope.pop(node.getLastToken().getEnd());
 

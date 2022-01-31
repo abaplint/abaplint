@@ -76,6 +76,9 @@ export class BasicTypes {
       chain = node.findFirstExpression(Expressions.FieldSub);
     }
     if (chain === undefined) {
+      chain = node.findFirstExpression(Expressions.SimpleFieldChain);
+    }
+    if (chain === undefined) {
       throw new Error("resolveLikeName, chain undefined");
     }
     const fullName = chain.concatTokens();
