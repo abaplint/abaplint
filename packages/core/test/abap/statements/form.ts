@@ -148,6 +148,7 @@ const tests = [
   "FORM re549r USING &permo.",
   "FORM moo USING boo-vbeln bar-vbtyp.",
   "FORM sdfsd TABLES sdfs/sdf/sdfs.",
+  "FORM foobar TABLES it_move STRUCTURE data_work-wa.",
 ];
 
 statementType(tests, "FORM", Statements.Form);

@@ -2,7 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {AnyType, UnknownType} from "../../types/basic";
-import {FormParamName, NamespaceSimpleName} from "../../2_statements/expressions";
+import {FormParamName, SimpleFieldChain} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
 
@@ -12,7 +12,7 @@ export class FormParam {
 
     if (node.findDirectTokenByText("STRUCTURE") && nameToken) {
       // STRUCTURES typing
-      const typeName = node.findDirectExpression(NamespaceSimpleName)?.getFirstToken().getStr();
+      const typeName = node.findDirectExpression(SimpleFieldChain)?.getFirstToken().getStr();
       let type: AbstractType | TypedIdentifier | undefined = undefined;
       if (typeName) {
         type = scope.findType(typeName)?.getType();
