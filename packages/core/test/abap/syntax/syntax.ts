@@ -5785,7 +5785,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("long CALL METHOD", () => {
+  it("long CALL METHOD", () => {
     const abap = `
 INTERFACE lifserver.
   METHODS encode.
