@@ -5749,6 +5749,15 @@ SELECT SINGLE ztabl3~valuefield3 INTO lv_val
     expect(issues.length).to.equals(0);
   });
 
+  it("ASSING CASTING TYPE C", () => {
+    const abap = `
+    FIELD-SYMBOLS <dest> TYPE any.
+    DATA bah TYPE c LENGTH 10.
+    ASSIGN bah TO <dest> CASTING TYPE c.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
