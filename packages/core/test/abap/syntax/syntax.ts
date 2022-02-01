@@ -5785,6 +5785,28 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.only("long CALL METHOD", () => {
+    const abap = `
+INTERFACE lifserver.
+  METHODS encode.
+ENDINTERFACE.
+
+INTERFACE lif.
+  DATA go_server TYPE REF TO lifserver.
+ENDINTERFACE.
+
+CLASS env DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA instance TYPE REF TO lif.
+ENDCLASS.
+CLASS env IMPLEMENTATION.
+ENDCLASS.
+
+CALL METHOD env=>instance->go_server->encode.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
