@@ -5813,6 +5813,22 @@ CALL METHOD env=>instance->go_server->encode.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("incompatible type, tab supplied to string parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1 IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    method1( tab ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

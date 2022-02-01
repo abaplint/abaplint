@@ -50,10 +50,10 @@ export class TypeUtils {
   }
 
   public static isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
-/*
+    /*
     console.dir(source);
     console.dir(target);
-*/
+    */
     if (target instanceof TableType) {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
@@ -82,6 +82,14 @@ export class TypeUtils {
         return true;
       }
       return false;
+    } else if (target instanceof StringType) {
+      if (source instanceof TableType
+          || source instanceof GenericObjectReferenceType
+          || source instanceof ObjectReferenceType
+          || source instanceof DataReference) {
+        return false;
+      }
+      return true;
     } else if (target instanceof StructureType) {
       if (source instanceof TableType && source.isWithHeader()) {
         return this.isAssignable(source.getRowType(), target);
