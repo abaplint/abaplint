@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {seq, opt, alt, per, plus} from "../combi";
-import {FSTarget, Target, Source, Dynamic, ComponentCond, FieldSub, SimpleName} from "../expressions";
+import {FSTarget, Target, Source, Dynamic, ComponentCond, ComponentChainSimple, SimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ModifyInternal implements IStatement {
@@ -8,7 +8,7 @@ export class ModifyInternal implements IStatement {
   public getMatcher(): IStatementRunnable {
     const index = seq("INDEX", Source);
     const from = seq("FROM", Source);
-    const transporting = seq("TRANSPORTING", plus(alt(FieldSub, Dynamic)));
+    const transporting = seq("TRANSPORTING", plus(alt(ComponentChainSimple, Dynamic)));
 
     const where = seq("WHERE", ComponentCond);
     const assigning = seq("ASSIGNING", FSTarget);
