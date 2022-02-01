@@ -82,14 +82,6 @@ export class TypeUtils {
         return true;
       }
       return false;
-    } else if (target instanceof StringType) {
-      if (source instanceof TableType
-          || source instanceof GenericObjectReferenceType
-          || source instanceof ObjectReferenceType
-          || source instanceof DataReference) {
-        return false;
-      }
-      return true;
     } else if (target instanceof StructureType) {
       if (source instanceof TableType && source.isWithHeader()) {
         return this.isAssignable(source.getRowType(), target);
@@ -103,7 +95,8 @@ export class TypeUtils {
         return true;
       }
       return false;
-    } else if (target instanceof IntegerType) {
+    } else if (target instanceof IntegerType
+        || target instanceof StringType) {
       if (source instanceof DataReference
           || source instanceof ObjectReferenceType
           || source instanceof GenericObjectReferenceType
