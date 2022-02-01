@@ -5758,6 +5758,33 @@ SELECT SINGLE ztabl3~valuefield3 INTO lv_val
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("Aliased attribute from super class", () => {
+    const abap = `
+INTERFACE lif.
+  DATA go_dyn TYPE string.
+ENDINTERFACE.
+
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES go_dyn FOR lif~go_dyn.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+ENDCLASS.
+
+CLASS child DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS child IMPLEMENTATION.
+  METHOD bar.
+    WRITE go_dyn.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

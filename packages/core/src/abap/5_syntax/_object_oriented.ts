@@ -59,6 +59,13 @@ export class ObjectOriented {
         }
       }
     }
+    const superName = classDefinition.getSuperClass();
+    if (superName !== undefined) {
+      const def = this.scope.findClassDefinition(superName);
+      if (def) {
+        this.addAliasedAttributes(def);
+      }
+    }
   }
 
   public addAliasedTypes(aliases: IAliases): void {
