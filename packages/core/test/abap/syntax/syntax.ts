@@ -5807,6 +5807,12 @@ CALL METHOD env=>instance->go_server->encode.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("voided method call, ok", () => {
+    const abap = `CALL METHOD cl_abap_elemdescr=>('GET_INT8').`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

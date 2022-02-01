@@ -9,7 +9,7 @@ export class MethodSource extends Expression {
     const cname = alt(FieldChain, MethodCallChain, Dynamic);
 
     // this is a bit tricky, this part is required as FieldChain takes a AttributeName
-    const stati = seq(ClassName, tok(StaticArrow), MethodName);
+    const stati = seq(ClassName, tok(StaticArrow), mname);
 
     const part1 = seq(cname, alt(tok(InstanceArrow), tok(StaticArrow)));
 
