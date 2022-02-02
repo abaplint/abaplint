@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
-import {IRuleMetadata} from "../../../packages/core/build/src/rules/_irule";
+import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_irule";
 import {home, renderIcons, preamble, postamble} from "./common";
 
 const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
@@ -103,6 +103,10 @@ export function buildRule(meta: IRuleMetadata) {
   html += "</p>\n";
 
   html = html + "<h2>Description</h2>\n<p>" + meta.shortDescription + "</p>";
+
+  if (meta.tags?.includes(RuleTag.Experimental)) {
+    html += `<font color="red">EXPERIMENTAL</font>`;
+  }
 
   if (meta.extendedInformation !== undefined && meta.extendedInformation !== "") {
     html = html + "<h2>Extended Information</h2>\n<p>" + renderExtended(meta.extendedInformation) + "</p>";
