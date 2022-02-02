@@ -74,6 +74,9 @@ export class FieldChain {
       } else if (current.get() instanceof DereferenceExpression) {
         context = new Dereference().runSyntax(context);
       } else if (current.get() instanceof Expressions.ComponentName) {
+        if (context instanceof TableType && context.isWithHeader()) {
+          context = context.getRowType();
+        }
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {

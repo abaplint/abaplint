@@ -5829,6 +5829,18 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("type checking void and header lines", () => {
+    const abap = `
+TYPES: BEGIN OF type,
+         language TYPE string,
+       END OF type.
+DATA it_language TYPE STANDARD TABLE OF type WITH HEADER LINE.
+DATA it_t002t TYPE STANDARD TABLE OF t002t WITH HEADER LINE.
+it_language-language = it_t002t-sptxt.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
