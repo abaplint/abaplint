@@ -69,6 +69,8 @@ EXCEPTIONS
   not_found = 1.`,
 
   `assert_true( xsdbool( not->negated_expression IS INSTANCE OF cl_blah ) ).`,
+  `CALL METHOD env=>instance->go_server->encode.`,
+  `CALL METHOD zcl_class=>method( ).`,
 ];
 
 statementType(tests, "CALL", Statements.Call);
