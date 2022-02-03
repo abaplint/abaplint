@@ -530,14 +530,18 @@ class Sequence implements IStatementRunnable {
 
     for (const input of r) {
       let temp = [input];
+      let match = true;
       for (const sequence of this.list) {
         temp = sequence.run(temp);
         if (temp.length === 0) {
+          match = false;
           break;
         }
       }
 
-      result.push(...temp);
+      if (match === true) {
+        result.push(...temp);
+      }
     }
 
     return result;
