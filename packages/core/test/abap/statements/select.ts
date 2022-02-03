@@ -327,6 +327,7 @@ WHERE hat_size = @( helper_function->hat_size_of_the_day( ) )
 INTO TABLE @DATA(evilized_monster_weapons).`,
 
   `SELECT * FROM /foo/bar INTO CORRESPONDING FIELDS OF TABLE lt_texts WHERE id = /foo/if_bar~key-id.`,
+  `SELECT SINGLE * FROM t100 INTO sdf WHERE arbgb = lv_foo(2).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
