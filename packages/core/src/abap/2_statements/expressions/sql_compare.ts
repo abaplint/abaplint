@@ -1,4 +1,4 @@
-import {ver, seq, tok, starPrio, alt, optPrio, altPrio, Expression, plusPrio} from "../combi";
+import {ver, seq, tok, starPrio, optPrio, altPrio, Expression, plusPrio} from "../combi";
 import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from ".";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -12,29 +12,27 @@ export class SQLCompare extends Expression {
 
     const subSelect = seq("(", Select, ")");
 
-    const inn = seq(optPrio("NOT"),
-                    "IN",
-                    altPrio(SQLSource, list, subSelect));
 
-    const between = seq(optPrio("NOT"), "BETWEEN", SQLSource, "AND", SQLSource);
+    const inn = seq("IN", altPrio(SQLSource, list, subSelect));
 
-    const like = seq(optPrio("NOT"), "LIKE", SQLSource, optPrio(seq("ESCAPE", SQLSource)));
+    const between = seq("BETWEEN", SQLSource, "AND", SQLSource);
 
-    const nul = seq("IS", optPrio("NOT"), alt("NULL", ver(Version.v753, "INITIAL")));
+    const like = seq("LIKE", SQLSource, optPrio(seq("ESCAPE", SQLSource)));
+
+
+    const nul = seq("IS", optPrio("NOT"), altPrio("NULL", ver(Version.v753, "INITIAL")));
 
     const source = new SQLSource();
 
     const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), subSelect);
 
-    const builtin = ver(Version.v751, seq(alt("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
+    const builtin = ver(Version.v751, seq(altPrio("lower", "upper"), tok(ParenLeftW), SQLFieldName, tok(WParenRightW)));
 
-    const arith = ver(Version.v750, seq(SQLFieldName, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName))));
+    const arith = ver(Version.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)));
 
-    const rett = seq(altPrio(builtin, arith, SQLFieldName),
+    const rett = seq(altPrio(builtin, seq(SQLFieldName, optPrio(arith))),
                      altPrio(seq(SQLCompareOperator, altPrio(sub, source)),
-                             inn,
-                             like,
-                             between,
+                             seq(optPrio("NOT"), altPrio(inn, like, between)),
                              nul));
 
     const exists = seq("EXISTS", subSelect);

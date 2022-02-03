@@ -12,6 +12,9 @@ export class DeleteDatabase implements StatementSyntax {
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
+    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
+      new Source().runSyntax(s, scope, filename);
+    }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, scope, filename);

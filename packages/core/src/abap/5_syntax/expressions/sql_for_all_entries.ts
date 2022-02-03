@@ -7,7 +7,10 @@ import {VoidType, TableType} from "../../types/basic";
 export class SQLForAllEntries {
 
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
-    const s = node.findFirstExpression(Expressions.Source);
+    let s = node.findFirstExpression(Expressions.Source);
+    if (s === undefined) {
+      s = node.findFirstExpression(Expressions.SimpleSource3);
+    }
     if (s) {
       const type = new Source().runSyntax(s, scope, filename);
       if (type instanceof VoidType) {

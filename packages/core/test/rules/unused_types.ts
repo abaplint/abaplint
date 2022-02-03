@@ -269,4 +269,13 @@ DATA END OF x031l.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("referenced in CREATE DATA", async () => {
+    const abap = `
+TYPES ty_bar TYPE i.
+DATA bar TYPE REF TO data.
+CREATE DATA bar TYPE ty_bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

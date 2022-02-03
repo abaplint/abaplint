@@ -5,6 +5,7 @@ import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
+import {BasicTypes} from "../basic_types";
 
 export class CreateData implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -19,6 +20,11 @@ export class CreateData implements StatementSyntax {
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(t, scope, filename);
+    }
+
+    const type = node.findDirectExpression(Expressions.TypeName);
+    if (type) {
+      new BasicTypes(filename, scope).resolveTypeName(type);
     }
 
   }

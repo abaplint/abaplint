@@ -4012,12 +4012,12 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(0);
   });
 
-  it("dynamic MODIFY, full errornamespace", () => {
+  it("dynamic MODIFY, full errornamespace, ls_content not found", () => {
     const abap = `DATA c_tabname TYPE string.
     FIELD-SYMBOLS <ls_table> TYPE any.
     MODIFY (c_tabname) FROM ls_content.`;
     const issues = runProgram(abap, [], Version.v702, ".");
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("INCLUDE AS 1", () => {

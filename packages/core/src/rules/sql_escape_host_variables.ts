@@ -75,7 +75,8 @@ export class SQLEscapeHostVariables extends ABAPRule {
         }
         for (const o of s.findAllExpressions(Expressions.SQLSource)) {
           const first = o.getFirstChild();
-          if (first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain) {
+          if ((first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain)
+              || (first?.get() instanceof Expressions.SimpleSource3 && first.getChildren()[0].get() instanceof Expressions.FieldChain)) {
             const message = "Escape SQL host variables";
             const issue = Issue.atToken(file, first.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
             issues.push(issue);

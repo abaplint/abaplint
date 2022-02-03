@@ -243,8 +243,23 @@ ENDCLASS.`;
   it("database update", async () => {
     const abap = `
   DATA lv_text TYPE c LENGTH 10.
-  UPDATE voided SET areat = lv_text.
-  `;
+  UPDATE voided SET areat = lv_text.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("unused variable, modify db", async () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  MODIFY sdfsd FROM TABLE tab.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("unused variable, delete db", async () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DELETE sdfsd FROM TABLE tab.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });

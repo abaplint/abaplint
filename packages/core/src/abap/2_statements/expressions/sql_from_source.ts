@@ -1,5 +1,5 @@
 import {altPrio, seq, optPrio, Expression, ver, tok} from "../combi";
-import {SQLAsName, Dynamic, SQLCDSParameters, DatabaseTable, FieldChain} from ".";
+import {SQLAsName, SQLCDSParameters, DatabaseTable, FieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
@@ -11,7 +11,7 @@ export class SQLFromSource extends Expression {
     const tab = ver(Version.v752, seq(tok(WAt), FieldChain));
     const aas = seq("AS", SQLAsName);
 
-    return seq(altPrio(Dynamic, WithName, seq(DatabaseTable, optPrio(SQLCDSParameters)), tab),
+    return seq(altPrio(WithName, seq(DatabaseTable, optPrio(SQLCDSParameters)), tab),
                optPrio(ver(Version.v752, "WITH PRIVILEGED ACCESS")),
                optPrio(aas));
   }
