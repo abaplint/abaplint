@@ -398,7 +398,7 @@ class StarPrioroity implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    let result = r;
+    let result: Result[] = r;
 
     let res = r;
 //    let input: Result[] = [];
@@ -409,14 +409,21 @@ class StarPrioroity implements IStatementRunnable {
 
       if (res.length === 0) {
         if (prev !== undefined) {
-          result = prev;
+//          console.log("star length: " + prev.length);
+          let best = Number.MAX_SAFE_INTEGER;
+          for (const p of prev) {
+            if (p.remainingLength() < best) {
+              result = [p];
+              best = p.remainingLength();
+            }
+          }
         }
         break;
       }
 
       prev = res;
     }
-//    console.dir(result);
+
     return result;
   }
 
@@ -910,7 +917,13 @@ export class Combi {
 
     const input = new Result(tokens, 0);
     const result = runnable.run([input]);
-//    console.log("res: " + result.length);
+/*
+    console.log("res: " + result.length);
+    for (const res of result) {
+      console.dir(res.getNodes().map(n => n.get().constructor.name));
+      console.dir(res.getNodes().map(n => n.concatTokens()));
+    }
+*/
     for (const res of result) {
       if (res.remainingLength() === 0) {
         return res.getNodes();
