@@ -49,6 +49,9 @@ export class Select {
     for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
+    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
+      new Source().runSyntax(s, scope, filename);
+    }
 
     if (scope.getType() === ScopeType.OpenSQL) {
       scope.pop(node.getLastToken().getEnd());
