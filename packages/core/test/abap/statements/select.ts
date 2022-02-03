@@ -231,6 +231,74 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
   WHERE t~iban = 'IBAN'
   INTO TABLE @DATA(foo).`,
 
+  `SELECT dd40l~typename,
+dd40t~ddtext,
+tadir~devclass,
+dd40l~rowtype,
+dd03l_low~rollname,
+dd03l_low~domname,
+dd03l_low~datatype,
+dd03l_low~leng,
+dd03l_low~decimals
+UP TO @p_limit ROWS
+INTO TABLE @DATA(lt_table)
+FROM dd40l
+JOIN tadir ON tadir~obj_name EQ dd40l~typename
+JOIN dd02l ON dd02l~tabname EQ dd40l~rowtype
+     AND dd02l~as4local EQ dd40l~as4local
+JOIN dd03l AS dd03l_sign ON dd03l_sign~tabname EQ dd02l~tabname
+                   AND dd03l_sign~as4local EQ dd02l~as4local
+                   AND dd03l_sign~as4vers EQ dd02l~as4vers
+                   AND dd03l_sign~position EQ '0001'
+JOIN dd03l AS dd03l_opt ON dd03l_opt~tabname EQ dd02l~tabname
+                  AND dd03l_opt~as4local EQ dd02l~as4local
+                  AND dd03l_opt~as4vers EQ dd02l~as4vers
+                  AND dd03l_opt~position EQ '0002'
+JOIN dd03l AS dd03l_low ON dd03l_low~tabname EQ dd02l~tabname
+                  AND dd03l_low~as4local EQ dd02l~as4local
+                  AND dd03l_low~as4vers EQ dd02l~as4vers
+                  AND dd03l_low~position EQ '0003'
+JOIN dd03l AS dd03l_high ON dd03l_high~tabname EQ dd02l~tabname
+                   AND dd03l_high~as4local EQ dd02l~as4local
+                   AND dd03l_high~as4vers EQ dd02l~as4vers
+                   AND dd03l_high~position EQ '0004'
+                   AND dd03l_high~rollname EQ dd03l_low~rollname
+                   AND dd03l_high~inttype EQ dd03l_low~inttype
+                   AND dd03l_high~intlen EQ dd03l_low~intlen
+                   AND dd03l_high~domname EQ dd03l_low~domname
+                   AND dd03l_high~datatype EQ dd03l_low~datatype
+                   AND dd03l_high~leng EQ dd03l_low~leng
+LEFT JOIN dd40t ON dd40t~typename EQ dd40l~typename
+          AND dd40t~as4local EQ dd40l~as4local
+          AND dd40t~ddlanguage EQ @p_langu
+WHERE dd40l~as4local EQ @p_as4loc
+AND dd40l~typename IN @s_rgt_nm
+AND dd02l~as4vers EQ @p_as4ver
+AND dd40t~ddtext IN @s_rgt_tx
+AND dd03l_sign~fieldname EQ 'SIGN'
+AND dd03l_sign~datatype EQ 'CHAR'
+AND dd03l_sign~leng EQ '000001'
+AND dd03l_opt~fieldname EQ 'OPTION'
+AND dd03l_opt~datatype EQ 'CHAR'
+AND dd03l_opt~leng EQ '000002'
+AND dd03l_low~fieldname EQ 'LOW'
+AND dd03l_high~fieldname EQ 'HIGH'
+AND dd03l_low~rollname IN @s_rng_en
+AND dd03l_low~domname IN @s_rng_dn
+AND dd03l_low~datatype IN @s_rng_dt
+AND dd03l_low~leng IN @s_rng_dl
+AND dd03l_low~decimals IN @s_rng_dc
+AND tadir~object EQ @lc_object
+AND tadir~devclass IN @s_devcls
+AND NOT EXISTS (
+SELECT tabname
+ FROM dd03l
+ WHERE tabname EQ dd02l~tabname
+   AND as4local EQ dd02l~as4local
+   AND as4vers EQ dd02l~as4vers
+   AND position NOT IN ('0001', '0002', '0003', '0004')
+).`,
+
   `SELECT @zcl_class=>option-eq AS option, devclass AS low
     FROM tdevc
     INTO CORRESPONDING FIELDS OF TABLE @target.`,
