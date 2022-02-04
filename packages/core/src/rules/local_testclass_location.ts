@@ -5,6 +5,7 @@ import {Class} from "../objects";
 import {IObject} from "../objects/_iobject";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {Version} from "../version";
 
 export class LocalTestclassLocationConf extends BasicRuleConfig {
 }
@@ -36,6 +37,11 @@ export class LocalTestclassLocation extends ABAPRule {
 
   public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
+
+    if (this.reg.getConfig().getVersion() === Version.v700) {
+      // 700 does not have testclass includes
+      return [];
+    }
 
     if (!(obj instanceof Class)) {
       return [];
