@@ -5856,6 +5856,22 @@ WRITE tab.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("type checking, WRITE xstring, ok", () => {
+    const abap = `
+    DATA lv_xstring TYPE xstring.
+    WRITE lv_xstring.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("type checking, WRITE hex, ok", () => {
+    const abap = `
+    DATA lv_hex TYPE x LENGTH 6.
+    WRITE lv_hex.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
