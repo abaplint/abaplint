@@ -5887,6 +5887,27 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("attribute from interface", () => {
+    const abap = `
+INTERFACE intf.
+  DATA foo TYPE i.
+ENDINTERFACE.
+
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS moo RETURNING VALUE(asdf) TYPE REF TO intf.
+ENDCLASS.
+CLASS bar IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  WRITE / bar=>moo( )->foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
