@@ -18,6 +18,7 @@ export class TypeUtils {
         || type instanceof AnyType
         || type instanceof UnknownType
         || type instanceof NumericType
+        || type instanceof IntegerType
         || type instanceof CSequenceType
         || type instanceof DateType
         || type instanceof CLikeType
@@ -50,10 +51,10 @@ export class TypeUtils {
   }
 
   public static isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
-    /*
+/*
     console.dir(source);
     console.dir(target);
-    */
+*/
     if (target instanceof TableType) {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
@@ -90,8 +91,11 @@ export class TypeUtils {
           || source instanceof AnyType
           || source instanceof UnknownType) {
         return true;
-      } else if (this.isCharLike(target)
-          && (this.isCharLike(source) || source instanceof IntegerType)) {
+      } else if (target.containsVoid() === true) {
+        return true;
+      } else if (source instanceof IntegerType) {
+        return false;
+      } else if (this.isCharLike(target) && this.isCharLike(source)) {
         return true;
       }
       return false;
