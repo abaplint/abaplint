@@ -16,7 +16,9 @@ export class Write implements StatementSyntax {
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
       const type = new Source().runSyntax(s, scope, filename);
-      if (s === second && TypeUtils.isCharLike(type) === false) {
+      if (s === second
+          && TypeUtils.isCharLike(type) === false
+          && TypeUtils.isHexLike(type) === false) {
         throw new Error("Source not character like");
       }
     }

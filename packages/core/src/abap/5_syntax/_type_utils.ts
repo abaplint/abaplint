@@ -20,8 +20,6 @@ export class TypeUtils {
         || type instanceof NumericType
         || type instanceof IntegerType
         || type instanceof CSequenceType
-        || type instanceof XStringType
-        || type instanceof HexType
         || type instanceof DateType
         || type instanceof CLikeType
         || type instanceof PackedType
@@ -96,10 +94,6 @@ export class TypeUtils {
       } else if (target.containsVoid() === true) {
         return true;
       } else if (source instanceof IntegerType) {
-        return false;
-      } else if (this.isCharLike(target)
-          && source instanceof StringType
-          && this.isHexLike(target)) {
         return false;
       } else if (this.isCharLike(target) && this.isCharLike(source)) {
         return true;
