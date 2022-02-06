@@ -5872,6 +5872,21 @@ WRITE tab.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("WRITE numeric, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING num TYPE numeric.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE num.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

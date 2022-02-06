@@ -13,7 +13,6 @@ export class Write implements StatementSyntax {
 // todo, more
 
     const second = node.getChildren()[1];
-
     for (const s of node.findAllExpressions(Expressions.Source)) {
       const type = new Source().runSyntax(s, scope, filename);
       if (s === second
