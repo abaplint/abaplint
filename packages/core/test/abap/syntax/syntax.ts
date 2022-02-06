@@ -5887,7 +5887,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it("attribute from interface", () => {
+  it("attribute from interface, ok", () => {
     const abap = `
 INTERFACE intf.
   DATA foo TYPE i.
