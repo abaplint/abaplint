@@ -16,8 +16,8 @@ export class IdenticalContents extends ABAPRule {
     return {
       key: "identical_contents",
       title: "Identical contents",
-      shortDescription: `Find identical contents in blocks inside IFs, both in the beginning and in the end.
-
+      shortDescription: `Find identical contents in blocks inside IFs, both in the beginning and in the end.`,
+      extendedInformation: `
 Prerequsites: code is pretty printed with identical cAsE
 
 Chained statments are ignored`,
