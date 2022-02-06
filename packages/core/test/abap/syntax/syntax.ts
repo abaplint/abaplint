@@ -2629,8 +2629,7 @@ DELETE TABLE lt_results FROM 10.`;
   it("CALL TRANSFORMATION with inline", () => {
     const abap = `
     CALL TRANSFORMATION id SOURCE data = 2 RESULT XML DATA(content).
-    WRITE content.
-    `;
+    CLEAR content.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -5837,6 +5836,74 @@ TYPES: BEGIN OF type,
 DATA it_language TYPE STANDARD TABLE OF type WITH HEADER LINE.
 DATA it_t002t TYPE STANDARD TABLE OF t002t WITH HEADER LINE.
 it_language-language = it_t002t-sptxt.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("type checking, WRITE internal table should give error", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+WRITE tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("not character like");
+  });
+
+  it("type checking, WRITE integer, ok", () => {
+    const abap = `
+    DATA int TYPE i.
+    WRITE int.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("type checking, WRITE xstring, ok", () => {
+    const abap = `
+    DATA lv_xstring TYPE xstring.
+    WRITE lv_xstring.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("type checking, WRITE hex, ok", () => {
+    const abap = `
+    DATA lv_hex TYPE x LENGTH 6.
+    WRITE lv_hex.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("WRITE numeric, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING num TYPE numeric.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE num.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("attribute from interface, ok", () => {
+    const abap = `
+INTERFACE intf.
+  DATA foo TYPE i.
+ENDINTERFACE.
+
+CLASS bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS moo RETURNING VALUE(asdf) TYPE REF TO intf.
+ENDCLASS.
+CLASS bar IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  WRITE / bar=>moo( )->foo.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });

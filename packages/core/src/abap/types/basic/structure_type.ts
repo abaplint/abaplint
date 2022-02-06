@@ -56,7 +56,7 @@ export class StructureType extends AbstractType {
   }
 
   public containsVoid() {
-    return this.getComponents().some(c => { c.type.containsVoid(); });
+    return this.getComponents().some(c => { return c.type.containsVoid(); });
   }
 
   public toCDS() {

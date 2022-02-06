@@ -72,7 +72,7 @@ export class UnusedVariables implements IRule {
       shortDescription: `Checks for unused variables and constants`,
       extendedInformation: `WARNING: slow
 
-Experimental, might give false positives. Skips event parameters.
+Skips event parameters.
 
 Note that this currently does not work if the source code uses macros.
 

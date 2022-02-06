@@ -5,14 +5,21 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {Dynamic} from "../expressions/dynamic";
+import {TypeUtils} from "../_type_utils";
 
 export class Write implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
 // todo, more
 
+    const second = node.getChildren()[1];
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      const type = new Source().runSyntax(s, scope, filename);
+      if (s === second
+          && TypeUtils.isCharLike(type) === false
+          && TypeUtils.isHexLike(type) === false) {
+        throw new Error("Source not character like");
+      }
     }
 
     for (const s of node.findAllExpressions(Expressions.Dynamic)) {

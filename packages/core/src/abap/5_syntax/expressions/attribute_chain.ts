@@ -28,7 +28,7 @@ export class AttributeChain {
       throw new Error("AttributeChain, unexpected first child");
     }
 
-    const def = scope.findClassDefinition(inputContext.getIdentifierName());
+    const def = scope.findObjectDefinition(inputContext.getIdentifierName());
     if (def === undefined) {
       throw new Error("Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)");
     }
