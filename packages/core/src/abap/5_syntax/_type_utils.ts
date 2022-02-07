@@ -1,4 +1,4 @@
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 
 export class TypeUtils {
@@ -19,6 +19,11 @@ export class TypeUtils {
         || type instanceof UnknownType
         || type instanceof NumericType
         || type instanceof IntegerType
+        || type instanceof FloatType
+        || type instanceof FloatingPointType
+        || type instanceof DecFloatType
+        || type instanceof DecFloat16Type
+        || type instanceof DecFloat34Type
         || type instanceof NumericGenericType
         || type instanceof CSequenceType
         || type instanceof DateType

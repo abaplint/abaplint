@@ -5872,6 +5872,15 @@ WRITE tab.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("type checking, WRITE float, ok", () => {
+    const abap = `
+    DATA float TYPE f.
+    float = 12345.
+    WRITE float.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("WRITE numeric, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
