@@ -83,8 +83,8 @@ export class MethodParameters {
       new InlineData().runSyntax(inline, scope, filename, type);
     } else if (target) {
       new Target().runSyntax(target, scope, filename);
+      // todo, check target is compatible
     }
-
   }
 
   private checkImporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
@@ -124,11 +124,8 @@ export class MethodParameters {
         parameterType = parameter.getType();
       }
 
-      if (item.targetType) {
-// todo, check that targetType and parameterType are compatible
-        if (0) {
-          console.log(parameterType); // todo
-        }
+      if (item.targetType && TypeUtils.isAssignable(parameterType, item.targetType) === false) {
+        throw new Error("Method parameter type not compatible, " + item.name);
       }
 
       this.requiredParameters?.delete(item.name);
