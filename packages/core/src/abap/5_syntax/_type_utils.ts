@@ -6,6 +6,8 @@ export class TypeUtils {
   public static isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
+    } else if (type instanceof TableType && type.isWithHeader()) {
+      return this.isCharLike(type.getRowType());
     } else if (type instanceof StructureType) {
       for (const c of type.getComponents()) {
         if (this.isCharLike(c.type) === false) {
