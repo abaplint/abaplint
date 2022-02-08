@@ -2,7 +2,47 @@
 const fs = require("fs");
 const childProcess = require("child_process");
 
-const repos = JSON.parse(process.env.REPOS).sort();
+const repos = [
+  "ABAP-Logger/ABAP-Logger",
+  "abap-observability-tools/abap-metrics-provider",
+  "abap-openapi/abap-openapi-client",
+  "abapGit/abapgit-review-example",
+  "abapGit/abapGit",
+  "abapGit/ADT_Backend",
+  "abapGit/background_modes",
+  "abapGit/ci_tools",
+  "abapGit/CI",
+  "abapGit/performance-test",
+  "abapinho/abapTimeMachine",
+  "abaplint/abaplint-sci-client",
+  "abaplint/deps",
+  "FreHu/abap-turtle-graphics",
+  "heliconialabs/abap-protobuf",
+  "heliconialabs/abap-pulsar",
+  "jrodriguez-rc/abap-tasks-tracker",
+  "larshp/abap-wasm",
+  "larshp/abapGitServer",
+  "larshp/abapNTLM",
+  "larshp/abapOpenChecks",
+  "larshp/abapPGP",
+  "Marc-Bernard-Tools/ABAP-Lint-Ext-for-abapGit",
+  "Marc-Bernard-Tools/MBT-Base",
+  "Marc-Bernard-Tools/MBT-Command-Field",
+  "Marc-Bernard-Tools/MBT-Icon-Browser",
+  "Marc-Bernard-Tools/MBT-Listcube",
+  "Marc-Bernard-Tools/MBT-Logical-Object-Lister",
+  "Marc-Bernard-Tools/MBT-Transport-Request",
+  "open-abap/open-abap",
+  "SAP/abap-file-formats",
+  "SAP/code-pal-for-abap",
+  "sapmentors/abap2xlsx",
+  "sbcgua/abap-string-map",
+  "sbcgua/ajson",
+  "sbcgua/mockup_loader",
+  "sbcgua/text2tab",
+  "Sumu-Ning/AES",
+];
+
 console.dir(repos);
 
 let map = {};
