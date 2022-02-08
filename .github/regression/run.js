@@ -25,7 +25,6 @@ const repos = [
   "larshp/abapNTLM",
   "larshp/abapOpenChecks",
   "larshp/abapPGP",
-  "Marc-Bernard-Tools/ABAP-Lint-Ext-for-abapGit",
   "Marc-Bernard-Tools/MBT-Base",
   "Marc-Bernard-Tools/MBT-Command-Field",
   "Marc-Bernard-Tools/MBT-Icon-Browser",
