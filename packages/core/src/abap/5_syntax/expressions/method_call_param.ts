@@ -29,7 +29,6 @@ export class MethodCallParam {
           throw new Error("Parameter \"" + required[0].getName() + "\" must be supplied");
         }
       }
-      return;
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.Source) {
       if (!(method instanceof VoidType) && method.getParameters().getImporting().length === 0) {
         throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
