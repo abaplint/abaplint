@@ -105,8 +105,8 @@ export class MethodParameters {
         new InlineData().runSyntax(inline, scope, filename, parameterType);
       } else if (item.targetType === undefined) {
         throw new Error("Could not determine target type");
-      } else if (item.targetType) {
-// todo, check that targetType and parameterType are compatible
+      } else if (item.targetType && TypeUtils.isAssignable(parameterType, item.targetType) === false) {
+        throw new Error("Method parameter type not compatible, " + item.name);
       }
     }
   }
