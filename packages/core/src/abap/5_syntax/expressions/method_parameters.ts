@@ -153,7 +153,7 @@ export class MethodParameters {
       if (parameter === undefined) {
         throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
       } else if (TypeUtils.isAssignable(parameter.getType(), item.sourceType) === false) {
-        throw new Error("Method parameter type not compatible");
+        throw new Error("Method parameter type not compatible, " + item.name);
       }
       this.requiredParameters.delete(item.name);
     }
