@@ -10,8 +10,6 @@ import {INode} from "../../nodes/_inode";
 import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
 
-// todo, checking that types are compatible
-
 interface IListItemT {
   name: string;
   target: ExpressionNode;
@@ -82,8 +80,10 @@ export class MethodParameters {
     if (inline) {
       new InlineData().runSyntax(inline, scope, filename, type);
     } else if (target) {
-      new Target().runSyntax(target, scope, filename);
-      // todo, check target is compatible
+      const targetType = new Target().runSyntax(target, scope, filename);
+      if (targetType && TypeUtils.isAssignable(type, targetType) === false) {
+        throw new Error("Method returning value not type compatible");
+      }
     }
   }
 
