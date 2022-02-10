@@ -82,7 +82,7 @@ export class ConstantClasses implements IRule {
       }
 
       const domainValueInfo = obj.getFixedValues();
-      const domainValues = domainValueInfo.map(x => x.value);
+      const domainValues = domainValueInfo.map(x => x.low);
       const issues: Issue[] = [];
 
       if (obj.getFixedValues().length === 0) {
@@ -137,12 +137,12 @@ export class ConstantClasses implements IRule {
       }
 
       for (const d of domainValueInfo) {
-        if (!def.constants.find(c => c.value === d.value)) {
+        if (!def.constants.find(c => c.value === d.low)) {
           issues.push(
             Issue.atStatement(
               classContents,
               classContents.getStatements()[0],
-              `Missing constant for ${d.value} (domain ${configEntry.domain})`,
+              `Missing constant for ${d.low} (domain ${configEntry.domain})`,
               this.getMetadata().key,
               this.conf.severity));
           // quickfix will add constant

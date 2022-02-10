@@ -33,8 +33,6 @@ jobs:
         cp packages/cli/build/cli.js ../../abaplint_before/
 
     - name: run
-      env:
-        REPOS: '["abapGit/abapGit", "abapGit/abapgit-review-example", "abapGit/performance-test", "ABAP-Logger/ABAP-Logger", "abap-openapi/abap-openapi-client", "heliconialabs/abap-pulsar", "heliconialabs/abap-protobuf", "larshp/abapNTLM", "abapinho/abapTimeMachine", "larshp/abapOpenChecks", "SAP/abap-file-formats", "abapGit/CI", "abapGit/ci_tools", "abap-observability-tools/abap-metrics-provider", "abapGit/background_modes", "abapGit/ADT_Backend", "sbcgua/text2tab", "open-abap/open-abap", "FreHu/abap-turtle-graphics", "sbcgua/mockup_loader", "SAP/code-pal-for-abap", "abaplint/deps", "larshp/abapGitServer", "larshp/abapPGP", "Sumu-Ning/AES", "abaplint/abaplint-sci-client", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx", "sbcgua/abap-string-map", "sbcgua/ajson", "larshp/abap-wasm"]'
       run: |
         cd .. && cd ..
         ls -salh

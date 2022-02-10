@@ -150,7 +150,7 @@ describe("Domain, parse main xml", () => {
     const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
     await reg.parseAsync();
     const doma = reg.getFirstObject()! as Domain;
-    const values = doma.getFixedValues().map(x => x.value);
+    const values = doma.getFixedValues().map(x => x.low);
     expect(values).to.contain("ALPHA");
     expect(values).to.contain("BETA");
     expect(values).to.contain("GAMMA");
@@ -188,7 +188,7 @@ describe("Domain, parse main xml", () => {
     const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
     await reg.parseAsync();
     const doma = reg.getFirstObject()! as Domain;
-    const values = doma.getFixedValues().map(x => x.value);
+    const values = doma.getFixedValues().map(x => x.low);
     expect(values).to.contain("ALPHA");
   });
 
@@ -216,8 +216,48 @@ describe("Domain, parse main xml", () => {
     const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
     await reg.parseAsync();
     const doma = reg.getFirstObject()! as Domain;
-    const values = doma.getFixedValues().map(x => x.value);
+    const values = doma.getFixedValues().map(x => x.low);
     expect(values.length).to.equal(0);
+  });
+
+  it("fixed values, and interval values", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZFIXEDVAL</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+    <VALEXI>X</VALEXI>
+    <DDTEXT>test</DDTEXT>
+   </DD01V>
+   <DD07V_TAB>
+    <DD07V>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DOMVALUE_L>F</DOMVALUE_L>
+     <DDTEXT>fixed</DDTEXT>
+    </DD07V>
+    <DD07V>
+     <VALPOS>0002</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DOMVALUE_L>1</DOMVALUE_L>
+     <DOMVALUE_H>9</DOMVALUE_H>
+     <DDTEXT>numbers</DDTEXT>
+    </DD07V>
+   </DD07V_TAB>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry().addFile(new MemoryFile("zfixedval.doma.xml", xml));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    const values = doma.getFixedValues();
+    expect(values.length).to.equal(2);
+    expect(values[1].high).to.equal("9");
   });
 
 });

@@ -60,7 +60,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     }
     const keys = Object.keys(this.method.mandatory);
     if (keys.length === 1) {
-      return keys[0];
+      return keys[0].toUpperCase();
     }
     return undefined;
   }
@@ -549,7 +549,7 @@ export class BuiltIn {
     {
       name: "LINE_EXISTS",
       mandatory: {
-        "val": new TableType(new AnyType(), {withHeader: false}),
+        "val": new AnyType(),
       },
       return: new CharacterType(1),
       version: Version.v740sp02,

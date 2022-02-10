@@ -8,8 +8,7 @@ import {Target} from "./target";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import {Source} from "./source";
-
-// todo, checking that types are compatible
+import {TypeUtils} from "../_type_utils";
 
 interface IListItemT {
   name: string;
@@ -81,9 +80,11 @@ export class MethodParameters {
     if (inline) {
       new InlineData().runSyntax(inline, scope, filename, type);
     } else if (target) {
-      new Target().runSyntax(target, scope, filename);
+      const targetType = new Target().runSyntax(target, scope, filename);
+      if (targetType && TypeUtils.isAssignable(type, targetType) === false) {
+        throw new Error("Method returning value not type compatible");
+      }
     }
-
   }
 
   private checkImporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
@@ -104,8 +105,8 @@ export class MethodParameters {
         new InlineData().runSyntax(inline, scope, filename, parameterType);
       } else if (item.targetType === undefined) {
         throw new Error("Could not determine target type");
-      } else if (item.targetType) {
-// todo, check that targetType and parameterType are compatible
+      } else if (item.targetType && TypeUtils.isAssignable(parameterType, item.targetType) === false) {
+        throw new Error("Method parameter type not compatible, " + item.name);
       }
     }
   }
@@ -123,11 +124,8 @@ export class MethodParameters {
         parameterType = parameter.getType();
       }
 
-      if (item.targetType) {
-// todo, check that targetType and parameterType are compatible
-        if (0) {
-          console.log(parameterType); // todo
-        }
+      if (item.targetType && TypeUtils.isAssignable(parameterType, item.targetType) === false) {
+        throw new Error("Method parameter type not compatible, " + item.name);
       }
 
       this.requiredParameters?.delete(item.name);
@@ -137,8 +135,8 @@ export class MethodParameters {
   public checkExporting(node: INode | undefined, scope: CurrentScope,
                         method: IMethodDefinition | VoidType, filename: string, errors = true): void {
 
+    const items = this.parameterListS(node, scope, filename, method);
     if (method instanceof VoidType) {
-      this.parameterListS(node, scope, filename, method);
       return;
     }
 
@@ -147,20 +145,13 @@ export class MethodParameters {
       this.requiredParameters = new Set(method.getParameters().getRequiredParameters().map(i => i.getName().toUpperCase()));
     }
 
-    for (const item of this.parameterListS(node, scope, filename, method)) {
-      let parameterType: AbstractType | undefined = undefined;
-
+    for (const item of items) {
       const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
       if (parameter === undefined) {
         throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
+      } else if (TypeUtils.isAssignable(parameter.getType(), item.sourceType) === false) {
+        throw new Error("Method parameter type not compatible, " + item.name);
       }
-      parameterType = parameter.getType();
-
-      // todo, check that targetType and parameterType are compatible
-      if (0) {
-        console.log(parameterType); // todo
-      }
-
       this.requiredParameters.delete(item.name);
     }
 

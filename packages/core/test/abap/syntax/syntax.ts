@@ -5925,6 +5925,14 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("type error when calling lines()", () => {
+    const abap = `
+    DATA int TYPE i.
+    WRITE lines( int ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
