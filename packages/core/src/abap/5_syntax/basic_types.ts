@@ -469,7 +469,6 @@ export class BasicTypes {
     const subs = rest.split("-");
     let foundType: AbstractType | undefined = undefined;
 
-
     if (className) {
       const split = chainText.split("=>");
       const className = split[0];
@@ -545,7 +544,8 @@ export class BasicTypes {
 
     subs.shift();
     while (subs.length > 0) {
-      if (foundType instanceof Types.UnknownType) {
+      if (foundType instanceof Types.UnknownType
+          || foundType instanceof Types.VoidType) {
         return foundType;
       } else if (!(foundType instanceof Types.StructureType)) {
         return new Types.UnknownType("Not a structured type");

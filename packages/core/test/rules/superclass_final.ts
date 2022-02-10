@@ -86,8 +86,31 @@ CLASS ltcl_single_file IMPLEMENTATION.
 ENDCLASS.`;
     const issues = await runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
-      {filename: "zfl_foobar.clas.testclasses.abap", contents: testclasses}]);
+      {filename: "zcl_foobar.clas.testclasses.abap", contents: testclasses}]);
     expect(issues.length).to.equals(0);
+  });
+
+  it("superclass, local test classes inheriting 2", async () => {
+    const clas =
+      `CLASS zcl_foobar DEFINITION PUBLIC.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+      ENDCLASS.`;
+    const testclasses = `
+CLASS ltcl_single_file DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT INHERITING FROM lcl_base.
+ENDCLASS.
+CLASS ltcl_single_file IMPLEMENTATION.
+ENDCLASS.`;
+    const locals_def = `CLASS lcl_base DEFINITION.
+ENDCLASS.`;
+    const locals_imp = `CLASS lcl_base IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zcl_foobar.clas.locals_def.abap", contents: locals_def},
+      {filename: "zcl_foobar.clas.locals_imp.abap", contents: locals_imp},
+      {filename: "zcl_foobar.clas.testclasses.abap", contents: testclasses}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });
