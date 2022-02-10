@@ -1536,4 +1536,27 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("reference to itself, voided structure type", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES BEGIN OF ty_s_object_table.
+    INCLUDE TYPE objsl AS objsl.
+    TYPES foo TYPE string.
+    TYPES END OF ty_s_object_table.
+
+    METHODS do_delete
+      IMPORTING
+        iv_table_name TYPE lcl=>ty_s_object_table-tobj_name.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD do_delete.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zlocalref.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
