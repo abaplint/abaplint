@@ -7,7 +7,8 @@ import {xmlToArray} from "../xml_utils";
 
 export interface DomainValue {
   language: string,
-  value: string,
+  low: string,
+  high: string,
   description: string
 }
 
@@ -73,7 +74,8 @@ export class Domain extends AbstractObject {
     for (const ddo7v of dd07v_tab) {
       const value: DomainValue = {
         description: ddo7v?.DDTEXT,
-        value: ddo7v?.DOMVALUE_L,
+        low: ddo7v?.DOMVALUE_L,
+        high: ddo7v?.DOMVALUE_H,
         language: ddo7v?.DDLANGUAGE,
       };
       values.push(value);
