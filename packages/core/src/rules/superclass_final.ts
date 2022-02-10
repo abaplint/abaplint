@@ -1,12 +1,12 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Class} from "../objects";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 import {RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "..";
 
 export class SuperclassFinalConf extends BasicRuleConfig {
 }
@@ -35,7 +35,7 @@ export class SuperclassFinal extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, obj: IObject) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const output: Issue[] = [];
 
     for (const definition of file.getInfo().listClassDefinitions()) {
@@ -49,8 +49,12 @@ export class SuperclassFinal extends ABAPRule {
       }
       let found: InfoClassDefinition | undefined = undefined;
       if (localLookup) {
-// todo, this should look inside the object instead of the file?
-        found = file.getInfo().getClassDefinitionByName(sup);
+        for (const f of obj.getABAPFiles()) {
+          found = f.getInfo().getClassDefinitionByName(sup);
+          if (found !== undefined) {
+            break;
+          }
+        }
       }
       if (found === undefined) {
         const clas = this.reg.getObject("CLAS", sup) as Class;
