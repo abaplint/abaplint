@@ -12,7 +12,7 @@ export class InlineFieldDefinition {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): void {
     let type: AbstractType | TypedIdentifier | undefined = undefined;
 
-    const field = node.findDirectExpression(Expressions.Field);
+    const field = node.findDirectExpression(Expressions.Field)?.getFirstToken();
     if (field === undefined) {
       return;
     }
@@ -29,8 +29,13 @@ export class InlineFieldDefinition {
       type = new UnknownType("InlineFieldDefinition, fallback");
     }
 
-    const identifier = new TypedIdentifier(field.getFirstToken(), filename, type, [IdentifierMeta.InlineDefinition]);
-    scope.addReference(field.getFirstToken(), identifier, ReferenceType.DataWriteReference, filename);
+    const name = field.getStr();
+    if (scope.findVariable(name) !== undefined) {
+      throw new Error(`Variable ${name} already defined`);
+    }
+
+    const identifier = new TypedIdentifier(field, filename, type, [IdentifierMeta.InlineDefinition]);
+    scope.addReference(field, identifier, ReferenceType.DataWriteReference, filename);
     scope.addIdentifier(identifier);
   }
 }

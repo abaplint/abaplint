@@ -5943,7 +5943,21 @@ START-OF-SELECTION.
     ) ).
   WRITE current_count.`;
     const issues = runProgram(abap);
-    expect(issues[0].getMessage()).to.contain("current_count");
+    expect(issues[0].getMessage()).to.contain(`"current_count" not found`);
+  });
+
+  it("Error, using already declared", () => {
+    const abap = `
+  DATA current_count TYPE i.
+  TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA(result) = VALUE ty_tab(
+    ( COND string( LET current_count = 2 IN
+      WHEN current_count = 1 THEN |{ current_count }|
+      ELSE |{ current_count }| )
+    ) ).
+    `;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("current_count already defined");
   });
 
 // todo, static method cannot access instance attributes
