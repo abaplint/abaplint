@@ -6,6 +6,7 @@ import {Source} from "./source";
 import {InlineLoopDefinition} from "./inline_loop_definition";
 import {ScopeType} from "../_scope_type";
 import {ComponentCond} from "./component_cond";
+import {Cond} from "./cond";
 
 export class For {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): void {
@@ -31,6 +32,10 @@ export class For {
 
     for (const s of node.findDirectExpressions(Expressions.ComponentCond)) {
       new ComponentCond().runSyntax(s, scope, filename);
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.Cond)) {
+      new Cond().runSyntax(s, scope, filename);
     }
 
     /*
