@@ -761,6 +761,20 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
+  private outlineFor(forLoop: ExpressionNode, indentation: string) {
+    let body = "";
+    const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
+    const loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    if (loopTargetField) {
+      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
+    }
+    if (loopTargetField === undefined) {
+      const loopTargetFieldSymbol = forLoop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
+      body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
+    }
+    return body;
+  }
+
   private outlineReduce(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
       const firstToken = i.getFirstToken();
@@ -787,19 +801,14 @@ ${indentation}    output = ${topTarget}.`;
         name = init.getFirstToken().getStr();
         body += indentation + `DATA(${name}) = ${reduceBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
       }
-      const loop = reduceBody.findFirstExpression(Expressions.InlineLoopDefinition);
-      if (loop === undefined) {
+
+
+      const forLoop = reduceBody.findDirectExpression(Expressions.For);
+      if (forLoop === undefined) {
         continue;
       }
-      const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
-      const loopTargetField = loop.findFirstExpression(Expressions.TargetField)?.concatTokens();
-      if (loopTargetField) {
-        body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
-      }
-      if (loopTargetField === undefined) {
-        const loopTargetFieldSymbol = loop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
-        body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
-      }
+
+      body += this.outlineFor(forLoop, indentation);
 
       const next = reduceBody.findDirectExpression(Expressions.ReduceNext);
       if (next === undefined) {

@@ -1275,6 +1275,16 @@ result = |{ temp1 }|.`;
     testFix(abap, expected);
   });
 
+  it.skip("VALUE with FOR", async () => {
+    const abap = `
+  TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA tab TYPE ty_tab.
+  tab = VALUE ty_tab( FOR i = 0 UNTIL i = 2 ( |hello| ) ).`;
+    const expected = `
+sdf`;
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
