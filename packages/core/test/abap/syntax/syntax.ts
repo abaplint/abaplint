@@ -5984,6 +5984,25 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, strlen typing with string header line table", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS call IMPORTING foo TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD call.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA p_new_where TYPE voided WITH HEADER LINE.
+  lcl=>call( p_new_where ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
