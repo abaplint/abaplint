@@ -1315,6 +1315,19 @@ DATA(result) = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("outline, multiple LETs indentical names", async () => {
+    const abap = `
+  TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 TYPE ty_tab.
+  APPEND COND string( LET current_count = 2 IN WHEN current_count = 1 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
+  APPEND COND string( LET current_count = 2 IN WHEN current_count = 2 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
+  DATA(result) = temp1.`;
+// note, the unit tests only perform one step
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
