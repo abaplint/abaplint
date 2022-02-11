@@ -74,7 +74,8 @@ export class TypeUtils {
         return true;
       }
       return false;
-    } else if (target instanceof ObjectReferenceType || target instanceof GenericObjectReferenceType) {
+    } else if (target instanceof ObjectReferenceType
+        || target instanceof GenericObjectReferenceType) {
       if (source instanceof ObjectReferenceType
           || source instanceof GenericObjectReferenceType
           || source instanceof VoidType
