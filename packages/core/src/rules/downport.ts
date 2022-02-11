@@ -860,6 +860,13 @@ ${indentation}    output = ${topTarget}.`;
       let indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
 
+      const forLoop = valueBody?.findDirectExpression(Expressions.For);
+      if (forLoop !== undefined) {
+        body += this.outlineFor(forLoop, indentation);
+        indentation += "  ";
+      }
+
+      /*
       const loop = valueBody?.findFirstExpression(Expressions.InlineLoopDefinition);
       if (loop) {
         const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
@@ -867,6 +874,7 @@ ${indentation}    output = ${topTarget}.`;
         body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
         indentation += "  ";
       }
+      */
 
       let structureName = uniqueName;
       let added = false;
@@ -891,8 +899,8 @@ ${indentation}    output = ${topTarget}.`;
         }
       }
 
-      if (loop) {
-        indentation = indentation.substr(2);
+      if (forLoop !== undefined) {
+        indentation = indentation.substring(2);
         body += indentation + `ENDLOOP.\n`;
       }
 
