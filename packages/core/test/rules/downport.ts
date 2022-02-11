@@ -1293,6 +1293,28 @@ tab = temp1.`;
     testFix(abap, expected);
   });
 
+  it("same var, double inline", async () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA(result) = VALUE ty_tab(
+  ( COND string( LET current_count = 2 IN
+    WHEN current_count = 1 THEN |{ current_count }|
+    ELSE |{ current_count }| )
+  )
+  ( COND string( LET current_count = 2 IN
+    WHEN current_count = 2 THEN |{ current_count }|
+    ELSE |{ current_count }| )
+  ) ).`;
+// note, the unit tests only perform one step
+    const expected = `
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 TYPE ty_tab.
+APPEND COND string( LET current_count = 2 IN WHEN current_count = 1 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
+APPEND COND string( LET current_count = 2 IN WHEN current_count = 2 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
+DATA(result) = temp1.`;
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
