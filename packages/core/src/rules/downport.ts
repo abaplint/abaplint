@@ -1079,7 +1079,7 @@ ${indentation}    output = ${topTarget}.`;
       } else if (c.get() instanceof Expressions.Source) {
         code += indent + "  " + uniqueName + " = " + c.concatTokens() + ".\n";
       } else {
-        throw "buildCondBody, unexpected expression";
+        throw "buildCondBody, unexpected expression, " + c.get().constructor.name;
       }
     }
     code += indent + "ENDIF.\n";

@@ -1252,6 +1252,18 @@ result = |{ temp1 }|.`;
     testFix(abap, expected);
   });
 
+  it.skip("COND with LET", async () => {
+    const abap = `
+  WRITE COND string(
+    LET current_count = 2
+        new_count = current_count - 1
+    IN
+    WHEN current_count = 1 THEN |{ current_count }|
+    ELSE |{ new_count }| ).`;
+    const expected = `exp`;
+    testFix(abap, expected);
+  });
+
 // ---------------------
 
   it.skip("line_exists()", async () => {
