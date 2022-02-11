@@ -5933,6 +5933,19 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("Error, using variable defined in LET outside expression", () => {
+    const abap = `
+  TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA(result) = VALUE ty_tab(
+    ( COND string( LET current_count = 2 IN
+      WHEN current_count = 1 THEN |{ current_count }|
+      ELSE |{ current_count }| )
+    ) ).
+  WRITE current_count.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("current_count");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

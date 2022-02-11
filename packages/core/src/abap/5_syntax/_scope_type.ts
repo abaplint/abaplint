@@ -14,5 +14,6 @@ export enum ScopeType {
   Method = "method",
   MethodInstance = "method_instance",
   For = "for",
+  Let = "let",
   OpenSQL = "open_sql",
 }

@@ -19,14 +19,15 @@ export class ValueBody {
       return targetType;
     }
 
-    const letNode = node.findDirectExpression(Expressions.Let);
-    if (letNode) {
-      new Let().runSyntax(letNode, scope, filename);
-    }
-
     const forNode = node.findDirectExpression(Expressions.For);
     if (forNode) {
       new For().runSyntax(forNode, scope, filename);
+    }
+
+    let scoped = false;
+    const letNode = node.findDirectExpression(Expressions.Let);
+    if (letNode) {
+      scoped = new Let().runSyntax(letNode, scope, filename);
     }
 
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
@@ -36,6 +37,10 @@ export class ValueBody {
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       type = new Source().runSyntax(s, scope, filename);
+    }
+
+    if (scoped === true) {
+      scope.pop(node.getLastToken().getEnd());
     }
 
     if (scope.getType() === ScopeType.For) {

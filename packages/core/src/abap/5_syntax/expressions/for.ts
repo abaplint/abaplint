@@ -38,6 +38,7 @@ export class For {
       new Cond().runSyntax(s, scope, filename);
     }
 
+    // actually looks like the inline FOR definitions are scoped not just to the current expression?
     /*
     if (addScope) {
       scope.pop(node.getLastToken().getEnd());

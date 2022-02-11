@@ -17,9 +17,10 @@ export class CondBody {
       return targetType;
     }
 
+    let scoped = false;
     const l = node.findDirectExpression(Expressions.Let);
     if (l) {
-      new Let().runSyntax(l, scope, filename);
+      scoped = new Let().runSyntax(l, scope, filename);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
@@ -33,6 +34,10 @@ export class CondBody {
       } else {
         new Source().runSyntax(s, scope, filename);
       }
+    }
+
+    if (scoped === true) {
+      scope.pop(node.getLastToken().getEnd());
     }
 
     return targetType ? targetType : type;
