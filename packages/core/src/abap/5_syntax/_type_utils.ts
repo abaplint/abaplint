@@ -74,7 +74,8 @@ export class TypeUtils {
         return true;
       }
       return false;
-    } else if (target instanceof ObjectReferenceType || target instanceof GenericObjectReferenceType) {
+    } else if (target instanceof ObjectReferenceType
+        || target instanceof GenericObjectReferenceType) {
       if (source instanceof ObjectReferenceType
           || source instanceof GenericObjectReferenceType
           || source instanceof VoidType
@@ -109,10 +110,11 @@ export class TypeUtils {
       return false;
     } else if (target instanceof IntegerType
         || target instanceof StringType) {
-      if (source instanceof DataReference
+      if (source instanceof TableType && source.isWithHeader() === false) {
+        return false;
+      } else if (source instanceof DataReference
           || source instanceof ObjectReferenceType
-          || source instanceof GenericObjectReferenceType
-          || source instanceof TableType) {
+          || source instanceof GenericObjectReferenceType) {
         return false;
       }
       return true;

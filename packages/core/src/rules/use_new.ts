@@ -24,7 +24,9 @@ export class UseNew extends ABAPRule {
       shortDescription: `Checks for deprecated CREATE OBJECT statements.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-new-to-create-object
 
-If the target variable is referenced in the CREATE OBJECT statement, no errors are issued`,
+If the target variable is referenced in the CREATE OBJECT statement, no errors are issued
+
+Applicable from v740sp02 and up`,
       badExample: `CREATE OBJECT ref.`,
       goodExample: `ref = NEW #( ).`,
       tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],

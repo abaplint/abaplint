@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -808,7 +808,7 @@ export class BuiltIn {
     {
       name: "STRLEN",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new IntegerType(),
     },
@@ -816,7 +816,7 @@ export class BuiltIn {
     {
       name: "SUBSTRING",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
         "off": new IntegerType(),
@@ -829,7 +829,7 @@ export class BuiltIn {
     {
       name: "SUBSTRING_AFTER",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
         "sub": new StringType(),
@@ -846,7 +846,7 @@ export class BuiltIn {
     {
       name: "SUBSTRING_BEFORE",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
         "sub": new StringType(),
@@ -863,7 +863,7 @@ export class BuiltIn {
     {
       name: "SUBSTRING_FROM",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
         "sub": new StringType(),
@@ -880,7 +880,7 @@ export class BuiltIn {
     {
       name: "SUBSTRING_TO",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
         "sub": new StringType(),

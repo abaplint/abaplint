@@ -1037,4 +1037,16 @@ cl_voided=>void( bar = bar ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("VALUE with FOR", async () => {
+    const abap = `
+  TYPES ty_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+  DATA(result) = VALUE ty_tab(
+    FOR i = 0 UNTIL i = 10
+    ( |hello| )
+    ( |world| ) ).
+  WRITE lines( result ).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
