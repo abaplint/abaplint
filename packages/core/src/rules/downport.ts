@@ -761,18 +761,29 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private outlineFor(forLoop: ExpressionNode, indentation: string) {
+  private outlineFor(forLoop: ExpressionNode, indentation: string): {body: string, end: string} {
     let body = "";
+    let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
     const loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
-    if (loopTargetField) {
+    if (forLoop.findDirectTokenByText("UNTIL")) {
+      const name = forLoop.findFirstExpression(Expressions.Field)?.concatTokens();
+      body += indentation + "DATA " + name + " TYPE i.\n";
+
+      const cond = forLoop.findFirstExpression(Expressions.Cond);
+      body += indentation + `WHILE NOT ${cond?.concatTokens()}.\n`;
+      const field = forLoop.findDirectExpression(Expressions.InlineFieldDefinition)?.findFirstExpression(Expressions.Field)?.concatTokens();
+      body += indentation + `  ${field} = ${field} + 1.\n`;
+      end = "ENDWHILE";
+    } else if (loopTargetField) {
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
-    }
-    if (loopTargetField === undefined) {
+      end = "ENDLOOP";
+    } else if (loopTargetField === undefined) {
       const loopTargetFieldSymbol = forLoop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
       body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
+      end = "ENDLOOP";
     }
-    return body;
+    return {body, end};
   }
 
   private outlineReduce(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -808,7 +819,8 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      body += this.outlineFor(forLoop, indentation);
+      const outlineFor = this.outlineFor(forLoop, indentation);
+      body += outlineFor.body;
 
       const next = reduceBody.findDirectExpression(Expressions.ReduceNext);
       if (next === undefined) {
@@ -826,7 +838,7 @@ ${indentation}    output = ${topTarget}.`;
         }
       }
 
-      body += indentation + `ENDLOOP.\n`;
+      body += indentation + outlineFor.end + `.\n`;
       body += indentation + `${uniqueName} = ${name}.\n`;
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
@@ -861,20 +873,12 @@ ${indentation}    output = ${topTarget}.`;
       let body = "";
 
       const forLoop = valueBody?.findDirectExpression(Expressions.For);
+      let outlineFor = {body: "", end: ""};
       if (forLoop !== undefined) {
-        body += this.outlineFor(forLoop, indentation);
+        outlineFor = this.outlineFor(forLoop, indentation);
+        body += outlineFor.body;
         indentation += "  ";
       }
-
-      /*
-      const loop = valueBody?.findFirstExpression(Expressions.InlineLoopDefinition);
-      if (loop) {
-        const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
-        const loopTargetFieldSymbol = loop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
-        body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
-        indentation += "  ";
-      }
-      */
 
       let structureName = uniqueName;
       let added = false;
@@ -901,7 +905,7 @@ ${indentation}    output = ${topTarget}.`;
 
       if (forLoop !== undefined) {
         indentation = indentation.substring(2);
-        body += indentation + `ENDLOOP.\n`;
+        body += indentation + outlineFor.end + `.\n`;
       }
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +

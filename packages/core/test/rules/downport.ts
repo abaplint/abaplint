@@ -1275,13 +1275,21 @@ result = |{ temp1 }|.`;
     testFix(abap, expected);
   });
 
-  it.skip("VALUE with FOR", async () => {
+  it("VALUE with FOR", async () => {
     const abap = `
-  TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-  DATA tab TYPE ty_tab.
-  tab = VALUE ty_tab( FOR i = 0 UNTIL i = 2 ( |hello| ) ).`;
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+tab = VALUE ty_tab( FOR i = 0 UNTIL i = 2 ( |hello| ) ).`;
     const expected = `
-sdf`;
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+DATA i TYPE i.
+WHILE NOT i = 2.
+  i = i + 1.
+  APPEND |hello| TO temp1.
+ENDWHILE.
+tab = temp1.`;
     testFix(abap, expected);
   });
 
