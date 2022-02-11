@@ -1043,7 +1043,7 @@ ${indentation}    output = ${topTarget}.`;
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const type = this.findType(i, lowFile, highSyntax);
       const indent = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
-      const bodyCode = this.buildCondBody(body, uniqueName, indent);
+      const bodyCode = this.buildCondBody(body, uniqueName, indent, lowFile, highSyntax);
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` + bodyCode;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
@@ -1056,14 +1056,14 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private buildCondBody(body: ExpressionNode, uniqueName: string, indent: string) {
-    let code = indent;
+  private buildCondBody(body: ExpressionNode, uniqueName: string, indent: string, lowFile: ABAPFile, highSyntax: ISyntaxResult) {
+    let code = "";
 
     for (const c of body.getChildren()) {
       if (c instanceof TokenNode) {
         switch (c.getFirstToken().getStr().toUpperCase()) {
           case "WHEN":
-            code += "IF ";
+            code += indent + "IF ";
             break;
           case "THEN":
             code += ".\n";
@@ -1076,6 +1076,8 @@ ${indentation}    output = ${topTarget}.`;
         }
       } else if (c.get() instanceof Expressions.Cond) {
         code += c.concatTokens();
+      } else if (c.get() instanceof Expressions.Let) {
+        code += this.outlineLet(c, indent, highSyntax, lowFile);
       } else if (c.get() instanceof Expressions.Source) {
         code += indent + "  " + uniqueName + " = " + c.concatTokens() + ".\n";
       } else {

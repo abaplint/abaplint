@@ -1252,7 +1252,7 @@ result = |{ temp1 }|.`;
     testFix(abap, expected);
   });
 
-  it.skip("COND with LET", async () => {
+  it("COND with LET", async () => {
     const abap = `
   WRITE COND string(
     LET current_count = 2
@@ -1260,7 +1260,18 @@ result = |{ temp1 }|.`;
     IN
     WHEN current_count = 1 THEN |{ current_count }|
     ELSE |{ new_count }| ).`;
-    const expected = `exp`;
+    const expected = `
+  DATA temp1 TYPE string.
+  DATA current_count TYPE i.
+  current_count = 2.
+  DATA new_count TYPE i.
+  new_count = current_count - 1.
+  IF current_count = 1.
+    temp1 = |{ current_count }|.
+  ELSE.
+    temp1 = |{ new_count }|.
+  ENDIF.
+  WRITE temp1.`;
     testFix(abap, expected);
   });
 
