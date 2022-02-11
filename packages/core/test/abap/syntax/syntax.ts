@@ -5960,6 +5960,14 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("current_count already defined");
   });
 
+  it("Error, variable not found", () => {
+    const abap = `
+  DATA(result) = VALUE string_table( FOR i = 0 UNTIL i = 42 ( || ) ).
+  WRITE i.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain(`"i" not found`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

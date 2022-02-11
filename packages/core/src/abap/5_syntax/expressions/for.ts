@@ -15,6 +15,7 @@ export class For {
     const inlineField = node.findAllExpressions(Expressions.InlineFieldDefinition);
     const addScope = inlineLoop.length > 0 || inlineField.length > 0;
     if (addScope) {
+      // this scope is popped in parent expressions
       scope.push(ScopeType.For, "FOR", node.getFirstToken().getStart(), filename);
     }
 
@@ -37,12 +38,5 @@ export class For {
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
       new Cond().runSyntax(s, scope, filename);
     }
-
-    // actually looks like the inline FOR definitions are scoped not just to the current expression?
-    /*
-    if (addScope) {
-      scope.pop(node.getLastToken().getEnd());
-    }
-    */
   }
 }
