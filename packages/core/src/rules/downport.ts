@@ -761,6 +761,31 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
+  private outlineFor(forLoop: ExpressionNode, indentation: string): {body: string, end: string} {
+    let body = "";
+    let end = "";
+    const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
+    const loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    if (forLoop.findDirectTokenByText("UNTIL")) {
+      const name = forLoop.findFirstExpression(Expressions.Field)?.concatTokens();
+      body += indentation + "DATA " + name + " TYPE i.\n";
+
+      const cond = forLoop.findFirstExpression(Expressions.Cond);
+      body += indentation + `WHILE NOT ${cond?.concatTokens()}.\n`;
+      const field = forLoop.findDirectExpression(Expressions.InlineFieldDefinition)?.findFirstExpression(Expressions.Field)?.concatTokens();
+      body += indentation + `  ${field} = ${field} + 1.\n`;
+      end = "ENDWHILE";
+    } else if (loopTargetField) {
+      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
+      end = "ENDLOOP";
+    } else if (loopTargetField === undefined) {
+      const loopTargetFieldSymbol = forLoop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
+      body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
+      end = "ENDLOOP";
+    }
+    return {body, end};
+  }
+
   private outlineReduce(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
       const firstToken = i.getFirstToken();
@@ -787,19 +812,15 @@ ${indentation}    output = ${topTarget}.`;
         name = init.getFirstToken().getStr();
         body += indentation + `DATA(${name}) = ${reduceBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
       }
-      const loop = reduceBody.findFirstExpression(Expressions.InlineLoopDefinition);
-      if (loop === undefined) {
+
+
+      const forLoop = reduceBody.findDirectExpression(Expressions.For);
+      if (forLoop === undefined) {
         continue;
       }
-      const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
-      const loopTargetField = loop.findFirstExpression(Expressions.TargetField)?.concatTokens();
-      if (loopTargetField) {
-        body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
-      }
-      if (loopTargetField === undefined) {
-        const loopTargetFieldSymbol = loop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
-        body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
-      }
+
+      const outlineFor = this.outlineFor(forLoop, indentation);
+      body += outlineFor.body;
 
       const next = reduceBody.findDirectExpression(Expressions.ReduceNext);
       if (next === undefined) {
@@ -817,7 +838,7 @@ ${indentation}    output = ${topTarget}.`;
         }
       }
 
-      body += indentation + `ENDLOOP.\n`;
+      body += indentation + outlineFor.end + `.\n`;
       body += indentation + `${uniqueName} = ${name}.\n`;
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
@@ -851,11 +872,11 @@ ${indentation}    output = ${topTarget}.`;
       let indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
 
-      const loop = valueBody?.findFirstExpression(Expressions.InlineLoopDefinition);
-      if (loop) {
-        const loopSource = loop.findFirstExpression(Expressions.Source)?.concatTokens();
-        const loopTargetFieldSymbol = loop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
-        body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
+      const forLoop = valueBody?.findDirectExpression(Expressions.For);
+      let outlineFor = {body: "", end: ""};
+      if (forLoop !== undefined) {
+        outlineFor = this.outlineFor(forLoop, indentation);
+        body += outlineFor.body;
         indentation += "  ";
       }
 
@@ -882,9 +903,9 @@ ${indentation}    output = ${topTarget}.`;
         }
       }
 
-      if (loop) {
-        indentation = indentation.substr(2);
-        body += indentation + `ENDLOOP.\n`;
+      if (forLoop !== undefined) {
+        indentation = indentation.substring(2);
+        body += indentation + outlineFor.end + `.\n`;
       }
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
