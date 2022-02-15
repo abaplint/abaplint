@@ -45,7 +45,7 @@ export class FunctionModuleRecommendations extends ABAPRule {
     return {
       key: "function_module_recommendations",
       title: "Function Module Recommendations",
-      shortDescription: `Function Module Recommendations`,
+      shortDescription: `Suggests replacements for various function modules`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/53/`,
       tags: [RuleTag.SingleFile],
     };
