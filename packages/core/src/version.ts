@@ -15,7 +15,7 @@ export enum Version {
   Cloud = "Cloud", // Steampunk, SAP BTP ABAP Environment
 }
 
-export const defaultVersion = Version.v755;
+export const defaultVersion = Version.v756;
 
 export function getPreviousVersion(v: Version): Version {
   if (v === Version.OpenABAP) {
