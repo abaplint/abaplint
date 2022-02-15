@@ -26,6 +26,7 @@ export * from "./endprovide";
 export * from "./if";
 export * from "./convert_text";
 export * from "./log_point";
+export * from "./loop_at_screen";
 export * from "./window";
 export * from "./endif";
 export * from "./type_enum";
