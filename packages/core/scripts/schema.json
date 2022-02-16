@@ -1846,7 +1846,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Function Module Recommendations\nTags: SingleFile\nhttps://rules.abaplint.org/function_module_recommendations"
+              "description": "Suggests replacements for various function modules\nTags: SingleFile\nhttps://rules.abaplint.org/function_module_recommendations"
             },
             "functional_writing": {
               "anyOf": [
