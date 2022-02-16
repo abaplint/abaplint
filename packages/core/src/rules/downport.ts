@@ -63,6 +63,7 @@ Current rules:
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * APPEND expression is outlined
+* Moving with +=, -=, /=, *=, &&=
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -185,6 +186,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.stringTemplateAlpha(high, lowFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.moveWithOperator(high, lowFile);
     if (found) {
       return found;
     }
@@ -647,6 +653,53 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     }
 
     return undefined;
+  }
+
+  private moveWithOperator(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.Move)) {
+      return undefined;
+    }
+    const children = high.getChildren();
+    const secondChild = children[1];
+    if (secondChild === undefined) {
+      return undefined;
+    }
+
+    const op = secondChild.getFirstToken();
+    let operator = "";
+    switch (op.getStr()) {
+      case "+":
+        operator = " + ";
+        break;
+      case "-":
+        operator = " - ";
+        break;
+      case "/=":
+        operator = " / ";
+        break;
+      case "*=":
+        operator = " * ";
+        break;
+      case "&&=":
+        operator = " && ";
+        break;
+      default:
+        return undefined;
+    }
+
+    const target = high.findDirectExpression(Expressions.Target)?.concatTokens();
+    if (target === undefined) {
+      return;
+    }
+
+    const sourceStart = high.findDirectExpression(Expressions.Source)?.getFirstChild()?.getFirstToken().getStart();
+    if (sourceStart === undefined) {
+      return;
+    }
+
+    const fix = EditHelper.replaceRange(lowFile, op.getStart(), sourceStart, "= " + target + operator);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Expand operator", this.getMetadata().key, this.conf.severity, fix);
   }
 
   // must be very simple string templates, like "|{ ls_line-no ALPHA = IN }|"

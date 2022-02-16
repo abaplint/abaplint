@@ -32,7 +32,8 @@ export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
     {name: "REUSE_ALV_GRID_DISPLAY", replace: "use CL_SALV_TABLE=>FACTORY or CL_GUI_ALV_GRID"},
     {name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC"},
     {name: "FUNCTION_EXISTS", replace: "surround with try-catch CX_SY_DYN_CALL_ILLEGAL_METHOD instead"},
-
+    {name: "IGN_TIMESTAMP_DIFFERENCE", replace: "use CL_ABAP_TSTMP"},
+    {name: "IGN_TIMESTAMP_PLUSMINUS", replace: "use CL_ABAP_TSTMP"},
   ];
 }
 
@@ -44,7 +45,7 @@ export class FunctionModuleRecommendations extends ABAPRule {
     return {
       key: "function_module_recommendations",
       title: "Function Module Recommendations",
-      shortDescription: `Function Module Recommendations`,
+      shortDescription: `Suggests replacements for various function modules`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/53/`,
       tags: [RuleTag.SingleFile],
     };
