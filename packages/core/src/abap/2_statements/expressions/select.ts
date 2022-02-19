@@ -1,5 +1,5 @@
 import {seq, per, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
-import {SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries} from ".";
+import {SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
@@ -30,7 +30,7 @@ export class Select extends Expression {
     const ret = seq("SELECT",
                     altPrio("DISTINCT", optPrio(seq("SINGLE", optPrio("FOR UPDATE")))),
                     optPrio(altPrio(SQLFieldList, paren)),
-                    perm);
+                    perm, optPrio(SQLHints));
 
     return ret;
   }
