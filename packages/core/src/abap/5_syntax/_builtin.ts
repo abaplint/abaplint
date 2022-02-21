@@ -1107,9 +1107,9 @@ export class BuiltIn {
     components.push({name: "folen", type: new IntegerType()});
     components.push({name: "host", type: new CharacterType(32, "sy-host")});
     components.push({name: "index", type: new IntegerType()});
+    components.push({name: "input", type: new CharacterType(1, "sy-input")});
     components.push({name: "langu", type: new CharacterType(1, "sy-langu")});
     components.push({name: "ldbpg", type: new CharacterType(40, "sy-ldbpg")});
-    components.push({name: "pdest", type: new CharacterType(4, "sy-pdest")});
     components.push({name: "lilli", type: new IntegerType()});
     components.push({name: "linct", type: new IntegerType()});
     components.push({name: "linno", type: new IntegerType()});
@@ -1132,6 +1132,7 @@ export class BuiltIn {
     components.push({name: "msgv4", type: new CharacterType(50, "sy-msgv4")});
     components.push({name: "opsys", type: new CharacterType(10, "sy-opsys")});
     components.push({name: "pagno", type: new IntegerType()});
+    components.push({name: "pdest", type: new CharacterType(4, "sy-pdest")});
     components.push({name: "pfkey", type: new CharacterType(20, "sy-pfkey")});
     components.push({name: "repid", type: new CharacterType(40, "sy-repid")});
     components.push({name: "saprl", type: new CharacterType(4, "sy-saprl")});

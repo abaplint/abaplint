@@ -4,7 +4,7 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class CondBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const when = seq("WHEN", Cond, "THEN", alt(Source, Throw));
+    const when = seq("WHEN", alt(Cond, Source), "THEN", alt(Source, Throw));
 
     const elsee = seq("ELSE", alt(Source, Throw));
 

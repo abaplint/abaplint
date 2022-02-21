@@ -1,4 +1,4 @@
-import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio} from "../combi";
+import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio, plus} from "../combi";
 import {Constant, TypeName, Integer, SimpleFieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
@@ -25,7 +25,8 @@ export class TypeTable extends Expression {
     const rangeLike = seq("RANGE OF", SimpleFieldChain, opt(header), opt(initial));
 
     const typetable = seq(normal1,
-                          opt(per(header, initial, plusPrio(TypeTableKey))));
+                          alt(opt(per(header, initial, plusPrio(TypeTableKey))),
+                              seq(plus(TypeTableKey), optPrio(initial))));
 
     const occurs = seq("OCCURS", Integer);
 

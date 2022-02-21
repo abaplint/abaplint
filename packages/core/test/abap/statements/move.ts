@@ -231,6 +231,15 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   `DATA(dat2) = CONV string( 'sdf').`,
   `DATA(sdfs) = SWITCH string( val WHEN 2 THEN 'sdf').`,
   `<ls_list>-sdfds = |{ lv_order_date DATE = (cl_abap_format=>d_user) }|.`,
+  `result = REDUCE string( INIT s = 0
+      FOR  i = 0 WHILE i < strlen( input )
+      NEXT s += COND i( LET current_val = to_upper( input+i(1) ) IN
+      WHEN contains( val = 'QZ' sub = current_val ) THEN 10
+      ELSE 0
+      ) ).`,
+  `result = REDUCE string( INIT s = 0
+      FOR  i = 0 WHILE i < strlen( input )
+      NEXT s += 2 ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);
