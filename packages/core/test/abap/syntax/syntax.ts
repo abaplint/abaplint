@@ -6003,6 +6003,32 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("Error, variable not compatible", () => {
+    const abap = `
+  CLASS lcl1 DEFINITION.
+  ENDCLASS.
+
+  CLASS lcl1 IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl2 DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS method1 IMPORTING ref2 TYPE REF TO lcl2.
+  ENDCLASS.
+
+  CLASS lcl2 IMPLEMENTATION.
+    METHOD method1.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref1 TYPE REF TO lcl1.
+    lcl2=>method1( ref1 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`not compatible`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
