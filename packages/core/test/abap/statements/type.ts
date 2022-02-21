@@ -22,6 +22,11 @@ const tests = [
   "TYPES tty_log_out TYPE STANDARD TABLE OF ty_log_out WITH NON-UNIQUE DEFAULT KEY.",
   "TYPES foo TYPE moo BOXED.",
   "TYPES ty_streenode_2 LIKE streenode OCCURS 10.",
+  `TYPES foobar
+    TYPE SORTED TABLE OF ty_moo
+    WITH NON-UNIQUE KEY name
+    WITH UNIQUE SORTED KEY key_alias COMPONENTS alias
+    INITIAL SIZE 2.`,
 ];
 
 statementType(tests, "TYPE", Statements.Type);
