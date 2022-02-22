@@ -86,19 +86,32 @@ export class TypeUtils {
       if (slist.indexOf(tname) >= 0) {
         return true;
       }
+    } if (sid instanceof InterfaceDefinition && tid instanceof InterfaceDefinition) {
+      if (sid.getName().toUpperCase() === tname) {
+        return true;
+      }
+      if (sid.getImplementing().some(i => i.name === tname) ) {
+        return true;
+      }
+      const slist = this.listAllInterfaces(sid);
+      if (slist.indexOf(tname) >= 0) {
+        return true;
+      }
     }
     return false;
   }
 
-  private listAllInterfaces(cdef: ClassDefinition): string[] {
+  private listAllInterfaces(cdef: ClassDefinition | InterfaceDefinition): string[] {
     const ret = new Set<string>();
     const stack: string[] = [];
 
     // initialize
     cdef.getImplementing().forEach(i => stack.push(i.name));
-    const supers = this.listAllSupers(cdef);
-    for (const s of supers) {
-      this.scope.findClassDefinition(s)?.getImplementing().forEach(i => stack.push(i.name));
+    if (cdef instanceof ClassDefinition) {
+      const supers = this.listAllSupers(cdef);
+      for (const s of supers) {
+        this.scope.findClassDefinition(s)?.getImplementing().forEach(i => stack.push(i.name));
+      }
     }
 
     // main loop

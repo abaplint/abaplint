@@ -6173,6 +6173,20 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("READ TABLE, types ok, no error", () => {
+    const abap = `
+INTERFACE lif_sxml_attribute.
+  TYPES attributes TYPE STANDARD TABLE OF REF TO lif_sxml_attribute WITH DEFAULT KEY.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  DATA lt_attributes TYPE lif_sxml_attribute=>attributes.
+  DATA li_attribute TYPE REF TO lif_sxml_attribute.
+  READ TABLE lt_attributes INDEX 1 INTO li_attribute.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
