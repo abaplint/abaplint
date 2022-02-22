@@ -6198,8 +6198,8 @@ ENDCLASS.
 
 CLASS logger IMPLEMENTATION.
   METHOD drill_down_into_exception.
-    DATA dyn TYPE REF TO cx_dynamic_check.
-    drill_down_into_exception( dyn ).
+    DATA dyn TYPE REF TO cx_sy_dyn_call_error.
+    drill_down_into_exception( exception = dyn ).
   ENDMETHOD.
 ENDCLASS.`;
 
@@ -6213,10 +6213,16 @@ ENDCLASS.
 CLASS cx_dynamic_check IMPLEMENTATION.
 ENDCLASS.`;
 
+    const dyn_call = `CLASS cx_sy_dyn_call_error DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+ENDCLASS.
+CLASS cx_sy_dyn_call_error IMPLEMENTATION.
+ENDCLASS.`;
+
     const issues = runMulti([
       {filename: "logger.clas.abap", contents: abap},
       {filename: "cx_root.clas.abap", contents: root},
       {filename: "cx_dynamic_check.clas.abap", contents: dynamic},
+      {filename: "cx_sy_dyn_call_error.clas.abap", contents: dyn_call},
     ]);
     expect(issues.length).to.equals(0);
     expect(issues[0]?.getMessage()).to.equal(undefined);
