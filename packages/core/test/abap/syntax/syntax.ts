@@ -6187,6 +6187,41 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("move, inherit, types ok", () => {
+    const abap = `
+CLASS logger DEFINITION.
+  PUBLIC SECTION.
+    METHODS drill_down_into_exception
+      IMPORTING
+        exception TYPE REF TO cx_root.
+ENDCLASS.
+
+CLASS logger IMPLEMENTATION.
+  METHOD drill_down_into_exception.
+    DATA dyn TYPE REF TO cx_dynamic_check.
+    drill_down_into_exception( dyn ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const root = `CLASS cx_root DEFINITION ABSTRACT PUBLIC.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.`;
+
+    const dynamic = `CLASS cx_dynamic_check DEFINITION PUBLIC INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_dynamic_check IMPLEMENTATION.
+ENDCLASS.`;
+
+    const issues = runMulti([
+      {filename: "logger.clas.abap", contents: abap},
+      {filename: "cx_root.clas.abap", contents: root},
+      {filename: "cx_dynamic_check.clas.abap", contents: dynamic},
+    ]);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
