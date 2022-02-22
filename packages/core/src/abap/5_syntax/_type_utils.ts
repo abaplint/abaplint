@@ -1,4 +1,4 @@
-import {ClassDefinition} from "../types";
+import {ClassDefinition, InterfaceDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CurrentScope} from "./_current_scope";
@@ -72,14 +72,17 @@ export class TypeUtils {
     if (sid instanceof ClassDefinition && tid instanceof ClassDefinition) {
       const tname = tid.getName().toUpperCase();
       if (sid.getName().toUpperCase() === tname) {
-// quick and easy,
         return true;
       }
-
       const slist = this.listAllSupers(sid);
       if (slist.indexOf(tname) >= 0) {
         return true;
       }
+    } else if (sid instanceof ClassDefinition && tid instanceof InterfaceDefinition) {
+      if (sid.getImplementing().some(i => i.name === tid.getName().toUpperCase()) ) {
+        return true;
+      }
+      // todo, interfaces implementing interfaces, super implementing interface
     }
     return false;
   }
