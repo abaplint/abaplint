@@ -1,9 +1,10 @@
+import {ClassDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 
 export class TypeUtils {
 
-  public static isCharLike(type: AbstractType | undefined): boolean {
+  public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
     } else if (type instanceof TableType && type.isWithHeader()) {
@@ -38,7 +39,7 @@ export class TypeUtils {
     return false;
   }
 
-  public static isHexLike(type: AbstractType | undefined): boolean {
+  public isHexLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
     } else if (type instanceof StructureType) {
@@ -58,7 +59,21 @@ export class TypeUtils {
     return false;
   }
 
-  public static isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+  public isOOAssignable(source: ObjectReferenceType, target: ObjectReferenceType): boolean {
+    const sid = source.getIdentifier();
+    const tid = target.getIdentifier();
+    if (sid instanceof ClassDefinition && tid instanceof ClassDefinition) {
+      if (sid.getName().toUpperCase() === tid.getName().toUpperCase()) {
+// quick and easy,
+        return true;
+      }
+
+      sid.getSuperClass();
+    }
+    return false;
+  }
+
+  public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
 /*
     console.dir(source);
     console.dir(target);
@@ -74,6 +89,8 @@ export class TypeUtils {
         return true;
       }
       return false;
+    } else if (target instanceof ObjectReferenceType && source instanceof ObjectReferenceType) {
+      return this.isOOAssignable(source, target);
     } else if (target instanceof ObjectReferenceType
         || target instanceof GenericObjectReferenceType) {
       if (source instanceof ObjectReferenceType

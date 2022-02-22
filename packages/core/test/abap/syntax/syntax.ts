@@ -6003,7 +6003,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("Error, variable not compatible", () => {
+  it.skip("Error, variable not compatible", () => {
     const abap = `
   CLASS lcl1 DEFINITION.
   ENDCLASS.
