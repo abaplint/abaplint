@@ -6100,6 +6100,23 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("move, types ok", () => {
+    const abap = `
+  CLASS cxx_root DEFINITION.
+  ENDCLASS.
+
+  CLASS cxx_root IMPLEMENTATION.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA previous_exception TYPE REF TO cxx_root.
+    DATA exception TYPE REF TO cxx_root.
+    previous_exception = exception.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
