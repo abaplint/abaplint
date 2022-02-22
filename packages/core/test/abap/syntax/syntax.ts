@@ -6144,6 +6144,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("move, void to other void, types ok", () => {
+    const abap = `
+    DATA v1 TYPE REF TO void1.
+    DATA v2 TYPE REF TO void2.
+    v1 = v2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
