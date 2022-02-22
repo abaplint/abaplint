@@ -4,29 +4,42 @@ import {ObjectReferenceType, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Source} from "./source";
+import {TypeUtils} from "../_type_utils";
 
 export class Cast {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+    const sourceNode = node.findDirectExpression(Expressions.Source);
+    if (sourceNode === undefined) {
+      throw new Error("Cast, source node not found");
     }
+
+    const sourceType = new Source().runSyntax(sourceNode, scope, filename);
+    let tt: AbstractType | undefined = undefined;
 
     const typeName = node.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken().getStr();
     if (typeName === undefined) {
       throw new Error("Cast, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
-      return targetType;
+      tt = targetType;
     } else if (typeName === "#") {
       throw new Error("Cast, todo, infer type");
     }
 
-    const found = scope.findObjectDefinition(typeName);
-    if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
-      return new VoidType(typeName);
-    } else if (found === undefined) {
-      throw new Error("Type \"" + typeName + "\" not found in scope, Cast");
+    if (tt === undefined) {
+      const found = scope.findObjectDefinition(typeName);
+      if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
+        tt = new VoidType(typeName);
+      } else if (found === undefined) {
+        throw new Error("Type \"" + typeName + "\" not found in scope, Cast");
+      } else {
+        tt = new ObjectReferenceType(found);
+      }
     }
 
-    return new ObjectReferenceType(found);
+    if (new TypeUtils(scope).isCastable(sourceType, tt) === false) {
+      throw new Error("Cast, incompatible types");
+    }
+
+    return tt;
   }
 }
