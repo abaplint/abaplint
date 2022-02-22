@@ -6241,6 +6241,28 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("deferred, ok", () => {
+    const abap = `
+INTERFACE zif_abapgit_log DEFERRED.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING ii_log TYPE REF TO zif_abapgit_log OPTIONAL.
+    DATA mi_log TYPE REF TO zif_abapgit_log READ-ONLY.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+    me->mi_log = ii_log.
+  ENDMETHOD.
+ENDCLASS.
+
+INTERFACE zif_abapgit_log.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
