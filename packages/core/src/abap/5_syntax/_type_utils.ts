@@ -69,8 +69,8 @@ export class TypeUtils {
   public isOOAssignable(source: ObjectReferenceType, target: ObjectReferenceType): boolean {
     const sid = source.getIdentifier();
     const tid = target.getIdentifier();
+    const tname = tid.getName().toUpperCase();
     if (sid instanceof ClassDefinition && tid instanceof ClassDefinition) {
-      const tname = tid.getName().toUpperCase();
       if (sid.getName().toUpperCase() === tname) {
         return true;
       }
@@ -79,12 +79,38 @@ export class TypeUtils {
         return true;
       }
     } else if (sid instanceof ClassDefinition && tid instanceof InterfaceDefinition) {
-      if (sid.getImplementing().some(i => i.name === tid.getName().toUpperCase()) ) {
+      if (sid.getImplementing().some(i => i.name === tname) ) {
         return true;
       }
-      // todo, interfaces implementing interfaces, super implementing interface
+      const slist = this.listAllInterfaces(sid);
+      if (slist.indexOf(tname) >= 0) {
+        return true;
+      }
     }
     return false;
+  }
+
+  private listAllInterfaces(cdef: ClassDefinition): string[] {
+    const ret = new Set<string>();
+    const stack: string[] = [];
+
+    // initialize
+    cdef.getImplementing().forEach(i => stack.push(i.name));
+    const supers = this.listAllSupers(cdef);
+    for (const s of supers) {
+      this.scope.findClassDefinition(s)?.getImplementing().forEach(i => stack.push(i.name));
+    }
+
+    // main loop
+    while (stack.length > 0) {
+      const intf = stack.pop()!.toUpperCase();
+      ret.add(intf);
+
+      const idef = this.scope.findInterfaceDefinition(intf);
+      idef?.getImplementing().forEach(i => stack.push(i.name));
+    }
+
+    return Array.from(ret.values());
   }
 
   private listAllSupers(cdef: ClassDefinition): string[] {
