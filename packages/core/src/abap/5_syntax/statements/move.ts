@@ -38,7 +38,7 @@ export class Move implements StatementSyntax {
       targetType = sourceType;
     }
 
-    if (new TypeUtils().isAssignable(sourceType, targetType) === false) {
+    if (new TypeUtils(scope).isAssignable(sourceType, targetType) === false) {
       throw new Error("Incompatible types");
     }
   }

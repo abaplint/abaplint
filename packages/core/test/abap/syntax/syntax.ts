@@ -6003,7 +6003,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("Error, variable not compatible", () => {
+  it("Error, variable not compatible", () => {
     const abap = `
   CLASS lcl1 DEFINITION.
   ENDCLASS.
@@ -6027,6 +6027,31 @@ START-OF-SELECTION.
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.contain(`not compatible`);
+  });
+
+  it("inheritance, types ok", () => {
+    const abap = `
+  CLASS lcl1 DEFINITION.
+  ENDCLASS.
+
+  CLASS lcl1 IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl2 DEFINITION INHERITING FROM lcl1.
+    PUBLIC SECTION.
+      CLASS-METHODS method1 IMPORTING ref2 TYPE REF TO lcl1.
+  ENDCLASS.
+
+  CLASS lcl2 IMPLEMENTATION.
+    METHOD method1.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref2 TYPE REF TO lcl2.
+    lcl2=>method1( ref2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 // todo, static method cannot access instance attributes

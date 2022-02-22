@@ -1,8 +1,15 @@
 import {ClassDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
+import {CurrentScope} from "./_current_scope";
 
 export class TypeUtils {
+  // scope is needed to determine class hieraracy for typing
+  private readonly scope: CurrentScope;
+
+  public constructor(scope: CurrentScope) {
+    this.scope = scope;
+  }
 
   public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
@@ -63,14 +70,28 @@ export class TypeUtils {
     const sid = source.getIdentifier();
     const tid = target.getIdentifier();
     if (sid instanceof ClassDefinition && tid instanceof ClassDefinition) {
-      if (sid.getName().toUpperCase() === tid.getName().toUpperCase()) {
+      const tname = tid.getName().toUpperCase();
+      if (sid.getName().toUpperCase() === tname) {
 // quick and easy,
         return true;
       }
 
-      sid.getSuperClass();
+      const slist = this.listAllSupers(sid);
+      if (slist.indexOf(tname) >= 0) {
+        return true;
+      }
     }
     return false;
+  }
+
+  private listAllSupers(cdef: ClassDefinition): string[] {
+    const ret: string[] = [];
+    let sup = cdef.getSuperClass();
+    while (sup !== undefined) {
+      ret.push(sup?.toUpperCase());
+      sup = this.scope.findClassDefinition(sup)?.getSuperClass()?.toUpperCase();
+    }
+    return ret;
   }
 
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
