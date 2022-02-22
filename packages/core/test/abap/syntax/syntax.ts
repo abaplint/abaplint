@@ -6228,6 +6228,19 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("NEW, infer type, ok", () => {
+    const abap = `
+  CLASS lcl_reader DEFINITION.
+  ENDCLASS.
+  CLASS lcl_reader IMPLEMENTATION.
+  ENDCLASS.
+  START-OF-SELECTION.
+    DATA lo_reader TYPE REF TO lcl_reader.
+    lo_reader = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
