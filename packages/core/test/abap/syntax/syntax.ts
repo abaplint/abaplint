@@ -6077,6 +6077,29 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("returning class implemementing intf, types ok", () => {
+    const abap = `
+  INTERFACE lif1.
+  ENDINTERFACE.
+
+  CLASS lcl2 DEFINITION.
+    PUBLIC SECTION.
+      INTERFACES lif1.
+      CLASS-METHODS method1 RETURNING VALUE(ref) TYPE REF TO lcl2.
+  ENDCLASS.
+
+  CLASS lcl2 IMPLEMENTATION.
+    METHOD method1.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref2 TYPE REF TO lif1.
+    ref2 = lcl2=>method1( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
