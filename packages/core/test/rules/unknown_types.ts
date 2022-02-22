@@ -1559,4 +1559,32 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("type pool and class", () => {
+    const pool = `
+TYPE-POOL abap.
+TYPES: BEGIN OF abap_componentdescr,
+         name TYPE string,
+         type TYPE REF TO zcl_abap_datadescr,
+       END OF abap_componentdescr.`;
+
+    const cl_abap_typedescr = `CLASS zcl_abap_typedescr DEFINITION.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_abap_typedescr IMPLEMENTATION.
+ENDCLASS.`;
+
+    const cl_abap_datadescr = `CLASS zcl_abap_datadescr DEFINITION PUBLIC INHERITING FROM zcl_abap_typedescr.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_abap_datadescr IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcl_abap_typedescr.clas.abap", contents: cl_abap_typedescr},
+      {filename: "zcl_abap_datadescr.clas.abap", contents: cl_abap_datadescr},
+      {filename: "abap.type.abap", contents: pool},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
