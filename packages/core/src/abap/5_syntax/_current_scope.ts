@@ -213,11 +213,6 @@ export class CurrentScope {
       return {found: false};
     }
 
-    const def = this.current?.findDeferred(name);
-    if (def !== undefined) {
-      return {found: true, id: def};
-    }
-
     const findLocalClass = this.current?.findClassDefinition(name);
     if (findLocalClass) {
       return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
@@ -236,6 +231,11 @@ export class CurrentScope {
     const globalIntf = this.reg.getObject("INTF", name);
     if (globalIntf) {
       return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
+    }
+
+    const def = this.current?.findDeferred(name);
+    if (def !== undefined) {
+      return {found: true, id: def};
     }
 
     return {found: false};

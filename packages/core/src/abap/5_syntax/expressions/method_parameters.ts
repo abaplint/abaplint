@@ -81,7 +81,7 @@ export class MethodParameters {
       new InlineData().runSyntax(inline, scope, filename, type);
     } else if (target) {
       const targetType = new Target().runSyntax(target, scope, filename);
-      if (targetType && TypeUtils.isAssignable(type, targetType) === false) {
+      if (targetType && new TypeUtils(scope).isAssignable(type, targetType) === false) {
         throw new Error("Method returning value not type compatible");
       }
     }
@@ -105,7 +105,7 @@ export class MethodParameters {
         new InlineData().runSyntax(inline, scope, filename, parameterType);
       } else if (item.targetType === undefined) {
         throw new Error("Could not determine target type");
-      } else if (item.targetType && TypeUtils.isAssignable(parameterType, item.targetType) === false) {
+      } else if (item.targetType && new TypeUtils(scope).isAssignable(parameterType, item.targetType) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
     }
@@ -124,7 +124,7 @@ export class MethodParameters {
         parameterType = parameter.getType();
       }
 
-      if (item.targetType && TypeUtils.isAssignable(parameterType, item.targetType) === false) {
+      if (item.targetType && new TypeUtils(scope).isAssignable(parameterType, item.targetType) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
 
@@ -149,7 +149,7 @@ export class MethodParameters {
       const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
       if (parameter === undefined) {
         throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
-      } else if (TypeUtils.isAssignable(parameter.getType(), item.sourceType) === false) {
+      } else if (new TypeUtils(scope).isAssignable(item.sourceType, parameter.getType()) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
       this.requiredParameters.delete(item.name);
