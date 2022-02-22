@@ -13,6 +13,7 @@ export class MethodSource {
 
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string) {
 
+// todo, rewrite the context finding, and/or restructure the expression?
     const context = new MethodCallChain().runSyntax(node, scope, filename);
 
     const last = node.getLastChild();
@@ -25,7 +26,7 @@ export class MethodSource {
         if (!(id instanceof ClassDefinition)) {
           id = scope.findObjectDefinition(id.getName());
         }
-        if (id instanceof ClassDefinition) {
+        if (id instanceof ClassDefinition) { // todo || id instanceof InterfaceDefinition) {
           const methodName = last.concatTokens().toUpperCase();
           const helper = new ObjectOriented(scope);
           const {method: foundMethod} = helper.searchMethodName(id, methodName);
