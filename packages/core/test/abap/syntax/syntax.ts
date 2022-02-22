@@ -6116,6 +6116,33 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("move, types ok, 2", () => {
+    const abap = `
+CLASS logger DEFINITION.
+  PUBLIC SECTION.
+    METHODS drill_down_into_exception
+      IMPORTING
+        exception TYPE REF TO cx_root.
+ENDCLASS.
+
+CLASS logger IMPLEMENTATION.
+  METHOD drill_down_into_exception.
+    DATA previous_exception TYPE REF TO cx_root.
+    previous_exception = exception.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const root = `CLASS cx_root DEFINITION ABSTRACT PUBLIC.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.`;
+
+    const issues = runMulti([
+      {filename: "logger.clas.abap", contents: abap},
+      {filename: "cx_root.clas.abap", contents: root}]);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

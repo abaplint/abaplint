@@ -223,9 +223,9 @@ export class CurrentScope {
       return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
     }
 
-    const globalClas = this.reg.getObject("CLAS", name);
+    const globalClas = this.reg.getObject("CLAS", name) as Class | undefined;
     if (globalClas) {
-      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
+      return {found: true, id: globalClas.getDefinition(), type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
     }
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
@@ -233,9 +233,9 @@ export class CurrentScope {
       return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
     }
 
-    const globalIntf = this.reg.getObject("INTF", name);
+    const globalIntf = this.reg.getObject("INTF", name) as Interface | undefined;
     if (globalIntf) {
-      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
+      return {found: true, id: globalIntf.getDefinition(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
     }
 
     return {found: false};
