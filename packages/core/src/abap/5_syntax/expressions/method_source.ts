@@ -7,6 +7,7 @@ import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ObjectOriented} from "../_object_oriented";
+import {Identifier} from "../../4_file_information/_identifier";
 
 export class MethodSource {
 
@@ -20,7 +21,10 @@ export class MethodSource {
       new Dynamic().runSyntax(first!, scope, filename);
     } else if (last instanceof ExpressionNode && last.get() instanceof Expressions.MethodName) {
       if (context instanceof ObjectReferenceType) {
-        const id = context.getIdentifier();
+        let id: Identifier | undefined = context.getIdentifier();
+        if (!(id instanceof ClassDefinition)) {
+          id = scope.findObjectDefinition(id.getName());
+        }
         if (id instanceof ClassDefinition) {
           const methodName = last.concatTokens().toUpperCase();
           const helper = new ObjectOriented(scope);

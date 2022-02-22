@@ -6263,6 +6263,34 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CALL METHOD with basic reference, method not found, expect error", () => {
+    const abap = `
+CLASS logger DEFINITION.
+  PUBLIC SECTION.
+    METHODS drill_down_into_exception
+      IMPORTING
+        exception TYPE REF TO cx_root.
+ENDCLASS.
+
+CLASS logger IMPLEMENTATION.
+  METHOD drill_down_into_exception.
+    CALL METHOD exception->sdfsdfsdfs.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const root = `CLASS cx_root DEFINITION ABSTRACT PUBLIC.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.`;
+
+    const issues = runMulti([
+      {filename: "logger.clas.abap", contents: abap},
+      {filename: "cx_root.clas.abap", contents: root},
+    ]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("method not found");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
