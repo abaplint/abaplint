@@ -6153,6 +6153,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("cast, types ok", () => {
+    const abap = `
+  CLASS lcl1 DEFINITION.
+  ENDCLASS.
+  CLASS lcl1 IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl2 DEFINITION INHERITING FROM lcl1.
+  ENDCLASS.
+  CLASS lcl2 IMPLEMENTATION.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref1 TYPE REF TO lcl1.
+    DATA ref2 TYPE REF TO lcl2.
+    ref2 ?= ref1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

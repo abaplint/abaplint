@@ -38,7 +38,11 @@ export class Move implements StatementSyntax {
       targetType = sourceType;
     }
 
-    if (new TypeUtils(scope).isAssignable(sourceType, targetType) === false) {
+    if (node.findDirectTokenByText("?=")) {
+      if (new TypeUtils(scope).isCastable(sourceType, targetType) === false) {
+        throw new Error("Incompatible types");
+      }
+    } else if (new TypeUtils(scope).isAssignable(sourceType, targetType) === false) {
       throw new Error("Incompatible types");
     }
   }

@@ -123,6 +123,11 @@ export class TypeUtils {
     return ret;
   }
 
+  public isCastable(_source: AbstractType | undefined, _target: AbstractType | undefined): boolean {
+// todo
+    return true;
+  }
+
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
 /*
     console.dir(source);
