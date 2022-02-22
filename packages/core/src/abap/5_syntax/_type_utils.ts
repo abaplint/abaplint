@@ -67,8 +67,22 @@ export class TypeUtils {
   }
 
   public isOOAssignable(source: ObjectReferenceType, target: ObjectReferenceType): boolean {
-    const sid = source.getIdentifier();
-    const tid = target.getIdentifier();
+    let sid = source.getIdentifier();
+    if (!(sid instanceof ClassDefinition || sid instanceof InterfaceDefinition)) {
+      const found = this.scope.findObjectDefinition(sid.getName());
+      if (found) {
+        sid = found;
+      }
+    }
+
+    let tid = target.getIdentifier();
+    if (!(tid instanceof ClassDefinition || tid instanceof InterfaceDefinition)) {
+      const found = this.scope.findObjectDefinition(tid.getName());
+      if (found) {
+        tid = found;
+      }
+    }
+
     const tname = tid.getName().toUpperCase();
     if (sid instanceof ClassDefinition && tid instanceof ClassDefinition) {
       if (sid.getName().toUpperCase() === tname) {
@@ -86,7 +100,7 @@ export class TypeUtils {
       if (slist.indexOf(tname) >= 0) {
         return true;
       }
-    } if (sid instanceof InterfaceDefinition && tid instanceof InterfaceDefinition) {
+    } else if (sid instanceof InterfaceDefinition && tid instanceof InterfaceDefinition) {
       if (sid.getName().toUpperCase() === tname) {
         return true;
       }
