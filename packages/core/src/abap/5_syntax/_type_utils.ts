@@ -72,6 +72,8 @@ export class TypeUtils {
       const found = this.scope.findObjectDefinition(sid.getName());
       if (found) {
         sid = found;
+      } else {
+        return false;
       }
     }
 
@@ -80,6 +82,8 @@ export class TypeUtils {
       const found = this.scope.findObjectDefinition(tid.getName());
       if (found) {
         tid = found;
+      } else {
+        return false;
       }
     }
 
