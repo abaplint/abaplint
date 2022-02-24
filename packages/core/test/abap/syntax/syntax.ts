@@ -6010,6 +6010,266 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Error, variable not compatible", () => {
+    const abap = `
+  CLASS lcl1 DEFINITION.
+  ENDCLASS.
+
+  CLASS lcl1 IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl2 DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS method1 IMPORTING ref2 TYPE REF TO lcl2.
+  ENDCLASS.
+
+  CLASS lcl2 IMPLEMENTATION.
+    METHOD method1.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref1 TYPE REF TO lcl1.
+    lcl2=>method1( ref1 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`not compatible`);
+  });
+
+  it("inheritance, types ok", () => {
+    const abap = `
+  CLASS lcl1 DEFINITION.
+  ENDCLASS.
+
+  CLASS lcl1 IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl2 DEFINITION INHERITING FROM lcl1.
+    PUBLIC SECTION.
+      CLASS-METHODS method1 IMPORTING ref2 TYPE REF TO lcl1.
+  ENDCLASS.
+
+  CLASS lcl2 IMPLEMENTATION.
+    METHOD method1.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref2 TYPE REF TO lcl2.
+    lcl2=>method1( ref2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("implements interface, types ok", () => {
+    const abap = `
+  INTERFACE lif1.
+  ENDINTERFACE.
+
+  CLASS lcl2 DEFINITION.
+    PUBLIC SECTION.
+      INTERFACES lif1.
+      CLASS-METHODS method1 IMPORTING ref2 TYPE REF TO lif1.
+  ENDCLASS.
+
+  CLASS lcl2 IMPLEMENTATION.
+    METHOD method1.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref2 TYPE REF TO lcl2.
+    lcl2=>method1( ref2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("returning class implemementing intf, types ok", () => {
+    const abap = `
+  INTERFACE lif1.
+  ENDINTERFACE.
+
+  CLASS lcl2 DEFINITION.
+    PUBLIC SECTION.
+      INTERFACES lif1.
+      CLASS-METHODS method1 RETURNING VALUE(ref) TYPE REF TO lcl2.
+  ENDCLASS.
+
+  CLASS lcl2 IMPLEMENTATION.
+    METHOD method1.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref2 TYPE REF TO lif1.
+    ref2 = lcl2=>method1( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("move, types ok", () => {
+    const abap = `
+  CLASS cxx_root DEFINITION.
+  ENDCLASS.
+
+  CLASS cxx_root IMPLEMENTATION.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA previous_exception TYPE REF TO cxx_root.
+    DATA exception TYPE REF TO cxx_root.
+    previous_exception = exception.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("move, types ok, 2", () => {
+    const abap = `
+CLASS logger DEFINITION.
+  PUBLIC SECTION.
+    METHODS drill_down_into_exception
+      IMPORTING
+        exception TYPE REF TO cx_root.
+ENDCLASS.
+
+CLASS logger IMPLEMENTATION.
+  METHOD drill_down_into_exception.
+    DATA previous_exception TYPE REF TO cx_root.
+    previous_exception = exception.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const root = `CLASS cx_root DEFINITION ABSTRACT PUBLIC.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.`;
+
+    const issues = runMulti([
+      {filename: "logger.clas.abap", contents: abap},
+      {filename: "cx_root.clas.abap", contents: root}]);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("move, void to other void, types ok", () => {
+    const abap = `
+    DATA v1 TYPE REF TO void1.
+    DATA v2 TYPE REF TO void2.
+    v1 = v2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("cast, types ok", () => {
+    const abap = `
+  CLASS lcl1 DEFINITION.
+  ENDCLASS.
+  CLASS lcl1 IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl2 DEFINITION INHERITING FROM lcl1.
+  ENDCLASS.
+  CLASS lcl2 IMPLEMENTATION.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA ref1 TYPE REF TO lcl1.
+    DATA ref2 TYPE REF TO lcl2.
+    ref2 ?= ref1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("READ TABLE, types ok, no error", () => {
+    const abap = `
+INTERFACE lif_sxml_attribute.
+  TYPES attributes TYPE STANDARD TABLE OF REF TO lif_sxml_attribute WITH DEFAULT KEY.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  DATA lt_attributes TYPE lif_sxml_attribute=>attributes.
+  DATA li_attribute TYPE REF TO lif_sxml_attribute.
+  READ TABLE lt_attributes INDEX 1 INTO li_attribute.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("move, inherit, types ok", () => {
+    const abap = `
+CLASS logger DEFINITION.
+  PUBLIC SECTION.
+    METHODS drill_down_into_exception
+      IMPORTING
+        exception TYPE REF TO cx_root.
+ENDCLASS.
+
+CLASS logger IMPLEMENTATION.
+  METHOD drill_down_into_exception.
+    DATA dyn TYPE REF TO cx_sy_dyn_call_error.
+    drill_down_into_exception( exception = dyn ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const root = `CLASS cx_root DEFINITION ABSTRACT PUBLIC.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.`;
+
+    const dynamic = `CLASS cx_dynamic_check DEFINITION PUBLIC INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_dynamic_check IMPLEMENTATION.
+ENDCLASS.`;
+
+    const dyn_call = `CLASS cx_sy_dyn_call_error DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+ENDCLASS.
+CLASS cx_sy_dyn_call_error IMPLEMENTATION.
+ENDCLASS.`;
+
+    const issues = runMulti([
+      {filename: "logger.clas.abap", contents: abap},
+      {filename: "cx_root.clas.abap", contents: root},
+      {filename: "cx_dynamic_check.clas.abap", contents: dynamic},
+      {filename: "cx_sy_dyn_call_error.clas.abap", contents: dyn_call},
+    ]);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("NEW, infer type, ok", () => {
+    const abap = `
+  CLASS lcl_reader DEFINITION.
+  ENDCLASS.
+  CLASS lcl_reader IMPLEMENTATION.
+  ENDCLASS.
+  START-OF-SELECTION.
+    DATA lo_reader TYPE REF TO lcl_reader.
+    lo_reader = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("deferred, ok", () => {
+    const abap = `
+INTERFACE zif_abapgit_log DEFERRED.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING ii_log TYPE REF TO zif_abapgit_log OPTIONAL.
+    DATA mi_log TYPE REF TO zif_abapgit_log READ-ONLY.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+    me->mi_log = ii_log.
+  ENDMETHOD.
+ENDCLASS.
+
+INTERFACE zif_abapgit_log.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

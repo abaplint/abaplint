@@ -1049,4 +1049,25 @@ cl_voided=>void( bar = bar ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("raise with MESSAGE WITH", async () => {
+    const abap = `
+CLASS lcx_syntax_error DEFINITION CREATE PRIVATE.
+  PUBLIC SECTION.
+    CLASS-METHODS invalid_calculation_attempt
+      IMPORTING operator TYPE string
+                left     TYPE string
+                right    TYPE string
+                previous TYPE REF TO cx_root.
+ENDCLASS.
+
+CLASS lcx_syntax_error IMPLEMENTATION.
+  METHOD invalid_calculation_attempt.
+    RAISE EXCEPTION TYPE lcx_syntax_error MESSAGE e016 WITH operator left right
+      EXPORTING previous = previous.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

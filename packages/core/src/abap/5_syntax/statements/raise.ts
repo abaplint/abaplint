@@ -6,6 +6,7 @@ import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {MessageSource} from "../expressions/message_source";
+import {RaiseWith} from "../expressions/raise_with";
 
 export class Raise implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -47,6 +48,10 @@ export class Raise implements StatementSyntax {
       for (const s of param.findAllExpressions(Expressions.Source)) {
         new Source().runSyntax(s, scope, filename);
       }
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.RaiseWith)) {
+      new RaiseWith().runSyntax(s, scope, filename);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {

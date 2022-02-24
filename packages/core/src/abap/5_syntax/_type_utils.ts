@@ -1,9 +1,17 @@
+import {ClassDefinition, InterfaceDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
+import {CurrentScope} from "./_current_scope";
 
 export class TypeUtils {
+  // scope is needed to determine class hieraracy for typing
+  private readonly scope: CurrentScope;
 
-  public static isCharLike(type: AbstractType | undefined): boolean {
+  public constructor(scope: CurrentScope) {
+    this.scope = scope;
+  }
+
+  public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
     } else if (type instanceof TableType && type.isWithHeader()) {
@@ -38,7 +46,7 @@ export class TypeUtils {
     return false;
   }
 
-  public static isHexLike(type: AbstractType | undefined): boolean {
+  public isHexLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
     } else if (type instanceof StructureType) {
@@ -58,7 +66,107 @@ export class TypeUtils {
     return false;
   }
 
-  public static isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+  public isOOAssignable(source: ObjectReferenceType, target: ObjectReferenceType): boolean {
+    let sid = source.getIdentifier();
+    let tid = target.getIdentifier();
+
+    const tname = tid.getName().toUpperCase();
+    const sname = sid.getName().toUpperCase();
+
+    if (tname === sname) {
+      return true;
+    }
+
+    if (!(sid instanceof ClassDefinition || sid instanceof InterfaceDefinition)) {
+      const found = this.scope.findObjectDefinition(sid.getName());
+      if (found) {
+        sid = found;
+      } else {
+        return false;
+      }
+    }
+
+    if (!(tid instanceof ClassDefinition || tid instanceof InterfaceDefinition)) {
+      const found = this.scope.findObjectDefinition(tid.getName());
+      if (found) {
+        tid = found;
+      } else {
+        return false;
+      }
+    }
+
+    if (sid instanceof ClassDefinition && tid instanceof ClassDefinition) {
+      if (sname === tname) {
+        return true;
+      }
+      const slist = this.listAllSupers(sid);
+      if (slist.indexOf(tname) >= 0) {
+        return true;
+      }
+    } else if (sid instanceof ClassDefinition && tid instanceof InterfaceDefinition) {
+      if (sid.getImplementing().some(i => i.name === tname) ) {
+        return true;
+      }
+      const slist = this.listAllInterfaces(sid);
+      if (slist.indexOf(tname) >= 0) {
+        return true;
+      }
+    } else if (sid instanceof InterfaceDefinition && tid instanceof InterfaceDefinition) {
+      if (sname === tname) {
+        return true;
+      }
+      if (sid.getImplementing().some(i => i.name === tname) ) {
+        return true;
+      }
+      const slist = this.listAllInterfaces(sid);
+      if (slist.indexOf(tname) >= 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private listAllInterfaces(cdef: ClassDefinition | InterfaceDefinition): string[] {
+    const ret = new Set<string>();
+    const stack: string[] = [];
+
+    // initialize
+    cdef.getImplementing().forEach(i => stack.push(i.name));
+    if (cdef instanceof ClassDefinition) {
+      const supers = this.listAllSupers(cdef);
+      for (const s of supers) {
+        this.scope.findClassDefinition(s)?.getImplementing().forEach(i => stack.push(i.name));
+      }
+    }
+
+    // main loop
+    while (stack.length > 0) {
+      const intf = stack.pop()!.toUpperCase();
+      ret.add(intf);
+
+      const idef = this.scope.findInterfaceDefinition(intf);
+      idef?.getImplementing().forEach(i => stack.push(i.name));
+    }
+
+    return Array.from(ret.values());
+  }
+
+  private listAllSupers(cdef: ClassDefinition): string[] {
+    const ret: string[] = [];
+    let sup = cdef.getSuperClass();
+    while (sup !== undefined) {
+      ret.push(sup?.toUpperCase());
+      sup = this.scope.findClassDefinition(sup)?.getSuperClass()?.toUpperCase();
+    }
+    return ret;
+  }
+
+  public isCastable(_source: AbstractType | undefined, _target: AbstractType | undefined): boolean {
+// todo
+    return true;
+  }
+
+  public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
 /*
     console.dir(source);
     console.dir(target);
@@ -74,6 +182,8 @@ export class TypeUtils {
         return true;
       }
       return false;
+    } else if (target instanceof ObjectReferenceType && source instanceof ObjectReferenceType) {
+      return this.isOOAssignable(source, target);
     } else if (target instanceof ObjectReferenceType
         || target instanceof GenericObjectReferenceType) {
       if (source instanceof ObjectReferenceType

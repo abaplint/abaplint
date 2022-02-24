@@ -20,11 +20,11 @@ export class Shift implements StatementSyntax {
 
     const targetType = new Target().runSyntax(target, scope, filename);
     if (node.concatTokens().toUpperCase().includes(" IN BYTE MODE")) {
-      if (TypeUtils.isHexLike(targetType) === false) {
+      if (new TypeUtils(scope).isHexLike(targetType) === false) {
         throw new Error("Shift, Target not hex like");
       }
     } else {
-      if (TypeUtils.isCharLike(targetType) === false) {
+      if (new TypeUtils(scope).isCharLike(targetType) === false) {
         throw new Error("Shift, Target not char like");
       }
     }
