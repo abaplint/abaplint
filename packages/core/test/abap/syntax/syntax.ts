@@ -6291,6 +6291,18 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("method not found");
   });
 
+  it("FOR ALL ENTRIES IN []", () => {
+    const abap = `
+    DATA lt_ltext TYPE STANDARD TABLE OF testtest.
+    DATA gt_box1 TYPE STANDARD TABLE OF testtest.
+    SELECT spras FROM testtest INTO TABLE lt_ltext
+          FOR ALL ENTRIES IN gt_box1[]
+          WHERE spras = sy-langu
+          AND   field = gt_box1-field.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
