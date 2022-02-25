@@ -64,6 +64,7 @@ Current rules:
 * RAISE EXCEPTION ... MESSAGE
 * APPEND expression is outlined
 * Moving with +=, -=, /=, *=, &&= is expanded
+* line_exists and line_index is downported to READ TABLE
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -265,7 +266,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.replaceLineExists(high, lowFile, highSyntax);
+    found = this.replaceLineFunctions(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1257,12 +1258,13 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private replaceLineExists(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+  private replaceLineFunctions(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
     for (const r of spag?.getData().references || []) {
+      const func = r.position.getName().toUpperCase();
       if (r.referenceType === ReferenceType.BuiltinMethodReference
-          && r.position.getName().toUpperCase() === "LINE_EXISTS") {
+          && (func === "LINE_EXISTS" || func === "LINE_INDEX")) {
         const token = r.position.getToken();
 
         const expression = this.findMethodCallExpression(node, token);
@@ -1287,9 +1289,11 @@ ${indentation}    output = ${topTarget}.`;
         const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
+        const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
+
         const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + " = sy-subrc.\n" +
+          indentation + uniqueName + ` = ${sy}.\n` +
           indentation ;
         const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
         const start = expression.getFirstToken().getStart();
