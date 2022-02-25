@@ -20,7 +20,7 @@ export class SQLForAllEntries {
         throw new Error("FAE parameter must be table type");
       }
 
-      const name = s.concatTokens();
+      const name = s.concatTokens().replace("[]", "");
       scope.setAllowHeaderUse(name);
     }
   }
