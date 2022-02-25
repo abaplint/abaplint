@@ -1370,7 +1370,7 @@ DATA(result) = temp1.`;
     testFix(abap, expected);
   });
 
-  it.only("line_exists()", async () => {
+  it.skip("line_exists()", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   IF line_exists( lt_list[ table_line = 123 ] ).
