@@ -1382,6 +1382,7 @@ ENDFORM.`;
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   DATA temp1 LIKE sy-subrc.
   READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
   IF temp1 = 0.
     WRITE / 'hello'.
   ENDIF.

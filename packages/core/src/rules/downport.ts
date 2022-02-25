@@ -1287,7 +1287,8 @@ ${indentation}    output = ${topTarget}.`;
 
         const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation;
+          indentation + uniqueName + " = sy-subrc.\n" +
+          indentation ;
         const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
         const start = expression.getFirstToken().getStart();
         const end = expression.getLastToken().getEnd();
