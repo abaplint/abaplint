@@ -1391,4 +1391,25 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("line_exists(), index", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ 1 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list INDEX 1 TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });

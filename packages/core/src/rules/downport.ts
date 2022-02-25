@@ -1276,6 +1276,8 @@ ${indentation}    output = ${topTarget}.`;
             continue;
           } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
             condition = "WITH KEY ";
+          } else if (c.get() instanceof Expressions.Source && condition === "") {
+            condition = "INDEX ";
           }
           condition += c.concatTokens() + " ";
         }
