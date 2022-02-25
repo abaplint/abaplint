@@ -63,7 +63,7 @@ Current rules:
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * APPEND expression is outlined
-* Moving with +=, -=, /=, *=, &&=
+* Moving with +=, -=, /=, *=, &&= is expanded
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -265,7 +265,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    // todo, line_exists() should be replaced before this call
+    found = this.replaceLineExists(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    // note: line_exists() must be replaced before this call
     found = this.replaceTableExpression(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -275,8 +280,6 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (found) {
       return found;
     }
-
-    // todo, add more rules here
 
     return undefined;
   }
@@ -1230,7 +1233,6 @@ ${indentation}    output = ${topTarget}.`;
     }
   }
 
-
   private replaceXsdBool(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
@@ -1239,6 +1241,60 @@ ${indentation}    output = ${topTarget}.`;
           && r.position.getName().toUpperCase() === "XSDBOOL") {
         const token = r.position.getToken();
         const fix = EditHelper.replaceRange(lowFile, token.getStart(), token.getEnd(), "boolc");
+        return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
+      }
+    }
+
+    return undefined;
+  }
+
+  private findMethodCallExpression(node: StatementNode, token: Token) {
+    for (const m of node.findAllExpressions(Expressions.MethodCall)) {
+      if (m.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStart().equals(token.getStart())) {
+        return m;
+      }
+    }
+    return undefined;
+  }
+
+  private replaceLineExists(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
+
+    for (const r of spag?.getData().references || []) {
+      if (r.referenceType === ReferenceType.BuiltinMethodReference
+          && r.position.getName().toUpperCase() === "LINE_EXISTS") {
+        const token = r.position.getToken();
+
+        const expression = this.findMethodCallExpression(node, token);
+        if (expression === undefined) {
+          continue;
+        }
+
+        let condition = "";
+        for (const c of expression?.findFirstExpression(Expressions.TableExpression)?.getChildren() || []) {
+          if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
+            continue;
+          } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
+            condition = "WITH KEY ";
+          }
+          condition += c.concatTokens() + " ";
+        }
+
+        const tableName = expression?.findFirstExpression(Expressions.SourceField)?.concatTokens();
+
+        const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+        const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+
+        const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
+          indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
+          indentation + uniqueName + " = sy-subrc.\n" +
+          indentation ;
+        const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+        const start = expression.getFirstToken().getStart();
+        const end = expression.getLastToken().getEnd();
+        const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName + " = 0");
+        const fix = EditHelper.merge(fix2, fix1);
+
         return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
       }
     }

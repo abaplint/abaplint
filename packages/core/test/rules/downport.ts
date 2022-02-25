@@ -1370,9 +1370,7 @@ DATA(result) = temp1.`;
     testFix(abap, expected);
   });
 
-// ---------------------
-
-  it.skip("line_exists()", async () => {
+  it("line_exists()", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   IF line_exists( lt_list[ table_line = 123 ] ).
@@ -1381,8 +1379,11 @@ DATA(result) = temp1.`;
 ENDFORM.`;
 
     const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
   READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
-  IF sy-subrc = 0.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
     WRITE / 'hello'.
   ENDIF.
 ENDFORM.`;
