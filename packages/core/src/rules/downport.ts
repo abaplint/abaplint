@@ -1298,7 +1298,7 @@ ${indentation}    output = ${topTarget}.`;
         const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
         const start = expression.getFirstToken().getStart();
         const end = expression.getLastToken().getEnd();
-        const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName + " = 0");
+        const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName + (func === "LINE_EXISTS" ? " = 0" : ""));
         const fix = EditHelper.merge(fix2, fix1);
 
         return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
