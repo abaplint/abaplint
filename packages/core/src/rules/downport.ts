@@ -63,7 +63,7 @@ Current rules:
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * APPEND expression is outlined
-* Moving with +=, -=, /=, *=, &&=
+* Moving with +=, -=, /=, *=, &&= is expanded
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
