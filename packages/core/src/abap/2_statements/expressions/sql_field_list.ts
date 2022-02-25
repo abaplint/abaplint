@@ -1,5 +1,5 @@
 import {plusPrio, seq, ver, tok, Expression, optPrio, altPrio} from "../combi";
-import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation, SQLCase} from ".";
+import {Constant, SQLFieldName, Dynamic, SQLAggregation, SQLCase, SQLAsName} from ".";
 import {Version} from "../../../version";
 import {WAt, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class SQLFieldList extends Expression {
 
     const abap = ver(Version.v740sp05, seq(tok(WAt), SimpleFieldChain));
 
-    const as = seq("AS", Field);
+    const as = seq("AS", SQLAsName);
 
     const field = altPrio(SQLAggregation,
                           SQLCase,
