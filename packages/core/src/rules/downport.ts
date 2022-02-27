@@ -51,6 +51,8 @@ Current rules:
 * CONV is outlined
 * COND is outlined
 * REDUCE is outlined
+* SWITCH is outlined
+* APPEND expression is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 * LOOP AT method_call( ) is outlined
@@ -62,7 +64,6 @@ Current rules:
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
-* APPEND expression is outlined
 * Moving with +=, -=, /=, *=, &&= is expanded
 * line_exists and line_index is downported to READ TABLE
 
@@ -222,6 +223,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.outlineReduce(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineSwitch(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -841,6 +847,69 @@ ${indentation}    output = ${topTarget}.`;
       end = "ENDLOOP";
     }
     return {body, end};
+  }
+
+  private outlineSwitch(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
+      const firstToken = i.getFirstToken();
+      if (firstToken.getStr().toUpperCase() !== "SWITCH") {
+        continue;
+      }
+
+      const type = this.findType(i, lowFile, highSyntax);
+      if (type === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      let body = "";
+      let name = "";
+
+      const switchBody = i.findDirectExpression(Expressions.SwitchBody);
+      if (switchBody === undefined) {
+        continue;
+      }
+
+      for (const l of switchBody?.findDirectExpression(Expressions.Let)?.findDirectExpressions(Expressions.InlineFieldDefinition) || []) {
+        name = l.getFirstToken().getStr();
+        body += indentation + `DATA(${name}) = ${switchBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
+      }
+
+      body += `DATA ${uniqueName} TYPE ${type}.\n`;
+      let firstSource = false;
+      let inWhen = false;
+      for (const c of switchBody.getChildren()) {
+        if (c.get() instanceof Expressions.Source && firstSource === false) {
+          body += indentation + `CASE ${c.concatTokens()}.`;
+          firstSource = true;
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "THEN") {
+          inWhen = true;
+          body += ".\n";
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "WHEN") {
+          inWhen = false;
+          body += `\n${indentation}  WHEN `;
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "OR") {
+          body += ` OR `;
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "ELSE") {
+          inWhen = true;
+          body += `\n${indentation}  WHEN OTHERS.\n`;
+        } else if (inWhen === false) {
+          body += c.concatTokens();
+        } else {
+          body += indentation + "    " + uniqueName + " = " + c.concatTokens() + ".";
+        }
+      }
+      body += "\n" + indentation + "ENDCASE.\n" + indentation;
+
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), body);
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, firstToken, "Downport SWITCH", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
   }
 
   private outlineReduce(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

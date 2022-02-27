@@ -1433,4 +1433,31 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("Basic SWITCH", async () => {
+    const abap = `
+  DATA result TYPE string.
+  DATA asset_type TYPE string.
+  result = SWITCH #(
+    asset_type
+    WHEN 'CSS' THEN |temp1|
+    WHEN 'HTML' THEN |sdfs|
+    ELSE |sdf| ).`;
+
+    const expected = `
+  DATA result TYPE string.
+  DATA asset_type TYPE string.
+  DATA temp1 TYPE string.
+  CASE asset_type.
+    WHEN 'CSS'.
+      temp1 = |temp1|.
+    WHEN 'HTML'.
+      temp1 = |sdfs|.
+    WHEN OTHERS.
+      temp1 = |sdf|.
+  ENDCASE.
+  result = temp1.`;
+
+    testFix(abap, expected);
+  });
+
 });
