@@ -51,19 +51,21 @@ Current rules:
 * CONV is outlined
 * COND is outlined
 * REDUCE is outlined
+* SWITCH is outlined
+* APPEND expression is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 * LOOP AT method_call( ) is outlined
 * VALUE # with structure fields
 * VALUE # with internal table lines
-* Table Expressions[ index ] are outlined
+* Table Expressions are outlined
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
-* APPEND expression is outlined
 * Moving with +=, -=, /=, *=, &&= is expanded
+* line_exists and line_index is downported to READ TABLE
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -225,6 +227,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineSwitch(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineCast(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -265,7 +272,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.replaceLineExists(high, lowFile, highSyntax);
+    found = this.replaceLineFunctions(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -483,10 +490,6 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       if (tableExpression === undefined) {
         continue;
       }
-      if (tableExpression.getChildren().length > 3) {
-// for now, only support the INDEX scenario
-        continue;
-      }
 
       let pre = "";
       let startToken: Token | undefined = undefined;
@@ -502,11 +505,23 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
         continue;
       }
 
+      let condition = "";
+      for (const c of tableExpression.getChildren() || []) {
+        if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
+          continue;
+        } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
+          condition = "WITH KEY ";
+        } else if (c.get() instanceof Expressions.Source && condition === "") {
+          condition = "INDEX ";
+        }
+        condition += c.concatTokens() + " ";
+      }
+
       const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const firstToken = node.getFirstToken();
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${pre}.
-${indentation}READ TABLE ${pre} INDEX ${tableExpression.findFirstExpression(Expressions.Source)?.concatTokens()} INTO ${uniqueName}.
+${indentation}READ TABLE ${pre} ${condition}INTO ${uniqueName}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
@@ -840,6 +855,69 @@ ${indentation}    output = ${topTarget}.`;
       end = "ENDLOOP";
     }
     return {body, end};
+  }
+
+  private outlineSwitch(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    for (const i of node.findAllExpressionsRecursive(Expressions.Source)) {
+      const firstToken = i.getFirstToken();
+      if (firstToken.getStr().toUpperCase() !== "SWITCH") {
+        continue;
+      }
+
+      const type = this.findType(i, lowFile, highSyntax);
+      if (type === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+      let body = "";
+      let name = "";
+
+      const switchBody = i.findDirectExpression(Expressions.SwitchBody);
+      if (switchBody === undefined) {
+        continue;
+      }
+
+      for (const l of switchBody?.findDirectExpression(Expressions.Let)?.findDirectExpressions(Expressions.InlineFieldDefinition) || []) {
+        name = l.getFirstToken().getStr();
+        body += indentation + `DATA(${name}) = ${switchBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
+      }
+
+      body += `DATA ${uniqueName} TYPE ${type}.\n`;
+      let firstSource = false;
+      let inWhen = false;
+      for (const c of switchBody.getChildren()) {
+        if (c.get() instanceof Expressions.Source && firstSource === false) {
+          body += indentation + `CASE ${c.concatTokens()}.`;
+          firstSource = true;
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "THEN") {
+          inWhen = true;
+          body += ".\n";
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "WHEN") {
+          inWhen = false;
+          body += `\n${indentation}  WHEN `;
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "OR") {
+          body += ` OR `;
+        } else if (c instanceof TokenNode && c.concatTokens().toUpperCase() === "ELSE") {
+          inWhen = true;
+          body += `\n${indentation}  WHEN OTHERS.\n`;
+        } else if (inWhen === false) {
+          body += c.concatTokens();
+        } else {
+          body += indentation + "    " + uniqueName + " = " + c.concatTokens() + ".";
+        }
+      }
+      body += "\n" + indentation + "ENDCASE.\n" + indentation;
+
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), body);
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, firstToken, "Downport SWITCH", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
   }
 
   private outlineReduce(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -1257,12 +1335,13 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private replaceLineExists(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+  private replaceLineFunctions(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
     for (const r of spag?.getData().references || []) {
+      const func = r.position.getName().toUpperCase();
       if (r.referenceType === ReferenceType.BuiltinMethodReference
-          && r.position.getName().toUpperCase() === "LINE_EXISTS") {
+          && (func === "LINE_EXISTS" || func === "LINE_INDEX")) {
         const token = r.position.getToken();
 
         const expression = this.findMethodCallExpression(node, token);
@@ -1276,6 +1355,8 @@ ${indentation}    output = ${topTarget}.`;
             continue;
           } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
             condition = "WITH KEY ";
+          } else if (c.get() instanceof Expressions.Source && condition === "") {
+            condition = "INDEX ";
           }
           condition += c.concatTokens() + " ";
         }
@@ -1285,14 +1366,16 @@ ${indentation}    output = ${topTarget}.`;
         const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
+        const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
+
         const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + " = sy-subrc.\n" +
+          indentation + uniqueName + ` = ${sy}.\n` +
           indentation ;
         const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
         const start = expression.getFirstToken().getStart();
         const end = expression.getLastToken().getEnd();
-        const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName + " = 0");
+        const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName + (func === "LINE_EXISTS" ? " = 0" : ""));
         const fix = EditHelper.merge(fix2, fix1);
 
         return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);

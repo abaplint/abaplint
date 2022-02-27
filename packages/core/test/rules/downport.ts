@@ -1391,4 +1391,96 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("line_exists(), index", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ 1 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list INDEX 1 TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("line_index()", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_index( lt_list[ table_line = 123 ] ) = 2.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
+  temp1 = sy-tabix.
+  IF temp1 = 2.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("Basic SWITCH", async () => {
+    const abap = `
+  DATA result TYPE string.
+  DATA asset_type TYPE string.
+  result = SWITCH #(
+    asset_type
+    WHEN 'CSS' THEN |temp1|
+    WHEN 'HTML' THEN |sdfs|
+    ELSE |sdf| ).`;
+
+    const expected = `
+  DATA result TYPE string.
+  DATA asset_type TYPE string.
+  DATA temp1 TYPE string.
+  CASE asset_type.
+    WHEN 'CSS'.
+      temp1 = |temp1|.
+    WHEN 'HTML'.
+      temp1 = |sdfs|.
+    WHEN OTHERS.
+      temp1 = |sdf|.
+  ENDCASE.
+  result = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("Table expression, by component", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
+WRITE tab[ foo = 2 ]-foo.`;
+
+    const expected = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF tab.
+READ TABLE tab WITH KEY foo = 2 INTO temp1.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+WRITE temp1-foo.`;
+
+    testFix(abap, expected);
+  });
+
 });
