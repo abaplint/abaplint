@@ -1460,4 +1460,27 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("Table expression, by component", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
+WRITE tab[ foo = 2 ]-foo.`;
+
+    const expected = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF tab.
+READ TABLE tab WITH KEY foo = 2 INTO temp1.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+WRITE temp1-foo.`;
+
+    testFix(abap, expected);
+  });
+
 });

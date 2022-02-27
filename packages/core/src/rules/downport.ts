@@ -58,7 +58,7 @@ Current rules:
 * LOOP AT method_call( ) is outlined
 * VALUE # with structure fields
 * VALUE # with internal table lines
-* Table Expressions[ index ] are outlined
+* Table Expressions are outlined
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
@@ -490,10 +490,6 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       if (tableExpression === undefined) {
         continue;
       }
-      if (tableExpression.getChildren().length > 3) {
-// for now, only support the INDEX scenario
-        continue;
-      }
 
       let pre = "";
       let startToken: Token | undefined = undefined;
@@ -509,11 +505,23 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
         continue;
       }
 
+      let condition = "";
+      for (const c of tableExpression.getChildren() || []) {
+        if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
+          continue;
+        } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
+          condition = "WITH KEY ";
+        } else if (c.get() instanceof Expressions.Source && condition === "") {
+          condition = "INDEX ";
+        }
+        condition += c.concatTokens() + " ";
+      }
+
       const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const firstToken = node.getFirstToken();
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${pre}.
-${indentation}READ TABLE ${pre} INDEX ${tableExpression.findFirstExpression(Expressions.Source)?.concatTokens()} INTO ${uniqueName}.
+${indentation}READ TABLE ${pre} ${condition}INTO ${uniqueName}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
