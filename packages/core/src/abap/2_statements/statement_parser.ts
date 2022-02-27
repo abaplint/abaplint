@@ -136,7 +136,9 @@ export class StatementParser {
     const result: StatementNode[] = [];
 
     for (let statement of wa.statements) {
-      if (statement.get() instanceof Unknown) {
+      // dont use CALL METHOD, when executing lazy, it easily gives a Move for the last statment if lazy logic is evaluated
+      if (statement.get() instanceof Unknown
+          && statement.concatTokens().toUpperCase().startsWith("CALL METHOD ") === false) {
         for (const {first, second} of this.buildSplits(statement.getTokens())) {
           const s = this.categorizeStatement(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(second)));
           if (!(s.get() instanceof Unknown)) {
