@@ -1,9 +1,10 @@
 import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../abap/2_statements/statements";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {ExpressionNode, TokenNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
 
@@ -70,10 +71,30 @@ ENDIF.
       }
     }
 
+    for (const m of structure.findAllStatements(Statements.Move)) {
+      issues.push(...this.analyzeMove(file, m));
+    }
+
     return issues;
   }
 
 ////////////////////
+
+  private analyzeMove(file: ABAPFile, m: StatementNode): Issue[] {
+    const issues: Issue[] = [];
+
+    const children = m.getChildren();
+    const last = children[ children.length - 2];
+    const lastChildren = last.getChildren();
+    if (lastChildren.length === 3
+        && lastChildren[0].getFirstToken().getStr() === "("
+        && lastChildren[2].getFirstToken().getStr() === ")") {
+      const issue = Issue.atToken(file, last.getFirstToken(), "Too many parentheses", this.getMetadata().key, this.conf.severity);
+      issues.push(issue);
+    }
+
+    return issues;
+  }
 
   private analyze(file: ABAPFile, cond: ExpressionNode): Issue[] {
     const issues: Issue[] = [];
