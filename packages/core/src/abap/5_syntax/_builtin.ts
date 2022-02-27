@@ -1064,6 +1064,7 @@ export class BuiltIn {
     ret.push(this.buildConstant("col_heading", new IntegerType(), "1"));
     ret.push(this.buildConstant("col_key", new IntegerType(), "4"));
     ret.push(this.buildConstant("col_negative", new IntegerType(), "6"));
+    ret.push(this.buildConstant("col_group", new IntegerType(), "7"));
     ret.push(this.buildConstant("col_normal", new IntegerType(), "2"));
     ret.push(this.buildConstant("col_positive", new IntegerType(), "5"));
     ret.push(this.buildConstant("col_total", new IntegerType(), "3"));
