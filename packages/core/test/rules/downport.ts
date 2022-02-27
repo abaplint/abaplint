@@ -1519,4 +1519,11 @@ ls_entry = ls_meta-page[ identifier = |sdf| ispub = abap_true ].`;
     testFix(abap, expected);
   });
 
+  it("outline, SELECT COUNT", async () => {
+    const abap = `SELECT COUNT( * ) FROM zbar INTO @DATA(lv_count) WHERE foo = 'abc'.`;
+    const expected = `DATA lv_count TYPE i.
+SELECT COUNT( * ) FROM zbar INTO @lv_count WHERE foo = 'abc'.`;
+    testFix(abap, expected);
+  });
+
 });
