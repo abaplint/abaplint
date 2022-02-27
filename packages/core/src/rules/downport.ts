@@ -560,6 +560,8 @@ ${indentation}`);
       return undefined;
     } else if (source.findFirstExpression(Expressions.FieldLength)) {
       return undefined;
+    } else if (source.findFirstExpression(Expressions.TableExpression)) {
+      return undefined;
     }
 
     const targetName = target.findFirstExpression(Expressions.TargetField)?.concatTokens();

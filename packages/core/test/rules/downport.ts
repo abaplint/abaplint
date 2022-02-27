@@ -1494,4 +1494,29 @@ WRITE temp1-foo.`;
     testFix(abap, expected);
   });
 
+  it("inline and table expression", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         identifier TYPE string,
+         ispub      TYPE abap_bool,
+       END OF ty_type.
+DATA: BEGIN OF ls_meta,
+        page TYPE STANDARD TABLE OF ty_type,
+      END OF ls_meta.
+DATA(ls_entry) = ls_meta-page[ identifier = |sdf| ispub = abap_true ].`;
+
+    const expected = `
+TYPES: BEGIN OF ty_type,
+         identifier TYPE string,
+         ispub      TYPE abap_bool,
+       END OF ty_type.
+DATA: BEGIN OF ls_meta,
+        page TYPE STANDARD TABLE OF ty_type,
+      END OF ls_meta.
+DATA ls_entry TYPE ty_type.
+ls_entry = ls_meta-page[ identifier = |sdf| ispub = abap_true ].`;
+
+    testFix(abap, expected);
+  });
+
 });
