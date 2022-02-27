@@ -8,10 +8,11 @@ import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ObjectOriented} from "../_object_oriented";
 import {Identifier} from "../../4_file_information/_identifier";
+import {IMethodDefinition} from "../../types/_method_definition";
 
 export class MethodSource {
 
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string) {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): IMethodDefinition | VoidType | undefined {
 
 // todo, rewrite the context finding, and/or restructure the expression?
     const context = new MethodCallChain().runSyntax(node, scope, filename);
@@ -37,9 +38,10 @@ export class MethodSource {
             ooName: id.getName(),
             ooType: "CLAS"};
           scope.addReference(last.getFirstToken(), foundMethod, ReferenceType.MethodReference, filename, extra);
+          return foundMethod;
         }
       } else if (context instanceof VoidType) {
-        return;
+        return context;
       } else {
         throw new Error("MethodSource, not a object reference, " + node.concatTokens());
       }
@@ -60,6 +62,7 @@ export class MethodSource {
     }
     */
 
+    return undefined;
   }
 
 }

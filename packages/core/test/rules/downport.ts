@@ -1526,4 +1526,24 @@ SELECT COUNT( * ) FROM zbar INTO @lv_count WHERE foo = 'abc'.`;
     testFix(abap, expected);
   });
 
+  it.skip("CALL METHOD with CONV #", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = CONV #( 'abc' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `asdf`;
+    testFix(abap, expected);
+  });
+
 });
