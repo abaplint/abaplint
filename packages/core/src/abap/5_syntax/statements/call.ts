@@ -19,12 +19,12 @@ export class Call implements StatementSyntax {
     if (methodSource === undefined) {
       throw new Error("Call, child MethodSource not found");
     }
-    new MethodSource().runSyntax(methodSource, scope, filename);
+    const methodDef = new MethodSource().runSyntax(methodSource, scope, filename);
 
     const body = node.findDirectExpression(Expressions.MethodCallBody);
     if (body) {
       // todo, resolve the method definition above and pass, if possible, in case of dynamic pass void
-      new MethodCallBody().runSyntax(body, scope, filename, new VoidType("CallTODO"));
+      new MethodCallBody().runSyntax(body, scope, filename, methodDef || new VoidType("CallTODO"));
     }
 
   }

@@ -1519,4 +1519,47 @@ ls_entry = ls_meta-page[ identifier = |sdf| ispub = abap_true ].`;
     testFix(abap, expected);
   });
 
+  it("outline, SELECT COUNT", async () => {
+    const abap = `SELECT COUNT( * ) FROM zbar INTO @DATA(lv_count) WHERE foo = 'abc'.`;
+    const expected = `DATA lv_count TYPE i.
+SELECT COUNT( * ) FROM zbar INTO @lv_count WHERE foo = 'abc'.`;
+    testFix(abap, expected);
+  });
+
+  it("CALL METHOD with CONV #", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = CONV #( 'abc' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    DATA temp1 TYPE string.
+    temp1 = 'abc'.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = temp1.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });

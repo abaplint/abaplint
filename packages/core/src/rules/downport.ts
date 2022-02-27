@@ -392,6 +392,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       fieldDefinition = `DATA ${name} TYPE ${tableName}-${fields[0].concatTokens()}.`;
     } else if (fieldList.concatTokens() === "*") {
       fieldDefinition = `DATA ${name} TYPE ${tableName}.`;
+    } else if (fieldList.concatTokens().toUpperCase() === "COUNT( * )") {
+      fieldDefinition = `DATA ${name} TYPE i.`;
     } else {
       for (const f of fields) {
         const fieldName = f.concatTokens();
