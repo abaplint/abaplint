@@ -1300,7 +1300,9 @@ ${indentation}    output = ${topTarget}.`;
   private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult): string {
     const spag = highSyntax.spaghetti.lookupPosition(position, filename);
     if (spag === undefined) {
-      return "uniqueErrorSpag";
+      const name = "temprr" + this.counter;
+      this.counter++;
+      return name;
     }
 
     while (true) {
