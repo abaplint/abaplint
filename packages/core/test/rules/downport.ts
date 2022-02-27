@@ -1483,4 +1483,15 @@ WRITE temp1-foo.`;
     testFix(abap, expected);
   });
 
+  it("SELECT SINGLE star", async () => {
+    const abap = `
+  SELECT SINGLE * FROM zfoobar INTO @DATA(ls_cfg) WHERE field = 'MOO'.`;
+
+    const expected = `
+  DATA ls_cfg TYPE zfoobar.
+  SELECT SINGLE * FROM zfoobar INTO @ls_cfg WHERE field = 'MOO'.`;
+
+    testFix(abap, expected);
+  });
+
 });
