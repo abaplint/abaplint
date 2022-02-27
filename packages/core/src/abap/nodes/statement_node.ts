@@ -286,6 +286,23 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return undefined;
   }
 
+  public findExpressionsAfterToken(text: string): ExpressionNode[] {
+    const children = this.getChildren();
+    const ret = [];
+
+    for (let i = 0; i < children.length - 1; i++) {
+      const c = children[i];
+      const next = children[i + 1];
+      if (c instanceof TokenNode
+          && c.get().getStr().toUpperCase() === text.toUpperCase()
+          && next instanceof ExpressionNode) {
+        ret.push(next);
+      }
+    }
+
+    return ret;
+  }
+
 ////////////////////////////////
 
   private toTokens(b: INode): readonly Token[] {

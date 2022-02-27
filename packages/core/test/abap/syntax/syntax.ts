@@ -6321,6 +6321,14 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("MATCH OFFSET inline", () => {
+    const abap = `DATA lv_uri TYPE string.
+  FIND FIRST OCCURRENCE OF '/' IN SECTION OFFSET 7 OF lv_uri IGNORING CASE MATCH OFFSET DATA(lv_end_site_offset).
+  WRITE lv_end_site_offset.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

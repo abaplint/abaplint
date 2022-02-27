@@ -390,6 +390,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
     if (fields.length === 1) {
       fieldDefinition = `DATA ${name} TYPE ${tableName}-${fields[0].concatTokens()}.`;
+    } else if (fieldList.concatTokens() === "*") {
+      fieldDefinition = `DATA ${name} TYPE ${tableName}.`;
     } else {
       for (const f of fields) {
         const fieldName = f.concatTokens();
