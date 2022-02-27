@@ -18,6 +18,7 @@ const tests = [
   {abap: `IF NOT ( foo = bar AND moo = loo ). ENDIF.`, cnt: 0, fix: false},
   {abap: `IF foo = boo AND ( bar = lar AND moo = loo ). ENDIF.`, cnt: 1, fix: false},
   {abap: `IF foo IS NOT INITIAL AND NOT ( moo = bar AND field IS INITIAL ). ENDIF.`, cnt: 0, fix: false},
+  {abap: `ls_draw = ( lt_draw[ doknr = <fs_dir>-doknr ] ).`, cnt: 1, fix: false},
 ];
 
 testRule(tests, ManyParentheses);
