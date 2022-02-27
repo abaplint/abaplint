@@ -1562,4 +1562,50 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("CALL METHOD with CONV #", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string
+      EXPORTING
+        bar         TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    DATA lv TYPE string.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = CONV #( 'abc' )
+      IMPORTING
+        bar         = lv.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string
+      EXPORTING
+        bar         TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    DATA lv TYPE string.
+    DATA temp1 TYPE string.
+    temp1 = 'abc'.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = temp1
+      IMPORTING
+        bar         = lv.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });
