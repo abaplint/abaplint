@@ -430,6 +430,7 @@ ${indentation}`);
     if (targets.length !== 1) {
       return undefined;
     }
+
     const inlineData = targets[0].findFirstExpression(Expressions.InlineData);
     if (inlineData === undefined) {
       return undefined;
@@ -437,8 +438,9 @@ ${indentation}`);
 
     const sqlFrom = high.findAllExpressions(Expressions.SQLFromSource);
     if (sqlFrom.length !== 1) {
-      return undefined;
+      return Issue.atToken(lowFile, high.getFirstToken(), "Outlining join, todo", this.getMetadata().key, this.conf.severity);
     }
+
     const tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
     if (tableName === undefined) {
       return undefined;

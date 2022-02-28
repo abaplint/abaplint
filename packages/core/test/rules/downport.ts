@@ -1670,4 +1670,16 @@ lv_col = ''.`;
     testFix(abap, expected);
   });
 
+  it.skip("SELECT INNER JOIN", async () => {
+    const abap = `
+SELECT aufk~aufnr, afko~aufpl, afvc~objnr
+  FROM aufk
+  INNER JOIN afko ON afko~aufnr = aufk~aufnr
+  INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+  INTO TABLE @DATA(lt_data).`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
 });
