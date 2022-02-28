@@ -1608,4 +1608,17 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("APPEND INITIAL LINE, voided types", async () => {
+    const abap = `
+    DATA tab TYPE voided.
+    APPEND INITIAL LINE TO tab ASSIGNING FIELD-SYMBOL(<fs>).`;
+
+    const expected = `
+    DATA tab TYPE voided.
+    FIELD-SYMBOLS <fs> LIKE LINE OF tab.
+    APPEND INITIAL LINE TO tab ASSIGNING <fs>.`;
+
+    testFix(abap, expected);
+  });
+
 });

@@ -129,7 +129,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         const low = lowStatements[i];
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
-            || high.findFirstExpression(Expressions.InlineData)) {
+        || high.findFirstExpression(Expressions.InlineData)) {
           const issue = this.checkStatement(low, high, lowFile, highSyntax);
           if (issue) {
             ret.push(issue);
@@ -1138,15 +1138,22 @@ ${indentation}    output = ${topTarget}.`;
       if (spag === undefined) {
         continue;
       }
-      const found = spag.findVariable(name);
-      if (found === undefined) {
-        continue;
-      } else if (found.getType() instanceof VoidType) {
-        return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
-      }
-      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
 
-      const code = `FIELD-SYMBOLS ${name} TYPE ${type}.\n` +
+      let type = "";
+      if (node.concatTokens().toUpperCase().startsWith("APPEND INITIAL LINE TO ")) {
+        type = "LIKE LINE OF " + node.findFirstExpression(Expressions.Target)?.concatTokens();
+      } else {
+        const found = spag.findVariable(name);
+        if (found === undefined) {
+          continue;
+        } else if (found.getType() instanceof VoidType) {
+          return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
+        }
+        type = "TYPE ";
+        type += found.getType().getQualifiedName() ? found.getType().getQualifiedName()!.toLowerCase() : found.getType().toABAP();
+      }
+
+      const code = `FIELD-SYMBOLS ${name} ${type}.\n` +
         " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), name);
