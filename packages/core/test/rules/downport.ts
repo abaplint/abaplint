@@ -1608,4 +1608,41 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("APPEND INITIAL LINE, voided types", async () => {
+    const abap = `
+    DATA tab TYPE voided.
+    APPEND INITIAL LINE TO tab ASSIGNING FIELD-SYMBOL(<fs>).`;
+
+    const expected = `
+    DATA tab TYPE voided.
+    FIELD-SYMBOLS <fs> LIKE LINE OF tab.
+    APPEND INITIAL LINE TO tab ASSIGNING <fs>.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MAX inline", async () => {
+    const abap = `
+  SELECT MAX( field ) INTO @DATA(lv_field) FROM dbtab WHERE blah EQ 'sdf'.`;
+
+    const expected = `
+  DATA lv_field TYPE dbtab-field.
+  SELECT MAX( field ) INTO @lv_field FROM dbtab WHERE blah EQ 'sdf'.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression, voided type", async () => {
+    const abap = `
+    DATA lt_return2 TYPE voided.
+    DATA(ls_return2) = lt_return2[ type = 'E' ].`;
+
+    const expected = `
+    DATA lt_return2 TYPE voided.
+    DATA ls_return2 LIKE LINE OF lt_return2.
+    ls_return2 = lt_return2[ type = 'E' ].`;
+
+    testFix(abap, expected);
+  });
+
 });

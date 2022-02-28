@@ -129,7 +129,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         const low = lowStatements[i];
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
-            || high.findFirstExpression(Expressions.InlineData)) {
+        || high.findFirstExpression(Expressions.InlineData)) {
           const issue = this.checkStatement(low, high, lowFile, highSyntax);
           if (issue) {
             ret.push(issue);
@@ -394,6 +394,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       fieldDefinition = `DATA ${name} TYPE ${tableName}.`;
     } else if (fieldList.concatTokens().toUpperCase() === "COUNT( * )") {
       fieldDefinition = `DATA ${name} TYPE i.`;
+    } else if (fieldList.getChildren().length === 1 && fieldList.getChildren()[0].get() instanceof Expressions.SQLAggregation) {
+      const c = fieldList.getChildren()[0];
+      if (c instanceof ExpressionNode) {
+        const concat = c.findFirstExpression(Expressions.SQLArithmetics)?.concatTokens();
+        fieldDefinition = `DATA ${name} TYPE ${tableName}-${concat}.`;
+      }
     } else {
       for (const f of fields) {
         const fieldName = f.concatTokens();
@@ -551,6 +557,7 @@ ${indentation}`);
       return undefined;
     }
 
+    let type = "";
     const source = node.findFirstExpression(Expressions.Source);
     if (source === undefined) {
       return undefined;
@@ -563,14 +570,24 @@ ${indentation}`);
     } else if (source.findFirstExpression(Expressions.FieldLength)) {
       return undefined;
     } else if (source.findFirstExpression(Expressions.TableExpression)) {
-      return undefined;
+      const chain = source.findDirectExpression(Expressions.FieldChain);
+      if (chain !== undefined
+          && chain.getChildren().length === 2
+          && chain.getChildren()[0].get() instanceof Expressions.SourceField
+          && chain.getChildren()[1].get() instanceof Expressions.TableExpression) {
+        type = "LINE OF " + chain.getChildren()[0].concatTokens();
+      } else {
+        return undefined;
+      }
+    } else {
+      type = source.concatTokens();
     }
 
     const targetName = target.findFirstExpression(Expressions.TargetField)?.concatTokens();
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
     const firstToken = node.getFirstToken();
     const lastToken = node.getLastToken();
-    const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${targetName} LIKE ${source.concatTokens()}.\n${indentation}`);
+    const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${targetName} LIKE ${type}.\n${indentation}`);
     const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), lastToken.getEnd(), `${targetName} = ${source.concatTokens()}.`);
     const fix = EditHelper.merge(fix2, fix1);
 
@@ -1138,15 +1155,22 @@ ${indentation}    output = ${topTarget}.`;
       if (spag === undefined) {
         continue;
       }
-      const found = spag.findVariable(name);
-      if (found === undefined) {
-        continue;
-      } else if (found.getType() instanceof VoidType) {
-        return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
-      }
-      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
 
-      const code = `FIELD-SYMBOLS ${name} TYPE ${type}.\n` +
+      let type = "";
+      if (node.concatTokens().toUpperCase().startsWith("APPEND INITIAL LINE TO ")) {
+        type = "LIKE LINE OF " + node.findFirstExpression(Expressions.Target)?.concatTokens();
+      } else {
+        const found = spag.findVariable(name);
+        if (found === undefined) {
+          continue;
+        } else if (found.getType() instanceof VoidType) {
+          return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
+        }
+        type = "TYPE ";
+        type += found.getType().getQualifiedName() ? found.getType().getQualifiedName()!.toLowerCase() : found.getType().toABAP();
+      }
+
+      const code = `FIELD-SYMBOLS ${name} ${type}.\n` +
         " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), name);
