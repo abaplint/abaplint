@@ -23,6 +23,8 @@ export class EmptyStructureConf extends BasicRuleConfig {
   public at: boolean = true;
   /** Checks for empty TRY blocks */
   public try: boolean = true;
+  /** Checks for empty WHEN blocks */
+  public when: boolean = true;
   // todo, other category containing WHEN, ELSE
 }
 

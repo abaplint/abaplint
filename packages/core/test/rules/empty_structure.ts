@@ -39,6 +39,11 @@ IF sy-subrc <> 0.
 ELSEIF 1 = 2.
 ENDIF.`, cnt: 1},
 
+  {abap: `
+CASE foo.
+  WHEN 'a'.
+ENDCASE.`, cnt: 1},
+
 ];
 
 testRule(tests, EmptyStructure);
