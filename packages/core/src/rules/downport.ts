@@ -342,8 +342,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   private downportSelectInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
-    if (!(low.get() instanceof Unknown)
-        || !(high.get() instanceof Statements.Select)) {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.Select) && !(high.get() instanceof Statements.SelectLoop)) {
       return undefined;
     }
 
@@ -352,6 +353,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (found) {
       return found;
     }
+
     found = this.downportSelectTableInline(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -366,6 +368,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (targets.length !== 1) {
       return undefined;
     }
+
     const inlineData = targets[0].findFirstExpression(Expressions.InlineData);
     if (inlineData === undefined) {
       return undefined;
@@ -375,6 +378,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (sqlFrom.length !== 1) {
       return undefined;
     }
+
     const tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
     if (tableName === undefined) {
       return undefined;
@@ -382,6 +386,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
+//sdf    console.dir("return1");
     if (fieldList === undefined) {
       return undefined;
     }
