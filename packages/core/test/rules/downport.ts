@@ -1645,4 +1645,18 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("downport, single character", async () => {
+    const abap = `DATA(lv_col) = '*'.`;
+    const expected = `DATA lv_col TYPE c LENGTH 1.
+lv_col = '*'.`;
+    testFix(abap, expected);
+  });
+
+  it("downport, zero character", async () => {
+    const abap = `DATA(lv_col) = ''.`;
+    const expected = `DATA lv_col TYPE c LENGTH 1.
+lv_col = ''.`;
+    testFix(abap, expected);
+  });
+
 });
