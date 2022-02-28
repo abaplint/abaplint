@@ -42,6 +42,15 @@ ENDIF.`, cnt: 1},
   {abap: `
 CASE foo.
   WHEN 'a'.
+    WRITE 'bar'.
+ENDCASE.`, cnt: 0},
+  {abap: `
+CASE foo.
+  WHEN 'a'.
+ENDCASE.`, cnt: 1},
+  {abap: `
+CASE foo.
+  WHEN OTHERS.
 ENDCASE.`, cnt: 1},
 
 ];
