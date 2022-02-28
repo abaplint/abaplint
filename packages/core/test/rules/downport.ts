@@ -1621,4 +1621,15 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("MAX inline", async () => {
+    const abap = `
+  SELECT MAX( field ) INTO @DATA(lv_field) FROM dbtab WHERE blah EQ 'sdf'.`;
+
+    const expected = `
+  DATA lv_field TYPE dbtab-field.
+  SELECT MAX( field ) INTO @lv_field FROM dbtab WHERE blah EQ 'sdf'.`;
+
+    testFix(abap, expected);
+  });
+
 });

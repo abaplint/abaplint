@@ -394,6 +394,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       fieldDefinition = `DATA ${name} TYPE ${tableName}.`;
     } else if (fieldList.concatTokens().toUpperCase() === "COUNT( * )") {
       fieldDefinition = `DATA ${name} TYPE i.`;
+    } else if (fieldList.getChildren().length === 1 && fieldList.getChildren()[0].get() instanceof Expressions.SQLAggregation) {
+      const c = fieldList.getChildren()[0];
+      if (c instanceof ExpressionNode) {
+        const concat = c.findFirstExpression(Expressions.SQLArithmetics)?.concatTokens();
+        fieldDefinition = `DATA ${name} TYPE ${tableName}-${concat}.`;
+      }
     } else {
       for (const f of fields) {
         const fieldName = f.concatTokens();
