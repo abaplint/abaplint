@@ -385,8 +385,10 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
-    const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
-//sdf    console.dir("return1");
+    let fieldList = high.findFirstExpression(Expressions.SQLFieldList);
+    if (fieldList === undefined) {
+      fieldList = high.findFirstExpression(Expressions.SQLFieldListLoop);
+    }
     if (fieldList === undefined) {
       return undefined;
     }

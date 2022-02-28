@@ -1659,11 +1659,14 @@ lv_col = ''.`;
     testFix(abap, expected);
   });
 
-  it.skip("SELECT LOOP, basic", async () => {
+  it("SELECT LOOP, basic", async () => {
     const abap = `
   SELECT * FROM voiddbtab INTO @DATA(ls_db) UP TO 1 ROWS WHERE field = 'sdfs'.
   ENDSELECT.`;
-    const expected = `sdfsd`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT * FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
     testFix(abap, expected);
   });
 
