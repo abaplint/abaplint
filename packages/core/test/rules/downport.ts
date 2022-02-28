@@ -1632,4 +1632,17 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("table expression, voided type", async () => {
+    const abap = `
+    DATA lt_return2 TYPE voided.
+    DATA(ls_return2) = lt_return2[ type = 'E' ].`;
+
+    const expected = `
+    DATA lt_return2 TYPE voided.
+    DATA ls_return2 LIKE LINE OF lt_return2.
+    ls_return2 = lt_return2[ type = 'E' ].`;
+
+    testFix(abap, expected);
+  });
+
 });

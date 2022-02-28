@@ -557,6 +557,7 @@ ${indentation}`);
       return undefined;
     }
 
+    let type = "";
     const source = node.findFirstExpression(Expressions.Source);
     if (source === undefined) {
       return undefined;
@@ -569,14 +570,24 @@ ${indentation}`);
     } else if (source.findFirstExpression(Expressions.FieldLength)) {
       return undefined;
     } else if (source.findFirstExpression(Expressions.TableExpression)) {
-      return undefined;
+      const chain = source.findDirectExpression(Expressions.FieldChain);
+      if (chain !== undefined
+          && chain.getChildren().length === 2
+          && chain.getChildren()[0].get() instanceof Expressions.SourceField
+          && chain.getChildren()[1].get() instanceof Expressions.TableExpression) {
+        type = "LINE OF " + chain.getChildren()[0].concatTokens();
+      } else {
+        return undefined;
+      }
+    } else {
+      type = source.concatTokens();
     }
 
     const targetName = target.findFirstExpression(Expressions.TargetField)?.concatTokens();
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
     const firstToken = node.getFirstToken();
     const lastToken = node.getLastToken();
-    const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${targetName} LIKE ${source.concatTokens()}.\n${indentation}`);
+    const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${targetName} LIKE ${type}.\n${indentation}`);
     const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), lastToken.getEnd(), `${targetName} = ${source.concatTokens()}.`);
     const fix = EditHelper.merge(fix2, fix1);
 
