@@ -342,8 +342,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   private downportSelectInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 
-    if (!(low.get() instanceof Unknown)
-        || !(high.get() instanceof Statements.Select)) {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.Select) && !(high.get() instanceof Statements.SelectLoop)) {
       return undefined;
     }
 
@@ -352,6 +353,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (found) {
       return found;
     }
+
     found = this.downportSelectTableInline(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -366,6 +368,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (targets.length !== 1) {
       return undefined;
     }
+
     const inlineData = targets[0].findFirstExpression(Expressions.InlineData);
     if (inlineData === undefined) {
       return undefined;
@@ -375,13 +378,17 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (sqlFrom.length !== 1) {
       return undefined;
     }
+
     const tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
     if (tableName === undefined) {
       return undefined;
     }
 
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
-    const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
+    let fieldList = high.findFirstExpression(Expressions.SQLFieldList);
+    if (fieldList === undefined) {
+      fieldList = high.findFirstExpression(Expressions.SQLFieldListLoop);
+    }
     if (fieldList === undefined) {
       return undefined;
     }
@@ -423,28 +430,35 @@ ${indentation}`);
     if (targets.length !== 1) {
       return undefined;
     }
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+
     const inlineData = targets[0].findFirstExpression(Expressions.InlineData);
     if (inlineData === undefined) {
       return undefined;
     }
 
     const sqlFrom = high.findAllExpressions(Expressions.SQLFromSource);
-    if (sqlFrom.length !== 1) {
-      return undefined;
+    if (sqlFrom.length === 0) {
+      return Issue.atToken(lowFile, high.getFirstToken(), "Error outlining, sqlFrom not found", this.getMetadata().key, this.conf.severity);
     }
-    const tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
+
+    let tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
     if (tableName === undefined) {
       return undefined;
     }
 
-    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
     if (fieldList === undefined) {
       return undefined;
     }
     let fieldDefinitions = "";
     for (const f of fieldList.findDirectExpressions(Expressions.SQLFieldName)) {
-      const fieldName = f.concatTokens();
+      let fieldName = f.concatTokens();
+      if (fieldName.includes("~")) {
+        const split = fieldName.split("~");
+        fieldName = split[0];
+        tableName = split[1];
+      }
       fieldDefinitions += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
     }
 
@@ -1244,11 +1258,17 @@ ${indentation}    output = ${topTarget}.`;
   private buildCondBody(body: ExpressionNode, uniqueName: string, indent: string, lowFile: ABAPFile, highSyntax: ISyntaxResult) {
     let code = "";
 
+    let first = true;
     for (const c of body.getChildren()) {
       if (c instanceof TokenNode) {
         switch (c.getFirstToken().getStr().toUpperCase()) {
           case "WHEN":
-            code += indent + "IF ";
+            if (first === true) {
+              code += indent + "IF ";
+              first = false;
+            } else {
+              code += indent + "ELSEIF ";
+            }
             break;
           case "THEN":
             code += ".\n";

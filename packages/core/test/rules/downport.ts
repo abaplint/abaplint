@@ -1043,6 +1043,29 @@ field = temp1.`;
     testFix(abap, expected);
   });
 
+  it("COND #, multiple WHEN", async () => {
+    const abap = `
+  DATA field TYPE i.
+  field = COND #(
+    WHEN 'a' = 'b' THEN 2
+    WHEN 'a' = 'b' THEN 2
+    ELSE 3 ).`;
+
+    const expected = `
+  DATA field TYPE i.
+  DATA temp1 TYPE i.
+  IF 'a' = 'b'.
+    temp1 = 2.
+  ELSEIF 'a' = 'b'.
+    temp1 = 2.
+  ELSE.
+    temp1 = 3.
+  ENDIF.
+  field = temp1.`;
+
+    testFix(abap, expected);
+  });
+
   it("REDUCE", async () => {
     const abap = `point_data = REDUCE string(
   INIT res = ||
@@ -1642,6 +1665,53 @@ ENDCLASS.`;
     DATA ls_return2 LIKE LINE OF lt_return2.
     ls_return2 = lt_return2[ type = 'E' ].`;
 
+    testFix(abap, expected);
+  });
+
+  it("downport, single character", async () => {
+    const abap = `DATA(lv_col) = '*'.`;
+    const expected = `DATA lv_col TYPE c LENGTH 1.
+lv_col = '*'.`;
+    testFix(abap, expected);
+  });
+
+  it("downport, zero character", async () => {
+    const abap = `DATA(lv_col) = ''.`;
+    const expected = `DATA lv_col TYPE c LENGTH 1.
+lv_col = ''.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT LOOP, basic", async () => {
+    const abap = `
+  SELECT * FROM voiddbtab INTO @DATA(ls_db) UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT * FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    testFix(abap, expected);
+  });
+
+  it("basic, SELECT INNER JOIN", async () => {
+    const abap = `
+SELECT aufk~aufnr, afko~aufpl, afvc~objnr
+  FROM aufk
+  INNER JOIN afko ON afko~aufnr = aufk~aufnr
+  INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+  INTO TABLE @DATA(lt_data).`;
+    const expected = `
+TYPES: BEGIN OF temp1,
+        aufk TYPE aufnr-aufk,
+        afko TYPE aufpl-afko,
+        afvc TYPE objnr-afvc,
+      END OF temp1.
+DATA lt_data TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+SELECT aufk~aufnr, afko~aufpl, afvc~objnr
+  FROM aufk
+  INNER JOIN afko ON afko~aufnr = aufk~aufnr
+  INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+  INTO TABLE @lt_data.`;
     testFix(abap, expected);
   });
 
