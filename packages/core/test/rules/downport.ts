@@ -1715,7 +1715,7 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
     testFix(abap, expected);
   });
 
-  it.skip("voided structure, VALUE", async () => {
+  it("voided structure, VALUE", async () => {
     const abap = `
   DATA temp33 TYPE voided.
   temp33 = VALUE #( line = 'moo' ).`;

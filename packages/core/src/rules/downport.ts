@@ -197,6 +197,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.moveWithSimpleValue(high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSelectInline(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -708,6 +713,43 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     }
 
     return undefined;
+  }
+
+  private moveWithSimpleValue(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.Move)
+        || high.getChildren().length !== 4) {
+      return undefined;
+    }
+
+    const target = high.findDirectExpression(Expressions.Target);
+    if (target === undefined) {
+      return undefined;
+    }
+    const source = high.findDirectExpression(Expressions.Source);
+    if (source === undefined) {
+      return undefined;
+    }
+    const field = target.findDirectExpression(Expressions.TargetField);
+    if (field === undefined) {
+      return;
+    }
+    const valueBody = source.findDirectExpression(Expressions.ValueBody);
+    if (valueBody === undefined || valueBody.getChildren().length !== 1) {
+      return;
+    }
+    const fieldAssignment = valueBody.findDirectExpression(Expressions.FieldAssignment);
+    if (fieldAssignment === undefined) {
+      return;
+    }
+
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `CLEAR ${target.concatTokens()}.\n` + indentation + target.concatTokens() + "-" + fieldAssignment.concatTokens();
+
+    const start = high.getFirstToken().getStart();
+    const end = high.getLastToken().getStart();
+    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, Reduce statement", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private moveWithOperator(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
