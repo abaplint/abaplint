@@ -1715,4 +1715,15 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
     testFix(abap, expected);
   });
 
+  it.skip("voided structure, VALUE", async () => {
+    const abap = `
+  DATA temp33 TYPE voided.
+  temp33 = VALUE #( line = 'moo' ).`;
+    const expected = `
+  DATA temp33 TYPE voided.
+  CLEAR temp33.
+  temp33-line = 'moo'.`;
+    testFix(abap, expected);
+  });
+
 });
