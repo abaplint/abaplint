@@ -1253,11 +1253,17 @@ ${indentation}    output = ${topTarget}.`;
   private buildCondBody(body: ExpressionNode, uniqueName: string, indent: string, lowFile: ABAPFile, highSyntax: ISyntaxResult) {
     let code = "";
 
+    let first = true;
     for (const c of body.getChildren()) {
       if (c instanceof TokenNode) {
         switch (c.getFirstToken().getStr().toUpperCase()) {
           case "WHEN":
-            code += indent + "IF ";
+            if (first === true) {
+              code += indent + "IF ";
+              first = false;
+            } else {
+              code += indent + "ELSEIF ";
+            }
             break;
           case "THEN":
             code += ".\n";

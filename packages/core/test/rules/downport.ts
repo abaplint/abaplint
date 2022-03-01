@@ -1043,6 +1043,29 @@ field = temp1.`;
     testFix(abap, expected);
   });
 
+  it("COND #, multiple WHEN", async () => {
+    const abap = `
+  DATA field TYPE i.
+  field = COND #(
+    WHEN 'a' = 'b' THEN 2
+    WHEN 'a' = 'b' THEN 2
+    ELSE 3 ).`;
+
+    const expected = `
+  DATA field TYPE i.
+  DATA temp1 TYPE i.
+  IF 'a' = 'b'.
+    temp1 = 2.
+  ELSEIF 'a' = 'b'.
+    temp1 = 2.
+  ELSE.
+    temp1 = 3.
+  ENDIF.
+  field = temp1.`;
+
+    testFix(abap, expected);
+  });
+
   it("REDUCE", async () => {
     const abap = `point_data = REDUCE string(
   INIT res = ||
