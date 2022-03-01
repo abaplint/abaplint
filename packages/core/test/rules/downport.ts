@@ -1693,7 +1693,7 @@ lv_col = ''.`;
     testFix(abap, expected);
   });
 
-  it.skip("SELECT INNER JOIN", async () => {
+  it("basic, SELECT INNER JOIN", async () => {
     const abap = `
 SELECT aufk~aufnr, afko~aufpl, afvc~objnr
   FROM aufk
@@ -1701,7 +1701,17 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
   INNER JOIN afvc ON afvc~aufpl = afko~aufpl
   INTO TABLE @DATA(lt_data).`;
     const expected = `
-sdfsd`;
+TYPES: BEGIN OF temp1,
+        aufk TYPE aufnr-aufk,
+        afko TYPE aufpl-afko,
+        afvc TYPE objnr-afvc,
+      END OF temp1.
+DATA lt_data TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+SELECT aufk~aufnr, afko~aufpl, afvc~objnr
+  FROM aufk
+  INNER JOIN afko ON afko~aufnr = aufk~aufnr
+  INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+  INTO TABLE @lt_data.`;
     testFix(abap, expected);
   });
 

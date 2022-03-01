@@ -430,6 +430,7 @@ ${indentation}`);
     if (targets.length !== 1) {
       return undefined;
     }
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
 
     const inlineData = targets[0].findFirstExpression(Expressions.InlineData);
     if (inlineData === undefined) {
@@ -437,23 +438,27 @@ ${indentation}`);
     }
 
     const sqlFrom = high.findAllExpressions(Expressions.SQLFromSource);
-    if (sqlFrom.length !== 1) {
-      return Issue.atToken(lowFile, high.getFirstToken(), "Outlining join, todo", this.getMetadata().key, this.conf.severity);
+    if (sqlFrom.length === 0) {
+      return Issue.atToken(lowFile, high.getFirstToken(), "Error outlining, sqlFrom not found", this.getMetadata().key, this.conf.severity);
     }
 
-    const tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
+    let tableName = sqlFrom[0].findDirectExpression(Expressions.DatabaseTable)?.concatTokens();
     if (tableName === undefined) {
       return undefined;
     }
 
-    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
     if (fieldList === undefined) {
       return undefined;
     }
     let fieldDefinitions = "";
     for (const f of fieldList.findDirectExpressions(Expressions.SQLFieldName)) {
-      const fieldName = f.concatTokens();
+      let fieldName = f.concatTokens();
+      if (fieldName.includes("~")) {
+        const split = fieldName.split("~");
+        fieldName = split[0];
+        tableName = split[1];
+      }
       fieldDefinitions += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
     }
 
