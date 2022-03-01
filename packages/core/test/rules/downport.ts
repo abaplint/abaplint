@@ -1414,6 +1414,48 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("line_exists(), two fields, voided", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE voided.
+  IF line_exists( lt_list[ foo = 123 bar = 2 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE voided.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY foo = 123 bar = 2 TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), two fields, two times, voided", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE voided.
+  IF line_exists( lt_list[ foo = 123 bar = '2' ] ) OR line_exists( lt_list[ foo = 1 bar = 5 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE voided.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY foo = 123 bar = '2' TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0 OR line_exists( lt_list[ foo = 1 bar = 5 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
   it("line_exists(), index", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -1702,9 +1744,9 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
   INTO TABLE @DATA(lt_data).`;
     const expected = `
 TYPES: BEGIN OF temp1,
-        aufk TYPE aufnr-aufk,
-        afko TYPE aufpl-afko,
-        afvc TYPE objnr-afvc,
+        aufnr TYPE aufk-aufnr,
+        aufpl TYPE afko-aufpl,
+        objnr TYPE afvc-objnr,
       END OF temp1.
 DATA lt_data TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
 SELECT aufk~aufnr, afko~aufpl, afvc~objnr
@@ -1712,6 +1754,17 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
   INNER JOIN afko ON afko~aufnr = aufk~aufnr
   INNER JOIN afvc ON afvc~aufpl = afko~aufpl
   INTO TABLE @lt_data.`;
+    testFix(abap, expected);
+  });
+
+  it("voided structure, VALUE", async () => {
+    const abap = `
+  DATA temp33 TYPE voided.
+  temp33 = VALUE #( line = 'moo' ).`;
+    const expected = `
+  DATA temp33 TYPE voided.
+  CLEAR temp33.
+  temp33-line = 'moo'.`;
     testFix(abap, expected);
   });
 
