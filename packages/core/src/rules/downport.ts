@@ -456,8 +456,8 @@ ${indentation}`);
       let fieldName = f.concatTokens();
       if (fieldName.includes("~")) {
         const split = fieldName.split("~");
-        fieldName = split[0];
-        tableName = split[1];
+        tableName = split[0];
+        fieldName = split[1];
       }
       fieldDefinitions += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
     }

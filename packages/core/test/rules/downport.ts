@@ -1702,9 +1702,9 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
   INTO TABLE @DATA(lt_data).`;
     const expected = `
 TYPES: BEGIN OF temp1,
-        aufk TYPE aufnr-aufk,
-        afko TYPE aufpl-afko,
-        afvc TYPE objnr-afvc,
+        aufnr TYPE aufk-aufnr,
+        aufpl TYPE afko-aufpl,
+        objnr TYPE afvc-objnr,
       END OF temp1.
 DATA lt_data TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
 SELECT aufk~aufnr, afko~aufpl, afvc~objnr
