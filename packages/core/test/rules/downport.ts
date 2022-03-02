@@ -729,6 +729,44 @@ tab = temp1.`;
     testFix(abap, expected);
   });
 
+  it("VALUE appending to table, voided type", async () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+tab = VALUE #( ( word = 0 shift = 3 ) ( word = 4 shift = 5 ) ).`;
+
+    const expected = `
+TYPES ty_tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+DATA temp2 LIKE LINE OF temp1.
+temp2-word = 0.
+temp2-shift = 3.
+APPEND temp2 TO temp1.
+temp2-word = 4.
+temp2-shift = 5.
+APPEND temp2 TO temp1.
+tab = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("VALUE appending to table, top level, no qualified name", async () => {
+    const abap = `
+DATA tab TYPE RANGE OF i.
+tab = VALUE #( ( low = 0 ) ).`;
+
+    const expected = `
+DATA tab TYPE RANGE OF i.
+DATA temp1 LIKE tab.
+DATA temp2 LIKE LINE OF temp1.
+temp2-low = 0.
+APPEND temp2 TO temp1.
+tab = temp1.`;
+
+    testFix(abap, expected);
+  });
+
   it("VALUE appending simple value to table", async () => {
     const abap = `
 TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -1743,6 +1781,18 @@ lv_col = ''.`;
     const expected = `
   DATA ls_db TYPE voiddbtab.
   SELECT * FROM voiddbtab INTO ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT LOOP, downport comma", async () => {
+    const abap = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT foo, bar FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT foo bar FROM voiddbtab INTO ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
   ENDSELECT.`;
     testFix(abap, expected);
   });
