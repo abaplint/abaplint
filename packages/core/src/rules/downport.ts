@@ -336,7 +336,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
     }
 
-    for (const fieldList of high.findAllExpressionsRecursive(Expressions.SQLFieldList)) {
+    for (const fieldList of high.findAllExpressionsMulti([Expressions.SQLFieldList, Expressions.SQLFieldListLoop], true)) {
       for (const token of fieldList.getDirectTokens()) {
         if (token.getStr() === ",") {
           addFix(token);

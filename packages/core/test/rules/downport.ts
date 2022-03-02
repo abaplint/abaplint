@@ -1747,6 +1747,18 @@ lv_col = ''.`;
     testFix(abap, expected);
   });
 
+  it("SELECT LOOP, downport comma", async () => {
+    const abap = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT foo, bar FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT foo bar FROM voiddbtab INTO ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    testFix(abap, expected);
+  });
+
   it("basic, SELECT INNER JOIN", async () => {
     const abap = `
 SELECT aufk~aufnr, afko~aufpl, afvc~objnr
