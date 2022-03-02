@@ -1110,9 +1110,11 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      const type = this.findType(i, lowFile, highSyntax);
+      let type = this.findType(i, lowFile, highSyntax);
       if (type === undefined) {
         continue;
+      } else {
+        type = "TYPE " + type;
       }
 
       const valueBody = i.findDirectExpression(Expressions.ValueBody);
@@ -1156,7 +1158,7 @@ ${indentation}    output = ${topTarget}.`;
         body += indentation + outlineFor.end + `.\n`;
       }
 
-      const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
+      const abap = `DATA ${uniqueName} ${type}.\n` +
         body +
         indentation;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);

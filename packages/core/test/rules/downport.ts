@@ -751,6 +751,17 @@ tab = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("VALUE appending to table, top level, no qualified name", async () => {
+    const abap = `
+DATA tab TYPE RANGE OF i.
+tab = VALUE #( ( low = 0 ) ).`;
+
+    const expected = `
+todo`;
+
+    testFix(abap, expected);
+  });
+
   it("VALUE appending simple value to table", async () => {
     const abap = `
 TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
