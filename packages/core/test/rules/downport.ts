@@ -751,13 +751,18 @@ tab = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("VALUE appending to table, top level, no qualified name", async () => {
+  it("VALUE appending to table, top level, no qualified name", async () => {
     const abap = `
 DATA tab TYPE RANGE OF i.
 tab = VALUE #( ( low = 0 ) ).`;
 
     const expected = `
-todo`;
+DATA tab TYPE RANGE OF i.
+DATA temp1 LIKE tab.
+DATA temp2 LIKE LINE OF temp1.
+temp2-low = 0.
+APPEND temp2 TO temp1.
+tab = temp1.`;
 
     testFix(abap, expected);
   });

@@ -1104,20 +1104,25 @@ ${indentation}    output = ${topTarget}.`;
 
   private outlineValue(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const allSources = node.findAllExpressionsRecursive(Expressions.Source);
-    for (const i of allSources) {
-      const firstToken = i.getFirstToken();
+    for (const s of allSources) {
+      const firstToken = s.getFirstToken();
       if (firstToken.getStr().toUpperCase() !== "VALUE") {
         continue;
       }
 
-      let type = this.findType(i, lowFile, highSyntax);
+      let type = this.findType(s, lowFile, highSyntax);
       if (type === undefined) {
-        continue;
+        if (node.get() instanceof Statements.Move && node.findDirectExpression(Expressions.Source) === s) {
+          type = "LIKE " + node.findDirectExpression(Expressions.Target)?.concatTokens();
+        }
+        if (type === undefined) {
+          continue;
+        }
       } else {
         type = "TYPE " + type;
       }
 
-      const valueBody = i.findDirectExpression(Expressions.ValueBody);
+      const valueBody = s.findDirectExpression(Expressions.ValueBody);
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       let indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
@@ -1162,7 +1167,7 @@ ${indentation}    output = ${topTarget}.`;
         body +
         indentation;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
-      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), s.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, firstToken, "Downport VALUE", this.getMetadata().key, this.conf.severity, fix);
