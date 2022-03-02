@@ -302,8 +302,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (!(low.get() instanceof Unknown)) {
       return undefined;
     }
-    // todo: select loop
+
     if (!(high.get() instanceof Statements.Select)
+        && !(high.get() instanceof Statements.SelectLoop)
         && !(high.get() instanceof Statements.UpdateDatabase)
         && !(high.get() instanceof Statements.ModifyDatabase)
         && !(high.get() instanceof Statements.DeleteDatabase)
