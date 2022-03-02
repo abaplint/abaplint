@@ -1780,4 +1780,17 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
     testFix(abap, expected);
   });
 
+  it("CATCH voided into inline", async () => {
+    const abap = `
+TRY.
+  CATCH cx_bcs INTO DATA(lx_bcs_excep).
+ENDTRY.`;
+    const expected = `
+TRY.
+    DATA lx_bcs_excep TYPE REF TO cx_bcs.
+  CATCH cx_bcs INTO lx_bcs_excep.
+ENDTRY.`;
+    testFix(abap, expected);
+  });
+
 });
