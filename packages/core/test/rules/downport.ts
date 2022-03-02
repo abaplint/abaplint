@@ -1735,6 +1735,18 @@ lv_col = ''.`;
     testFix(abap, expected);
   });
 
+  it("SELECT LOOP, downport at", async () => {
+    const abap = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT * FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT * FROM voiddbtab INTO ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    testFix(abap, expected);
+  });
+
   it("basic, SELECT INNER JOIN", async () => {
     const abap = `
 SELECT aufk~aufnr, afko~aufpl, afvc~objnr
@@ -1765,6 +1777,19 @@ SELECT aufk~aufnr, afko~aufpl, afvc~objnr
   DATA temp33 TYPE voided.
   CLEAR temp33.
   temp33-line = 'moo'.`;
+    testFix(abap, expected);
+  });
+
+  it("CATCH voided into inline", async () => {
+    const abap = `
+TRY.
+  CATCH cx_bcs INTO DATA(lx_bcs_excep).
+ENDTRY.`;
+    const expected = `
+TRY.
+    DATA lx_bcs_excep TYPE REF TO cx_bcs.
+  CATCH cx_bcs INTO lx_bcs_excep.
+ENDTRY.`;
     testFix(abap, expected);
   });
 

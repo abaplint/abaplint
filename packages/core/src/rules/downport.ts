@@ -252,6 +252,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineCatchSimple(high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineDataSimple(high, lowFile);
     if (found) {
       return found;
@@ -302,8 +307,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (!(low.get() instanceof Unknown)) {
       return undefined;
     }
-    // todo: select loop
+
     if (!(high.get() instanceof Statements.Select)
+        && !(high.get() instanceof Statements.SelectLoop)
         && !(high.get() instanceof Statements.UpdateDatabase)
         && !(high.get() instanceof Statements.ModifyDatabase)
         && !(high.get() instanceof Statements.DeleteDatabase)
@@ -562,6 +568,35 @@ ${indentation}`);
     }
 
     return undefined;
+  }
+
+  private outlineCatchSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    // outlines "CATCH cx_bcs INTO DATA(lx_bcs_excep).", note that this does not need to look at types
+
+    if (!(node.get() instanceof Statements.Catch)) {
+      return undefined;
+    }
+
+    const target = node.findFirstExpression(Expressions.Target);
+    if (!(target?.getFirstChild()?.get() instanceof Expressions.InlineData)) {
+      return undefined;
+    }
+
+    const classNames = node.findDirectExpressions(Expressions.ClassName);
+    if (classNames.length !== 1) {
+      return undefined;
+    }
+    const className = classNames[0].concatTokens();
+
+    const targetName = target.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+
+    const code = `  DATA ${targetName} TYPE REF TO ${className}.
+${indentation}CATCH ${className} INTO ${targetName}.`;
+
+    const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), code);
+
+    return Issue.atToken(lowFile, node.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private outlineDataSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
