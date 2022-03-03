@@ -1845,17 +1845,16 @@ ENDTRY.`;
 
   it.skip("downport, searching for type in Include", async () => {
     const abap = `FORM bar.
-todo
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ table_line = 123 ] ).
+    WRITE / 'hello'.
+  ENDIF.
 ENDFORM.`;
-    const expected = `FORM bar.
-todo
-ENDFORM.`;
+    const expected = `sdfsd`;
 
-    const zrow = new MemoryFile("zrow.tabl.xml", `sdfdsf`);
+    const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zprog.`);
 
-    const ztab = new MemoryFile("ztab.ttyp.xml", `sdfds`);
-
-    testFix(abap, expected, [ztab, zrow]);
+    testFix(abap, expected, [zmain]);
   });
 
 });

@@ -1480,9 +1480,11 @@ ${indentation}    output = ${topTarget}.`;
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
     for (const r of spag?.getData().references || []) {
+      if (r.referenceType !== ReferenceType.BuiltinMethodReference) {
+        continue;
+      }
       const func = r.position.getName().toUpperCase();
-      if (r.referenceType === ReferenceType.BuiltinMethodReference
-          && (func === "LINE_EXISTS" || func === "LINE_INDEX")) {
+      if (func === "LINE_EXISTS" || func === "LINE_INDEX") {
         const token = r.position.getToken();
 
         const expression = this.findMethodCallExpression(node, token);
