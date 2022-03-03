@@ -1843,4 +1843,19 @@ ENDTRY.`;
     testFix(abap, expected);
   });
 
+  it.skip("downport, searching for type in Include", async () => {
+    const abap = `FORM bar.
+todo
+ENDFORM.`;
+    const expected = `FORM bar.
+todo
+ENDFORM.`;
+
+    const zrow = new MemoryFile("zrow.tabl.xml", `sdfdsf`);
+
+    const ztab = new MemoryFile("ztab.ttyp.xml", `sdfds`);
+
+    testFix(abap, expected, [ztab, zrow]);
+  });
+
 });
