@@ -525,7 +525,7 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
         continue;
       }
 
-      const concat = node.concatTokens();
+      const concat = node.concatTokens().toUpperCase();
       if (concat.includes(" LINE_EXISTS( ") || concat.includes(" LINE_INDEX( ")) {
         // note: line_exists() must be replaced before handling table expressions
         continue;
