@@ -287,7 +287,6 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    // note: line_exists() must be replaced before this call
     found = this.replaceTableExpression(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -523,6 +522,12 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
     for (const fieldChain of node.findAllExpressionsRecursive(Expressions.FieldChain)) {
       const tableExpression = fieldChain.findDirectExpression(Expressions.TableExpression);
       if (tableExpression === undefined) {
+        continue;
+      }
+
+      const concat = node.concatTokens().toUpperCase();
+      if (concat.includes(" LINE_EXISTS( ") || concat.includes(" LINE_INDEX( ")) {
+        // note: line_exists() must be replaced before handling table expressions
         continue;
       }
 
@@ -1475,9 +1480,11 @@ ${indentation}    output = ${topTarget}.`;
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
     for (const r of spag?.getData().references || []) {
+      if (r.referenceType !== ReferenceType.BuiltinMethodReference) {
+        continue;
+      }
       const func = r.position.getName().toUpperCase();
-      if (r.referenceType === ReferenceType.BuiltinMethodReference
-          && (func === "LINE_EXISTS" || func === "LINE_INDEX")) {
+      if (func === "LINE_EXISTS" || func === "LINE_INDEX") {
         const token = r.position.getToken();
 
         const expression = this.findMethodCallExpression(node, token);

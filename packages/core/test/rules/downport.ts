@@ -1843,4 +1843,18 @@ ENDTRY.`;
     testFix(abap, expected);
   });
 
+  it.skip("downport, searching for type in Include", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ table_line = 123 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+    const expected = `sdfsd`;
+
+    const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zprog.`);
+
+    testFix(abap, expected, [zmain]);
+  });
+
 });
