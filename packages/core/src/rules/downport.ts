@@ -1317,11 +1317,14 @@ ${indentation}    output = ${topTarget}.`;
       if (spag === undefined) {
         continue;
       }
+
       const found = spag.findVariable(name);
-      if (found === undefined
-          || found.getType() instanceof VoidType) {
+      if (found === undefined) {
+        continue;
+      } else if (found.getType() instanceof VoidType && found.getType().getQualifiedName() === undefined) {
         continue;
       }
+
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
 
       const code = `DATA ${name} TYPE ${type}.\n` +
