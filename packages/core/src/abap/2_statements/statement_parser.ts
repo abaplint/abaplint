@@ -140,6 +140,9 @@ export class StatementParser {
       if (statement.get() instanceof Unknown
           && statement.concatTokens().toUpperCase().startsWith("CALL METHOD ") === false) {
         for (const {first, second} of this.buildSplits(statement.getTokens())) {
+          if (second.length === 1) {
+            continue; // probably punctuation
+          }
           const s = this.categorizeStatement(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(second)));
           if (!(s.get() instanceof Unknown)) {
             result.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(first)));
