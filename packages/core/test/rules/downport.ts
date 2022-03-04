@@ -1841,18 +1841,22 @@ ENDTRY.`;
     testFix(abap, expected);
   });
 
-  it.skip("downport, searching for type in Include", async () => {
+  it("downport, searching for type in Include", async () => {
     const abap = `FORM bar.
-  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
-  IF line_exists( lt_list[ table_line = 123 ] ).
-    WRITE / 'hello'.
-  ENDIF.
+  DATA(lv_len) = strlen( |sdfds| ).
 ENDFORM.`;
-    const expected = `sdfsd`;
+    const zincl = new MemoryFile("zincl.prog.abap", abap);
+    const zinclxml = new MemoryFile("zincl.prog.xml", `<SUBC>I</SUBC>`);
+    const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zincl.`);
 
-    const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zprog.`);
-
-    testFix(abap, expected, [zmain]);
+    const reg = new Registry(buildConfig());
+    reg.addFile(zincl);
+    reg.addFile(zmain);
+    reg.addFile(zinclxml);
+    reg.parse();
+    const issues = new Downport().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1, "single issue expected");
+    expect(issues[0].getFix()).to.not.equal(undefined);
   });
 
 });
