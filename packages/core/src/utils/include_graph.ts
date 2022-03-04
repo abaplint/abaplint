@@ -98,8 +98,11 @@ export class IncludeGraph implements IIncludeGraph {
     return this.issues;
   }
 
-  public listMainForInclude(filename: string): string[] {
+  public listMainForInclude(filename: string | undefined): string[] {
     const ret: string[] = [];
+    if (filename === undefined) {
+      return [];
+    }
     for (const f of this.graph.findTop(filename)) {
       if (f.include === false) {
         ret.push(f.filename);

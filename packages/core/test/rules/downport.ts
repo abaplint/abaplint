@@ -837,23 +837,6 @@ DATA(parameters) = temp1.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("downport, voided via RETURNING", async () => {
-    const issues = await findIssues(`
-CLASS lcl_bar DEFINITION.
-  PUBLIC SECTION.
-    METHODS run.
-    METHODS read RETURNING VALUE(rs_voided) TYPE voided.
-ENDCLASS.
-CLASS lcl_bar IMPLEMENTATION.
-  METHOD run.
-    DATA(sdf) = read( ).
-  ENDMETHOD.
-  METHOD read.
-  ENDMETHOD.
-ENDCLASS.`);
-    expect(issues.length).to.equal(1);
-  });
-
   it("downport, append #, with ddic table type", async () => {
     const abap = `FORM bar.
   DATA tab TYPE ztab.
@@ -1843,18 +1826,37 @@ ENDTRY.`;
     testFix(abap, expected);
   });
 
-  it.skip("downport, searching for type in Include", async () => {
-    const abap = `FORM bar.
-  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
-  IF line_exists( lt_list[ table_line = 123 ] ).
-    WRITE / 'hello'.
+  it("outline table expression first, type is voided", async () => {
+    const abap = `
+  DATA it_operations TYPE voided.
+  DATA(lv_text) = it_operations[ activity = 2 ]-description.`;
+    const expected = `
+  DATA it_operations TYPE voided.
+  DATA temp1 LIKE LINE OF it_operations.
+  READ TABLE it_operations WITH KEY activity = 2 INTO temp1.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
+  DATA(lv_text) = temp1-description.`;
+    testFix(abap, expected);
+  });
+
+  it("downport, searching for type in Include", async () => {
+    const abap = `FORM bar.
+  DATA(lv_len) = strlen( |sdfds| ).
 ENDFORM.`;
-    const expected = `sdfsd`;
+    const zincl = new MemoryFile("zincl.prog.abap", abap);
+    const zinclxml = new MemoryFile("zincl.prog.xml", `<SUBC>I</SUBC>`);
+    const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zincl.`);
 
-    const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zprog.`);
-
-    testFix(abap, expected, [zmain]);
+    const reg = new Registry(buildConfig());
+    reg.addFile(zincl);
+    reg.addFile(zmain);
+    reg.addFile(zinclxml);
+    reg.parse();
+    const issues = new Downport().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1, "single issue expected");
+    expect(issues[0].getFix()).to.not.equal(undefined);
   });
 
 });

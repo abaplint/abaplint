@@ -22,6 +22,8 @@ import {VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
+import {IncludeGraph} from "../utils/include_graph";
+import {Program} from "../objects";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
@@ -34,6 +36,7 @@ export class Downport implements IRule {
   private highReg: IRegistry;
   private conf = new DownportConf();
   private counter: number;
+  private graph: IncludeGraph;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -85,6 +88,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const version = this.lowReg.getConfig().getVersion();
     if (version === Version.v702 || version === Version.OpenABAP) {
       this.initHighReg();
+      this.graph = new IncludeGraph(reg);
     }
     return this;
   }
@@ -92,6 +96,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   public run(lowObj: IObject): Issue[] {
     const ret: Issue[] = [];
     this.counter = 1;
+
 
     const version = this.lowReg.getConfig().getVersion();
     if (version !== Version.v702 && version !== Version.OpenABAP) {
@@ -105,7 +110,22 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return ret;
     }
 
-    const highSyntax = new SyntaxLogic(this.highReg, highObj).run();
+    let highSyntaxObj = highObj;
+
+    // for includes do the syntax check via a main program
+    if (lowObj instanceof Program && lowObj.isInclude()) {
+      const mains = this.graph.listMainForInclude(lowObj.getMainABAPFile()?.getFilename());
+      if (mains.length <= 0) {
+        return [];
+      }
+      const f = this.highReg.getFileByName(mains[0]);
+      if (f === undefined) {
+        return [];
+      }
+      highSyntaxObj = this.highReg.findObjectForFile(f) as ABAPObject;
+    }
+
+    const highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
 
     for (const lowFile of lowObj.getABAPFiles()) {
       const highFile = highObj.getABAPFileByName(lowFile.getFilename());
@@ -1286,22 +1306,21 @@ ${indentation}    output = ${topTarget}.`;
   }
 
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
-
     for (const i of node.findAllExpressionsRecursive(Expressions.InlineData)) {
       const nameToken = i.findDirectExpression(Expressions.TargetField)?.getFirstToken();
       if (nameToken === undefined) {
         continue;
       }
       const name = nameToken.getStr();
+
       const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
       if (spag === undefined) {
         continue;
       }
       const found = spag.findVariable(name);
-      if (found === undefined) {
+      if (found === undefined
+          || found.getType() instanceof VoidType) {
         continue;
-      } else if (found.getType() instanceof VoidType) {
-        return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
 
