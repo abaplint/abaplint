@@ -1274,15 +1274,15 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
       const name = nameToken.getStr();
-      const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
-      if (spag === undefined) {
-        continue;
-      }
 
       let type = "";
       if (node.concatTokens().toUpperCase().startsWith("APPEND INITIAL LINE TO ")) {
         type = "LIKE LINE OF " + node.findFirstExpression(Expressions.Target)?.concatTokens();
       } else {
+        const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
+        if (spag === undefined) {
+          continue;
+        }
         const found = spag.findVariable(name);
         if (found === undefined) {
           continue;
