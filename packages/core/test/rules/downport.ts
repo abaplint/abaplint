@@ -1859,4 +1859,19 @@ ENDFORM.`;
     expect(issues[0].getFix()).to.not.equal(undefined);
   });
 
+  it("line_eixsts, dashed source table", async () => {
+    const abap = `
+    DATA ls_update TYPE voided.
+    IF line_exists( ls_update-users[ table_line = 2 ] ).
+    ENDIF.`;
+    const expected = `
+    DATA ls_update TYPE voided.
+    DATA temp1 LIKE sy-subrc.
+    READ TABLE ls_update-users WITH KEY table_line = 2 TRANSPORTING NO FIELDS.
+    temp1 = sy-subrc.
+    IF temp1 = 0.
+    ENDIF.`;
+    testFix(abap, expected);
+  });
+
 });

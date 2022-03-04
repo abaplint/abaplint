@@ -1523,7 +1523,7 @@ ${indentation}    output = ${topTarget}.`;
           condition += c.concatTokens() + " ";
         }
 
-        const tableName = expression?.findFirstExpression(Expressions.SourceField)?.concatTokens();
+        const tableName = expression.findFirstExpression(Expressions.Source)?.concatTokens().split("[")[0];
 
         const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
