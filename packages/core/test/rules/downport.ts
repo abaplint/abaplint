@@ -837,23 +837,6 @@ DATA(parameters) = temp1.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("downport, voided via RETURNING", async () => {
-    const issues = await findIssues(`
-CLASS lcl_bar DEFINITION.
-  PUBLIC SECTION.
-    METHODS run.
-    METHODS read RETURNING VALUE(rs_voided) TYPE voided.
-ENDCLASS.
-CLASS lcl_bar IMPLEMENTATION.
-  METHOD run.
-    DATA(sdf) = read( ).
-  ENDMETHOD.
-  METHOD read.
-  ENDMETHOD.
-ENDCLASS.`);
-    expect(issues.length).to.equal(1);
-  });
-
   it("downport, append #, with ddic table type", async () => {
     const abap = `FORM bar.
   DATA tab TYPE ztab.
@@ -1840,6 +1823,21 @@ TRY.
     DATA lx_bcs_excep TYPE REF TO cx_bcs.
   CATCH cx_bcs INTO lx_bcs_excep.
 ENDTRY.`;
+    testFix(abap, expected);
+  });
+
+  it("outline table expression first, type is voided", async () => {
+    const abap = `
+  DATA it_operations TYPE voided.
+  DATA(lv_text) = it_operations[ activity = 2 ]-description.`;
+    const expected = `
+  DATA it_operations TYPE voided.
+  DATA temp1 LIKE LINE OF it_operations.
+  READ TABLE it_operations WITH KEY activity = 2 INTO temp1.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  DATA(lv_text) = temp1-description.`;
     testFix(abap, expected);
   });
 

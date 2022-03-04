@@ -1298,10 +1298,9 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
       const found = spag.findVariable(name);
-      if (found === undefined) {
+      if (found === undefined
+          || found.getType() instanceof VoidType) {
         continue;
-      } else if (found.getType() instanceof VoidType) {
-        return Issue.atToken(lowFile, i.getFirstToken(), "Error outlining voided type", this.getMetadata().key, this.conf.severity);
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
 
