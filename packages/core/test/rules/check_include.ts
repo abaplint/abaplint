@@ -158,4 +158,13 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("type pool example, ok", async () => {
+    const contents = `INCLUDE zexistsa.`;
+    const issues = await runMulti([
+      {filename: "zzz.type.abap", contents},
+      {filename: "zexistsa.prog.abap", contents: `WRITE 2.`},
+      {filename: "zexistsa.prog.xml", contents: `<SUBC>I</SUBC>`}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
