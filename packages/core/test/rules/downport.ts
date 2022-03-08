@@ -1874,4 +1874,18 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.only("REDUCE with WHILE", async () => {
+    const abap = `
+    DATA input TYPE string.
+    DATA result TYPE string.
+    input = 'sdfs'.
+    result = REDUCE string( INIT s = 0
+      FOR  i = 0 WHILE i < strlen( input )
+      NEXT s = s + 1 ).
+    WRITE result.`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
 });
