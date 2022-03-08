@@ -1874,7 +1874,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it.only("REDUCE with WHILE", async () => {
+  it("REDUCE with WHILE", async () => {
     const abap = `
     DATA input TYPE string.
     DATA result TYPE string.
@@ -1884,7 +1884,19 @@ ENDFORM.`;
       NEXT s = s + 1 ).
     WRITE result.`;
     const expected = `
-sdfsd`;
+    DATA input TYPE string.
+    DATA result TYPE string.
+    input = 'sdfs'.
+    DATA temp1 TYPE string.
+    DATA(s) = 0.
+    DATA i TYPE i.
+    WHILE i < strlen( input ).
+      i = i + 1.
+      s = s + 1.
+    ENDWHILE.
+    temp1 = s.
+    result = temp1.
+    WRITE result.`;
     testFix(abap, expected);
   });
 
