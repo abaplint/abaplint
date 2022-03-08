@@ -3980,13 +3980,18 @@
           },
           "type": "array"
         },
+        "ignoreTestClasses": {
+          "description": "Option to ignore test classes for this check.",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
       "required": [
-        "allowReadOnly"
+        "allowReadOnly",
+        "ignoreTestClasses"
       ],
       "type": "object"
     },
