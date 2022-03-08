@@ -1,6 +1,6 @@
 import {Include} from "../abap/2_statements/statements";
 import {IncludeName} from "../abap/2_statements/expressions";
-import {Class, FunctionGroup, Program} from "../objects";
+import {Class, FunctionGroup, Program, TypePool} from "../objects";
 import {CheckInclude} from "../rules/check_include";
 import {Position} from "../position";
 import {Issue} from "../issue";
@@ -183,6 +183,14 @@ export class IncludeGraph implements IIncludeGraph {
             filename: file.getFilename(),
             includeName: o.getName(),
             include: o.isInclude()});
+        }
+      } else if (o instanceof TypePool) {
+        const file = o.getMainABAPFile();
+        if (file) {
+          this.graph.addVertex({
+            filename: file.getFilename(),
+            includeName: o.getName(),
+            include: false});
         }
       } else if (o instanceof Class) {
         for (const f of o.getSequencedFiles()) {
