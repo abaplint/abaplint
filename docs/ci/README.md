@@ -28,4 +28,6 @@ example configuration is in [examples/.travis.yml](examples/.travis.yml). Reposi
 [Example](https://bitbucket.org/larshp/abaplint_pipeline)
 
 ## Azure Pipelines
-[Example](https://github.com/abaplint/azure-devops-example)
+[Azure Pipelines Task](https://marketplace.visualstudio.com/items?itemName=heliconialabs.abaplint)
+
+[Example, running pipeline for GitHub repository](https://github.com/abaplint/azure-devops-example)
