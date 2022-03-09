@@ -11,6 +11,8 @@ import {ABAPFile} from "../abap/abap_file";
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */
   public allowReadOnly: boolean = false;
+  /** Option to ignore test classes for this check. */
+  public ignoreTestClasses: boolean = false;
 }
 
 export class NoPublicAttributes extends ABAPRule {
@@ -81,6 +83,9 @@ Exceptions are excluded from this rule.`,
       if (this.conf.allowReadOnly === true && attr.readOnly) {
         continue;
       } else if (attr.level === AttributeLevel.Constant) {
+        continue;
+      } else if ((this.conf.ignoreTestClasses === true)
+        && this.file.getFilename().includes(".testclasses.")) {
         continue;
       }
       const issue = Issue.atIdentifier(attr.identifier, this.getDescription(attr.name), this.getMetadata().key, this.conf.severity);

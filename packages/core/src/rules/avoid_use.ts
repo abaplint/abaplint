@@ -79,6 +79,7 @@ DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
         message = "STATICS";
       } else if (this.conf.break && statement instanceof Statements.Break) {
         message = "BREAK/BREAK-POINT";
+        fix = EditHelper.deleteStatement(file, statementNode);
       }
 
       if (message) {

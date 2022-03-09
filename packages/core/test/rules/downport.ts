@@ -729,6 +729,44 @@ tab = temp1.`;
     testFix(abap, expected);
   });
 
+  it("VALUE appending to table, voided type", async () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+tab = VALUE #( ( word = 0 shift = 3 ) ( word = 4 shift = 5 ) ).`;
+
+    const expected = `
+TYPES ty_tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+DATA temp2 LIKE LINE OF temp1.
+temp2-word = 0.
+temp2-shift = 3.
+APPEND temp2 TO temp1.
+temp2-word = 4.
+temp2-shift = 5.
+APPEND temp2 TO temp1.
+tab = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("VALUE appending to table, top level, no qualified name", async () => {
+    const abap = `
+DATA tab TYPE RANGE OF i.
+tab = VALUE #( ( low = 0 ) ).`;
+
+    const expected = `
+DATA tab TYPE RANGE OF i.
+DATA temp1 LIKE tab.
+DATA temp2 LIKE LINE OF temp1.
+temp2-low = 0.
+APPEND temp2 TO temp1.
+tab = temp1.`;
+
+    testFix(abap, expected);
+  });
+
   it("VALUE appending simple value to table", async () => {
     const abap = `
 TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -796,23 +834,6 @@ DATA(parameters) = temp1.`;
   FIELD-SYMBOLS <tab> TYPE ANY TABLE.
   LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<fs>).
   ENDLOOP.`);
-    expect(issues.length).to.equal(1);
-  });
-
-  it("downport, voided via RETURNING", async () => {
-    const issues = await findIssues(`
-CLASS lcl_bar DEFINITION.
-  PUBLIC SECTION.
-    METHODS run.
-    METHODS read RETURNING VALUE(rs_voided) TYPE voided.
-ENDCLASS.
-CLASS lcl_bar IMPLEMENTATION.
-  METHOD run.
-    DATA(sdf) = read( ).
-  ENDMETHOD.
-  METHOD read.
-  ENDMETHOD.
-ENDCLASS.`);
     expect(issues.length).to.equal(1);
   });
 
@@ -1039,6 +1060,29 @@ ELSE.
   temp1 = 3.
 ENDIF.
 field = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("COND #, multiple WHEN", async () => {
+    const abap = `
+  DATA field TYPE i.
+  field = COND #(
+    WHEN 'a' = 'b' THEN 2
+    WHEN 'a' = 'b' THEN 2
+    ELSE 3 ).`;
+
+    const expected = `
+  DATA field TYPE i.
+  DATA temp1 TYPE i.
+  IF 'a' = 'b'.
+    temp1 = 2.
+  ELSEIF 'a' = 'b'.
+    temp1 = 2.
+  ELSE.
+    temp1 = 3.
+  ENDIF.
+  field = temp1.`;
 
     testFix(abap, expected);
   });
@@ -1370,9 +1414,7 @@ DATA(result) = temp1.`;
     testFix(abap, expected);
   });
 
-// ---------------------
-
-  it.skip("line_exists()", async () => {
+  it("line_exists()", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   IF line_exists( lt_list[ table_line = 123 ] ).
@@ -1381,12 +1423,454 @@ DATA(result) = temp1.`;
 ENDFORM.`;
 
     const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
   READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
-  IF sy-subrc = 0.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
     WRITE / 'hello'.
   ENDIF.
 ENDFORM.`;
 
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), two fields, voided", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE voided.
+  IF line_exists( lt_list[ foo = 123 bar = 2 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE voided.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY foo = 123 bar = 2 TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), two fields, two times, voided", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE voided.
+  IF line_exists( lt_list[ foo = 123 bar = '2' ] ) OR line_exists( lt_list[ foo = 1 bar = 5 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE voided.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY foo = 123 bar = '2' TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0 OR line_exists( lt_list[ foo = 1 bar = 5 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), index", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ 1 ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list INDEX 1 TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("line_index()", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_index( lt_list[ table_line = 123 ] ) = 2.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
+  temp1 = sy-tabix.
+  IF temp1 = 2.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("Basic SWITCH", async () => {
+    const abap = `
+  DATA result TYPE string.
+  DATA asset_type TYPE string.
+  result = SWITCH #(
+    asset_type
+    WHEN 'CSS' THEN |temp1|
+    WHEN 'HTML' THEN |sdfs|
+    ELSE |sdf| ).`;
+
+    const expected = `
+  DATA result TYPE string.
+  DATA asset_type TYPE string.
+  DATA temp1 TYPE string.
+  CASE asset_type.
+    WHEN 'CSS'.
+      temp1 = |temp1|.
+    WHEN 'HTML'.
+      temp1 = |sdfs|.
+    WHEN OTHERS.
+      temp1 = |sdf|.
+  ENDCASE.
+  result = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("Table expression, by component", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
+WRITE tab[ foo = 2 ]-foo.`;
+
+    const expected = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF tab.
+READ TABLE tab WITH KEY foo = 2 INTO temp1.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+WRITE temp1-foo.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT SINGLE star", async () => {
+    const abap = `
+  SELECT SINGLE * FROM zfoobar INTO @DATA(ls_cfg) WHERE field = 'MOO'.`;
+
+    const expected = `
+  DATA ls_cfg TYPE zfoobar.
+  SELECT SINGLE * FROM zfoobar INTO @ls_cfg WHERE field = 'MOO'.`;
+
+    testFix(abap, expected);
+  });
+
+  it("inline and table expression", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         identifier TYPE string,
+         ispub      TYPE abap_bool,
+       END OF ty_type.
+DATA: BEGIN OF ls_meta,
+        page TYPE STANDARD TABLE OF ty_type,
+      END OF ls_meta.
+DATA(ls_entry) = ls_meta-page[ identifier = |sdf| ispub = abap_true ].`;
+
+    const expected = `
+TYPES: BEGIN OF ty_type,
+         identifier TYPE string,
+         ispub      TYPE abap_bool,
+       END OF ty_type.
+DATA: BEGIN OF ls_meta,
+        page TYPE STANDARD TABLE OF ty_type,
+      END OF ls_meta.
+DATA ls_entry TYPE ty_type.
+ls_entry = ls_meta-page[ identifier = |sdf| ispub = abap_true ].`;
+
+    testFix(abap, expected);
+  });
+
+  it("outline, SELECT COUNT", async () => {
+    const abap = `SELECT COUNT( * ) FROM zbar INTO @DATA(lv_count) WHERE foo = 'abc'.`;
+    const expected = `DATA lv_count TYPE i.
+SELECT COUNT( * ) FROM zbar INTO @lv_count WHERE foo = 'abc'.`;
+    testFix(abap, expected);
+  });
+
+  it("CALL METHOD with CONV #", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = CONV #( 'abc' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    DATA temp1 TYPE string.
+    temp1 = 'abc'.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = temp1.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("CALL METHOD with CONV #", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string
+      EXPORTING
+        bar         TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    DATA lv TYPE string.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = CONV #( 'abc' )
+      IMPORTING
+        bar         = lv.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string
+      EXPORTING
+        bar         TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    DATA lv TYPE string.
+    DATA temp1 TYPE string.
+    temp1 = 'abc'.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        iv_username = temp1
+      IMPORTING
+        bar         = lv.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND INITIAL LINE, voided types", async () => {
+    const abap = `
+    DATA tab TYPE voided.
+    APPEND INITIAL LINE TO tab ASSIGNING FIELD-SYMBOL(<fs>).`;
+
+    const expected = `
+    DATA tab TYPE voided.
+    FIELD-SYMBOLS <fs> LIKE LINE OF tab.
+    APPEND INITIAL LINE TO tab ASSIGNING <fs>.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MAX inline", async () => {
+    const abap = `
+  SELECT MAX( field ) INTO @DATA(lv_field) FROM dbtab WHERE blah EQ 'sdf'.`;
+
+    const expected = `
+  DATA lv_field TYPE dbtab-field.
+  SELECT MAX( field ) INTO @lv_field FROM dbtab WHERE blah EQ 'sdf'.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression, voided type", async () => {
+    const abap = `
+    DATA lt_return2 TYPE voided.
+    DATA(ls_return2) = lt_return2[ type = 'E' ].`;
+
+    const expected = `
+    DATA lt_return2 TYPE voided.
+    DATA ls_return2 LIKE LINE OF lt_return2.
+    ls_return2 = lt_return2[ type = 'E' ].`;
+
+    testFix(abap, expected);
+  });
+
+  it("downport, single character", async () => {
+    const abap = `DATA(lv_col) = '*'.`;
+    const expected = `DATA lv_col TYPE c LENGTH 1.
+lv_col = '*'.`;
+    testFix(abap, expected);
+  });
+
+  it("downport, zero character", async () => {
+    const abap = `DATA(lv_col) = ''.`;
+    const expected = `DATA lv_col TYPE c LENGTH 1.
+lv_col = ''.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT LOOP, basic", async () => {
+    const abap = `
+  SELECT * FROM voiddbtab INTO @DATA(ls_db) UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT * FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT LOOP, downport at", async () => {
+    const abap = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT * FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT * FROM voiddbtab INTO ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT LOOP, downport comma", async () => {
+    const abap = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT foo, bar FROM voiddbtab INTO @ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    const expected = `
+  DATA ls_db TYPE voiddbtab.
+  SELECT foo bar FROM voiddbtab INTO ls_db UP TO 1 ROWS WHERE field = 'sdfs'.
+  ENDSELECT.`;
+    testFix(abap, expected);
+  });
+
+  it("basic, SELECT INNER JOIN", async () => {
+    const abap = `
+SELECT aufk~aufnr, afko~aufpl, afvc~objnr
+  FROM aufk
+  INNER JOIN afko ON afko~aufnr = aufk~aufnr
+  INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+  INTO TABLE @DATA(lt_data).`;
+    const expected = `
+TYPES: BEGIN OF temp1,
+        aufnr TYPE aufk-aufnr,
+        aufpl TYPE afko-aufpl,
+        objnr TYPE afvc-objnr,
+      END OF temp1.
+DATA lt_data TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+SELECT aufk~aufnr, afko~aufpl, afvc~objnr
+  FROM aufk
+  INNER JOIN afko ON afko~aufnr = aufk~aufnr
+  INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+  INTO TABLE @lt_data.`;
+    testFix(abap, expected);
+  });
+
+  it("voided structure, VALUE", async () => {
+    const abap = `
+  DATA temp33 TYPE voided.
+  temp33 = VALUE #( line = 'moo' ).`;
+    const expected = `
+  DATA temp33 TYPE voided.
+  CLEAR temp33.
+  temp33-line = 'moo'.`;
+    testFix(abap, expected);
+  });
+
+  it("CATCH voided into inline", async () => {
+    const abap = `
+TRY.
+  CATCH cx_bcs INTO DATA(lx_bcs_excep).
+ENDTRY.`;
+    const expected = `
+TRY.
+    DATA lx_bcs_excep TYPE REF TO cx_bcs.
+  CATCH cx_bcs INTO lx_bcs_excep.
+ENDTRY.`;
+    testFix(abap, expected);
+  });
+
+  it("outline table expression first, type is voided", async () => {
+    const abap = `
+  DATA it_operations TYPE voided.
+  DATA(lv_text) = it_operations[ activity = 2 ]-description.`;
+    const expected = `
+  DATA it_operations TYPE voided.
+  DATA temp1 LIKE LINE OF it_operations.
+  READ TABLE it_operations WITH KEY activity = 2 INTO temp1.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  DATA(lv_text) = temp1-description.`;
+    testFix(abap, expected);
+  });
+
+  it("downport, searching for type in Include", async () => {
+    const abap = `FORM bar.
+  DATA(lv_len) = strlen( |sdfds| ).
+ENDFORM.`;
+    const zincl = new MemoryFile("zincl.prog.abap", abap);
+    const zinclxml = new MemoryFile("zincl.prog.xml", `<SUBC>I</SUBC>`);
+    const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zincl.`);
+
+    const reg = new Registry(buildConfig());
+    reg.addFile(zincl);
+    reg.addFile(zmain);
+    reg.addFile(zinclxml);
+    reg.parse();
+    const issues = new Downport().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1, "single issue expected");
+    expect(issues[0].getFix()).to.not.equal(undefined);
+  });
+
+  it("line_eixsts, dashed source table", async () => {
+    const abap = `
+    DATA ls_update TYPE voided.
+    IF line_exists( ls_update-users[ table_line = 2 ] ).
+    ENDIF.`;
+    const expected = `
+    DATA ls_update TYPE voided.
+    DATA temp1 LIKE sy-subrc.
+    READ TABLE ls_update-users WITH KEY table_line = 2 TRANSPORTING NO FIELDS.
+    temp1 = sy-subrc.
+    IF temp1 = 0.
+    ENDIF.`;
     testFix(abap, expected);
   });
 

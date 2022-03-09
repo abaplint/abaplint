@@ -9,9 +9,19 @@ export class SwitchBody {
       return;
     }
 
+    const thenSource = node.findExpressionAfterToken("THEN");
+    if (!(thenSource?.get() instanceof Expressions.Source)) {
+      throw new Error("SwitchBody, unexpected");
+    }
+    const type = new Source().runSyntax(thenSource, scope, filename);
+
     for (const s of node.findDirectExpressions(Expressions.Source)) {
+      if (s === thenSource) {
+        continue;
+      }
       new Source().runSyntax(s, scope, filename);
     }
 
+    return type;
   }
 }

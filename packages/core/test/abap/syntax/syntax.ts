@@ -6310,6 +6310,53 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Infer switch type to string", () => {
+    const abap = `
+  DATA asset_type TYPE string.
+  DATA(result) = SWITCH #(
+    asset_type
+    WHEN 'CSS' THEN |sdf|
+    WHEN 'HTML' THEN |sdf|
+    ELSE |sdf| ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("WRITE col_group.", () => {
+    const abap = `WRITE col_group.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("MATCH OFFSET inline", () => {
+    const abap = `DATA lv_uri TYPE string.
+  FIND FIRST OCCURRENCE OF '/' IN SECTION OFFSET 7 OF lv_uri IGNORING CASE MATCH OFFSET DATA(lv_end_site_offset).
+  WRITE lv_end_site_offset.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CALL METHOD, error expected, parameter not found", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_token
+      IMPORTING
+        iv_username TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_token.
+    CALL METHOD lcl=>get_token
+      EXPORTING
+        not_valid = 'abc'.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`NOT_VALID`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -30,9 +30,11 @@ export class Find implements StatementSyntax {
       }
     }
 
-    const ofound = node.findExpressionAfterToken("OFFSET");
-    if (ofound && ofound.get() instanceof Expressions.Target) {
-      this.inline(ofound, scope, filename, new IntegerType());
+    const ofound = node.findExpressionsAfterToken("OFFSET");
+    for (const o of ofound) {
+      if (o.get() instanceof Expressions.Target) {
+        this.inline(o, scope, filename, new IntegerType());
+      }
     }
 
     const lfound = node.findExpressionAfterToken("LINE");
@@ -52,7 +54,9 @@ export class Find implements StatementSyntax {
 
     if (node.findDirectTokenByText("SUBMATCHES")) {
       for (const t of node.findDirectExpressions(Expressions.Target)) {
-        if (t === rfound || t === ofound || t === lfound || t === cfound || t === lnfound) {
+        if (t === rfound || t === lfound || t === cfound || t === lnfound) {
+          continue;
+        } else if (ofound.indexOf(t) >= 0) {
           continue;
         }
         const inline = t?.findDirectExpression(Expressions.InlineData);

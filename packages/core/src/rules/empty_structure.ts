@@ -23,7 +23,9 @@ export class EmptyStructureConf extends BasicRuleConfig {
   public at: boolean = true;
   /** Checks for empty TRY blocks */
   public try: boolean = true;
-  // todo, other category containing WHEN, ELSE
+  /** Checks for empty WHEN blocks */
+  public when: boolean = true;
+  // todo, other category containing ELSE
 }
 
 export class EmptyStructure extends ABAPRule {
@@ -119,6 +121,19 @@ export class EmptyStructure extends ABAPRule {
             this.getDescription(t.get().constructor.name),
             this.getMetadata().key,
             this.conf.severity);
+          issues.push(issue);
+        }
+      }
+    }
+
+    if (this.getConfig().when === true) {
+      const tries = stru.findAllStructures(Structures.When);
+
+      for (const t of tries) {
+        if (t.getChildren().length === 1) {
+          const token = t.getFirstToken();
+          const message = this.getDescription(t.get().constructor.name);
+          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }

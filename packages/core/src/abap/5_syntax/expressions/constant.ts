@@ -8,7 +8,11 @@ export class Constant {
     if(node.findDirectExpression(Integer)) {
       return new IntegerType("I");
     } else if (node.getFirstToken().getStr().startsWith("'")) {
-      return new CharacterType(10);
+      let len = node.getFirstToken().getStr().length - 2;
+      if (len <= 0) {
+        len = 1;
+      }
+      return new CharacterType(len);
     } else {
       return new StringType("STRING");
     }

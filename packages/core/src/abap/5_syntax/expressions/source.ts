@@ -80,8 +80,11 @@ export class Source {
         case "SWITCH":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), scope, filename);
-          return foundType;
+          const bodyType = new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), scope, filename);
+          if (foundType === undefined) {
+            this.addIfInferred(node, scope, filename, bodyType);
+          }
+          return foundType ? foundType : bodyType;
         }
         case "COND":
         {
