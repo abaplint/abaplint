@@ -65,7 +65,7 @@ If the target is a sorted/hashed table, no issue is reported`,
       const selects = stru.findAllStatements(Statements.Select);
       selects.push(...stru.findAllStatements(Statements.SelectLoop));
       for (const s of selects) {
-        const c = s.concatTokens();
+        const c = s.concatTokens().toUpperCase();
         if (c.startsWith("SELECT SINGLE ")) {
           continue;
         }

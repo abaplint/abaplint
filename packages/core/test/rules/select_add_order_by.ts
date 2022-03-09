@@ -4,6 +4,7 @@ import {testRule} from "./_utils";
 const tests = [
   {abap: `sdfdsf`, cnt: 0},
   {abap: `SELECT * from mara INTO table @data(foobar).`, cnt: 1},
+  {abap: `select single @abap_true from seoclass where clsname = @name into @data(ext).`, cnt: 0},
   {abap: `SELECT * from mara INTO table @data(foobar) order by primary key.`, cnt: 0},
   {abap: `SELECT COUNT(*) FROM tcdrp WHERE object = mv_object.`, cnt: 0},
   {abap: `SELECT COUNT( * ) FROM  dm40l
