@@ -743,6 +743,37 @@ class Permutation implements IStatementRunnable {
   }
 }
 
+class FailCombinator extends Error {
+
+}
+
+class Fail implements IStatementRunnable {
+
+  public listKeywords(): string[] {
+    return [];
+  }
+
+  public getUsing() {
+    return [];
+  }
+
+  public run(_r: Result[]): Result[] {
+    throw new FailCombinator();
+  }
+
+  public railroad() {
+    return "Railroad.Terminal('!Fail')";
+  }
+
+  public toStr() {
+    return "fail()";
+  }
+
+  public first() {
+    return [];
+  }
+}
+
 class Alternative implements IStatementRunnable {
   private readonly list: IStatementRunnable[];
 
@@ -916,7 +947,8 @@ export class Combi {
     this.ver = version;
 
     const input = new Result(tokens, 0);
-    const result = runnable.run([input]);
+    try {
+      const result = runnable.run([input]);
 /*
     console.log("res: " + result.length);
     for (const res of result) {
@@ -924,10 +956,16 @@ export class Combi {
       console.dir(res.getNodes().map(n => n.concatTokens()));
     }
 */
-    for (const res of result) {
-      if (res.remainingLength() === 0) {
-        return res.getNodes();
+      for (const res of result) {
+        if (res.remainingLength() === 0) {
+          return res.getNodes();
+        }
       }
+    } catch (err) {
+      if (err instanceof FailCombinator) {
+        return undefined;
+      }
+      throw err;
     }
 
     return undefined;
@@ -1018,4 +1056,7 @@ export function ver(version: Version, first: InputType, or?: Version): IStatemen
 }
 export function verNot(version: Version, first: InputType): IStatementRunnable {
   return new VersNot(version, map(first));
+}
+export function fail(): IStatementRunnable {
+  return new Fail();
 }
