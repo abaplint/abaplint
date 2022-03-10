@@ -141,6 +141,7 @@ export class Indent {
         || type instanceof Statements.WhenOthers
         || type instanceof Statements.Cleanup
         || type instanceof Statements.Loop
+        || type instanceof Statements.LoopAtScreen
         || type instanceof Statements.CatchSystemExceptions
         || type instanceof Statements.Form
         || type instanceof Statements.Else
