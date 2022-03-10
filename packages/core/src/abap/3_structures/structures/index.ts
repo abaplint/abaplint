@@ -25,6 +25,7 @@ export * from "./function_module";
 export * from "./if";
 export * from "./interface_global";
 export * from "./interface";
+export * from "./loop_at_screen";
 export * from "./loop";
 export * from "./method";
 export * from "./module";

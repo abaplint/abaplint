@@ -163,6 +163,11 @@ SELECTION-SCREEN BEGIN OF BLOCK table_compare WITH FRAME TITLE TEXT-006.
 PARAMETERS p_diff AS CHECKBOX DEFAULT abap_true MODIF ID exl.
 SELECTION-SCREEN END OF BLOCK table_compare.`, cnt: 0},
 
+  {abap: `
+LOOP AT SCREEN.
+  WRITE 2.
+ENDLOOP.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

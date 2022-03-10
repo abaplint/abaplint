@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, ver, altPrio, optPrio, per} from "../combi";
+import {seq, alt, opt, ver, altPrio, optPrio, per, fail} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, SimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -30,6 +30,7 @@ export class Loop implements IStatement {
     const options = per(target, from, to, where, usingKey, group);
 
     const at = seq("AT",
+                   opt(seq("SCREEN", fail())),
                    opt(ver(Version.v740sp08, "GROUP")),
                    alt(SimpleSource2, ver(Version.v740sp02, Source)),
                    opt(options));

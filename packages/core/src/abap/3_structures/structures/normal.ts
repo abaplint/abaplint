@@ -18,6 +18,7 @@ export class Normal implements IStructure {
                sta(Statements.CreateObject),
                sta(Statements.CallFunction),
                sta(MacroCall),
+               sub(Structures.LoopAtScreen),
                sub(Structures.Loop),
                sta(Statements.Append),
                sub(Structures.Try),

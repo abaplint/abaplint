@@ -20,6 +20,7 @@ export * from "./do";
 export * from "./break_id";
 export * from "./interface_deferred";
 export * from "./while";
+export * from "./loop_at_screen";
 export * from "./loop";
 export * from "./check";
 export * from "./endprovide";
