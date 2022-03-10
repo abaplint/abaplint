@@ -1088,4 +1088,12 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("unused");
   });
 
+  it("unused and loop at screen, 3", async () => {
+    const abap = `
+    LOOP AT SCREEN INTO DATA(unused).
+    ENDLOOP.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.include("unused");
+  });
+
 });

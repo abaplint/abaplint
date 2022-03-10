@@ -134,6 +134,7 @@ import {DeleteCluster} from "./statements/delete_cluster";
 import {Unassign} from "./statements/unassign";
 import {InsertTextpool} from "./statements/insert_textpool";
 import {GetCursor} from "./statements/get_cursor";
+import {LoopAtScreen} from "./statements/loop_at_screen";
 
 // -----------------------------------
 
@@ -161,6 +162,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Assert());
   addToMap(new Catch());
   addToMap(new Loop());
+  addToMap(new LoopAtScreen());
   addToMap(new SetPFStatus());
   addToMap(new SetTitlebar());
   addToMap(new Submit());
