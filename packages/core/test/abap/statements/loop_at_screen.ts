@@ -4,6 +4,7 @@ import {Version} from "../../../src/version";
 
 const tests = [
   "LOOP AT SCREEN.",
+  "LOOP AT SCREEN INTO DATA(line).",
 ];
 
 statementType(tests, "LOOP AT SCREEN", Statements.LoopAtScreen);
