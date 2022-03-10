@@ -1894,13 +1894,6 @@ DATA(bar) = foo->lif_def~foo.`;
     expect(issues.length).to.equals(0);
   });
 
-  it("LOOP AT SCREEN, on Cloud", () => {
-    const abap = `LOOP AT SCREEN.
-    ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.Cloud);
-    expect(issues.length).to.equals(1);
-  });
-
   it("LOOP, 702", () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA row TYPE string.
