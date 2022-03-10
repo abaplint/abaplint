@@ -1070,4 +1070,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("unused and loop at screen", async () => {
+    const abap = `
+    DATA unused TYPE string.
+    LOOP AT SCREEN.
+    ENDLOOP.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.include("unused");
+  });
+
+  it("unused and loop at screen, 2", async () => {
+    const abap = `
+    LOOP AT SCREEN.
+      DATA unused TYPE string.
+    ENDLOOP.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.include("unused");
+  });
+
 });
