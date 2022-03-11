@@ -62,6 +62,8 @@ Applicable from v740sp02 and up`,
           continue;
         } else if (statement.findDirectExpression(ParameterListExceptions)) {
           continue;
+        } else if (statement.findDirectTokenByText("AREA")) {
+          continue;
         }
         const target = statement.findDirectExpression(Target)?.concatTokens() + "->";
         if (statement.concatTokens().includes(target)) {
