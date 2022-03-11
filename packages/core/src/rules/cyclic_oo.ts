@@ -15,6 +15,8 @@ export class CyclicOOConf extends BasicRuleConfig {
    * @uniqueItems true
   */
   public skip: string[] = [];
+  /** Skips shared memory enabled classes*/
+  public skipSharedMemory = true;
 }
 
 export class CyclicOO implements IRule {
@@ -47,9 +49,11 @@ export class CyclicOO implements IRule {
     this.edges = {};
     for (const obj of this.reg.getObjectsByType("CLAS")) {
       const name = obj.getName().toUpperCase();
-      if (!(obj instanceof ABAPObject)) {
+      if (!(obj instanceof Class)) {
         continue;
       } else if (this.conf.skip.indexOf(name) >= 0) {
+        continue;
+      } else if (this.conf.skipSharedMemory === true && obj.getClassDefinition()?.isSharedMemory === true) {
         continue;
       }
       this.buildEdges(name, new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
