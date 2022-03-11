@@ -32,6 +32,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly implementing: IImplementing[];
   private readonly testing: boolean;
   private readonly abstract: boolean;
+  private readonly sharedMemory: boolean;
   private aliases: IAliases;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -73,6 +74,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     const concat = this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase();
     this.testing = concat.includes(" FOR TESTING");
+    this.sharedMemory = concat.includes(" SHARED MEMORY ENABLED");
     this.abstract = concat.includes(" ABSTRACT");
   }
 
@@ -122,6 +124,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   public isAbstract(): boolean {
     return this.abstract;
+  }
+
+  public isSharedMemory(): boolean {
+    return this.sharedMemory;
   }
 
 /*

@@ -169,6 +169,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         interfaces: this.getImplementing(found),
         isForTesting: concat.includes(" FOR TESTING"),
         isAbstract: concat.includes(" ABSTRACT"),
+        isSharedMemory: concat.includes(" SHARED MEMORY ENABLED"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
         aliases,
         attributes,

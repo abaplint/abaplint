@@ -11,9 +11,10 @@ import {StatementSyntax} from "../_statement_syntax";
 export class Catch implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
+    const names = new Set<string>();
     for (const c of node.findDirectExpressions(Expressions.ClassName)) {
       const token = c.getFirstToken();
-      const className = token.getStr();
+      const className = token.getStr().toUpperCase();
       const found = scope.existsObject(className);
       if (found.found === true && found.id) {
         scope.addReference(token, found.id, found.type, filename);
@@ -23,6 +24,11 @@ export class Catch implements StatementSyntax {
       } else {
         throw new Error("CATCH, unknown class " + className);
       }
+
+      if (names.has(className)) {
+        throw new Error("Duplicate class name in CATCH: " + className);
+      }
+      names.add(className);
     }
 
     const target = node.findDirectExpression(Expressions.Target);

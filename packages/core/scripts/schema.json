@@ -708,10 +708,15 @@
           },
           "type": "array",
           "uniqueItems": true
+        },
+        "skipSharedMemory": {
+          "description": "Skips shared memory enabled classes",
+          "type": "boolean"
         }
       },
       "required": [
-        "skip"
+        "skip",
+        "skipSharedMemory"
       ],
       "type": "object"
     },

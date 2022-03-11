@@ -86,6 +86,7 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   isFinal: boolean;
   interfaces: readonly InfoImplementing[];
   isForTesting: boolean;
+  isSharedMemory: boolean;
 }
 
 export interface InfoClassImplementation {

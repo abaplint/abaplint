@@ -5,6 +5,9 @@ const tests = [
   {abap: "parser error", cnt: 0},
   {abap: "CREATE OBJECT foobar.", cnt: 1},
   {abap: "foobar = NEW #( ).", cnt: 0},
+  {abap: "CREATE OBJECT lo_root AREA HANDLE lo_area.", cnt: 0},
+  {abap: "create object lo_root area handle lo_area.", cnt: 0},
+  {abap: "create object area.", cnt: 1},
   {abap: "CREATE OBJECT ref TYPE ('ZCL_CLASS').", cnt: 0},
   {abap: `
 CREATE OBJECT lo_source
