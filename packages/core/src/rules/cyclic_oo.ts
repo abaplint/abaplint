@@ -16,7 +16,7 @@ export class CyclicOOConf extends BasicRuleConfig {
   */
   public skip: string[] = [];
   /** Skips shared memory enabled classes*/
-  public skipSharedMemory = true;
+  public skipSharedMemory: boolean = true;
 }
 
 export class CyclicOO implements IRule {
