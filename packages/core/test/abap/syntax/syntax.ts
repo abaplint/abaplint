@@ -6350,6 +6350,16 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain(`NOT_VALID`);
   });
 
+  it("duplicate in CATCH", () => {
+    const abap = `
+  TRY.
+    CATCH cx_root cx_root.
+  ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`Duplicate`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
