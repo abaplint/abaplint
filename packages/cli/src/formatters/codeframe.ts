@@ -2,7 +2,7 @@ import {Issue} from "@abaplint/core";
 import {Total} from "./total";
 import {IFormatter} from "./_iformatter";
 import * as fs from "fs";
-import {red, grey, green, yellow} from "chalk";
+import chalk from "chalk";
 
 type IssueDetails = {
   filename: string,
@@ -30,7 +30,7 @@ export class CodeFrame implements IFormatter {
     const builtIssues = this.convertAllIssues(issues).sort(issueSort); // Make sure it is sorted by filename for caching to work
     return [
       ...builtIssues.map(i => this.renderIssue(i)),
-      (issues.length > 0 ? red(new Total().output(issues, fileCount)) : green(new Total().output(issues, fileCount))),
+      (issues.length > 0 ? chalk.red(new Total().output(issues, fileCount)) : chalk.green(new Total().output(issues, fileCount))),
     ].join("\n");
   }
 
@@ -65,12 +65,12 @@ export class CodeFrame implements IFormatter {
     }
 
     const severityStr = issue.severity === "E"
-      ? red(issue.severity)
-      : yellow(issue.severity);
+      ? chalk.red(issue.severity)
+      : chalk.yellow(issue.severity);
 
     return `[${severityStr}] ${issue.description} (${issue.issueKey}) @ ${issue.location}`
       + "\n"
-      + code.map(str => grey(str)).join("\n")
+      + code.map(str => chalk.grey(str)).join("\n")
       + "\n";
   }
 
