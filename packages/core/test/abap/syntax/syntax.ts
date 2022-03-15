@@ -6371,6 +6371,16 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain(`Incompatible`);
   });
 
+  it("split, ok, voided", () => {
+    const abap = `
+    DATA str TYPE string.
+    DATA int_tab TYPE voided.
+    str = '1 2 10'.
+    SPLIT str AT space INTO TABLE int_tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.

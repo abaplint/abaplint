@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {TableType, StringType} from "../../types/basic";
+import {TableType, StringType, VoidType, UnknownType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
@@ -21,10 +21,14 @@ export class Split implements StatementSyntax {
       } else {
         let targetType = new Target().runSyntax(target, scope, filename);
         if (intoTable) {
-          if (!(targetType instanceof TableType)) {
+          if (!(targetType instanceof TableType)
+              && !(targetType instanceof UnknownType)
+              && !(targetType instanceof VoidType)) {
             throw new Error("Into must be table typed");
           }
-          targetType = targetType.getRowType();
+          if (targetType instanceof TableType) {
+            targetType = targetType.getRowType();
+          }
         }
         if (new TypeUtils(scope).isCharLikeStrict(targetType) === false) {
           throw new Error("Incompatible, target not character like");
