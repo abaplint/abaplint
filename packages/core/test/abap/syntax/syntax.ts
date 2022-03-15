@@ -6360,6 +6360,17 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain(`Duplicate`);
   });
 
+  it("Error, split table target must be character like", () => {
+    const abap = `
+    DATA str TYPE string.
+    DATA int_tab TYPE TABLE OF i.
+    str = '1 2 10'.
+    SPLIT str AT space INTO TABLE int_tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`Incompatible`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

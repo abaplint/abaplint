@@ -6,18 +6,29 @@ import {InlineData} from "../expressions/inline_data";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {TypeUtils} from "../_type_utils";
 
 export class Split implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    const type = node.findTokenSequencePosition("INTO", "TABLE") ? new TableType(new StringType(), {withHeader: false}) : new StringType();
+    const intoTable = node.findTokenSequencePosition("INTO", "TABLE") !== undefined;
+    const type = intoTable ? new TableType(new StringType(), {withHeader: false}) : new StringType();
 
     for (const target of node.findAllExpressions(Expressions.Target)) {
       const inline = target.findDirectExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, type);
       } else {
-        new Target().runSyntax(target, scope, filename);
+        let targetType = new Target().runSyntax(target, scope, filename);
+        if (intoTable) {
+          if (!(targetType instanceof TableType)) {
+            throw new Error("Into must be table typed");
+          }
+          targetType = targetType.getRowType();
+        }
+        if (new TypeUtils(scope).isCharLikeStrict(targetType) === false) {
+          throw new Error("Incompatible, target not character like");
+        }
       }
     }
 
