@@ -26,6 +26,7 @@ export class TypeUtils {
         || type instanceof CharacterType
         || type instanceof CLikeType
         || type instanceof DateType
+        || type instanceof CSequenceType
         || type instanceof NumericGenericType
         || type instanceof NumericType
         || type instanceof TimeType
