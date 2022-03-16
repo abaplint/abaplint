@@ -16,6 +16,7 @@ export class PragmaPlacement extends ABAPRule {
       title: "Pragma Placement",
       shortDescription: `Place pragmas at end of statements`,
       tags: [RuleTag.SingleFile],
+      extendedInformation: `https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/abenpragma.htm`,
       badExample: `DATA field ##NO_TEXT TYPE i.`,
       goodExample: `DATA field TYPE i ##NO_TEXT.`,
     };
