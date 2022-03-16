@@ -45,7 +45,7 @@ export class PragmaPlacement extends ABAPRule {
         }
         if (children[children.length - 2].getLastToken().getStart().isAfter(p.getStart())) {
           const message = "Place pragma at end of statement";
-          const issue = Issue.atStatement(file, s, message, this.getMetadata().key, this.conf.severity);
+          const issue = Issue.atToken(file, p, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
           continue; // max one finding per statement
         }
