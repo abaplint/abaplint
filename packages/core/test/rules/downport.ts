@@ -1900,4 +1900,21 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("target with table expression", async () => {
+    const abap = `
+    DATA itab TYPE STANDARD TABLE OF i.
+    APPEND 1 TO itab.
+    itab[ 1 ] = 2.`;
+    const expected = `
+    DATA itab TYPE STANDARD TABLE OF i.
+    APPEND 1 TO itab.
+    FIELD-SYMBOLS <temp1> LIKE LINE OF itab.
+    READ TABLE itab INDEX 1 ASSIGNING <temp1>.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    <temp1> = 2.`;
+    testFix(abap, expected);
+  });
+
 });

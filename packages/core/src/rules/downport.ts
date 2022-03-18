@@ -222,6 +222,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.moveWithTableTarget(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSelectInline(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -807,6 +812,44 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const start = high.getFirstToken().getStart();
     const end = high.getLastToken().getStart();
+    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, Reduce statement", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private moveWithTableTarget(node: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Move)) {
+      return undefined;
+    }
+
+    const target = high.findDirectExpression(Expressions.Target);
+    if (target === undefined) {
+      return undefined;
+    }
+    const tableExpression = target.findDirectExpression(Expressions.TableExpression);
+    if (tableExpression === undefined) {
+      return undefined;
+    }
+    const index = tableExpression.findDirectExpression(Expressions.Source);
+    if (index === undefined) {
+      return undefined;
+    }
+
+    let uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    uniqueName = `<${uniqueName}>`;
+
+    const tName = target.concatTokens().split("[")[0];
+
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${tName}.
+${indentation}READ TABLE ${tName} INDEX ${index?.concatTokens()} ASSIGNING <temp1>.
+${indentation}IF sy-subrc <> 0.
+${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+${indentation}ENDIF.
+    ${uniqueName}`;
+
+    const start = target.getFirstToken().getStart();
+    const end = target.getLastToken().getEnd();
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, Reduce statement", this.getMetadata().key, this.conf.severity, fix);
