@@ -2175,7 +2175,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks Method names that overwrite builtin SAP functions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/method_overwrites_builtin"
+              "description": "Checks Method names that overwrite builtin SAP functions\nTags: Naming, SingleFile, Styleguide\nhttps://rules.abaplint.org/method_overwrites_builtin"
             },
             "method_parameter_names": {
               "anyOf": [

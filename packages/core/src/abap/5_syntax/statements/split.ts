@@ -1,23 +1,38 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {TableType, StringType} from "../../types/basic";
+import {TableType, StringType, VoidType, UnknownType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {TypeUtils} from "../_type_utils";
 
 export class Split implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    const type = node.findTokenSequencePosition("INTO", "TABLE") ? new TableType(new StringType(), {withHeader: false}) : new StringType();
+    const intoTable = node.findTokenSequencePosition("INTO", "TABLE") !== undefined;
+    const type = intoTable ? new TableType(new StringType(), {withHeader: false}) : new StringType();
 
     for (const target of node.findAllExpressions(Expressions.Target)) {
       const inline = target.findDirectExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, type);
       } else {
-        new Target().runSyntax(target, scope, filename);
+        let targetType = new Target().runSyntax(target, scope, filename);
+        if (intoTable) {
+          if (!(targetType instanceof TableType)
+              && !(targetType instanceof UnknownType)
+              && !(targetType instanceof VoidType)) {
+            throw new Error("Into must be table typed");
+          }
+          if (targetType instanceof TableType) {
+            targetType = targetType.getRowType();
+          }
+        }
+        if (new TypeUtils(scope).isCharLikeStrict(targetType) === false) {
+          throw new Error("Incompatible, target not character like");
+        }
       }
     }
 

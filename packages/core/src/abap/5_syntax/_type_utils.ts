@@ -11,6 +11,32 @@ export class TypeUtils {
     this.scope = scope;
   }
 
+  public isCharLikeStrict(type: AbstractType | undefined): boolean {
+    if (type === undefined) {
+      return false;
+    } else if (type instanceof StructureType) {
+      for (const c of type.getComponents()) {
+        if (this.isCharLikeStrict(c.type) === false) {
+          return false;
+        }
+      }
+      return true;
+    } else if (type instanceof StringType
+        || type instanceof AnyType
+        || type instanceof CharacterType
+        || type instanceof CLikeType
+        || type instanceof DateType
+        || type instanceof CSequenceType
+        || type instanceof NumericGenericType
+        || type instanceof NumericType
+        || type instanceof TimeType
+        || type instanceof UnknownType
+        || type instanceof VoidType) {
+      return true;
+    }
+    return false;
+  }
+
   public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
