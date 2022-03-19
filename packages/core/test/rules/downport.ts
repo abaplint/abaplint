@@ -1917,4 +1917,16 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("contains()", async () => {
+    const abap = `
+    DATA current_val TYPE string.
+    IF contains( val = 'AEIOULNRST' sub = current_val ).
+    ENDIF.`;
+    const expected = `
+    DATA current_val TYPE string.
+    IF 'AEIOULNRST' CS current_val.
+    ENDIF.`;
+    testFix(abap, expected);
+  });
+
 });

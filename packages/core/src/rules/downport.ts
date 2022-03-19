@@ -312,6 +312,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.replaceContains(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.replaceTableExpression(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -1546,6 +1551,39 @@ ${indentation}    output = ${topTarget}.`;
         return m;
       }
     }
+    return undefined;
+  }
+
+  private replaceContains(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
+
+    for (const r of spag?.getData().references || []) {
+      if (r.referenceType !== ReferenceType.BuiltinMethodReference) {
+        continue;
+      }
+      const func = r.position.getName().toUpperCase();
+      if (func === "CONTAINS") {
+        const token = r.position.getToken();
+
+        const expression = this.findMethodCallExpression(node, token);
+        if (expression === undefined) {
+          continue;
+        }
+
+        const sList = expression.findAllExpressions(Expressions.Source).map(e => e.concatTokens());
+        if (sList.length !== 2) {
+          continue;
+        }
+
+        const code = sList[0] + " CS " + sList[1];
+        const start = expression.getFirstToken().getStart();
+        const end = expression.getLastToken().getEnd();
+        const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+        return Issue.atToken(lowFile, token, "Downport contains()", this.getMetadata().key, this.conf.severity, fix);
+      }
+    }
+
     return undefined;
   }
 
