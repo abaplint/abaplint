@@ -1557,6 +1557,18 @@ ${indentation}    output = ${topTarget}.`;
   private replaceContains(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
+    // only downport if its an single method call condition
+    let found = false;
+    for (const c of node.findAllExpressionsRecursive(Expressions.Compare)) {
+      found = c.findDirectExpression(Expressions.MethodCallChain) !== undefined;
+      if (found === true) {
+        break;
+      }
+    }
+    if (found === false) {
+      return undefined;
+    }
+
     for (const r of spag?.getData().references || []) {
       if (r.referenceType !== ReferenceType.BuiltinMethodReference) {
         continue;
