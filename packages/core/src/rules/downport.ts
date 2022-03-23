@@ -1219,6 +1219,7 @@ ${indentation}    output = ${topTarget}.`;
       let structureName = uniqueName;
       let added = false;
       let data = "";
+      let previous: ExpressionNode | TokenNode | undefined = undefined;
       for (const b of valueBody?.getChildren() || []) {
         if (b.concatTokens() === "(" && added === false) {
           structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
@@ -1235,8 +1236,13 @@ ${indentation}    output = ${topTarget}.`;
         } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.Let) {
           body += this.outlineLet(b, indentation, highSyntax, lowFile);
         } else if (b.concatTokens() === ")") {
+          if (added === false && previous?.concatTokens() === "(") {
+            body += data;
+            added = true;
+          }
           body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
         }
+        previous = b;
       }
 
       if (forLoop !== undefined) {

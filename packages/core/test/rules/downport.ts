@@ -1929,4 +1929,31 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("VALUE, empty row", async () => {
+    const abap = `
+    DATA input TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    input  = VALUE #( ( ) ).`;
+    const expected = `
+    DATA input TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp1 LIKE input.
+    DATA temp2 LIKE LINE OF temp1.
+    APPEND temp2 TO temp1.
+    input  = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, two empty rows", async () => {
+    const abap = `
+    DATA input TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    input  = VALUE #( ( ) ( ) ).`;
+    const expected = `
+    DATA input TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp1 LIKE input.
+    DATA temp2 LIKE LINE OF temp1.
+    APPEND temp2 TO temp1.
+    APPEND temp2 TO temp1.
+    input  = temp1.`;
+    testFix(abap, expected);
+  });
+
 });
