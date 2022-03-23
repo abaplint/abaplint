@@ -1235,6 +1235,10 @@ ${indentation}    output = ${topTarget}.`;
         } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.Let) {
           body += this.outlineLet(b, indentation, highSyntax, lowFile);
         } else if (b.concatTokens() === ")") {
+          if (added === false && valueBody?.concatTokens() === "( )") {
+            body += data;
+            added = true;
+          }
           body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
         }
       }
