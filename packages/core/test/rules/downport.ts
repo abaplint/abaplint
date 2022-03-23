@@ -1330,8 +1330,8 @@ DATA tab TYPE ty_tab.
 DATA temp1 TYPE ty_tab.
 DATA i TYPE i.
 WHILE NOT i = 2.
-  i = i + 1.
   APPEND |hello| TO temp1.
+  i = i + 1.
 ENDWHILE.
 tab = temp1.`;
     testFix(abap, expected);
@@ -1953,6 +1953,26 @@ ENDFORM.`;
     APPEND temp2 TO temp1.
     APPEND temp2 TO temp1.
     input  = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("Another REDUCE testcase", async () => {
+    const abap = `
+    DATA int TYPE string.
+    int = REDUCE string( INIT s = || FOR i = 0 UNTIL i > 2 NEXT s = s && i ).
+    WRITE int.`;
+    const expected = `
+    DATA int TYPE string.
+    DATA temp1 TYPE string.
+    DATA(s) = ||.
+    DATA i TYPE i.
+    WHILE NOT i > 2.
+      s = s && i.
+      i = i + 1.
+    ENDWHILE.
+    temp1 = s.
+    int = temp1.
+    WRITE int.`;
     testFix(abap, expected);
   });
 

@@ -819,7 +819,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const end = high.getLastToken().getStart();
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
-    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, Reduce statement", this.getMetadata().key, this.conf.severity, fix);
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple move", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private moveWithTableTarget(node: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -857,7 +857,7 @@ ${indentation}ENDIF.
     const end = target.getLastToken().getEnd();
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
-    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, Reduce statement", this.getMetadata().key, this.conf.severity, fix);
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, move with table target", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private moveWithOperator(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
@@ -1031,8 +1031,8 @@ ${indentation}    output = ${topTarget}.`;
       const cond = forLoop.findFirstExpression(Expressions.Cond);
       body += indentation + `WHILE NOT ${cond?.concatTokens()}.\n`;
       const field = forLoop.findDirectExpression(Expressions.InlineFieldDefinition)?.findFirstExpression(Expressions.Field)?.concatTokens();
-      body += indentation + `  ${field} = ${field} + 1.\n`;
-      end = "ENDWHILE";
+      end += `  ${field} = ${field} + 1.\n`;
+      end += indentation + "ENDWHILE";
     } else if (forLoop.findDirectTokenByText("WHILE")) {
       const name = forLoop.findFirstExpression(Expressions.Field)?.concatTokens();
       body += indentation + "DATA " + name + " TYPE i.\n";
