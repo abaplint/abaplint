@@ -847,7 +847,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     const code = `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${tName}.
-${indentation}READ TABLE ${tName} INDEX ${index?.concatTokens()} ASSIGNING <temp1>.
+${indentation}READ TABLE ${tName} INDEX ${index?.concatTokens()} ASSIGNING ${uniqueName}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
@@ -1040,8 +1040,8 @@ ${indentation}    output = ${topTarget}.`;
       const cond = forLoop.findFirstExpression(Expressions.Cond);
       body += indentation + `WHILE ${cond?.concatTokens()}.\n`;
       const field = forLoop.findDirectExpression(Expressions.InlineFieldDefinition)?.findFirstExpression(Expressions.Field)?.concatTokens();
-      body += indentation + `  ${field} = ${field} + 1.\n`;
-      end = "ENDWHILE";
+      end += `  ${field} = ${field} + 1.\n`;
+      end += indentation + "ENDWHILE";
     } else if (loopTargetField) {
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
       end = "ENDLOOP";
