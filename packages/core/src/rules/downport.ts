@@ -847,7 +847,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     const code = `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${tName}.
-${indentation}READ TABLE ${tName} INDEX ${index?.concatTokens()} ASSIGNING <temp1>.
+${indentation}READ TABLE ${tName} INDEX ${index?.concatTokens()} ASSIGNING ${uniqueName}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
