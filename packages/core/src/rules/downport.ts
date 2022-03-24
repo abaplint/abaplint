@@ -1040,8 +1040,8 @@ ${indentation}    output = ${topTarget}.`;
       const cond = forLoop.findFirstExpression(Expressions.Cond);
       body += indentation + `WHILE ${cond?.concatTokens()}.\n`;
       const field = forLoop.findDirectExpression(Expressions.InlineFieldDefinition)?.findFirstExpression(Expressions.Field)?.concatTokens();
-      body += indentation + `  ${field} = ${field} + 1.\n`;
-      end = "ENDWHILE";
+      end += `  ${field} = ${field} + 1.\n`;
+      end += indentation + "ENDWHILE";
     } else if (loopTargetField) {
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
       end = "ENDLOOP";
