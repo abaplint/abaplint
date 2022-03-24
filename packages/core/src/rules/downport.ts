@@ -1156,14 +1156,15 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
       for (const n of next.getChildren()) {
-        if (n.concatTokens().toUpperCase() === "NEXT") {
+        const concat = n.concatTokens();
+        if (concat.toUpperCase() === "NEXT") {
           continue;
-        } else if (n.concatTokens() === "=") {
-          body += " = ";
         } else if (n.get() instanceof Expressions.Field) {
-          body += indentation + "  " + n.concatTokens();
+          body += indentation + "  " + concat + " ";
         } else if (n.get() instanceof Expressions.Source) {
-          body += n.concatTokens() + ".\n";
+          body += " " + concat + ".\n";
+        } else {
+          body += concat;
         }
       }
 
