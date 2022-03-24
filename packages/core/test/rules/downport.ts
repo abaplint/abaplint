@@ -1976,4 +1976,24 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE with &&= in body", async () => {
+    const abap = `
+    DATA int TYPE string.
+    int = REDUCE string( INIT s = || FOR i = 0 UNTIL i > 2 NEXT s &&= i ).
+    WRITE int.`;
+    const expected = `
+    DATA int TYPE string.
+    DATA temp1 TYPE string.
+    DATA(s) = ||.
+    DATA i TYPE i.
+    WHILE NOT i > 2.
+      s &&= i.
+      i = i + 1.
+    ENDWHILE.
+    temp1 = s.
+    int = temp1.
+    WRITE int.`;
+    testFix(abap, expected);
+  });
+
 });
