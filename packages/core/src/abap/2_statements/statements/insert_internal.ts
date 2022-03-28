@@ -15,16 +15,14 @@ export class InsertInternal implements IStatement {
     const into = seq("INTO", opt("TABLE"), Target);
 
     const to = seq("TO", Source);
-
-    const from = seq("FROM",
-                     Source,
-                     opt(to));
+    const from = seq("FROM", Source);
+    const fromTo = seq(opt(from), opt(to));
 
     const foo = per(into, ref, index, assigning);
 
     const lines = seq("LINES OF",
                       target,
-                      opt(from));
+                      opt(fromTo));
 
     const src = alt(ver(Version.v740sp02, Source), SimpleSource1);
 
