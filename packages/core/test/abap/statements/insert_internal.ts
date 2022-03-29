@@ -21,6 +21,7 @@ const tests = [
     fieldname      = <ls_f4_group>-fieldname
     f4_definitions = VALUE zdbbr_f4_data_itab( FOR f4 IN GROUP <ls_f4_group> ( f4 ) )
     ) INTO TABLE mt_custom_f4_map.`,
+  `INSERT LINES OF sorted_scores TO hits INTO TABLE result.`,
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);
