@@ -18,8 +18,8 @@ export class For extends Expression {
 
     const groups = ver(Version.v740sp08, seq("GROUPS", FieldChain, "OF", Target, "IN", Source, optPrio(groupBy)));
 
-    const f = seq("FOR", alt(itera, inn, groups));
+    const f = seq("FOR", alt(itera, inn, groups), optPrio(Let));
 
-    return ver(Version.v740sp05, seq(f, optPrio(Let)));
+    return ver(Version.v740sp05, f);
   }
 }
