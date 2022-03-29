@@ -2012,4 +2012,17 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.skip("VALUE, double FOR loop", async () => {
+    const abap = `
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  results = VALUE #(
+    FOR row IN garden_rows
+    FOR seed = 0 WHILE seed <= 1
+    ( row && seed ) ).`;
+    const expected = `
+sdfs`;
+    testFix(abap, expected);
+  });
+
 });
