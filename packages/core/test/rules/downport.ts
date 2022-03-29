@@ -2012,7 +2012,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it.skip("VALUE, double FOR loop", async () => {
+  it("VALUE, double FOR loop", async () => {
     const abap = `
   DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
@@ -2021,7 +2021,17 @@ ENDFORM.`;
     FOR seed = 0 WHILE seed <= 1
     ( row && seed ) ).`;
     const expected = `
-sdfs`;
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE results.
+  LOOP AT garden_rows INTO DATA(row).
+    DATA seed TYPE i.
+    WHILE seed <= 1.
+      APPEND row && seed TO temp1.
+      seed = seed + 1.
+    ENDWHILE.
+ENDLOOP.
+    results = temp1.`;
     testFix(abap, expected);
   });
 
