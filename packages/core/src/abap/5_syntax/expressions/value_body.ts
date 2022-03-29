@@ -42,7 +42,7 @@ export class ValueBody {
       scope.pop(node.getLastToken().getEnd());
     }
 
-    if (scope.getType() === ScopeType.For) {
+    while (scope.getType() === ScopeType.For) {
       scope.pop(node.getLastToken().getEnd());
     }
 
