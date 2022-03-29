@@ -1208,12 +1208,11 @@ ${indentation}    output = ${topTarget}.`;
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       let indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
-
-      const forLoop = valueBody?.findDirectExpression(Expressions.For);
-      let outlineFor = {body: "", end: ""};
-      if (forLoop !== undefined) {
-        outlineFor = this.outlineFor(forLoop, indentation);
+      let end = "";
+      for (const forLoop of valueBody?.findDirectExpressions(Expressions.For) || []) {
+        const outlineFor = this.outlineFor(forLoop, indentation);
         body += outlineFor.body;
+        end = outlineFor.end + `.\n` + end;
         indentation += "  ";
       }
 
@@ -1246,9 +1245,9 @@ ${indentation}    output = ${topTarget}.`;
         previous = b;
       }
 
-      if (forLoop !== undefined) {
+      if (end !== "") {
         indentation = indentation.substring(2);
-        body += indentation + outlineFor.end + `.\n`;
+        body += indentation + end;
       }
 
       const abap = `DATA ${uniqueName} ${type}.\n` +

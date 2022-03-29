@@ -1996,4 +1996,43 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("VALUE FOR IN tab", async () => {
+    const abap = `
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  results = VALUE #( FOR row IN garden_rows ( row ) ).`;
+    const expected = `
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE results.
+  LOOP AT garden_rows INTO DATA(row).
+    APPEND row TO temp1.
+  ENDLOOP.
+  results = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, double FOR loop", async () => {
+    const abap = `
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  results = VALUE #(
+    FOR row IN garden_rows
+    FOR seed = 0 WHILE seed <= 1
+    ( row && seed ) ).`;
+    const expected = `
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE results.
+  LOOP AT garden_rows INTO DATA(row).
+    DATA seed TYPE i.
+    WHILE seed <= 1.
+      APPEND row && seed TO temp1.
+      seed = seed + 1.
+    ENDWHILE.
+ENDLOOP.
+    results = temp1.`;
+    testFix(abap, expected);
+  });
+
 });

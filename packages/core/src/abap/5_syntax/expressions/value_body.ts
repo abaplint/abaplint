@@ -19,8 +19,7 @@ export class ValueBody {
       return targetType;
     }
 
-    const forNode = node.findDirectExpression(Expressions.For);
-    if (forNode) {
+    for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
       new For().runSyntax(forNode, scope, filename);
     }
 
@@ -43,7 +42,7 @@ export class ValueBody {
       scope.pop(node.getLastToken().getEnd());
     }
 
-    if (scope.getType() === ScopeType.For) {
+    while (scope.getType() === ScopeType.For) {
       scope.pop(node.getLastToken().getEnd());
     }
 

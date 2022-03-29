@@ -19,8 +19,7 @@ export class ReduceBody {
       new InlineFieldDefinition().runSyntax(i, scope, filename);
     }
 
-    const forNode = node.findDirectExpression(Expressions.For);
-    if (forNode) {
+    for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
       new For().runSyntax(forNode, scope, filename);
     }
 
@@ -32,7 +31,7 @@ export class ReduceBody {
       new ReduceNext().runSyntax(s, scope, filename);
     }
 
-    if (scope.getType() === ScopeType.For) {
+    while (scope.getType() === ScopeType.For) {
       scope.pop(node.getLastToken().getEnd());
     }
 
