@@ -6381,6 +6381,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("double FOR loop, ok", () => {
+    const abap = `
+  TYPES type TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+  DATA tab TYPE type.
+  DATA(result) = VALUE type( FOR part IN tab FOR line IN tab ( line ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.

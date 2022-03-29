@@ -19,8 +19,7 @@ export class ValueBody {
       return targetType;
     }
 
-    const forNode = node.findDirectExpression(Expressions.For);
-    if (forNode) {
+    for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
       new For().runSyntax(forNode, scope, filename);
     }
 
