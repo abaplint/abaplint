@@ -1209,9 +1209,8 @@ ${indentation}    output = ${topTarget}.`;
       let indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
 
-      const forLoop = valueBody?.findDirectExpression(Expressions.For);
       let outlineFor = {body: "", end: ""};
-      if (forLoop !== undefined) {
+      for (const forLoop of valueBody?.findDirectExpressions(Expressions.For) || []) {
         outlineFor = this.outlineFor(forLoop, indentation);
         body += outlineFor.body;
         indentation += "  ";
@@ -1246,7 +1245,7 @@ ${indentation}    output = ${topTarget}.`;
         previous = b;
       }
 
-      if (forLoop !== undefined) {
+      if (outlineFor.end !== "") {
         indentation = indentation.substring(2);
         body += indentation + outlineFor.end + `.\n`;
       }
