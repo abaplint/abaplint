@@ -2035,4 +2035,25 @@ ENDLOOP.
     testFix(abap, expected);
   });
 
+  it("SWITCH, voided target", async () => {
+    const abap = `
+  DATA temp3 TYPE voided.
+  DATA row TYPE string.
+  temp3 = SWITCH #( row
+    WHEN 'R' THEN 'radishes'
+    WHEN 'V' THEN 'violets' ).`;
+    const expected = `
+  DATA temp3 TYPE voided.
+  DATA row TYPE string.
+  DATA temp1 LIKE temp3.
+  CASE row.
+    WHEN 'R'.
+      temp1 = 'radishes'.
+    WHEN 'V'.
+      temp1 = 'violets'.
+  ENDCASE.
+  temp3 = temp1.`;
+    testFix(abap, expected);
+  });
+
 });

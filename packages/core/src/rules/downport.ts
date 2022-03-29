@@ -1060,9 +1060,16 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      const type = this.findType(i, lowFile, highSyntax);
+      let type = this.findType(i, lowFile, highSyntax);
       if (type === undefined) {
-        continue;
+        if (node.get() instanceof Statements.Move && node.findDirectExpression(Expressions.Source) === i) {
+          type = "LIKE " + node.findDirectExpression(Expressions.Target)?.concatTokens();
+        }
+        if (type === undefined) {
+          continue;
+        }
+      } else {
+        type = "TYPE " + type;
       }
 
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
@@ -1080,7 +1087,7 @@ ${indentation}    output = ${topTarget}.`;
         body += indentation + `DATA(${name}) = ${switchBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
       }
 
-      body += `DATA ${uniqueName} TYPE ${type}.\n`;
+      body += `DATA ${uniqueName} ${type}.\n`;
       let firstSource = false;
       let inWhen = false;
       for (const c of switchBody.getChildren()) {
