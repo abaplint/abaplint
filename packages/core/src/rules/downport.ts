@@ -1019,7 +1019,8 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private outlineFor(forLoop: ExpressionNode, indentation: string): {body: string, end: string} {
+  private outlineFor(forLoop: ExpressionNode, indentation: string, lowFile: ABAPFile, highSyntax: ISyntaxResult):
+  {body: string, end: string} {
     let body = "";
     let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
@@ -1050,6 +1051,12 @@ ${indentation}    output = ${topTarget}.`;
       body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
       end = "ENDLOOP";
     }
+
+    const l = forLoop.findDirectExpression(Expressions.Let);
+    if (l) {
+      body += this.outlineLet(l, indentation, highSyntax, lowFile);
+    }
+
     return {body, end};
   }
 
@@ -1155,7 +1162,7 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      const outlineFor = this.outlineFor(forLoop, indentation);
+      const outlineFor = this.outlineFor(forLoop, indentation, lowFile, highSyntax);
       body += outlineFor.body;
 
       const next = reduceBody.findDirectExpression(Expressions.ReduceNext);
@@ -1217,7 +1224,7 @@ ${indentation}    output = ${topTarget}.`;
       let body = "";
       let end = "";
       for (const forLoop of valueBody?.findDirectExpressions(Expressions.For) || []) {
-        const outlineFor = this.outlineFor(forLoop, indentation);
+        const outlineFor = this.outlineFor(forLoop, indentation, lowFile, highSyntax);
         body += outlineFor.body;
         end = outlineFor.end + `.\n` + end;
         indentation += "  ";

@@ -2056,4 +2056,30 @@ ENDLOOP.
     testFix(abap, expected);
   });
 
+  it("double FOR, remember LET", async () => {
+    const abap = `
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  results = VALUE #(
+    FOR row IN garden_rows
+    FOR seed = 0 WHILE seed <= 1
+    LET offset = 2 IN
+    ( row && offset ) ).`;
+    const expected = `
+  DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE results.
+  LOOP AT garden_rows INTO DATA(row).
+    DATA seed TYPE i.
+    WHILE seed <= 1.
+    DATA offset TYPE i.
+    offset = 2.
+      APPEND row && offset TO temp1.
+      seed = seed + 1.
+    ENDWHILE.
+ENDLOOP.
+    results = temp1.`;
+    testFix(abap, expected);
+  });
+
 });
