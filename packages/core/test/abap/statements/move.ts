@@ -244,6 +244,13 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
         FOR part IN parts
         FOR line IN part-lines
         ( line ) ).`,
+  `datetime = REDUCE #(
+          INIT dt = '00000000000000'
+          FOR step IN system-steps
+          FOR action IN step-actions
+          NEXT dt = COND #(
+          WHEN action-date > dt(8) AND action-time > dt+8
+          THEN |{ action-date DATE = RAW }{ action-time TIME = RAW }| ELSE dt ) ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

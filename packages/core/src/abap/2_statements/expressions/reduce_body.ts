@@ -9,7 +9,7 @@ export class ReduceBody extends Expression {
 
     return seq(opt(Let),
                init,
-               For,
+               plus(For),
                ReduceNext);
   }
 }
