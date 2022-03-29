@@ -240,6 +240,10 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   `result = REDUCE string( INIT s = 0
       FOR  i = 0 WHILE i < strlen( input )
       NEXT s += 2 ).`,
+  `result = VALUE ztimem_line_t(
+        FOR part IN parts
+        FOR line IN part-lines
+        ( line ) ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);
