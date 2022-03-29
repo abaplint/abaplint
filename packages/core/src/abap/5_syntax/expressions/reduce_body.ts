@@ -32,7 +32,7 @@ export class ReduceBody {
       new ReduceNext().runSyntax(s, scope, filename);
     }
 
-    if (scope.getType() === ScopeType.For) {
+    while (scope.getType() === ScopeType.For) {
       scope.pop(node.getLastToken().getEnd());
     }
 
