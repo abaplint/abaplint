@@ -2298,6 +2298,17 @@
               ],
               "description": "Finds Yoda conditions and reports issues\nTags: SingleFile\nhttps://rules.abaplint.org/no_yoda_conditions"
             },
+            "nrob_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NROBConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Consistency checks for number ranges\nTags: SingleFile\nhttps://rules.abaplint.org/nrob_consistency"
+            },
             "object_naming": {
               "anyOf": [
                 {
@@ -3858,6 +3869,23 @@
         "reportDynamic",
         "ownTables"
       ],
+      "type": "object"
+    },
+    "NROBConsistencyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "NamesNoDashConf": {
