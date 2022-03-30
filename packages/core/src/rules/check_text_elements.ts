@@ -53,23 +53,26 @@ export class CheckTextElements implements IRule {
       let texts: ITextElements;
       let mainName: string | undefined = undefined;
 
-      const mains = this.graph.listMainForInclude(file.getFilename());
-      if (mains.length === 1) {
-// todo, this only checks the first main
-        mainName = mains[0];
-        const main1 = this.reg.findObjectForFile(this.reg.getFileByName(mains[0])!)! as ABAPObject;
-        texts = main1.getTexts();
-      } else {
-        texts = obj.getTexts();
-      }
-
       const expressions = stru.findAllExpressionsMulti([Expressions.TextElement, Expressions.TextElementString]);
+
+      // optimize: no need to find main and texts if there are no expressions to check
+      if (expressions.length > 0) {
+        const mains = this.graph.listMainForInclude(file.getFilename());
+        if (mains.length === 1) {
+// todo, this only checks the first main
+          mainName = mains[0];
+          const main1 = this.reg.findObjectForFile(this.reg.getFileByName(mains[0])!)! as ABAPObject;
+          texts = main1.getTexts();
+        } else {
+          texts = obj.getTexts();
+        }
+      }
 
       for (const e of expressions) {
         if (e.get() instanceof Expressions.TextElement) {
           const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
           const key = token.getStr().toUpperCase();
-          if (texts[key] === undefined) {
+          if (texts![key] === undefined) {
             const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
             output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
           }
@@ -78,7 +81,7 @@ export class CheckTextElements implements IRule {
           const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
           const code = e.getFirstToken().getStr();
           const key = token.getStr().toUpperCase();
-          let found = texts[key];
+          let found = texts![key];
           if (found && code.startsWith("'")) {
             found = found.replace(/'/g, "''");
           }
