@@ -2098,4 +2098,27 @@ ENDLOOP.
     testFix(abap, expected);
   });
 
+  it("target, table expression, with key", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         letter  TYPE string,
+         is_seen TYPE abap_bool,
+       END OF ty_row.
+DATA seen_letters TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+seen_letters[ letter = 'A' ]-is_seen = abap_true.`;
+    const expected = `
+TYPES: BEGIN OF ty_row,
+         letter  TYPE string,
+         is_seen TYPE abap_bool,
+       END OF ty_row.
+DATA seen_letters TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+FIELD-SYMBOLS <temp1> LIKE LINE OF seen_letters.
+READ TABLE seen_letters WITH KEY letter = 'A' ASSIGNING <temp1>.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+<temp1>-is_seen = abap_true.`;
+    testFix(abap, expected);
+  });
+
 });

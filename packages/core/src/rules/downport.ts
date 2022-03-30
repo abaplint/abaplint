@@ -575,17 +575,7 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
         continue;
       }
 
-      let condition = "";
-      for (const c of tableExpression.getChildren() || []) {
-        if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
-          continue;
-        } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
-          condition = "WITH KEY ";
-        } else if (c.get() instanceof Expressions.Source && condition === "") {
-          condition = "INDEX ";
-        }
-        condition += c.concatTokens() + " ";
-      }
+      const condition = this.tableCondition(tableExpression);
 
       const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
@@ -603,6 +593,21 @@ ${indentation}`);
     }
 
     return undefined;
+  }
+
+  private tableCondition(tableExpression: ExpressionNode) {
+    let condition = "";
+    for (const c of tableExpression.getChildren() || []) {
+      if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
+        continue;
+      } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
+        condition = "WITH KEY ";
+      } else if (c.get() instanceof Expressions.Source && condition === "") {
+        condition = "INDEX ";
+      }
+      condition += c.concatTokens() + " ";
+    }
+    return condition;
   }
 
   private outlineCatchSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
@@ -844,17 +849,21 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     uniqueName = `<${uniqueName}>`;
 
     const tName = target.concatTokens().split("[")[0];
+    const condition = this.tableCondition(tableExpression);
 
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     const code = `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${tName}.
-${indentation}READ TABLE ${tName} INDEX ${index?.concatTokens()} ASSIGNING ${uniqueName}.
+${indentation}READ TABLE ${tName} ${condition}ASSIGNING ${uniqueName}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
-    ${uniqueName}`;
+${indentation}${uniqueName}`;
 
     const start = target.getFirstToken().getStart();
-    const end = target.getLastToken().getEnd();
+    const end = tableExpression.findDirectTokenByText("]")?.getEnd();
+    if (end === undefined) {
+      return undefined;
+    }
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, move with table target", this.getMetadata().key, this.conf.severity, fix);
