@@ -8,9 +8,12 @@ export class ValueBody extends Expression {
   public getRunnable(): IStatementRunnable {
     const base = seq("BASE", Source);
 
+    const range = seq(optPrio(seq("FROM", Source)), optPrio(seq("TO", Source)));
+    const lines = seq("LINES OF", Source, range);
+
     // missing spaces caught by rule "parser_missing_space"
     const foo = seq(altPrio(tok(WParenLeftW), tok(WParenLeft)),
-                    optPrio(altPrio(plusPrio(FieldAssignment), seq(optPrio("LINES OF"), Source))),
+                    optPrio(altPrio(plusPrio(FieldAssignment), lines, Source)),
                     altPrio(tok(WParenRightW), tok(ParenRightW)));
 
     const strucOrTab = seq(optPrio(Let), optPrio(base), star(For), plusPrio(altPrio(FieldAssignment, foo)));
