@@ -18,7 +18,7 @@ Raw setup, example workflow can be seen in [github-actions-workflow.yml](example
 ## Gitlab Pipelines
 example can be found in [examples/.gitlab-ci.yml](examples/.gitlab-ci.yml).
 
-To use *abaplint_commit_only* rule, create an abaplint_template file that should reflect the .abaplint.json file with an additional rule in the *global* section. Formatting is important.
+To use *abaplint_commit_only* rule, create an *abaplint_template* file that should reflect the *.abaplint.json* file with an additional rule in the *global* section. Formatting is important.
 ```
 "noIssues" : [
         ###NOISSUES###
