@@ -1232,6 +1232,7 @@ ${indentation}    output = ${topTarget}.`;
 
       let structureName = uniqueName;
       let added = false;
+      let skip = false;
       let data = "";
       let previous: ExpressionNode | TokenNode | undefined = undefined;
       for (const b of valueBody?.getChildren() || []) {
@@ -1247,6 +1248,9 @@ ${indentation}    output = ${topTarget}.`;
           body += indentation + structureName + "-" + b.concatTokens() + ".\n";
         } else if (b.get() instanceof Expressions.Source) {
           structureName = b.concatTokens();
+        } else if (b.get() instanceof Expressions.ValueBodyLines) {
+          body += indentation + "APPEND " + b.concatTokens() + ` TO ${uniqueName}.\n`;
+          skip = true;
         } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.Let) {
           body += this.outlineLet(b, indentation, highSyntax, lowFile);
         } else if (b.concatTokens() === ")") {
@@ -1254,7 +1258,10 @@ ${indentation}    output = ${topTarget}.`;
             body += data;
             added = true;
           }
-          body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
+          if (skip === false) {
+            body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
+          }
+          skip = false;
         }
         previous = b;
       }

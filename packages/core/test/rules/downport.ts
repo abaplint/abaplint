@@ -2082,14 +2082,19 @@ ENDLOOP.
     testFix(abap, expected);
   });
 
-  it.skip("VALUE, LINES OF", async () => {
+  it("VALUE, LINES OF", async () => {
     const abap = `
   DATA index TYPE i.
   DATA tab1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA tab2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   tab2 = VALUE #( ( LINES OF tab1 TO index ) ).`;
     const expected = `
-sdfsd`;
+  DATA index TYPE i.
+  DATA tab1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA tab2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE tab2.
+  APPEND LINES OF tab1 TO index TO temp1.
+  tab2 = temp1.`;
     testFix(abap, expected);
   });
 
