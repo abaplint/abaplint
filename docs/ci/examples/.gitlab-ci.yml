@@ -1,4 +1,4 @@
-# abaplint on pure nodejs image
+# abaplint on pure nodejs image for whole repository
 run_abaplint:
     image: node:12
     # only:
@@ -6,3 +6,20 @@ run_abaplint:
     script:
         - npm install -g @abaplint/cli
         - abaplint
+# abaplint for commited changes only
+abaplint_commit_only:
+    image: abaplint/abaplint
+    stage: test
+    script:
+        - git diff-tree --no-commit-id --name-only -r $CI_MERGE_REQUEST_TARGET_BRANCH_SHA -r $CI_COMMIT_SHA > commited.txt
+        - git ls-files > files.txt
+        - grep -Fvxf commited.txt files.txt > exclude.txt
+        - sed -e 's/^/"/' -e 's/$/"/' -e '$!s/$/,/' exclude.txt > exclude_final.txt
+        - wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+        - chmod +x jq-linux64
+        - sed $'/###NOISSUES###/{r exclude_final.txt\nd}' abaplint_template | ./jq-linux64 . > abaplint_commited.json
+        # - cat abaplint_commited.json
+        - abaplint abaplint_commited.json --outformat junit --outfile report_commit.xml
+    artifacts:
+        reports:
+            junit: report_commit.xml
