@@ -251,6 +251,9 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
           NEXT dt = COND #(
           WHEN action-date > dt(8) AND action-time > dt+8
           THEN |{ action-date DATE = RAW }{ action-time TIME = RAW }| ELSE dt ) ).`,
+  `tab2 = VALUE #( ( LINES OF tab1 TO index ) ).`,
+  `tab2 = VALUE #( ( LINES OF tab1 FROM index ) ).`,
+  `tab2 = VALUE #( ( LINES OF tab1 FROM index TO index ) ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

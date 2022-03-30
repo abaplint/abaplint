@@ -185,6 +185,7 @@ export * from "./type_table_key";
 export * from "./type_table";
 export * from "./type";
 export * from "./value_body";
+export * from "./value_body_lines";
 export * from "./value";
 export * from "./with_name";
 export * from "./write_offset_length";
