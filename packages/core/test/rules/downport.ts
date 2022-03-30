@@ -2082,4 +2082,15 @@ ENDLOOP.
     testFix(abap, expected);
   });
 
+  it.skip("VALUE, LINES OF", async () => {
+    const abap = `
+  DATA index TYPE i.
+  DATA tab1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA tab2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  tab2 = VALUE #( ( LINES OF tab1 TO index ) ).`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
 });

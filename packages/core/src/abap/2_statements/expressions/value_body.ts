@@ -3,17 +3,15 @@ import {ParenRightW, WParenLeft, WParenLeftW, WParenRightW} from "../../1_lexer/
 import {Source, Let, For, FieldAssignment} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {ValueBodyLines} from "./value_body_lines";
 
 export class ValueBody extends Expression {
   public getRunnable(): IStatementRunnable {
     const base = seq("BASE", Source);
 
-    const range = seq(optPrio(seq("FROM", Source)), optPrio(seq("TO", Source)));
-    const lines = seq("LINES OF", Source, range);
-
     // missing spaces caught by rule "parser_missing_space"
     const foo = seq(altPrio(tok(WParenLeftW), tok(WParenLeft)),
-                    optPrio(altPrio(plusPrio(FieldAssignment), lines, Source)),
+                    optPrio(altPrio(plusPrio(FieldAssignment), ValueBodyLines, Source)),
                     altPrio(tok(WParenRightW), tok(ParenRightW)));
 
     const strucOrTab = seq(optPrio(Let), optPrio(base), star(For), plusPrio(altPrio(FieldAssignment, foo)));
