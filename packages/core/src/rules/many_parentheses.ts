@@ -74,11 +74,34 @@ ENDIF.
     for (const m of structure.findAllStatements(Statements.Move)) {
       issues.push(...this.analyzeMove(file, m));
     }
+    for (const m of structure.findAllStatements(Statements.Select)) {
+      issues.push(...this.analyzeInto(file, m));
+    }
 
     return issues;
   }
 
 ////////////////////
+
+  private analyzeInto(file: ABAPFile, m: StatementNode): Issue[] {
+    const into = m.findFirstExpression(Expressions.SQLIntoStructure);
+    if (into === undefined) {
+      return [];
+    }
+
+    const second = into.getAllTokens()[1];
+    if (second === undefined || second.getStr() !== "(") {
+      return [];
+    }
+
+    const concat = into.concatTokens();
+    if (concat.endsWith(")") === true && concat.includes(",") === false) {
+      const issue = Issue.atStatement(file, m, "Too many parentheses", this.getMetadata().key, this.conf.severity);
+      return [issue];
+    }
+
+    return [];
+  }
 
   private analyzeMove(file: ABAPFile, m: StatementNode): Issue[] {
     const issues: Issue[] = [];

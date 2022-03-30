@@ -19,6 +19,11 @@ const tests = [
   {abap: `IF foo = boo AND ( bar = lar AND moo = loo ). ENDIF.`, cnt: 1, fix: false},
   {abap: `IF foo IS NOT INITIAL AND NOT ( moo = bar AND field IS INITIAL ). ENDIF.`, cnt: 0, fix: false},
   {abap: `ls_draw = ( lt_draw[ doknr = <fs_dir>-doknr ] ).`, cnt: 1, fix: false},
+  {abap: `DATA l_vsart TYPE tvro-vsart.
+SELECT SINGLE vsart INTO (l_vsart) FROM tvro.`, cnt: 1, fix: false},
+  {abap: `DATA l_vsart TYPE tvro-vsart.
+SELECT SINGLE vsart INTO l_vsart FROM tvro.`, cnt: 0, fix: false},
+  {abap: `SELECT SINGLE vsart INTO @DATA(l_vsart) FROM tvro.`, cnt: 0, fix: false},
 ];
 
 testRule(tests, ManyParentheses);
