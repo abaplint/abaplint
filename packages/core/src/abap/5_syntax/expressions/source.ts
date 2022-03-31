@@ -22,6 +22,7 @@ import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
+import {TypedIdentifier} from "../../types/_typed_identifier";
 
 /*
 * Type interference, valid scenarios:
@@ -180,10 +181,14 @@ export class Source {
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();
 
-    if (typeName === "#" && inferredType) {
+    if (typeName === "#" && inferredType && typeToken) {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
         scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
+      } else if (inferredType instanceof CharacterType) {
+        // character is bit special it does not have a qualified name eg "TYPE c LENGTH 6"
+        const tid = new TypedIdentifier(typeToken, filename, inferredType);
+        scope.addReference(typeToken, tid, ReferenceType.InferredType, filename);
       }
     }
 
