@@ -11,6 +11,11 @@ const tests = [
             PUBLIC SECTION.
               ALIASES foo FOR bar.
           ENDCLASS.`, cnt: 1},
+  {abap: `CLASS lcl_abc DEFINITION.
+            PUBLIC SECTION.
+              ALIASES: foo FOR bar,
+                       moo FOR loo.
+          ENDCLASS.`, cnt: 1},
 ];
 
 testRule(tests, NoAliases);

@@ -1044,12 +1044,17 @@ ${indentation}    output = ${topTarget}.`;
       end += `  ${field} = ${field} + 1.\n`;
       end += indentation + "ENDWHILE";
     } else if (forLoop.findDirectTokenByText("WHILE")) {
-      const name = forLoop.findFirstExpression(Expressions.Field)?.concatTokens();
-      body += indentation + "DATA " + name + " TYPE i.\n";
+      const fieldDef = forLoop.findDirectExpression(Expressions.InlineFieldDefinition);
+      const field = fieldDef?.findFirstExpression(Expressions.Field)?.concatTokens();
+      body += indentation + "DATA " + field + " TYPE i.\n";
+
+      const second = fieldDef?.getChildren()[2];
+      if (second?.get() instanceof Expressions.Source) {
+        body += indentation + field + " = " + second.concatTokens() + ".\n";
+      }
 
       const cond = forLoop.findFirstExpression(Expressions.Cond);
       body += indentation + `WHILE ${cond?.concatTokens()}.\n`;
-      const field = forLoop.findDirectExpression(Expressions.InlineFieldDefinition)?.findFirstExpression(Expressions.Field)?.concatTokens();
       end += `  ${field} = ${field} + 1.\n`;
       end += indentation + "ENDWHILE";
     } else if (loopTargetField) {

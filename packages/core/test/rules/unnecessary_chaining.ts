@@ -13,6 +13,9 @@ const tests = [
   " comment will break this check
    value  TYPE abap_bool,
  END OF t_test.`, cnt: 0},
+  {abap: `DATA: integer    TYPE i,
+                decfloat16 TYPE decfloat16, "sdfsdfsd
+                integer1   TYPE int1.`, cnt: 0},
 ];
 
 testRule(tests, UnnecessaryChaining);
