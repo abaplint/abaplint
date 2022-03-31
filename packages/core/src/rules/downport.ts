@@ -1446,6 +1446,9 @@ ${indentation}    output = ${topTarget}.`;
 
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const type = this.findType(i, lowFile, highSyntax);
+      if (type === undefined) {
+        continue;
+      }
       const indent = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const bodyCode = this.buildCondBody(body, uniqueName, indent, lowFile, highSyntax);
 
