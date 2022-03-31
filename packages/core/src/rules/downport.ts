@@ -1078,7 +1078,9 @@ ${indentation}    output = ${topTarget}.`;
 
       let type = this.findType(i, lowFile, highSyntax);
       if (type === undefined) {
-        if (node.get() instanceof Statements.Move && node.findDirectExpression(Expressions.Source) === i) {
+        if (node.get() instanceof Statements.Move
+            && node.findDirectExpression(Expressions.Source) === i
+            && node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.TargetField) !== undefined) {
           type = "LIKE " + node.findDirectExpression(Expressions.Target)?.concatTokens();
         }
         if (type === undefined) {
