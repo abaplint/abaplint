@@ -2147,4 +2147,22 @@ ENDIF.
     testFix(abap, expected);
   });
 
+  it("COND, inferred, simple", async () => {
+    const abap = `
+    data bottle type i.
+    DATA what_to_take_down TYPE c LENGTH 3.
+    what_to_take_down = cond #( when bottle > 1 then 'one' else 'it' ).`;
+    const expected = `
+    data bottle type i.
+    DATA what_to_take_down TYPE c LENGTH 3.
+    DATA temp1 LIKE what_to_take_down.
+    IF bottle > 1.
+      temp1 = 'one'.
+    ELSE.
+      temp1 = 'it'.
+    ENDIF.
+    what_to_take_down = temp1.`;
+    testFix(abap, expected);
+  });
+
 });
