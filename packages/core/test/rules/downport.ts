@@ -2121,7 +2121,7 @@ ENDIF.
     testFix(abap, expected);
   });
 
-  it("SWITCH, inferred char", async () => {
+  it("SWITCH, inferred char, outline DATA()", async () => {
     const abap = `
   DATA bottle TYPE i.
   DATA(left) = SWITCH #( bottle
