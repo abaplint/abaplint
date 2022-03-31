@@ -1445,14 +1445,24 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const type = this.findType(i, lowFile, highSyntax);
+      let type = this.findType(i, lowFile, highSyntax);
       if (type === undefined) {
-        continue;
+        if (node.get() instanceof Statements.Move
+            && node.findDirectExpression(Expressions.Source) === i
+            && node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.TargetField) !== undefined) {
+          type = "LIKE " + node.findDirectExpression(Expressions.Target)?.concatTokens();
+        }
+        if (type === undefined) {
+          continue;
+        }
+      } else {
+        type = "TYPE " + type;
       }
+
       const indent = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const bodyCode = this.buildCondBody(body, uniqueName, indent, lowFile, highSyntax);
 
-      const abap = `DATA ${uniqueName} TYPE ${type}.\n` + bodyCode;
+      const abap = `DATA ${uniqueName} ${type}.\n` + bodyCode;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
