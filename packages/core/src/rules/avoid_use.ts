@@ -37,7 +37,9 @@ Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_gu
 
 STATICS: use CLASS-DATA instead
 
-DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
+DESCRIBE TABLE LINES: use lines() instead (quickfix exists)
+
+TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-test-seams-as-temporary-workaround`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
@@ -75,6 +77,8 @@ DESCRIBE TABLE LINES: use lines() instead (quickfix exists)`,
         message = "STATICS";
       } else if (this.conf.statics && statement instanceof Statements.StaticEnd) {
         isStaticsBlock = false;
+      } else if (this.conf.statics && statement instanceof Statements.TestSeam) {
+        message = "TEST-SEAM";
       } else if (this.conf.statics && statement instanceof Statements.Static && isStaticsBlock === false) {
         message = "STATICS";
       } else if (this.conf.break && statement instanceof Statements.Break) {

@@ -312,6 +312,21 @@ ENDFORM.`;
     expect(hover?.value).to.contain("ty_stru");
   });
 
+  it("Hover inferred type, SWITCH", () => {
+// yes, CHAR 6 is correct, the code is bad because it has different types in THEN clauses
+    const abap = `DATA bottle TYPE i.
+DATA(left) = SWITCH #( bottle - 1
+  WHEN 0 THEN 'bottle'
+  WHEN 1 THEN 'no more bottles'
+  ELSE |{ bottle - 1 } bottles| ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 20));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("c LENGTH 6");
+  });
+
   it("Hover data element", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>

@@ -30,6 +30,8 @@ const tests = [
   {abap: "DESCRIBE TABLE foo-bar LINES bar.", cnt: 1, fix: true},
   {abap: "describe table foo-bar lines bar.", cnt: 1, fix: true},
   {abap: "bar = lines( foo ).", cnt: 0, fix: false},
+
+  {abap: `TEST-SEAM authorization_seam. END-TEST-SEAM.`, cnt: 1},
 ];
 
 testRule(tests, AvoidUse);

@@ -2121,4 +2121,19 @@ ENDIF.
     testFix(abap, expected);
   });
 
+  it("SWITCH, inferred char, outline DATA()", async () => {
+    const abap = `
+  DATA bottle TYPE i.
+  DATA(left) = SWITCH #( bottle
+    WHEN 0 THEN 'bottle'
+    WHEN 1 THEN 'no more bottles' ).`;
+    const expected = `
+  DATA bottle TYPE i.
+  DATA left TYPE c LENGTH 6.
+  left = SWITCH #( bottle
+    WHEN 0 THEN 'bottle'
+    WHEN 1 THEN 'no more bottles' ).`;
+    testFix(abap, expected);
+  });
+
 });

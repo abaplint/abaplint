@@ -87,6 +87,7 @@ import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
+import {NROBConsistencyConf} from "../src/rules/nrob_consistency";
 import {ObjectNamingConf} from "../src/rules/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {OmitParameterNameConf} from "../src/rules/omit_parameter_name";
@@ -242,6 +243,7 @@ export interface IConfig {
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
+    "nrob_consistency"?: NROBConsistencyConf | boolean,
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "omit_parameter_name"?: OmitParameterNameConf | boolean,

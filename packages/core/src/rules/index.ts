@@ -85,6 +85,7 @@ export * from "./no_aliases";
 export * from "./no_chained_assignment";
 export * from "./no_public_attributes";
 export * from "./no_yoda_conditions";
+export * from "./nrob_consistency";
 export * from "./object_naming";
 export * from "./obsolete_statement";
 export * from "./omit_parameter_name";
