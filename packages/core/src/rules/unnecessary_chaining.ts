@@ -43,7 +43,6 @@ export class UnnecessaryChaining extends ABAPRule {
         continue;
       }
 
-      // find the next non Comment statement
       let j = 1;
       let nextStatement = statements[i + j];
       while (nextStatement?.get() instanceof Comment) {
@@ -51,8 +50,15 @@ export class UnnecessaryChaining extends ABAPRule {
         nextStatement = statements[i + j];
       }
 
+      j = 1;
+      let prevStatement = statements[i - j];
+      while (prevStatement?.get() instanceof Comment) {
+        j--;
+        prevStatement = statements[i - j];
+      }
+
       const next = nextStatement?.getColon();
-      const prev = statements[i - 1]?.getColon();
+      const prev = prevStatement?.getColon();
       if (next !== undefined && colon.getStart().equals(next.getStart())) {
         continue;
       } else if (prev !== undefined && colon.getStart().equals(prev.getStart())) {
