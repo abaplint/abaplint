@@ -1890,6 +1890,7 @@ ENDFORM.`;
     DATA temp1 TYPE string.
     DATA(s) = 0.
     DATA i TYPE i.
+    i = 0.
     WHILE i < strlen( input ).
       s = s + 1.
       i = i + 1.
@@ -2026,6 +2027,7 @@ ENDFORM.`;
   DATA temp1 LIKE results.
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
+    seed = 0.
     WHILE seed <= 1.
       APPEND row && seed TO temp1.
       seed = seed + 1.
@@ -2071,6 +2073,7 @@ ENDLOOP.
   DATA temp1 LIKE results.
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
+    seed = 0.
     WHILE seed <= 1.
     DATA offset TYPE i.
     offset = 2.
