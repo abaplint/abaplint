@@ -2213,4 +2213,39 @@ rv_time = temp1 * 1440.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE with WHERE", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_letter_value,
+  letter(1) TYPE c,
+  value     TYPE i,
+END OF ty_letter_value.
+DATA letter_values TYPE TABLE OF ty_letter_value.
+DATA char_list    TYPE TABLE OF c.
+DATA result TYPE i.
+result = REDUCE i(
+  INIT x = 0
+  FOR letter_value IN letter_values
+  FOR char IN char_list WHERE ( table_line = letter_value-letter )
+  NEXT x = x + letter_value-value ).`;
+    const expected = `
+TYPES: BEGIN OF ty_letter_value,
+  letter(1) TYPE c,
+  value     TYPE i,
+END OF ty_letter_value.
+DATA letter_values TYPE TABLE OF ty_letter_value.
+DATA char_list    TYPE TABLE OF c.
+DATA result TYPE i.
+DATA temp1 TYPE i.
+DATA(x) = 0.
+LOOP AT letter_values INTO DATA(letter_value).
+LOOP AT char_list INTO DATA(char) WHERE ( table_line = letter_value-letter ).
+  x = x + letter_value-value.
+ENDLOOP.
+ENDLOOP.
+temp1 = x.
+result = temp1.`;
+    testFix(abap, expected);
+  });
+
+
 });
