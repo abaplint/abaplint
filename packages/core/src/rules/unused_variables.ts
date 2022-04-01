@@ -21,7 +21,7 @@ export class UnusedVariablesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive
    * @uniqueItems true
   */
-  public skipNames: string[] = [];
+  public skipNames?: string[] = [];
 }
 
 class WorkArea {
@@ -169,7 +169,8 @@ Unused variables are not reported if the object contains syntax errors. Errors f
       const vars = node.getData().vars;
       for (const name in vars) {
         const meta = vars[name].getMeta();
-        if (this.conf.skipNames?.length > 0
+        if (this.conf.skipNames
+            && this.conf.skipNames.length > 0
             && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
           continue;
         } else if (name === "ME"

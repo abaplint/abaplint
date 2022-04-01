@@ -44,29 +44,9 @@ class WorkArea {
   }
 }
 
-/*
-function removeDuplicates(list: readonly TypedIdentifier[]): readonly TypedIdentifier[] {
-  const deduplicated: TypedIdentifier[] = [];
-  for (const result of list) {
-    let cont = false;
-    for (const d of deduplicated) {
-      if (result.getStart().equals(d.getStart())) {
-        cont = true;
-        break;
-      }
-    }
-    if (cont === true) {
-      continue;
-    }
-    deduplicated.push(result);
-  }
-  return deduplicated;
-}
-*/
-
 export class UnusedTypesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
-  public skipNames: string[] = [];
+  public skipNames?: string[] = [];
 }
 
 export class UnusedTypes implements IRule {
@@ -178,7 +158,8 @@ export class UnusedTypes implements IRule {
         const identifier = types[name];
         if (obj.containsFile(identifier.getFilename()) === false) {
           continue;
-        } else if (this.conf.skipNames?.length > 0
+        } else if (this.conf.skipNames
+            && this.conf.skipNames.length > 0
             && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
           continue;
         } else if (name !== identifier.getName().toUpperCase()) {
