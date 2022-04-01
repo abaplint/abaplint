@@ -1329,6 +1329,7 @@ TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA tab TYPE ty_tab.
 DATA temp1 TYPE ty_tab.
 DATA i TYPE i.
+i = 0.
 WHILE NOT i = 2.
   APPEND |hello| TO temp1.
   i = i + 1.
@@ -1967,6 +1968,7 @@ ENDFORM.`;
     DATA temp1 TYPE string.
     DATA(s) = ||.
     DATA i TYPE i.
+    i = 0.
     WHILE NOT i > 2.
       s = s && i.
       i = i + 1.
@@ -1987,6 +1989,7 @@ ENDFORM.`;
     DATA temp1 TYPE string.
     DATA(s) = ||.
     DATA i TYPE i.
+    i = 0.
     WHILE NOT i > 2.
       s &&= i.
       i = i + 1.
@@ -2165,6 +2168,28 @@ ENDIF.
       temp1 = 'it'.
     ENDIF.
     what_to_take_down = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("REDUCE, should init var", async () => {
+    const abap = `
+  DATA result TYPE i.
+  result = REDUCE i(
+      INIT s = 0
+      FOR i = 2 UNTIL i > 4
+      NEXT s = s + i ).`;
+    const expected = `
+  DATA result TYPE i.
+  DATA temp1 TYPE i.
+  DATA(s) = 0.
+  DATA i TYPE i.
+  i = 2.
+  WHILE NOT i > 4.
+    s = s + i.
+    i = i + 1.
+  ENDWHILE.
+  temp1 = s.
+  result = temp1.`;
     testFix(abap, expected);
   });
 
