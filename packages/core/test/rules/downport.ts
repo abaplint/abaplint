@@ -2247,5 +2247,15 @@ result = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("VALUE table expression, optional", async () => {
+    const abap = `
+  DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA input TYPE i.
+  DATA result TYPE i.
+  result = VALUE i( lt_prime_numbers[ input ] OPTIONAL ).`;
+    const expected = `
+sdfsd.`;
+    testFix(abap, expected);
+  });
 
 });
