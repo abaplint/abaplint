@@ -1034,6 +1034,11 @@ ${indentation}    output = ${topTarget}.`;
     let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
     const loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    let cond = forLoop.findDirectExpression(Expressions.ComponentCond)?.concatTokens() || "";
+    if (cond !== "") {
+      cond = " WHERE " + cond;
+    }
+
     if (forLoop.findDirectTokenByText("UNTIL")
         || forLoop.findDirectTokenByText("WHILE")) {
       const fieldDef = forLoop.findDirectExpression(Expressions.InlineFieldDefinition);
@@ -1050,11 +1055,11 @@ ${indentation}    output = ${topTarget}.`;
       end += `  ${field} = ${field} + 1.\n`;
       end += indentation + "ENDWHILE";
     } else if (loopTargetField) {
-      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField}).\n`;
+      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${cond}.\n`;
       end = "ENDLOOP";
     } else if (loopTargetField === undefined) {
       const loopTargetFieldSymbol = forLoop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
-      body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol}).\n`;
+      body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol})${cond}.\n`;
       end = "ENDLOOP";
     }
 
@@ -1165,13 +1170,12 @@ ${indentation}    output = ${topTarget}.`;
         body += indentation + `DATA(${name}) = ${reduceBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
       }
 
-      const forLoop = reduceBody.findDirectExpression(Expressions.For);
-      if (forLoop === undefined) {
-        continue;
+      let end = "";
+      for (const forLoop of reduceBody?.findDirectExpressions(Expressions.For) || []) {
+        const outlineFor = this.outlineFor(forLoop, indentation, lowFile, highSyntax);
+        body += outlineFor.body;
+        end = outlineFor.end + `.\n` + end;
       }
-
-      const outlineFor = this.outlineFor(forLoop, indentation, lowFile, highSyntax);
-      body += outlineFor.body;
 
       const next = reduceBody.findDirectExpression(Expressions.ReduceNext);
       if (next === undefined) {
@@ -1190,7 +1194,7 @@ ${indentation}    output = ${topTarget}.`;
         }
       }
 
-      body += indentation + outlineFor.end + `.\n`;
+      body += indentation + end;
       body += indentation + `${uniqueName} = ${name}.\n`;
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
@@ -1515,6 +1519,10 @@ ${indentation}    output = ${topTarget}.`;
       if (i.getFirstToken().getStr().toUpperCase() !== "CONV") {
         continue;
       }
+      const end = i.findDirectTokenByText(")");
+      if (end === undefined) {
+        continue;
+      }
 
       const body = i.findDirectExpression(Expressions.ConvBody)?.concatTokens();
       if (body === undefined) {
@@ -1529,7 +1537,7 @@ ${indentation}    output = ${topTarget}.`;
         indent + `${uniqueName} = ${body}.\n` +
         indent;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
-      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), end.getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport CONV", this.getMetadata().key, this.conf.severity, fix);

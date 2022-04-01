@@ -2193,4 +2193,69 @@ ENDIF.
     testFix(abap, expected);
   });
 
+  it("CONV with calculation", async () => {
+    const abap = `
+DATA: BEGIN OF ls_time,
+        hours   TYPE i,
+        minutes TYPE i,
+      END OF ls_time.
+DATA rv_time TYPE i.
+rv_time = CONV decfloat34( frac( ( ls_time-hours * 60 + ls_time-minutes ) / 1440 ) ) * 1440.`;
+    const expected = `
+DATA: BEGIN OF ls_time,
+        hours   TYPE i,
+        minutes TYPE i,
+      END OF ls_time.
+DATA rv_time TYPE i.
+DATA temp1 TYPE decfloat34.
+temp1 = frac( ( ls_time-hours * 60 + ls_time-minutes ) / 1440 ).
+rv_time = temp1 * 1440.`;
+    testFix(abap, expected);
+  });
+
+  it("REDUCE with WHERE", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_letter_value,
+  letter(1) TYPE c,
+  value     TYPE i,
+END OF ty_letter_value.
+DATA letter_values TYPE TABLE OF ty_letter_value.
+DATA char_list    TYPE TABLE OF c.
+DATA result TYPE i.
+result = REDUCE i(
+  INIT x = 0
+  FOR letter_value IN letter_values
+  FOR char IN char_list WHERE ( table_line = letter_value-letter )
+  NEXT x = x + letter_value-value ).`;
+    const expected = `
+TYPES: BEGIN OF ty_letter_value,
+  letter(1) TYPE c,
+  value     TYPE i,
+END OF ty_letter_value.
+DATA letter_values TYPE TABLE OF ty_letter_value.
+DATA char_list    TYPE TABLE OF c.
+DATA result TYPE i.
+DATA temp1 TYPE i.
+DATA(x) = 0.
+LOOP AT letter_values INTO DATA(letter_value).
+LOOP AT char_list INTO DATA(char) WHERE ( table_line = letter_value-letter ).
+  x = x + letter_value-value.
+ENDLOOP.
+ENDLOOP.
+temp1 = x.
+result = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it.skip("VALUE table expression, optional", async () => {
+    const abap = `
+  DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA input TYPE i.
+  DATA result TYPE i.
+  result = VALUE i( lt_prime_numbers[ input ] OPTIONAL ).`;
+    const expected = `
+sdfsd.`;
+    testFix(abap, expected);
+  });
+
 });
