@@ -2193,4 +2193,24 @@ ENDIF.
     testFix(abap, expected);
   });
 
+  it("CONV with calculation", async () => {
+    const abap = `
+DATA: BEGIN OF ls_time,
+        hours   TYPE i,
+        minutes TYPE i,
+      END OF ls_time.
+DATA rv_time TYPE i.
+rv_time = CONV decfloat34( frac( ( ls_time-hours * 60 + ls_time-minutes ) / 1440 ) ) * 1440.`;
+    const expected = `
+DATA: BEGIN OF ls_time,
+        hours   TYPE i,
+        minutes TYPE i,
+      END OF ls_time.
+DATA rv_time TYPE i.
+DATA temp1 TYPE decfloat34.
+temp1 = frac( ( ls_time-hours * 60 + ls_time-minutes ) / 1440 ).
+rv_time = temp1 * 1440.`;
+    testFix(abap, expected);
+  });
+
 });

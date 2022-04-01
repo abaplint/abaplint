@@ -1515,6 +1515,10 @@ ${indentation}    output = ${topTarget}.`;
       if (i.getFirstToken().getStr().toUpperCase() !== "CONV") {
         continue;
       }
+      const end = i.findDirectTokenByText(")");
+      if (end === undefined) {
+        continue;
+      }
 
       const body = i.findDirectExpression(Expressions.ConvBody)?.concatTokens();
       if (body === undefined) {
@@ -1529,7 +1533,7 @@ ${indentation}    output = ${topTarget}.`;
         indent + `${uniqueName} = ${body}.\n` +
         indent;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
-      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), end.getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport CONV", this.getMetadata().key, this.conf.severity, fix);
