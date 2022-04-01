@@ -1034,27 +1034,19 @@ ${indentation}    output = ${topTarget}.`;
     let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
     const loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
-    if (forLoop.findDirectTokenByText("UNTIL")) {
-      const name = forLoop.findFirstExpression(Expressions.Field)?.concatTokens();
-      body += indentation + "DATA " + name + " TYPE i.\n";
-
-      const cond = forLoop.findFirstExpression(Expressions.Cond);
-      body += indentation + `WHILE NOT ${cond?.concatTokens()}.\n`;
-      const field = forLoop.findDirectExpression(Expressions.InlineFieldDefinition)?.findFirstExpression(Expressions.Field)?.concatTokens();
-      end += `  ${field} = ${field} + 1.\n`;
-      end += indentation + "ENDWHILE";
-    } else if (forLoop.findDirectTokenByText("WHILE")) {
+    if (forLoop.findDirectTokenByText("UNTIL")
+        || forLoop.findDirectTokenByText("WHILE")) {
       const fieldDef = forLoop.findDirectExpression(Expressions.InlineFieldDefinition);
       const field = fieldDef?.findFirstExpression(Expressions.Field)?.concatTokens();
       body += indentation + "DATA " + field + " TYPE i.\n";
-
       const second = fieldDef?.getChildren()[2];
       if (second?.get() instanceof Expressions.Source) {
         body += indentation + field + " = " + second.concatTokens() + ".\n";
       }
 
+      const not = forLoop.findDirectTokenByText("UNTIL") ? " NOT" : "";
       const cond = forLoop.findFirstExpression(Expressions.Cond);
-      body += indentation + `WHILE ${cond?.concatTokens()}.\n`;
+      body += indentation + `WHILE${not} ${cond?.concatTokens()}.\n`;
       end += `  ${field} = ${field} + 1.\n`;
       end += indentation + "ENDWHILE";
     } else if (loopTargetField) {

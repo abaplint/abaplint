@@ -5223,9 +5223,6 @@
           "type": "array"
         }
       },
-      "required": [
-        "skipNames"
-      ],
       "type": "object"
     },
     "UnusedVariablesConf": {
@@ -5251,9 +5248,6 @@
           "uniqueItems": true
         }
       },
-      "required": [
-        "skipNames"
-      ],
       "type": "object"
     },
     "UseBoolExpressionConf": {
