@@ -317,6 +317,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.replaceMethodConditional(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.replaceTableExpression(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -1607,6 +1612,21 @@ ${indentation}    output = ${topTarget}.`;
         return m;
       }
     }
+    return undefined;
+  }
+
+  private replaceMethodConditional(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    for (const c of node.findAllExpressionsRecursive(Expressions.Compare)) {
+      const chain = c.findDirectExpression(Expressions.MethodCallChain);
+      if (chain === undefined) {
+        continue;
+      }
+
+      const end = chain.getLastToken().getEnd();
+      const fix = EditHelper.insertAt(lowFile, end, " IS NOT INITIAL");
+      return Issue.atToken(lowFile, chain.getFirstToken(), "Downport method conditional", this.getMetadata().key, this.conf.severity, fix);
+    }
+
     return undefined;
   }
 

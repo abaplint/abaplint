@@ -2247,6 +2247,34 @@ result = temp1.`;
     testFix(abap, expected);
   });
 
+  it("method conditional", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RETURNING VALUE(result) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    IF foo( ).
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RETURNING VALUE(result) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    IF foo( ) IS NOT INITIAL.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
