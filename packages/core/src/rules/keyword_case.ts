@@ -148,6 +148,7 @@ export class KeywordCase extends ABAPRule {
     }
 
     const skip = new Skip(this.getConfig());
+    let prev: Token | undefined = undefined;
     for (const statement of file.getStatements()) {
       if (skip.skipStatement(statement) === true) {
         continue;
@@ -155,6 +156,9 @@ export class KeywordCase extends ABAPRule {
 
       let result = this.traverse(statement, statement.get());
       if (result.length > 0) {
+        if (prev && result[0].token.getStart().equals(prev.getStart())) {
+          continue;
+        }
         if (statement.getColon() !== undefined) {
           // if its a chained statement, go token by token
           result = [result[0]];
@@ -164,6 +168,7 @@ export class KeywordCase extends ABAPRule {
         if (issues.length > MAX_ISSUES) {
           break;
         }
+        prev = result[0].token;
       }
     }
 

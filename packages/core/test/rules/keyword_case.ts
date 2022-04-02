@@ -98,6 +98,8 @@ INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`, cnt: 0},
   {abap: `DATA
     nodes TYPE HASHED TABLE OF t_search_index WITH UNIQUE KEY info-id
     WITH NON-UNIQUE SORTED KEY type COMPONENTS info-type READ-ONLY.`, cnt: 0},
+
+  {abap: `data: foo TYPE i, boo TYPE i.`, cnt: 1},
 ];
 
 testRule(tests, KeywordCase);
