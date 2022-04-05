@@ -20,7 +20,7 @@ export class UnsecureFAE implements IRule {
       title: "Unsecure FAE",
       shortDescription: `Checks for unsecure FAE`,
       extendedInformation: `Issues from rule check_syntax must be fixed before this rule takes effect`,
-      tags: [RuleTag.Experimental],
+      tags: [RuleTag.Experimental, RuleTag.Performance],
     };
   }
 

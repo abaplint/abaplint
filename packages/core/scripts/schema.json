@@ -2780,7 +2780,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unsecure FAE\nTags: Experimental\nhttps://rules.abaplint.org/unsecure_fae"
+              "description": "Checks for unsecure FAE\nTags: Experimental, Performance\nhttps://rules.abaplint.org/unsecure_fae"
             },
             "unused_ddic": {
               "anyOf": [
