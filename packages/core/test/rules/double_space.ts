@@ -37,6 +37,11 @@ const tests = [
     "                                 es_1st_commit   = ls_next_commit\n" +
     "                       CHANGING  ct_commits      = ct_commits ).", cnt: 0},
   {abap: "call(  |moo {\nvar }bar| ).", cnt: 1},
+  {abap: `
+EVENTS sdfs
+  EXPORTING
+    VALUE(sdf)        TYPE c
+    VALUE(fdsdfdsdsf) TYPE i.`, cnt: 0},
 ];
 
 testRule(tests, DoubleSpace);

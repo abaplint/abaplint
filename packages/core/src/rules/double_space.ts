@@ -5,7 +5,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight} from "../abap/1_lexer/tokens";
 import {TokenNode, StatementNode, TokenNodeRegex} from "../abap/nodes";
 import {Unknown, MacroContent, MacroCall} from "../abap/2_statements/statements/_statement";
-import {MethodDef} from "../abap/2_statements/statements";
+import {Events, MethodDef} from "../abap/2_statements/statements";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
@@ -58,12 +58,12 @@ export class DoubleSpace extends ABAPRule {
           && !(s.get() instanceof Unknown)
           && !(s.get() instanceof MethodDef)
           && !(s.get() instanceof MacroCall)
+          && !(s.get() instanceof Events)
           && !(s.get() instanceof MacroContent)) {
         issues = issues.concat(this.checkKeywords(s, file));
       }
 
       issues = issues.concat(this.checkParen(s, file));
-
     }
 
     issues = issues.concat(this.checkAfterColon(file));

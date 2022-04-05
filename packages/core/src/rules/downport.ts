@@ -1289,6 +1289,7 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       const abap = `DATA ${uniqueName} ${type}.\n` +
+        indentation + `CLEAR ${uniqueName}.\n` + // might be called inside a loop
         body +
         indentation;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
@@ -1483,6 +1484,7 @@ ${indentation}    output = ${topTarget}.`;
     let code = "";
 
     let first = true;
+    let addElse = true;
     for (const c of body.getChildren()) {
       if (c instanceof TokenNode) {
         switch (c.getFirstToken().getStr().toUpperCase()) {
@@ -1499,6 +1501,7 @@ ${indentation}    output = ${topTarget}.`;
             break;
           case "ELSE":
             code += indent + "ELSE.\n";
+            addElse = false;
             break;
           default:
             throw "buildCondBody, unexpected token";
@@ -1513,6 +1516,12 @@ ${indentation}    output = ${topTarget}.`;
         throw "buildCondBody, unexpected expression, " + c.get().constructor.name;
       }
     }
+    if (addElse) {
+      // COND might be called inside a loop
+      code += indent + "ELSE.\n";
+      code += indent + `  CLEAR ${uniqueName}.\n`;
+    }
+
     code += indent + "ENDIF.\n";
 
     code += indent;
