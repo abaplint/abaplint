@@ -2311,6 +2311,39 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("table expression with key specified", async () => {
+    const abap = `
+    TYPES:
+      BEGIN OF cipher_dict_struct,
+        plain  TYPE c LENGTH 1,
+        cipher TYPE c LENGTH 1,
+      END OF cipher_dict_struct.
+    DATA
+      cipher_dict TYPE HASHED TABLE OF cipher_dict_struct
+        WITH UNIQUE KEY plain
+        WITH UNIQUE HASHED KEY cipher_key COMPONENTS cipher.
+    DATA foo TYPE c LENGTH 1.
+    foo = cipher_dict[ KEY cipher_key cipher = '' ]-plain.`;
+    const expected = `
+    TYPES:
+      BEGIN OF cipher_dict_struct,
+        plain  TYPE c LENGTH 1,
+        cipher TYPE c LENGTH 1,
+      END OF cipher_dict_struct.
+    DATA
+      cipher_dict TYPE HASHED TABLE OF cipher_dict_struct
+        WITH UNIQUE KEY plain
+        WITH UNIQUE HASHED KEY cipher_key COMPONENTS cipher.
+    DATA foo TYPE c LENGTH 1.
+    DATA temp1 LIKE LINE OF cipher_dict.
+    READ TABLE cipher_dict WITH TABLE KEY cipher_key COMPONENTS cipher = '' INTO temp1.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    foo = temp1-plain.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

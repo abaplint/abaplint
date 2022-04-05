@@ -602,13 +602,23 @@ ${indentation}`);
 
   private tableCondition(tableExpression: ExpressionNode) {
     let condition = "";
+    let keyName = "";
     for (const c of tableExpression.getChildren() || []) {
       if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
         continue;
       } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
-        condition = "WITH KEY ";
+        if (keyName === "") {
+          condition = "WITH KEY ";
+        } else {
+          condition = "WITH TABLE KEY " + keyName + " COMPONENTS ";
+        }
       } else if (c.get() instanceof Expressions.Source && condition === "") {
         condition = "INDEX ";
+      } else if (c instanceof TokenNode && c.getFirstToken().getStr().toUpperCase() === "KEY") {
+        continue;
+      } else if (c.get() instanceof Expressions.SimpleName) {
+        keyName = c.concatTokens();
+        continue;
       }
       condition += c.concatTokens() + " ";
     }
