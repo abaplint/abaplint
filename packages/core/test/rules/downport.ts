@@ -1291,6 +1291,8 @@ DATA result TYPE string.
 DATA temp1 TYPE string.
 IF count = 0.
   temp1 = |bar|.
+ELSE.
+  CLEAR temp1.
 ENDIF.
 result = |{ temp1 }|.`;
     testFix(abap, expected);
@@ -2272,6 +2274,22 @@ CLASS lcl IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("COND without ELSE should CLEAR", async () => {
+    const abap = `
+    DATA int TYPE i.
+    int = COND #( WHEN 10 <> 20 THEN 1 ).`;
+    const expected = `
+    DATA int TYPE i.
+    DATA temp1 TYPE i.
+    IF 10 <> 20.
+      temp1 = 1.
+    ELSE.
+      CLEAR temp1.
+    ENDIF.
+    int = temp1.`;
     testFix(abap, expected);
   });
 
