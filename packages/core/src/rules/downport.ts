@@ -1516,6 +1516,7 @@ ${indentation}    output = ${topTarget}.`;
       }
     }
     if (addElse) {
+      // COND might be called inside a loop
       code += indent + "ELSE.\n";
       code += indent + `  CLEAR ${uniqueName}.\n`;
     }
