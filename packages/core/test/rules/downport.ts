@@ -630,6 +630,7 @@ FORM bar.
   TYPES ty_tab TYPE STANDARD TABLE OF ty_stru WITH DEFAULT KEY.
   DATA tab TYPE ty_tab.
   DATA temp1 TYPE ty_stru.
+  CLEAR temp1.
   temp1-field = 1.
   temp1-field2 = 2.
   APPEND temp1 TO tab.
@@ -717,6 +718,7 @@ TYPES: BEGIN OF ty_hash,
 TYPES ty_tab TYPE STANDARD TABLE OF ty_hash WITH DEFAULT KEY.
 DATA tab TYPE ty_tab.
 DATA temp1 TYPE ty_tab.
+CLEAR temp1.
 DATA temp2 LIKE LINE OF temp1.
 temp2-word = 0.
 temp2-shift = 3.
@@ -739,6 +741,7 @@ tab = VALUE #( ( word = 0 shift = 3 ) ( word = 4 shift = 5 ) ).`;
 TYPES ty_tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
 DATA tab TYPE ty_tab.
 DATA temp1 TYPE ty_tab.
+CLEAR temp1.
 DATA temp2 LIKE LINE OF temp1.
 temp2-word = 0.
 temp2-shift = 3.
@@ -759,6 +762,7 @@ tab = VALUE #( ( low = 0 ) ).`;
     const expected = `
 DATA tab TYPE RANGE OF i.
 DATA temp1 LIKE tab.
+CLEAR temp1.
 DATA temp2 LIKE LINE OF temp1.
 temp2-low = 0.
 APPEND temp2 TO temp1.
@@ -775,6 +779,7 @@ DATA(sdf) = VALUE ty( ( 1 ) ( 2 ) ).`;
     const expected = `
 TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA temp1 TYPE ty.
+CLEAR temp1.
 APPEND 1 TO temp1.
 APPEND 2 TO temp1.
 DATA(sdf) = temp1.`;
@@ -796,6 +801,7 @@ TYPES: BEGIN OF params,
          foo TYPE i,
        END OF params.
 DATA temp1 TYPE params.
+CLEAR temp1.
 DATA distance TYPE i.
 distance = 10.
 temp1-foo = distance.
@@ -819,6 +825,7 @@ TYPES: BEGIN OF params,
          foo TYPE i,
        END OF params.
 DATA temp1 TYPE params.
+CLEAR temp1.
 DATA distance TYPE i.
 distance = 10.
 DATA rotation TYPE i.
@@ -845,6 +852,7 @@ ENDFORM.`;
     const expected = `FORM bar.
   DATA tab TYPE ztab.
   DATA temp1 TYPE zrow.
+  CLEAR temp1.
   temp1-msg = sy-msgv1.
   APPEND temp1 TO tab.
 ENDFORM.`;
@@ -1137,6 +1145,7 @@ TYPES tt_turtles TYPE STANDARD TABLE OF ty_turtles WITH DEFAULT KEY.
 DATA turtles TYPE tt_turtles.
 DATA new_height TYPE tt_turtles.
 DATA temp1 TYPE tt_turtles.
+CLEAR temp1.
 LOOP AT turtles ASSIGNING FIELD-SYMBOL(<x>).
   APPEND <x> TO temp1.
 ENDLOOP.
@@ -1183,6 +1192,7 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
   METHOD impl.
     DATA temp1 TYPE i.
+    CLEAR temp1.
     method1( method2( temp1 ) ).
   ENDMETHOD.
 ENDCLASS.`;
@@ -1330,6 +1340,7 @@ tab = VALUE ty_tab( FOR i = 0 UNTIL i = 2 ( |hello| ) ).`;
 TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA tab TYPE ty_tab.
 DATA temp1 TYPE ty_tab.
+CLEAR temp1.
 DATA i TYPE i.
 i = 0.
 WHILE NOT i = 2.
@@ -1356,6 +1367,7 @@ DATA(result) = VALUE ty_tab(
     const expected = `
 TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA temp1 TYPE ty_tab.
+CLEAR temp1.
 APPEND COND string( LET current_count = 2 IN WHEN current_count = 1 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
 APPEND COND string( LET current_count = 2 IN WHEN current_count = 2 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
 DATA(result) = temp1.`;
@@ -1940,6 +1952,7 @@ ENDFORM.`;
     const expected = `
     DATA input TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA temp1 LIKE input.
+    CLEAR temp1.
     DATA temp2 LIKE LINE OF temp1.
     APPEND temp2 TO temp1.
     input  = temp1.`;
@@ -1953,6 +1966,7 @@ ENDFORM.`;
     const expected = `
     DATA input TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA temp1 LIKE input.
+    CLEAR temp1.
     DATA temp2 LIKE LINE OF temp1.
     APPEND temp2 TO temp1.
     APPEND temp2 TO temp1.
@@ -2011,6 +2025,7 @@ ENDFORM.`;
   DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA temp1 LIKE results.
+  CLEAR temp1.
   LOOP AT garden_rows INTO DATA(row).
     APPEND row TO temp1.
   ENDLOOP.
@@ -2030,6 +2045,7 @@ ENDFORM.`;
   DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA temp1 LIKE results.
+    CLEAR temp1.
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
     seed = 0.
@@ -2076,6 +2092,7 @@ ENDLOOP.
   DATA results TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA garden_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA temp1 LIKE results.
+    CLEAR temp1.
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
     seed = 0.
@@ -2101,6 +2118,7 @@ ENDLOOP.
   DATA tab1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA tab2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA temp1 LIKE tab2.
+  CLEAR temp1.
   APPEND LINES OF tab1 TO index TO temp1.
   tab2 = temp1.`;
     testFix(abap, expected);

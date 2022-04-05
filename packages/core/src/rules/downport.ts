@@ -1289,6 +1289,7 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       const abap = `DATA ${uniqueName} ${type}.\n` +
+        indentation + `CLEAR ${uniqueName}.\n` + // might be called inside a loop
         body +
         indentation;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), abap);
