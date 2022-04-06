@@ -5,6 +5,11 @@ import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {IRegistry} from "../_iregistry";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
+import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
+import {Position} from "../position";
+import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class SlowParameterPassingConf extends BasicRuleConfig {
 }
@@ -17,7 +22,7 @@ export class SlowParameterPassing implements IRule {
     return {
       key: "slow_parameter_passing",
       title: "Slow Parameter Passing",
-      shortDescription: `Slow parameter pass`,
+      shortDescription: `Detects show pass by value passing for methods where parameter is not changed`,
       tags: [RuleTag.Performance],
     };
   }
@@ -42,10 +47,53 @@ export class SlowParameterPassing implements IRule {
       return [];
     }
 
-    // todo
-    new SyntaxLogic(this.reg, obj).run().spaghetti.getTop();
+    const top = new SyntaxLogic(this.reg, obj).run().spaghetti.getTop();
+    const methods = this.listMethodNodes(top);
+
+    for (const m of methods) {
+      const vars = m.getData().vars;
+      for (const v in vars) {
+        const id = vars[v];
+        if (id.getMeta().includes(IdentifierMeta.PassByValue) === false) {
+          continue;
+        }
+        const writes = this.listWritePositions(m, id);
+        if (writes.length === 0) {
+          const message = "Parameter passed by VALUE but not changed";
+          issues.push(Issue.atIdentifier(id, message, this.getMetadata().key, this.getConfig().severity));
+        }
+      }
+    }
 
     return issues;
+  }
+
+  private listWritePositions(node: ISpaghettiScopeNode, id: TypedIdentifier): Position[] {
+    const ret: Position[] = [];
+
+    for (const v of node.getData().references) {
+      if (v.referenceType === ReferenceType.DataWriteReference
+          && v.resolved?.getFilename() === id.getFilename()
+          && v.resolved?.getStart().equals(id.getStart())) {
+        ret.push(v.position.getStart());
+      }
+    }
+
+    return ret;
+  }
+
+  private listMethodNodes(node: ISpaghettiScopeNode): ISpaghettiScopeNode[] {
+    const ret: ISpaghettiScopeNode[] = [];
+
+    if (node.getIdentifier().stype === ScopeType.Method) {
+      ret.push(node);
+    } else {
+      for (const c of node.getChildren()) {
+        ret.push(...this.listMethodNodes(c));
+      }
+    }
+
+    return ret;
   }
 
 }

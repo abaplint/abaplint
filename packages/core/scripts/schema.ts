@@ -115,6 +115,7 @@ import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
 import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
+import {SlowParameterPassingConf} from "../src/rules/slow_parameter_passing";
 import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
 import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
@@ -271,6 +272,7 @@ export interface IConfig {
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
+    "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
