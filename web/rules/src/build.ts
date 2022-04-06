@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
-import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon, singleFileIcon} from "./common";
+import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon, singleFileIcon, performanceIcon} from "./common";
 import {buildRule} from "./rule_page";
 import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
@@ -43,6 +43,9 @@ function buildChips(json: any) {
       case RuleTag.SingleFile:
         icon = singleFileIcon;
         break;
+      case RuleTag.Performance:
+        icon = performanceIcon;
+        break;
       default:
         break;
     }
@@ -65,10 +68,11 @@ function buildChips(json: any) {
       issued++;
     }
 
-    if (issued % 5 === 0) {
+    if (issued % 6 === 0) {
       html += "<br><br>\n";
     }
   }
+  html += "<br><br>\n";
 
   return html;
 }
