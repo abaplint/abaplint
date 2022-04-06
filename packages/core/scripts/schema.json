@@ -2606,6 +2606,17 @@
               ],
               "description": "Checks the validity of ICF services:\n\n* Class defined in handler must exist\n* Class must not have any syntax errors\n* Class must implement interface IF_HTTP_EXTENSION\nhttps://rules.abaplint.org/sicf_consistency"
             },
+            "slow_parameter_passing": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SlowParameterPassingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects show pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -4893,6 +4904,23 @@
         "length",
         "allow"
       ],
+      "type": "object"
+    },
+    "SlowParameterPassingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "SpaceBeforeColonConf": {

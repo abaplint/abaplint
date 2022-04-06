@@ -195,7 +195,13 @@ export class MethodParameters implements IMethodParameters {
       if (p === undefined) {
         continue;
       }
-      target.push(new MethodParam().runSyntax(p, scope, this.filename, meta));
+      const extraMeta: IdentifierMeta[] = [];
+      if (opt.concatTokens().toUpperCase().startsWith("VALUE(")) {
+        extraMeta.push(IdentifierMeta.PassByValue);
+      } else if (meta.includes(IdentifierMeta.MethodImporting)) {
+        extraMeta.push(IdentifierMeta.ReadOnly);
+      }
+      target.push(new MethodParam().runSyntax(p, scope, this.filename, [...meta, ...extraMeta]));
       if (opt.getLastToken().getStr().toUpperCase() === "OPTIONAL") {
         const name = target[target.length - 1].getName().toUpperCase();
         this.optional.push(name);
