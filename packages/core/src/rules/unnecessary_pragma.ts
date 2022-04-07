@@ -7,17 +7,18 @@ import {Comment} from "../abap/2_statements/statements/_statement";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
-export class CheckNoHandlerPragmaConf extends BasicRuleConfig {
+export class UnnecessaryPragmaConf extends BasicRuleConfig {
 }
 
-export class CheckNoHandlerPragma extends ABAPRule {
-  private conf = new CheckNoHandlerPragmaConf();
+export class UnnecessaryPragma extends ABAPRule {
+  private conf = new UnnecessaryPragmaConf();
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "check_no_handler_pragma",
-      title: "Check if NO_HANDLER can be removed",
-      shortDescription: `Checks NO_HANDLER pragmas that can be removed`,
+      key: "unnecessary_pragma",
+      title: "Unnecessary Pragma",
+      shortDescription: `Finds pragmas which can be removed`,
+      extendedInformation: `* Checks NO_HANDLER pragmas that can be removed`,
       tags: [RuleTag.SingleFile],
       badExample: `TRY.
     ...
@@ -36,7 +37,7 @@ ENDTRY.`,
     return this.conf;
   }
 
-  public setConfig(conf: CheckNoHandlerPragmaConf) {
+  public setConfig(conf: UnnecessaryPragmaConf) {
     this.conf = conf;
   }
 

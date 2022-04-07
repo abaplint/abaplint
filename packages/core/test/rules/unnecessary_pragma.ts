@@ -1,5 +1,5 @@
 import {testRule} from "./_utils";
-import {CheckNoHandlerPragma} from "../../src/rules/check_no_handler_pragma";
+import {UnnecessaryPragma} from "../../src/rules/unnecessary_pragma";
 
 const tests = [
   {abap: `parser error`, cnt: 0},
@@ -39,4 +39,4 @@ ENDTRY.`, cnt: 0},
 
 ];
 
-testRule(tests, CheckNoHandlerPragma);
+testRule(tests, UnnecessaryPragma);

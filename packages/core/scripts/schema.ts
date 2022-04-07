@@ -16,7 +16,6 @@ import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
 import {CheckIncludeConf} from "../src/rules/check_include";
-import {CheckNoHandlerPragmaConf} from "../src/rules/check_no_handler_pragma";
 import {CheckSubrcConf} from "../src/rules/check_subrc";
 import {CheckSyntaxConf} from "../src/rules/check_syntax";
 import {CheckTextElementsConf} from "../src/rules/check_text_elements";
@@ -130,6 +129,7 @@ import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
+import {UnnecessaryPragmaConf} from "../src/rules/unnecessary_pragma";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
 import {UnsecureFAEConf} from "../src/rules/unsecure_fae";
 import {UnusedDDICConf} from "../src/rules/unused_ddic";
@@ -173,7 +173,6 @@ export interface IConfig {
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
     "check_include"?: CheckIncludeConf | boolean,
-    "check_no_handler_pragma"?: CheckNoHandlerPragmaConf | boolean,
     "check_subrc"?: CheckSubrcConf | boolean,
     "check_syntax"?: CheckSyntaxConf | boolean,
     "check_text_elements"?: CheckTextElementsConf | boolean,
@@ -253,7 +252,7 @@ export interface IConfig {
     "parser_702_chaining"?: Parser702ChainingConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
-    "pragma_placement"?: PragmaStyleConf | boolean,
+    "pragma_style"?: PragmaStyleConf | boolean,
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
@@ -287,6 +286,7 @@ export interface IConfig {
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
+    "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
     "unsecure_fae"?: UnsecureFAEConf | boolean,
     "unused_ddic"?: UnusedDDICConf | boolean,

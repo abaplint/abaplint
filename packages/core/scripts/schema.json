@@ -366,23 +366,6 @@
       },
       "type": "object"
     },
-    "CheckNoHandlerPragmaConf": {
-      "additionalProperties": false,
-      "properties": {
-        "exclude": {
-          "description": "List of file regex filename patterns to exclude, case insensitive",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "severity": {
-          "$ref": "#/definitions/Severity",
-          "description": "Problem severity"
-        }
-      },
-      "type": "object"
-    },
     "CheckSubrcConf": {
       "additionalProperties": false,
       "properties": {
@@ -1517,17 +1500,6 @@
               ],
               "description": "Checks INCLUDE statements\nTags: Syntax\nhttps://rules.abaplint.org/check_include"
             },
-            "check_no_handler_pragma": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/CheckNoHandlerPragmaConf"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "description": "Checks NO_HANDLER pragmas that can be removed\nTags: SingleFile\nhttps://rules.abaplint.org/check_no_handler_pragma"
-            },
             "check_subrc": {
               "anyOf": [
                 {
@@ -2397,16 +2369,16 @@
               ],
               "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax, Whitespace, SingleFile\nhttps://rules.abaplint.org/parser_missing_space"
             },
-            "pragma_placement": {
+            "pragma_style": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/PragmaPlacementConf"
+                  "$ref": "#/definitions/PragmaStyleConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "Place pragmas at end of statements\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_placement"
+              "description": "Check pragmas placment and case\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_style"
             },
             "prefer_corresponding": {
               "anyOf": [
@@ -2770,6 +2742,17 @@
                 }
               ],
               "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
+            },
+            "unnecessary_pragma": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryPragmaConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds pragmas which can be removed\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_pragma"
             },
             "unreachable_code": {
               "anyOf": [
@@ -4423,7 +4406,7 @@
       ],
       "type": "string"
     },
-    "PragmaPlacementConf": {
+    "PragmaStyleConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -4436,8 +4419,14 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "style": {
+          "$ref": "#/definitions/KeywordCaseStyle"
         }
       },
+      "required": [
+        "style"
+      ],
       "type": "object"
     },
     "PreferCorrespondingConf": {
@@ -5145,6 +5134,23 @@
       "type": "object"
     },
     "UnnecessaryChainingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UnnecessaryPragmaConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
