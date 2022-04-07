@@ -1,4 +1,4 @@
-import {PragmaPlacement} from "../../src/rules";
+import {PragmaStyle} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -9,4 +9,4 @@ const tests = [
   {abap: "DATA field TYPE i ##NO_TEXT.", cnt: 0},
 ];
 
-testRule(tests, PragmaPlacement);
+testRule(tests, PragmaStyle);

@@ -96,7 +96,7 @@ import {OmitReceivingConf} from "../src/rules/omit_receiving";
 import {Parser702ChainingConf} from "../src/rules/parser_702_chaining";
 import {ParserErrorConf} from "../src/rules/parser_error";
 import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
-import {PragmaPlacementConf} from "../src/rules/pragma_placement";
+import {PragmaStyleConf} from "../src/rules/pragma_style";
 import {PreferCorrespondingConf} from "../src/rules/prefer_corresponding";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
@@ -253,7 +253,7 @@ export interface IConfig {
     "parser_702_chaining"?: Parser702ChainingConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
-    "pragma_placement"?: PragmaPlacementConf | boolean,
+    "pragma_placement"?: PragmaStyleConf | boolean,
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,

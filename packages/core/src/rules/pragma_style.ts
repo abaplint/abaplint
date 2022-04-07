@@ -3,18 +3,20 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {KeywordCaseStyle} from "./keyword_case";
 
-export class PragmaPlacementConf extends BasicRuleConfig {
+export class PragmaStyleConf extends BasicRuleConfig {
+  public style: KeywordCaseStyle = KeywordCaseStyle.Upper;
 }
 
-export class PragmaPlacement extends ABAPRule {
-  private conf = new PragmaPlacementConf();
+export class PragmaStyle extends ABAPRule {
+  private conf = new PragmaStyleConf();
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "pragma_placement",
-      title: "Pragma Placement",
-      shortDescription: `Place pragmas at end of statements`,
+      key: "pragma_style",
+      title: "Pragma Style",
+      shortDescription: `Check pragmas placment and case`,
       tags: [RuleTag.SingleFile],
       extendedInformation: `https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/abenpragma.htm`,
       badExample: `DATA field ##NO_TEXT TYPE i.`,
@@ -26,7 +28,7 @@ export class PragmaPlacement extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf: PragmaPlacementConf) {
+  public setConfig(conf: PragmaStyleConf) {
     this.conf = conf;
   }
 
