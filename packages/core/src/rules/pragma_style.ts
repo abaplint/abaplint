@@ -30,6 +30,9 @@ export class PragmaStyle extends ABAPRule {
 
   public setConfig(conf: PragmaStyleConf) {
     this.conf = conf;
+    if (this.conf.style === undefined) {
+      this.conf.style = KeywordCaseStyle.Upper;
+    }
   }
 
   public runParsed(file: ABAPFile) {
@@ -50,6 +53,16 @@ export class PragmaStyle extends ABAPRule {
           const issue = Issue.atToken(file, p, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
           continue; // max one finding per statement
+        }
+
+        if (this.conf.style === KeywordCaseStyle.Upper && p.getStr() !== p.getStr().toUpperCase()) {
+          const message = "Upper case pragmas";
+          const issue = Issue.atToken(file, p, message, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        } else if (this.conf.style === KeywordCaseStyle.Lower && p.getStr() !== p.getStr().toLowerCase()) {
+          const message = "Lower case pragmas";
+          const issue = Issue.atToken(file, p, message, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
         }
       }
     }
