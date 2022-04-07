@@ -1,5 +1,5 @@
 import {testRule} from "./_utils";
-import {CheckNoHandlerPragma} from "../../src/rules/check_no_handler_pragma";
+import {UnnecessaryPragma} from "../../src/rules/unnecessary_pragma";
 
 const tests = [
   {abap: `parser error`, cnt: 0},
@@ -37,6 +37,10 @@ CATCH zcx_abapgit_exception.
   cl_abap_unit_assert=>fail( ).
 ENDTRY.`, cnt: 0},
 
+  {abap: `WRITE 'hello' ##NO_TEXT.`, cnt: 0},
+  {abap: `MESSAGE w125(zbar) WITH c_foo INTO message ##NO_TEXT.`, cnt: 1},
+  {abap: `MESSAGE w125(zbar) WITH c_foo INTO message.`, cnt: 0},
+  {abap: `MESSAGE w125(zbar) WITH c_foo INTO message ##NEEDED ##NO_TEXT.`, cnt: 2},
 ];
 
-testRule(tests, CheckNoHandlerPragma);
+testRule(tests, UnnecessaryPragma);

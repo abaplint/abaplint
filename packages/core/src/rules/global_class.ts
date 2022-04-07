@@ -16,9 +16,8 @@ export class GlobalClass extends ABAPRule {
     return {
       key: "global_class",
       title: "Global class checks",
-      shortDescription: `Checks related to global classes.
-
-* global classes must be in own files
+      shortDescription: `Checks related to global classes`,
+      extendedInformation: `* global classes must be in own files
 
 * file names must match class name
 

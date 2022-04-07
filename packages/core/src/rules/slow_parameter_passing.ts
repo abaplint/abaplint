@@ -59,7 +59,7 @@ export class SlowParameterPassing implements IRule {
         }
         const writes = this.listWritePositions(m, id);
         if (writes.length === 0) {
-          const message = "Parameter passed by VALUE but not changed";
+          const message = "Parameter " + id.getName() + " passed by VALUE but not changed";
           issues.push(Issue.atIdentifier(id, message, this.getMetadata().key, this.getConfig().severity));
         }
       }
