@@ -37,6 +37,10 @@ CATCH zcx_abapgit_exception.
   cl_abap_unit_assert=>fail( ).
 ENDTRY.`, cnt: 0},
 
+  {abap: `WRITE 'hello' ##NO_TEXT.`, cnt: 0},
+  {abap: `MESSAGE w125(zbar) WITH c_foo INTO message ##NO_TEXT.`, cnt: 1},
+  {abap: `MESSAGE w125(zbar) WITH c_foo INTO message.`, cnt: 0},
+  {abap: `MESSAGE w125(zbar) WITH c_foo INTO message ##NEEDED ##NO_TEXT.`, cnt: 2},
 ];
 
 testRule(tests, UnnecessaryPragma);

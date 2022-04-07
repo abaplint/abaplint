@@ -1,5 +1,6 @@
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
@@ -18,18 +19,24 @@ export class UnnecessaryPragma extends ABAPRule {
       key: "unnecessary_pragma",
       title: "Unnecessary Pragma",
       shortDescription: `Finds pragmas which can be removed`,
-      extendedInformation: `* Checks NO_HANDLER pragmas that can be removed`,
+      extendedInformation: `* NO_HANDLER with handler
+
+* NEEDED without definition
+
+* NO_TEXT without texts`,
       tags: [RuleTag.SingleFile],
       badExample: `TRY.
     ...
   CATCH zcx_abapgit_exception ##NO_HANDLER.
     RETURN. " it has a handler
-ENDTRY.`,
+ENDTRY.
+MESSAGE w125(zbar) WITH c_foo INTO message ##NEEDED ##NO_TEXT.`,
       goodExample: `TRY.
     ...
   CATCH zcx_abapgit_exception.
     RETURN.
-ENDTRY.`,
+ENDTRY.
+MESSAGE w125(zbar) WITH c_foo INTO message.`,
     };
   }
 
@@ -61,9 +68,46 @@ ENDTRY.`,
       } else {
         noHandler = this.containsNoHandler(statement, statements[i + 1]);
       }
+
+      issues.push(...this.checkText(statement, file));
+      issues.push(...this.checkNeeded(statement, file));
     }
 
     return issues;
+  }
+
+  private checkText(statement: StatementNode, file: ABAPFile): Issue[] {
+    const p = statement.getPragmas().find(t => t.getStr().toUpperCase() === "##NO_TEXT");
+    if (p === undefined) {
+      return [];
+    }
+
+    if (statement.findFirstExpression(Expressions.ConstantString) === undefined
+        && statement.findFirstExpression(Expressions.StringTemplate) === undefined) {
+      const message = "There is no text, NO_TEXT can be removed";
+      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity)];
+    }
+
+    return [];
+  }
+
+  private checkNeeded(statement: StatementNode, file: ABAPFile): Issue[] {
+    const p = statement.getPragmas().find(t => t.getStr().toUpperCase() === "##NEEDED");
+    if (p === undefined) {
+      return [];
+    }
+
+    if (statement.findFirstExpression(Expressions.InlineData) === undefined
+        && !(statement.get() instanceof Statements.Parameter)
+        && !(statement.get() instanceof Statements.Data)
+        && !(statement.get() instanceof Statements.MethodImplementation)
+        && !(statement.get() instanceof Statements.MethodDef)
+        && statement.findFirstExpression(Expressions.InlineFS) === undefined) {
+      const message = "There is no data definition, NEEDED can be removed";
+      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity)];
+    }
+
+    return [];
   }
 
   private containsNoHandler(statement: StatementNode, next: StatementNode | undefined): boolean {
