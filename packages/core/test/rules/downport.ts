@@ -922,10 +922,13 @@ ENDFORM.`;
 
     const expected = `FORM bar.
   DATA temp1 LIKE LINE OF lt_lognumbers.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
   READ TABLE lt_lognumbers INDEX 1 INTO temp1.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
+  sy-tabix = temp2.
   rv_lognumber = temp1-lognumber.
 ENDFORM.`;
 
@@ -1578,10 +1581,13 @@ TYPES: BEGIN OF ty_type,
        END OF ty_type.
 DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
 DATA temp1 LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
 READ TABLE tab WITH KEY foo = 2 INTO temp1.
 IF sy-subrc <> 0.
   RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ENDIF.
+sy-tabix = temp2.
 WRITE temp1-foo.`;
 
     testFix(abap, expected);
@@ -1851,10 +1857,13 @@ ENDTRY.`;
     const expected = `
   DATA it_operations TYPE voided.
   DATA temp1 LIKE LINE OF it_operations.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
   READ TABLE it_operations WITH KEY activity = 2 INTO temp1.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
+  sy-tabix = temp2.
   DATA(lv_text) = temp1-description.`;
     testFix(abap, expected);
   });
@@ -1931,10 +1940,13 @@ ENDFORM.`;
     DATA itab TYPE STANDARD TABLE OF i.
     APPEND 1 TO itab.
     FIELD-SYMBOLS <temp1> LIKE LINE OF itab.
+    DATA temp2 LIKE sy-tabix.
+    temp2 = sy-tabix.
     READ TABLE itab INDEX 1 ASSIGNING <temp1>.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
+    sy-tabix = temp2.
     <temp1> = 2.`;
     testFix(abap, expected);
   });
@@ -2157,10 +2169,13 @@ TYPES: BEGIN OF ty_row,
        END OF ty_row.
 DATA seen_letters TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
 FIELD-SYMBOLS <temp1> LIKE LINE OF seen_letters.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
 READ TABLE seen_letters WITH KEY letter = 'A' ASSIGNING <temp1>.
 IF sy-subrc <> 0.
   RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ENDIF.
+sy-tabix = temp2.
 <temp1>-is_seen = abap_true.`;
     testFix(abap, expected);
   });
@@ -2357,10 +2372,13 @@ ENDCLASS.`;
         WITH UNIQUE HASHED KEY cipher_key COMPONENTS cipher.
     DATA foo TYPE c LENGTH 1.
     DATA temp1 LIKE LINE OF cipher_dict.
+    DATA temp2 LIKE sy-tabix.
+    temp2 = sy-tabix.
     READ TABLE cipher_dict WITH TABLE KEY cipher_key COMPONENTS cipher = '' INTO temp1.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
+    sy-tabix = temp2.
     foo = temp1-plain.`;
     testFix(abap, expected);
   });
