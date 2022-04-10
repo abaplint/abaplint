@@ -2344,6 +2344,28 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE, str should be TYPE string", async () => {
+    const abap = `
+DATA result TYPE string.
+result = REDUCE string(
+           INIT str TYPE string
+           FOR i = 0 UNTIL i = 5
+           NEXT str = |sdf| ).`;
+    const expected = `
+DATA result TYPE string.
+DATA temp1 TYPE string.
+DATA str TYPE string.
+DATA i TYPE i.
+i = 0.
+WHILE NOT i = 5.
+  str = |sdf|.
+  i = i + 1.
+ENDWHILE.
+temp1 = str.
+result = temp1.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

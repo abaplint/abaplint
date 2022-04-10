@@ -1182,7 +1182,13 @@ ${indentation}    output = ${topTarget}.`;
 
       for (const init of reduceBody.findDirectExpressions(Expressions.InlineFieldDefinition)) {
         name = init.getFirstToken().getStr();
-        body += indentation + `DATA(${name}) = ${reduceBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
+        const s = init.findFirstExpression(Expressions.Source)?.concatTokens();
+        const t = init.findFirstExpression(Expressions.TypeName)?.concatTokens();
+        if (s) {
+          body += indentation + `DATA(${name}) = ${s}.\n`;
+        } else {
+          body += indentation + `DATA ${name} TYPE ${t}.\n`;
+        }
       }
 
       let end = "";

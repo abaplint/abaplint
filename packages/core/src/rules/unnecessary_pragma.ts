@@ -100,9 +100,13 @@ MESSAGE w125(zbar) WITH c_foo INTO message.`,
     if (statement.findFirstExpression(Expressions.InlineData) === undefined
         && !(statement.get() instanceof Statements.Parameter)
         && !(statement.get() instanceof Statements.Data)
+        && !(statement.get() instanceof Statements.DataEnd)
         && !(statement.get() instanceof Statements.Type)
+        && !(statement.get() instanceof Statements.TypeEnd)
         && !(statement.get() instanceof Statements.Constant)
+        && !(statement.get() instanceof Statements.ConstantEnd)
         && !(statement.get() instanceof Statements.TypeEnum)
+        && !(statement.get() instanceof Statements.TypeEnumEnd)
         && !(statement.get() instanceof Statements.MethodImplementation)
         && !(statement.get() instanceof Statements.MethodDef)
         && statement.findFirstExpression(Expressions.InlineFS) === undefined) {
