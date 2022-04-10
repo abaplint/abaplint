@@ -12,7 +12,7 @@ function findDefault(ruleKey: string) {
 
 function renderExtended(str: string) {
   const exp_match = /(\b(https?|):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  return str.replace(exp_match, "<a href='$1'>$1</a>").replace(/\n/g, "<br>");
+  return str.replace(exp_match, "<a href='$1'>$1</a>").trim().replace(/\n/g, "<br>");
 }
 
 function findSchema(ruleKey: string): string {

@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {MessageClass} from "../objects";
 import {DDIC} from "../ddic";
 import {ABAPFile} from "../abap/abap_file";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class MessageExistsConf extends BasicRuleConfig {
 }
@@ -12,11 +13,12 @@ export class MessageExistsConf extends BasicRuleConfig {
 export class MessageExistsRule extends ABAPRule {
   private conf = new MessageExistsConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "message_exists",
       title: "Check MESSAGE exists",
       shortDescription: `In message statements, check that the message class + id exist`,
+      tags: [RuleTag.Syntax],
     };
   }
 
