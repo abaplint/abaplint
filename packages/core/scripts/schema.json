@@ -2114,7 +2114,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "In message statements, check that the message class + id exist\nhttps://rules.abaplint.org/message_exists"
+              "description": "In message statements, check that the message class + id exist\nTags: Syntax\nhttps://rules.abaplint.org/message_exists"
             },
             "method_implemented_twice": {
               "anyOf": [
@@ -2576,7 +2576,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the validity of ICF services:\n\n* Class defined in handler must exist\n* Class must not have any syntax errors\n* Class must implement interface IF_HTTP_EXTENSION\nhttps://rules.abaplint.org/sicf_consistency"
+              "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
             },
             "slow_parameter_passing": {
               "anyOf": [
