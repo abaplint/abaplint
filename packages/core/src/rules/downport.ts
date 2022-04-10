@@ -1058,6 +1058,7 @@ ${indentation}    output = ${topTarget}.`;
         || forLoop.findDirectTokenByText("WHILE")) {
       const fieldDef = forLoop.findDirectExpression(Expressions.InlineFieldDefinition);
       const field = fieldDef?.findFirstExpression(Expressions.Field)?.concatTokens();
+      const indexBackup = this.uniqueName(forLoop.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       body += indentation + "DATA " + field + " TYPE i.\n";
       const second = fieldDef?.getChildren()[2];
       if (second?.get() instanceof Expressions.Source) {
@@ -1066,7 +1067,10 @@ ${indentation}    output = ${topTarget}.`;
 
       const not = forLoop.findDirectTokenByText("UNTIL") ? " NOT" : "";
       const cond = forLoop.findFirstExpression(Expressions.Cond);
+      body += indentation + `DATA ${indexBackup} LIKE sy-index.\n`;
+      body += indentation + `${indexBackup} = sy-index.\n`;
       body += indentation + `WHILE${not} ${cond?.concatTokens()}.\n`;
+      body += indentation + `  sy-index = ${indexBackup}.\n`;
 
       const then = forLoop.findExpressionAfterToken("THEN");
       if (then) {
@@ -1077,9 +1081,11 @@ ${indentation}    output = ${topTarget}.`;
 
       end += indentation + "ENDWHILE";
     } else if (loopTargetField) {
+      // todo, also backup sy-index / sy-tabix here?
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${cond}.\n`;
       end = "ENDLOOP";
     } else if (loopTargetField === undefined) {
+      // todo, also backup sy-index / sy-tabix here?
       const loopTargetFieldSymbol = forLoop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
       body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol})${cond}.\n`;
       end = "ENDLOOP";

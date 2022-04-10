@@ -1343,7 +1343,10 @@ DATA temp1 TYPE ty_tab.
 CLEAR temp1.
 DATA i TYPE i.
 i = 0.
+DATA temp2 LIKE sy-index.
+temp2 = sy-index.
 WHILE NOT i = 2.
+  sy-index = temp2.
   APPEND |hello| TO temp1.
   i = i + 1.
 ENDWHILE.
@@ -1906,7 +1909,10 @@ ENDFORM.`;
     DATA(s) = 0.
     DATA i TYPE i.
     i = 0.
+    DATA temp2 LIKE sy-index.
+    temp2 = sy-index.
     WHILE i < strlen( input ).
+      sy-index = temp2.
       s = s + 1.
       i = i + 1.
     ENDWHILE.
@@ -1985,7 +1991,10 @@ ENDFORM.`;
     DATA(s) = ||.
     DATA i TYPE i.
     i = 0.
+    DATA temp2 LIKE sy-index.
+    temp2 = sy-index.
     WHILE NOT i > 2.
+      sy-index = temp2.
       s = s && i.
       i = i + 1.
     ENDWHILE.
@@ -2006,7 +2015,10 @@ ENDFORM.`;
     DATA(s) = ||.
     DATA i TYPE i.
     i = 0.
+    DATA temp2 LIKE sy-index.
+    temp2 = sy-index.
     WHILE NOT i > 2.
+      sy-index = temp2.
       s &&= i.
       i = i + 1.
     ENDWHILE.
@@ -2049,7 +2061,10 @@ ENDFORM.`;
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
     seed = 0.
+    DATA temp2 LIKE sy-index.
+    temp2 = sy-index.
     WHILE seed <= 1.
+      sy-index = temp2.
       APPEND row && seed TO temp1.
       seed = seed + 1.
     ENDWHILE.
@@ -2096,7 +2111,10 @@ ENDLOOP.
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
     seed = 0.
+    DATA temp2 LIKE sy-index.
+    temp2 = sy-index.
     WHILE seed <= 1.
+      sy-index = temp2.
     DATA offset TYPE i.
     offset = 2.
       APPEND row && offset TO temp1.
@@ -2204,7 +2222,10 @@ ENDIF.
   DATA(s) = 0.
   DATA i TYPE i.
   i = 2.
+  DATA temp2 LIKE sy-index.
+  temp2 = sy-index.
   WHILE NOT i > 4.
+    sy-index = temp2.
     s = s + i.
     i = i + 1.
   ENDWHILE.
@@ -2357,7 +2378,10 @@ DATA temp1 TYPE string.
 DATA str TYPE string.
 DATA i TYPE i.
 i = 0.
+DATA temp2 LIKE sy-index.
+temp2 = sy-index.
 WHILE NOT i = 5.
+  sy-index = temp2.
   str = |sdf|.
   i = i + 1.
 ENDWHILE.
@@ -2381,12 +2405,40 @@ result = temp1.`;
   CLEAR temp1.
   DATA i TYPE i.
   i = count.
+  DATA temp2 LIKE sy-index.
+  temp2 = sy-index.
   WHILE i GT 5.
+    sy-index = temp2.
     APPEND |dsf| TO temp1.
     APPEND || TO temp1.
     i = i - 1.
   ENDWHILE.
   result = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("FOR, should not change sy-index", async () => {
+    const abap = `
+    DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    result = VALUE #(
+      FOR i = 0 WHILE i < 2
+      ( |{ sy-index }| )
+      ( || ) ).`;
+    const expected = `
+    DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp1 LIKE result.
+    CLEAR temp1.
+    DATA i TYPE i.
+    i = 0.
+    DATA temp2 LIKE sy-index.
+    temp2 = sy-index.
+    WHILE i < 2.
+      sy-index = temp2.
+      APPEND |{ sy-index }| TO temp1.
+      APPEND || TO temp1.
+      i = i + 1.
+    ENDWHILE.
+    result = temp1.`;
     testFix(abap, expected);
   });
 
