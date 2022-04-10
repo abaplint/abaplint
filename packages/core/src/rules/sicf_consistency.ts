@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {ICFService, Class} from "../objects";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 import {InfoClassDefinition, InfoImplementing} from "../abap/4_file_information/_abap_file_information";
@@ -14,13 +14,13 @@ export class SICFConsistency implements IRule {
   private reg: IRegistry;
   private conf = new SICFConsistencyConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "sicf_consistency",
       title: "SICF consistency",
-      shortDescription: `Checks the validity of ICF services:
-
-* Class defined in handler must exist
+      shortDescription: `Checks the validity of ICF services`,
+      extendedInformation:
+`* Class defined in handler must exist
 * Class must not have any syntax errors
 * Class must implement interface IF_HTTP_EXTENSION`,
     };
