@@ -1067,7 +1067,14 @@ ${indentation}    output = ${topTarget}.`;
       const not = forLoop.findDirectTokenByText("UNTIL") ? " NOT" : "";
       const cond = forLoop.findFirstExpression(Expressions.Cond);
       body += indentation + `WHILE${not} ${cond?.concatTokens()}.\n`;
-      end += `  ${field} = ${field} + 1.\n`;
+
+      const then = forLoop.findExpressionAfterToken("THEN");
+      if (then) {
+        end += `  ${field} = ${then.concatTokens()}.\n`;
+      } else {
+        end += `  ${field} = ${field} + 1.\n`;
+      }
+
       end += indentation + "ENDWHILE";
     } else if (loopTargetField) {
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${cond}.\n`;

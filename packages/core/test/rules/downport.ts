@@ -2366,6 +2366,30 @@ result = temp1.`;
     testFix(abap, expected);
   });
 
+  it("FOR, negative increment", async () => {
+    const abap = `
+  DATA count TYPE i.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  result = VALUE #(
+    FOR i = count THEN i - 1 WHILE i GT 5
+    ( |dsf| )
+    ( || ) ).`;
+    const expected = `
+  DATA count TYPE i.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE result.
+  CLEAR temp1.
+  DATA i TYPE i.
+  i = count.
+  WHILE i GT 5.
+    APPEND |dsf| TO temp1.
+    APPEND || TO temp1.
+    i = i - 1.
+  ENDWHILE.
+  result = temp1.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
