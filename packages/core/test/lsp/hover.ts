@@ -295,6 +295,19 @@ DATA(result) = |foo { COND #( WHEN input IS INITIAL THEN \`you\` ELSE input ) } 
     expect(hover?.value).to.contain("Inferred");
   });
 
+  it("Hover inferred type, types table", () => {
+    const abap = `TYPES type_e_letter TYPE c LENGTH 1.
+TYPES type_t_letter TYPE STANDARD TABLE OF type_e_letter WITH NON-UNIQUE DEFAULT KEY.
+DATA rt_letter TYPE type_t_letter.
+INSERT CONV #( 'a' ) INTO TABLE rt_letter.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 12));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("type_e_letter");
+  });
+
   it("Hover inferred row type", () => {
     const abap = `FORM bar.
   TYPES: BEGIN OF ty_stru,
