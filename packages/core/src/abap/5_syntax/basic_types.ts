@@ -2,6 +2,7 @@
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {StatementNode, ExpressionNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
+import * as Statements from "../2_statements/statements";
 import * as Types from "../types/basic";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -229,12 +230,15 @@ export class BasicTypes {
     }
 
     let qualifiedName: string | undefined = undefined;
-    if (this.scope.isTypePool() === true) {
-      qualifiedName = name.getStr();
-    } else { qualifiedName = name.getStr();
-      if (this.scope.getType() === ScopeType.ClassDefinition
-          || this.scope.getType() === ScopeType.Interface) {
-        qualifiedName = this.scope.getName() + "=>" + qualifiedName;
+    if (node.get() instanceof Statements.Type) {
+      if (this.scope.isTypePool() === true) {
+        qualifiedName = name.getStr();
+      } else {
+        qualifiedName = name.getStr();
+        if (this.scope.getType() === ScopeType.ClassDefinition
+            || this.scope.getType() === ScopeType.Interface) {
+          qualifiedName = this.scope.getName() + "=>" + qualifiedName;
+        }
       }
     }
 
