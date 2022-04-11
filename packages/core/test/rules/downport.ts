@@ -2460,6 +2460,20 @@ result = temp1.`;
     testFix(abap, expected);
   });
 
+  it("Typed CONV", async () => {
+    const abap = `TYPES type_e_letter TYPE c LENGTH 1.
+TYPES type_t_letter TYPE STANDARD TABLE OF type_e_letter WITH NON-UNIQUE DEFAULT KEY.
+DATA rt_letter TYPE type_t_letter.
+INSERT CONV #( 'a' ) INTO TABLE rt_letter.`;
+    const expected = `TYPES type_e_letter TYPE c LENGTH 1.
+TYPES type_t_letter TYPE STANDARD TABLE OF type_e_letter WITH NON-UNIQUE DEFAULT KEY.
+DATA rt_letter TYPE type_t_letter.
+DATA temp1 TYPE type_e_letter.
+temp1 = 'a'.
+INSERT temp1 INTO TABLE rt_letter.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

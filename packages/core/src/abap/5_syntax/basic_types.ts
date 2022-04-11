@@ -228,7 +228,17 @@ export class BasicTypes {
       name = new TokenIdentifier(name.getStart(), nameExpr.concatTokens());
     }
 
-    const found = this.parseType(node, this.scope.isTypePool() ? name.getStr() : undefined);
+    let qualifiedName: string | undefined = undefined;
+    if (this.scope.isTypePool() === true) {
+      qualifiedName = name.getStr();
+    } else { qualifiedName = name.getStr();
+      if (this.scope.getType() === ScopeType.ClassDefinition
+          || this.scope.getType() === ScopeType.Interface) {
+        qualifiedName = this.scope.getName() + "=>" + qualifiedName;
+      }
+    }
+
+    const found = this.parseType(node, qualifiedName);
     if (found) {
       return new TypedIdentifier(name, this.filename, found);
     }
@@ -328,8 +338,8 @@ export class BasicTypes {
     return this.parseType(node, name);
   }
 
-  public parseType(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
-    const typename = node.findFirstExpression(Expressions.TypeName);
+  public parseType(node: ExpressionNode | StatementNode, qualifiedName?: string): AbstractType | undefined {
+    const typeName = node.findFirstExpression(Expressions.TypeName);
 
     let text = node.findFirstExpression(Expressions.Type)?.concatTokens().toUpperCase();
     if (text === undefined) {
@@ -393,7 +403,7 @@ export class BasicTypes {
       found = this.resolveLikeName(sub);
 
       if (found && text.includes(" OCCURS ")) {
-        found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, name);
+        found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, qualifiedName);
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
@@ -411,13 +421,13 @@ export class BasicTypes {
         return new Types.UnknownType("TYPE LINE OF, unexpected type, " + found?.constructor.name);
       }
     } else if (text.startsWith("TYPE REF TO ")) {
-      found = this.resolveTypeRef(typename);
+      found = this.resolveTypeRef(typeName);
     } else if (text.startsWith("TYPE")) {
-      found = this.resolveTypeName(typename, this.findLength(node), this.findDecimals(node), name);
+      found = this.resolveTypeName(typeName, this.findLength(node), this.findDecimals(node), qualifiedName);
 
       const concat = node.concatTokens().toUpperCase();
       if (found && concat.includes(" OCCURS ")) {
-        found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, name);
+        found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, qualifiedName);
       } else if (found && concat.includes("WITH HEADER LINE")) {
         if (found instanceof Types.VoidType) {
           found = new Types.TableType(found, {withHeader: true});
@@ -428,7 +438,7 @@ export class BasicTypes {
         }
       }
 
-      if (found === undefined && typename === undefined) {
+      if (found === undefined && typeName === undefined) {
         let length = 1;
 
         const len = node.findDirectExpression(Expressions.ConstantFieldLength);
@@ -439,9 +449,9 @@ export class BasicTypes {
           }
         }
 
-        found = new Types.CharacterType(length, name); // fallback
+        found = new Types.CharacterType(length, qualifiedName); // fallback
         if (concat.includes(" OCCURS ")) {
-          found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, name);
+          found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, qualifiedName);
         }
       }
 
