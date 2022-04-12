@@ -2474,6 +2474,22 @@ INSERT temp1 INTO TABLE rt_letter.`;
     testFix(abap, expected);
   });
 
+  it("VALUE with BASE", async () => {
+    const abap = `
+  DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  APPEND 1 TO result.
+  result = VALUE #( BASE result ( 5 ) ).`;
+    const expected = `
+  DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  APPEND 1 TO result.
+  DATA temp1 LIKE result.
+  CLEAR temp1.
+  temp1 = result.
+  APPEND 5 TO temp1.
+  result = temp1.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

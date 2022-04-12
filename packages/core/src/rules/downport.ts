@@ -1276,6 +1276,10 @@ ${indentation}    output = ${topTarget}.`;
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       let indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       let body = "";
+      const base = valueBody?.findExpressionAfterToken("BASE");
+      if (base) {
+        body += indentation + uniqueName + " = " + base.concatTokens() + ".\n";
+      }
       let end = "";
       for (const forLoop of valueBody?.findDirectExpressions(Expressions.For) || []) {
         const outlineFor = this.outlineFor(forLoop, indentation, lowFile, highSyntax);
