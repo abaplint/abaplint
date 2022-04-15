@@ -6,6 +6,7 @@ import {SQLGroupBy} from "./sql_group_by";
 import {SQLIntoStructure} from "./sql_into_structure";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {SQLFieldName} from "./sql_field_name";
+import {SQLUpTo} from "./sql_up_to";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -13,7 +14,6 @@ export class Select extends Expression {
 
     const where = seq("WHERE", SQLCond);
 
-    const up = seq("UP TO", SQLSource, "ROWS");
     const offset = ver(Version.v751, seq("OFFSET", SQLSource));
 
     const client = str("CLIENT SPECIFIED");
@@ -22,7 +22,7 @@ export class Select extends Expression {
     const fields = seq("FIELDS", SQLFieldList);
 
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
-                     SQLOrderBy, up, offset, client, SQLHaving,
+                     SQLOrderBy, SQLUpTo, offset, client, SQLHaving,
                      bypass, SQLGroupBy, fields, DatabaseConnection);
 
     const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));

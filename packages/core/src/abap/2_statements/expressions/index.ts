@@ -184,6 +184,7 @@ export * from "./type_param";
 export * from "./type_table_key";
 export * from "./type_table";
 export * from "./type";
+export * from "./sql_up_to";
 export * from "./value_body";
 export * from "./value_body_lines";
 export * from "./value";

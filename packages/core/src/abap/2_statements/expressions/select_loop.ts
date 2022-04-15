@@ -7,6 +7,7 @@ import {SQLIntoStructure} from "./sql_into_structure";
 import {SQLFieldList} from "./sql_field_list";
 import {SQLHints} from "./sql_hints";
 import {SQLFieldListLoop} from "./sql_field_list_loop";
+import {SQLUpTo} from "./sql_up_to";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -15,15 +16,13 @@ export class SelectLoop extends Expression {
     const client = "CLIENT SPECIFIED";
     const bypass = "BYPASSING BUFFER";
 
-    const up = seq("UP TO", SQLSource, "ROWS");
-
     const pack = seq("PACKAGE SIZE", SQLSource);
 
     const tab = seq(SQLIntoTable, alt(pack, seq(SQLFrom, pack), seq(pack, SQLFrom)));
 
     const perm = per(SQLFrom,
                      where,
-                     up,
+                     SQLUpTo,
                      SQLOrderBy,
                      SQLHaving,
                      client,
@@ -32,7 +31,7 @@ export class SelectLoop extends Expression {
                      SQLForAllEntries,
                      alt(tab, SQLIntoStructure));
 
-    const strict = seq(SQLFrom, "FIELDS", SQLFieldList, where, SQLIntoStructure, up);
+    const strict = seq(SQLFrom, "FIELDS", SQLFieldList, where, SQLIntoStructure, SQLUpTo);
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict),
