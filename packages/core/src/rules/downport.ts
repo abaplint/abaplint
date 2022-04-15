@@ -586,14 +586,15 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const tabixBackup = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
       const firstToken = node.getFirstToken();
+      // note that the tabix restore should be done before throwing the exception
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${pre}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
 ${indentation}${tabixBackup} = sy-tabix.
 ${indentation}READ TABLE ${pre} ${condition}INTO ${uniqueName}.
+${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
-${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, startToken.getStart(), tableExpression.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
@@ -872,14 +873,15 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const tabixBackup = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    // restore tabix before exeption
     const code = `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${tName}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
 ${indentation}${tabixBackup} = sy-tabix.
 ${indentation}READ TABLE ${tName} ${condition}ASSIGNING ${uniqueName}.
+${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
-${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}${uniqueName}`;
 
     const start = target.getFirstToken().getStart();

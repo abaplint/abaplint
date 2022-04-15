@@ -925,10 +925,10 @@ ENDFORM.`;
   DATA temp2 LIKE sy-tabix.
   temp2 = sy-tabix.
   READ TABLE lt_lognumbers INDEX 1 INTO temp1.
+  sy-tabix = temp2.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
-  sy-tabix = temp2.
   rv_lognumber = temp1-lognumber.
 ENDFORM.`;
 
@@ -1584,10 +1584,10 @@ DATA temp1 LIKE LINE OF tab.
 DATA temp2 LIKE sy-tabix.
 temp2 = sy-tabix.
 READ TABLE tab WITH KEY foo = 2 INTO temp1.
+sy-tabix = temp2.
 IF sy-subrc <> 0.
   RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ENDIF.
-sy-tabix = temp2.
 WRITE temp1-foo.`;
 
     testFix(abap, expected);
@@ -1860,10 +1860,10 @@ ENDTRY.`;
   DATA temp2 LIKE sy-tabix.
   temp2 = sy-tabix.
   READ TABLE it_operations WITH KEY activity = 2 INTO temp1.
+  sy-tabix = temp2.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
-  sy-tabix = temp2.
   DATA(lv_text) = temp1-description.`;
     testFix(abap, expected);
   });
@@ -1943,10 +1943,10 @@ ENDFORM.`;
     DATA temp2 LIKE sy-tabix.
     temp2 = sy-tabix.
     READ TABLE itab INDEX 1 ASSIGNING <temp1>.
+    sy-tabix = temp2.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
-    sy-tabix = temp2.
     <temp1> = 2.`;
     testFix(abap, expected);
   });
@@ -2172,10 +2172,10 @@ FIELD-SYMBOLS <temp1> LIKE LINE OF seen_letters.
 DATA temp2 LIKE sy-tabix.
 temp2 = sy-tabix.
 READ TABLE seen_letters WITH KEY letter = 'A' ASSIGNING <temp1>.
+sy-tabix = temp2.
 IF sy-subrc <> 0.
   RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ENDIF.
-sy-tabix = temp2.
 <temp1>-is_seen = abap_true.`;
     testFix(abap, expected);
   });
@@ -2375,10 +2375,10 @@ ENDCLASS.`;
     DATA temp2 LIKE sy-tabix.
     temp2 = sy-tabix.
     READ TABLE cipher_dict WITH TABLE KEY cipher_key COMPONENTS cipher = '' INTO temp1.
+    sy-tabix = temp2.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
-    sy-tabix = temp2.
     foo = temp1-plain.`;
     testFix(abap, expected);
   });
