@@ -1096,4 +1096,13 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("unused");
   });
 
+  it("constant referred via VALUE", async () => {
+    const abap = `
+    CONSTANTS const TYPE string VALUE 'value'.
+    DATA foo TYPE string VALUE const.
+    WRITE foo.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
