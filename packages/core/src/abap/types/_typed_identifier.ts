@@ -16,6 +16,7 @@ export const enum IdentifierMeta {
   DDIC = "ddic",
   Static = "static",
   Enum = "enum",
+  SelectionScreenTab = "selection_screen_tab",
 // todo, MethodPreferred
 // todo, Optional
 }

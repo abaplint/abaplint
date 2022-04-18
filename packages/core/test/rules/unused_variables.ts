@@ -1105,4 +1105,14 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("selection screen TABs should be ignored", async () => {
+    const abap = `
+  SELECTION-SCREEN:
+  BEGIN OF TABBED BLOCK scr_tab FOR 10 LINES,
+  TAB (10) scr_tab1 USER-COMMAND scr_push1 DEFAULT SCREEN 100,
+  END OF BLOCK scr_tab.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
