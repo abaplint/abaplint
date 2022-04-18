@@ -2490,7 +2490,7 @@ INSERT temp1 INTO TABLE rt_letter.`;
     testFix(abap, expected);
   });
 
-  it.only("VALUE table expression, optional", async () => {
+  it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   DATA input TYPE i.
