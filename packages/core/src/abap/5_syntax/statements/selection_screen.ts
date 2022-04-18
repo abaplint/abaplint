@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {TypedIdentifier} from "../../types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {CharacterType, StructureType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 
@@ -23,7 +23,9 @@ export class SelectionScreen implements StatementSyntax {
         {name: "ACTIVETAB", type: new CharacterType(132)},
       ]);
 
-      scope.addIdentifier(new TypedIdentifier(name, filename, type));
+      scope.addIdentifier(new TypedIdentifier(name, filename, type, [IdentifierMeta.SelectionScreenTab]));
+    } else if (concat.startsWith("SELECTION-SCREEN TAB")) {
+      scope.addIdentifier(new TypedIdentifier(name, filename, new CharacterType(83), [IdentifierMeta.SelectionScreenTab]));
     } else {
       scope.addIdentifier(new TypedIdentifier(name, filename, new CharacterType(83)));
     }

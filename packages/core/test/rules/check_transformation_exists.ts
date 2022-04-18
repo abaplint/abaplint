@@ -23,9 +23,18 @@ describe("Rules, check_transformation_exists", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("not found", async () => {
+  it("not in error namespace, ok", async () => {
     const contents = `REPORT zfoo.
       CALL TRANSFORMATION id
+        SOURCE (lt_stab)
+        RESULT XML li_doc.`;
+    const issues = await runMulti([{filename: "zfoo.prog.abap", contents}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("not found", async () => {
+    const contents = `REPORT zfoo.
+      CALL TRANSFORMATION zid
         SOURCE (lt_stab)
         RESULT XML li_doc.`;
     const issues = await runMulti([{filename: "zfoo.prog.abap", contents}]);

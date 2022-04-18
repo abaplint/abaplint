@@ -543,6 +543,23 @@
       ],
       "type": "object"
     },
+    "ClassicExceptionsOverlapConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CloudTypesConf": {
       "additionalProperties": false,
       "properties": {
@@ -1555,6 +1572,17 @@
               ],
               "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/class_attribute_names"
             },
+            "classic_exceptions_overlap": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClassicExceptionsOverlapConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
+            },
             "cloud_types": {
               "anyOf": [
                 {
@@ -2039,16 +2067,16 @@
               ],
               "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_class_naming"
             },
-            "local_testclass_location": {
+            "local_testclass_consistency": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/LocalTestclassLocationConf"
+                  "$ref": "#/definitions/LocalTestclassConsistencyConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that local test classes are placed in the test include.\nTags: SingleFile\nhttps://rules.abaplint.org/local_testclass_location"
+              "description": "Checks that local test classes are placed in the test include, and class unit test flag is set\nTags: Syntax\nhttps://rules.abaplint.org/local_testclass_consistency"
             },
             "local_variable_names": {
               "anyOf": [
@@ -2247,6 +2275,17 @@
                 }
               ],
               "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_chained_assignment"
+            },
+            "no_inline_in_optional_branches": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoInlineInOptionalBranchesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Don't declare inline in optional branches\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_inline_in_optional_branches"
             },
             "no_public_attributes": {
               "anyOf": [
@@ -3514,7 +3553,7 @@
       ],
       "type": "object"
     },
-    "LocalTestclassLocationConf": {
+    "LocalTestclassConsistencyConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -3977,6 +4016,23 @@
       "type": "object"
     },
     "NoChainedAssignmentConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "NoInlineInOptionalBranchesConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

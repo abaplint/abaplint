@@ -43,11 +43,11 @@ function renderLeft() {
     html += renderSidenavList(languages[currentLanguage].statements);
   }
   if (languages[currentLanguage].expressions.length > 0) {
-    html += "<b>Expressions</b><br>\n";
+    html += "<br><br><b>Expressions</b><br>\n";
     html += renderSidenavList(languages[currentLanguage].expressions);
   }
   if (languages[currentLanguage].structures.length > 0) {
-    html += "<b>Structures</b><br>\n";
+    html += "<br><br><b>Structures</b><br>\n";
     html += renderSidenavList(languages[currentLanguage].structures);
   }
 

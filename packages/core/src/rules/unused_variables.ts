@@ -175,6 +175,7 @@ Unused variables are not reported if the object contains syntax errors. Errors f
           continue;
         } else if (name === "ME"
             || name === "SUPER"
+            || meta.includes(IdentifierMeta.SelectionScreenTab)
             || meta.includes(IdentifierMeta.EventParameter)) {
           // todo, workaround for "me" and "super", these should somehow be typed to built-in
           continue;

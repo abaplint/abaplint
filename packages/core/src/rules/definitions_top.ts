@@ -132,7 +132,8 @@ export class DefinitionsTop extends ABAPRule {
   }
 
   private buildFix(file: ABAPFile, statement: StatementNode, start: StatementNode): IEdit {
-    const concat = statement.concatTokens();
+    let concat = statement.concatTokens();
+    concat = concat.replace(/,$/, ".");
 
     const fix1 = EditHelper.deleteStatement(file, statement);
     const indentation = " ".repeat(statement.getFirstToken().getCol() - 1);

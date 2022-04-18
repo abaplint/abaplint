@@ -1,8 +1,8 @@
 import {DefinitionsTop} from "../../src/rules/definitions_top";
 import {testRule, testRuleFixSingle} from "./_utils";
 
-function testFix(input: string, expected: string) {
-  testRuleFixSingle(input, expected, new DefinitionsTop());
+function testFix(input: string, expected: string, noIssuesAfter = true) {
+  testRuleFixSingle(input, expected, new DefinitionsTop(), undefined, undefined, noIssuesAfter);
 }
 
 const tests = [
@@ -177,6 +177,26 @@ FORM bar.
 ` + "  " + `
 ENDFORM.`;
     testFix(abap, expected);
+  });
+
+  it("quick fix 3", async () => {
+    const abap = `
+FORM foo.
+  TYPE-POOLS vsdfds.
+  DATA: asdf TYPE string,
+         foo TYPE string.
+  CLEAR asdf.
+  CLEAR foo.
+ENDFORM.`;
+    const expected = `
+FORM foo.
+  DATA asdf TYPE string.
+  TYPE-POOLS vsdfds.
+  DATA: foo TYPE string.
+  CLEAR asdf.
+  CLEAR foo.
+ENDFORM.`;
+    testFix(abap, expected, false);
   });
 
 });
