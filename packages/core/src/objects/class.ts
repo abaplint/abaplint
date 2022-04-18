@@ -86,6 +86,15 @@ export class Class extends ABAPObject {
     return undefined;
   }
 
+  public getTestclassFile(): ABAPFile | undefined {
+    for (const file of this.getABAPFiles()) {
+      if (file.getFilename().endsWith(".clas.testclasses.abap")) {
+        return file;
+      }
+    }
+    return undefined;
+  }
+
 /////////////////////////
 
   private parseXML() {
