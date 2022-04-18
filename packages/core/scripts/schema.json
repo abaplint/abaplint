@@ -2039,16 +2039,16 @@
               ],
               "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_class_naming"
             },
-            "local_testclass_location": {
+            "local_testclass_consistency": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/LocalTestclassLocationConf"
+                  "$ref": "#/definitions/LocalTestclassConsistencyConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that local test classes are placed in the test include.\nTags: SingleFile\nhttps://rules.abaplint.org/local_testclass_location"
+              "description": "Checks that local test classes are placed in the test include, and class unit test flag is set\nTags: Syntax\nhttps://rules.abaplint.org/local_testclass_consistency"
             },
             "local_variable_names": {
               "anyOf": [
@@ -3514,7 +3514,7 @@
       ],
       "type": "object"
     },
-    "LocalTestclassLocationConf": {
+    "LocalTestclassConsistencyConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

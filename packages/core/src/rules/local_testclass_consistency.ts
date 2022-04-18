@@ -7,31 +7,27 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Version} from "../version";
 
-export class LocalTestclassLocationConf extends BasicRuleConfig {
+export class LocalTestclassConsistencyConf extends BasicRuleConfig {
 }
 
-export class LocalTestclassLocation extends ABAPRule {
+export class LocalTestclassConsistency extends ABAPRule {
 
-  private conf = new LocalTestclassLocationConf();
+  private conf = new LocalTestclassConsistencyConf();
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "local_testclass_location",
-      title: "Local testclass location",
-      shortDescription: `Checks that local test classes are placed in the test include.`,
-      tags: [RuleTag.SingleFile],
+      key: "local_testclass_consistency",
+      title: "Local testclass consistency",
+      shortDescription: `Checks that local test classes are placed in the test include, and class unit test flag is set`,
+      tags: [RuleTag.Syntax],
     };
-  }
-
-  private getDescription(className: string): string {
-    return "Place local testclass \"" + className + "\" in the testclass include";
   }
 
   public getConfig() {
     return this.conf;
   }
 
-  public setConfig(conf: LocalTestclassLocationConf) {
+  public setConfig(conf: LocalTestclassConsistencyConf) {
     this.conf = conf;
   }
 
@@ -49,7 +45,8 @@ export class LocalTestclassLocation extends ABAPRule {
 
     for (const c of file.getInfo().listClassDefinitions()) {
       if (c.isLocal && c.isForTesting && !file.getFilename().includes(".testclasses.abap")) {
-        const issue = Issue.atIdentifier(c.identifier, this.getDescription(c.name), this.getMetadata().key, this.conf.severity);
+        const message = "Place local testclass \"" + c.name + "\" in the testclass include";
+        const issue = Issue.atIdentifier(c.identifier, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

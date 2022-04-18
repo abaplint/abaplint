@@ -65,7 +65,7 @@ import {LineBreakStyleConf} from "../src/rules/line_break_style";
 import {LineLengthConf} from "../src/rules/line_length";
 import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
 import {LocalClassNamingConf} from "../src/rules/local_class_naming";
-import {LocalTestclassLocationConf} from "../src/rules/local_testclass_location";
+import {LocalTestclassConsistencyConf} from "../src/rules/local_testclass_consistency";
 import {LocalVariableNamesConf} from "../src/rules/local_variable_names";
 import {MainFileContentsConf} from "../src/rules/main_file_contents";
 import {ManyParenthesesConf} from "../src/rules/many_parentheses";
@@ -222,7 +222,7 @@ export interface IConfig {
     "line_length"?: LineLengthConf | boolean,
     "line_only_punc"?: LineOnlyPuncConf | boolean,
     "local_class_naming"?: LocalClassNamingConf | boolean,
-    "local_testclass_location"?: LocalTestclassLocationConf | boolean,
+    "local_testclass_consistency"?: LocalTestclassConsistencyConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parentheses"?: ManyParenthesesConf | boolean,
