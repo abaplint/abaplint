@@ -21,6 +21,7 @@ import {CheckSyntaxConf} from "../src/rules/check_syntax";
 import {CheckTextElementsConf} from "../src/rules/check_text_elements";
 import {CheckTransformationExistsConf} from "../src/rules/check_transformation_exists";
 import {ClassAttributeNamesConf} from "../src/rules/class_attribute_names";
+import {ClassicExceptionsOverlapConf} from "../src/rules/classic_exceptions_overlap";
 import {CloudTypesConf} from "../src/rules/cloud_types";
 import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
 import {CommentedCodeConf} from "../src/rules/commented_code";
@@ -84,6 +85,7 @@ import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
+import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
 import {NROBConsistencyConf} from "../src/rules/nrob_consistency";
@@ -178,6 +180,7 @@ export interface IConfig {
     "check_text_elements"?: CheckTextElementsConf | boolean,
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
+    "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
     "commented_code"?: CommentedCodeConf | boolean,
@@ -241,6 +244,7 @@ export interface IConfig {
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_aliases"?: NoAliasesConf | boolean,
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
+    "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "nrob_consistency"?: NROBConsistencyConf | boolean,
