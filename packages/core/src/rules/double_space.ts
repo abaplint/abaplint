@@ -166,6 +166,7 @@ export class DoubleSpace extends ABAPRule {
       const upper = prev.get().getStr().toUpperCase();
       if (prev instanceof TokenNodeRegex
           || upper === "("
+          || upper === ")"
           || upper === "CHANGING"
           || upper === "EXPORTING"
           || upper === "OTHERS") {

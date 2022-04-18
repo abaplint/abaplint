@@ -42,6 +42,14 @@ EVENTS sdfs
   EXPORTING
     VALUE(sdf)        TYPE c
     VALUE(fdsdfdsdsf) TYPE i.`, cnt: 0},
+  {abap: `
+DATA(my_variable) = 0.
+DATA(my_var_01)   = 0.
+DATA(my_var_2)    = 0.`, cnt: 0},
+  {abap: `
+your_variable = 0.
+your_var_01   = 0.
+your_var_2    = 0.`, cnt: 0},
 ];
 
 testRule(tests, DoubleSpace);
