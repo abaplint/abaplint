@@ -8,6 +8,8 @@ import {ABAPObject} from "../objects/_abap_object";
 export class IdenticalFormNamesConf extends BasicRuleConfig {
 }
 
+// todo: deprecation candidate? this is/should be handled by the syntax check?
+
 export class IdenticalFormNames implements IRule {
 
   private conf = new IdenticalFormNamesConf();
