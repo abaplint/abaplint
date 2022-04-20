@@ -22,11 +22,11 @@ export class Find implements StatementSyntax {
         {name: "OFFSET", type: new IntegerType()},
         {name: "LENGTH", type: new IntegerType()},
         {name: "SUBMATCHES", type: new TableType(new StringType(), {withHeader: false})},
-      ]);
+      ], "MATCH_RESULT");
       if (node.concatTokens().toUpperCase().startsWith("FIND FIRST")) {
         this.inline(rfound, scope, filename, type);
       } else {
-        this.inline(rfound, scope, filename, new TableType(type, {withHeader: false}));
+        this.inline(rfound, scope, filename, new TableType(type, {withHeader: false}, "MATCH_RESULT_TAB"));
       }
     }
 

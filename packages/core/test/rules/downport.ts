@@ -2490,11 +2490,12 @@ INSERT temp1 INTO TABLE rt_letter.`;
     testFix(abap, expected);
   });
 
-  it.skip("FIND, RESULTS inline", async () => {
+  it("FIND, RESULTS inline", async () => {
     const abap = `
     FIND ALL OCCURRENCES OF REGEX 'abc' IN 'sdf' RESULTS DATA(result_table).`;
     const expected = `
-todo`;
+    DATA result_table TYPE match_result_tab.
+    FIND ALL OCCURRENCES OF REGEX 'abc' IN 'sdf' RESULTS result_table.`;
     testFix(abap, expected);
   });
 
