@@ -13,6 +13,7 @@ import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {ReferenceType} from "../abap/5_syntax/_reference";
+import {UnknownType} from "../abap/types/basic";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -80,6 +81,13 @@ export class UnknownTypes implements IRule {
     for (const r of nodeData.references) {
       if (r.referenceType === ReferenceType.ObjectOrientedUnknownReference && r.extra?.ooName) {
         const message = r.extra.ooName + " unknown";
+        ret.push(Issue.atIdentifier(r.position, message, this.getMetadata().key, this.conf.severity));
+      }
+
+      if (r.referenceType === ReferenceType.TypeReference
+          && r.resolved instanceof TypedIdentifier
+          && r.resolved.getType() instanceof UnknownType) {
+        const message = (r.resolved.getType() as UnknownType).getError();
         ret.push(Issue.atIdentifier(r.position, message, this.getMetadata().key, this.conf.severity));
       }
     }

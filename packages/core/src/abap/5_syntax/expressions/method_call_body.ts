@@ -7,8 +7,8 @@ import {VoidType} from "../../types/basic/void_type";
 import {Source} from "./source";
 
 export class MethodCallBody {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, method: IMethodDefinition | VoidType): void {
 
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, method: IMethodDefinition | VoidType): void {
     const parameters = node.findDirectExpression(Expressions.MethodParameters);
     if (parameters) {
       new MethodParameters().runSyntax(parameters, scope, method, filename);
@@ -17,7 +17,6 @@ export class MethodCallBody {
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
-
   }
 
 }
