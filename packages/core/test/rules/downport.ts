@@ -2490,6 +2490,14 @@ INSERT temp1 INTO TABLE rt_letter.`;
     testFix(abap, expected);
   });
 
+  it.skip("FIND, RESULTS inline", async () => {
+    const abap = `
+    FIND ALL OCCURRENCES OF REGEX 'abc' IN 'sdf' RESULTS DATA(result_table).`;
+    const expected = `
+todo`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
