@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -170,7 +170,7 @@ export class Source {
 
 ////////////////////////////////
 
-  private addIfInferred(
+  public addIfInferred(
     node: ExpressionNode,
     scope: CurrentScope,
     filename: string,
@@ -185,6 +185,12 @@ export class Source {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
         scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
+      } else if (inferredType instanceof ObjectReferenceType) {
+        const def = scope.findObjectDefinition(inferredType.getQualifiedName());
+        if (def) {
+          const tid = new TypedIdentifier(typeToken, filename, inferredType);
+          scope.addReference(typeToken, tid, ReferenceType.InferredType, filename);
+        }
       } else if (inferredType instanceof CharacterType) {
         // character is bit special it does not have a qualified name eg "TYPE c LENGTH 6"
         const tid = new TypedIdentifier(typeToken, filename, inferredType);

@@ -2499,7 +2499,7 @@ INSERT temp1 INTO TABLE rt_letter.`;
     testFix(abap, expected);
   });
 
-  it.only("CAST, infer", async () => {
+  it("CAST, infer", async () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
@@ -2512,7 +2512,18 @@ CLASS lcl_bar IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const expected = `
-todo`;
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS m IMPORTING foo TYPE REF TO lcl_bar.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD m.
+    DATA var TYPE REF TO lcl_bar.
+    DATA temp1 TYPE REF TO lcl_bar.
+    temp1 ?= var.
+    m( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
     testFix(abap, expected);
   });
 
