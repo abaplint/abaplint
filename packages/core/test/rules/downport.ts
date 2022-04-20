@@ -2499,6 +2499,23 @@ INSERT temp1 INTO TABLE rt_letter.`;
     testFix(abap, expected);
   });
 
+  it.only("CAST, infer", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS m IMPORTING foo TYPE REF TO lcl_bar.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD m.
+    DATA var TYPE REF TO lcl_bar.
+    m( CAST #( var ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+todo`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
