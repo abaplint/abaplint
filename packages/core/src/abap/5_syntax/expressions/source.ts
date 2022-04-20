@@ -217,8 +217,13 @@ export class Source {
 
     if (typeName !== "#") {
       const found = basic.parseType(typeExpression);
-      if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
-        return new VoidType(typeName);
+      if (found && found instanceof UnknownType) {
+        if (scope.getDDIC().inErrorNamespace(typeName) === false) {
+          scope.addReference(typeToken, undefined, ReferenceType.VoidType, filename);
+          return new VoidType(typeName);
+        } else {
+          throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
+        }
       } else if (found === undefined) {
         throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
       }
