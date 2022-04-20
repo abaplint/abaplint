@@ -6390,22 +6390,6 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("expect error, ZNOTFOUND not found", () => {
-    const abap = `
-CLASS lcl_bar DEFINITION.
-  PUBLIC SECTION.
-    METHODS call IMPORTING foo TYPE string.
-ENDCLASS.
-CLASS lcl_bar IMPLEMENTATION.
-  METHOD call.
-    call( VALUE znotfound( ) ).
-  ENDMETHOD.
-ENDCLASS.`;
-    const issues = runProgram(abap);
-    expect(issues.length).to.equal(1);
-    expect(issues[0].getMessage()).to.contain(`znotfound`);
-  });
-
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.

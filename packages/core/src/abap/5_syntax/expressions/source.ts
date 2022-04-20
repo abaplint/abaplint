@@ -215,14 +215,16 @@ export class Source {
       return targetType;
     }
 
-    if (typeName !== "#") {
+    if (typeName !== "#" && typeToken) {
       const found = basic.parseType(typeExpression);
       if (found && found instanceof UnknownType) {
         if (scope.getDDIC().inErrorNamespace(typeName) === false) {
           scope.addReference(typeToken, undefined, ReferenceType.VoidType, filename);
           return new VoidType(typeName);
         } else {
-          throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
+          const tid = new TypedIdentifier(typeToken, filename, found);
+          scope.addReference(typeToken, tid, ReferenceType.TypeReference, filename);
+          return found;
         }
       } else if (found === undefined) {
         throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
