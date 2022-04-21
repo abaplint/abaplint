@@ -2596,6 +2596,39 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("should downport to qualified type name, not basic type", async () => {
+    const abap = `
+INTERFACE lif.
+  TYPES type TYPE i.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get RETURNING VALUE(result) TYPE lif=>type.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+    DATA(sdfs) = get( ).
+    WRITE result.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+INTERFACE lif.
+  TYPES type TYPE i.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get RETURNING VALUE(result) TYPE lif=>type.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+    DATA sdfs TYPE lif=>type.
+    sdfs = get( ).
+    WRITE result.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
