@@ -8,6 +8,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StructureNode, StatementNode} from "../abap/nodes";
+import {Position} from "../position";
 
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
@@ -24,7 +25,7 @@ export class DefinitionsTop extends ABAPRule {
 
   private mode: number;
   private fixed: boolean;
-  private moveTo: StatementNode | undefined;
+  private moveTo: Position | undefined;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -62,7 +63,7 @@ export class DefinitionsTop extends ABAPRule {
       this.fixed = false;
 
       this.mode = DEFINITION;
-      this.moveTo = r.getFirstStatement();
+      this.moveTo = r.getFirstStatement()?.getLastToken().getEnd();
 
       const found = this.walk(r, file);
       if (found) {
@@ -94,6 +95,8 @@ export class DefinitionsTop extends ABAPRule {
         if (this.mode === AFTER) {
           // no quick fixes for these, its difficult?
           return Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity);
+        } else {
+          this.moveTo = c.getLastToken().getEnd();
         }
       } else if (c instanceof StatementNode
           && (c.get() instanceof Statements.Data
@@ -110,7 +113,7 @@ export class DefinitionsTop extends ABAPRule {
           }
           return Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         } else {
-          this.moveTo = c;
+          this.moveTo = c.getLastToken().getEnd();
         }
       } else if (c instanceof StructureNode && c.get() instanceof Structures.Define) {
         this.mode = IGNORE;
@@ -131,13 +134,13 @@ export class DefinitionsTop extends ABAPRule {
     return undefined;
   }
 
-  private buildFix(file: ABAPFile, statement: StatementNode, start: StatementNode): IEdit {
+  private buildFix(file: ABAPFile, statement: StatementNode, at: Position): IEdit {
     let concat = statement.concatTokens();
     concat = concat.replace(/,$/, ".");
 
     const fix1 = EditHelper.deleteStatement(file, statement);
     const indentation = " ".repeat(statement.getFirstToken().getCol() - 1);
-    const fix2 = EditHelper.insertAt(file, start.getEnd(), "\n" + indentation + concat);
+    const fix2 = EditHelper.insertAt(file, at, "\n" + indentation + concat);
 
     return EditHelper.merge(fix1, fix2);
   }

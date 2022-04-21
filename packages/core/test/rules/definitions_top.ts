@@ -199,4 +199,27 @@ ENDFORM.`;
     testFix(abap, expected, false);
   });
 
+  it("quick fix 4", async () => {
+    const abap = `
+FORM foo.
+  TYPES:
+      BEGIN OF my_structure,
+        my_first_element TYPE string,
+      END OF my_structure.
+  WRITE 'moo'.
+DATA temp109 TYPE my_structure.
+ENDFORM.`;
+    const expected = `
+FORM foo.
+  TYPES:
+      BEGIN OF my_structure,
+        my_first_element TYPE string,
+      END OF my_structure.
+DATA temp109 TYPE my_structure.
+  WRITE 'moo'.
+
+ENDFORM.`;
+    testFix(abap, expected, false);
+  });
+
 });
