@@ -1354,6 +1354,9 @@ ${indentation}    output = ${topTarget}.`;
           body += indentation + structureName + "-" + b.concatTokens() + ".\n";
         } else if (b.get() instanceof Expressions.Source) {
           structureName = b.concatTokens();
+          if (base && valueBody?.findDirectTokenByText("(") === undefined) {
+            structureName = uniqueName;
+          }
         } else if (b.get() instanceof Expressions.ValueBodyLines) {
           body += indentation + "APPEND " + b.concatTokens() + ` TO ${uniqueName}.\n`;
           skip = true;

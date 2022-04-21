@@ -2558,6 +2558,77 @@ CONSTANTS: BEGIN OF type_info,
     testFix(abap, expected);
   });
 
+  it("generic types should infer to non generic if possible", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF typefoo,
+             field TYPE string,
+             msgty TYPE c LENGTH 1,
+           END OF typefoo.
+    METHODS foo IMPORTING moo TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA exp_message TYPE typefoo.
+    foo( VALUE #( BASE exp_message msgty = 'E' ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF typefoo,
+             field TYPE string,
+             msgty TYPE c LENGTH 1,
+           END OF typefoo.
+    METHODS foo IMPORTING moo TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA exp_message TYPE typefoo.
+    DATA temp1 TYPE lcl=>typefoo.
+    CLEAR temp1.
+    temp1 = exp_message.
+    temp1-msgty = 'E'.
+    foo( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("should downport to qualified type name, not basic type", async () => {
+    const abap = `
+INTERFACE lif.
+  TYPES type TYPE i.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get RETURNING VALUE(result) TYPE lif=>type.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+    DATA(sdfs) = get( ).
+    WRITE result.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+INTERFACE lif.
+  TYPES type TYPE i.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get RETURNING VALUE(result) TYPE lif=>type.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+    DATA sdfs TYPE lif=>type.
+    sdfs = get( ).
+    WRITE result.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

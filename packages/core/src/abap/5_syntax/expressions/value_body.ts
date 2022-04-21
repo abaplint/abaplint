@@ -46,6 +46,9 @@ export class ValueBody {
       scope.pop(node.getLastToken().getEnd());
     }
 
+    if (targetType?.isGeneric() && type) {
+      return type;
+    }
     return targetType ? targetType : type;
   }
 }
