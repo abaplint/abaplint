@@ -30,11 +30,13 @@ export class Cast {
       if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
         tt = new VoidType(typeName);
       } else if (found === undefined) {
+// todo, this should be an UnknownType instead?
         throw new Error("Type \"" + typeName + "\" not found in scope, Cast");
       } else {
         tt = new ObjectReferenceType(found);
       }
     }
+    new Source().addIfInferred(node, scope, filename, tt);
 
     if (new TypeUtils(scope).isCastable(sourceType, tt) === false) {
       throw new Error("Cast, incompatible types");

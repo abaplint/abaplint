@@ -18,7 +18,7 @@ import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {VoidType} from "../abap/types/basic";
+import {ObjectReferenceType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
@@ -1469,7 +1469,10 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
+      let type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
+      if (found.getType() instanceof ObjectReferenceType) {
+        type = found.getType().toABAP();
+      }
 
       const code = `DATA ${name} TYPE ${type}.\n` +
         " ".repeat(node.getFirstToken().getStart().getCol() - 1);
