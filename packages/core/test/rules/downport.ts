@@ -2558,6 +2558,44 @@ CONSTANTS: BEGIN OF type_info,
     testFix(abap, expected);
   });
 
+  it("generic types should infer to non generic if possible", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF typefoo,
+             field TYPE string,
+             msgty TYPE c LENGTH 1,
+           END OF typefoo.
+    METHODS foo IMPORTING moo TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA exp_message TYPE typefoo.
+    foo( VALUE #( BASE exp_message msgty = 'E' ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF typefoo,
+             field TYPE string,
+             msgty TYPE c LENGTH 1,
+           END OF typefoo.
+    METHODS foo IMPORTING moo TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA exp_message TYPE typefoo.
+    DATA temp1 TYPE lcl=>typefoo.
+    CLEAR temp1.
+    temp1 = exp_message.
+    temp1-msgty = 'E'.
+    foo( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

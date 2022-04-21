@@ -127,7 +127,11 @@ export class Source {
         case "VALUE":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          return new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename, foundType);
+          const bodyType = new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename, foundType);
+          if (foundType === undefined || foundType.isGeneric()) {
+            this.addIfInferred(node, scope, filename, bodyType);
+          }
+          return foundType ? foundType : bodyType;
         }
         default:
           return new UnknownType("todo, Source type " + tok);
