@@ -1,10 +1,11 @@
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
+import * as Structures from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Unknown} from "../abap/2_statements/statements/_statement";
 import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
-import * as Statements from "../abap/2_statements/statements";
-import * as Expressions from "../abap/2_statements/expressions";
 import {IEdit, EditHelper} from "../edit_helper";
 import {Position, VirtualPosition} from "../position";
 import {ABAPFile} from "../abap/abap_file";
@@ -69,6 +70,7 @@ Current rules:
 * RAISE EXCEPTION ... MESSAGE
 * Moving with +=, -=, /=, *=, &&= is expanded
 * line_exists and line_index is downported to READ TABLE
+* ENUMs, but does not nessesarily give the correct type and value
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -150,7 +152,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
         || high.findFirstExpression(Expressions.InlineData)) {
-          const issue = this.checkStatement(low, high, lowFile, highSyntax);
+          const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
           if (issue) {
             ret.push(issue);
           }
@@ -187,12 +189,18 @@ Only one transformation is applied to a statement at a time, so multiple steps m
   }
 
   /** applies one rule at a time, multiple iterations are required to transform complex statements */
-  private checkStatement(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+  private checkStatement(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                         highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
     if (low.getFirstToken().getStart() instanceof VirtualPosition) {
       return undefined;
     }
 
-    let found = this.partiallyImplemented(high, lowFile);
+    let found = this.downportEnum(low, high, lowFile, highSyntax, highFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.partiallyImplemented(high, lowFile);
     if (found) {
       return found;
     }
@@ -845,6 +853,44 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple move", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  // note, downporting ENUM does not give the correct types, but it will work in most cases?
+  private downportEnum(_low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                       _highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.TypeEnumBegin)) {
+      return undefined;
+    }
+    const enumStructure = highFile.getStructure()?.findFirstStructure(Structures.TypeEnum);
+    if (enumStructure === undefined) {
+      return undefined;
+    }
+    if (enumStructure.getFirstStatement() !== high) {
+      return undefined;
+    }
+
+    const enumName = high.findExpressionAfterToken("ENUM")?.concatTokens();
+    const structureName = high.findExpressionAfterToken("STRUCTURE")?.concatTokens();
+
+    let code = `TYPES ${enumName} TYPE i.
+CONSTANTS: BEGIN OF ${structureName},\n`;
+    let count = 1;
+    for (const e of enumStructure.findDirectStatements(Statements.TypeEnum).concat(enumStructure.findDirectStatements(Statements.Type))) {
+      const name = e.findFirstExpression(Expressions.NamespaceSimpleName)?.concatTokens();
+      let value = e.findFirstExpression(Expressions.Value)?.concatTokens();
+      if (value === undefined) {
+        value = "VALUE " + count++;
+      }
+      code += `             ${name} TYPE ${enumName} ${value},\n`;
+    }
+    code += `           END OF ${structureName}.`;
+
+    const start = enumStructure.getFirstToken().getStart();
+    const end = enumStructure.getLastToken().getEnd();
+    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport ENUM", this.getMetadata().key, this.conf.severity, fix);
+
   }
 
   private moveWithTableTarget(node: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
