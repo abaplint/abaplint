@@ -70,7 +70,7 @@ Not considered optional branches:
       const inline = c.findFirstExpression(Expressions.InlineData);
       if (inline) {
         const message = "Don't declare inline in optional branches";
-        const issue = Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.getConfig().severity);
+        const issue = Issue.atToken(file, inline.getFirstToken(), message, this.getMetadata().key, this.getConfig().severity);
         output.push(issue);
       }
     }
