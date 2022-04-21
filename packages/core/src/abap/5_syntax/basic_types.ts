@@ -61,6 +61,11 @@ export class BasicTypes {
       return new TypedIdentifier(new TokenIdentifier(new Position(1, 1), name), BuiltIn.filename, builtin);
     }
 
+    const type = this.scope.findTypePoolType(name);
+    if (type) {
+      return type;
+    }
+
     return undefined;
   }
 
@@ -195,7 +200,7 @@ export class BasicTypes {
       return typ.getType();
     }
 
-    const type = this.scope.findTypePoolType(chainText);
+    const type = this.scope.findTypePoolType(chainText)?.getType();
     if (type) {
 //      this.scope.addReference(typeName.getFirstToken(), type, ReferenceType.TypeReference, this.filename);
       return type;
@@ -525,7 +530,7 @@ export class BasicTypes {
       const found = this.scope.findType(subs[0]);
       foundType = found?.getType();
       if (foundType === undefined) {
-        const typePoolType = this.scope.findTypePoolType(subs[0]);
+        const typePoolType = this.scope.findTypePoolType(subs[0])?.getType();
         if (typePoolType) {
 //          this.scope.addReference(typeName.getFirstToken(), typePoolType, ReferenceType.TypeReference, this.filename);
           foundType = typePoolType;

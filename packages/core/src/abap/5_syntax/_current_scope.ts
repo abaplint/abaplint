@@ -12,7 +12,6 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {IScopeIdentifier} from "./_spaghetti_scope";
 import {ReferenceType, IReferenceExtras} from "./_reference";
-import {AbstractType} from "../types/basic/_abstract_type";
 
 import {IObject} from "../../objects/_iobject";
 import {Class} from "../../objects/class";
@@ -279,7 +278,7 @@ export class CurrentScope {
     return found;
   }
 
-  public findTypePoolType(name: string): AbstractType | undefined {
+  public findTypePoolType(name: string): TypedIdentifier | undefined {
     if (name.includes("_") === undefined) {
       return undefined;
     }
@@ -292,7 +291,7 @@ export class CurrentScope {
 
     const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild()?.getFirstChild();
 
-    const found = spag?.findType(name)?.getType();
+    const found = spag?.findType(name);
     return found;
   }
 
