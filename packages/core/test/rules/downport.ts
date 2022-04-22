@@ -2629,13 +2629,16 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
-  it.skip("MESSAGE WITH non simple source", async () => {
+  it("MESSAGE WITH non simple source", async () => {
     const abap = `
   DATA name_of_constant TYPE string.
   DATA name_of_source TYPE string.
   MESSAGE e000(aa) WITH name_of_source && '=>' && name_of_constant.`;
     const expected = `
-sdfsd`;
+  DATA name_of_constant TYPE string.
+  DATA name_of_source TYPE string.
+  DATA(temp1) = name_of_source && '=>' && name_of_constant.
+  MESSAGE e000(aa) WITH temp1.`;
     testFix(abap, expected);
   });
 

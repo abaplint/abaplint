@@ -539,12 +539,29 @@ ${indentation}`);
     return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private downportMessage(high: StatementNode, _lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private downportMessage(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(high.get() instanceof Statements.Message)) {
       return undefined;
     }
+    const foundWith = high.findExpressionAfterToken("WITH");
+    if (foundWith === undefined) {
+      return undefined;
+    }
+    const likeSource = high.findExpressionAfterToken("LIKE");
 
-// todo
+    for (const s of high.findAllExpressions(Expressions.Source)) {
+      if (s === likeSource) {
+        continue;
+      }
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+      const firstToken = high.getFirstToken();
+      const code = `DATA(${uniqueName}) = ${s.concatTokens()}.\n${indentation}`;
+      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), code);
+      const fix2 = EditHelper.replaceRange(lowFile, s.getFirstToken().getStart(), s.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, high.getFirstToken(), "Refactor MESSAGE WITH source", this.getMetadata().key, this.conf.severity, fix);
+    }
 
     return undefined;
   }
