@@ -793,21 +793,29 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       return undefined;
     }
 
-    const startToken = node.findDirectTokenByText("ID");
-    if (startToken === undefined) {
-      return undefined;
-    }
+    let id: string | undefined = undefined;
+    let number: string | undefined = undefined;
 
-    const sources = node.findDirectExpressions(Expressions.Source);
-    const id = sources[0].concatTokens();
-
-    const numberExpression = node.findExpressionAfterToken("NUMBER");
-    if (numberExpression === undefined) {
-      throw "downport raiseException, could not find number";
-    }
-    let number = numberExpression.concatTokens();
-    if (numberExpression.get() instanceof Expressions.MessageNumber) {
-      number = "'" + number + "'";
+    let startToken = node.findDirectTokenByText("ID");
+    if (startToken) {
+      const sources = node.findDirectExpressions(Expressions.Source);
+      id = sources[0].concatTokens();
+      const numberExpression = node.findExpressionAfterToken("NUMBER");
+      if (numberExpression === undefined) {
+        throw "downport raiseException, could not find number";
+      }
+      number = numberExpression.concatTokens();
+      if (numberExpression.get() instanceof Expressions.MessageNumber) {
+        number = "'" + number + "'";
+      }
+    } else {
+      const s = node.findDirectExpression(Expressions.MessageSource);
+      if (s === undefined) {
+        return undefined;
+      }
+      id = "'" + s.findDirectExpression(Expressions.MessageClass)?.concatTokens() + "'";
+      number = "'" + s.findDirectExpression(Expressions.MessageTypeAndNumber)?.concatTokens().substring(1) + "'";
+      startToken = node.getFirstToken();
     }
 
     const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
@@ -817,7 +825,7 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
     const abap = `DATA ${uniqueName1} LIKE if_t100_message=>t100key.
-${indentation}${uniqueName1}-msgid = ${id}.
+${indentation}${uniqueName1}-msgid = ${id?.toUpperCase()}.
 ${indentation}${uniqueName1}-msgno = ${number}.
 ${indentation}DATA ${uniqueName2} TYPE REF TO ${className}.
 ${indentation}CREATE OBJECT ${uniqueName2} EXPORTING textid = ${uniqueName1}.

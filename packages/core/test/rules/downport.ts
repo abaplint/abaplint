@@ -1253,7 +1253,7 @@ RAISE EXCEPTION temp2.`;
     testFix(abap, expected);
   });
 
-  it.skip("downport RAISE ... MESSAGE", async () => {
+  it("downport RAISE ... MESSAGE", async () => {
     const abap = `
 RAISE EXCEPTION TYPE zcx_tools MESSAGE e100(zfoo).`;
 
