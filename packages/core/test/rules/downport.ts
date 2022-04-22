@@ -2642,6 +2642,34 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("READ with key VALUE infer", async () => {
+    const abap = `
+TYPES: BEGIN OF bar,
+         name1 TYPE string,
+         name2 TYPE string,
+       END OF bar.
+TYPES: BEGIN OF foo,
+         keyname TYPE bar,
+       END OF foo.
+DATA result TYPE STANDARD TABLE OF foo WITH DEFAULT KEY.
+READ TABLE result WITH KEY keyname = VALUE #( name1 = 'sdfs' name2 = 'sdfsd' ) TRANSPORTING NO FIELDS.`;
+    const expected = `
+TYPES: BEGIN OF bar,
+         name1 TYPE string,
+         name2 TYPE string,
+       END OF bar.
+TYPES: BEGIN OF foo,
+         keyname TYPE bar,
+       END OF foo.
+DATA result TYPE STANDARD TABLE OF foo WITH DEFAULT KEY.
+DATA temp1 TYPE bar.
+CLEAR temp1.
+temp1-name1 = 'sdfs'.
+temp1-name2 = 'sdfsd'.
+READ TABLE result WITH KEY keyname = temp1 TRANSPORTING NO FIELDS.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
