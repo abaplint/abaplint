@@ -71,6 +71,7 @@ Current rules:
 * Moving with +=, -=, /=, *=, &&= is expanded
 * line_exists and line_index is downported to READ TABLE
 * ENUMs, but does not nessesarily give the correct type and value
+* MESSAGE with non simple source
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
@@ -340,6 +341,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.downportMessage(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     return undefined;
   }
 
@@ -531,6 +537,16 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private downportMessage(high: StatementNode, _lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Message)) {
+      return undefined;
+    }
+
+// todo
+
+    return undefined;
   }
 
   private replaceAppendExpression(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

@@ -16,7 +16,7 @@ export class Message implements IStatement {
 
     const type = seq("TYPE", Source);
 
-    const sou = altPrio(options, Source);
+    const sou = altPrio(options, s);
     const sourc = alt(sou,
                       seq(s, sou),
                       seq(s, s, sou),

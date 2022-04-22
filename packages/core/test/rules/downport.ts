@@ -2629,6 +2629,16 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it.skip("MESSAGE WITH non simple source", async () => {
+    const abap = `
+  DATA name_of_constant TYPE string.
+  DATA name_of_source TYPE string.
+  MESSAGE e000(aa) WITH name_of_source && '=>' && name_of_constant.`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
