@@ -50,6 +50,8 @@ DATA(my_var_2)    = 0.`, cnt: 0},
 your_variable = 0.
 your_var_01   = 0.
 your_var_2    = 0.`, cnt: 0},
+  {abap: `test_type = VALUE #( enum_component =  'AA' ).`, cnt: 1},
+  {abap: `test_type = VALUE #( enum_component =    'AA' ).`, cnt: 1},
 ];
 
 testRule(tests, DoubleSpace);
