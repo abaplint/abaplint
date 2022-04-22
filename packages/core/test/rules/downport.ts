@@ -1253,6 +1253,21 @@ RAISE EXCEPTION temp2.`;
     testFix(abap, expected);
   });
 
+  it("downport RAISE ... MESSAGE", async () => {
+    const abap = `
+RAISE EXCEPTION TYPE zcx_tools MESSAGE e100(zfoo).`;
+
+    const expected = `
+DATA temp1 LIKE if_t100_message=>t100key.
+temp1-msgid = 'ZFOO'.
+temp1-msgno = '100'.
+DATA temp2 TYPE REF TO zcx_tools.
+CREATE OBJECT temp2 EXPORTING textid = temp1.
+RAISE EXCEPTION temp2.`;
+
+    testFix(abap, expected);
+  });
+
   it("APPEND, outline expression", async () => {
     const abap = `
 FORM foo.

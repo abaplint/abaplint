@@ -789,42 +789,50 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     RAISE EXCEPTION bar.
     */
 
-    if (node.get() instanceof Statements.Raise) {
-      const startToken = node.findDirectTokenByText("ID");
-      if (startToken === undefined) {
-        return undefined;
-      }
+    if (!(node.get() instanceof Statements.Raise)) {
+      return undefined;
+    }
 
+    let id: string | undefined = undefined;
+    let number: string | undefined = undefined;
+
+    let startToken = node.findDirectTokenByText("ID");
+    if (startToken) {
       const sources = node.findDirectExpressions(Expressions.Source);
-      const id = sources[0].concatTokens();
-
+      id = sources[0].concatTokens();
       const numberExpression = node.findExpressionAfterToken("NUMBER");
       if (numberExpression === undefined) {
         throw "downport raiseException, could not find number";
       }
-      let number = numberExpression.concatTokens();
+      number = numberExpression.concatTokens();
       if (numberExpression.get() instanceof Expressions.MessageNumber) {
         number = "'" + number + "'";
       }
+    } else {
+      const s = node.findDirectExpression(Expressions.MessageSource);
+      if (s === undefined) {
+        return undefined;
+      }
+      id = "'" + s.findDirectExpression(Expressions.MessageClass)?.concatTokens() + "'";
+      number = "'" + s.findDirectExpression(Expressions.MessageTypeAndNumber)?.concatTokens().substring(1) + "'";
+      startToken = node.getFirstToken();
+    }
 
-      const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
+    const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
 
-      const uniqueName1 = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const uniqueName2 = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+    const uniqueName1 = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const uniqueName2 = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-      const abap = `DATA ${uniqueName1} LIKE if_t100_message=>t100key.
-${indentation}${uniqueName1}-msgid = ${id}.
+    const abap = `DATA ${uniqueName1} LIKE if_t100_message=>t100key.
+${indentation}${uniqueName1}-msgid = ${id?.toUpperCase()}.
 ${indentation}${uniqueName1}-msgno = ${number}.
 ${indentation}DATA ${uniqueName2} TYPE REF TO ${className}.
 ${indentation}CREATE OBJECT ${uniqueName2} EXPORTING textid = ${uniqueName1}.
 ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
-      const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), abap);
-      return Issue.atToken(lowFile, startToken, "Downport RAISE MESSAGE", this.getMetadata().key, this.conf.severity, fix);
-    }
-
-    return undefined;
+    const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), abap);
+    return Issue.atToken(lowFile, startToken, "Downport RAISE MESSAGE", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private emptyKey(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
