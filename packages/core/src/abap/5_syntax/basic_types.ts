@@ -278,9 +278,9 @@ export class BasicTypes {
       }
     }
     const options: Types.ITableOptions = {
-      withHeader: text.includes("WITH HEADER LINE"),
+      withHeader: text.includes(" WITH HEADER LINE"),
       type: type,
-      isUnique: text.includes("WITH UNIQUE"),
+      isUnique: text.includes(" WITH UNIQUE"),
       keyFields: keyFields,
     };
 
@@ -411,7 +411,7 @@ export class BasicTypes {
       }
       found = this.resolveLikeName(sub);
 
-      if (found && text.includes(" OCCURS ")) {
+      if (found && this.isOccurs(node)) {
         found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, qualifiedName);
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
@@ -435,9 +435,9 @@ export class BasicTypes {
       found = this.resolveTypeName(typeName, this.findLength(node), this.findDecimals(node), qualifiedName);
 
       const concat = node.concatTokens().toUpperCase();
-      if (found && concat.includes(" OCCURS ")) {
-        found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, qualifiedName);
-      } else if (found && concat.includes("WITH HEADER LINE")) {
+      if (found && this.isOccurs(node)) {
+        found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE")}, qualifiedName);
+      } else if (found && concat.includes(" WITH HEADER LINE")) {
         if (found instanceof Types.VoidType) {
           found = new Types.TableType(found, {withHeader: true});
         } else if (!(found instanceof Types.TableType)) {
@@ -459,8 +459,8 @@ export class BasicTypes {
         }
 
         found = new Types.CharacterType(length, qualifiedName); // fallback
-        if (concat.includes(" OCCURS ")) {
-          found = new Types.TableType(found, {withHeader: concat.includes("WITH HEADER LINE")}, qualifiedName);
+        if (this.isOccurs(node)) {
+          found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE")}, qualifiedName);
         }
       }
 
@@ -470,6 +470,15 @@ export class BasicTypes {
   }
 
 /////////////////////
+
+  private isOccurs(node: ExpressionNode | StatementNode): boolean {
+    if (node.findDirectTokenByText("OCCURS")) {
+      return true;
+    } else if (node.findFirstExpression(Expressions.TypeTable)?.findDirectTokenByText("OCCURS")) {
+      return true;
+    }
+    return false;
+  }
 
   // todo, rewrite this method
   private resolveTypeChain(expr: ExpressionNode): AbstractType | undefined {

@@ -2685,6 +2685,25 @@ READ TABLE result WITH KEY keyname = temp1 TRANSPORTING NO FIELDS.`;
     testFix(abap, expected);
   });
 
+  it("infer type, concat", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         name TYPE string,
+       END OF ty_bar.
+DATA name_of_constant TYPE string.
+DATA s_foo TYPE ty_bar.
+DATA(fullname_of_component) = name_of_constant && '-' && s_foo-name.`;
+    const expected = `
+TYPES: BEGIN OF ty_bar,
+         name TYPE string,
+       END OF ty_bar.
+DATA name_of_constant TYPE string.
+DATA s_foo TYPE ty_bar.
+DATA fullname_of_component TYPE string.
+fullname_of_component = name_of_constant && '-' && s_foo-name.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

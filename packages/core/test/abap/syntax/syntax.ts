@@ -6390,6 +6390,45 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, field name = OCCURS", () => {
+    const abap = `
+TYPES: BEGIN OF ty_letter,
+         letter(1) TYPE c,
+         occurs    TYPE i,
+       END OF ty_letter.
+DATA letter TYPE ty_letter.
+letter-occurs = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("GROUP BY, inline data", () => {
+    const abap = `
+DATA lt_eina TYPE STANDARD TABLE OF eina WITH DEFAULT KEY.
+LOOP AT lt_eina INTO DATA(ls_eina_local)
+    GROUP BY ( matnr = ls_eina_local-matnr )
+    INTO DATA(ls_eina_group).
+  WRITE ls_eina_group-matnr.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP AT GROUP", () => {
+    const abap = `
+DATA lt_eina TYPE STANDARD TABLE OF eina WITH DEFAULT KEY.
+LOOP AT lt_eina INTO DATA(ls_eina_local)
+    GROUP BY ( matnr = ls_eina_local-matnr )
+    INTO DATA(ls_eina_group).
+  WRITE ls_eina_group-matnr.
+  LOOP AT GROUP ls_eina_group INTO DATA(ls_eina).
+    WRITE ls_eina-infnr.
+  ENDLOOP.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.

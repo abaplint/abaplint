@@ -3,7 +3,9 @@ import {ExpressionNode} from "../../nodes";
 import {IStructureComponent, StructureType, VoidType} from "../../types/basic";
 import {CurrentScope} from "../_current_scope";
 import {ComponentCompare} from "./component_compare";
+import {InlineData} from "./inline_data";
 import {InlineFS} from "./inline_fs";
+import {Target} from "./target";
 
 export class LoopGroupBy {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
@@ -18,6 +20,16 @@ export class LoopGroupBy {
       return;
     }
     const sourceType = new StructureType(components);
+
+
+    for (const t of node.findAllExpressions(Expressions.Target)) {
+      const inline = t.findDirectExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(inline, scope, filename, new VoidType("todoGroupBy"));
+      } else {
+        new Target().runSyntax(t, scope, filename);
+      }
+    }
 
     const inlinefs = node.findFirstExpression(Expressions.InlineFS);
     if (inlinefs) {
