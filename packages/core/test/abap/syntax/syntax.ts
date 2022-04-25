@@ -6390,6 +6390,18 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, field name = OCCURS", () => {
+    const abap = `
+TYPES: BEGIN OF ty_letter,
+         letter(1) TYPE c,
+         occurs    TYPE i,
+       END OF ty_letter.
+DATA letter TYPE ty_letter.
+letter-occurs = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.
