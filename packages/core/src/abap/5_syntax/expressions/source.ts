@@ -167,7 +167,9 @@ export class Source {
         break;
       }
     }
-
+    if (node.findDirectTokenByText("&&")) {
+      return new StringType();
+    }
 
     return context;
   }

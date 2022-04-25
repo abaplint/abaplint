@@ -28,7 +28,6 @@ export class Move implements StatementSyntax {
 
     const source = node.findDirectExpression(Expressions.Source);
     const sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : undefined;
-
     if (sourceType === undefined) {
       throw new Error("No source type determined");
     }
