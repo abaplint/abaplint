@@ -2704,7 +2704,7 @@ fullname_of_component = name_of_constant && '-' && s_foo-name.`;
     testFix(abap, expected);
   });
 
-  it.only("infer type, VALUE # REF TO", async () => {
+  it("infer type, VALUE # REF TO", async () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -2716,7 +2716,17 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const expected = `
-todo`;
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA temp1 TYPE REF TO lcl.
+    CLEAR temp1.
+    foo( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
     testFix(abap, expected);
   });
 

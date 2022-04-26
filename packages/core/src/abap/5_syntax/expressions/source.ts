@@ -130,6 +130,8 @@ export class Source {
           const bodyType = new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, scope, filename, bodyType);
+          } else {
+            this.addIfInferred(node, scope, filename, foundType);
           }
           return foundType ? foundType : bodyType;
         }

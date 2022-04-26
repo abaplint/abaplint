@@ -1465,8 +1465,7 @@ ${indentation}    output = ${topTarget}.`;
     return ret;
   }
 
-  private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {
-
+  private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, ref = false): string | undefined {
     const expr = i.findDirectExpression(Expressions.TypeNameOrInfer);
     if (expr === undefined) {
       return undefined;
@@ -1475,7 +1474,7 @@ ${indentation}    output = ${topTarget}.`;
 
     const concat = expr.concatTokens().toLowerCase();
     if (concat !== "#") {
-      return concat;
+      return ref ? "REF TO " + concat : concat;
     }
 
     const spag = highSyntax.spaghetti.lookupPosition(firstToken.getStart(), lowFile.getFilename());
@@ -1497,7 +1496,11 @@ ${indentation}    output = ${topTarget}.`;
       return undefined;
     }
 
-    return inferred.getType().getQualifiedName()?.toLowerCase();
+    if (inferred.getType() instanceof ObjectReferenceType) {
+      return inferred.getType().toABAP();
+    } else {
+      return inferred.getType().getQualifiedName()?.toLowerCase();
+    }
   }
 
   private outlineFS(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -1701,10 +1704,10 @@ ${indentation}    output = ${topTarget}.`;
 
     for (const i of node.findAllExpressionsRecursive(Expressions.Cast)) {
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const type = this.findType(i, lowFile, highSyntax);
+      const type = this.findType(i, lowFile, highSyntax, true);
       const body = i.findDirectExpression(Expressions.Source)?.concatTokens();
 
-      const abap = `DATA ${uniqueName} TYPE REF TO ${type}.\n` +
+      const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
         " ".repeat(node.getFirstToken().getStart().getCol() - 1) +
         `${uniqueName} ?= ${body}.\n` +
         " ".repeat(node.getFirstToken().getStart().getCol() - 1);
