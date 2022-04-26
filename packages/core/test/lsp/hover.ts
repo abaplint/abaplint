@@ -1111,4 +1111,25 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("Extra");
   });
 
+  it("Hover, enums should have qualified name", () => {
+    const abap = `TYPES: BEGIN OF ENUM enum_type_info STRUCTURE type_info,
+         string,
+         numeric,
+       END OF ENUM enum_type_info STRUCTURE type_info.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RETURNING VALUE(result) TYPE enum_type_info.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    WRITE result.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 10, 12));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("enum_type_info");
+  });
+
 });

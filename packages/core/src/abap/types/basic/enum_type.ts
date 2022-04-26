@@ -10,7 +10,7 @@ export class EnumType extends AbstractType {
   }
 
   public toABAP(): string {
-    return "enum";
+    return this.getQualifiedName() || "enum";
   }
 
   public containsVoid() {
