@@ -33,7 +33,7 @@ export class Cast {
 // todo, this should be an UnknownType instead?
         throw new Error("Type \"" + typeName + "\" not found in scope, Cast");
       } else {
-        tt = new ObjectReferenceType(found);
+        tt = new ObjectReferenceType(found, typeName);
       }
     }
     new Source().addIfInferred(node, scope, filename, tt);
