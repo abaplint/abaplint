@@ -1115,4 +1115,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("IS ASSIGNED", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+READ TABLE tab INDEX 1 ASSIGNING FIELD-SYMBOL(<fs>).
+IF <fs> IS ASSIGNED.
+  WRITE 'in use'.
+ENDIF.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

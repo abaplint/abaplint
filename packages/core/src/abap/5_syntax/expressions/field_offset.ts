@@ -2,6 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
+import {SourceFieldSymbol} from "./source_field_symbol";
 
 export class FieldOffset {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
@@ -18,12 +19,7 @@ export class FieldOffset {
 
     const symbol = node.findDirectExpression(Expressions.SourceFieldSymbol);
     if (symbol) {
-      const token = symbol.getFirstToken();
-      const found = scope.findVariable(token.getStr());
-      if (found === undefined) {
-        throw new Error("\"" + symbol.getFirstToken().getStr() + "\" not found, FieldOffset");
-      }
-      scope.addReference(token, found, ReferenceType.DataReadReference, filename);
+      new SourceFieldSymbol().runSyntax(symbol, scope, filename);
     }
 
   }
