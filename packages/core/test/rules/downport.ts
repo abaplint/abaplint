@@ -2704,6 +2704,22 @@ fullname_of_component = name_of_constant && '-' && s_foo-name.`;
     testFix(abap, expected);
   });
 
+  it.only("infer type, VALUE # REF TO", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( VALUE #( ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+todo`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
