@@ -7,6 +7,7 @@ import {IntegerType, IStructureComponent, StructureType} from "../../types/basic
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {ReferenceType} from "../_reference";
 import {EnumType} from "../../types/basic/enum_type";
+import {ScopeType} from "../_scope_type";
 
 export class TypeEnum {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): {values: TypedIdentifier[], types: TypedIdentifier[]} {
@@ -52,7 +53,12 @@ export class TypeEnum {
 
     const name = begin.findFirstExpression(Expressions.NamespaceSimpleName);
     if (name) {
-      const id = new TypedIdentifier(name.getFirstToken(), filename, new EnumType(), [IdentifierMeta.Enum]);
+      let qualifiedName = name.concatTokens();
+      if (scope.getType() === ScopeType.ClassDefinition
+          || scope.getType() === ScopeType.Interface) {
+        qualifiedName = scope.getName() + "=>" + qualifiedName;
+      }
+      const id = new TypedIdentifier(name.getFirstToken(), filename, new EnumType(qualifiedName), [IdentifierMeta.Enum]);
       scope.addType(id);
       types.push(id);
     }
