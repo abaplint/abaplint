@@ -8,11 +8,18 @@ import {InlineFieldDefinition} from "./inline_field_definition";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {ScopeType} from "../_scope_type";
 import {ReduceNext} from "./reduce_next";
+import {Let} from "./let";
 
 export class ReduceBody {
   public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string): AbstractType | undefined {
     if (node === undefined) {
       return;
+    }
+
+    let scoped = false;
+    const letNode = node.findDirectExpression(Expressions.Let);
+    if (letNode) {
+      scoped = new Let().runSyntax(letNode, scope, filename);
     }
 
     for (const i of node.findDirectExpressions(Expressions.InlineFieldDefinition)) {
@@ -29,6 +36,10 @@ export class ReduceBody {
 
     for (const s of node.findDirectExpressions(Expressions.ReduceNext)) {
       new ReduceNext().runSyntax(s, scope, filename);
+    }
+
+    if (scoped === true) {
+      scope.pop(node.getLastToken().getEnd());
     }
 
     while (scope.getType() === ScopeType.For) {

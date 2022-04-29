@@ -6429,6 +6429,17 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("REDUCE with LET used in FOR", () => {
+    const abap = `
+    DATA(text) = REDUCE string(
+      LET txt_len = strlen( |dfsdfs| ) IN
+      INIT foo = ||
+      FOR i = 1 UNTIL i > txt_len
+      NEXT foo = foo && |sdf| ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.
