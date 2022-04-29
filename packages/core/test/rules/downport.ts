@@ -2730,6 +2730,34 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE with LET", async () => {
+    const abap = `
+DATA text TYPE string.
+text = REDUCE #(
+  LET txt_len = strlen( |dfsdfs| ) IN
+  INIT foo = ||
+  FOR i = 1 UNTIL i > txt_len
+  NEXT foo = foo && |sdf| ).`;
+    const expected = `
+DATA text TYPE string.
+DATA temp1 TYPE string.
+DATA txt_len TYPE i.
+txt_len = strlen( |dfsdfs| ).
+DATA(foo) = ||.
+DATA i TYPE i.
+i = 1.
+DATA temp2 LIKE sy-index.
+temp2 = sy-index.
+WHILE NOT i > txt_len.
+  sy-index = temp2.
+  foo = foo && |sdf|.
+  i = i + 1.
+ENDWHILE.
+temp1 = foo.
+text = temp1.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
