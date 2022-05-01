@@ -69,7 +69,8 @@ export class Indent {
         || type instanceof Statements.EndCatch
         || (this.options.selectionScreenBlockIndentation === true
           && type instanceof Statements.SelectionScreen
-          && statement.concatTokens().toUpperCase().includes("END OF BLOCK"))
+          && (statement.concatTokens().toUpperCase().includes("END OF BLOCK") ||
+          statement.concatTokens().toUpperCase().includes("END OF LINE")))
         || type instanceof Statements.ElseIf
         || type instanceof Statements.EndFunction
         || type instanceof Statements.EndInterface
@@ -151,7 +152,8 @@ export class Indent {
         || type instanceof Statements.TestSeam
         || (this.options.selectionScreenBlockIndentation === true
           && type instanceof Statements.SelectionScreen
-          && statement.concatTokens().toUpperCase().includes("BEGIN OF BLOCK"))
+          && (statement.concatTokens().toUpperCase().includes("BEGIN OF BLOCK") ||
+          statement.concatTokens().toUpperCase().includes("BEGIN OF LINE")))
         || type instanceof Statements.StartOfSelection
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.AtLineSelection

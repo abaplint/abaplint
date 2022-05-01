@@ -1290,6 +1290,11 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
+      const letNode = reduceBody.findDirectExpression(Expressions.Let);
+      if (letNode) {
+        body += this.outlineLet(letNode, indentation, highSyntax, lowFile);
+      }
+
       for (const init of reduceBody.findDirectExpressions(Expressions.InlineFieldDefinition)) {
         name = init.getFirstToken().getStr();
         const s = init.findFirstExpression(Expressions.Source)?.concatTokens();
