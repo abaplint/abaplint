@@ -2730,6 +2730,35 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE, init multiple vars", async () => {
+    const abap = `
+DATA result TYPE i.
+result = REDUCE i(
+    INIT first = 0 second = 5
+    FOR i = 2 UNTIL i > 4
+    NEXT
+    first = first + i
+    second = 2 ).`;
+    const expected = `
+DATA result TYPE i.
+DATA temp1 TYPE i.
+DATA(first) = 0.
+DATA(second) = 5.
+DATA i TYPE i.
+i = 2.
+DATA temp2 LIKE sy-index.
+temp2 = sy-index.
+WHILE NOT i > 4.
+  sy-index = temp2.
+  first = first + i.
+  second = 2.
+  i = i + 1.
+ENDWHILE.
+temp1 = first.
+result = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("REDUCE with LET", async () => {
     const abap = `
 DATA text TYPE string.
