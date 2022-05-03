@@ -18,6 +18,8 @@ export class AvoidUseConf extends BasicRuleConfig {
   public defaultKey: boolean = true;
   /** Detects BREAK and BREAK-POINTS */
   public break: boolean = true;
+  /** Detects TEST SEAMS */
+  public testSeams: boolean = true;
   /** Detects DESCRIBE TABLE LINES, use lines() instead */
   public describeLines: boolean = true;
 }
@@ -77,7 +79,7 @@ TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md
         message = "STATICS";
       } else if (this.conf.statics && statement instanceof Statements.StaticEnd) {
         isStaticsBlock = false;
-      } else if (this.conf.statics && statement instanceof Statements.TestSeam) {
+      } else if (this.conf.testSeams && statement instanceof Statements.TestSeam) {
         message = "TEST-SEAM";
       } else if (this.conf.statics && statement instanceof Statements.Static && isStaticsBlock === false) {
         message = "STATICS";
