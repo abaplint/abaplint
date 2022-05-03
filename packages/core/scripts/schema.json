@@ -138,6 +138,10 @@
         "statics": {
           "description": "Detects statics",
           "type": "boolean"
+        },
+        "testSeams": {
+          "description": "Detects TEST SEAMS",
+          "type": "boolean"
         }
       },
       "required": [
@@ -145,6 +149,7 @@
         "statics",
         "defaultKey",
         "break",
+        "testSeams",
         "describeLines"
       ],
       "type": "object"

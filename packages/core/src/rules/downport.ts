@@ -1295,8 +1295,12 @@ ${indentation}    output = ${topTarget}.`;
         body += this.outlineLet(letNode, indentation, highSyntax, lowFile);
       }
 
+      let firstName = "";
       for (const init of reduceBody.findDirectExpressions(Expressions.InlineFieldDefinition)) {
         name = init.getFirstToken().getStr();
+        if (firstName === "") {
+          firstName = name;
+        }
         const s = init.findFirstExpression(Expressions.Source)?.concatTokens();
         const t = init.findFirstExpression(Expressions.TypeName)?.concatTokens();
         if (s) {
@@ -1331,7 +1335,7 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       body += indentation + end;
-      body += indentation + `${uniqueName} = ${name}.\n`;
+      body += indentation + `${uniqueName} = ${firstName}.\n`;
 
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
         body +
