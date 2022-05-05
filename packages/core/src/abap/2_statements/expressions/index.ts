@@ -17,6 +17,7 @@ export * from "./class_name";
 export * from "./color";
 export * from "./compare_operator";
 export * from "./compare";
+export * from "./test_seam_name";
 export * from "./component_chain_simple";
 export * from "./component_chain";
 export * from "./component_compare_simple";
