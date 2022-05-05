@@ -15,6 +15,7 @@ export * from "./check_comments";
 export * from "./check_ddic";
 export * from "./check_include";
 export * from "./check_subrc";
+export * from "./no_external_form_calls";
 export * from "./check_syntax";
 export * from "./classic_exceptions_overlap";
 export * from "./check_text_elements";

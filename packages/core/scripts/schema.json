@@ -2281,6 +2281,17 @@
               ],
               "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_chained_assignment"
             },
+            "no_external_form_calls": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoExternalFormCallsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detect external form calls\nTags: SingleFile\nhttps://rules.abaplint.org/no_external_form_calls"
+            },
             "no_inline_in_optional_branches": {
               "anyOf": [
                 {
@@ -4021,6 +4032,23 @@
       "type": "object"
     },
     "NoChainedAssignmentConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "NoExternalFormCallsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
