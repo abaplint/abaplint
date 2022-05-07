@@ -100,7 +100,7 @@ export class DoubleSpace extends ABAPRule {
           const issueStartPos = new Position(cPosition.getRow(), cPosition.getCol() + 2);
           const issueEndPos = new Position(t.getRow(), t.getCol());
           const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-          issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
+          issues.push(Issue.atRange(file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
         }
 
         break;
@@ -128,7 +128,9 @@ export class DoubleSpace extends ABAPRule {
         const issueStartPos = new Position(prev.getRow(), prev.getCol() + 2);
         const issueEndPos = new Position(t.getRow(), t.getCol());
         const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
+        if (this.pragmaInRange(s.getPragmas(), issueStartPos, issueEndPos) === false) {
+          issues.push(Issue.atRange(file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
+        }
       }
 
       if (this.getConfig().endParen === true
@@ -139,13 +141,25 @@ export class DoubleSpace extends ABAPRule {
         const issueStartPos = new Position(prev.getEnd().getRow(), prev.getEnd().getCol() + 1);
         const issueEndPos = new Position(t.getRow(), t.getCol());
         const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
+        if (this.pragmaInRange(s.getPragmas(), issueStartPos, issueEndPos) === false) {
+          issues.push(Issue.atRange(file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
+        }
       }
 
       prev = t;
     }
 
     return issues;
+  }
+
+  private pragmaInRange(pragmas: readonly Token[], start: Position, end: Position): boolean {
+    let ret = false;
+    for (const p of pragmas) {
+      if (p.getStart().isBetween(start, end)) {
+        ret = true;
+      }
+    }
+    return ret;
   }
 
   private checkKeywords(s: StatementNode, file: ABAPFile): Issue[] {

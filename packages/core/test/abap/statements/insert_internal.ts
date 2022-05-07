@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersion, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -29,6 +29,13 @@ statementType(tests, "INSERT", Statements.InsertInternal);
 
 const versions = [
   {abap: "INSERT NEW zcl_foobar( ) INTO TABLE lt_tab ASSIGNING FIELD-SYMBOL(<fs>).", ver: Version.v740sp02},
+  {abap: "insert |field_more| into table ls_result-struc_data-field_more.", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "INSERT internal", Statements.InsertInternal);
+
+const versionsFail = [
+  {abap: "insert |field_more| into table ls_result-struc_data-field_more.", ver: Version.v702},
+];
+
+statementVersionFail(versionsFail, "INSERT internal");

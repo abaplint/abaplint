@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersion, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -336,6 +336,10 @@ INTO TABLE @DATA(evilized_monster_weapons).`,
     WHERE foobar~aufnr IN @blah
     AND h~objectclas = 'ABC'
     INTO TABLE @gt_tab.`,
+
+  `SELECT * INTO TABLE lt_but000
+FROM but000
+WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
@@ -354,3 +358,11 @@ const versions = [
 ];
 
 statementVersion(versions, "SELECT", Statements.Select);
+
+const versionsFail = [
+  {abap: `SELECT * INTO TABLE lt_but000
+  FROM but000
+  WHERE  but000~partner IN ( '1000' , '2000' , '3000' ).`, ver: Version.v702},
+];
+
+statementVersionFail(versionsFail, "SELECT");
