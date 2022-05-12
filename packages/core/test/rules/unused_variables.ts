@@ -1126,4 +1126,13 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("INSERT", async () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA str TYPE string.
+    INSERT str INTO tab.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

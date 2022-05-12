@@ -22,7 +22,7 @@ export class InsertInternal implements StatementSyntax {
 
     const afterAssigning = node.findExpressionAfterToken("ASSIGNING");
     if (afterAssigning?.get() instanceof Expressions.FSTarget) {
-      let source = node.findDirectExpression(Expressions.SimpleSource2);
+      let source = node.findDirectExpression(Expressions.SimpleSource4);
       if (source === undefined) {
         source = node.findDirectExpression(Expressions.Source);
       }
@@ -40,7 +40,7 @@ export class InsertInternal implements StatementSyntax {
       new Source().runSyntax(s, scope, filename, targetType);
     }
 
-    for (const s of node.findDirectExpressions(Expressions.SimpleSource1)) {
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource4)) {
       new Source().runSyntax(s, scope, filename, targetType);
     }
 
