@@ -2787,6 +2787,31 @@ text = temp1.`;
     testFix(abap, expected);
   });
 
+  it("VALUE with LET + FOR", async () => {
+    const abap = `
+DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+result = VALUE #(
+  LET lv_start = 2 + 2 IN
+  FOR i = lv_start UNTIL i > lv_start * 2
+  ( lv_start ) ).`;
+    const expected = `
+DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA temp1 LIKE result.
+CLEAR temp1.
+DATA(lv_start) = 2 + 2.
+DATA i TYPE i.
+i = lv_start.
+DATA temp2 LIKE sy-index.
+temp2 = sy-index.
+WHILE NOT i > lv_start * 2.
+  sy-index = temp2.
+  APPEND lv_start TO temp1.
+  i = i + 1.
+ENDWHILE.
+result = temp1.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

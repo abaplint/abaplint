@@ -1379,13 +1379,14 @@ ${indentation}    output = ${topTarget}.`;
         body += indentation + uniqueName + " = " + base.concatTokens() + ".\n";
       }
       let end = "";
+/*
       for (const forLoop of valueBody?.findDirectExpressions(Expressions.For) || []) {
         const outlineFor = this.outlineFor(forLoop, indentation, lowFile, highSyntax);
         body += outlineFor.body;
         end = outlineFor.end + `.\n` + end;
         indentation += "  ";
       }
-
+*/
       let structureName = uniqueName;
       let added = false;
       let skip = false;
@@ -1402,6 +1403,11 @@ ${indentation}    output = ${topTarget}.`;
             added = true;
           }
           body += indentation + structureName + "-" + b.concatTokens() + ".\n";
+        } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.For) {
+          const outlineFor = this.outlineFor(b, indentation, lowFile, highSyntax);
+          body += outlineFor.body;
+          end = outlineFor.end + `.\n` + end;
+          indentation += "  ";
         } else if (b.get() instanceof Expressions.Source) {
           structureName = b.concatTokens();
           if (base && valueBody?.findDirectTokenByText("(") === undefined) {
@@ -1460,6 +1466,10 @@ ${indentation}    output = ${topTarget}.`;
 
       const found = spag.findVariable(name);
       if (found === undefined) {
+        const source = f.findFirstExpression(Expressions.Source);
+        if (source) {
+          ret += indentation + "DATA(" + name + `) = ${source.concatTokens()}.\n`;
+        }
         continue;
       }
       const type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
