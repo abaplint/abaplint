@@ -57,6 +57,7 @@ Current rules:
 * REDUCE is outlined
 * SWITCH is outlined
 * APPEND expression is outlined
+* INSERT expression is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
 * CAST changed to ?=
 * LOOP AT method_call( ) is outlined
@@ -341,6 +342,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.replaceInsertExpression(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportMessage(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -588,6 +594,33 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, high.getFirstToken(), "Outline APPEND source expression", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private replaceInsertExpression(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.InsertInternal)) {
+      return undefined;
+    }
+
+    const children = high.getChildren();
+    if (children[1].get() instanceof Expressions.Source) {
+      const source = children[1];
+      const target = high.findDirectExpression(Expressions.Target);
+      if (target === undefined) {
+        return undefined;
+      }
+
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+      const firstToken = high.getFirstToken();
+      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${target?.concatTokens()}.
+${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
+      const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, high.getFirstToken(), "Outline INSERT source expression", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;

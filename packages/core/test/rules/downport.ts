@@ -2812,6 +2812,18 @@ result = temp1.`;
     testFix(abap, expected);
   });
 
+  it("INSERT internal, non simple", async () => {
+    const abap = `
+DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+INSERT |sdfsd| INTO TABLE result.`;
+    const expected = `
+DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF result.
+temp1 = |sdfsd|.
+INSERT temp1 INTO TABLE result.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
