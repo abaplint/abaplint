@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, per, ver, altPrio} from "../combi";
+import {str, seq, opt, per, ver, altPrio, alt, optPrio} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Source, Dynamic, SimpleSource4} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class InsertInternal implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const target = alt(Source, Dynamic);
+    const target = altPrio(Source, Dynamic);
     const assigning = seq("ASSIGNING", FSTarget);
     const ref = seq("REFERENCE INTO", Target);
     const index = seq("INDEX", Source);
@@ -16,7 +16,7 @@ export class InsertInternal implements IStatement {
 
     const to = seq("TO", Source);
     const from = seq("FROM", Source);
-    const fromTo = seq(opt(from), opt(to));
+    const fromTo = seq(optPrio(from), optPrio(to));
 
     const foo = per(into, ref, index, assigning);
 
@@ -24,7 +24,7 @@ export class InsertInternal implements IStatement {
                       target,
                       opt(fromTo));
 
-    const src = alt(ver(Version.v740sp02, Source), SimpleSource4);
+    const src = alt(SimpleSource4, ver(Version.v740sp02, Source));
 
     const tab = seq("TABLE", Source);
 
