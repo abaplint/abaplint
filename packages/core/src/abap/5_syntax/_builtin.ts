@@ -355,7 +355,7 @@ export class BuiltIn {
         "off": new IntegerType(),
         "len": new IntegerType(),
       },
-      return: new StringType(),
+      return: new IntegerType(),
       version: Version.v702,
     },
 
@@ -372,7 +372,7 @@ export class BuiltIn {
         "off": new IntegerType(),
         "len": new IntegerType(),
       },
-      return: new StringType(),
+      return: new IntegerType(),
       version: Version.v702,
     },
 
@@ -389,7 +389,7 @@ export class BuiltIn {
         "off": new IntegerType(),
         "len": new IntegerType(),
       },
-      return: new StringType(),
+      return: new IntegerType(),
       version: Version.v702,
     },
 
