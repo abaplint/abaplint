@@ -1,4 +1,4 @@
-import * as SemanticProtocol from "vscode-languageserver-protocol/lib/common/protocol.semanticTokens";
+import * as LServer from "vscode-languageserver-types";
 import {VirtualPosition, Position} from "../position";
 import {Comment, Punctuation, String, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle} from "../abap/1_lexer/tokens";
 import {TokenNodeRegex} from "../abap/nodes";
@@ -28,7 +28,7 @@ export class SemanticHighlighting {
     SemanticHighlighting.initLegend();
   }
 
-  public static semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
+  public static semanticTokensLegend(): LServer.SemanticTokensLegend {
     // https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#semantic-token-scope-map
     // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokenTypes
     this.initLegend();
@@ -46,7 +46,7 @@ export class SemanticHighlighting {
       SemanticHighlighting.tokenTypes.push(SOURCE_ABAP);
       SemanticHighlighting.tokenTypeMap[BLOCK_ABAP] = SemanticHighlighting.tokenTypes.length;
       SemanticHighlighting.tokenTypes.push(BLOCK_ABAP);
-      for (const t in SemanticProtocol.SemanticTokenTypes) {
+      for (const t in LServer.SemanticTokenTypes) {
         SemanticHighlighting.tokenTypeMap[t] = SemanticHighlighting.tokenTypes.length;
         SemanticHighlighting.tokenTypes.push(t);
       }
@@ -54,7 +54,7 @@ export class SemanticHighlighting {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#textDocument_semanticTokens
-  public semanticTokensRange(range: ITextDocumentRange): SemanticProtocol.SemanticTokens {
+  public semanticTokensRange(range: ITextDocumentRange): LServer.SemanticTokens {
     const file = LSPUtils.getABAPFile(this.reg, range.textDocument.uri);
     if (file === undefined) {
       return {data: []};
@@ -74,7 +74,7 @@ export class SemanticHighlighting {
       const statementInstance = s.get();
       for (const t of s.getTokenNodes()) {
         const tokenInstance = t.get();
-        let tokenType: string = SemanticProtocol.SemanticTokenTypes.keyword;
+        let tokenType: string = LServer.SemanticTokenTypes.keyword;
         if (tokenInstance instanceof Punctuation) {
           tokenType = SOURCE_ABAP;
         } else if (statementInstance instanceof Statements.Public
@@ -95,9 +95,9 @@ export class SemanticHighlighting {
             || tokenInstance instanceof StringTemplateBegin
             || tokenInstance instanceof StringTemplateEnd
             || tokenInstance instanceof StringTemplateMiddle) {
-          tokenType = SemanticProtocol.SemanticTokenTypes.string;
+          tokenType = LServer.SemanticTokenTypes.string;
         } else if (tokenInstance instanceof Comment) {
-          tokenType = SemanticProtocol.SemanticTokenTypes.comment;
+          tokenType = LServer.SemanticTokenTypes.comment;
         } else if (t instanceof TokenNodeRegex) {
           tokenType = SOURCE_ABAP;
         }

@@ -1,5 +1,4 @@
 import * as LServer from "vscode-languageserver-types";
-import * as SemanticProtocol from "vscode-languageserver-protocol/lib/common/protocol.semanticTokens";
 import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {Diagnostics} from "./diagnostics";
@@ -107,12 +106,12 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensLegend
-  public static semanticTokensLegend(): SemanticProtocol.SemanticTokensLegend {
+  public static semanticTokensLegend(): LServer.SemanticTokensLegend {
     return SemanticHighlighting.semanticTokensLegend();
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensRangeParams
-  public semanticTokensRange(range: ITextDocumentRange): SemanticProtocol.SemanticTokens {
+  public semanticTokensRange(range: ITextDocumentRange): LServer.SemanticTokens {
     return new SemanticHighlighting(this.reg).semanticTokensRange(range);
   }
 
