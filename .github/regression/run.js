@@ -70,7 +70,7 @@ for (let r of repos) {
 
   try {
     const raw = fs.readFileSync(configFile).toString();
-    const reg = new RegExp(/"version": "(\w+)"/);
+    const reg = new RegExp(/"version": "([\w-]+)"/);
     const match = raw.match(reg);
     map[r].version = match[1].trim();
   } catch {
