@@ -43,4 +43,24 @@ describe("Rule: classic_exceptions_overlap", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("CALL METHOD, old", async () => {
+    const abap = `
+    CALL METHOD foo
+      EXCEPTIONS
+        resource_failure = 1
+        OTHERS           = 1.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("CALL METHOD, functional", async () => {
+    const abap = `
+    foo(
+      EXCEPTIONS
+        resource_failure = 1
+        OTHERS           = 1 ).`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
 });
