@@ -107,7 +107,8 @@ dynamic SQL can potentially create SQL injection problems`,
         || statement instanceof Statements.InsertDatabase
         || statement instanceof Statements.ModifyDatabase
         || statement instanceof Statements.DeleteDatabase) {
-      if (statementNode.findFirstExpression(Expressions.Dynamic)) {
+      const dyn = statementNode.findFirstExpression(Expressions.Dynamic);
+      if (dyn && dyn.findDirectExpression(Expressions.Constant) === undefined) {
         return "Dynamic SQL";
       }
     }

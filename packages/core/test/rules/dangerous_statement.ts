@@ -15,6 +15,8 @@ const tests = [
   {abap: "SELECT * FROM /dmo/flight WHERE foo = bar INTO table @DATA(results).", cnt: 0},
   {abap: "SELECT * FROM (dbTable) INTO TABLE @<results> UP TO 100 ROWS.", cnt: 1},
   {abap: "SELECT * FROM tab INTO TABLE @<results> UP TO 100 ROWS.", cnt: 0},
+// this is hardcoded dynamic, so no SQL injection possible, at all,
+  {abap: "SELECT * FROM ssyntaxstructure INTO TABLE @DATA(gt_syntax) WHERE (`proglang IS NULL`).", cnt: 0},
 ];
 
 testRule(tests, DangerousStatement);
