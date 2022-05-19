@@ -775,6 +775,9 @@
           "description": "Detects execSQL (dynamic SQL)",
           "type": "boolean"
         },
+        "exportDynpro": {
+          "type": "boolean"
+        },
         "generateDynpro": {
           "type": "boolean"
         },
@@ -782,9 +785,6 @@
           "type": "boolean"
         },
         "generateSubroutine": {
-          "type": "boolean"
-        },
-        "importDynpro": {
           "type": "boolean"
         },
         "insertReport": {
@@ -815,7 +815,7 @@
         "deleteReport",
         "deleteTextpool",
         "deleteDynpro",
-        "importDynpro",
+        "exportDynpro",
         "dynamicSQL"
       ],
       "type": "object"

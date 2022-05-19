@@ -9,8 +9,8 @@ const tests = [
   {abap: " 'stsdf'", type: Tokens.String},
   {abap: "|bar|", type: Tokens.StringTemplate},
   {abap: "|bar{", type: Tokens.StringTemplateBegin},
-  {abap: "}bar|", type: Tokens.StringTemplateEnd},
-  {abap: "}bar{", type: Tokens.StringTemplateMiddle},
+  {abap: " }bar|", type: Tokens.StringTemplateEnd},
+  {abap: " }bar{ ", type: Tokens.StringTemplateMiddle},
   {abap: "##ASDF", type: Tokens.Pragma},
   {abap: "#foo", type: Tokens.Identifier},
 ];
