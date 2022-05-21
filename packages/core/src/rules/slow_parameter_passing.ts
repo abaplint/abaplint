@@ -22,7 +22,7 @@ export class SlowParameterPassing implements IRule {
     return {
       key: "slow_parameter_passing",
       title: "Slow Parameter Passing",
-      shortDescription: `Detects show pass by value passing for methods where parameter is not changed`,
+      shortDescription: `Detects slow pass by value passing for methods where parameter is not changed`,
       tags: [RuleTag.Performance],
     };
   }
