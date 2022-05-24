@@ -40,6 +40,7 @@ export class Table extends AbstractObject {
       DECIMALS?: string,
       KEYFLAG?: string,
       GROUPNAME?: string,
+      REFTYPE?: string,
     }[]} | undefined;
 
   public getType(): string {
@@ -164,6 +165,24 @@ export class Table extends AbstractObject {
           components.push({
             name: field.FIELDNAME,
             type: new GenericObjectReferenceType()});
+        } else if (field.REFTYPE === "S") {
+          const lookup = ddic.lookupTableOrView(field.ROLLNAME);
+          components.push({name: field.FIELDNAME, type: new DataReference(lookup.type)});
+          if (lookup.object) {
+            references.push({object: lookup.object});
+          }
+        } else if (field.REFTYPE === "L") {
+          const lookup = ddic.lookupTableType(field.ROLLNAME);
+          components.push({name: field.FIELDNAME, type: new DataReference(lookup.type)});
+          if (lookup.object) {
+            references.push({object: lookup.object});
+          }
+        } else if (field.REFTYPE === "E") {
+          const lookup = ddic.lookupDataElement(field.ROLLNAME);
+          components.push({name: field.FIELDNAME, type: new DataReference(lookup.type)});
+          if (lookup.object) {
+            references.push({object: lookup.object});
+          }
         } else {
           const lookup = ddic.lookupObject(field.ROLLNAME);
           components.push({name: field.FIELDNAME, type: lookup.type});
@@ -257,6 +276,7 @@ export class Table extends AbstractObject {
         DECIMALS: field.DECIMALS,
         KEYFLAG: field.KEYFLAG,
         GROUPNAME: field.GROUPNAME,
+        REFTYPE: field.REFTYPE,
       });
     }
   }
