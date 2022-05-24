@@ -2642,7 +2642,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects show pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
+              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
             "space_before_colon": {
               "anyOf": [

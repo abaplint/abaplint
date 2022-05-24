@@ -12,6 +12,7 @@ const tests = [
   "METHOD blah BY DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY USING zfoo zbar.",
   "METHOD sdfs BY DATABASE GRAPH WORKSPACE FOR HDB LANGUAGE SQL USING zsdfsd zsdf.",
   "METHOD sdfd BY DATABASE PROCEDURE FOR HDB LANGUAGE GRAPH OPTIONS READ-ONLY USING zcl_bar=>bar.",
+  "METHOD /ui2/bar.",
 ];
 
 statementType(tests, "METHOD", Statements.MethodImplementation);
