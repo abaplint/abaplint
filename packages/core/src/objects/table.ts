@@ -167,13 +167,13 @@ export class Table extends AbstractObject {
             type: new GenericObjectReferenceType()});
         } else if (field.REFTYPE === "S") {
           const lookup = ddic.lookupTableOrView(field.ROLLNAME);
-          components.push({name: field.FIELDNAME, type: lookup.type});
+          components.push({name: field.FIELDNAME, type: new DataReference(lookup.type)});
           if (lookup.object) {
             references.push({object: lookup.object});
           }
         } else if (field.REFTYPE === "L") {
           const lookup = ddic.lookupTableType(field.ROLLNAME);
-          components.push({name: field.FIELDNAME, type: lookup.type});
+          components.push({name: field.FIELDNAME, type: new DataReference(lookup.type)});
           if (lookup.object) {
             references.push({object: lookup.object});
           }
