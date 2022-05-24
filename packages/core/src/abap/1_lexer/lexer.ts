@@ -91,6 +91,14 @@ class Stream {
   public nextNextChar(): string {
     return this.raw.substr(this.offset + 1, 2);
   }
+
+  public getRaw(): string {
+    return this.raw;
+  }
+
+  public getOffset() {
+    return this.offset;
+  }
 }
 
 export class Lexer {
@@ -117,10 +125,7 @@ export class Lexer {
       const row = this.stream.getRow();
 
       let whiteBefore = false;
-      let prev = this.stream.prevChar();
-      if (s.length === 2) {
-        prev = this.stream.prevPrevChar().substr(0, 1);
-      }
+      const prev = this.stream.getRaw().substr(this.stream.getOffset() - s.length, 1);
       if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
         whiteBefore = true;
       }
@@ -146,11 +151,11 @@ export class Lexer {
         const last = s.charAt(s.length - 1);
         if (first === "|" && last === "|") {
           tok = new Tokens.StringTemplate(pos, s);
-        } else if (first === "|" && last === "{") {
+        } else if (first === "|" && last === "{" && whiteAfter === true) {
           tok = new Tokens.StringTemplateBegin(pos, s);
-        } else if (first === "}" && last === "|") {
+        } else if (first === "}" && last === "|" && whiteBefore === true) {
           tok = new Tokens.StringTemplateEnd(pos, s);
-        } else if (first === "}" && last === "{") {
+        } else if (first === "}" && last === "{" && whiteAfter === true && whiteBefore === true) {
           tok = new Tokens.StringTemplateMiddle(pos, s);
         } else {
           tok = new Tokens.Identifier(pos, s);

@@ -28,9 +28,9 @@
     "license": "MIT",
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.24.0",
-        "@typescript-eslint/parser": "^5.24.0",
-        "eslint": "^8.15.0",
+        "@typescript-eslint/eslint-plugin": "^5.26.0",
+        "@typescript-eslint/parser": "^5.26.0",
+        "eslint": "^8.16.0",
         "eslint-plugin-import": "^2.26.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "typescript": "^4.6.4",

@@ -3,7 +3,7 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodParamName extends Expression {
   public getRunnable(): IStatementRunnable {
-    const field = reg(/^!?(\/\w+\/)?\w+$/);
+    const field = reg(/^!?\w*(\/\w+\/)?\w+$/);
     return field;
   }
 }

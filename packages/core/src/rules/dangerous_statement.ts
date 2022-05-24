@@ -22,7 +22,7 @@ export class DangerousStatementConf extends BasicRuleConfig {
   public deleteReport: boolean = true;
   public deleteTextpool: boolean = true;
   public deleteDynpro: boolean = true;
-  public importDynpro: boolean = true;
+  public exportDynpro: boolean = true;
   /** Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY */
   public dynamicSQL: boolean = true;
 }
@@ -80,8 +80,8 @@ dynamic SQL can potentially create SQL injection problems`,
         message = "DELETE TEXTPOOL";
       } else if (this.conf.deleteDynpro && statement instanceof Statements.DeleteDynpro) {
         message = "DELETE DYNPRO";
-      } else if (this.conf.importDynpro && statement instanceof Statements.ImportDynpro) {
-        message = "IMPORT DYNPRO";
+      } else if (this.conf.exportDynpro && statement instanceof Statements.ExportDynpro) {
+        message = "EXPORT DYNPRO";
       }
 
       if (message) {
@@ -107,7 +107,8 @@ dynamic SQL can potentially create SQL injection problems`,
         || statement instanceof Statements.InsertDatabase
         || statement instanceof Statements.ModifyDatabase
         || statement instanceof Statements.DeleteDatabase) {
-      if (statementNode.findFirstExpression(Expressions.Dynamic)) {
+      const dyn = statementNode.findFirstExpression(Expressions.Dynamic);
+      if (dyn && dyn.findDirectExpression(Expressions.Constant) === undefined) {
         return "Dynamic SQL";
       }
     }

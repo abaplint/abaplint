@@ -34,6 +34,7 @@ const repos = [
   "open-abap/open-abap",
   "open-abap/open-table-maintenance",
   "SAP/abap-file-formats",
+  "SAP/abap-file-formats-tools",
   "SAP/code-pal-for-abap",
   "abap2xlsx/abap2xlsx",
   "sbcgua/abap-string-map",
@@ -70,7 +71,7 @@ for (let r of repos) {
 
   try {
     const raw = fs.readFileSync(configFile).toString();
-    const reg = new RegExp(/"version": "(\w+)"/);
+    const reg = new RegExp(/"version": "([\w-]+)"/);
     const match = raw.match(reg);
     map[r].version = match[1].trim();
   } catch {

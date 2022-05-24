@@ -90,6 +90,8 @@ const tests = [
     FOR DDL OBJECT
     OPTIONS CDS SESSION CLIENT REQUIRED.`,
   `CLASS-METHODS get_shortest_path AMDP OPTIONS CDS SESSION CLIENT current.`,
+  `METHODS /ui2/bar.`,
+  `METHODS /ui2/foo_bar RETURNING VALUE(ro_/ui2/moo) TYPE REF TO /ui2/boo.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
