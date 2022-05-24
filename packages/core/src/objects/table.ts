@@ -177,6 +177,12 @@ export class Table extends AbstractObject {
           if (lookup.object) {
             references.push({object: lookup.object});
           }
+        } else if (field.REFTYPE === "E") {
+          const lookup = ddic.lookupDataElement(field.ROLLNAME);
+          components.push({name: field.FIELDNAME, type: new DataReference(lookup.type)});
+          if (lookup.object) {
+            references.push({object: lookup.object});
+          }
         } else {
           const lookup = ddic.lookupObject(field.ROLLNAME);
           components.push({name: field.FIELDNAME, type: lookup.type});
