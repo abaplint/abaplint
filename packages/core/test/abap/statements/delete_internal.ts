@@ -1,4 +1,4 @@
-import {statementType} from "../_utils";
+import {statementExpectFail, statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -30,3 +30,8 @@ const tests = [
 ];
 
 statementType(tests, "DELETE", Statements.DeleteInternal);
+
+const fails = [
+  "DELETE TABLE mt_edges WHERE from = lv_vertex.",
+];
+statementExpectFail(fails, "DELETE");
