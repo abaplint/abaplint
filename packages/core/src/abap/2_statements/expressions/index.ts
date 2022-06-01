@@ -7,6 +7,7 @@ export * from "./arrow";
 export * from "./attribute_chain";
 export * from "./attribute_name";
 export * from "./block_name";
+export * from "./association_name";
 export * from "./call_transformation_options";
 export * from "./call_transformation_parameters";
 export * from "./cast";
