@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, ver, tok} from "../combi";
+import {seq, ver, tok, plus, optPrio} from "../combi";
 import {SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -11,9 +11,11 @@ export class ReadEntities implements IStatement {
     const s = seq("READ ENTITIES OF", SimpleName,
                   "IN LOCAL MODE",
                   "ENTITY", SimpleName,
-                  "FIELDS", tok(WParenLeftW), SimpleName, tok(WParenRightW),
+                  "FIELDS", tok(WParenLeftW), plus(SimpleName), tok(WParenRightW),
                   "WITH", Source,
-                  "RESULT", Target);
+                  "RESULT", Target,
+                  optPrio(seq("FAILED", Target)),
+                  optPrio(seq("REPORTED", Target)));
     return ver(Version.v754, s);
   }
 
