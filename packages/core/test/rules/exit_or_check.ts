@@ -5,6 +5,14 @@ const tests = [
   {abap: `LOOP AT lt_usr02 INTO ls_usr02.
             EXIT.
           ENDLOOP.`, cnt: 0},
+  {abap: `loop at screen.
+          if screen-name = 'P_USNAM'.
+            p_usnam = sy-uname.
+            screen-input = '0'.
+            modify screen.
+            exit.
+          endif.
+        endloop.`, cnt: 0},
   {abap: "EXIT.", cnt: 1, fix: true},
   {abap: "CHECK foo = bar.", cnt: 1, fix: true},
   {abap: `SELECT kunnr INTO lv_kunnr FROM kna1.

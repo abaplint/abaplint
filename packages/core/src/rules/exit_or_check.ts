@@ -46,6 +46,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-re
       const get = statement.get();
       if (get instanceof Statements.Loop
           || get instanceof Statements.While
+          || get instanceof Statements.LoopAtScreen
           || get instanceof Statements.SelectLoop
           || get instanceof Statements.Do) {
         stack.push(statement);
