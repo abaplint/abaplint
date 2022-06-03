@@ -6,6 +6,10 @@ const tests = [
   RESPONSE OF zi_foobar
   FAILED     DATA(failed_commit)
   REPORTED   DATA(reported_commit).`,
+
+  `COMMIT ENTITIES IN SIMULATION MODE.`,
+
+  `COMMIT ENTITIES.`,
 ];
 
 statementType(tests, "COMMIT ENTITIES", Statements.CommitEntities);

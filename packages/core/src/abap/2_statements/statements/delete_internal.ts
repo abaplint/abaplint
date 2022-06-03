@@ -21,8 +21,11 @@ export class DeleteInternal implements IStatement {
                     opt(seq(keyName, "COMPONENTS")),
                     plus(ComponentCompare));
 
-    const table = seq(opt("TABLE"),
+    const table = seq("TABLE",
                       Target,
+                      alt(per(index, using), fromTo, key));
+
+    const other = seq(Target,
                       alt(per(index, using), fromTo, key), opt(where));
 
     const f = seq(FieldSub, optPrio(FieldOffset), optPrio(FieldLength));
@@ -33,7 +36,7 @@ export class DeleteInternal implements IStatement {
                          opt(seq("COMPARING", altPrio("ALL FIELDS", plus(altPrio(f, Dynamic))))),
                          optPrio(using));
 
-    return seq("DELETE", alt(table, adjacent));
+    return seq("DELETE", alt(table, adjacent, other));
   }
 
 }

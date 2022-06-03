@@ -297,5 +297,7 @@ export * from "./delete_memory";
 export * from "./provide";
 export * from "./endexec";
 export * from "./sort_dataset";
+export * from "./get_permissions";
+export * from "./set_locks";
 export * from "./enhancement";
 export * from "./end_enhancement";

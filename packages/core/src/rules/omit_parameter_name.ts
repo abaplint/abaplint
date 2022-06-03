@@ -10,7 +10,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types/method_definition";
-import {EditHelper, IEdit} from "../edit_helper";
+import {EditHelper} from "../edit_helper";
 
 export class OmitParameterNameConf extends BasicRuleConfig {
 }
@@ -92,12 +92,13 @@ EXPORTING must already be omitted for this rule to take effect, https://rules.ab
 
         if (p?.getStr().toUpperCase() === i.toUpperCase()) {
           const message = "Omit default parameter name \"" + i + "\"";
-          let fix: IEdit | undefined = undefined;
           const end = parameters[0].findDirectExpression(Expressions.Source)?.getFirstToken().getStart();
           if (end) {
-            fix = EditHelper.deleteRange(file, p.getStart(), end);
+            const fix = EditHelper.deleteRange(file, p.getStart(), end);
+            issues.push(Issue.atRange(file, p.getStart(), end, message, this.getMetadata().key, this.getConfig().severity, fix));
+          } else {
+            issues.push(Issue.atToken(file, name.getFirstToken(), message, this.getMetadata().key, this.getConfig().severity));
           }
-          issues.push(Issue.atToken(file, name.getFirstToken(), message, this.getMetadata().key, this.getConfig().severity, fix));
         }
       }
     }

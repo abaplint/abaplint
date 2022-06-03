@@ -6,6 +6,23 @@ const tests = [
     ENTITY ent
     FIELDS ( field ) WITH CORRESPONDING #( keys )
     RESULT DATA(res).`,
+
+  `READ ENTITIES OF sdf IN LOCAL MODE
+    ENTITY reqe
+      FIELDS ( foo bar )
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(res)
+    FAILED DATA(failed)
+    REPORTED DATA(reported).`,
+
+  `READ ENTITIES OF sdf IN LOCAL MODE
+      ENTITY ent BY \\_acc
+        FIELDS ( field )
+        WITH CORRESPONDING #( keys )
+    RESULT DATA(tr)
+    LINK DATA(link)
+    FAILED DATA(failed)
+    REPORTED DATA(reported).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);

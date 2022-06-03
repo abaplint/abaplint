@@ -6440,6 +6440,17 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("numeric field name, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ret__test,
+         200 TYPE string,
+       END OF ret__test.
+DATA ret TYPE ret__test.
+WRITE ret-200.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.
