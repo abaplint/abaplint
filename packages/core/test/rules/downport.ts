@@ -2824,6 +2824,18 @@ INSERT temp1 INTO TABLE result.`;
     testFix(abap, expected);
   });
 
+  it.only("predicate function, matches()", async () => {
+    const abap = `
+  IF matches( val = 'foo' regex = 'foo' ).
+    WRITE / 'yes'.
+  ENDIF.`;
+    const expected = `
+  IF boolc( matches( val = 'foo' regex = 'foo' ) ) = abap_true.
+    WRITE / 'yes'.
+  ENDIF.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
