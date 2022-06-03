@@ -1035,6 +1035,20 @@ export class BuiltIn {
     return this.buildDefinition(BuiltIn.methods[index], index);
   }
 
+  public isPredicate(name: string | undefined): boolean | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
+    // todo, optimize, use hash map
+    const index = BuiltIn.methods.findIndex(a => a.name === name.toUpperCase());
+    if (index < 0) {
+      return undefined;
+    }
+
+    return BuiltIn.methods[index].predicate;
+  }
+
   public getTypes(): TypedIdentifier[] {
     const ret: TypedIdentifier[] = this.buildSY();
 

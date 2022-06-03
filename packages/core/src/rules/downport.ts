@@ -25,6 +25,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
+import { BuiltIn } from "../abap/5_syntax/_builtin";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
@@ -1825,9 +1826,10 @@ ${indentation}    output = ${topTarget}.`;
       let predicate = false;
       const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
       for (const r of spag?.getData().references || []) {
-        if (r.referenceType === ReferenceType.BuiltinMethodReference) {
+        if (r.referenceType === ReferenceType.BuiltinMethodReference &&
+              new BuiltIn().isPredicate(chain.getFirstToken().getStr().toUpperCase())) {
           predicate = true;
-          continue;
+          break;
         }
       }
 
