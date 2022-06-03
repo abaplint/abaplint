@@ -2824,7 +2824,7 @@ INSERT temp1 INTO TABLE result.`;
     testFix(abap, expected);
   });
 
-  it.only("predicate function, matches()", async () => {
+  it("predicate function, matches()", async () => {
     const abap = `
   IF matches( val = 'foo' regex = 'foo' ).
     WRITE / 'yes'.
