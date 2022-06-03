@@ -25,7 +25,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
-import { BuiltIn } from "../abap/5_syntax/_builtin";
+import {BuiltIn} from "../abap/5_syntax/_builtin";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
