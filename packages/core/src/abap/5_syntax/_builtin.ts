@@ -16,6 +16,7 @@ interface IBuiltinMethod {
   mandatory?: {[key: string]: AbstractType},
   optional?: {[key: string]: AbstractType},
   version?: Version,
+  predicate?: boolean,
   return: AbstractType;
 }
 
@@ -290,6 +291,7 @@ export class BuiltIn {
         "occ": new IntegerType(),
       },
       return: new CharacterType(1),
+      predicate: true,
       version: Version.v702,
     },
 
@@ -306,6 +308,7 @@ export class BuiltIn {
         "len": new IntegerType(),
         "occ": new IntegerType(),
       },
+      predicate: true,
       return: new CharacterType(1), version: Version.v702,
     },
 
@@ -323,6 +326,7 @@ export class BuiltIn {
         "occ": new IntegerType(),
       },
       return: new CharacterType(1),
+      predicate: true,
       version: Version.v702,
     },
 
@@ -552,6 +556,7 @@ export class BuiltIn {
         "val": new AnyType(),
       },
       return: new CharacterType(1),
+      predicate: true,
       version: Version.v740sp02,
     },
 
@@ -615,6 +620,7 @@ export class BuiltIn {
         "len": new IntegerType(),
       },
       return: new CharacterType(1),
+      predicate: true,
       version: Version.v702,
     },
 
@@ -1027,6 +1033,20 @@ export class BuiltIn {
     }
 
     return this.buildDefinition(BuiltIn.methods[index], index);
+  }
+
+  public isPredicate(name: string | undefined): boolean | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
+    // todo, optimize, use hash map
+    const index = BuiltIn.methods.findIndex(a => a.name === name.toUpperCase());
+    if (index < 0) {
+      return undefined;
+    }
+
+    return BuiltIn.methods[index].predicate;
   }
 
   public getTypes(): TypedIdentifier[] {

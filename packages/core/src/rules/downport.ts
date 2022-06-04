@@ -25,6 +25,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {WAt} from "../abap/1_lexer/tokens";
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
+import {BuiltIn} from "../abap/5_syntax/_builtin";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
@@ -1815,15 +1816,30 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private replaceMethodConditional(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private replaceMethodConditional(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     for (const c of node.findAllExpressionsRecursive(Expressions.Compare)) {
       const chain = c.findDirectExpression(Expressions.MethodCallChain);
       if (chain === undefined) {
         continue;
       }
 
+      let predicate = false;
+      const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
+      for (const r of spag?.getData().references || []) {
+        if (r.referenceType === ReferenceType.BuiltinMethodReference &&
+              new BuiltIn().isPredicate(chain.getFirstToken().getStr().toUpperCase())) {
+          predicate = true;
+          break;
+        }
+      }
+
       const end = chain.getLastToken().getEnd();
-      const fix = EditHelper.insertAt(lowFile, end, " IS NOT INITIAL");
+      let fix = EditHelper.insertAt(lowFile, end, " IS NOT INITIAL");
+      if (predicate === true) {
+        fix = EditHelper.insertAt(lowFile, end, " ) = abap_true");
+        const fix1 = EditHelper.insertAt(lowFile, chain.getFirstToken().getStart(), "boolc( ");
+        fix = EditHelper.merge(fix, fix1);
+      }
       return Issue.atToken(lowFile, chain.getFirstToken(), "Downport method conditional", this.getMetadata().key, this.conf.severity, fix);
     }
 
