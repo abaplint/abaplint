@@ -2836,6 +2836,25 @@ INSERT temp1 INTO TABLE result.`;
     testFix(abap, expected);
   });
 
+  it("superflous VALUE #", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         msgno TYPE i,
+       END OF ty.
+DATA message_table TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA(message_entry) = VALUE #( message_table[ msgno = 124 ] ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         msgno TYPE i,
+       END OF ty.
+DATA message_table TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA temp1 TYPE ty.
+CLEAR temp1.
+temp1 = message_table[ msgno = 124 ].
+DATA(message_entry) = temp1.`;
+    testFix(abap, expected);
+  });
+
   it.skip("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

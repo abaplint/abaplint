@@ -1413,14 +1413,7 @@ ${indentation}    output = ${topTarget}.`;
         body += indentation + uniqueName + " = " + base.concatTokens() + ".\n";
       }
       let end = "";
-/*
-      for (const forLoop of valueBody?.findDirectExpressions(Expressions.For) || []) {
-        const outlineFor = this.outlineFor(forLoop, indentation, lowFile, highSyntax);
-        body += outlineFor.body;
-        end = outlineFor.end + `.\n` + end;
-        indentation += "  ";
-      }
-*/
+
       let structureName = uniqueName;
       let added = false;
       let skip = false;
@@ -1443,6 +1436,9 @@ ${indentation}    output = ${topTarget}.`;
           end = outlineFor.end + `.\n` + end;
           indentation += "  ";
         } else if (b.get() instanceof Expressions.Source) {
+          if (valueBody?.getChildren().length === 1) {
+            body += indentation + uniqueName + " = " + b.concatTokens() + `.\n`;
+          }
           structureName = b.concatTokens();
           if (base && valueBody?.findDirectTokenByText("(") === undefined) {
             structureName = uniqueName;
