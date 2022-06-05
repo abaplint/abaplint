@@ -41,6 +41,13 @@ ENDTRY.`, cnt: 0},
   {abap: `MESSAGE w125(zbar) WITH c_foo INTO message ##NO_TEXT.`, cnt: 1},
   {abap: `MESSAGE w125(zbar) WITH c_foo INTO message.`, cnt: 0},
   {abap: `MESSAGE w125(zbar) WITH c_foo INTO message ##NEEDED ##NO_TEXT.`, cnt: 2},
+
+  {abap: `SELECT SINGLE * FROM tadir INTO @DATA(sdfs) ##SUBRC_OK.
+IF sy-subrc <> 0.
+ENDIF.`, cnt: 1},
+  {abap: `SELECT SINGLE * FROM tadir INTO @DATA(sdfs).
+IF sy-subrc <> 0.
+ENDIF.`, cnt: 0},
 ];
 
 testRule(tests, UnnecessaryPragma);

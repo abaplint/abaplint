@@ -23,20 +23,28 @@ export class UnnecessaryPragma extends ABAPRule {
 
 * NEEDED without definition
 
-* NO_TEXT without texts`,
+* NO_TEXT without texts
+
+* SUBRC_OK where sy-subrc is checked`,
       tags: [RuleTag.SingleFile],
       badExample: `TRY.
     ...
   CATCH zcx_abapgit_exception ##NO_HANDLER.
     RETURN. " it has a handler
 ENDTRY.
-MESSAGE w125(zbar) WITH c_foo INTO message ##NEEDED ##NO_TEXT.`,
+MESSAGE w125(zbar) WITH c_foo INTO message ##NEEDED ##NO_TEXT.
+SELECT SINGLE * FROM tadir INTO @DATA(sdfs) ##SUBRC_OK.
+IF sy-subrc <> 0.
+ENDIF.`,
       goodExample: `TRY.
     ...
   CATCH zcx_abapgit_exception.
     RETURN.
 ENDTRY.
-MESSAGE w125(zbar) WITH c_foo INTO message.`,
+MESSAGE w125(zbar) WITH c_foo INTO message.
+SELECT SINGLE * FROM tadir INTO @DATA(sdfs).
+IF sy-subrc <> 0.
+ENDIF.`,
     };
   }
 
@@ -55,6 +63,7 @@ MESSAGE w125(zbar) WITH c_foo INTO message.`,
     const statements = file.getStatements();
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
+      const nextStatement = statements[i + 1];
 
       if (statement.get() instanceof Statements.EndTry) {
         noHandler = false;
@@ -71,6 +80,7 @@ MESSAGE w125(zbar) WITH c_foo INTO message.`,
 
       issues.push(...this.checkText(statement, file));
       issues.push(...this.checkNeeded(statement, file));
+      issues.push(...this.checkSubrc(statement, nextStatement, file));
     }
 
     return issues;
@@ -85,6 +95,21 @@ MESSAGE w125(zbar) WITH c_foo INTO message.`,
     if (statement.findFirstExpression(Expressions.ConstantString) === undefined
         && statement.findFirstExpression(Expressions.StringTemplate) === undefined) {
       const message = "There is no text, NO_TEXT can be removed";
+      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity)];
+    }
+
+    return [];
+  }
+
+  private checkSubrc(statement: StatementNode, next: StatementNode, file: ABAPFile): Issue[] {
+    const p = statement.getPragmas().find(t => t.getStr().toUpperCase() === "##SUBRC_OK");
+    if (p === undefined) {
+      return [];
+    }
+
+    const concat = next.concatTokens().toUpperCase();
+    if (concat.includes(" SY-SUBRC")) {
+      const message = "SUBRC_OK can be removed as sy-subrc is checked";
       return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity)];
     }
 
