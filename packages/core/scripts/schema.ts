@@ -124,6 +124,7 @@ import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables
 import {StartAtTabConf} from "../src/rules/start_at_tab";
 import {StaticCallViaInstanceConf} from "../src/rules/static_call_via_instance";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
+import {SuperfluousValueConf} from "../src/rules/superfluous_value";
 import {SyModificationConf} from "../src/rules/sy_modification";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
@@ -284,6 +285,7 @@ export interface IConfig {
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
+    "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
