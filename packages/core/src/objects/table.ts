@@ -40,6 +40,7 @@ export class Table extends AbstractObject {
       DECIMALS?: string,
       KEYFLAG?: string,
       GROUPNAME?: string,
+      CHECKTABLE?: string,
       REFTYPE?: string,
     }[]} | undefined;
 
@@ -210,6 +211,13 @@ export class Table extends AbstractObject {
           name: field.FIELDNAME,
           type: new Types.UnknownType("Table " + this.getName() + ", unknown component type \"" + comptype + "\"")});
       }
+
+      if (field.CHECKTABLE) {
+        const lookup = ddic.lookupTableOrView(field.CHECKTABLE);
+        if (lookup.object) {
+          references.push({object: lookup.object});
+        }
+      }
     }
 
     if (components.length === 0) {
@@ -276,6 +284,7 @@ export class Table extends AbstractObject {
         DECIMALS: field.DECIMALS,
         KEYFLAG: field.KEYFLAG,
         GROUPNAME: field.GROUPNAME,
+        CHECKTABLE: field.CHECKTABLE,
         REFTYPE: field.REFTYPE,
       });
     }

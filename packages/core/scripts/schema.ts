@@ -10,6 +10,7 @@ import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
+import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
@@ -124,6 +125,7 @@ import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables
 import {StartAtTabConf} from "../src/rules/start_at_tab";
 import {StaticCallViaInstanceConf} from "../src/rules/static_call_via_instance";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
+import {SuperfluousValueConf} from "../src/rules/superfluous_value";
 import {SyModificationConf} from "../src/rules/sy_modification";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
@@ -170,6 +172,7 @@ export interface IConfig {
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
@@ -284,6 +287,7 @@ export interface IConfig {
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
+    "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,

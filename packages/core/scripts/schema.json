@@ -188,6 +188,23 @@
       },
       "type": "object"
     },
+    "CDSLegacyViewConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSParserErrorConf": {
       "additionalProperties": false,
       "properties": {
@@ -1456,6 +1473,17 @@
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
+            "cds_legacy_view": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSLegacyViewConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Identify CDS Legacy Views\nTags: SingleFile\nhttps://rules.abaplint.org/cds_legacy_view"
+            },
             "cds_parser_error": {
               "anyOf": [
                 {
@@ -1465,7 +1493,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "CDS parsing, experimental\nTags: Syntax, Experimental\nhttps://rules.abaplint.org/cds_parser_error"
+              "description": "CDS parsing, experimental\nTags: Syntax\nhttps://rules.abaplint.org/cds_parser_error"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -2709,6 +2737,17 @@
                 }
               ],
               "description": "Checks that classes which are inherited from are not declared as FINAL.\nTags: Syntax\nhttps://rules.abaplint.org/superclass_final"
+            },
+            "superfluous_value": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuperfluousValueConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
             },
             "sy_modification": {
               "anyOf": [
@@ -5080,6 +5119,23 @@
       "type": "object"
     },
     "SuperclassFinalConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SuperfluousValueConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

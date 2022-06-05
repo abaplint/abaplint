@@ -17,7 +17,7 @@ export class CDSParserError implements IRule {
       title: "CDS Parser Error",
       shortDescription: `CDS parsing, experimental`,
       extendedInformation: ``,
-      tags: [RuleTag.Syntax, RuleTag.Experimental],
+      tags: [RuleTag.Syntax],
     };
   }
 
@@ -40,7 +40,7 @@ export class CDSParserError implements IRule {
       const hasError = o.hasParserError();
       const file = o.findSourceFile();
       if (hasError === true && file) {
-        issues.push(Issue.atRow(file, 1, "CDS Parser error", this.getMetadata().key));
+        issues.push(Issue.atRow(file, 1, "CDS Parser error", this.getMetadata().key, this.getConfig().severity));
       }
     }
 

@@ -4,6 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {IFile} from "../../src";
 import {UnusedDDIC} from "../../src/rules";
 
+/** returns results for the first file only */
 async function run(files: IFile[]){
   const reg = new Registry().addFiles(files);
   await reg.parseAsync();
@@ -396,6 +397,153 @@ EXPORT foo = <bar>
     const files = [
       new MemoryFile(`ztabl.tabl.xml`, tabl),
       new MemoryFile(`zprogabc.prog.abap`, abap),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ZLINT_TEST2 references ZLINT_TEST1 via foreign key", async () => {
+    const zlint_test1 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZLINT_TEST1</TABNAME>
+    <TABCLASS>TRANSP</TABCLASS>
+    <CLIDEP>X</CLIDEP>
+    <MASTERLANG>E</MASTERLANG>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZLINT_TEST1</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>CLIENT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000006</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CLNT</DATATYPE>
+     <LENG>000003</LENG>
+     <MASK>  CLNT</MASK>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>BUKRS</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>BUKRS</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <SHLPORIGIN>D</SHLPORIGIN>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+   <I18N_LANGS>
+    <LANGU>E</LANGU>
+   </I18N_LANGS>
+   <DD02_TEXTS>
+    <item>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>AbapLint test table 1</DDTEXT>
+    </item>
+   </DD02_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const zlint_test2 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZLINT_TEST2</TABNAME>
+    <TABCLASS>TRANSP</TABCLASS>
+    <CLIDEP>X</CLIDEP>
+    <MASTERLANG>E</MASTERLANG>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZLINT_TEST2</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>CLIENT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000006</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CLNT</DATATYPE>
+     <LENG>000003</LENG>
+     <MASK>  CLNT</MASK>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>BUKRS</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>BUKRS</ROLLNAME>
+     <CHECKTABLE>ZLINT_TEST1</CHECKTABLE>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <SHLPORIGIN>P</SHLPORIGIN>
+     <SHLPNAME>C_T001</SHLPNAME>
+     <SHLPFIELD>BUKRS</SHLPFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+   <DD05M_TABLE>
+    <DD05M>
+     <FIELDNAME>BUKRS</FIELDNAME>
+     <FORTABLE>ZLINT_TEST2</FORTABLE>
+     <FORKEY>CLIENT</FORKEY>
+     <CHECKTABLE>ZLINT_TEST1</CHECKTABLE>
+     <CHECKFIELD>CLIENT</CHECKFIELD>
+     <PRIMPOS>0001</PRIMPOS>
+     <DATATYPE>CLNT</DATATYPE>
+    </DD05M>
+    <DD05M>
+     <FIELDNAME>BUKRS</FIELDNAME>
+     <FORTABLE>ZLINT_TEST2</FORTABLE>
+     <FORKEY>BUKRS</FORKEY>
+     <CHECKTABLE>ZLINT_TEST1</CHECKTABLE>
+     <CHECKFIELD>BUKRS</CHECKFIELD>
+     <PRIMPOS>0002</PRIMPOS>
+     <DOMNAME>BUKRS</DOMNAME>
+     <DATATYPE>CHAR</DATATYPE>
+    </DD05M>
+   </DD05M_TABLE>
+   <DD08V_TABLE>
+    <DD08V>
+     <FIELDNAME>BUKRS</FIELDNAME>
+     <CHECKTABLE>ZLINT_TEST1</CHECKTABLE>
+     <CHECKFLAG>X</CHECKFLAG>
+    </DD08V>
+   </DD08V_TABLE>
+   <I18N_LANGS>
+    <LANGU>E</LANGU>
+   </I18N_LANGS>
+   <DD02_TEXTS>
+    <item>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>AbapLint test table 2</DDTEXT>
+    </item>
+   </DD02_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const files = [
+      new MemoryFile(`zlint_test1.tabl.xml`, zlint_test1),
+      new MemoryFile(`zlint_test2.tabl.xml`, zlint_test2),
     ];
     const issues = await run(files);
     expect(issues[0]?.getMessage()).to.equal(undefined);
