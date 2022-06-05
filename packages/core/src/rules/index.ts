@@ -20,6 +20,7 @@ export * from "./check_syntax";
 export * from "./classic_exceptions_overlap";
 export * from "./check_text_elements";
 export * from "./check_transformation_exists";
+export * from "./superfluous_value";
 export * from "./class_attribute_names";
 export * from "./cloud_types";
 export * from "./colon_missing_space";
