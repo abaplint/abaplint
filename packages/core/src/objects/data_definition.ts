@@ -107,6 +107,10 @@ export class DataDefinition extends AbstractObject {
     return {updated: true, runtime: Date.now() - start};
   }
 
+  public getTree() {
+    return this.parsedData?.tree;
+  }
+
 //////////
 
   private findSQLViewName(): void {
