@@ -6451,6 +6451,31 @@ WRITE ret-200.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CHANGING type simple vs structure", () => {
+    const abap = `
+CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS test
+      CHANGING
+        cg_data TYPE simple.
+ENDCLASS.
+CLASS lcl_test IMPLEMENTATION.
+  METHOD test.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA:
+    BEGIN OF gs_data,
+      key TYPE c LENGTH 1,
+      val TYPE c LENGTH 10,
+    END OF gs_data.
+  lcl_test=>test( CHANGING cg_data = gs_data ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("Error, insert, types incompatible", () => {
     const abap = `
   DATA str TYPE string.
