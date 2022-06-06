@@ -250,6 +250,7 @@ export class DDIC {
     return this.lookupView(name);
   }
 
+  /** this method only looks up the object, does not parse the type */
   public lookupTableOrView2(name: string | undefined): Table | DataDefinition | View | undefined {
     if (name === undefined) {
       return undefined;
