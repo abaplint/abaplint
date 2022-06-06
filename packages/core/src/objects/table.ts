@@ -213,9 +213,9 @@ export class Table extends AbstractObject {
       }
 
       if (field.CHECKTABLE) {
-        const lookup = ddic.lookupTableOrView(field.CHECKTABLE);
-        if (lookup.object) {
-          references.push({object: lookup.object});
+        const lookup = ddic.lookupTableOrView2(field.CHECKTABLE);
+        if (lookup) {
+          references.push({object: lookup});
         }
       }
     }
