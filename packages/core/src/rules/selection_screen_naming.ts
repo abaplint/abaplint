@@ -4,7 +4,7 @@ import {NamingRuleConfig} from "./_naming_rule_config";
 import {Parameter, SelectOption, SelectionScreen} from "../abap/2_statements/statements";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {NameValidator} from "../utils/name_validator";
-import {FieldSub,InlineField} from "../abap/2_statements/expressions";
+import {FieldSub, InlineField} from "../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
