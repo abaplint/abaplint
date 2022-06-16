@@ -38,6 +38,11 @@ export class SelectPerformance implements IRule {
 
 SELECT *: not reported if using INTO/APPENDING CORRESPONDING FIELDS OF`,
       tags: [RuleTag.SingleFile, RuleTag.Performance],
+      badExample: `SELECT field1, field2 FROM table
+    INTO @DATA(structure) UP TO 1 ROWS ORDER BY field3 DESCENDING.
+ENDSELECT.`,
+      goodExample: `SELECT field1, field2 FROM table UP TO 1 ROWS
+  INTO TABLE @DATA(table) ORDER BY field3 DESCENDING`,
     };
   }
 

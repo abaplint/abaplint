@@ -3069,10 +3069,7 @@
         }
       },
       "required": [
-        "files",
-        "skipGeneratedGatewayClasses",
-        "skipGeneratedPersistentClasses",
-        "skipGeneratedFunctionGroups"
+        "files"
       ],
       "type": "object"
     },
