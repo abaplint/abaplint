@@ -5,7 +5,7 @@ const childProcess = require("child_process");
 const repos = [
   "ABAP-Logger/ABAP-Logger",
   "abap-observability-tools/abap-metrics-provider",
-  "abap-openapi/abap-openapi-client",
+  "abap-openapi/abap-openapi",
   "abapGit/abapgit-review-example",
   "abapGit/abapGit",
   "abapGit/ADT_Backend",

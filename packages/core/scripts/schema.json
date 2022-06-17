@@ -3069,10 +3069,7 @@
         }
       },
       "required": [
-        "files",
-        "skipGeneratedGatewayClasses",
-        "skipGeneratedPersistentClasses",
-        "skipGeneratedFunctionGroups"
+        "files"
       ],
       "type": "object"
     },
@@ -4926,6 +4923,10 @@
           "$ref": "#/definitions/PatternKind",
           "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
         },
+        "screenElement": {
+          "description": "The pattern for selection-screen screen elements",
+          "type": "string"
+        },
         "selectOption": {
           "description": "The pattern for selection-screen select-options",
           "type": "string"
@@ -4937,7 +4938,8 @@
       },
       "required": [
         "parameter",
-        "selectOption"
+        "selectOption",
+        "screenElement"
       ],
       "type": "object"
     },
