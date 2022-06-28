@@ -242,7 +242,7 @@ OCCURENCES: check for OCCURENCES vs OCCURRENCES`,
 
       if (this.conf.withHeaderLine === true && sta instanceof Statements.Data) {
         if (staNode.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
-          const token = staNode.getFirstToken();
+          const token = staNode.getTokens().find(t => t.getStr().toUpperCase() === "WITH");
           if (token) {
             const issue = Issue.atToken(file, token, "WITH HEADER LINE is obsolete", this.getMetadata().key, this.conf.severity);
             issues.push(issue);
