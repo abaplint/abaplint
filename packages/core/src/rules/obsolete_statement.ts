@@ -64,6 +64,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public regex: boolean = true;
   /** Check for OCCURENCES vs OCCURRENCES usage */
   public occurences: boolean = true;
+  /** Check for CLIENT SPECIFIED */
+  public clientSpecified: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -116,7 +118,9 @@ CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.5
 
 POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.htm
 
-OCCURENCES: check for OCCURENCES vs OCCURRENCES`,
+OCCURENCES: check for OCCURENCES vs OCCURRENCES
+
+CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abapselect_client_obsolete.htm`,
     };
   }
 
@@ -302,6 +306,20 @@ OCCURENCES: check for OCCURENCES vs OCCURRENCES`,
         const concat = staNode.concatTokens().toUpperCase();
         if (concat.includes(" OCCURENCES ")) {
           const issue = Issue.atStatement(file, staNode, "Use \"OCCURRENCES\"", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+      }
+
+      if (configVersion >= Version.v754 && this.conf.clientSpecified
+          && (sta instanceof Statements.Select
+          || sta instanceof Statements.SelectLoop
+          || sta instanceof Statements.DeleteDatabase
+          || sta instanceof Statements.InsertDatabase
+          || sta instanceof Statements.ModifyDatabase
+          || sta instanceof Statements.UpdateDatabase)) {
+        const concat = staNode.concatTokens().toUpperCase();
+        if (concat.includes(" CLIENT SPECIFIED")) {
+          const issue = Issue.atStatement(file, staNode, "Use USING CLIENT", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }
