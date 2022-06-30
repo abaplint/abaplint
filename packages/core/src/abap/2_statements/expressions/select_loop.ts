@@ -1,5 +1,5 @@
 import {seq, per, alt, Expression, optPrio, altPrio} from "../combi";
-import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLForAllEntries} from ".";
+import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
 import {SQLHaving} from "./sql_having";
@@ -13,7 +13,6 @@ export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
     const where = seq("WHERE", SQLCond);
 
-    const client = "CLIENT SPECIFIED";
     const bypass = "BYPASSING BUFFER";
 
     const pack = seq("PACKAGE SIZE", SQLSource);
@@ -25,7 +24,7 @@ export class SelectLoop extends Expression {
                      SQLUpTo,
                      SQLOrderBy,
                      SQLHaving,
-                     client,
+                     SQLClient,
                      bypass,
                      SQLGroupBy,
                      SQLForAllEntries,
