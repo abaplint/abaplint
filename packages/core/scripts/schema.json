@@ -4289,6 +4289,10 @@
           "description": "Checks for CALL TRANSFORMATION OBJECTS",
           "type": "boolean"
         },
+        "clientSpecified": {
+          "description": "Check for CLIENT SPECIFIED",
+          "type": "boolean"
+        },
         "communication": {
           "description": "Checks for COMMUNICATION",
           "type": "boolean"
@@ -4418,7 +4422,8 @@
         "sortByFS",
         "callTransformation",
         "regex",
-        "occurences"
+        "occurences",
+        "clientSpecified"
       ],
       "type": "object"
     },

@@ -1,5 +1,5 @@
 import {seq, per, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
-import {SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints} from ".";
+import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
@@ -16,13 +16,12 @@ export class Select extends Expression {
 
     const offset = ver(Version.v751, seq("OFFSET", SQLSource));
 
-    const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");
 
     const fields = seq("FIELDS", SQLFieldList);
 
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
-                     SQLOrderBy, SQLUpTo, offset, client, SQLHaving,
+                     SQLOrderBy, SQLUpTo, offset, SQLClient, SQLHaving,
                      bypass, SQLGroupBy, fields, DatabaseConnection);
 
     const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
