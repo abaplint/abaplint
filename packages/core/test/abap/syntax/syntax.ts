@@ -6487,6 +6487,15 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain(`Incompatible`);
   });
 
+  it("MOVE-CORRESPONDING with internal tables not possible on 702", () => {
+    const abap = `
+DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+MOVE-CORRESPONDING tab1 TO tab2.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONSING with tables possible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
