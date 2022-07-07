@@ -33,5 +33,6 @@ statementType(tests, "DELETE", Statements.DeleteInternal);
 
 const fails = [
   "DELETE TABLE mt_edges WHERE from = lv_vertex.",
+  "DELETE TABLE ignore FROM lv_name to 10.",
 ];
 statementExpectFail(fails, "DELETE");

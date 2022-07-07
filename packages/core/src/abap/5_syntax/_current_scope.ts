@@ -60,6 +60,10 @@ export class CurrentScope {
 
 ///////////////////////////
 
+  public getVersion() {
+    return this.reg.getConfig().getVersion();
+  }
+
   public addType(type: TypedIdentifier | undefined) {
     if (type === undefined) {
       return;
