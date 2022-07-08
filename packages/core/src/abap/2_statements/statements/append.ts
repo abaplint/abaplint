@@ -11,15 +11,16 @@ export class Append implements IStatement {
     const reference = seq("REFERENCE INTO", Target);
     const sorted = seq("SORTED BY", Field);
 
-    const range = seq(optPrio(seq("FROM", Source)),
-                      optPrio(seq("TO", Source)));
+    const fromIndex = seq("FROM", Source);
+    const toIndex = seq("TO", Source);
+    const toTarget = seq("TO", Target);
 
     const src = alt(SimpleSource4, ver(Version.v740sp02, Source));
 
     return seq("APPEND",
                altPrio("INITIAL LINE", seq(optPrio("LINES OF"), src)),
-               opt(range),
-               optPrio(seq("TO", Target)),
+               optPrio(fromIndex),
+               opt(alt(seq(toIndex, toTarget), toTarget)),
                opt(altPrio(assigning, reference)),
                optPrio("CASTING"),
                optPrio(sorted));
