@@ -170,6 +170,9 @@ export class MethodParameters implements IMethodParameters {
       this.add(this.importing, importing, scope, [IdentifierMeta.MethodImporting]);
       if (importing.concatTokens().toUpperCase().includes(" PREFERRED PARAMETER")) {
         this.preferred = importing.getLastToken().getStr().toUpperCase();
+        if (this.preferred.startsWith("!")) {
+          this.preferred = this.preferred.substring(1);
+        }
       }
     }
 
