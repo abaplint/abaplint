@@ -117,6 +117,42 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("preferred parameter", async () => {
+    const abap = `
+INTERFACE zif_abaplint_code_inspector.
+  METHODS run
+    IMPORTING
+      in1 TYPE string optional
+      in2 type string optional
+      PREFERRED PARAMETER in1.
+endinterface.
+
+FORM bar.
+  DATA li_code_inspector TYPE REF TO zif_abaplint_code_inspector.
+  li_code_inspector->run( in1 = |sdf| ).
+ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("preferred parameter, escaped", async () => {
+    const abap = `
+INTERFACE zif_abaplint_code_inspector.
+  METHODS run
+    IMPORTING
+      in1 TYPE string optional
+      in2 type string optional
+      PREFERRED PARAMETER !in1.
+endinterface.
+
+FORM bar.
+  DATA li_code_inspector TYPE REF TO zif_abaplint_code_inspector.
+  li_code_inspector->run( in1 = |sdf| ).
+ENDFORM.`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
 });
 
 describe("Rule: omit_parameter_name, quick fixes", () => {
