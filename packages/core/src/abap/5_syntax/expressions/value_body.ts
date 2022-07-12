@@ -38,6 +38,10 @@ export class ValueBody {
       type = new Source().runSyntax(s, scope, filename);
     }
 
+    for (const s of node.findDirectExpression(Expressions.ValueBodyLines)?.findDirectExpressions(Expressions.Source) || []) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
     if (scoped === true) {
       scope.pop(node.getLastToken().getEnd());
     }
