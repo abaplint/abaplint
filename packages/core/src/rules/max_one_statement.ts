@@ -48,17 +48,26 @@ https://docs.abapopenchecks.org/checks/11/`,
     let prev: number = 0;
     let reported: number = 0;
     for (const statement of file.getStatements()) {
-      const term = statement.getTerminator();
       if (statement.get() instanceof Comment
-          || statement.get() instanceof NativeSQL
-          || term === ",") {
+          || statement.get() instanceof NativeSQL) {
         continue;
       }
 
-      const pos = statement.getStart();
+      let pos = statement.getStart();
       if (pos instanceof VirtualPosition) {
         continue;
       }
+
+      const colon = statement.getColon()?.getEnd();
+      if (colon) {
+        for (const t of statement.getTokens()) {
+          if (t.getStart().isAfter(colon)) {
+            pos = t.getStart();
+            break;
+          }
+        }
+      }
+
       const row = pos.getRow();
       if (prev === row && row !== reported && statement.getFirstToken().getStr() !== ".") {
         const fix = EditHelper.insertAt(file, pos, "\n");
