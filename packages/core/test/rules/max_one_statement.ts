@@ -4,7 +4,7 @@ import {testRule, testRuleFix} from "./_utils";
 const tests = [
   {abap: "WRITE 'hello'.  WRITE 'world'.  WRITE 'world'.", cnt: 1},
   {abap: "WRITE 'hello'.WRITE 'world'.", cnt: 1},
-  {abap: "DATA: foo TYPE x, bar TYPE x.", cnt: 1},
+  {abap: "DATA: foo TYPE x, bar TYPE x.", cnt: 0},
   {abap: "DATA: foo TYPE x,\nbar TYPE x.", cnt: 0},
   {abap: "WRITE 'hello'. .", cnt: 0}, // do not report empty statement, it is handled by separate rule
   {abap: "WRITE 'hello'.\nWRITE 'world'.\nWRITE 'world'.", cnt: 0},

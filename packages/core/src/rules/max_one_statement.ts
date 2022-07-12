@@ -22,6 +22,8 @@ export class MaxOneStatement extends ABAPRule {
       extendedInformation:
 `Does not report empty statements, use rule empty_statement for detecting empty statements.
 
+Does not report anything for chained statements.
+
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line
 https://docs.abapopenchecks.org/checks/11/`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
@@ -48,26 +50,17 @@ https://docs.abapopenchecks.org/checks/11/`,
     let prev: number = 0;
     let reported: number = 0;
     for (const statement of file.getStatements()) {
+      const term = statement.getTerminator();
       if (statement.get() instanceof Comment
-          || statement.get() instanceof NativeSQL) {
+          || statement.get() instanceof NativeSQL
+          || term === ",") {
         continue;
       }
 
-      let pos = statement.getStart();
+      const pos = statement.getStart();
       if (pos instanceof VirtualPosition) {
         continue;
       }
-
-      const colon = statement.getColon()?.getEnd();
-      if (colon) {
-        for (const t of statement.getTokens()) {
-          if (t.getStart().isAfter(colon)) {
-            pos = t.getStart();
-            break;
-          }
-        }
-      }
-
       const row = pos.getRow();
       if (prev === row && row !== reported && statement.getFirstToken().getStr() !== ".") {
         const fix = EditHelper.insertAt(file, pos, "\n");
