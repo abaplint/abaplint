@@ -1604,4 +1604,20 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("ZNOTFOUND");
   });
 
+  it("class events", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    EVENTS double_click
+      EXPORTING
+        VALUE(row) TYPE znotfound.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("ZNOTFOUND");
+  });
+
 });

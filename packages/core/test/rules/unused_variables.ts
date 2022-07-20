@@ -1144,4 +1144,15 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LINES OF, 2", async () => {
+    const abap = `
+DATA(expected_like_findings) = VALUE if_ci_atc_unit_asserter=>ty_expected_findings( ).
+DATA(another) = VALUE voided( ).
+cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
+  expected_findings = VALUE #( ( LINES OF expected_like_findings ) )
+  bar = VALUE #( ( LINES OF another ) )  ).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
