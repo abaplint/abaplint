@@ -1604,7 +1604,7 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("ZNOTFOUND");
   });
 
-  it.skip("class events", () => {
+  it("class events", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
