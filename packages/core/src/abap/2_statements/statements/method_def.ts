@@ -1,7 +1,7 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
 import {seq, alt, altPrio, ver, regex as reg, optPrio} from "../combi";
-import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions} from "../expressions";
+import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodDef implements IStatement {
@@ -20,9 +20,16 @@ export class MethodDef implements IStatement {
     const testing = seq(optPrio(Abstract), "FOR TESTING", optPrio(altPrio(MethodDefRaising, MethodDefExceptions)));
 
 // todo, this is only from version something
-    const tableFunction = seq("FOR TABLE FUNCTION", reg(/^\w+?$/));
+    const tableFunction = seq("TABLE FUNCTION", reg(/^\w+?$/));
 // todo, this is only from version something
-    const ddl = "FOR DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED";
+    const ddl = "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED";
+
+    const behavior = altPrio(
+      seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
+      seq("MODIFY IMPORTING", MethodParamName, "FOR ACTION", TypeName, "RESULT", MethodParamName),
+      seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, "RESULT", MethodParamName),
+      seq("DETERMINE ON MODIFY IMPORTING", MethodParamName, "FOR", TypeName));
+
 // todo, this is only from version something
     const amdp = "AMDP OPTIONS CDS SESSION CLIENT current";
 
@@ -31,8 +38,7 @@ export class MethodDef implements IStatement {
                     alt(seq(optPrio(Abstract), EventHandler),
                         parameters,
                         testing,
-                        tableFunction,
-                        ddl,
+                        seq("FOR", alt(tableFunction, ddl, behavior)),
                         amdp,
                         "NOT AT END OF MODE",
                         optPrio(Redefinition)));

@@ -1,8 +1,9 @@
-import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio, plus} from "../combi";
+import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio, plus, ver} from "../combi";
 import {Constant, TypeName, Integer, SimpleFieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
 import {TypeTableKey} from "./type_table_key";
+import {Version} from "../../../version";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -30,13 +31,15 @@ export class TypeTable extends Expression {
 
     const occurs = seq("OCCURS", Integer);
 
+    const derived = ver(Version.v754, seq("TABLE FOR", altPrio("CREATE", "FAILED", "LOCK", "ACTION IMPORT", "UPDATE", "READ RESULT", "ACTION RESULT"), TypeName));
+
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
     const oldLike = seq(opt("REF TO"), FieldChain, alt(seq(occurs, opt(header)), header));
 
     const ret = altPrio(
       seq(occurs, opt(header)),
       seq("LIKE", alt(oldLike, likeType, rangeLike)),
-      seq("TYPE", alt(oldType, typetable, rangeType)));
+      seq("TYPE", alt(oldType, typetable, rangeType, derived)));
 
     return ret;
   }

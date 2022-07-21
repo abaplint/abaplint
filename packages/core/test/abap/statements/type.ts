@@ -27,6 +27,10 @@ const tests = [
     WITH NON-UNIQUE KEY name
     WITH UNIQUE SORTED KEY key_alias COMPONENTS alias
     INITIAL SIZE 2.`,
+  `TYPES ty_foo TYPE TABLE FOR CREATE EntityItem.`,
+  `TYPES ty_foo TYPE TABLE FOR FAILED EntityItem.`,
+  `TYPES ty_foo TYPE TABLE FOR LOCK EntityItem.`,
+  `TYPES ty_foo TYPE TABLE FOR ACTION IMPORT EntityItem~add.`,
 ];
 
 statementType(tests, "TYPE", Statements.Type);

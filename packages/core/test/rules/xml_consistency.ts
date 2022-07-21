@@ -35,6 +35,7 @@ describe("rule, xml_consistency, error", async () => {
     const issues = await run(reg);
     expect(issues.length).to.equals(1);
   });
+
 });
 
 describe("rule, xml_consistency, okay", () => {
@@ -116,14 +117,27 @@ describe("rule, xml_consistency, INTF mismatch xml and abap", () => {
  </asx:abap>
 </abapGit>`;
 
-  const abap = `
+  it("test", async () => {
+    const abap = `
 INTERFACE if_abapgit_xml_input PUBLIC.
 ENDINTERFACE.`;
 
-  it("test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zif_abapgit_xml_input.intf.xml", xml)).addFile(new MemoryFile("zif_abapgit_xml_input.intf.abap", abap));
     const issues = await run(reg);
     expect(issues.length).to.equals(1);
+  });
+
+  it("parsing/syntax error should not trigger xml consistency", async () => {
+    const abap = `
+INTERFACE if_abapgit_xml_input PUBLIC.
+  INTERFACES zif_not_found.
+ENDINTERFACE.`;
+
+    const reg = new Registry().addFile(
+      new MemoryFile("zif_abapgit_xml_input.intf.xml", xml)).addFile(
+      new MemoryFile("#foo#zif.intf.abap", abap));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(0);
   });
 });
 
@@ -144,11 +158,11 @@ describe("rule, xml_consistency, INTF ok, with namespace", () => {
  </asx:abap>
 </abapGit>`;
 
-  const abap = `
-INTERFACE /foo/zif PUBLIC.
-ENDINTERFACE.`;
-
   it("test", async () => {
+    const abap = `
+    INTERFACE /foo/zif PUBLIC.
+    ENDINTERFACE.`;
+
     const reg = new Registry().addFile(new MemoryFile("#foo#zif.intf.xml", xml)).addFile(new MemoryFile("#foo#zif.intf.abap", abap));
     const issues = await run(reg);
     expect(issues.length).to.equals(0);
