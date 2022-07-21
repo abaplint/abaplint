@@ -92,6 +92,9 @@ const tests = [
   "DATA foo LIKE RANGE OF cl_abap_typedescr=>kind_elem.",
   "DATA list(250) OCCURS 0 WITH HEADER LINE.",
   "DATA complete_table LIKE SORTED TABLE OF zddic WITH HEADER LINE WITH UNIQUE KEY field1 field2.",
+  `DATA foo TYPE TABLE FOR UPDATE EntityItem.`,
+  `DATA foo TYPE TABLE FOR READ RESULT EntityItem.`,
+  `DATA foo TYPE TABLE FOR ACTION RESULT EntityItem~action.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
