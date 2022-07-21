@@ -3,7 +3,7 @@ import {Constant, TypeName, Integer, SimpleFieldChain} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
 import {TypeTableKey} from "./type_table_key";
-import { Version } from "../../../version";
+import {Version} from "../../../version";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
