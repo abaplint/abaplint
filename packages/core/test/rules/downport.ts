@@ -39,6 +39,15 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("CALL FUNCTION, ok, no downport", async () => {
+    const issues = await findIssues(`CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = temp1
+  IMPORTING
+    output = lv_string.`);
+    expect(issues.length).to.equal(0);
+  });
+
 // todo, this example can actually be implemented?
   it("try downport voided value", async () => {
     const issues = await findIssues("DATA(bar) = VALUE asdf( ).");
@@ -2854,10 +2863,28 @@ GET REFERENCE OF lv_string INTO ref.`;
     testFix(abap, expected);
   });
 
-  it.skip("CALL FUNCTION, not simple", async () => {
+  it("CALL FUNCTION, not simple", async () => {
     const abap = `
 CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
   EXPORTING
+    input  = cl_ujt_utility=>string2xstring( lv_json )
+  IMPORTING
+    output = lv_string.`;
+    const expected = `
+DATA(temp1) = cl_ujt_utility=>string2xstring( lv_json ).
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = temp1
+  IMPORTING
+    output = lv_string.`;
+    testFix(abap, expected);
+  });
+
+  it.skip("CALL FUNCTION, not simple, second parameter", async () => {
+    const abap = `
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    foo    = sdfs
     input  = cl_ujt_utility=>string2xstring( lv_json )
   IMPORTING
     output = lv_string.`;
