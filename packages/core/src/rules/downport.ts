@@ -911,7 +911,12 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     let found: ExpressionNode | undefined = undefined;
     for (const p of high.findAllExpressions(Expressions.FunctionExportingParameter)) {
       found = p.findDirectExpression(Expressions.Source);
-      if (found !== undefined) {
+      if (found && (found.findDirectExpression(Expressions.FieldChain)
+          || found.findDirectExpression(Expressions.Constant)
+          || found.findDirectExpression(Expressions.TextElement))) {
+// its actually simple, ok
+        found = undefined;
+      } else if (found !== undefined) {
         break;
       }
     }

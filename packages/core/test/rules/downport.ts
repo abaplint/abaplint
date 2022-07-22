@@ -2880,7 +2880,7 @@ CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
     testFix(abap, expected);
   });
 
-  it.skip("CALL FUNCTION, not simple, second parameter", async () => {
+  it("CALL FUNCTION, not simple, second parameter", async () => {
     const abap = `
 CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
   EXPORTING
@@ -2892,6 +2892,7 @@ CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
 DATA(temp1) = cl_ujt_utility=>string2xstring( lv_json ).
 CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
   EXPORTING
+    foo    = sdfs
     input  = temp1
   IMPORTING
     output = lv_string.`;
