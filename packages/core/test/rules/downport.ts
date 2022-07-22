@@ -2854,6 +2854,23 @@ GET REFERENCE OF lv_string INTO ref.`;
     testFix(abap, expected);
   });
 
+  it.skip("CALL FUNCTION, not simple", async () => {
+    const abap = `
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = cl_ujt_utility=>string2xstring( lv_json )
+  IMPORTING
+    output = lv_string.`;
+    const expected = `
+DATA(unique) = cl_ujt_utility=>string2xstring( lv_json ).
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = unique
+  IMPORTING
+    output = lv_string.`;
+    testFix(abap, expected);
+  });
+
   it("predicate function, matches()", async () => {
     const abap = `
   IF matches( val = 'foo' regex = 'foo' ).

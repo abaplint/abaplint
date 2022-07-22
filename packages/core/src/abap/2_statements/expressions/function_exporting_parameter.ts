@@ -8,7 +8,7 @@ import {SimpleSource3} from "./simple_source3";
 export class FunctionExportingParameter extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const s = altPrio(ver(Version.v740sp02, Source), SimpleSource3);
+    const s = altPrio(SimpleSource3, ver(Version.v740sp02, Source));
     const exp = seq(ParameterName, "=", s);
 
     return exp;

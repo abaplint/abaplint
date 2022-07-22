@@ -238,6 +238,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.callFunctionParameterSimple(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.moveWithTableTarget(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -896,6 +901,30 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     }
 
     return undefined;
+  }
+
+  private callFunctionParameterSimple(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.CallFunction)) {
+      return undefined;
+    }
+
+    if (2 === 1 + 1) {
+      return undefined; // todo
+    }
+
+    for (const p of high.findAllExpressions(Expressions.FunctionExportingParameter)) {
+      p.findDirectExpression(Expressions.Source);
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+
+    const code = `DATA(sdf) = foo.`;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, call function parameter", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private moveWithSimpleRef(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
