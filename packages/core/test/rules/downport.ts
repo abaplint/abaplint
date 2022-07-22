@@ -2842,6 +2842,18 @@ INSERT temp1 INTO TABLE result.`;
     testFix(abap, expected);
   });
 
+  it("REF, simple, inferred", async () => {
+    const abap = `
+DATA ref TYPE REF TO string.
+DATA lv_string TYPE string.
+ref = REF #( lv_string ).`;
+    const expected = `
+DATA ref TYPE REF TO string.
+DATA lv_string TYPE string.
+GET REFERENCE OF lv_string INTO ref.`;
+    testFix(abap, expected);
+  });
+
   it("predicate function, matches()", async () => {
     const abap = `
   IF matches( val = 'foo' regex = 'foo' ).

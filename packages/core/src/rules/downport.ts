@@ -233,6 +233,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.moveWithSimpleRef(high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.moveWithTableTarget(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -891,6 +896,31 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     }
 
     return undefined;
+  }
+
+  private moveWithSimpleRef(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.Move)
+        || high.getChildren().length !== 4
+        || high.getChildren()[2].getFirstToken().getStr().toUpperCase() !== "REF") {
+      return undefined;
+    }
+
+    const target = high.findDirectExpression(Expressions.Target);
+    if (target === undefined) {
+      return undefined;
+    }
+    const sourceRef = high.findFirstExpression(Expressions.Source)?.findDirectExpression(Expressions.Source);
+    if (sourceRef === undefined || sourceRef.getChildren().length !== 1) {
+      return;
+    }
+
+    const code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
+
+    const start = high.getFirstToken().getStart();
+    const end = high.getLastToken().getStart();
+    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple REF move", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private moveWithSimpleValue(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
