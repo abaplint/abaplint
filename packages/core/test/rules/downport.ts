@@ -1059,6 +1059,16 @@ lv_topbit = mv_hex+1.`;
     testFix(abap, expected);
   });
 
+  it.only("downport, ALPHA = OUT", async () => {
+    const abap = `DATA iv_in TYPE matnr.
+DATA rv_out TYPE string.
+rv_out = condense( |{ iv_in ALPHA = OUT }| ).`;
+
+    const expected = `todo`;
+
+    testFix(abap, expected);
+  });
+
   it("COND #", async () => {
     const abap = `DATA field TYPE i.
 field = COND #( WHEN 'a' = 'b' THEN 2 ELSE 3 ).`;
