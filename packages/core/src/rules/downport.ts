@@ -154,7 +154,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         const low = lowStatements[i];
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
-        || high.findFirstExpression(Expressions.InlineData)) {
+            || high.findFirstExpression(Expressions.InlineData)) {
           const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
           if (issue) {
             ret.push(issue);
@@ -908,20 +908,23 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
       return undefined;
     }
 
-    if (2 === 1 + 1) {
-      return undefined; // todo
-    }
-
+    let found: ExpressionNode | undefined = undefined;
     for (const p of high.findAllExpressions(Expressions.FunctionExportingParameter)) {
-      p.findDirectExpression(Expressions.Source);
+      found = p.findDirectExpression(Expressions.Source);
+      if (found !== undefined) {
+        break;
+      }
+    }
+    if (found === undefined) {
+      return undefined;
     }
 
     const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
 
-    const code = `DATA(sdf) = foo.`;
+    const code = `DATA(${uniqueName}) = ${found.concatTokens()}.\n`;
 
     const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
-    const fix2 = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), uniqueName);
+    const fix2 = EditHelper.replaceRange(lowFile, found.getFirstToken().getStart(), found.getLastToken().getEnd(), uniqueName);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, call function parameter", this.getMetadata().key, this.conf.severity, fix);

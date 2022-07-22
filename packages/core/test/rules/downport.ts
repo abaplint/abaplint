@@ -2862,10 +2862,10 @@ CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
   IMPORTING
     output = lv_string.`;
     const expected = `
-DATA(unique) = cl_ujt_utility=>string2xstring( lv_json ).
+DATA(temp1) = cl_ujt_utility=>string2xstring( lv_json ).
 CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
   EXPORTING
-    input  = unique
+    input  = temp1
   IMPORTING
     output = lv_string.`;
     testFix(abap, expected);
