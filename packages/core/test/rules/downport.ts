@@ -1059,12 +1059,20 @@ lv_topbit = mv_hex+1.`;
     testFix(abap, expected);
   });
 
-  it.only("downport, ALPHA = OUT", async () => {
+  it("downport, ALPHA = OUT", async () => {
     const abap = `DATA iv_in TYPE matnr.
 DATA rv_out TYPE string.
 rv_out = condense( |{ iv_in ALPHA = OUT }| ).`;
 
-    const expected = `todo`;
+    const expected = `DATA iv_in TYPE matnr.
+DATA rv_out TYPE string.
+DATA temp1 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
+  EXPORTING
+    input  = iv_in
+  IMPORTING
+    output = temp1.
+rv_out = condense( temp1 ).`;
 
     testFix(abap, expected);
   });

@@ -218,7 +218,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.stringTemplateAlpha(high, lowFile);
+    found = this.stringTemplateAlpha(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1063,7 +1063,7 @@ ${indentation}${uniqueName}`;
   }
 
   // must be very simple string templates, like "|{ ls_line-no ALPHA = IN }|"
-  private stringTemplateAlpha(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+  private stringTemplateAlpha(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(node.get() instanceof Statements.Move)) {
       return undefined;
     }
@@ -1071,16 +1071,24 @@ ${indentation}${uniqueName}`;
     if (topSource === undefined || topSource.getChildren().length !== 1) {
       return undefined;
     }
-    const child = topSource.getFirstChild()! as ExpressionNode;
+
+    let top = true;
+    let child: ExpressionNode | undefined = topSource.getFirstChild()! as ExpressionNode;
     if (!(child.get() instanceof Expressions.StringTemplate)) {
+      child = child.findFirstExpression(Expressions.StringTemplate);
+      top = false;
+    }
+    if (child === undefined || !(child.get() instanceof Expressions.StringTemplate)) {
       return undefined;
     }
+
     const templateTokens = child.getChildren();
     if (templateTokens.length !== 3
         || templateTokens[0].getFirstToken().getStr() !== "|{"
         || templateTokens[2].getFirstToken().getStr() !== "}|") {
       return undefined;
     }
+
     const templateSource = child.findDirectExpression(Expressions.StringTemplateSource);
     const formatting = templateSource?.findDirectExpression(Expressions.StringTemplateFormatting)?.concatTokens();
     let functionName = "";
@@ -1098,15 +1106,29 @@ ${indentation}${uniqueName}`;
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
     const source = templateSource?.findDirectExpression(Expressions.Source)?.concatTokens();
     const topTarget = node.findDirectExpression(Expressions.Target)?.concatTokens();
+    const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
 
-    const code = `CALL FUNCTION '${functionName}'
+    if (top === false) {
+      const code = `DATA ${uniqueName} TYPE string.
+${indentation}CALL FUNCTION '${functionName}'
+${indentation}  EXPORTING
+${indentation}    input  = ${source}
+${indentation}  IMPORTING
+${indentation}    output = ${uniqueName}.\n`;
+      const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+      const fix2 = EditHelper.replaceRange(lowFile, child.getFirstToken().getStart(), child.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, node.getFirstToken(), "Downport ALPHA", this.getMetadata().key, this.conf.severity, fix);
+    } else {
+      const code = `CALL FUNCTION '${functionName}'
 ${indentation}  EXPORTING
 ${indentation}    input  = ${source}
 ${indentation}  IMPORTING
 ${indentation}    output = ${topTarget}.`;
-    const fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), code);
+      const fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), code);
+      return Issue.atToken(lowFile, node.getFirstToken(), "Downport ALPHA", this.getMetadata().key, this.conf.severity, fix);
+    }
 
-    return Issue.atToken(lowFile, node.getFirstToken(), "Downport ALPHA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private outlineLoopInput(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
