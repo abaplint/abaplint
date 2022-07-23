@@ -2569,6 +2569,14 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("ref variable name with CAST", async () => {
+    const abap = `foo = CAST asdf( cl_abap_structdescr=>describe_by_data( ref ) ).`;
+    const expected = `DATA temp1 TYPE REF TO asdf.
+temp1 ?= cl_abap_structdescr=>describe_by_data( ref ).
+foo = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("structured ENUM", async () => {
     const abap = `
 TYPES:

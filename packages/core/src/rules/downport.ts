@@ -973,7 +973,8 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
   private downportRef(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     let found: ExpressionNode | undefined = undefined;
     for (const s of high.findAllExpressionsRecursive(Expressions.Source)) {
-      if (s.getFirstToken().getStr().toUpperCase() === "REF") {
+      if (s.getFirstToken().getStr().toUpperCase() === "REF"
+          && s.findDirectExpression(Expressions.TypeNameOrInfer)) {
         found = s;
       }
     }
