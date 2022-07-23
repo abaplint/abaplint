@@ -2871,6 +2871,29 @@ GET REFERENCE OF lv_string INTO ref.`;
     testFix(abap, expected);
   });
 
+  it("REF, in method call, inferred", async () => {
+    const abap = `
+serialize_json( iv_data          = REF #( iv_data )
+                iv_compress_json = iv_compress_json ).`;
+    const expected = `
+DATA(temp1) = REF #( iv_data ).
+serialize_json( iv_data          = temp1
+                iv_compress_json = iv_compress_json ).`;
+    testFix(abap, expected);
+  });
+
+  it("REF, simple, inline", async () => {
+    const abap = `DATA(temp1) = REF #( iv_data ).`;
+    const expected = `GET REFERENCE OF iv_data INTO DATA(temp1).`;
+    testFix(abap, expected);
+  });
+
+  it.skip("GET REFERINCE INTO inline", async () => {
+    const abap = `GET REFERENCE OF iv_data INTO DATA(temp1).`;
+    const expected = `sdf`;
+    testFix(abap, expected);
+  });
+
   it("CALL FUNCTION, not simple", async () => {
     const abap = `
 CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
