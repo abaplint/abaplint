@@ -39,6 +39,15 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("CALL FUNCTION, ok, no downport", async () => {
+    const issues = await findIssues(`CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = temp1
+  IMPORTING
+    output = lv_string.`);
+    expect(issues.length).to.equal(0);
+  });
+
 // todo, this example can actually be implemented?
   it("try downport voided value", async () => {
     const issues = await findIssues("DATA(bar) = VALUE asdf( ).");
@@ -1055,6 +1064,24 @@ lv_topbit = mv_hex+1.`;
     input  = ls_line-no
   IMPORTING
     output = temp2-ebelp.`;
+
+    testFix(abap, expected);
+  });
+
+  it("downport, ALPHA = OUT", async () => {
+    const abap = `DATA iv_in TYPE matnr.
+DATA rv_out TYPE string.
+rv_out = condense( |{ iv_in ALPHA = OUT }| ).`;
+
+    const expected = `DATA iv_in TYPE matnr.
+DATA rv_out TYPE string.
+DATA temp1 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
+  EXPORTING
+    input  = iv_in
+  IMPORTING
+    output = temp1.
+rv_out = condense( temp1 ).`;
 
     testFix(abap, expected);
   });
@@ -2821,6 +2848,54 @@ DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA temp1 LIKE LINE OF result.
 temp1 = |sdfsd|.
 INSERT temp1 INTO TABLE result.`;
+    testFix(abap, expected);
+  });
+
+  it("REF, simple, inferred", async () => {
+    const abap = `
+DATA ref TYPE REF TO string.
+DATA lv_string TYPE string.
+ref = REF #( lv_string ).`;
+    const expected = `
+DATA ref TYPE REF TO string.
+DATA lv_string TYPE string.
+GET REFERENCE OF lv_string INTO ref.`;
+    testFix(abap, expected);
+  });
+
+  it("CALL FUNCTION, not simple", async () => {
+    const abap = `
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = cl_ujt_utility=>string2xstring( lv_json )
+  IMPORTING
+    output = lv_string.`;
+    const expected = `
+DATA(temp1) = cl_ujt_utility=>string2xstring( lv_json ).
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = temp1
+  IMPORTING
+    output = lv_string.`;
+    testFix(abap, expected);
+  });
+
+  it("CALL FUNCTION, not simple, second parameter", async () => {
+    const abap = `
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    foo    = sdfs
+    input  = cl_ujt_utility=>string2xstring( lv_json )
+  IMPORTING
+    output = lv_string.`;
+    const expected = `
+DATA(temp1) = cl_ujt_utility=>string2xstring( lv_json ).
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    foo    = sdfs
+    input  = temp1
+  IMPORTING
+    output = lv_string.`;
     testFix(abap, expected);
   });
 
