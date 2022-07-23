@@ -2888,9 +2888,10 @@ serialize_json( iv_data          = temp1
     testFix(abap, expected);
   });
 
-  it.skip("GET REFERINCE INTO inline", async () => {
+  it("GET REFERINCE INTO inline", async () => {
     const abap = `GET REFERENCE OF iv_data INTO DATA(temp1).`;
-    const expected = `sdf`;
+    const expected = `DATA temp1 LIKE REF TO iv_data.
+GET REFERENCE OF iv_data INTO temp1.`;
     testFix(abap, expected);
   });
 

@@ -338,6 +338,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.getReference(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.replaceContains(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -1956,6 +1961,29 @@ ${indentation}    output = ${topTarget}.`;
     }
 
     return undefined;
+  }
+
+  private getReference(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(node.get() instanceof Statements.GetReference)) {
+      return undefined;
+    }
+
+    const inline = node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    if (inline === undefined) {
+      return undefined;
+    }
+    const targetName = inline.findDirectExpression(Expressions.TargetField)?.concatTokens();
+    const sourceName = node.findDirectExpression(Expressions.Source)?.concatTokens();
+    if (targetName === undefined || sourceName === undefined) {
+      return undefined;
+    }
+
+    const code = `DATA ${targetName} LIKE REF TO ${sourceName}.\n`;
+    const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), targetName);
+    const fix = EditHelper.merge(fix2, fix1);
+    return Issue.atToken(lowFile, inline.getFirstToken(), "Downport, outline DATA ref", this.getMetadata().key, this.conf.severity, fix);
+
   }
 
   private replaceContains(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
