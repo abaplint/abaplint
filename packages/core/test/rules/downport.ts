@@ -2684,6 +2684,14 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("Inline with NEW, must outline", async () => {
+    const abap = `DATA(foobar) = NEW zcl_foobar( ).`;
+    const expected = `DATA temp1 TYPE REF TO zcl_foobar.
+CREATE OBJECT temp1 TYPE zcl_foobar.
+DATA(foobar) = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("READ with key VALUE infer", async () => {
     const abap = `
 TYPES: BEGIN OF bar,
@@ -2860,6 +2868,30 @@ ref = REF #( lv_string ).`;
 DATA ref TYPE REF TO string.
 DATA lv_string TYPE string.
 GET REFERENCE OF lv_string INTO ref.`;
+    testFix(abap, expected);
+  });
+
+  it("REF, in method call, inferred", async () => {
+    const abap = `
+serialize_json( iv_data          = REF #( iv_data )
+                iv_compress_json = iv_compress_json ).`;
+    const expected = `
+DATA(temp1) = REF #( iv_data ).
+serialize_json( iv_data          = temp1
+                iv_compress_json = iv_compress_json ).`;
+    testFix(abap, expected);
+  });
+
+  it("REF, simple, inline", async () => {
+    const abap = `DATA(temp1) = REF #( iv_data ).`;
+    const expected = `GET REFERENCE OF iv_data INTO DATA(temp1).`;
+    testFix(abap, expected);
+  });
+
+  it("GET REFERINCE INTO inline", async () => {
+    const abap = `GET REFERENCE OF iv_data INTO DATA(temp1).`;
+    const expected = `DATA temp1 LIKE REF TO iv_data.
+GET REFERENCE OF iv_data INTO temp1.`;
     testFix(abap, expected);
   });
 

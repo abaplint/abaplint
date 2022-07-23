@@ -233,7 +233,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.moveWithSimpleRef(high, lowFile);
+    found = this.downportRefSimple(high, lowFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.downportRef(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -329,6 +334,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.replaceLineFunctions(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.getReference(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -935,7 +945,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, call function parameter", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private moveWithSimpleRef(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+  private downportRefSimple(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
     if (!(high.get() instanceof Statements.Move)
         || high.getChildren().length !== 4
         || high.getChildren()[2].getFirstToken().getStr().toUpperCase() !== "REF") {
@@ -958,6 +968,28 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple REF move", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private downportRef(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    let found: ExpressionNode | undefined = undefined;
+    for (const s of high.findAllExpressionsRecursive(Expressions.Source)) {
+      if (s.getFirstToken().getStr().toUpperCase() === "REF") {
+        found = s;
+      }
+    }
+    if (found === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+
+    const code = `DATA(${uniqueName}) = ${found.concatTokens()}.\n`;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, found.getFirstToken().getStart(), found.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, REF", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private moveWithSimpleValue(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
@@ -1931,6 +1963,29 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
+  private getReference(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(node.get() instanceof Statements.GetReference)) {
+      return undefined;
+    }
+
+    const inline = node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    if (inline === undefined) {
+      return undefined;
+    }
+    const targetName = inline.findDirectExpression(Expressions.TargetField)?.concatTokens();
+    const sourceName = node.findDirectExpression(Expressions.Source)?.concatTokens();
+    if (targetName === undefined || sourceName === undefined) {
+      return undefined;
+    }
+
+    const code = `DATA ${targetName} LIKE REF TO ${sourceName}.\n`;
+    const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), targetName);
+    const fix = EditHelper.merge(fix2, fix1);
+    return Issue.atToken(lowFile, inline.getFirstToken(), "Downport, outline DATA ref", this.getMetadata().key, this.conf.severity, fix);
+
+  }
+
   private replaceContains(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
@@ -2038,8 +2093,10 @@ ${indentation}    output = ${topTarget}.`;
       const target = node.findDirectExpression(Expressions.Target);
       const found = source?.findFirstExpression(Expressions.NewObject);
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
-      // todo, assumption: the target is not an inline definition
-      if (target && found && source.concatTokens() === found.concatTokens()) {
+      if (target
+          && found
+          && source.concatTokens() === found.concatTokens()
+          && target.findDirectExpression(Expressions.InlineData) === undefined) {
         const abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
         if (abap !== undefined) {
           fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
