@@ -2684,6 +2684,14 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("Inline with NEW, must outline", async () => {
+    const abap = `DATA(foobar) = NEW zcl_foobar( ).`;
+    const expected = `DATA temp1 TYPE REF TO zcl_foobar.
+CREATE OBJECT temp1 TYPE zcl_foobar.
+DATA(foobar) = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("READ with key VALUE infer", async () => {
     const abap = `
 TYPES: BEGIN OF bar,

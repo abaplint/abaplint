@@ -2038,8 +2038,10 @@ ${indentation}    output = ${topTarget}.`;
       const target = node.findDirectExpression(Expressions.Target);
       const found = source?.findFirstExpression(Expressions.NewObject);
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
-      // todo, assumption: the target is not an inline definition
-      if (target && found && source.concatTokens() === found.concatTokens()) {
+      if (target
+          && found
+          && source.concatTokens() === found.concatTokens()
+          && target.findDirectExpression(Expressions.InlineData) === undefined) {
         const abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
         if (abap !== undefined) {
           fix = EditHelper.replaceRange(lowFile, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
