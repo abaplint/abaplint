@@ -2608,7 +2608,7 @@ CONSTANTS: BEGIN OF type_info,
     testFix(abap, expected);
   });
 
-  it.skip("SELECT, spaces within IN", async () => {
+  it("SELECT, spaces within IN", async () => {
     const abap = `
   DATA ls_t000 TYPE t000.
   SELECT SINGLE * FROM t000 INTO ls_t000 WHERE cccategory IN ( 'S', 'C' ).`;

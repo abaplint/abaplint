@@ -142,15 +142,6 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
-  public findDirectToken(type: new () => Token): TokenNode | undefined {
-    for (const child of this.getChildren()) {
-      if (child instanceof TokenNode && child.get() instanceof type) {
-        return child;
-      }
-    }
-    return undefined;
-  }
-
   public findDirectExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof ExpressionNode && child.get() instanceof type) {
