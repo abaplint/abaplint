@@ -232,4 +232,23 @@ ENDFORM.`;
     testFix(abap, expected, false);
   });
 
+  it("quick fix 5, basic chained", async () => {
+    const abap = `
+FORM foo.
+  WRITE 'moo'.
+  DATA: BEGIN OF ls_foo,
+          bar TYPE i,
+        END OF ls_foo.
+ENDFORM.`;
+    const expected = `
+FORM foo.
+DATA BEGIN OF ls_foo.
+DATA bar TYPE i.
+DATA END OF ls_foo.
+  WRITE 'moo'.
+` + "  " + `
+ENDFORM.`;
+    testFix(abap, expected, false);
+  });
+
 });

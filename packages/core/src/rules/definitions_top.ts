@@ -88,6 +88,7 @@ https://docs.abapopenchecks.org/checks/17/`,
       }
     }
 
+    let previous: StatementNode | StructureNode | undefined = undefined;
     for (const c of r.getChildren()) {
       if (c instanceof StatementNode && c.get() instanceof Comment) {
         continue;
@@ -103,8 +104,24 @@ https://docs.abapopenchecks.org/checks/17/`,
           || c.get() instanceof Structures.Constants
           || c.get() instanceof Structures.Statics)) {
         if (this.mode === AFTER) {
+          // These are chained structured statements
+          let fix = undefined;
+          if (c.getLastChild()?.getLastChild()?.getFirstToken().getStr() === "."
+              && !(previous instanceof StructureNode)
+              && this.moveTo) {
+            // this is not perfect, but will work for now
+            const start = c.getFirstChild()?.getFirstChild()?.getFirstToken().getStart();
+            const end = c.getLastChild()?.getLastChild()?.getLastToken().getEnd();
+            if (start && end ) {
+              let concat = c.concatTokens();
+              concat = concat.replace(/,/g, ".\n");
+              const fix1 = EditHelper.deleteRange(file, start, end);
+              const fix2 = EditHelper.insertAt(file, this.moveTo, "\n" + concat);
+              fix = EditHelper.merge(fix1, fix2);
+            }
+          }
           // no quick fixes for these, its difficult?
-          return Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          return Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         } else {
           this.moveTo = c.getLastToken().getEnd();
         }
@@ -139,6 +156,8 @@ https://docs.abapopenchecks.org/checks/17/`,
           return found;
         }
       }
+
+      previous = c;
     }
 
     return undefined;
