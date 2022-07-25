@@ -419,11 +419,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
     }
 
-    if (fix === undefined) {
-      return undefined;
-    } else {
+    if (fix !== undefined) {
       return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove \" and ,", this.getMetadata().key, this.conf.severity, fix);
     }
+/*
+    for (const c of high.findAllExpressionsRecursive(Expressions.SQLCompare)) {
+      const afterIn = c.findExpressionAfterToken("IN");
+
+      console.dir(afterIn);
+      const left = c.findDirectToken(WParenLeftW);
+      const left = c.findDirectToken(WParenRightW);
+    }
+*/
+    return undefined;
   }
 
   private downportSelectInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
