@@ -140,6 +140,21 @@ ENDFORM.`,
     fix: false,
   },
 
+  {
+    abap: `
+FORM foo.
+  WRITE 'moo'.
+  DATA: BEGIN OF ls_foo,
+          bar TYPE i,
+        END OF ls_foo,
+        BEGIN OF ls_bar,
+          bar TYPE i,
+        END OF ls_bar.
+ENDFORM.`,
+    cnt: 1,
+    fix: false,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);
