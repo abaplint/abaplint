@@ -130,6 +130,31 @@ ENDFORM.`,
     cnt: 1,
   },
 
+  {
+    abap: `
+FORM foo.
+  DATA(diff) = 2.
+  DATA row LIKE diff.
+ENDFORM.`,
+    cnt: 0,
+    fix: false,
+  },
+
+  {
+    abap: `
+FORM foo.
+  WRITE 'moo'.
+  DATA: BEGIN OF ls_foo,
+          bar TYPE i,
+        END OF ls_foo,
+        BEGIN OF ls_bar,
+          bar TYPE i,
+        END OF ls_bar.
+ENDFORM.`,
+    cnt: 1,
+    fix: false,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);
@@ -218,6 +243,25 @@ FORM foo.
 DATA temp109 TYPE my_structure.
   WRITE 'moo'.
 
+ENDFORM.`;
+    testFix(abap, expected, false);
+  });
+
+  it("quick fix 5, basic chained", async () => {
+    const abap = `
+FORM foo.
+  WRITE 'moo'.
+  DATA: BEGIN OF ls_foo,
+          bar TYPE i,
+        END OF ls_foo.
+ENDFORM.`;
+    const expected = `
+FORM foo.
+DATA BEGIN OF ls_foo.
+DATA bar TYPE i.
+DATA END OF ls_foo.
+  WRITE 'moo'.
+` + "  " + `
 ENDFORM.`;
     testFix(abap, expected, false);
   });
