@@ -2608,6 +2608,16 @@ CONSTANTS: BEGIN OF type_info,
     testFix(abap, expected);
   });
 
+  it("SELECT, spaces within IN", async () => {
+    const abap = `
+  DATA ls_t000 TYPE t000.
+  SELECT SINGLE * FROM t000 INTO ls_t000 WHERE cccategory IN ( 'S', 'C' ).`;
+    const expected = `
+  DATA ls_t000 TYPE t000.
+  SELECT SINGLE * FROM t000 INTO ls_t000 WHERE cccategory IN ('S', 'C').`;
+    testFix(abap, expected);
+  });
+
   it("generic types should infer to non generic if possible", async () => {
     const abap = `
 CLASS lcl DEFINITION.

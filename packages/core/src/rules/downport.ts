@@ -22,7 +22,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {ObjectReferenceType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
-import {WAt} from "../abap/1_lexer/tokens";
+import {WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
@@ -419,11 +419,31 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
     }
 
-    if (fix === undefined) {
-      return undefined;
-    } else {
+    if (fix !== undefined) {
       return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove \" and ,", this.getMetadata().key, this.conf.severity, fix);
     }
+
+    for (const c of high.findAllExpressionsRecursive(Expressions.SQLIn)) {
+      const children = c.getChildren();
+      const first = children[1];
+      if (!(first.get() instanceof WParenLeftW)) {
+        continue;
+      }
+      const last = children[children.length - 1];
+      if (last.get() instanceof WParenRightW || last.get() instanceof WParenRight) {
+        const firstEnd = first.getFirstToken().getEnd();
+        const endDelete = new Position(firstEnd.getRow(), firstEnd.getCol() + 1);
+        const fix1 = EditHelper.deleteRange(lowFile, firstEnd, endDelete);
+
+        const lastStart = last.getFirstToken().getStart();
+        const startDelete = new Position(lastStart.getRow(), lastStart.getCol() - 1);
+        const fix2 = EditHelper.deleteRange(lowFile, startDelete, lastStart);
+        fix = EditHelper.merge(fix2, fix1);
+        return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove spaces", this.getMetadata().key, this.conf.severity, fix);
+      }
+    }
+
+    return undefined;
   }
 
   private downportSelectInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
