@@ -130,6 +130,16 @@ ENDFORM.`,
     cnt: 1,
   },
 
+  {
+    abap: `
+FORM foo.
+  DATA(diff) = 2.
+  DATA row LIKE diff.
+ENDFORM.`,
+    cnt: 0,
+    fix: false,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);

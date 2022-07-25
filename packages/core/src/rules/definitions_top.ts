@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -9,6 +10,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StructureNode, StatementNode} from "../abap/nodes";
 import {Position} from "../position";
+import {Version} from "../version";
 
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
@@ -32,7 +34,9 @@ export class DefinitionsTop extends ABAPRule {
       key: "definitions_top",
       title: "Place definitions in top of routine",
       shortDescription: `Checks that definitions are placed at the beginning of METHODs and FORMs.`,
-      extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
+      extendedInformation: `If the routine has inline definitions then no issues are reported
+
+https://docs.abapopenchecks.org/checks/17/`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
@@ -77,6 +81,12 @@ export class DefinitionsTop extends ABAPRule {
 //////////////////
 
   private walk(r: StructureNode, file: ABAPFile): Issue | undefined {
+
+    if (this.reg.getConfig().getVersion() !== Version.v702) {
+      if (r.findFirstExpression(Expressions.InlineData)) {
+        return undefined;
+      }
+    }
 
     for (const c of r.getChildren()) {
       if (c instanceof StatementNode && c.get() instanceof Comment) {
