@@ -19,6 +19,7 @@ export class Domain extends AbstractObject {
     datatype?: string,
     length?: string,
     decimals?: string,
+    conversionExit?: string,
     values?: DomainValue[],
   } | undefined;
   private parsedType: AbstractType | undefined;
@@ -29,6 +30,10 @@ export class Domain extends AbstractObject {
 
   public getDescription(): string | undefined {
     return this.parsedXML?.description;
+  }
+
+  public getConversionExit(): string | undefined {
+    return this.parsedXML?.conversionExit;
   }
 
   public getAllowedNaming() {
@@ -85,6 +90,7 @@ export class Domain extends AbstractObject {
       description: dd01v?.DDTEXT,
       datatype: dd01v?.DATATYPE,
       length: dd01v?.LENG,
+      conversionExit: dd01v?.CONVEXIT,
       decimals: dd01v?.DECIMALS,
       values: values,
     };
