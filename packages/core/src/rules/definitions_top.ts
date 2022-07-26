@@ -61,6 +61,11 @@ https://docs.abapopenchecks.org/checks/17/`,
       return [];
     }
 
+    const containsUnknown = file.getStatements().some(s => s.get() instanceof Unknown);
+    if (containsUnknown === true) {
+      return [];
+    }
+
     const routines = structure.findAllStructures(Structures.Form).concat(structure.findAllStructures(Structures.Method));
     for (const r of routines) {
       // one fix per routine
@@ -68,6 +73,12 @@ https://docs.abapopenchecks.org/checks/17/`,
 
       this.mode = DEFINITION;
       this.moveTo = r.getFirstStatement()?.getLastToken().getEnd();
+
+      if (this.reg.getConfig().getVersion() !== Version.v702) {
+        if (r.findFirstExpression(Expressions.InlineData)) {
+          continue;
+        }
+      }
 
       const found = this.walk(r, file);
       if (found) {
@@ -81,12 +92,6 @@ https://docs.abapopenchecks.org/checks/17/`,
 //////////////////
 
   private walk(r: StructureNode, file: ABAPFile): Issue | undefined {
-
-    if (this.reg.getConfig().getVersion() !== Version.v702) {
-      if (r.findFirstExpression(Expressions.InlineData)) {
-        return undefined;
-      }
-    }
 
     let previous: StatementNode | StructureNode | undefined = undefined;
     for (const c of r.getChildren()) {
