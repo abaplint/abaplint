@@ -155,6 +155,16 @@ ENDFORM.`,
     fix: false,
   },
 
+  { // parser error
+    abap: `
+FORM foobar.
+	data: lt_file type foo.
+	write 'hello' sdfsd.
+	DATA int type i.
+ENDFORM.`,
+    cnt: 0,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);
