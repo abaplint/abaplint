@@ -1603,6 +1603,22 @@ ${indentation}    output = ${topTarget}.`;
         previous = b;
       }
 
+      if (body === "" && valueBody?.getLastChild()?.getFirstToken().getStr().toUpperCase() === "OPTIONAL") {
+        const fieldChain = valueBody.findFirstExpression(Expressions.FieldChain);
+        const tableExpression = fieldChain?.findDirectExpression(Expressions.TableExpression);
+        const rowName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+        const tabName = fieldChain?.getFirstChild()?.concatTokens();
+        let condition = "";
+        if (tableExpression?.findDirectExpression(Expressions.Source)) {
+          condition = "INDEX " + tableExpression?.findDirectExpression(Expressions.Source)?.concatTokens();
+        }
+        body +=
+          indentation + `READ TABLE ${tabName} INTO DATA(${rowName}) ${condition}.\n` +
+          indentation + `IF sy-subrc = 0.\n` +
+          indentation + `  ${uniqueName} = ${rowName}.\n` +
+          indentation + `ENDIF.\n`;
+      }
+
       if (end !== "") {
         indentation = indentation.substring(2);
         body += indentation + end;
