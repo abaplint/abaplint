@@ -1605,17 +1605,32 @@ ${indentation}    output = ${topTarget}.`;
 
       if (body === "" && valueBody?.getLastChild()?.getFirstToken().getStr().toUpperCase() === "OPTIONAL") {
         const fieldChain = valueBody.findFirstExpression(Expressions.FieldChain);
-        const tableExpression = fieldChain?.findDirectExpression(Expressions.TableExpression);
         const rowName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-        const tabName = fieldChain?.getFirstChild()?.concatTokens();
-        let condition = "";
-        if (tableExpression?.findDirectExpression(Expressions.Source)) {
-          condition = "INDEX " + tableExpression?.findDirectExpression(Expressions.Source)?.concatTokens();
+
+        let tableExpression: ExpressionNode | undefined = undefined;
+        let tabName = "";
+        let after = "";
+        for (const c of fieldChain?.getChildren() || []) {
+          if (c.get() instanceof Expressions.TableExpression && c instanceof ExpressionNode) {
+            tableExpression = c;
+          } else if (tableExpression === undefined) {
+            tabName += c.concatTokens();
+          } else {
+            after += c.concatTokens();
+          }
         }
+
+        let condition = "";
+        if (tableExpression?.getChildren().length === 3) {
+          condition = "INDEX " + tableExpression?.findDirectExpression(Expressions.Source)?.concatTokens();
+        } else {
+          condition = "WITH KEY " + tableExpression?.concatTokens().replace("[ ", "").replace(" ]", "");
+        }
+
         body +=
           indentation + `READ TABLE ${tabName} INTO DATA(${rowName}) ${condition}.\n` +
           indentation + `IF sy-subrc = 0.\n` +
-          indentation + `  ${uniqueName} = ${rowName}.\n` +
+          indentation + `  ${uniqueName} = ${rowName}${after}.\n` +
           indentation + `ENDIF.\n`;
       }
 

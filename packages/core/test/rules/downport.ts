@@ -3000,7 +3000,7 @@ DATA(message_entry) = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("VALUE table expression, optional, another", async () => {
+  it("VALUE table expression, optional, another", async () => {
     const abap = `
 TYPES: BEGIN OF ty_row,
          ext TYPE i,
@@ -3010,7 +3010,19 @@ DATA table TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
 DATA foo TYPE i.
 foo = VALUE #( table[ ext = 2 ]-int OPTIONAL ).`;
     const expected = `
-sdfsd.`;
+TYPES: BEGIN OF ty_row,
+         ext TYPE i,
+         int TYPE i,
+       END OF ty_row.
+DATA table TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA foo TYPE i.
+DATA temp1 TYPE i.
+CLEAR temp1.
+READ TABLE table INTO DATA(temp2) WITH KEY ext = 2.
+IF sy-subrc = 0.
+  temp1 = temp2-int.
+ENDIF.
+foo = temp1.`;
     testFix(abap, expected);
   });
 
