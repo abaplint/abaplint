@@ -1603,6 +1603,37 @@ ${indentation}    output = ${topTarget}.`;
         previous = b;
       }
 
+      if (body === "" && valueBody?.getLastChild()?.getFirstToken().getStr().toUpperCase() === "OPTIONAL") {
+        const fieldChain = valueBody.findFirstExpression(Expressions.FieldChain);
+        const rowName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+
+        let tableExpression: ExpressionNode | undefined = undefined;
+        let tabName = "";
+        let after = "";
+        for (const c of fieldChain?.getChildren() || []) {
+          if (c.get() instanceof Expressions.TableExpression && c instanceof ExpressionNode) {
+            tableExpression = c;
+          } else if (tableExpression === undefined) {
+            tabName += c.concatTokens();
+          } else {
+            after += c.concatTokens();
+          }
+        }
+
+        let condition = "";
+        if (tableExpression?.getChildren().length === 3) {
+          condition = "INDEX " + tableExpression?.findDirectExpression(Expressions.Source)?.concatTokens();
+        } else {
+          condition = "WITH KEY " + tableExpression?.concatTokens().replace("[ ", "").replace(" ]", "");
+        }
+
+        body +=
+          indentation + `READ TABLE ${tabName} INTO DATA(${rowName}) ${condition}.\n` +
+          indentation + `IF sy-subrc = 0.\n` +
+          indentation + `  ${uniqueName} = ${rowName}${after}.\n` +
+          indentation + `ENDIF.\n`;
+      }
+
       if (end !== "") {
         indentation = indentation.substring(2);
         body += indentation + end;
