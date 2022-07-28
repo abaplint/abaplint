@@ -2991,4 +2991,18 @@ sdfsd.`;
     testFix(abap, expected);
   });
 
+  it.skip("VALUE table expression, optional, another", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         ext TYPE i,
+         int TYPE i,
+       END OF ty_row.
+DATA table TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA foo TYPE i.
+foo = VALUE #( table[ ext = 2 ]-int OPTIONAL ).`;
+    const expected = `
+sdfsd.`;
+    testFix(abap, expected);
+  });
+
 });
