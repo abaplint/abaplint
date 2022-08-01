@@ -115,7 +115,7 @@ export class UnknownTypes implements IRule {
     }
 
     for (const v of nodeData.idefs) {
-      const found = this.checkMethodParameters(v);
+      const found = this.checkParameters(v);
       if (found) {
         const message = "Contains unknown, " + found.found;
         ret.push(Issue.atIdentifier(found.id, message, this.getMetadata().key, this.conf.severity));
@@ -123,7 +123,7 @@ export class UnknownTypes implements IRule {
     }
     for (const name in nodeData.cdefs) {
       const v = nodeData.cdefs[name];
-      const found = this.checkMethodParameters(v);
+      const found = this.checkParameters(v);
       if (found) {
         const message = "Contains unknown, " + found.found;
         ret.push(Issue.atIdentifier(found.id, message, this.getMetadata().key, this.conf.severity));
@@ -137,9 +137,17 @@ export class UnknownTypes implements IRule {
     return ret;
   }
 
-  private checkMethodParameters(idef: IInterfaceDefinition): {id: Identifier, found: string} | undefined {
+  private checkParameters(idef: IInterfaceDefinition): {id: Identifier, found: string} | undefined {
     for (const m of idef.getMethodDefinitions()?.getAll() || []) {
       for (const p of m.getParameters().getAll()) {
+        const found = this.containsUnknown(p.getType());
+        if (found) {
+          return {id: p, found};
+        }
+      }
+    }
+    for (const e of idef.getEvents() || []) {
+      for (const p of e.getParameters()) {
         const found = this.containsUnknown(p.getType());
         if (found) {
           return {id: p, found};

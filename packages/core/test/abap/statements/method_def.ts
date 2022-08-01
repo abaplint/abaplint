@@ -92,6 +92,11 @@ const tests = [
   `CLASS-METHODS get_shortest_path AMDP OPTIONS CDS SESSION CLIENT current.`,
   `METHODS /ui2/bar.`,
   `METHODS /ui2/foo_bar RETURNING VALUE(ro_/ui2/moo) TYPE REF TO /ui2/boo.`,
+
+  `METHODS validate_foo  FOR VALIDATE ON SAVE IMPORTING keys FOR foo~bar.`,
+  `METHODS modify_foo    FOR MODIFY IMPORTING  keys FOR ACTION foo~bar RESULT result.`,
+  `METHODS features_foo  FOR FEATURES IMPORTING keys REQUEST requested_features FOR bar RESULT result.`,
+  `METHODS determine_foo FOR DETERMINE ON MODIFY IMPORTING keys FOR foo~bar.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

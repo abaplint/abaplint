@@ -75,6 +75,8 @@ END OF li_order.`, cnt: 1, fix: false},
     parameters (lt_par)
     source xml lv_xml
     result xml rv_res.`, cnt: 0},
+
+  {abap: "INSERT zfoo CLIENT SPECIFIED.", cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);

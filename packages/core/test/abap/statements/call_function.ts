@@ -274,6 +274,12 @@ const tests = [
   "  starting new task 'ZFOO'\n" +
   "  calling <out>->end_of_task on end of task.",
 */
+
+  `CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+     EXPORTING
+       input  = cl_ujt_utility=>string2xstring( lv_json )
+     IMPORTING
+       output = lv_string.`,
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

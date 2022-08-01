@@ -138,7 +138,8 @@ export class StatementParser {
     for (let statement of wa.statements) {
       // dont use CALL METHOD, when executing lazy, it easily gives a Move for the last statment if lazy logic is evaluated
       if (statement.get() instanceof Unknown
-          && statement.concatTokens().toUpperCase().startsWith("CALL METHOD ") === false) {
+          && statement.concatTokens().toUpperCase().startsWith("CALL METHOD ") === false
+          && statement.concatTokens().toUpperCase().startsWith("CALL FUNCTION ") === false) {
         for (const {first, second} of this.buildSplits(statement.getTokens())) {
           if (second.length === 1) {
             continue; // probably punctuation

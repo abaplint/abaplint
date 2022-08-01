@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -9,6 +10,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StructureNode, StatementNode} from "../abap/nodes";
 import {Position} from "../position";
+import {Version} from "../version";
 
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
@@ -32,7 +34,9 @@ export class DefinitionsTop extends ABAPRule {
       key: "definitions_top",
       title: "Place definitions in top of routine",
       shortDescription: `Checks that definitions are placed at the beginning of METHODs and FORMs.`,
-      extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
+      extendedInformation: `If the routine has inline definitions then no issues are reported
+
+https://docs.abapopenchecks.org/checks/17/`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
@@ -57,6 +61,11 @@ export class DefinitionsTop extends ABAPRule {
       return [];
     }
 
+    const containsUnknown = file.getStatements().some(s => s.get() instanceof Unknown);
+    if (containsUnknown === true) {
+      return [];
+    }
+
     const routines = structure.findAllStructures(Structures.Form).concat(structure.findAllStructures(Structures.Method));
     for (const r of routines) {
       // one fix per routine
@@ -64,6 +73,12 @@ export class DefinitionsTop extends ABAPRule {
 
       this.mode = DEFINITION;
       this.moveTo = r.getFirstStatement()?.getLastToken().getEnd();
+
+      if (this.reg.getConfig().getVersion() !== Version.v702) {
+        if (r.findFirstExpression(Expressions.InlineData)) {
+          continue;
+        }
+      }
 
       const found = this.walk(r, file);
       if (found) {
@@ -78,6 +93,7 @@ export class DefinitionsTop extends ABAPRule {
 
   private walk(r: StructureNode, file: ABAPFile): Issue | undefined {
 
+    let previous: StatementNode | StructureNode | undefined = undefined;
     for (const c of r.getChildren()) {
       if (c instanceof StatementNode && c.get() instanceof Comment) {
         continue;
@@ -93,8 +109,24 @@ export class DefinitionsTop extends ABAPRule {
           || c.get() instanceof Structures.Constants
           || c.get() instanceof Structures.Statics)) {
         if (this.mode === AFTER) {
+          // These are chained structured statements
+          let fix = undefined;
+          if (c.getLastChild()?.getLastChild()?.getFirstToken().getStr() === "."
+              && !(previous instanceof StructureNode)
+              && this.moveTo) {
+            // this is not perfect, but will work for now
+            const start = c.getFirstChild()?.getFirstChild()?.getFirstToken().getStart();
+            const end = c.getLastChild()?.getLastChild()?.getLastToken().getEnd();
+            if (start && end ) {
+              let concat = c.concatTokens();
+              concat = concat.replace(/,/g, ".\n");
+              const fix1 = EditHelper.deleteRange(file, start, end);
+              const fix2 = EditHelper.insertAt(file, this.moveTo, "\n" + concat);
+              fix = EditHelper.merge(fix1, fix2);
+            }
+          }
           // no quick fixes for these, its difficult?
-          return Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          return Issue.atStatement(file, c.getFirstStatement()!, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         } else {
           this.moveTo = c.getLastToken().getEnd();
         }
@@ -129,6 +161,8 @@ export class DefinitionsTop extends ABAPRule {
           return found;
         }
       }
+
+      previous = c;
     }
 
     return undefined;

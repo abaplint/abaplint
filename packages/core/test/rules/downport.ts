@@ -39,6 +39,15 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("CALL FUNCTION, ok, no downport", async () => {
+    const issues = await findIssues(`CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = temp1
+  IMPORTING
+    output = lv_string.`);
+    expect(issues.length).to.equal(0);
+  });
+
 // todo, this example can actually be implemented?
   it("try downport voided value", async () => {
     const issues = await findIssues("DATA(bar) = VALUE asdf( ).");
@@ -1055,6 +1064,24 @@ lv_topbit = mv_hex+1.`;
     input  = ls_line-no
   IMPORTING
     output = temp2-ebelp.`;
+
+    testFix(abap, expected);
+  });
+
+  it("downport, ALPHA = OUT", async () => {
+    const abap = `DATA iv_in TYPE matnr.
+DATA rv_out TYPE string.
+rv_out = condense( |{ iv_in ALPHA = OUT }| ).`;
+
+    const expected = `DATA iv_in TYPE matnr.
+DATA rv_out TYPE string.
+DATA temp1 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
+  EXPORTING
+    input  = iv_in
+  IMPORTING
+    output = temp1.
+rv_out = condense( temp1 ).`;
 
     testFix(abap, expected);
   });
@@ -2542,6 +2569,14 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("ref variable name with CAST", async () => {
+    const abap = `foo = CAST asdf( cl_abap_structdescr=>describe_by_data( ref ) ).`;
+    const expected = `DATA temp1 TYPE REF TO asdf.
+temp1 ?= cl_abap_structdescr=>describe_by_data( ref ).
+foo = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("structured ENUM", async () => {
     const abap = `
 TYPES:
@@ -2570,6 +2605,16 @@ CONSTANTS: BEGIN OF type_info,
              string TYPE enum_type_info VALUE 1,
              numeric TYPE enum_type_info VALUE 2,
            END OF type_info.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT, spaces within IN", async () => {
+    const abap = `
+  DATA ls_t000 TYPE t000.
+  SELECT SINGLE * FROM t000 INTO ls_t000 WHERE cccategory IN ( 'S', 'C' ).`;
+    const expected = `
+  DATA ls_t000 TYPE t000.
+  SELECT SINGLE * FROM t000 INTO ls_t000 WHERE cccategory IN ('S', 'C').`;
     testFix(abap, expected);
   });
 
@@ -2654,6 +2699,14 @@ ENDCLASS.`;
   DATA name_of_source TYPE string.
   DATA(temp1) = name_of_source && '=>' && name_of_constant.
   MESSAGE e000(aa) WITH temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("Inline with NEW, must outline", async () => {
+    const abap = `DATA(foobar) = NEW zcl_foobar( ).`;
+    const expected = `DATA temp1 TYPE REF TO zcl_foobar.
+CREATE OBJECT temp1 TYPE zcl_foobar.
+DATA(foobar) = temp1.`;
     testFix(abap, expected);
   });
 
@@ -2824,6 +2877,78 @@ INSERT temp1 INTO TABLE result.`;
     testFix(abap, expected);
   });
 
+  it("REF, simple, inferred", async () => {
+    const abap = `
+DATA ref TYPE REF TO string.
+DATA lv_string TYPE string.
+ref = REF #( lv_string ).`;
+    const expected = `
+DATA ref TYPE REF TO string.
+DATA lv_string TYPE string.
+GET REFERENCE OF lv_string INTO ref.`;
+    testFix(abap, expected);
+  });
+
+  it("REF, in method call, inferred", async () => {
+    const abap = `
+serialize_json( iv_data          = REF #( iv_data )
+                iv_compress_json = iv_compress_json ).`;
+    const expected = `
+DATA(temp1) = REF #( iv_data ).
+serialize_json( iv_data          = temp1
+                iv_compress_json = iv_compress_json ).`;
+    testFix(abap, expected);
+  });
+
+  it("REF, simple, inline", async () => {
+    const abap = `DATA(temp1) = REF #( iv_data ).`;
+    const expected = `GET REFERENCE OF iv_data INTO DATA(temp1).`;
+    testFix(abap, expected);
+  });
+
+  it("GET REFERINCE INTO inline", async () => {
+    const abap = `GET REFERENCE OF iv_data INTO DATA(temp1).`;
+    const expected = `DATA temp1 LIKE REF TO iv_data.
+GET REFERENCE OF iv_data INTO temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("CALL FUNCTION, not simple", async () => {
+    const abap = `
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = cl_ujt_utility=>string2xstring( lv_json )
+  IMPORTING
+    output = lv_string.`;
+    const expected = `
+DATA(temp1) = cl_ujt_utility=>string2xstring( lv_json ).
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    input  = temp1
+  IMPORTING
+    output = lv_string.`;
+    testFix(abap, expected);
+  });
+
+  it("CALL FUNCTION, not simple, second parameter", async () => {
+    const abap = `
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    foo    = sdfs
+    input  = cl_ujt_utility=>string2xstring( lv_json )
+  IMPORTING
+    output = lv_string.`;
+    const expected = `
+DATA(temp1) = cl_ujt_utility=>string2xstring( lv_json ).
+CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
+  EXPORTING
+    foo    = sdfs
+    input  = temp1
+  IMPORTING
+    output = lv_string.`;
+    testFix(abap, expected);
+  });
+
   it("predicate function, matches()", async () => {
     const abap = `
   IF matches( val = 'foo' regex = 'foo' ).
@@ -2855,14 +2980,49 @@ DATA(message_entry) = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("VALUE table expression, optional", async () => {
+  it("VALUE table expression, optional", async () => {
     const abap = `
   DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   DATA input TYPE i.
   DATA result TYPE i.
   result = VALUE i( lt_prime_numbers[ input ] OPTIONAL ).`;
     const expected = `
-sdfsd.`;
+  DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA input TYPE i.
+  DATA result TYPE i.
+  DATA temp1 TYPE i.
+  CLEAR temp1.
+  READ TABLE lt_prime_numbers INTO DATA(temp2) INDEX input.
+  IF sy-subrc = 0.
+    temp1 = temp2.
+  ENDIF.
+  result = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE table expression, optional, another", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         ext TYPE i,
+         int TYPE i,
+       END OF ty_row.
+DATA table TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA foo TYPE i.
+foo = VALUE #( table[ ext = 2 ]-int OPTIONAL ).`;
+    const expected = `
+TYPES: BEGIN OF ty_row,
+         ext TYPE i,
+         int TYPE i,
+       END OF ty_row.
+DATA table TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA foo TYPE i.
+DATA temp1 TYPE i.
+CLEAR temp1.
+READ TABLE table INTO DATA(temp2) WITH KEY ext = 2.
+IF sy-subrc = 0.
+  temp1 = temp2-int.
+ENDIF.
+foo = temp1.`;
     testFix(abap, expected);
   });
 

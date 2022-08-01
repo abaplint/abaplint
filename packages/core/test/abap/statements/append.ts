@@ -1,4 +1,4 @@
-import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
+import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -67,3 +67,8 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "APPEND");
+
+const fails = [
+  "APPEND LINES OF tab1 FROM 1 TO 2.", // '2' is not a possible table target
+];
+statementExpectFail(fails, "APPEND");
