@@ -81,10 +81,10 @@ export class Junit implements IFormatter {
 
     const code: string[] = [];
     for (let lineIndex = lineFrom - 1; lineIndex < lineTo; lineIndex++) {
-      const prefix = `${ " " }${lineIndex + 1} |`.padStart(padSize);
+      const prefix = `${lineIndex + 1} | `.padStart(padSize, "0");
       code.push(prefix + this.fileContent[lineIndex]);
       if (lineIndex === issueLineIndex) {
-        code.push("|".padStart(padSize) + " ".repeat(issue.getStart().getCol() - 1) + "^");
+        code.push("| ".padStart(padSize) + " ".repeat(issue.getStart().getCol() - 1) + "^");
       }
     }
 
