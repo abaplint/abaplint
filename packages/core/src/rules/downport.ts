@@ -1067,14 +1067,15 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const enumName = high.findExpressionAfterToken("ENUM")?.concatTokens();
     const structureName = high.findExpressionAfterToken("STRUCTURE")?.concatTokens();
 
-    let code = `TYPES ${enumName} TYPE i.
+// all ENUMS are char like?
+    let code = `TYPES ${enumName} TYPE string.
 CONSTANTS: BEGIN OF ${structureName},\n`;
     let count = 1;
     for (const e of enumStructure.findDirectStatements(Statements.TypeEnum).concat(enumStructure.findDirectStatements(Statements.Type))) {
       const name = e.findFirstExpression(Expressions.NamespaceSimpleName)?.concatTokens();
       let value = e.findFirstExpression(Expressions.Value)?.concatTokens();
       if (value === undefined) {
-        value = "VALUE " + count++;
+        value = "VALUE '" + count++ + "'";
       }
       code += `             ${name} TYPE ${enumName} ${value},\n`;
     }

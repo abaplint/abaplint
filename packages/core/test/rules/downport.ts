@@ -2585,7 +2585,7 @@ TYPES:
     camel_case    VALUE 1,
   END OF ENUM enum_formatting_option STRUCTURE formatting_option.`;
     const expected = `
-TYPES enum_formatting_option TYPE i.
+TYPES enum_formatting_option TYPE string.
 CONSTANTS: BEGIN OF formatting_option,
              no_formatting TYPE enum_formatting_option VALUE IS INITIAL,
              camel_case TYPE enum_formatting_option VALUE 1,
@@ -2600,10 +2600,10 @@ TYPES: BEGIN OF ENUM enum_type_info STRUCTURE type_info,
          numeric,
        END OF ENUM enum_type_info STRUCTURE type_info.`;
     const expected = `
-TYPES enum_type_info TYPE i.
+TYPES enum_type_info TYPE string.
 CONSTANTS: BEGIN OF type_info,
-             string TYPE enum_type_info VALUE 1,
-             numeric TYPE enum_type_info VALUE 2,
+             string TYPE enum_type_info VALUE '1',
+             numeric TYPE enum_type_info VALUE '2',
            END OF type_info.`;
     testFix(abap, expected);
   });
