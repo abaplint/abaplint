@@ -221,7 +221,7 @@ export class BasicTypes {
     return undefined;
   }
 
-  public simpleType(node: StatementNode | ExpressionNode): TypedIdentifier | undefined {
+  public simpleType(node: StatementNode | ExpressionNode, noQualifiedName?: boolean): TypedIdentifier | undefined {
     let nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (nameExpr === undefined) {
       nameExpr = node.findFirstExpression(Expressions.DefinitionName);
@@ -245,6 +245,9 @@ export class BasicTypes {
           qualifiedName = this.scope.getName() + "=>" + qualifiedName;
         }
       }
+    }
+    if (noQualifiedName === true) {
+      qualifiedName = undefined;
     }
 
     const found = this.parseType(node, qualifiedName);
