@@ -2618,6 +2618,33 @@ CONSTANTS: BEGIN OF type_info,
     testFix(abap, expected);
   });
 
+  it("COND, typing", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_abap_value_mapping,
+         target_type TYPE string,
+       END OF ty_abap_value_mapping.
+DATA abap_value_mapping TYPE ty_abap_value_mapping.
+DATA foo TYPE i.
+DATA(type) = COND #(
+  WHEN foo IS NOT INITIAL
+  THEN abap_value_mapping-target_type
+  ELSE 'bar' ).`;
+    const expected = `
+TYPES: BEGIN OF ty_abap_value_mapping,
+         target_type TYPE string,
+       END OF ty_abap_value_mapping.
+DATA abap_value_mapping TYPE ty_abap_value_mapping.
+DATA foo TYPE i.
+DATA temp1 TYPE string.
+IF foo IS NOT INITIAL.
+  temp1 = abap_value_mapping-target_type.
+ELSE.
+  temp1 = 'bar'.
+ENDIF.
+DATA(type) = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("generic types should infer to non generic if possible", async () => {
     const abap = `
 CLASS lcl DEFINITION.

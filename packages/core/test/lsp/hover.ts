@@ -768,6 +768,18 @@ ENDINTERFACE.`;
     expect(hover?.value).to.contain("zif_wasm_value=>ty_values");
   });
 
+  it("hover, type BEGIN OF", () => {
+    const abap = `TYPES: BEGIN OF ty_abap_value_mapping,
+    target_type TYPE string,
+  END OF ty_abap_value_mapping.
+DATA(sdf) = VALUE ty_abap_value_mapping-target_type( ).`;
+    const file = new MemoryFile("foo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Qualified Type Name: ```STRING```");
+  });
+
   it("hover, interface method", () => {
     const abap = `INTERFACE zif_test.
   METHODS moo.
