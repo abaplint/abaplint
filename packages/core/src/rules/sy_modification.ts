@@ -18,7 +18,9 @@ export class SyModification extends ABAPRule {
       key: "sy_modification",
       title: "Modification of SY fields",
       shortDescription: `Finds modification of sy fields`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abensystem_fields.htm`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abensystem_fields.htm
+
+Changes to SY-TVAR* fields are not reported`,
       tags: [RuleTag.SingleFile],
       badExample: `
 sy-uname = 2.
@@ -45,6 +47,10 @@ sy = sy.`,
       const firstChild = t.getChildren()[0];
       if (firstChild.get() instanceof Expressions.TargetField
           && firstChild.getFirstToken().getStr().toUpperCase() === "SY") {
+
+        if (t.concatTokens().toUpperCase().startsWith("SY-TVAR")) {
+          continue;
+        }
 
         const message = "Modification of SY field";
         const issue = Issue.atToken(file, firstChild.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
