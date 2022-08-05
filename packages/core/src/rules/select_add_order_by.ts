@@ -71,8 +71,8 @@ If the target is a sorted/hashed table, no issue is reported`,
         }
 
         // skip COUNT(*)
-        const list = s.findFirstExpression(Expressions.SQLFieldList);
-        if (list?.getChildren().length === 1 && list.getFirstChild()?.get() instanceof Expressions.SQLAggregation) {
+        const list = s.findAllExpressions(Expressions.SQLField);
+        if (list.length === 1 && list[0].getFirstChild()?.get() instanceof Expressions.SQLAggregation) {
           continue;
         } else if (s.findFirstExpression(Expressions.SQLOrderBy)) {
           continue;

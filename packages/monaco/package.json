@@ -1,6 +1,6 @@
 {
   "name": "@abaplint/monaco",
-  "version": "2.91.23",
+  "version": "2.91.24",
   "description": "ABAP language support for Monaco Editor",
   "main": "build/index.js",
   "typings": "build/index.d.ts",

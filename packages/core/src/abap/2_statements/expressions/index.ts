@@ -147,6 +147,7 @@ export * from "./sql_client";
 export * from "./sql_compare_operator";
 export * from "./sql_compare";
 export * from "./sql_cond";
+export * from "./sql_field";
 export * from "./sql_field_list_loop";
 export * from "./sql_field_list";
 export * from "./sql_field_name";
