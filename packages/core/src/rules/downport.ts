@@ -500,7 +500,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return undefined;
     }
     let fieldDefinition = "";
-    const fields = fieldList.findDirectExpressions(Expressions.SQLFieldName);
+    const fields = fieldList.findAllExpressions(Expressions.SQLFieldName);
     const name = inlineData.findFirstExpression(Expressions.TargetField)?.concatTokens() || "error";
     if (fields.length === 1) {
       fieldDefinition = `DATA ${name} TYPE ${tableName}-${fields[0].concatTokens()}.`;
@@ -559,7 +559,7 @@ ${indentation}`);
       return undefined;
     }
     let fieldDefinitions = "";
-    for (const f of fieldList.findDirectExpressions(Expressions.SQLFieldName)) {
+    for (const f of fieldList.findAllExpressions(Expressions.SQLFieldName)) {
       let fieldName = f.concatTokens();
       if (fieldName.includes("~")) {
         const split = fieldName.split("~");
