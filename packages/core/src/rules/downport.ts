@@ -22,7 +22,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {ObjectReferenceType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
-import {WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
+import {At, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
@@ -405,8 +405,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const candidates = [high.findAllExpressionsRecursive(Expressions.SQLTarget),
       high.findAllExpressionsRecursive(Expressions.SQLSource),
       high.findAllExpressionsRecursive(Expressions.SQLSourceSimple)].flat();
-    for (const c of candidates) {
-      if (c.getFirstToken() instanceof WAt) {
+    for (const c of candidates.reverse()) {
+      if (c.getFirstToken() instanceof WAt
+          || c.getFirstToken() instanceof At) {
         addFix(c.getFirstToken());
       }
     }
