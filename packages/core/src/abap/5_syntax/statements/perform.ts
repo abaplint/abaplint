@@ -5,6 +5,7 @@ import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
+import {Target} from "../expressions/target";
 
 export class Perform implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -16,8 +17,8 @@ export class Perform implements StatementSyntax {
     // check parameters are defined
 
     for (const c of node.findDirectExpressions(Expressions.PerformChanging)) {
-      for (const s of c.findDirectExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, scope, filename);
+      for (const s of c.findDirectExpressions(Expressions.Target)) {
+        new Target().runSyntax(s, scope, filename);
       }
     }
     for (const t of node.findDirectExpressions(Expressions.PerformTables)) {

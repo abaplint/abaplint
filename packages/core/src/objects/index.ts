@@ -35,6 +35,7 @@ export * from "./ecatt_test_data_container";
 export * from "./ecatt_test_script";
 export * from "./enhancement_implementation";
 export * from "./enhancement_spot";
+export * from "./event_binding";
 export * from "./extension_index";
 export * from "./field_catalog";
 export * from "./form_object_form";

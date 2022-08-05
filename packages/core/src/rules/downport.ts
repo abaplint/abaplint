@@ -420,7 +420,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     if (fix !== undefined) {
-      return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove \" and ,", this.getMetadata().key, this.conf.severity, fix);
+      return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove @ and ,", this.getMetadata().key, this.conf.severity, fix);
     }
 
     for (const c of high.findAllExpressionsRecursive(Expressions.SQLIn)) {
