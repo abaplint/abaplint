@@ -3053,4 +3053,16 @@ foo = temp1.`;
     testFix(abap, expected);
   });
 
+  it("SQL, INTO field list", async () => {
+    const abap = `
+SELECT SINGLE foo, bar INTO (@ls_result-foo, @ls_result-bar)
+  FROM zfoobar
+  WHERE field = @ls_result-field.`;
+    const expected = `
+SELECT SINGLE foo bar INTO (ls_result-foo, ls_result-bar)
+  FROM zfoobar
+  WHERE field = ls_result-field.`;
+    testFix(abap, expected);
+  });
+
 });
