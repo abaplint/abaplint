@@ -3,10 +3,11 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
-import {TableType, VoidType} from "../../types/basic";
+import {DataReference, TableType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
+import {InlineData} from "../expressions/inline_data";
 
 export class Append implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -23,10 +24,17 @@ export class Append implements StatementSyntax {
       if (!(targetType instanceof TableType) && !(targetType instanceof VoidType)) {
         throw new Error("APPEND to non table type");
       }
-
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
-
       new FSTarget().runSyntax(fsTarget, scope, filename, rowType);
+    }
+
+    const dataTarget = node.findExpressionAfterToken("INTO");
+    if (dataTarget && node.concatTokens().toUpperCase().includes(" REFERENCE INTO DATA(")) {
+      if (!(targetType instanceof TableType) && !(targetType instanceof VoidType)) {
+        throw new Error("APPEND to non table type");
+      }
+      const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
+      new InlineData().runSyntax(dataTarget, scope, filename, new DataReference(rowType));
     }
 
     let source = node.findDirectExpression(Expressions.Source);
