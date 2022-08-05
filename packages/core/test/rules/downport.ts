@@ -3065,4 +3065,32 @@ SELECT SINGLE foo bar INTO (ls_result-foo, ls_result-bar)
     testFix(abap, expected);
   });
 
+  it("APPEND INITIAL data reference inline, simple", async () => {
+    const abap = `
+DATA combined_data TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND INITIAL LINE TO combined_data REFERENCE INTO DATA(combined_values).`;
+    const expected = `
+DATA combined_data TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA combined_values TYPE REF TO i.
+APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND INITIAL data reference inline, structured", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+DATA combined_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+APPEND INITIAL LINE TO combined_data REFERENCE INTO DATA(combined_values).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+DATA combined_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA combined_values TYPE REF TO ty.
+APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
+    testFix(abap, expected);
+  });
+
 });

@@ -1155,4 +1155,12 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("APPEND INITIAL, reference INTO", async () => {
+    const abap = `
+    DATA combined_data TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    APPEND INITIAL LINE TO combined_data REFERENCE INTO DATA(combined_values).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.include("combined_values");
+  });
+
 });
