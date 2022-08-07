@@ -19,7 +19,7 @@ import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {ObjectReferenceType, VoidType} from "../abap/types/basic";
+import {ObjectReferenceType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {At, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
@@ -996,7 +996,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple REF move", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private downportLoopGroup(high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
+  private downportLoopGroup(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
     if (!(high.get() instanceof Statements.Loop)) {
       return undefined;
     }
@@ -1006,8 +1006,18 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     }
     const groupTargetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
     const loopSourceName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
-    const loopTargetName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
+    const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
     const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
+
+    let loopSourceRowType = "typeNotFound";
+    const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
+    if (spag !== undefined) {
+      const found = spag.findVariable(loopSourceName);
+      const tt = found?.getType();
+      if (tt instanceof TableType) {
+        loopSourceRowType = tt.getRowType().getQualifiedName() || "typeNotFound";
+      }
+    }
 
     let code = `TYPES: BEGIN OF ${groupTargetName}#type,\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
@@ -1016,7 +1026,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
       if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP SIZE")) {
         type = "i";
       } else {
-        type = type.replace(loopTargetName, loopSourceName);
+        type = type.replace(loopTargetName, loopSourceRowType);
         type = type.replace("->", "-");
       }
       code += `  ${name?.concatTokens()} TYPE ${type},\n`;

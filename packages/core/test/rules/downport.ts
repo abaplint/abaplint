@@ -3124,7 +3124,7 @@ APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
     testFix(abap, expected);
   });
 
-  it.skip("LOOP AT GROUP BY", async () => {
+  it("LOOP AT GROUP BY", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
          group  TYPE group,
@@ -3142,7 +3142,25 @@ LOOP AT initial_numbers REFERENCE INTO DATA(initial_number)
   WRITE / group_key->count.
 ENDLOOP.`;
     const expected = `
-sdfsd`;
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+TYPES: BEGIN OF group_key#type,
+  key TYPE initial_numbers_type-group,
+  count TYPE i,
+  items LIKE initial_numbers,
+END OF group_key#type.
+DATA group_key#tab TYPE STANDARD TABLE OF group_key#type WITH DEFAULT KEY.
+* todo, aggregation code here
+LOOP AT group_key#tab REFERENCE INTO DATA(group_key).
+  WRITE / group_key->count.
+  LOOP AT group_key->items REFERENCE INTO DATA(group_item).
+    WRITE / group_key->count.
+  ENDLOOP.
+  WRITE / group_key->count.
+ENDLOOP.`;
     testFix(abap, expected);
   });
 
