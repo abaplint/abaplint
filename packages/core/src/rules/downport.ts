@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
@@ -1034,7 +1035,9 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     code += `         items LIKE ${loopSourceName},
        END OF ${groupTargetName}type.
 DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DEFAULT KEY.
+LOOP AT ${loopSourceName} sdf.
 * todo, aggregation code here
+ENDLOOP.
 LOOP AT ${groupTargetName}tab ${groupTarget}.`;
 
     let fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
@@ -1365,7 +1368,7 @@ ${indentation}    output = ${topTarget}.`;
     }
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-    const dataTarget = node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    const dataTarget = node.findDirectExpression(Expressions.LoopTarget)?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
     if (dataTarget) {
       const targetName = dataTarget.findDirectExpression(Expressions.TargetField)?.concatTokens() || "DOWNPORT_ERROR";
       const code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
@@ -1375,7 +1378,7 @@ ${indentation}    output = ${topTarget}.`;
       return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP data target", this.getMetadata().key, this.conf.severity, fix);
     }
 
-    const fsTarget = node.findDirectExpression(Expressions.FSTarget)?.findDirectExpression(Expressions.InlineFS);
+    const fsTarget = node.findDirectExpression(Expressions.LoopTarget)?.findDirectExpression(Expressions.FSTarget)?.findDirectExpression(Expressions.InlineFS);
     if (fsTarget) {
       const targetName = fsTarget.findDirectExpression(Expressions.TargetFieldSymbol)?.concatTokens() || "DOWNPORT_ERROR";
       const code = `FIELD-SYMBOLS ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;

@@ -3124,7 +3124,7 @@ APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
     testFix(abap, expected);
   });
 
-  it("LOOP AT GROUP BY", async () => {
+  it.skip("LOOP AT GROUP BY", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
          group  TYPE group,

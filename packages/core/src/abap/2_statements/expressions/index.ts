@@ -83,6 +83,7 @@ export * from "./let";
 export * from "./loop_group_by_component";
 export * from "./loop_group_by_target";
 export * from "./loop_group_by";
+export * from "./loop_target";
 export * from "./macro_name";
 export * from "./message_class";
 export * from "./message_number";

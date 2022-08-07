@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, ver, altPrio, optPrio, per, fail} from "../combi";
-import {FSTarget, Target, ComponentCond, Dynamic, Source, SimpleName} from "../expressions";
+import {seq, alt, opt, ver, altPrio, per, fail} from "../combi";
+import {ComponentCond, Dynamic, Source, SimpleName, LoopTarget} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SimpleSource2} from "../expressions/simple_source2";
@@ -11,15 +11,7 @@ export class Loop implements IStatement {
   public getMatcher(): IStatementRunnable {
     const where = seq("WHERE", alt(ComponentCond, Dynamic));
 
-    const into = seq(opt("REFERENCE"), "INTO", Target);
-
-    const assigning = seq("ASSIGNING", FSTarget);
-
     const group = ver(Version.v740sp08, seq("GROUP BY", LoopGroupBy));
-
-    const target = alt(seq(alt(into, assigning),
-                           optPrio("CASTING")),
-                       "TRANSPORTING NO FIELDS");
 
     const from = seq("FROM", Source);
 
@@ -27,7 +19,7 @@ export class Loop implements IStatement {
 
     const usingKey = seq("USING KEY", altPrio(SimpleName, Dynamic));
 
-    const options = per(target, from, to, where, usingKey, group);
+    const options = per(LoopTarget, from, to, where, usingKey, group);
 
     const at = seq("AT",
                    opt(seq("SCREEN", fail())),
