@@ -2635,13 +2635,44 @@ TYPES: BEGIN OF ty_abap_value_mapping,
        END OF ty_abap_value_mapping.
 DATA abap_value_mapping TYPE ty_abap_value_mapping.
 DATA foo TYPE i.
-DATA temp1 TYPE string.
+DATA temp1 TYPE ty_abap_value_mapping-target_type.
 IF foo IS NOT INITIAL.
   temp1 = abap_value_mapping-target_type.
 ELSE.
   temp1 = 'bar'.
 ENDIF.
 DATA(type) = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("COND, typing, with type in interface", async () => {
+    const abap = `
+INTERFACE lif.
+  TYPES: BEGIN OF ty_abap_value_mapping,
+           target_type TYPE string,
+         END OF ty_abap_value_mapping.
+ENDINTERFACE.
+
+DATA abap_value_mapping TYPE lif=>ty_abap_value_mapping.
+DATA foo TYPE i.
+DATA(type) = COND #(
+  WHEN foo IS NOT INITIAL
+  THEN abap_value_mapping-target_type
+  ELSE 'bar' ).`;
+    const expected = `
+INTERFACE lif.
+  TYPES: BEGIN OF ty_abap_value_mapping,
+           target_type TYPE string,
+         END OF ty_abap_value_mapping.
+ENDINTERFACE.
+
+DATA abap_value_mapping TYPE lif=>ty_abap_value_mapping.
+DATA foo TYPE i.
+DATA type TYPE lif=>ty_abap_value_mapping-target_type.
+type = COND #(
+  WHEN foo IS NOT INITIAL
+  THEN abap_value_mapping-target_type
+  ELSE 'bar' ).`;
     testFix(abap, expected);
   });
 
@@ -3090,6 +3121,46 @@ TYPES: BEGIN OF ty,
 DATA combined_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA combined_values TYPE REF TO ty.
 APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
+    testFix(abap, expected);
+  });
+
+  it("LOOP AT GROUP BY", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+LOOP AT initial_numbers REFERENCE INTO DATA(initial_number)
+    GROUP BY ( key = initial_number->group  count = GROUP SIZE )
+    ASCENDING
+    REFERENCE INTO DATA(group_key).
+  WRITE / group_key->count.
+  LOOP AT GROUP group_key REFERENCE INTO DATA(group_item).
+    WRITE / group_key->count.
+  ENDLOOP.
+  WRITE / group_key->count.
+ENDLOOP.`;
+    const expected = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+TYPES: BEGIN OF group_key#type,
+  key TYPE initial_numbers_type-group,
+  count TYPE i,
+  items LIKE initial_numbers,
+END OF group_key#type.
+DATA group_key#tab TYPE STANDARD TABLE OF group_key#type WITH DEFAULT KEY.
+* todo, aggregation code here
+LOOP AT group_key#tab REFERENCE INTO DATA(group_key).
+  WRITE / group_key->count.
+  LOOP AT group_key->items REFERENCE INTO DATA(group_item).
+    WRITE / group_key->count.
+  ENDLOOP.
+  WRITE / group_key->count.
+ENDLOOP.`;
     testFix(abap, expected);
   });
 

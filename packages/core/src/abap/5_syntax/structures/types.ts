@@ -20,7 +20,7 @@ export class Types {
       const ctyp = c.get();
       if (c instanceof StatementNode) {
         if (ctyp instanceof Statements.Type) {
-          const found = new Type().runSyntax(c, scope, filename, true);
+          const found = new Type().runSyntax(c, scope, filename, name.getStr() + "-");
           if (found) {
             components.push({name: found.getName(), type: found.getType()});
           }

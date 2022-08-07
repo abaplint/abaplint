@@ -19,7 +19,7 @@ import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {ObjectReferenceType, VoidType} from "../abap/types/basic";
+import {ObjectReferenceType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {At, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
@@ -239,6 +239,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.downportRef(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.downportLoopGroup(high, lowFile, highSyntax, highFile);
     if (found) {
       return found;
     }
@@ -989,6 +994,71 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple REF move", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private downportLoopGroup(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.Loop)) {
+      return undefined;
+    }
+    const group = high.findDirectExpression(Expressions.LoopGroupBy);
+    if (group === undefined) {
+      return undefined;
+    }
+    const groupTargetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
+    const loopSourceName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
+    const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
+    const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
+
+    let loopSourceRowType = "typeNotFound";
+    const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
+    if (spag !== undefined) {
+      const found = spag.findVariable(loopSourceName);
+      const tt = found?.getType();
+      if (tt instanceof TableType) {
+        loopSourceRowType = tt.getRowType().getQualifiedName() || "typeNotFound";
+      }
+    }
+
+    let code = `TYPES: BEGIN OF ${groupTargetName}#type,\n`;
+    for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
+      const name = c.findFirstExpression(Expressions.ComponentName);
+      let type = c.findFirstExpression(Expressions.Source)?.concatTokens() || "todo";
+      if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP SIZE")) {
+        type = "i";
+      } else {
+        type = type.replace(loopTargetName, loopSourceRowType);
+        type = type.replace("->", "-");
+      }
+      code += `  ${name?.concatTokens()} TYPE ${type},\n`;
+    }
+    code += `  items LIKE ${loopSourceName},
+END OF ${groupTargetName}#type.
+DATA ${groupTargetName}#tab TYPE STANDARD TABLE OF ${groupTargetName}#type WITH DEFAULT KEY.
+* todo, aggregation code here
+LOOP AT ${groupTargetName}#tab ${groupTarget}.`;
+
+    let fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
+
+    for (const l of highFile.getStructure()?.findAllStructures(Structures.Loop) || []) {
+// make sure to find the correct/current loop statement
+      if (l.findDirectStatement(Statements.Loop) !== high) {
+        continue;
+      }
+      for (const loop of l.findAllStatements(Statements.Loop)) {
+        if (loop.concatTokens()?.toUpperCase().startsWith("LOOP AT GROUP ")) {
+          const subLoopSource = loop.findFirstExpression(Expressions.SimpleSource2);
+          if (subLoopSource === undefined) {
+            continue;
+          }
+          const subLoopSourceName = subLoopSource?.concatTokens() || "nameNotFound";
+          const subCode = `LOOP AT ${subLoopSourceName}->items`;
+          const subFix = EditHelper.replaceRange(lowFile, loop.getFirstToken().getStart(), subLoopSource.getLastToken().getEnd(), subCode);
+          fix = EditHelper.merge(subFix, fix);
+        }
+      }
+    }
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, LOOP GROUP", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportRef(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

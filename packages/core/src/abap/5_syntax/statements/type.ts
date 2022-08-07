@@ -7,13 +7,13 @@ import * as Expressions from "../../2_statements/expressions";
 import {TypeTable} from "../expressions/type_table";
 
 export class Type {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string, noQualifiedName?: boolean): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      return new TypeTable().runSyntax(node, scope, filename);
+      return new TypeTable().runSyntax(node, scope, filename, qualifiedNamePrefix);
     }
 
-    const found = new BasicTypes(filename, scope).simpleType(node, noQualifiedName);
+    const found = new BasicTypes(filename, scope).simpleType(node, qualifiedNamePrefix);
     if (found) {
       return found;
     }

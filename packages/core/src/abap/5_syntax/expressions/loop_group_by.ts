@@ -11,10 +11,8 @@ export class LoopGroupBy {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
 
     const components: IStructureComponent[] = [];
-    for (const c of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      for (const f of c.findDirectExpressions(Expressions.ComponentChainSimple)) {
-        components.push({name: f.getFirstToken().getStr(), type: new VoidType("todoGroupBy")});
-      }
+    for (const c of node.findDirectExpressions(Expressions.LoopGroupByComponent)) {
+      components.push({name: c.getFirstToken().getStr(), type: new VoidType("todoGroupBy")});
     }
     if (components.length === 0) {
       return;
@@ -36,8 +34,10 @@ export class LoopGroupBy {
       new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
     }
 
-    for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      new ComponentCompare().runSyntax(t, scope, filename);
+    for (const c of node.findDirectExpressions(Expressions.LoopGroupByComponent)) {
+      for (const t of c.findDirectExpressions(Expressions.ComponentCompareSimple)) {
+        new ComponentCompare().runSyntax(t, scope, filename);
+      }
     }
 
   }
