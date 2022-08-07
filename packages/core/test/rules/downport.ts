@@ -3160,6 +3160,7 @@ IF sy-subrc = 0.
   <temp2>-count = <temp2>-count + 1.
   INSERT initial_number->* INTO TABLE <temp2>-items.
 ELSE.
+  CLEAR temp1.
   temp1-key = initial_number->group.
   temp1-count = 1.
   INSERT initial_number->* INTO TABLE temp1-items.
