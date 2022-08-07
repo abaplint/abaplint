@@ -254,14 +254,13 @@ export class BasicTypes {
       if (this.scope.isTypePool() === true) {
         qualifiedName = name.getStr();
       } else {
-        qualifiedName = name.getStr();
+        qualifiedName = ( qualifiedNamePrefix || "" ) + name.getStr();
         if (this.scope.getType() === ScopeType.ClassDefinition
             || this.scope.getType() === ScopeType.Interface) {
           qualifiedName = this.scope.getName() + "=>" + qualifiedName;
         }
       }
-    }
-    if (qualifiedNamePrefix) {
+    } else if (qualifiedNamePrefix) {
       qualifiedName = qualifiedNamePrefix + qualifiedName;
     }
 

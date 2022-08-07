@@ -2645,6 +2645,37 @@ DATA(type) = temp1.`;
     testFix(abap, expected);
   });
 
+  it("COND, typing, with type in interface", async () => {
+    const abap = `
+INTERFACE lif.
+  TYPES: BEGIN OF ty_abap_value_mapping,
+           target_type TYPE string,
+         END OF ty_abap_value_mapping.
+ENDINTERFACE.
+
+DATA abap_value_mapping TYPE lif=>ty_abap_value_mapping.
+DATA foo TYPE i.
+DATA(type) = COND #(
+  WHEN foo IS NOT INITIAL
+  THEN abap_value_mapping-target_type
+  ELSE 'bar' ).`;
+    const expected = `
+INTERFACE lif.
+  TYPES: BEGIN OF ty_abap_value_mapping,
+           target_type TYPE string,
+         END OF ty_abap_value_mapping.
+ENDINTERFACE.
+
+DATA abap_value_mapping TYPE lif=>ty_abap_value_mapping.
+DATA foo TYPE i.
+DATA type TYPE lif=>ty_abap_value_mapping-target_type.
+type = COND #(
+  WHEN foo IS NOT INITIAL
+  THEN abap_value_mapping-target_type
+  ELSE 'bar' ).`;
+    testFix(abap, expected);
+  });
+
   it("generic types should infer to non generic if possible", async () => {
     const abap = `
 CLASS lcl DEFINITION.
