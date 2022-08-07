@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
@@ -1019,23 +1020,42 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
       }
     }
 
-    let code = `TYPES: BEGIN OF ${groupTargetName}#type,\n`;
+    let code = `TYPES: BEGIN OF ${groupTargetName}type,\n`;
+    let condition = "";
+    let groupCountName: string | undefined = undefined;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       const name = c.findFirstExpression(Expressions.ComponentName);
       let type = c.findFirstExpression(Expressions.Source)?.concatTokens() || "todo";
       if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP SIZE")) {
         type = "i";
+        groupCountName = name?.concatTokens();
       } else {
+        condition += c.concatTokens();
         type = type.replace(loopTargetName, loopSourceRowType);
         type = type.replace("->", "-");
       }
-      code += `  ${name?.concatTokens()} TYPE ${type},\n`;
+      code += `         ${name?.concatTokens()} TYPE ${type},\n`;
     }
-    code += `  items LIKE ${loopSourceName},
-END OF ${groupTargetName}#type.
-DATA ${groupTargetName}#tab TYPE STANDARD TABLE OF ${groupTargetName}#type WITH DEFAULT KEY.
-* todo, aggregation code here
-LOOP AT ${groupTargetName}#tab ${groupTarget}.`;
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const uniqueFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    code += `         items LIKE ${loopSourceName},
+       END OF ${groupTargetName}type.
+DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DEFAULT KEY.
+DATA ${uniqueName} LIKE LINE OF ${groupTargetName}tab.
+LOOP AT ${loopSourceName} ${high.findFirstExpression(Expressions.LoopTarget)?.concatTokens()}.
+READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
+IF sy-subrc = 0.
+  <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.
+  INSERT ${loopTargetName}->* INTO TABLE <${uniqueFS}>-items.
+ELSE.\n`;
+    for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
+      code += `  ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
+    }
+    code += `  INSERT ${loopTargetName}->* INTO TABLE ${uniqueName}-items.\n`;
+    code += `  INSERT ${uniqueName} INTO TABLE ${groupTargetName}tab.\n`;
+    code += `ENDIF.
+ENDLOOP.
+LOOP AT ${groupTargetName}tab ${groupTarget}.`;
 
     let fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
 
@@ -1365,7 +1385,7 @@ ${indentation}    output = ${topTarget}.`;
     }
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-    const dataTarget = node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    const dataTarget = node.findDirectExpression(Expressions.LoopTarget)?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
     if (dataTarget) {
       const targetName = dataTarget.findDirectExpression(Expressions.TargetField)?.concatTokens() || "DOWNPORT_ERROR";
       const code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
@@ -1375,7 +1395,7 @@ ${indentation}    output = ${topTarget}.`;
       return Issue.atToken(lowFile, node.getFirstToken(), "Outline LOOP data target", this.getMetadata().key, this.conf.severity, fix);
     }
 
-    const fsTarget = node.findDirectExpression(Expressions.FSTarget)?.findDirectExpression(Expressions.InlineFS);
+    const fsTarget = node.findDirectExpression(Expressions.LoopTarget)?.findDirectExpression(Expressions.FSTarget)?.findDirectExpression(Expressions.InlineFS);
     if (fsTarget) {
       const targetName = fsTarget.findDirectExpression(Expressions.TargetFieldSymbol)?.concatTokens() || "DOWNPORT_ERROR";
       const code = `FIELD-SYMBOLS ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;

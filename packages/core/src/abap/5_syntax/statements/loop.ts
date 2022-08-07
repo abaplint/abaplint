@@ -15,7 +15,9 @@ import {LoopGroupBy} from "../expressions/loop_group_by";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    let target = node.findDirectExpression(Expressions.Target);
+    const loopTarget = node.findDirectExpression(Expressions.LoopTarget);
+
+    let target = loopTarget?.findDirectExpression(Expressions.Target);
     const targetType = target ? new Target().runSyntax(target, scope, filename) : undefined;
     if (target === undefined) {
       target = node.findDirectExpression(Expressions.FSTarget);
@@ -62,7 +64,7 @@ export class Loop implements StatementSyntax {
     if (inlinefs) {
       new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
     } else {
-      const fstarget = node.findDirectExpression(Expressions.FSTarget);
+      const fstarget = loopTarget?.findDirectExpression(Expressions.FSTarget);
       if (fstarget) {
         new FSTarget().runSyntax(fstarget, scope, filename, sourceType);
       }
