@@ -11,7 +11,8 @@ export class TypeTableKey {
         for (const c of node.findAllExpressions(Expressions.FieldSub)) {
           const concat = c.concatTokens();
           if (concat.includes("-") === false // todo, properly check sub fields
-              && rowType.getComponentByName(concat) === undefined) {
+              && rowType.getComponentByName(concat) === undefined
+              && concat.toUpperCase() !== "TABLE_LINE") {
             return new UnknownType(`Field ${concat} not part of structure`);
           }
         }

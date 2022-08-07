@@ -1669,4 +1669,20 @@ DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY sub-field.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("key ok, its table_line", () => {
+    const abap = `
+    TYPES:
+      BEGIN OF ty_issue,
+        message  TYPE string,
+        key      TYPE string,
+        filename TYPE string,
+        severity TYPE string,
+      END OF ty_issue.
+    TYPES:
+      ty_issues TYPE STANDARD TABLE OF ty_issue WITH KEY table_line.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
