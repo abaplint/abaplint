@@ -243,7 +243,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.downportLoopGroup(high, lowFile, highSyntax);
+    found = this.downportLoopGroup(high, lowFile, highSyntax, highFile);
     if (found) {
       return found;
     }
@@ -996,7 +996,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple REF move", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private downportLoopGroup(high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private downportLoopGroup(high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
     if (!(high.get() instanceof Statements.Loop)) {
       return undefined;
     }
@@ -1004,21 +1004,39 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     if (group === undefined) {
       return undefined;
     }
-    const targetName = high.findFirstExpression(Expressions.Target)?.concatTokens() || high.findFirstExpression(Expressions.FSTarget)?.concatTokens() || "nameNotFound";
+    const targetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
     const loopSourceName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
+    const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
 
-    const code = `TYPES: BEGIN OF ${targetName}TYPE,
+    const code = `TYPES: BEGIN OF ${targetName}#type,
   key   TYPE initial_numbers_type-group,
   count TYPE i,
   items LIKE ${loopSourceName},
-END OF ${targetName}TYPE.
-DATA ${targetName}TAB TYPE STANDARD TABLE OF ${targetName}TYPE WITH DEFAULT KEY.
+END OF ${targetName}#type.
+DATA ${targetName}#tab TYPE STANDARD TABLE OF ${targetName}#type WITH DEFAULT KEY.
 * todo, aggregation code here
-LOOP AT ${targetName}TAB.`;
+LOOP AT ${targetName}#tab ${groupTarget}.`;
 
-//    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
-    const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
-//    const fix = EditHelper.merge(fix2, fix1);
+    let fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
+
+    for (const l of highFile.getStructure()?.findAllStructures(Structures.Loop) || []) {
+// make sure to find the correct/current loop statement
+      if (l.findDirectStatement(Statements.Loop) !== high) {
+        continue;
+      }
+      for (const loop of l.findAllStatements(Statements.Loop)) {
+        if (loop.concatTokens()?.toUpperCase().startsWith("LOOP AT GROUP ")) {
+          const subLoopSource = loop.findFirstExpression(Expressions.SimpleSource2);
+          if (subLoopSource === undefined) {
+            continue;
+          }
+          const subLoopSourceName = subLoopSource?.concatTokens() || "nameNotFound";
+          const subCode = `LOOP AT ${subLoopSourceName}->items`;
+          const subFix = EditHelper.replaceRange(lowFile, loop.getFirstToken().getStart(), subLoopSource.getLastToken().getEnd(), subCode);
+          fix = EditHelper.merge(subFix, fix);
+        }
+      }
+    }
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, LOOP GROUP", this.getMetadata().key, this.conf.severity, fix);
   }

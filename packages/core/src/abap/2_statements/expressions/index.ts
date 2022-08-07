@@ -80,6 +80,7 @@ export * from "./interface_name";
 export * from "./language";
 export * from "./length";
 export * from "./let";
+export * from "./loop_group_by_component";
 export * from "./loop_group_by_target";
 export * from "./loop_group_by";
 export * from "./macro_name";
