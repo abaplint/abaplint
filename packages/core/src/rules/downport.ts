@@ -1019,7 +1019,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
       }
     }
 
-    let code = `TYPES: BEGIN OF ${groupTargetName}#type,\n`;
+    let code = `TYPES: BEGIN OF ${groupTargetName}type,\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       const name = c.findFirstExpression(Expressions.ComponentName);
       let type = c.findFirstExpression(Expressions.Source)?.concatTokens() || "todo";
@@ -1029,13 +1029,13 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
         type = type.replace(loopTargetName, loopSourceRowType);
         type = type.replace("->", "-");
       }
-      code += `  ${name?.concatTokens()} TYPE ${type},\n`;
+      code += `         ${name?.concatTokens()} TYPE ${type},\n`;
     }
-    code += `  items LIKE ${loopSourceName},
-END OF ${groupTargetName}#type.
-DATA ${groupTargetName}#tab TYPE STANDARD TABLE OF ${groupTargetName}#type WITH DEFAULT KEY.
+    code += `         items LIKE ${loopSourceName},
+       END OF ${groupTargetName}type.
+DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DEFAULT KEY.
 * todo, aggregation code here
-LOOP AT ${groupTargetName}#tab ${groupTarget}.`;
+LOOP AT ${groupTargetName}tab ${groupTarget}.`;
 
     let fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
 
