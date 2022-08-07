@@ -1021,22 +1021,37 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     }
 
     let code = `TYPES: BEGIN OF ${groupTargetName}type,\n`;
+    let condition = "";
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       const name = c.findFirstExpression(Expressions.ComponentName);
       let type = c.findFirstExpression(Expressions.Source)?.concatTokens() || "todo";
       if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP SIZE")) {
         type = "i";
       } else {
+        condition += c.concatTokens();
         type = type.replace(loopTargetName, loopSourceRowType);
         type = type.replace("->", "-");
       }
       code += `         ${name?.concatTokens()} TYPE ${type},\n`;
     }
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const uniqueFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     code += `         items LIKE ${loopSourceName},
        END OF ${groupTargetName}type.
 DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DEFAULT KEY.
-LOOP AT ${loopSourceName} sdf.
-* todo, aggregation code here
+DATA ${uniqueName} LIKE LINE OF ${groupTargetName}tab.
+LOOP AT ${loopSourceName} ${high.findFirstExpression(Expressions.LoopTarget)?.concatTokens()}.
+* READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
+* IF sy-subrc = 0.
+* todo, increase GROUP COUNT
+*   INSERT ${loopTargetName}->* INTO TABLE <${uniqueFS}>-items.
+* ELSE.\n`;
+    for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
+      code += `*   ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
+    }
+    code += `*   INSERT ${loopTargetName}->* INTO TABLE ${uniqueName}-items.\n`;
+    code += `*   INSERT ${uniqueName} INTO TABLE ${groupTargetName}tab.\n`;
+    code += `* ENDIF.
 ENDLOOP.
 LOOP AT ${groupTargetName}tab ${groupTarget}.`;
 

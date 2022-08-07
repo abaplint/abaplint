@@ -3124,7 +3124,7 @@ APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
     testFix(abap, expected);
   });
 
-  it.skip("LOOP AT GROUP BY", async () => {
+  it("LOOP AT GROUP BY", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
          group  TYPE group,
@@ -3153,7 +3153,19 @@ TYPES: BEGIN OF group_keytype,
          items LIKE initial_numbers,
        END OF group_keytype.
 DATA group_keytab TYPE STANDARD TABLE OF group_keytype WITH DEFAULT KEY.
-* todo, aggregation code here
+DATA temp1 LIKE LINE OF group_keytab.
+LOOP AT initial_numbers REFERENCE INTO DATA(initial_number).
+* READ TABLE group_keytab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY key = initial_number->group.
+* IF sy-subrc = 0.
+* todo, increase GROUP COUNT
+*   INSERT initial_number->* INTO TABLE <temp2>-items.
+* ELSE.
+*   temp1-key = initial_number->group.
+*   temp1-count = 1.
+*   INSERT initial_number->* INTO TABLE temp1-items.
+*   INSERT temp1 INTO TABLE group_keytab.
+* ENDIF.
+ENDLOOP.
 LOOP AT group_keytab REFERENCE INTO DATA(group_key).
   WRITE / group_key->count.
   LOOP AT group_key->items REFERENCE INTO DATA(group_item).
