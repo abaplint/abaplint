@@ -221,7 +221,7 @@ export class BasicTypes {
     return undefined;
   }
 
-  public simpleType(node: StatementNode | ExpressionNode, noQualifiedName?: boolean): TypedIdentifier | undefined {
+  public simpleType(node: StatementNode | ExpressionNode, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
     let nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (nameExpr === undefined) {
       nameExpr = node.findFirstExpression(Expressions.DefinitionName);
@@ -246,8 +246,8 @@ export class BasicTypes {
         }
       }
     }
-    if (noQualifiedName === true) {
-      qualifiedName = undefined;
+    if (qualifiedNamePrefix) {
+      qualifiedName = qualifiedNamePrefix + qualifiedName;
     }
 
     const found = this.parseType(node, qualifiedName);

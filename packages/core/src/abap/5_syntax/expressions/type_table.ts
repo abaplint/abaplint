@@ -7,7 +7,8 @@ import {UnknownType} from "../../types/basic";
 import {ScopeType} from "../_scope_type";
 
 export class TypeTable {
-  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope,
+                   filename: string, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
     // todo, input is currently the statement, but should be the expression?
     let nameExpr = node.findFirstExpression(Expressions.DefinitionName);
     if (nameExpr === undefined) {
@@ -18,9 +19,9 @@ export class TypeTable {
     }
     const name = nameExpr.getFirstToken();
 
-    let qualifiedName = "";
+    let qualifiedName = qualifiedNamePrefix || "";
     if (node.getFirstToken().getStr().toUpperCase() === "TYPES") {
-      qualifiedName = name.getStr();
+      qualifiedName = qualifiedName + name.getStr();
       if (scope.getType() === ScopeType.ClassDefinition
           || scope.getType() === ScopeType.Interface) {
         qualifiedName = scope.getName() + "=>" + qualifiedName;

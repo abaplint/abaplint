@@ -777,7 +777,7 @@ DATA(sdf) = VALUE ty_abap_value_mapping-target_type( ).`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 3, 7));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("Qualified Type Name: ```STRING```");
+    expect(hover?.value).to.contain("ty_abap_value_mapping-target_type");
   });
 
   it("hover, interface method", () => {
@@ -1142,6 +1142,30 @@ ENDCLASS.`;
     const hover = new Hover(reg).find(buildPosition(file, 10, 12));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("enum_type_info");
+  });
+
+  it("Hover, qualified name nested TYPES, basic", () => {
+    const abap = `TYPES: BEGIN OF blah,
+    foo TYPE string,
+  END OF blah.
+DATA(sdf) = VALUE blah-foo( ).`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("blah-foo");
+  });
+
+  it("Hover, qualified name nested TYPES, table", () => {
+    const abap = `TYPES: BEGIN OF blah,
+    foo TYPE STANDARD TABLE OF string WITH EMPTY KEY,
+  END OF blah.
+DATA(sdf) = VALUE blah-foo( ).`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("blah-foo");
   });
 
 });
