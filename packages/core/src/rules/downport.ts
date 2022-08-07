@@ -243,6 +243,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.downportLoopGroup(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.callFunctionParameterSimple(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -989,6 +994,33 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple REF move", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private downportLoopGroup(high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Loop)) {
+      return undefined;
+    }
+    const group = high.findDirectExpression(Expressions.LoopGroupBy);
+    if (group === undefined) {
+      return undefined;
+    }
+    const targetName = high.findFirstExpression(Expressions.Target)?.concatTokens() || high.findFirstExpression(Expressions.FSTarget)?.concatTokens() || "nameNotFound";
+    const loopSourceName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
+
+    const code = `TYPES: BEGIN OF ${targetName}TYPE,
+  key   TYPE initial_numbers_type-group,
+  count TYPE i,
+  items LIKE ${loopSourceName},
+END OF ${targetName}TYPE.
+DATA ${targetName}TAB TYPE STANDARD TABLE OF ${targetName}TYPE WITH DEFAULT KEY.
+* todo, aggregation code here
+LOOP AT ${targetName}TAB.`;
+
+//    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
+//    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, LOOP GROUP", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportRef(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

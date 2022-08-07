@@ -3124,4 +3124,26 @@ APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
     testFix(abap, expected);
   });
 
+  it.skip("LOOP AT GROUP BY", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+LOOP AT initial_numbers REFERENCE INTO DATA(initial_number)
+    GROUP BY ( key = initial_number->group  count = GROUP SIZE )
+    ASCENDING
+    REFERENCE INTO DATA(group_key).
+  WRITE / group_key->count.
+  LOOP AT GROUP group_key REFERENCE INTO DATA(group_item).
+    WRITE / group_key->count.
+  ENDLOOP.
+  WRITE / group_key->count.
+ENDLOOP.`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
 });
