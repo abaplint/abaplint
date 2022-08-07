@@ -1022,11 +1022,13 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     let code = `TYPES: BEGIN OF ${groupTargetName}type,\n`;
     let condition = "";
+    let groupCountName: string | undefined = undefined;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       const name = c.findFirstExpression(Expressions.ComponentName);
       let type = c.findFirstExpression(Expressions.Source)?.concatTokens() || "todo";
       if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP SIZE")) {
         type = "i";
+        groupCountName = name?.concatTokens();
       } else {
         condition += c.concatTokens();
         type = type.replace(loopTargetName, loopSourceRowType);
@@ -1041,17 +1043,17 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DEFAULT KEY.
 DATA ${uniqueName} LIKE LINE OF ${groupTargetName}tab.
 LOOP AT ${loopSourceName} ${high.findFirstExpression(Expressions.LoopTarget)?.concatTokens()}.
-* READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
-* IF sy-subrc = 0.
-* todo, increase GROUP COUNT
-*   INSERT ${loopTargetName}->* INTO TABLE <${uniqueFS}>-items.
-* ELSE.\n`;
+READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
+IF sy-subrc = 0.
+  <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.
+  INSERT ${loopTargetName}->* INTO TABLE <${uniqueFS}>-items.
+ELSE.\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
-      code += `*   ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
+      code += `  ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
     }
-    code += `*   INSERT ${loopTargetName}->* INTO TABLE ${uniqueName}-items.\n`;
-    code += `*   INSERT ${uniqueName} INTO TABLE ${groupTargetName}tab.\n`;
-    code += `* ENDIF.
+    code += `  INSERT ${loopTargetName}->* INTO TABLE ${uniqueName}-items.\n`;
+    code += `  INSERT ${uniqueName} INTO TABLE ${groupTargetName}tab.\n`;
+    code += `ENDIF.
 ENDLOOP.
 LOOP AT ${groupTargetName}tab ${groupTarget}.`;
 

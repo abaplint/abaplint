@@ -3155,16 +3155,16 @@ TYPES: BEGIN OF group_keytype,
 DATA group_keytab TYPE STANDARD TABLE OF group_keytype WITH DEFAULT KEY.
 DATA temp1 LIKE LINE OF group_keytab.
 LOOP AT initial_numbers REFERENCE INTO DATA(initial_number).
-* READ TABLE group_keytab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY key = initial_number->group.
-* IF sy-subrc = 0.
-* todo, increase GROUP COUNT
-*   INSERT initial_number->* INTO TABLE <temp2>-items.
-* ELSE.
-*   temp1-key = initial_number->group.
-*   temp1-count = 1.
-*   INSERT initial_number->* INTO TABLE temp1-items.
-*   INSERT temp1 INTO TABLE group_keytab.
-* ENDIF.
+READ TABLE group_keytab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY key = initial_number->group.
+IF sy-subrc = 0.
+  <temp2>-count = <temp2>-count + 1.
+  INSERT initial_number->* INTO TABLE <temp2>-items.
+ELSE.
+  temp1-key = initial_number->group.
+  temp1-count = 1.
+  INSERT initial_number->* INTO TABLE temp1-items.
+  INSERT temp1 INTO TABLE group_keytab.
+ENDIF.
 ENDLOOP.
 LOOP AT group_keytab REFERENCE INTO DATA(group_key).
   WRITE / group_key->count.
