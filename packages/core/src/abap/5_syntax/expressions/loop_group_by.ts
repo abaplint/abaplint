@@ -35,7 +35,7 @@ export class LoopGroupBy {
     }
 
     for (const c of node.findDirectExpressions(Expressions.LoopGroupByComponent)) {
-      for (const t of c.findDirectExpressions(Expressions.ComponentCompare)) {
+      for (const t of c.findDirectExpressions(Expressions.ComponentCompareSimple)) {
         new ComponentCompare().runSyntax(t, scope, filename);
       }
     }

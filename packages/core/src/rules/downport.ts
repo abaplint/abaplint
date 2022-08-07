@@ -1004,18 +1004,28 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     if (group === undefined) {
       return undefined;
     }
-    const targetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
+    const groupTargetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
     const loopSourceName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
+    const loopTargetName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
     const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
 
-    const code = `TYPES: BEGIN OF ${targetName}#type,
-  key   TYPE initial_numbers_type-group,
-  count TYPE i,
-  items LIKE ${loopSourceName},
-END OF ${targetName}#type.
-DATA ${targetName}#tab TYPE STANDARD TABLE OF ${targetName}#type WITH DEFAULT KEY.
+    let code = `TYPES: BEGIN OF ${groupTargetName}#type,\n`;
+    for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
+      const name = c.findFirstExpression(Expressions.ComponentName);
+      let type = c.findFirstExpression(Expressions.Source)?.concatTokens() || "todo";
+      if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP SIZE")) {
+        type = "i";
+      } else {
+        type = type.replace(loopTargetName, loopSourceName);
+        type = type.replace("->", "-");
+      }
+      code += `  ${name?.concatTokens()} TYPE ${type},\n`;
+    }
+    code += `  items LIKE ${loopSourceName},
+END OF ${groupTargetName}#type.
+DATA ${groupTargetName}#tab TYPE STANDARD TABLE OF ${groupTargetName}#type WITH DEFAULT KEY.
 * todo, aggregation code here
-LOOP AT ${targetName}#tab ${groupTarget}.`;
+LOOP AT ${groupTargetName}#tab ${groupTarget}.`;
 
     let fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
 
