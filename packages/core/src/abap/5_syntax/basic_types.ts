@@ -11,7 +11,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {TableAccessType, TableType, VoidType} from "../types/basic";
+import {StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
 import {FieldSub, TypeTableKey} from "../2_statements/expressions";
@@ -28,6 +28,7 @@ export class BasicTypes {
   }
 
   public lookupQualifiedName(name: string | undefined): TypedIdentifier | undefined {
+// argh, todo, rewrite this entire method
     if (name === undefined) {
       return undefined;
     }
@@ -46,6 +47,20 @@ export class BasicTypes {
         const f = oo.getTypeDefinitions().getByName(typeName);
         if (f) {
           return f;
+        }
+      }
+    } else if (name.includes("-")) {
+      const split = name.split("-");
+      const typeName = split[0];
+      const fieldName = split[1];
+      const type = this.scope.findType(typeName);
+      if (type) {
+        const stru = type.getType();
+        if (stru instanceof StructureType) {
+          const f = stru.getComponentByName(fieldName);
+          if (f) {
+            return new TypedIdentifier(type.getToken(), type.getFilename(), f);
+          }
         }
       }
     }

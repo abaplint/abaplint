@@ -2635,7 +2635,7 @@ TYPES: BEGIN OF ty_abap_value_mapping,
        END OF ty_abap_value_mapping.
 DATA abap_value_mapping TYPE ty_abap_value_mapping.
 DATA foo TYPE i.
-DATA temp1 TYPE string.
+DATA temp1 TYPE ty_abap_value_mapping-target_type.
 IF foo IS NOT INITIAL.
   temp1 = abap_value_mapping-target_type.
 ELSE.
