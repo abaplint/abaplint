@@ -9,8 +9,10 @@ export class TypeTableKey {
       const rowType = type.getRowType();
       if (rowType instanceof StructureType) {
         for (const c of node.findAllExpressions(Expressions.FieldSub)) {
-          if (rowType.getComponentByName(c.concatTokens()) === undefined) {
-            return new UnknownType(`Field ${c.concatTokens()} not part of structure`);
+          const concat = c.concatTokens();
+          if (concat.includes("-") === false // todo
+              && rowType.getComponentByName(concat) === undefined) {
+            return new UnknownType(`Field ${concat} not part of structure`);
           }
         }
       }

@@ -1644,4 +1644,29 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("not part of structure");
   });
 
+  it("DATA, ok field part of structure", () => {
+    const abap = `
+    TYPES: BEGIN OF albums_typee,
+             artist_id  TYPE string,
+           END OF albums_typee.
+    DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA, ok sub field", () => {
+    const abap = `
+TYPES: BEGIN OF albums_typee,
+         artist_id TYPE string,
+         BEGIN OF sub,
+           field TYPE i,
+         END OF sub,
+       END OF albums_typee.
+DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY sub-field.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
