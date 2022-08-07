@@ -5,6 +5,7 @@ import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
 import {UnknownType} from "../../types/basic";
 import {ScopeType} from "../_scope_type";
+import {TypeTableKey} from "./type_table_key";
 
 export class TypeTable {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope,
@@ -28,10 +29,18 @@ export class TypeTable {
       }
     }
 
-    const type = new BasicTypes(filename, scope).parseTable(node, qualifiedName);
+    let type = new BasicTypes(filename, scope).parseTable(node, qualifiedName);
     if (type === undefined) {
       return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }
+
+    for (const tt of node.findAllExpressions(Expressions.TypeTableKey)) {
+      const error = new TypeTableKey().runSyntax(tt, type);
+      if (error) {
+        type = error;
+      }
+    }
+
     return new TypedIdentifier(name, filename, type);
   }
 }

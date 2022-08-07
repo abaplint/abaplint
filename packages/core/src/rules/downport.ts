@@ -1048,6 +1048,7 @@ IF sy-subrc = 0.
   <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.
   INSERT ${loopTargetName}->* INTO TABLE <${uniqueFS}>-items.
 ELSE.\n`;
+    code += `  CLEAR ${uniqueName}.\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       code += `  ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
     }

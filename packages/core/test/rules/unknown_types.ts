@@ -1620,4 +1620,69 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("ZNOTFOUND");
   });
 
+  it("TYPES, key field not part of structure", () => {
+    const abap = `
+    TYPES: BEGIN OF albums_typee,
+             artist_id  TYPE string,
+           END OF albums_typee.
+    TYPES albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id album_id.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("not part of structure");
+  });
+
+  it("DATA, key field not part of structure", () => {
+    const abap = `
+    TYPES: BEGIN OF albums_typee,
+             artist_id  TYPE string,
+           END OF albums_typee.
+    DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id album_id.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("not part of structure");
+  });
+
+  it("DATA, ok field part of structure", () => {
+    const abap = `
+    TYPES: BEGIN OF albums_typee,
+             artist_id  TYPE string,
+           END OF albums_typee.
+    DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA, ok sub field", () => {
+    const abap = `
+TYPES: BEGIN OF albums_typee,
+         artist_id TYPE string,
+         BEGIN OF sub,
+           field TYPE i,
+         END OF sub,
+       END OF albums_typee.
+DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY sub-field.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("key ok, its table_line", () => {
+    const abap = `
+    TYPES:
+      BEGIN OF ty_issue,
+        message  TYPE string,
+        key      TYPE string,
+        filename TYPE string,
+        severity TYPE string,
+      END OF ty_issue.
+    TYPES:
+      ty_issues TYPE STANDARD TABLE OF ty_issue WITH KEY table_line.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
