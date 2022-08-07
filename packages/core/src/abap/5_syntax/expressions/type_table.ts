@@ -5,6 +5,7 @@ import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
 import {UnknownType} from "../../types/basic";
 import {ScopeType} from "../_scope_type";
+import {TypeTableKey} from "./type_table_key";
 
 export class TypeTable {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope,
@@ -32,6 +33,11 @@ export class TypeTable {
     if (type === undefined) {
       return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }
+
+    for (const tt of node.findAllExpressions(Expressions.TypeTableKey)) {
+      new TypeTableKey().runSyntax(tt, type);
+    }
+
     return new TypedIdentifier(name, filename, type);
   }
 }
