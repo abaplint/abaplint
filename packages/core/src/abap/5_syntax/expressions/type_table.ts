@@ -29,13 +29,16 @@ export class TypeTable {
       }
     }
 
-    const type = new BasicTypes(filename, scope).parseTable(node, qualifiedName);
+    let type = new BasicTypes(filename, scope).parseTable(node, qualifiedName);
     if (type === undefined) {
       return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }
 
     for (const tt of node.findAllExpressions(Expressions.TypeTableKey)) {
-      new TypeTableKey().runSyntax(tt, type);
+      const error = new TypeTableKey().runSyntax(tt, type);
+      if (error) {
+        type = error;
+      }
     }
 
     return new TypedIdentifier(name, filename, type);

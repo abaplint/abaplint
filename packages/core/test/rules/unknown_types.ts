@@ -1620,4 +1620,28 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("ZNOTFOUND");
   });
 
+  it("TYPES, key field not part of structure", () => {
+    const abap = `
+    TYPES: BEGIN OF albums_typee,
+             artist_id  TYPE string,
+           END OF albums_typee.
+    TYPES albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id album_id.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("not part of structure");
+  });
+
+  it("DATA, key field not part of structure", () => {
+    const abap = `
+    TYPES: BEGIN OF albums_typee,
+             artist_id  TYPE string,
+           END OF albums_typee.
+    DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id album_id.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("not part of structure");
+  });
+
 });

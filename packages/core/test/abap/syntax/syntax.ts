@@ -6496,26 +6496,6 @@ MOVE-CORRESPONDING tab1 TO tab2.`;
     expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONSING with tables possible");
   });
 
-  it("TYPES, key field not part of structure", () => {
-    const abap = `
-    TYPES: BEGIN OF albums_typee,
-             artist_id  TYPE string,
-           END OF albums_typee.
-    TYPES albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id album_id.`;
-    const issues = runProgram(abap, [], Version.v702);
-    expect(issues[0]?.getMessage()).to.include("not part of structure");
-  });
-
-  it("DATA, key field not part of structure", () => {
-    const abap = `
-    TYPES: BEGIN OF albums_typee,
-             artist_id  TYPE string,
-           END OF albums_typee.
-    DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY artist_id album_id.`;
-    const issues = runProgram(abap, [], Version.v702);
-    expect(issues[0]?.getMessage()).to.include("not part of structure");
-  });
-
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
