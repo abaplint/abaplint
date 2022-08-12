@@ -234,6 +234,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.assignWithTable(high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.downportRefSimple(high, lowFile);
     if (found) {
       return found;
@@ -1103,6 +1108,34 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, REF", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private assignWithTable(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.Assign)
+        || high.getChildren().length !== 5) {
+      return undefined;
+    }
+
+    const fieldChain = high.findDirectExpression(Expressions.Source)?.findDirectExpression(Expressions.FieldChain);
+    if (fieldChain?.getChildren().length !== 2) {
+      return undefined;
+    }
+    const tableExpression = fieldChain?.getChildren()[1];
+    if (!(tableExpression.get() instanceof Expressions.TableExpression)
+        || !(tableExpression instanceof ExpressionNode)) {
+      return undefined;
+    }
+    const index = tableExpression.findDirectExpression(Expressions.Source);
+    if (index === undefined) {
+      return undefined;
+    }
+    const fsTarget = high.findDirectExpression(Expressions.FSTarget);
+
+    const code = `READ TABLE ${fieldChain?.getChildren()[0].concatTokens()} INDEX ${index.concatTokens()} ASSIGNING ${fsTarget?.concatTokens()}.`;
+
+    const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, ASSIGN table expr", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private moveWithSimpleValue(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
