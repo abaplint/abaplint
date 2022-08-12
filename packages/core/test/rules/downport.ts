@@ -3124,6 +3124,18 @@ APPEND INITIAL LINE TO combined_data REFERENCE INTO combined_values.`;
     testFix(abap, expected);
   });
 
+  it("ASSIGN table expression", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+FIELD-SYMBOLS <row> LIKE LINE OF tab.
+ASSIGN tab[ 1 ] TO <row>.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+FIELD-SYMBOLS <row> LIKE LINE OF tab.
+READ TABLE tab INDEX 1 ASSIGNING <row>.`;
+    testFix(abap, expected);
+  });
+
   it("LOOP AT GROUP BY", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
