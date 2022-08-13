@@ -9,15 +9,14 @@ import {StatementSyntax} from "../_statement_syntax";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    const sources = node.findDirectExpressions(Expressions.Source);
+    const sources = node.findAllExpressions(Expressions.Source);
     const firstSource = sources[0];
     let sourceType = new Source().runSyntax(firstSource, scope, filename);
 
-    if (sourceType === undefined || node.findDirectExpression(Expressions.Dynamic)) {
+    if (sourceType === undefined || node.findDirectExpression(Expressions.AssignSource)?.findDirectExpression(Expressions.Dynamic)) {
       sourceType = new VoidType("DynamicAssign");
     }
-
-    for (const d of node.findAllExpressions(Expressions.Dynamic)) {
+    for (const d of node.findDirectExpression(Expressions.AssignSource)?.findAllExpressions(Expressions.Dynamic) || []) {
       new Dynamic().runSyntax(d, scope, filename);
     }
 

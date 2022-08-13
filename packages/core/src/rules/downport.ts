@@ -1116,7 +1116,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
       return undefined;
     }
 
-    const fieldChain = high.findDirectExpression(Expressions.Source)?.findDirectExpression(Expressions.FieldChain);
+    const fieldChain = high.findDirectExpression(Expressions.AssignSource)?.findDirectExpression(Expressions.Source)?.findDirectExpression(Expressions.FieldChain);
     if (fieldChain?.getChildren().length !== 2) {
       return undefined;
     }
