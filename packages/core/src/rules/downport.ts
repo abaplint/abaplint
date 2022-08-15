@@ -1111,8 +1111,9 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
   }
 
   private assignWithTable(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
-    if (!(high.get() instanceof Statements.Assign)
-        || high.getChildren().length !== 5) {
+    if (!(high.get() instanceof Statements.Assign)) {
+      return undefined;
+    } else if (high.getChildren().length !== 5) {
       return undefined;
     }
 
@@ -1125,13 +1126,23 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
         || !(tableExpression instanceof ExpressionNode)) {
       return undefined;
     }
-    const index = tableExpression.findDirectExpression(Expressions.Source);
-    if (index === undefined) {
-      return undefined;
-    }
-    const fsTarget = high.findDirectExpression(Expressions.FSTarget);
 
-    const code = `READ TABLE ${fieldChain?.getChildren()[0].concatTokens()} INDEX ${index.concatTokens()} ASSIGNING ${fsTarget?.concatTokens()}.`;
+    let condition = "";
+    if (tableExpression.getChildren().length === 3) {
+      const index = tableExpression.findDirectExpression(Expressions.Source);
+      if (index === undefined) {
+        return undefined;
+      }
+      condition = `INDEX ${index.concatTokens()}`;
+    } else {
+      let concat = tableExpression.concatTokens();
+      concat = concat.substring(2);
+      concat = concat.substring(0, concat.length - 2);
+      condition = `WITH KEY ${concat}`;
+    }
+
+    const fsTarget = high.findDirectExpression(Expressions.FSTarget);
+    const code = `READ TABLE ${fieldChain?.getChildren()[0].concatTokens()} ${condition} ASSIGNING ${fsTarget?.concatTokens()}.`;
 
     const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
 

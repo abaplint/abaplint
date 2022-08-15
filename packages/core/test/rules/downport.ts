@@ -3136,6 +3136,26 @@ READ TABLE tab INDEX 1 ASSIGNING <row>.`;
     testFix(abap, expected);
   });
 
+  it("ASSIGN table expression, by component", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE i,
+       END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+ASSIGN tab[ field = 5 ] TO FIELD-SYMBOL(<fs>).
+WRITE sy-subrc.
+WRITE sy-tabix.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         field TYPE i,
+       END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+READ TABLE tab WITH KEY field = 5 ASSIGNING FIELD-SYMBOL(<fs>).
+WRITE sy-subrc.
+WRITE sy-tabix.`;
+    testFix(abap, expected);
+  });
+
   it("LOOP AT GROUP BY", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
