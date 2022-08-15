@@ -1168,4 +1168,15 @@ DATA(sdf) = VALUE blah-foo( ).`;
     expect(hover?.value).to.contain("blah-foo");
   });
 
+  it("Hover, qualified name, structure field from type", () => {
+    const abap = `INTERFACE zif_aff_types_v1 PUBLIC.
+  TYPES ty_original_language TYPE sy-langu.
+ENDINTERFACE.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zif_aff_types_v1=>ty_original_language");
+  });
+
 });
