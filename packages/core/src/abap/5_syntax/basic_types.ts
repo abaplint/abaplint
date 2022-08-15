@@ -11,7 +11,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
+import {CharacterType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
 import {FieldSub, TypeTableKey} from "../2_statements/expressions";
@@ -182,19 +182,22 @@ export class BasicTypes {
   }
 
   public resolveTypeName(typeName: ExpressionNode | undefined,
-                         length?: number, decimals?: number, name?: string): AbstractType | undefined {
+                         length?: number, decimals?: number, qualifiedName?: string): AbstractType | undefined {
 
     if (typeName === undefined) {
       return undefined;
     }
 
-    const chain = this.resolveTypeChain(typeName);
+    let chain = this.resolveTypeChain(typeName);
     if (chain) {
+      if (chain instanceof CharacterType && qualifiedName) {
+        chain = chain.cloneType(qualifiedName);
+      }
       return chain;
     }
 
     const chainText = typeName.concatTokens().toUpperCase();
-    const f = this.scope.getDDIC().lookupBuiltinType(chainText, length, decimals, name);
+    const f = this.scope.getDDIC().lookupBuiltinType(chainText, length, decimals, qualifiedName);
     if (f !== undefined) {
       return f;
     }

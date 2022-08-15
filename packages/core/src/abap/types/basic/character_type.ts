@@ -11,6 +11,10 @@ export class CharacterType extends AbstractType {
     this.length = length;
   }
 
+  public cloneType(qualifiedName?: string) {
+    return new CharacterType(this.length, qualifiedName);
+  }
+
   public getLength() {
     return this.length;
   }
