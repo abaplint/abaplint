@@ -135,6 +135,7 @@ import {Unassign} from "./statements/unassign";
 import {InsertTextpool} from "./statements/insert_textpool";
 import {GetCursor} from "./statements/get_cursor";
 import {LoopAtScreen} from "./statements/loop_at_screen";
+import {InsertFieldGroup} from "./statements/insert_field_group";
 
 // -----------------------------------
 
@@ -209,6 +210,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Find());
   addToMap(new Message());
   addToMap(new SystemCall());
+  addToMap(new InsertFieldGroup());
   addToMap(new GetTime());
   addToMap(new Unassign());
   addToMap(new GetParameter());
