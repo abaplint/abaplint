@@ -28,6 +28,7 @@ const tests = [
   "INSERT tab INDEX 1.",
   "INSERT tab INDEX 1 ASSIGNING <fs>.",
   "INSERT tab ASSIGNING <fs> INDEX 1.",
+  "INSERT LINES OF tab TO 2 FROM 1 INTO TABLE tab.", // yea, this is valid TO FROM
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);
