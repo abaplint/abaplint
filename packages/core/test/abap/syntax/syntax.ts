@@ -6496,6 +6496,15 @@ MOVE-CORRESPONDING tab1 TO tab2.`;
     expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONSING with tables possible");
   });
 
+  it("field symbol tokens is undefined", () => {
+    const abap = `
+DATA chain_tokens TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA sfrom TYPE i.
+APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.include("tokens");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
