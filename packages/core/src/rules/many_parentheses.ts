@@ -52,12 +52,12 @@ ENDIF.
       return [];
     }
 
-    for (const cond of structure.findAllExpressions(Expressions.Cond)) {
+    for (const cond of structure.findAllExpressionsMulti([Expressions.Cond, Expressions.ComponentCond])) {
       issues.push(...this.analyze(file, cond));
     }
 
-    for (const sub of structure.findAllExpressions(Expressions.CondSub)) {
-      const cond = sub.findDirectExpressions(Expressions.Cond);
+    for (const sub of structure.findAllExpressionsMulti([Expressions.CondSub, Expressions.ComponentCondSub])) {
+      const cond = sub.findDirectExpressions(Expressions.Cond) || sub.findDirectExpressions(Expressions.ComponentCond);
       if (cond.length !== 1) {
         continue;
       }
@@ -128,11 +128,15 @@ ENDIF.
       let current = "";
       if (c instanceof TokenNode) {
         current = c.get().getStr().toUpperCase();
-      } else if (c instanceof ExpressionNode && c.get() instanceof Expressions.CondSub) {
+      } else if (c instanceof ExpressionNode
+          && (c.get() instanceof Expressions.CondSub || c.get() instanceof Expressions.ComponentCondSub)) {
         if (c.getFirstToken().getStr().toUpperCase() === "NOT") {
           return [];
         }
-        const i = c.findDirectExpression(Expressions.Cond);
+        let i = c.findDirectExpression(Expressions.Cond);
+        if (i === undefined) {
+          i = c.findDirectExpression(Expressions.ComponentCond);
+        }
         if (i === undefined) {
           return [];
         }
