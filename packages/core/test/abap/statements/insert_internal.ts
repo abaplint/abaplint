@@ -1,4 +1,4 @@
-import {statementType, statementVersion, statementVersionFail} from "../_utils";
+import {statementExpectFail, statementType, statementVersion, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -22,10 +22,23 @@ const tests = [
     f4_definitions = VALUE zdbbr_f4_data_itab( FOR f4 IN GROUP <ls_f4_group> ( f4 ) )
     ) INTO TABLE mt_custom_f4_map.`,
   `INSERT LINES OF sorted_scores TO hits INTO TABLE result.`,
+  "INSERT row INTO tab INDEX 1 ASSIGNING <fs>.",
+  "INSERT row INTO tab ASSIGNING <fs> INDEX 1.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);
 
+const toFail = [
+  "INSERT row REFERENCE INTO ref INTO table tab.",
+  "INSERT ls_copy INTO TABLE ms_spec-components-schemas INDEX 1.",
+  "INSERT row INTO TABLE tab REFERENCE INTO ref ASSIGNING <fs>.",
+  /*
+  "INSERT row INTO tab REFERENCE INTO ref ASSIGNING <fs>.",
+  "INSERT row INDEX 1 INTO tab.",
+  "INSERT row ASSIGNING <fs> INTO table tab.",
+  */
+];
+statementExpectFail(toFail, "INSERT");
 
 const versions = [
   {abap: "INSERT NEW zcl_foobar( ) INTO TABLE lt_tab ASSIGNING FIELD-SYMBOL(<fs>).", ver: Version.v740sp02},
