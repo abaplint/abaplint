@@ -25,6 +25,9 @@ const tests = [
   "INSERT row INTO tab INDEX 1 ASSIGNING <fs>.",
   "INSERT row INTO tab ASSIGNING <fs> INDEX 1.",
   "INSERT str INTO tab.",
+  "INSERT tab INDEX 1.",
+  "INSERT tab INDEX 1 ASSIGNING <fs>.",
+  "INSERT tab ASSIGNING <fs> INDEX 1.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);
