@@ -19,7 +19,7 @@ export class InsertInternal implements IStatement {
     const from = seq("FROM", Source);
     const fromTo = seq(optPrio(from), optPrio(to));
 
-    const foo = alt(intoTable, per(into, ref, index, assigning));
+    const foo = alt(intoTable, per(into, index, alt(ref, assigning)));
 
     const lines = seq("LINES OF",
                       target,

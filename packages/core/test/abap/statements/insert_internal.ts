@@ -32,8 +32,8 @@ const toFail = [
   "INSERT row REFERENCE INTO ref INTO table tab.",
   "INSERT ls_copy INTO TABLE ms_spec-components-schemas INDEX 1.",
   "INSERT row INTO TABLE tab REFERENCE INTO ref ASSIGNING <fs>.",
-  /*
   "INSERT row INTO tab REFERENCE INTO ref ASSIGNING <fs>.",
+  /*
   "INSERT row INDEX 1 INTO tab.",
   "INSERT row ASSIGNING <fs> INTO table tab.",
   */
