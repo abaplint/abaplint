@@ -57,7 +57,12 @@ ENDIF.
     }
 
     for (const sub of structure.findAllExpressionsMulti([Expressions.CondSub, Expressions.ComponentCondSub])) {
-      const cond = sub.findDirectExpressions(Expressions.Cond) || sub.findDirectExpressions(Expressions.ComponentCond);
+      let cond: readonly ExpressionNode[] = [];
+      if (sub.get() instanceof Expressions.CondSub) {
+        cond = sub.findDirectExpressions(Expressions.Cond);
+      } else {
+        cond = sub.findDirectExpressions(Expressions.ComponentCond);
+      }
       if (cond.length !== 1) {
         continue;
       }

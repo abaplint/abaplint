@@ -31,10 +31,8 @@ SELECT SINGLE vsart INTO l_vsart FROM tvro.`, cnt: 0, fix: false},
 ENDLOOP.`, cnt: 1, fix: false},
   {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE ( type <> 'P' AND type <> 'S' AND type <> 'G' ).
 ENDLOOP.`, cnt: 1, fix: false},
-/*
   {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE ( type <> 'P' ).
 ENDLOOP.`, cnt: 1, fix: true},
-*/
   {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE type <> 'P' AND type <> 'S' AND type <> 'G' AND from <= limit.
 ENDLOOP.`, cnt: 0, fix: false},
 ];
