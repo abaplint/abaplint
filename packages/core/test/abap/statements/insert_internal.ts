@@ -6,6 +6,7 @@ const tests = [
   "INSERT INITIAL LINE INTO ct_diff INDEX lv_index.",
   "INSERT INITIAL LINE INTO bar ASSIGNING <sdf> INDEX lv_tabix.",
   "insert initial line into lt_table reference into lr_ref index lv_index.",
+  "INSERT INITIAL LINE INTO TABLE tab.",
   "INSERT ls_stage INTO TABLE mt_stage.",
   "INSERT <ls_list>-icfhandler INTO TABLE rt_list.",
   "INSERT lt_table INDEX lv_index.",
@@ -28,7 +29,7 @@ const tests = [
   "INSERT tab INDEX 1.",
   "INSERT tab INDEX 1 ASSIGNING <fs>.",
   "INSERT tab ASSIGNING <fs> INDEX 1.",
-  "INSERT LINES OF tab TO 2 FROM 1 INTO TABLE tab.", // yea, this is valid TO FROM
+  "INSERT LINES OF tab TO 2 FROM 1 INTO TABLE tab.", // yea, this is valid, TO FROM
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);
