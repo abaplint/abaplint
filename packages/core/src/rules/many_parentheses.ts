@@ -122,6 +122,7 @@ ENDIF.
   private analyze(file: ABAPFile, cond: ExpressionNode): Issue[] {
     const issues: Issue[] = [];
     let comparator = "";
+    let found = false;
 
     for (const c of cond.getChildren()) {
       let current = "";
@@ -136,15 +137,18 @@ ENDIF.
           return [];
         }
         current = this.findComparator(i);
+        if (current !== "") {
+          found = true; // dont report for the simple case that contains quick fixes
+        }
       }
       if (comparator === "") {
         comparator = current;
-      } else if (comparator !== current) {
+      } else if (comparator !== "" && current !== "" && comparator !== current) {
         return [];
       }
     }
 
-    if (comparator !== "" && comparator !== "MIXED") {
+    if (comparator !== "" && comparator !== "MIXED" && found === true) {
       const message = "Too many parentheses, complex";
       const issue = Issue.atToken(file, cond.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
       issues.push(issue);
