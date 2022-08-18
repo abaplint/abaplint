@@ -24,6 +24,7 @@ const tests = [
   `INSERT LINES OF sorted_scores TO hits INTO TABLE result.`,
   "INSERT row INTO tab INDEX 1 ASSIGNING <fs>.",
   "INSERT row INTO tab ASSIGNING <fs> INDEX 1.",
+  "INSERT str INTO tab.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);
