@@ -12,6 +12,9 @@ const tests = [
   {abap: `IF NOT ( foo = bar ). ENDIF.`, cnt: 1, fix: true},
   {abap: `IF iv_url CS 'a' AND ( iv_url CP 'b' OR iv_url CP 'c' ). ENDIF.`, cnt: 0, fix: false},
   {abap: `IF iv_url CS 'a' AND ( iv_url CP 'b' AND iv_url CP 'c' ). ENDIF.`, cnt: 1, fix: false},
+  {abap: `IF ( type <> 'P' AND type <> 'S' AND type <> 'G' ) AND from <= limit. ENDIF.`, cnt: 1, fix: false},
+  {abap: `IF type <> 'P' AND ( type <> 'S' AND type <> 'G' ) AND from <= limit. ENDIF.`, cnt: 1, fix: false},
+  {abap: `IF type <> 'P' AND ( type <> 'S' AND type <> 'G' AND from <= limit ). ENDIF.`, cnt: 1, fix: false},
   {abap: `IF ( subrc = 1 AND loc = true ) OR ( subrc = 2 AND loc = false ). ENDIF.`, cnt: 0, fix: false},
   {abap: `IF ( subrc = 1 OR loc = true ) OR ( subrc = 2 OR loc = false ). ENDIF.`, cnt: 1, fix: false},
   {abap: `IF ( ldate > ldate ) OR ( ldate = ldate AND ltime > ltime ). ENDIF.`, cnt: 1, fix: true},
@@ -24,6 +27,14 @@ SELECT SINGLE vsart INTO (l_vsart) FROM tvro.`, cnt: 1, fix: false},
   {abap: `DATA l_vsart TYPE tvro-vsart.
 SELECT SINGLE vsart INTO l_vsart FROM tvro.`, cnt: 0, fix: false},
   {abap: `SELECT SINGLE vsart INTO @DATA(l_vsart) FROM tvro.`, cnt: 0, fix: false},
+  {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE ( type <> 'P' AND type <> 'S' AND type <> 'G' ) AND from <= limit.
+ENDLOOP.`, cnt: 1, fix: false},
+  {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE ( type <> 'P' AND type <> 'S' AND type <> 'G' ).
+ENDLOOP.`, cnt: 1, fix: false},
+  {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE ( type <> 'P' ).
+ENDLOOP.`, cnt: 1, fix: true},
+  {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE type <> 'P' AND type <> 'S' AND type <> 'G' AND from <= limit.
+ENDLOOP.`, cnt: 0, fix: false},
 ];
 
 testRule(tests, ManyParentheses);

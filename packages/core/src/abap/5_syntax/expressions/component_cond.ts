@@ -7,8 +7,11 @@ export class ComponentCond {
 
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
 
-    for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, scope, filename);
+    for (const t of node.findDirectExpressions(Expressions.ComponentCondSub)) {
+      const c = t.findDirectExpression(Expressions.ComponentCond);
+      if (c) {
+        new ComponentCond().runSyntax(c, scope, filename);
+      }
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {

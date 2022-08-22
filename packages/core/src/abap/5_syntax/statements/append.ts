@@ -37,9 +37,9 @@ export class Append implements StatementSyntax {
       new InlineData().runSyntax(dataTarget, scope, filename, new DataReference(rowType));
     }
 
-    let source = node.findDirectExpression(Expressions.Source);
+    let source = node.findDirectExpression(Expressions.SimpleSource4);
     if (source === undefined) {
-      source = node.findDirectExpression(Expressions.SimpleSource4);
+      source = node.findDirectExpression(Expressions.Source);
     }
     if (source) {
       if (targetType !== undefined

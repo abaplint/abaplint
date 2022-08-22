@@ -27,7 +27,7 @@ import * as Nodes from "./abap/nodes";
 import * as BasicTypes from "./abap/types/basic";
 import * as Types from "./abap/types";
 import * as Tokens from "./abap/1_lexer/tokens";
-import {IConfig, IDependency, IRenameSettings} from "./_config";
+import {IConfig, IDependency, IRenameSettings, IConfiguration} from "./_config";
 import {IRegistry} from "./_iregistry";
 import {IFile} from "./files/_ifile";
 import {Position, VirtualPosition} from "./position";
@@ -60,7 +60,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
-  ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment,
+  ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,

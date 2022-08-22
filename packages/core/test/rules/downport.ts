@@ -1295,6 +1295,16 @@ RAISE EXCEPTION temp2.`;
     testFix(abap, expected);
   });
 
+  it.skip("downport RAISE ... MESSAGE, WITH", async () => {
+    const abap = `
+RAISE EXCEPTION TYPE zcx_tools MESSAGE e100(zfoo) WITH 2 3.`;
+
+    const expected = `
+todo`;
+
+    testFix(abap, expected);
+  });
+
   it("APPEND, outline expression", async () => {
     const abap = `
 FORM foo.

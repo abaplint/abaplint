@@ -56,20 +56,22 @@ This rule makes sure the spaces are consistently required across the language.`,
 
     const found = statement.findAllExpressionsMulti([Expressions.CondSub, Expressions.SQLCond,
       Expressions.ValueBody, Expressions.NewObject, Expressions.Cond,
-      Expressions.ComponentCond, Expressions.MethodCallParam], true);
+      Expressions.ComponentCond, Expressions.ComponentCondSub, Expressions.MethodCallParam], true);
     let pos: Position | undefined = undefined;
     for (const f of found) {
       const type = f.get();
-      if (type instanceof Expressions.CondSub) {
-        pos = this.checkCondSub(f);
-      } else if (type instanceof Expressions.ValueBody) {
-        pos = this.checkValueBody(f);
-      } else if (type instanceof Expressions.Cond) {
+      if (type instanceof Expressions.Cond) {
         pos = this.checkCond(f);
+      } else if (type instanceof Expressions.CondSub) {
+        pos = this.checkCondSub(f);
       } else if (type instanceof Expressions.ComponentCond) {
         pos = this.checkComponentCond(f);
+      } else if (type instanceof Expressions.ComponentCondSub) {
+        pos = this.checkComponentCondSub(f);
       } else if (type instanceof Expressions.SQLCond) {
         pos = this.checkSQLCond(f);
+      } else if (type instanceof Expressions.ValueBody) {
+        pos = this.checkValueBody(f);
       } else if (type instanceof Expressions.NewObject) {
         pos = this.checkNewObject(f);
       } else if (type instanceof Expressions.MethodCallParam) {
@@ -148,7 +150,7 @@ This rule makes sure the spaces are consistently required across the language.`,
     return undefined;
   }
 
-  private checkComponentCond(cond: ExpressionNode): Position | undefined {
+  private checkComponentCondSub(cond: ExpressionNode): Position | undefined {
     const children = cond.getChildren();
     for (let i = 0; i < children.length; i++) {
       if (children[i].get() instanceof Expressions.ComponentCond) {
@@ -170,6 +172,22 @@ This rule makes sure the spaces are consistently required across the language.`,
 
       }
     }
+    return undefined;
+  }
+
+  private checkComponentCond(cond: ExpressionNode): Position | undefined {
+    const children = cond.getAllTokens();
+    for (let i = 0; i < children.length - 1; i++) {
+      const current = children[i];
+      const next = children[i + 1];
+
+      if (next.getStr().startsWith("'")
+          && next.getRow() === current.getRow()
+          && next.getCol() === current.getEnd().getCol()) {
+        return current.getEnd();
+      }
+    }
+
     return undefined;
   }
 

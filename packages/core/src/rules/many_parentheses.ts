@@ -52,12 +52,17 @@ ENDIF.
       return [];
     }
 
-    for (const cond of structure.findAllExpressions(Expressions.Cond)) {
+    for (const cond of structure.findAllExpressionsMulti([Expressions.Cond, Expressions.ComponentCond])) {
       issues.push(...this.analyze(file, cond));
     }
 
-    for (const sub of structure.findAllExpressions(Expressions.CondSub)) {
-      const cond = sub.findDirectExpressions(Expressions.Cond);
+    for (const sub of structure.findAllExpressionsMulti([Expressions.CondSub, Expressions.ComponentCondSub])) {
+      let cond: readonly ExpressionNode[] = [];
+      if (sub.get() instanceof Expressions.CondSub) {
+        cond = sub.findDirectExpressions(Expressions.Cond);
+      } else {
+        cond = sub.findDirectExpressions(Expressions.ComponentCond);
+      }
       if (cond.length !== 1) {
         continue;
       }
@@ -122,29 +127,37 @@ ENDIF.
   private analyze(file: ABAPFile, cond: ExpressionNode): Issue[] {
     const issues: Issue[] = [];
     let comparator = "";
+    let found = false;
 
     for (const c of cond.getChildren()) {
       let current = "";
       if (c instanceof TokenNode) {
         current = c.get().getStr().toUpperCase();
-      } else if (c instanceof ExpressionNode && c.get() instanceof Expressions.CondSub) {
+      } else if (c instanceof ExpressionNode
+          && (c.get() instanceof Expressions.CondSub || c.get() instanceof Expressions.ComponentCondSub)) {
         if (c.getFirstToken().getStr().toUpperCase() === "NOT") {
           return [];
         }
-        const i = c.findDirectExpression(Expressions.Cond);
+        let i = c.findDirectExpression(Expressions.Cond);
+        if (i === undefined) {
+          i = c.findDirectExpression(Expressions.ComponentCond);
+        }
         if (i === undefined) {
           return [];
         }
         current = this.findComparator(i);
+        if (current !== "") {
+          found = true; // dont report for the simple case that contains quick fixes
+        }
       }
       if (comparator === "") {
         comparator = current;
-      } else if (comparator !== current) {
+      } else if (comparator !== "" && current !== "" && comparator !== current) {
         return [];
       }
     }
 
-    if (comparator !== "" && comparator !== "MIXED") {
+    if (comparator !== "" && comparator !== "MIXED" && found === true) {
       const message = "Too many parentheses, complex";
       const issue = Issue.atToken(file, cond.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
       issues.push(issue);
