@@ -1697,7 +1697,7 @@ TYPES tab TYPE STANDARD TABLE OF name_value WITH NON-UNIQUE KEY !name.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("WITH many", () => {
+  it("WITH many", () => {
     const abap = `
 TYPES: BEGIN OF foo_bar,
          foo TYPE string,
@@ -1711,7 +1711,6 @@ TYPES moo
   INITIAL SIZE 2.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 

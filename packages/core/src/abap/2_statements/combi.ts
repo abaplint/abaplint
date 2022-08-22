@@ -352,17 +352,24 @@ class Star implements IStatementRunnable {
   public run(r: Result[]): Result[] {
     const result = r;
 
-    let res = r;
-    let input: Result[] = [];
-    for (;;) {
-      input = res;
-      res = this.sta.run(input);
+    try {
+      let res = r;
+      let input: Result[] = [];
+      for (;;) {
+        input = res;
+        res = this.sta.run(input);
 
-      if (res.length === 0) {
-        break;
+        if (res.length === 0) {
+          break;
+        }
+
+        result.push(...res);
       }
-
-      result.push(...res);
+    } catch (err) {
+      if (err instanceof FailStarError) {
+        return result;
+      }
+      throw err;
     }
 //    console.dir(result);
     return result;
@@ -747,6 +754,10 @@ class FailCombinatorError extends Error {
 
 }
 
+class FailStarError extends Error {
+
+}
+
 class FailCombinator implements IStatementRunnable {
 
   public listKeywords(): string[] {
@@ -763,6 +774,34 @@ class FailCombinator implements IStatementRunnable {
 
   public railroad() {
     return "Railroad.Terminal('!FailCombinator')";
+  }
+
+  public toStr() {
+    return "fail()";
+  }
+
+  public first() {
+    return [];
+  }
+}
+
+// Note that Plus is implemented with Star
+class FailStar implements IStatementRunnable {
+
+  public listKeywords(): string[] {
+    return [];
+  }
+
+  public getUsing() {
+    return [];
+  }
+
+  public run(_r: Result[]): Result[] {
+    throw new FailStarError();
+  }
+
+  public railroad() {
+    return "Railroad.Terminal('!FailStar')";
   }
 
   public toStr() {
@@ -1057,6 +1096,9 @@ export function ver(version: Version, first: InputType, or?: Version): IStatemen
 export function verNot(version: Version, first: InputType): IStatementRunnable {
   return new VersNot(version, map(first));
 }
-export function fail(): IStatementRunnable {
+export function failCombinator(): IStatementRunnable {
   return new FailCombinator();
+}
+export function failStar(): IStatementRunnable {
+  return new FailStar();
 }
