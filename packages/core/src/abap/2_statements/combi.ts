@@ -743,11 +743,11 @@ class Permutation implements IStatementRunnable {
   }
 }
 
-class FailCombinator extends Error {
+class FailCombinatorError extends Error {
 
 }
 
-class Fail implements IStatementRunnable {
+class FailCombinator implements IStatementRunnable {
 
   public listKeywords(): string[] {
     return [];
@@ -758,11 +758,11 @@ class Fail implements IStatementRunnable {
   }
 
   public run(_r: Result[]): Result[] {
-    throw new FailCombinator();
+    throw new FailCombinatorError();
   }
 
   public railroad() {
-    return "Railroad.Terminal('!Fail')";
+    return "Railroad.Terminal('!FailCombinator')";
   }
 
   public toStr() {
@@ -962,7 +962,7 @@ export class Combi {
         }
       }
     } catch (err) {
-      if (err instanceof FailCombinator) {
+      if (err instanceof FailCombinatorError) {
         return undefined;
       }
       throw err;
@@ -1058,5 +1058,5 @@ export function verNot(version: Version, first: InputType): IStatementRunnable {
   return new VersNot(version, map(first));
 }
 export function fail(): IStatementRunnable {
-  return new Fail();
+  return new FailCombinator();
 }

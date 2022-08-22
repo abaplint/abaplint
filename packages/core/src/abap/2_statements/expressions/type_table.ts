@@ -25,6 +25,8 @@ export class TypeTable extends Expression {
     const rangeType = seq("RANGE OF", TypeName, opt(header), opt(initial));
     const rangeLike = seq("RANGE OF", SimpleFieldChain, opt(header), opt(initial));
 
+    // a maximum of 15 secondary table keys can be defined
+    // "WITH" is not allowed as a field name in keys
     const typetable = seq(normal1,
                           alt(opt(per(header, initial, plusPrio(TypeTableKey))),
                               seq(plus(TypeTableKey), optPrio(initial))));
