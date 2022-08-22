@@ -9,7 +9,7 @@ export class TypeTableKey {
       const rowType = type.getRowType();
       if (rowType instanceof StructureType) {
         for (const c of node.findAllExpressions(Expressions.FieldSub)) {
-          const concat = c.concatTokens();
+          const concat = c.concatTokens().replace(/^!/, "");
           if (concat.includes("-") === false // todo, properly check sub fields
               && rowType.getComponentByName(concat) === undefined
               && concat.toUpperCase() !== "TABLE_LINE") {

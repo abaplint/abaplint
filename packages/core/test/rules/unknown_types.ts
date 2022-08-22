@@ -1685,4 +1685,16 @@ DATA albums TYPE STANDARD TABLE OF albums_typee WITH KEY sub-field.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("escaped key field name", () => {
+    const abap = `
+TYPES: BEGIN OF name_value,
+         name  TYPE string,
+         value TYPE string,
+       END OF name_value.
+TYPES tab TYPE STANDARD TABLE OF name_value WITH NON-UNIQUE KEY !name.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
