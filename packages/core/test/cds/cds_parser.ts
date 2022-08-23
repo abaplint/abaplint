@@ -350,4 +350,17 @@ define root view entity name1
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("abstract without key", () => {
+    const cds = `
+define abstract entity name1
+{
+  name2 : type2;
+  name3 : type3;
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
