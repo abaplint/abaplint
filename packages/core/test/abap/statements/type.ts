@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementExpectFail, statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -40,3 +40,9 @@ const versions = [
 ];
 
 statementVersion(versions, "TYPE", Statements.Type);
+
+
+const fails = [
+  `TYPES moo TYPE SORTED TABLE OF foo_bar WITH NON-UNIQUE KEY and with.`,
+];
+statementExpectFail(fails, "TYPES");

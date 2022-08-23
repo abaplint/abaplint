@@ -100,6 +100,7 @@ INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`, cnt: 0},
     WITH NON-UNIQUE SORTED KEY type COMPONENTS info-type READ-ONLY.`, cnt: 0},
 
   {abap: `data: foo TYPE i, boo TYPE i.`, cnt: 1},
+  {abap: `READ TABLE lt_trkorr INDEX 1 TRANSPORTING trkorr INTO ls_trkorr.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);

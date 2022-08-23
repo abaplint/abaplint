@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, ver, altPrio, per, fail} from "../combi";
+import {seq, alt, opt, ver, altPrio, per, failCombinator} from "../combi";
 import {ComponentCond, Dynamic, Source, SimpleName, LoopTarget} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -22,7 +22,7 @@ export class Loop implements IStatement {
     const options = per(LoopTarget, from, to, where, usingKey, group);
 
     const at = seq("AT",
-                   opt(seq("SCREEN", fail())),
+                   opt(seq("SCREEN", failCombinator())),
                    opt(ver(Version.v740sp08, "GROUP")),
                    alt(SimpleSource2, ver(Version.v740sp02, Source)),
                    opt(options));
