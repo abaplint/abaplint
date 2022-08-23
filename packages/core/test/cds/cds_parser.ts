@@ -368,8 +368,17 @@ define abstract entity name1
 define abstract entity footbar2
 {
   key context : abap.string;
-}
-`;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("select AS", () => {
+    const cds = `
+define view zsdfsd as select from Blah as foo {
+  foo.Name
+}`;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
