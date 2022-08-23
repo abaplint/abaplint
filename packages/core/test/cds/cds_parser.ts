@@ -335,4 +335,63 @@ define view zhvamfoocust as select from I_asdfsd {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("provider contract projection", () => {
+    const cds = `
+define root view entity name1
+  provider contract name2
+  as projection on name3
+{
+  key field1,
+      field2
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abstract without key", () => {
+    const cds = `
+define abstract entity name1
+{
+  name2 : type2;
+  name3 : type3;
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abstract with abap type", () => {
+    const cds = `
+define abstract entity footbar2
+{
+  key context : abap.string;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("select AS", () => {
+    const cds = `
+define view zsdfsd as select from Blah as foo {
+  foo.Name
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("select max", () => {
+    const cds = `
+define view zsdfsd as select from Blah as foo {
+  max(foo.Name) as sdfsdf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
