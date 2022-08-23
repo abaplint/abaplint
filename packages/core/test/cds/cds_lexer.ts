@@ -85,4 +85,28 @@ define view zhvamfoocust as select from zhvam_cust
     expect(result[12].getRow()).to.equal(4);
   });
 
+  it("eq without spaces", () => {
+    const cds = `when I_asdfsd.Name='' then 2`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const result = CDSLexer.run(file);
+    expect(result.length).to.equal(8);
+    expect(result[4].getStr()).to.equal("=");
+  });
+
+  it("lt without spaces", () => {
+    const cds = `when I_asdfsd.Name<'' then 2`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const result = CDSLexer.run(file);
+    expect(result.length).to.equal(8);
+    expect(result[4].getStr()).to.equal("<");
+  });
+
+  it("gt without spaces", () => {
+    const cds = `when I_asdfsd.Name>'' then 2`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const result = CDSLexer.run(file);
+    expect(result.length).to.equal(8);
+    expect(result[4].getStr()).to.equal(">");
+  });
+
 });

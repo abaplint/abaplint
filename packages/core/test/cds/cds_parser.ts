@@ -273,15 +273,59 @@ define view zhvamfoocust as select from I_asdfsd {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
-  it.skip("compare operators, without preceding or trailing spaces", () => {
+  it("compare operators, without preceding or trailing spaces", () => {
     const cds = `
 @AbapCatalog.sqlViewName: 'ZSDF'
 define view zhvamfoocust as select from I_asdfsd {
   case
     when I_asdfsd.Name='' then 2
-    when I_asdfsd.Name!='' then 2
     when I_asdfsd.Name<'' then 2
     when I_asdfsd.Name>'' then 2
+    else 1
+  end as sdf
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("compare operator ne", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from I_asdfsd {
+  case
+    when I_asdfsd.Name <> '' then 2
+    else 1
+  end as sdf
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("compare operator ge", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from I_asdfsd {
+  case
+    when I_asdfsd.Name >= '' then 2
+    else 1
+  end as sdf
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("compare operator le", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from I_asdfsd {
+  case
+    when I_asdfsd.Name <= '' then 2
     else 1
   end as sdf
 }
