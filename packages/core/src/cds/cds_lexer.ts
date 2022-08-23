@@ -89,6 +89,10 @@ export class CDSLexer {
         mode = Mode.SingleLineComment;
         build = result.add(build, row, col);
         continue;
+      } else if (mode === Mode.Default && next === "-" && nextNext === "-") {
+        mode = Mode.SingleLineComment;
+        build = result.add(build, row, col);
+        continue;
       }
 
 // multi line comment handling
