@@ -5,7 +5,7 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 export class CDSCondition extends Expression {
   public getRunnable(): IStatementRunnable {
     const name = seq(CDSName, opt(seq(".", alt(CDSName, CDSString))));
-    const eq = seq(name, alt("=", "!=", "<>", "<", ">", ">=", "<=", "LIKE", "NOT LIKE"), alt(name, CDSFunction, CDSString));
+    const eq = seq(name, alt("=", seq("!", "="), seq("<", ">"), "<", ">", seq(">", "="), seq("<", "="), "LIKE", "NOT LIKE"), alt(name, CDSFunction, CDSString));
     const isInitial = seq(name, "IS INITIAL");
     const isNotInitial = seq(name, "IS NOT INITIAL");
     const isNull = seq(name, "IS NULL");
