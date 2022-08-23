@@ -13,6 +13,7 @@ export * from "./cds_cast";
 export * from "./cds_composition";
 export * from "./cds_condition";
 export * from "./cds_define_abstract";
+export * from "./cds_define_projection";
 export * from "./cds_define_view";
 export * from "./cds_element";
 export * from "./cds_function";

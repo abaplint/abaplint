@@ -335,4 +335,19 @@ define view zhvamfoocust as select from I_asdfsd {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("provider contract projection", () => {
+    const cds = `
+define root view entity name1
+  provider contract name2
+  as projection on name3
+{
+  key field1,
+      field2
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
