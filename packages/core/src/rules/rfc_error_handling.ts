@@ -34,7 +34,7 @@ CALL FUNCTION 'ZRFC'
   }
 
   private getMessage(): string {
-    return "RFC error handling: At least one unhandled exception from SYSTEM_FAILURE, COMMUNICATION_FAILURE, RESOURCE_FAILURE.";
+    return "RFC error handling: At least one unhandled exception from SYSTEM_FAILURE, COMMUNICATION_FAILURE, RESOURCE_FAILURE";
   }
 
   public getConfig() {
