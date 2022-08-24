@@ -6505,6 +6505,14 @@ APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.`;
     expect(issues[0]?.getMessage()).to.include("tokens");
   });
 
+  it("too few spaces, ok", () => {
+    const abap = `
+DATA lo_dest TYPE REF TO voided.
+lo_dest->set('HELLO').`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

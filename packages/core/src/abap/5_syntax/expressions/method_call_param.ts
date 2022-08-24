@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType} from "../../types/basic";
+import {StringType, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
@@ -29,7 +29,9 @@ export class MethodCallParam {
           throw new Error("Parameter \"" + required[0].getName() + "\" must be supplied");
         }
       }
-    } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.Source) {
+    } else if (child instanceof ExpressionNode
+        && (child.get() instanceof Expressions.Source
+        || child.get() instanceof Expressions.ConstantString)) {
       if (!(method instanceof VoidType) && method.getParameters().getImporting().length === 0) {
         throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
       }
@@ -48,7 +50,10 @@ export class MethodCallParam {
       } else {
         targetType = method;
       }
-      const sourceType = new Source().runSyntax(child, scope, filename, targetType);
+      let sourceType: AbstractType | undefined = new StringType();
+      if (child.get() instanceof Expressions.Source) {
+        sourceType = new Source().runSyntax(child, scope, filename, targetType);
+      }
 
       if (sourceType === undefined) {
         throw new Error("No source type determined, method source");
