@@ -222,9 +222,9 @@ export class Registry implements IRegistry {
 
   public addDependencies(files: readonly IFile[]): IRegistry {
     for (const f of files) {
-      this.dependencies[f.getFilename().toUpperCase()] = true;
+      this.addDependency(f);
     }
-    return this.addFiles(files);
+    return this;
   }
 
   public addDependency(file: IFile): IRegistry {
