@@ -178,6 +178,7 @@ export class Registry implements IRegistry {
   }
 
   public inErrorNamespace(name: string): boolean {
+    // todo: performance? cache regexp?
     const reg = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
     return reg.test(name);
   }
@@ -202,7 +203,7 @@ export class Registry implements IRegistry {
     return this;
   }
 
-  public addFiles(files: readonly IFile[]): IRegistry {
+  private _addFiles(files: readonly IFile[], dependency: boolean): IRegistry {
     const globalExclude = (this.conf.getGlobal().exclude ?? [])
       .map(pattern => new RegExp(pattern, "i"));
 
@@ -212,14 +213,20 @@ export class Registry implements IRegistry {
       if (isNotAbapgitFile || ExcludeHelper.isExcluded(filename, globalExclude)) {
         continue;
       }
-      const found = this.findOrCreate(f.getObjectName(), f.getObjectType());
+      let found = this.findOrCreate(f.getObjectName(), f.getObjectType());
 
-      if (found && this.isDependency(found)) {
+      if (dependency === false && found && this.isDependency(found)) {
         this.removeDependency(found);
+        found = this.findOrCreate(f.getObjectName(), f.getObjectType());
       }
 
       found.addFile(f);
     }
+    return this;
+  }
+
+  public addFiles(files: readonly IFile[]): IRegistry {
+    this._addFiles(files, false);
     return this;
   }
 
@@ -241,7 +248,7 @@ export class Registry implements IRegistry {
       this.dependencies[type] = {};
     }
     this.dependencies[type][name] = true;
-    this.addFile(file);
+    this._addFiles([file], true);
     return this;
   }
 

@@ -431,13 +431,22 @@ describe("exclude list", () => {
     const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
     registry.addDependency(file1);
 
-    const file2 = new MemoryFile("/real(zcl_class.clas.abap", "real");
+    const file2 = new MemoryFile("/real/zcl_class.clas.abap", "real");
     registry.addFile(file2);
 
     expect(registry.getObjectCount()).to.equal(1);
     const file = registry.getFirstObject()?.getFiles()[0];
     expect(file?.getFilename()).to.include("real");
     expect(file?.getRaw()).to.equal("real");
+  });
+
+  it("add dependency", async () => {
+    const registry = new Registry();
+
+    const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
+    registry.addDependency(file1);
+
+    expect(registry.isFileDependency(file1.getFilename())).to.equal(true);
   });
 
 });
