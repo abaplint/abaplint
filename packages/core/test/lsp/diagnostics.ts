@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {Diagnostics} from "../../src/lsp/diagnostics";
 import {MemoryFile} from "../../src/files/memory_file";
+import {Config} from "../../src";
 
 describe("LSP, diagnostics", () => {
 
@@ -30,6 +31,10 @@ CLASS ZCL_FIORI_MONI_MPC IMPLEMENTATION.
   endmethod.
 endclass.`);
     const registry = new Registry().addFile(file);
+    const config = registry.getConfig().get();
+    config.global.skipGeneratedGatewayClasses = true;
+    registry.setConfig(new Config(JSON.stringify(config)));
+
     expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(0);
   });
 
