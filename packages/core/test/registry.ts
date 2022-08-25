@@ -428,14 +428,16 @@ describe("exclude list", () => {
   it("identical filename in deps and in repo", async () => {
     const registry = new Registry();
 
-    const file1 = new MemoryFile("zcl_class.clas.abap", "deps");
+    const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
     registry.addDependency(file1);
 
-    const file2 = new MemoryFile("zcl_class.clas.abap", "real");
+    const file2 = new MemoryFile("/real(zcl_class.clas.abap", "real");
     registry.addFile(file2);
 
     expect(registry.getObjectCount()).to.equal(1);
-    expect(registry.getFirstObject()?.getFiles()[0].getRaw()).to.equal("real");
+    const file = registry.getFirstObject()?.getFiles()[0];
+    expect(file?.getFilename()).to.include("real");
+    expect(file?.getRaw()).to.equal("real");
   });
 
 });
