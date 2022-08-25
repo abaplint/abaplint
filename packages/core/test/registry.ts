@@ -425,4 +425,15 @@ describe("exclude list", () => {
     expect(Array.from(registry.getObjectsByType("SDFDSFD")).length).to.equal(0);
   });
 
+  it.skip("identical filename in deps and in repo", async () => {
+    const registry = new Registry();
+    const file1 = new MemoryFile("zcl_class.clas.abap", "deps");
+    registry.addDependency(file1);
+    const file2 = new MemoryFile("zcl_class.clas.abap", "real");
+    registry.addFile(file2);
+
+    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getFirstObject()?.getFiles()[0].getRaw()).to.equal("real");
+  });
+
 });

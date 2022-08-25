@@ -233,6 +233,10 @@ export class Registry implements IRegistry {
     return this;
   }
 
+  public removeDependency(_obj: IObject) {
+    // todo
+  }
+
   public isDependency(obj: IObject): boolean {
     const filename = obj.getFiles()[0].getFilename().toUpperCase();
     return this.dependencies[filename] === true;

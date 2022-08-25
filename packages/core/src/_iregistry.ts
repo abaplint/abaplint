@@ -17,6 +17,7 @@ export interface IRegistry {
   // dependency operations
   addDependencies(files: readonly IFile[]): IRegistry;
   addDependency(file: IFile): IRegistry;
+  removeDependency(obj: IObject): void;
   isDependency(obj: IObject): boolean;
   isFileDependency(filename: string): boolean;
 
