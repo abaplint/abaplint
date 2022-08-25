@@ -3050,6 +3050,9 @@
           "type": "array",
           "uniqueItems": true
         },
+        "skipGeneratedBOPFInterfaces": {
+          "type": "boolean"
+        },
         "skipGeneratedFunctionGroups": {
           "type": "boolean"
         },
@@ -3057,6 +3060,12 @@
           "type": "boolean"
         },
         "skipGeneratedPersistentClasses": {
+          "type": "boolean"
+        },
+        "skipGeneratedProxyClasses": {
+          "type": "boolean"
+        },
+        "skipGeneratedProxyInterfaces": {
           "type": "boolean"
         },
         "skipIncludesWithoutMain": {

@@ -16,7 +16,7 @@ export class SkipLogic {
   public skip(obj: IObject): boolean {
     const global = this.reg.getConfig().getGlobal();
 
-    if (global.skipGeneratedGatewayClasses
+    if (global.skipGeneratedGatewayClasses === true
         && obj instanceof Class
         && this.isGeneratedGatewayClass(obj)) {
       return true;
@@ -28,19 +28,25 @@ export class SkipLogic {
       if (file && ig.listMainForInclude(file.getFilename()).length === 0) {
         return true;
       }
-    } else if (global.skipGeneratedPersistentClasses
+    } else if (global.skipGeneratedPersistentClasses === true
         && obj instanceof Class
         && this.isGeneratedPersistentClass(obj)) {
       return true;
-    } else if (global.skipGeneratedFunctionGroups
+    } else if (global.skipGeneratedFunctionGroups === true
         && obj instanceof FunctionGroup
         && this.isGeneratedFunctionGroup(obj)) {
       return true;
-    } else if (obj instanceof Class && this.isGeneratedProxyClass(obj)) {
+    } else if (global.skipGeneratedProxyClasses === true
+        && obj instanceof Class
+        && this.isGeneratedProxyClass(obj)) {
       return true;
-    } else if (obj instanceof Interface && this.isGeneratedProxyInterface(obj)) {
+    } else if (global.skipGeneratedProxyInterfaces === true
+        && obj instanceof Interface
+        && this.isGeneratedProxyInterface(obj)) {
       return true;
-    } else if (obj instanceof Interface && this.isGeneratedBOPFInterface(obj)) {
+    } else if (global.skipGeneratedBOPFInterfaces === true
+        && obj instanceof Interface
+        && this.isGeneratedBOPFInterface(obj)) {
       return true;
     }
 

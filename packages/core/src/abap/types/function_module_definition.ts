@@ -91,7 +91,8 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.tables,
-          type: param.DBSTRUCT,
+          // table types are stored in TYP
+          type: param.DBSTRUCT || param.TYP,
         });
       }
     }

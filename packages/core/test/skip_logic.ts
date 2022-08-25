@@ -32,6 +32,10 @@ ENDINTERFACE.`;
 
     const file = new MemoryFile("#abc#cl_z_abapgit_test_mpc.clas.abap", abap);
     const reg = new Registry().addFile(file);
+    const config = reg.getConfig().get();
+    config.global.skipGeneratedGatewayClasses = true;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
     await reg.parseAsync();
     expect(reg.getObjectCount()).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
@@ -60,6 +64,9 @@ ENDINTERFACE.`;
       "</asx:abap>\n" +
       "</abapGit>";
     reg.addFile(new MemoryFile("zif_foobar.intf.xml", xml));
+    const config = reg.getConfig().get();
+    config.global.skipGeneratedProxyInterfaces = true;
+    reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();
     expect(reg.getObjectCount()).to.equal(1);
@@ -74,6 +81,10 @@ ENDINTERFACE.`;
 
     const file = new MemoryFile("zif_tt_i_projects_c.intf.abap", abap);
     const reg = new Registry().addFile(file);
+    const config = reg.getConfig().get();
+    config.global.skipGeneratedBOPFInterfaces = true;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
     await reg.parseAsync();
     expect(reg.getObjectCount()).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
@@ -92,6 +103,10 @@ ENDINTERFACE.`;
 
     const file = new MemoryFile("zcl_ztt_c_projects.clas.abap", abap);
     const reg = new Registry().addFile(file);
+    const config = reg.getConfig().get();
+    config.global.skipGeneratedGatewayClasses = true;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
     await reg.parseAsync();
     expect(reg.getObjectCount()).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);

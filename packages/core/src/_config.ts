@@ -4,9 +4,12 @@ import {IRule} from "./rules/_irule";
 export interface IGlobalConfig {
   /** input files, glob format */
   files: string;
+  skipGeneratedBOPFInterfaces?: boolean;
+  skipGeneratedFunctionGroups?: boolean;
   skipGeneratedGatewayClasses?: boolean;
   skipGeneratedPersistentClasses?: boolean;
-  skipGeneratedFunctionGroups?: boolean;
+  skipGeneratedProxyClasses?: boolean;
+  skipGeneratedProxyInterfaces?: boolean;
   /** Clone and parse dependencies specified in .apack-manifest.xml if it is present */
   useApackDependencies?: boolean;
   /** Do not report any issues for includes without main programs */
