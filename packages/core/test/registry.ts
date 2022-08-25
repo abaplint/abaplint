@@ -430,6 +430,7 @@ describe("exclude list", () => {
 
     const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
     registry.addDependency(file1);
+    expect(registry.getObjectCount()).to.equal(0);
 
     const file2 = new MemoryFile("/real/zcl_class.clas.abap", "real");
     registry.addFile(file2);
