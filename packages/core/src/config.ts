@@ -24,14 +24,19 @@ export class Config implements IConfiguration {
       version = ver;
     }
 
+    // defaults: dont skip anything, report everything. The user can decide to skip stuff
+    // its difficult to debug errors not being reported
     const config: IConfig = {
       global: {
         files: "/src/**/*.*",
         exclude: [],
         noIssues: [],
-        skipGeneratedGatewayClasses: true,
-        skipGeneratedPersistentClasses: true,
-        skipGeneratedFunctionGroups: true,
+        skipGeneratedGatewayClasses: false,
+        skipGeneratedPersistentClasses: false,
+        skipGeneratedFunctionGroups: false,
+        skipGeneratedBOPFInterface: false,
+        skipGeneratedProxyClass: false,
+        skipGeneratedProxyInterface: false,
         useApackDependencies: false,
         skipIncludesWithoutMain: false,
       },
