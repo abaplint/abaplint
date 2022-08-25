@@ -78,8 +78,7 @@ class ParsingPerformance {
 export class Registry implements IRegistry {
   private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
   private readonly objectsByType: { [type: string]: { [name: string]: IObject } } = {};
-  /** object containing filenames of dependencies */
-  private readonly dependencies: { [filename: string]: boolean } = {};
+  private readonly dependencies: { [type: string]: { [name: string]: boolean } } = {};
   private readonly references: IDDICReferences;
   private conf: IConfiguration;
   private issues: Issue[] = [];
@@ -228,7 +227,16 @@ export class Registry implements IRegistry {
   }
 
   public addDependency(file: IFile): IRegistry {
-    this.dependencies[file.getFilename().toUpperCase()] = true;
+    const type = file.getObjectType()?.toUpperCase();
+    if (type === undefined) {
+      return this;
+    }
+    const name = file.getObjectName().toUpperCase();
+
+    if (this.dependencies[type] === undefined) {
+      this.dependencies[type] = {};
+    }
+    this.dependencies[type][name] = true;
     this.addFile(file);
     return this;
   }
@@ -238,12 +246,20 @@ export class Registry implements IRegistry {
   }
 
   public isDependency(obj: IObject): boolean {
-    const filename = obj.getFiles()[0].getFilename().toUpperCase();
-    return this.dependencies[filename] === true;
+    return this.dependencies[obj.getType()]?.[obj.getName()] === true;
   }
 
   public isFileDependency(filename: string): boolean {
-    return this.dependencies[filename.toUpperCase()] === true;
+    const f = this.getFileByName(filename);
+    if (f === undefined) {
+      return false;
+    }
+    const type = f.getObjectType()?.toUpperCase();
+    if (type === undefined) {
+      return false;
+    }
+    const name = f.getObjectName().toUpperCase();
+    return this.dependencies[type]?.[name] === true;
   }
 
   // assumption: the file is already in the registry
@@ -472,7 +488,6 @@ export class Registry implements IRegistry {
     } else {
       delete this.objectsByType[remove.getType()][remove.getName()];
     }
-
   }
 
   private find(name: string, type?: string): IObject {
