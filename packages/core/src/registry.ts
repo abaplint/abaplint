@@ -78,8 +78,7 @@ class ParsingPerformance {
 export class Registry implements IRegistry {
   private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
   private readonly objectsByType: { [type: string]: { [name: string]: IObject } } = {};
-  /** object containing filenames of dependencies */
-  private readonly dependencies: { [filename: string]: boolean } = {};
+  private readonly dependencies: { [type: string]: { [name: string]: boolean } } = {};
   private readonly references: IDDICReferences;
   private conf: IConfiguration;
   private issues: Issue[] = [];
@@ -179,6 +178,7 @@ export class Registry implements IRegistry {
   }
 
   public inErrorNamespace(name: string): boolean {
+    // todo: performance? cache regexp?
     const reg = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
     return reg.test(name);
   }
@@ -203,7 +203,7 @@ export class Registry implements IRegistry {
     return this;
   }
 
-  public addFiles(files: readonly IFile[]): IRegistry {
+  private _addFiles(files: readonly IFile[], dependency: boolean): IRegistry {
     const globalExclude = (this.conf.getGlobal().exclude ?? [])
       .map(pattern => new RegExp(pattern, "i"));
 
@@ -213,33 +213,65 @@ export class Registry implements IRegistry {
       if (isNotAbapgitFile || ExcludeHelper.isExcluded(filename, globalExclude)) {
         continue;
       }
-      const found = this.findOrCreate(f.getObjectName(), f.getObjectType());
+      let found = this.findOrCreate(f.getObjectName(), f.getObjectType());
+
+      if (dependency === false && found && this.isDependency(found)) {
+        this.removeDependency(found);
+        found = this.findOrCreate(f.getObjectName(), f.getObjectType());
+      }
 
       found.addFile(f);
     }
     return this;
   }
 
-  public addDependencies(files: readonly IFile[]): IRegistry {
-    for (const f of files) {
-      this.dependencies[f.getFilename().toUpperCase()] = true;
-    }
-    return this.addFiles(files);
-  }
-
-  public addDependency(file: IFile): IRegistry {
-    this.dependencies[file.getFilename().toUpperCase()] = true;
-    this.addFile(file);
+  public addFiles(files: readonly IFile[]): IRegistry {
+    this._addFiles(files, false);
     return this;
   }
 
+  public addDependencies(files: readonly IFile[]): IRegistry {
+    for (const f of files) {
+      this.addDependency(f);
+    }
+    return this;
+  }
+
+  public addDependency(file: IFile): IRegistry {
+    const type = file.getObjectType()?.toUpperCase();
+    if (type === undefined) {
+      return this;
+    }
+    const name = file.getObjectName().toUpperCase();
+
+    if (this.dependencies[type] === undefined) {
+      this.dependencies[type] = {};
+    }
+    this.dependencies[type][name] = true;
+    this._addFiles([file], true);
+    return this;
+  }
+
+  public removeDependency(obj: IObject) {
+    delete this.dependencies[obj.getType()]?.[obj.getName()];
+    this.removeObject(obj);
+  }
+
   public isDependency(obj: IObject): boolean {
-    const filename = obj.getFiles()[0].getFilename().toUpperCase();
-    return this.dependencies[filename] === true;
+    return this.dependencies[obj.getType()]?.[obj.getName()] === true;
   }
 
   public isFileDependency(filename: string): boolean {
-    return this.dependencies[filename.toUpperCase()] === true;
+    const f = this.getFileByName(filename);
+    if (f === undefined) {
+      return false;
+    }
+    const type = f.getObjectType()?.toUpperCase();
+    if (type === undefined) {
+      return false;
+    }
+    const name = f.getObjectName().toUpperCase();
+    return this.dependencies[type]?.[name] === true;
   }
 
   // assumption: the file is already in the registry
@@ -468,7 +500,6 @@ export class Registry implements IRegistry {
     } else {
       delete this.objectsByType[remove.getType()][remove.getName()];
     }
-
   }
 
   private find(name: string, type?: string): IObject {

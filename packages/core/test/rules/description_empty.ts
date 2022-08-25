@@ -20,10 +20,9 @@ describe("rule, description_empty, error", () => {
    </asx:abap>
   </abapGit>`;
 
-  const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml));
-
-  const issues = new DescriptionEmpty().initialize(reg).run(reg.getFirstObject()!);
   it("test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml));
+    const issues = new DescriptionEmpty().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equals(1);
   });
 });
@@ -46,10 +45,9 @@ describe("rule, description_empty, okay", () => {
    </asx:abap>
   </abapGit>`;
 
-  const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml));
-
-  const issues = new DescriptionEmpty().initialize(reg).run(reg.getFirstObject()!);
   it("test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml));
+    const issues = new DescriptionEmpty().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equals(0);
   });
 });
@@ -72,10 +70,9 @@ describe("rule, description_empty, okay, namespaced", () => {
    </asx:abap>
   </abapGit>`;
 
-  const reg = new Registry().addFile(new MemoryFile("#foo#cl_klaus.clas.xml", xml));
-
-  const issues = new DescriptionEmpty().initialize(reg).run(reg.getFirstObject()!);
   it("test", () => {
+    const reg = new Registry().addFile(new MemoryFile("#foo#cl_klaus.clas.xml", xml));
+    const issues = new DescriptionEmpty().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equals(0);
   });
 });
