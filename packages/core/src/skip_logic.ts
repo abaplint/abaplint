@@ -36,15 +36,15 @@ export class SkipLogic {
         && obj instanceof FunctionGroup
         && this.isGeneratedFunctionGroup(obj)) {
       return true;
-    } else if (global.skipGeneratedProxyClass === true
+    } else if (global.skipGeneratedProxyClasses === true
         && obj instanceof Class
         && this.isGeneratedProxyClass(obj)) {
       return true;
-    } else if (global.skipGeneratedProxyInterface === true
+    } else if (global.skipGeneratedProxyInterfaces === true
         && obj instanceof Interface
         && this.isGeneratedProxyInterface(obj)) {
       return true;
-    } else if (global.skipGeneratedBOPFInterface === true
+    } else if (global.skipGeneratedBOPFInterfaces === true
         && obj instanceof Interface
         && this.isGeneratedBOPFInterface(obj)) {
       return true;

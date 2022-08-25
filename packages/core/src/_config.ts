@@ -7,9 +7,9 @@ export interface IGlobalConfig {
   skipGeneratedGatewayClasses?: boolean;
   skipGeneratedPersistentClasses?: boolean;
   skipGeneratedFunctionGroups?: boolean;
-  skipGeneratedProxyClass?: boolean;
-  skipGeneratedProxyInterface?: boolean;
-  skipGeneratedBOPFInterface?: boolean;
+  skipGeneratedProxyClasses?: boolean;
+  skipGeneratedProxyInterfaces?: boolean;
+  skipGeneratedBOPFInterfaces?: boolean;
   /** Clone and parse dependencies specified in .apack-manifest.xml if it is present */
   useApackDependencies?: boolean;
   /** Do not report any issues for includes without main programs */

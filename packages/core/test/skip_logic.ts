@@ -65,7 +65,7 @@ ENDINTERFACE.`;
       "</abapGit>";
     reg.addFile(new MemoryFile("zif_foobar.intf.xml", xml));
     const config = reg.getConfig().get();
-    config.global.skipGeneratedProxyInterface = true;
+    config.global.skipGeneratedProxyInterfaces = true;
     reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();
@@ -82,7 +82,7 @@ ENDINTERFACE.`;
     const file = new MemoryFile("zif_tt_i_projects_c.intf.abap", abap);
     const reg = new Registry().addFile(file);
     const config = reg.getConfig().get();
-    config.global.skipGeneratedBOPFInterface = true;
+    config.global.skipGeneratedBOPFInterfaces = true;
     reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();
