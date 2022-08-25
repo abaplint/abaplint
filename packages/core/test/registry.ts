@@ -425,10 +425,12 @@ describe("exclude list", () => {
     expect(Array.from(registry.getObjectsByType("SDFDSFD")).length).to.equal(0);
   });
 
-  it.skip("identical filename in deps and in repo", async () => {
+  it("identical filename in deps and in repo", async () => {
     const registry = new Registry();
+
     const file1 = new MemoryFile("zcl_class.clas.abap", "deps");
     registry.addDependency(file1);
+
     const file2 = new MemoryFile("zcl_class.clas.abap", "real");
     registry.addFile(file2);
 

@@ -214,6 +214,10 @@ export class Registry implements IRegistry {
       }
       const found = this.findOrCreate(f.getObjectName(), f.getObjectType());
 
+      if (found && this.isDependency(found)) {
+        this.removeDependency(found);
+      }
+
       found.addFile(f);
     }
     return this;
@@ -241,8 +245,9 @@ export class Registry implements IRegistry {
     return this;
   }
 
-  public removeDependency(_obj: IObject) {
-    // todo
+  public removeDependency(obj: IObject) {
+    delete this.dependencies[obj.getType()]?.[obj.getName()];
+    this.removeObject(obj);
   }
 
   public isDependency(obj: IObject): boolean {
