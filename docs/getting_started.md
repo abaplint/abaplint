@@ -41,7 +41,6 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "implement_methods": true,
     "method_implemented_twice": true,
     "parser_error": true,
-    "parser_missing_space": true,
     "superclass_final": true,
     "unknown_types": true,
     "xml_consistency": true
@@ -77,7 +76,6 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "implement_methods": true,
     "method_implemented_twice": true,
     "parser_error": true,
-    "parser_missing_space": true,
     "superclass_final": true,
     "unknown_types": true,
     "xml_consistency": true
