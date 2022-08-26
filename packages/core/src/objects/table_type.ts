@@ -42,7 +42,7 @@ export class TableType extends AbstractObject {
 
     const references: IObjectAndToken[] = [];
     let type: AbstractType;
-    if (this.parsedXML === undefined || this.parsedXML === {}) {
+    if (this.parsedXML === undefined) {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
     } else if (this.parsedXML.rowkind === "S") {
       const lookup = ddic.lookupTableOrView(this.parsedXML.rowtype);

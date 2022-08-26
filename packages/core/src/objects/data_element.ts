@@ -43,7 +43,7 @@ export class DataElement extends AbstractObject {
     const references: IObjectAndToken[] = [];
 
     let lookup: ILookupResult | undefined = undefined;
-    if (this.parsedXML === undefined || this.parsedXML === {}) {
+    if (this.parsedXML === undefined) {
       lookup = {type: new Types.UnknownType("Data Element " + this.getName() + ", parser error")};
     } else {
       const ddic = new DDIC(reg);
