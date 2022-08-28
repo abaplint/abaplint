@@ -1695,49 +1695,59 @@ ${indentation}    output = ${topTarget}.`;
 
       let structureName = uniqueName;
       let added = false;
-      let skip = false;
       let data = "";
       let previous: ExpressionNode | TokenNode | undefined = undefined;
-      for (const b of valueBody?.getChildren() || []) {
-        if (b.concatTokens() === "(" && added === false) {
-          structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-          data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
-        }
-        if (b.get() instanceof Expressions.FieldAssignment) {
+      for (const a of valueBody?.getChildren() || []) {
+        if (a.get() instanceof Expressions.FieldAssignment) {
           if (added === false) {
             body += data;
             added = true;
           }
-          body += indentation + structureName + "-" + b.concatTokens() + ".\n";
-        } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.For) {
-          const outlineFor = this.outlineFor(b, indentation, lowFile, highSyntax);
+          body += indentation + structureName + "-" + a.concatTokens() + ".\n";
+        } else if (a instanceof ExpressionNode && a.get() instanceof Expressions.For) {
+          const outlineFor = this.outlineFor(a, indentation, lowFile, highSyntax);
           body += outlineFor.body;
           end = outlineFor.end + `.\n` + end;
           indentation += "  ";
-        } else if (b.get() instanceof Expressions.Source) {
+        } else if (a instanceof ExpressionNode && a.get() instanceof Expressions.Source) {
+          // special handling for superflous value expression
           if (valueBody?.getChildren().length === 1) {
-            body += indentation + uniqueName + " = " + b.concatTokens() + `.\n`;
+            body += indentation + uniqueName + " = " + a.concatTokens() + `.\n`;
           }
-          structureName = b.concatTokens();
-          if (base && valueBody?.findDirectTokenByText("(") === undefined) {
-            structureName = uniqueName;
-          }
-        } else if (b.get() instanceof Expressions.ValueBodyLines) {
-          body += indentation + "APPEND " + b.concatTokens() + ` TO ${uniqueName}.\n`;
-          skip = true;
-        } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.Let) {
-          body += this.outlineLet(b, indentation, highSyntax, lowFile);
-        } else if (b.concatTokens() === ")") {
-          if (added === false && previous?.concatTokens() === "(") {
-            body += data;
-            added = true;
-          }
-          if (skip === false) {
-            body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
-          }
-          skip = false;
+        } else if (a instanceof ExpressionNode && a.get() instanceof Expressions.Let) {
+          body += this.outlineLet(a, indentation, highSyntax, lowFile);
         }
-        previous = b;
+        if (a instanceof ExpressionNode && a.get() instanceof Expressions.ValueBodyLine) {
+          let skip = false;
+          for (const b of a?.getChildren() || []) {
+            if (b.concatTokens() === "(" && added === false) {
+              structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+              data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+            }
+            if (b.get() instanceof Expressions.FieldAssignment) {
+              if (added === false) {
+                body += data;
+                added = true;
+              }
+              body += indentation + structureName + "-" + b.concatTokens() + ".\n";
+            } else if (b.get() instanceof Expressions.Source) {
+              body += indentation + "APPEND " + b.concatTokens() + ` TO ${uniqueName}.\n`;
+              skip = true;
+            } else if (b.get() instanceof Expressions.ValueBodyLines) {
+              body += indentation + "APPEND " + b.concatTokens() + ` TO ${uniqueName}.\n`;
+              skip = true;
+            } else if (b.concatTokens() === ")") {
+              if (added === false && previous?.concatTokens() === "(") {
+                body += data;
+                added = true;
+              }
+              if (skip === false) {
+                body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
+              }
+            }
+            previous = b;
+          }
+        }
       }
 
       if (body === "" && valueBody?.getLastChild()?.getFirstToken().getStr().toUpperCase() === "OPTIONAL") {

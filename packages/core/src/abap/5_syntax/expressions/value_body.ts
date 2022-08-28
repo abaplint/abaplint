@@ -38,8 +38,16 @@ export class ValueBody {
       type = new Source().runSyntax(s, scope, filename);
     }
 
-    for (const l of node.findDirectExpressions(Expressions.ValueBodyLines)) {
-      for (const s of l.findDirectExpressions(Expressions.Source)) {
+    for (const foo of node.findDirectExpressions(Expressions.ValueBodyLine)) {
+      for (const l of foo.findDirectExpressions(Expressions.ValueBodyLines)) {
+        for (const s of l.findDirectExpressions(Expressions.Source)) {
+          new Source().runSyntax(s, scope, filename);
+        }
+      }
+      for (const s of foo.findDirectExpressions(Expressions.FieldAssignment)) {
+        new FieldAssignment().runSyntax(s, scope, filename, targetType);
+      }
+      for (const s of foo.findDirectExpressions(Expressions.Source)) {
         new Source().runSyntax(s, scope, filename);
       }
     }

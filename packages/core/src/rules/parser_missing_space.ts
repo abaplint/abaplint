@@ -55,7 +55,7 @@ This rule makes sure the spaces are consistently required across the language.`,
   private missingSpace(statement: StatementNode): Position | undefined {
 
     const found = statement.findAllExpressionsMulti([Expressions.CondSub, Expressions.SQLCond,
-      Expressions.ValueBody, Expressions.NewObject, Expressions.Cond,
+      Expressions.ValueBodyLine, Expressions.NewObject, Expressions.Cond,
       Expressions.ComponentCond, Expressions.ComponentCondSub, Expressions.MethodCallParam], true);
     let pos: Position | undefined = undefined;
     for (const f of found) {
@@ -70,8 +70,8 @@ This rule makes sure the spaces are consistently required across the language.`,
         pos = this.checkComponentCondSub(f);
       } else if (type instanceof Expressions.SQLCond) {
         pos = this.checkSQLCond(f);
-      } else if (type instanceof Expressions.ValueBody) {
-        pos = this.checkValueBody(f);
+      } else if (type instanceof Expressions.ValueBodyLine) {
+        pos = this.checkValueBodyLine(f);
       } else if (type instanceof Expressions.NewObject) {
         pos = this.checkNewObject(f);
       } else if (type instanceof Expressions.MethodCallParam) {
@@ -191,7 +191,7 @@ This rule makes sure the spaces are consistently required across the language.`,
     return undefined;
   }
 
-  private checkValueBody(vb: ExpressionNode): Position | undefined {
+  private checkValueBodyLine(vb: ExpressionNode): Position | undefined {
     const children = vb.getChildren();
     for (let i = 0; i < children.length; i++) {
       const current = children[i];

@@ -1,20 +1,13 @@
-import {seq, tok, Expression, optPrio, altPrio, plusPrio, ver, star} from "../combi";
-import {ParenRightW, WParenLeft, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
-import {Source, Let, For, FieldAssignment} from ".";
+import {seq, Expression, optPrio, altPrio, plusPrio, ver, star} from "../combi";
+import {Source, Let, For, FieldAssignment, ValueBodyLine} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
-import {ValueBodyLines} from "./value_body_lines";
 
 export class ValueBody extends Expression {
   public getRunnable(): IStatementRunnable {
     const base = seq("BASE", Source);
 
-    // missing spaces caught by rule "parser_missing_space"
-    const foo = seq(altPrio(tok(WParenLeftW), tok(WParenLeft)),
-                    optPrio(altPrio(plusPrio(FieldAssignment), ValueBodyLines, Source)),
-                    altPrio(tok(WParenRightW), tok(ParenRightW)));
-
-    const strucOrTab = seq(optPrio(Let), optPrio(base), star(For), plusPrio(altPrio(FieldAssignment, foo)));
+    const strucOrTab = seq(optPrio(Let), optPrio(base), star(For), plusPrio(altPrio(FieldAssignment, ValueBodyLine)));
 
     const tabdef = ver(Version.v740sp08, altPrio("OPTIONAL", seq("DEFAULT", Source)));
 
