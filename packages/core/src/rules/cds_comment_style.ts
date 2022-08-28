@@ -3,7 +3,7 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {DataDefinition} from "../objects";
+import {CDSMetadataExtension, DataDefinition} from "../objects";
 import {CDSLexer} from "../cds/cds_lexer";
 import {Comment} from "../abap/1_lexer/tokens";
 
@@ -42,7 +42,8 @@ https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abencds_general_synta
   public run(object: IObject): Issue[] {
     const issues: Issue[] = [];
 
-    if (object.getType() === "DDLS" && object instanceof DataDefinition) {
+    if ((object.getType() === "DDLS" && object instanceof DataDefinition) ||
+        (object.getType() === "DDLX" && object instanceof CDSMetadataExtension)) {
       const file = object.findSourceFile();
       if (file === undefined) {
         return issues;

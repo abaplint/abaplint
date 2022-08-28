@@ -17,4 +17,8 @@ export class CDSMetadataExtension extends AbstractObject {
     // todo
     return undefined;
   }
+
+  public findSourceFile() {
+    return this.getFiles().find(f => f.getFilename().endsWith(".asddlxs") || f.getFilename().endsWith(".acds"));
+  }
 }

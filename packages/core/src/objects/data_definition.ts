@@ -68,7 +68,7 @@ export class DataDefinition extends AbstractObject {
   }
 
   public findSourceFile() {
-    return this.getFiles().find(f => f.getFilename().endsWith(".asddls"));
+    return this.getFiles().find(f => f.getFilename().endsWith(".asddls") || f.getFilename().endsWith(".acds"));
   }
 
   public hasParserError() {
