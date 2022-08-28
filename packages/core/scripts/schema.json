@@ -330,6 +330,23 @@
       ],
       "type": "object"
     },
+    "ChangeIfToCaseConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CheckAbstractConf": {
       "additionalProperties": false,
       "properties": {
@@ -1533,6 +1550,17 @@
                 }
               ],
               "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/chain_mainly_declarations"
+            },
+            "change_if_to_case": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangeIfToCaseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
             },
             "check_abstract": {
               "anyOf": [

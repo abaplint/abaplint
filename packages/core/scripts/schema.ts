@@ -14,6 +14,7 @@ import {CDSCommentStyleConf} from "../src/rules/cds_comment_style";
 import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
+import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -177,6 +178,7 @@ export interface IConfig {
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
+    "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
