@@ -10,6 +10,7 @@ import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
+import {CDSCommentStyleConf} from "../src/rules/cds_comment_style";
 import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
@@ -172,6 +173,7 @@ export interface IConfig {
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,

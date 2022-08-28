@@ -188,6 +188,23 @@
       },
       "type": "object"
     },
+    "CDSCommentStyleConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSLegacyViewConf": {
       "additionalProperties": false,
       "properties": {
@@ -1472,6 +1489,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cds_comment_style": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSCommentStyleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Check for obsolete comment style\nhttps://rules.abaplint.org/cds_comment_style"
             },
             "cds_legacy_view": {
               "anyOf": [

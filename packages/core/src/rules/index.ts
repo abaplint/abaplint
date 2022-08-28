@@ -10,6 +10,7 @@ export * from "./begin_single_include";
 export * from "./call_transaction_authority_check";
 export * from "./cds_parser_error";
 export * from "./cds_legacy_view";
+export * from "./cds_comment_style";
 export * from "./chain_mainly_declarations";
 export * from "./check_abstract";
 export * from "./check_comments";
