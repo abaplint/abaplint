@@ -44,6 +44,9 @@ export class ValueBody {
           new Source().runSyntax(s, scope, filename);
         }
       }
+      for (const s of foo.findDirectExpressions(Expressions.FieldAssignment)) {
+        new FieldAssignment().runSyntax(s, scope, filename, targetType);
+      }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
         new Source().runSyntax(s, scope, filename);
       }

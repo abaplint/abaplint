@@ -1163,4 +1163,15 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.include("combined_values");
   });
 
+  it("value body line", async () => {
+    const abap = `
+    DATA metrics_current_run TYPE voided.
+    SELECT COUNT( * )
+      INTO @DATA(number_of_runtime_errors)
+      FROM snap.
+    metrics_current_run = VALUE #( BASE metrics_current_run ( metric_key = 'number' metric_value = number_of_runtime_errors ) ).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
