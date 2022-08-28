@@ -6513,6 +6513,27 @@ lo_dest->set('HELLO').`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, field chain ends with dash", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS deserialize IMPORTING foo TYPE string.
+    CONSTANTS: BEGIN OF mode,
+                 bar TYPE string VALUE 'sdf',
+               END OF mode.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD deserialize.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>deserialize( lcl=>mode- ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("with dash");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

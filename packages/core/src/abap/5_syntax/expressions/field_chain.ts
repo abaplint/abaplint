@@ -3,7 +3,7 @@ import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
-import {Dash, InstanceArrow} from "../../1_lexer/tokens";
+import {Dash, DashW, InstanceArrow} from "../../1_lexer/tokens";
 import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType, GenericObjectReferenceType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
@@ -46,7 +46,9 @@ export class FieldChain {
         break;
       }
 
-      if (current.get() instanceof Dash) {
+      if (current.get() instanceof DashW) {
+        throw new Error("Ending with dash");
+      } else if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {
           throw new Error("Not a structure, type unknown, FieldChain");
         } else if (!(context instanceof StructureType)
