@@ -263,7 +263,7 @@ describe("Rule: align_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("value with rows", async () => {
+  it("value with rows, ok", async () => {
     const abap = `
     DATA(sdf) = VALUE type(
       common_val     = 2
@@ -272,6 +272,28 @@ describe("Rule: align_parameters", () => {
         value_foo = 5 ) ).`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(0);
+  });
+
+  it("value with rows, error in first part", async () => {
+    const abap = `
+    DATA(sdf) = VALUE type(
+      common_val = 2
+      another_common = 5
+      ( row_value = 4
+        value_foo = 5 ) ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("value with rows, error in line part", async () => {
+    const abap = `
+    DATA(sdf) = VALUE type(
+      common_val     = 2
+      another_common = 5
+      ( row_val = 4
+        value_foo = 5 ) ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
   });
 
 });

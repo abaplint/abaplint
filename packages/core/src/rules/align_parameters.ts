@@ -67,7 +67,13 @@ foobar( moo   = 1
 
 foo = VALUE #(
     foo = bar
-    moo = 2 ).`,
+    moo = 2 ).
+
+DATA(sdf) = VALUE type(
+  common_val     = 2
+  another_common = 5
+  ( row_value = 4
+    value_foo = 5 ) ).`,
     };
   }
 
@@ -178,6 +184,28 @@ foo = VALUE #(
     const candidates: ICandidate[] = [];
 
     for (const vb of stru.findAllExpressionsRecursive(Expressions.ValueBody)) {
+      const parameters: IParameterData[] = [];
+      const fieldAssignments = vb.findDirectExpressions(Expressions.FieldAssignment);
+      if (fieldAssignments.length <= 1) {
+        continue;
+      }
+      for (const fs of fieldAssignments) {
+        const children = fs.getChildren();
+        if (children.length < 3) {
+          continue; // unexpected
+        }
+        parameters.push({
+          left: children[0],
+          eq: children[1].getFirstToken().getStart(),
+          right: children[2],
+        });
+      }
+      if (parameters.length > 0) {
+        candidates.push({parameters});
+      }
+    }
+
+    for (const vb of stru.findAllExpressionsRecursive(Expressions.ValueBodyLine)) {
       const parameters: IParameterData[] = [];
       const fieldAssignments = vb.findDirectExpressions(Expressions.FieldAssignment);
       if (fieldAssignments.length <= 1) {
