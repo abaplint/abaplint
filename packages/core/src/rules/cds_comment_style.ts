@@ -20,6 +20,8 @@ export class CDSCommentStyle implements IRule {
       shortDescription: `Check for obsolete comment style`,
       extendedInformation: `Check for obsolete comment style
 
+Comments starting with "--" are considered obsolete
+
 https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abencds_general_syntax_rules.htm`,
       tags: [RuleTag.SingleFile],
       badExample: "-- this is a comment",
