@@ -1,4 +1,4 @@
-import {Identifier} from "../abap/1_lexer/tokens";
+import {Comment, Identifier} from "../abap/1_lexer/tokens";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IFile} from "../files/_ifile";
 import {Position} from "../position";
@@ -29,12 +29,23 @@ class Stream {
   }
 }
 
+enum Mode {
+  Default,
+  String,
+  SingleLineComment,
+  MultiLineComment,
+}
+
 class Result {
   private readonly result: Token[] = [];
 
-  public add(text: string, row: number, col: number): string {
+  public add(text: string, row: number, col: number, mode: Mode): string {
     if (text.length > 0) {
-      this.result.push(new Identifier(new Position(row, col), text));
+      if (mode === Mode.SingleLineComment) {
+        this.result.push(new Comment(new Position(row, col), text));
+      } else {
+        this.result.push(new Identifier(new Position(row, col), text));
+      }
     }
     return "";
   }
@@ -42,13 +53,6 @@ class Result {
   public get() {
     return this.result;
   }
-}
-
-enum Mode {
-  Default,
-  String,
-  SingleLineComment,
-  MultiLineComment,
 }
 
 export class CDSLexer {
@@ -72,7 +76,7 @@ export class CDSLexer {
       if (mode === Mode.String) {
         build += next;
         if (next === "'") {
-          build = result.add(build, row, col);
+          build = result.add(build, row, col, mode);
           mode = Mode.Default;
         }
         continue;
@@ -81,17 +85,21 @@ export class CDSLexer {
 // single line comment handling
       if (mode === Mode.SingleLineComment) {
         if (next === "\n") {
+          build = result.add(build, row, col, mode);
           mode = Mode.Default;
         } else {
+          build += next;
           continue;
         }
       } else if (mode === Mode.Default && next === "/" && nextNext === "/") {
         mode = Mode.SingleLineComment;
-        build = result.add(build, row, col);
+        build = result.add(build, row, col, mode);
+        build += next;
         continue;
       } else if (mode === Mode.Default && next === "-" && nextNext === "-") {
         mode = Mode.SingleLineComment;
-        build = result.add(build, row, col);
+        build = result.add(build, row, col, mode);
+        build += next;
         continue;
       }
 
@@ -105,7 +113,7 @@ export class CDSLexer {
         continue;
       } else if (mode === Mode.Default && next === "/" && nextNext === "*") {
         mode = Mode.MultiLineComment;
-        build = result.add(build, row, col);
+        build = result.add(build, row, col, mode);
         continue;
       }
 
@@ -115,10 +123,10 @@ export class CDSLexer {
           build += next;
           break;
         case " ":
-          build = result.add(build, row, col);
+          build = result.add(build, row, col, mode);
           break;
         case "\n":
-          build = result.add(build, row, col);
+          build = result.add(build, row, col, mode);
           row++;
           col = 0;
           break;
@@ -139,8 +147,8 @@ export class CDSLexer {
         case "-":
         case "*":
         case "/":
-          build = result.add(build, row, col);
-          result.add(next, row, col);
+          build = result.add(build, row, col, mode);
+          result.add(next, row, col, mode);
           break;
         default:
           build += next;
@@ -148,7 +156,7 @@ export class CDSLexer {
       }
     }
 
-    result.add(build, row, col);
+    result.add(build, row, col, mode);
     return result.get();
   }
 }

@@ -46,8 +46,9 @@ https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abencds_general_synta
       if (file === undefined) {
         return issues;
       }
-      const tokens = CDSLexer.run(file);
-      console.dir(tokens);
+  //    const tokens =
+      CDSLexer.run(file);
+//      console.dir(tokens);
       /*
       for (const t of tokens) {
       }

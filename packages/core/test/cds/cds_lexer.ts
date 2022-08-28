@@ -50,9 +50,9 @@ define view zhvamfoocust as select from zhvam_cust
 }`;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const result = CDSLexer.run(file);
-    expect(result.length).to.equal(16);
-    expect(result[12].getStr()).to.equal("{");
-    expect(result[12].getRow()).to.equal(4);
+    expect(result.length).to.equal(17);
+    expect(result[13].getStr()).to.equal("{");
+    expect(result[13].getRow()).to.equal(4);
   });
 
   it("multi line comment", () => {
@@ -80,9 +80,9 @@ define view zhvamfoocust as select from zhvam_cust
 }`;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const result = CDSLexer.run(file);
-    expect(result.length).to.equal(16);
-    expect(result[12].getStr()).to.equal("{");
-    expect(result[12].getRow()).to.equal(4);
+    expect(result.length).to.equal(17);
+    expect(result[13].getStr()).to.equal("{");
+    expect(result[13].getRow()).to.equal(4);
   });
 
   it("eq without spaces", () => {

@@ -1,3 +1,4 @@
+import { Comment } from "../abap/1_lexer/tokens";
 import {Combi} from "../abap/2_statements/combi";
 import {ExpressionNode} from "../abap/nodes";
 import {IFile} from "../files/_ifile";
@@ -13,7 +14,8 @@ export class CDSParser {
       return undefined;
     }
 
-    const tokens = CDSLexer.run(file);
+    let tokens = CDSLexer.run(file);
+    tokens = tokens.filter(t => !(t instanceof Comment));
     // console.dir(tokens);
 
     let res = Combi.run(new Expressions.CDSDefineView(), tokens, defaultVersion);
