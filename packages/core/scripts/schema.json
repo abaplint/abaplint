@@ -1527,7 +1527,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Identify CDS Legacy Views\nTags: SingleFile\nhttps://rules.abaplint.org/cds_legacy_view"
+              "description": "Identify CDS Legacy Views\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/cds_legacy_view"
             },
             "cds_parser_error": {
               "anyOf": [

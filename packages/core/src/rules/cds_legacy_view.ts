@@ -24,7 +24,7 @@ export class CDSLegacyView implements IRule {
 https://blogs.sap.com/2021/10/16/a-new-generation-of-cds-views-how-to-migrate-your-cds-views-to-cds-view-entities/
 
 v755 and up`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Upport],
     };
   }
 
