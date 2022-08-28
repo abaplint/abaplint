@@ -188,6 +188,23 @@
       },
       "type": "object"
     },
+    "CDSCommentStyleConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSLegacyViewConf": {
       "additionalProperties": false,
       "properties": {
@@ -311,6 +328,23 @@
         "check",
         "sort"
       ],
+      "type": "object"
+    },
+    "ChangeIfToCaseConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "CheckAbstractConf": {
@@ -1473,6 +1507,17 @@
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
+            "cds_comment_style": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSCommentStyleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
+            },
             "cds_legacy_view": {
               "anyOf": [
                 {
@@ -1493,7 +1538,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "CDS parsing, experimental\nTags: Syntax\nhttps://rules.abaplint.org/cds_parser_error"
+              "description": "CDS parsing\nTags: Syntax\nhttps://rules.abaplint.org/cds_parser_error"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -1505,6 +1550,17 @@
                 }
               ],
               "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/chain_mainly_declarations"
+            },
+            "change_if_to_case": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangeIfToCaseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
             },
             "check_abstract": {
               "anyOf": [

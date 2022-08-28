@@ -394,4 +394,28 @@ define view zsdfsd as select from Blah as foo {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("extension, ANNOTATE ENTITY", () => {
+    const cds = `
+@Metadata.layer: #CORE
+annotate entity ZFOO with {
+  @EndUserText.label: 'Hello'
+  FooBar;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddlsx", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extension, parsing error", () => {
+    const cds = `
+@Metadata.layer: #CORE
+sdfsdfsdfsdf entity ZFOO with {
+  @EndUserText.label: 'Hello'
+  FooBar;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddlsx", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.equal(undefined);
+  });
+
 });

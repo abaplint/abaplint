@@ -3,7 +3,7 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {DataDefinition} from "../objects";
+import {CDSMetadataExtension, DataDefinition} from "../objects";
 
 export class CDSParserErrorConf extends BasicRuleConfig {
 }
@@ -15,8 +15,8 @@ export class CDSParserError implements IRule {
     return {
       key: "cds_parser_error",
       title: "CDS Parser Error",
-      shortDescription: `CDS parsing, experimental`,
-      extendedInformation: ``,
+      shortDescription: `CDS parsing`,
+      extendedInformation: `Parses CDS and issues parser errors`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -33,12 +33,13 @@ export class CDSParserError implements IRule {
     return this;
   }
 
-  public run(o: IObject): Issue[] {
+  public run(object: IObject): Issue[] {
     const issues: Issue[] = [];
 
-    if (o.getType() === "DDLS" && o instanceof DataDefinition) {
-      const hasError = o.hasParserError();
-      const file = o.findSourceFile();
+    if ((object.getType() === "DDLS" && object instanceof DataDefinition) ||
+        (object.getType() === "DDLX" && object instanceof CDSMetadataExtension)) {
+      const hasError = object.hasParserError();
+      const file = object.findSourceFile();
       if (hasError === true && file) {
         issues.push(Issue.atRow(file, 1, "CDS Parser error", this.getMetadata().key, this.getConfig().severity));
       }

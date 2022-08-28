@@ -10,9 +10,11 @@ import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
+import {CDSCommentStyleConf} from "../src/rules/cds_comment_style";
 import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
+import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -172,9 +174,11 @@ export interface IConfig {
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
+    "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
