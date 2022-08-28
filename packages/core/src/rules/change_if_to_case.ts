@@ -76,10 +76,7 @@ ENDCASE.`,
   }
 
   private analyze(conds: (ExpressionNode | undefined)[]): boolean {
-// Scenarios:
-// Matching field chain, different constant strings
-// Matching field chain, different field chain
-    let chain = "";
+    const tuples: {left: string, right: string}[] = [];
 
     for (const c of conds) {
       if (c === undefined) {
@@ -99,22 +96,30 @@ ENDCASE.`,
         } else if (op !== "=" && op !== "EQ") {
           return false;
         }
-        const source1 = compare.getChildren()[0]?.concatTokens()?.toUpperCase();
-        const source2 = compare.getChildren()[2]?.concatTokens()?.toUpperCase();
-        if (source1.startsWith("'") === false) {
-          if (chain === "") {
-            chain = source1;
-          } else if (chain !== source1) {
-            return false;
-          }
-        }
-        if (source2.startsWith("'") === false) {
-          if (chain === "") {
-            chain = source2;
-          } else if (chain !== source2) {
-            return false;
-          }
-        }
+        const left = compare.getChildren()[0]?.concatTokens()?.toUpperCase();
+        const right = compare.getChildren()[2]?.concatTokens()?.toUpperCase();
+        tuples.push({left, right});
+      }
+    }
+    if (tuples.length === 1) {
+      return false;
+    }
+
+    let chain = "";
+    if (tuples[0].left === tuples[1].left) {
+      chain = tuples[0].left;
+    } else if (tuples[0].left === tuples[1].right) {
+      chain = tuples[0].left;
+    } else if (tuples[0].right === tuples[1].right) {
+      chain = tuples[0].right;
+    } else if (tuples[0].right === tuples[1].left) {
+      chain = tuples[0].right;
+    } else {
+      return false;
+    }
+    for (const t of tuples) {
+      if (t.left !== chain && t.right !== chain) {
+        return false;
       }
     }
 

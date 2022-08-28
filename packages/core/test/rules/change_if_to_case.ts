@@ -76,7 +76,7 @@ describe("Rule: change_if_to_case", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("issue, compare with variable", async () => {
+  it("issue, compare with variable", async () => {
     const issues = await findIssues(`
   IF type = type-some_type.
   ELSEIF type = type-some_other_type.
@@ -85,13 +85,22 @@ describe("Rule: change_if_to_case", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("issue, compare with variable, mirrored", async () => {
+  it("issue, compare with variable, mirrored", async () => {
     const issues = await findIssues(`
   IF type-some_type = type.
   ELSEIF type-some_other_type = type.
   ELSE.
   ENDIF.`);
     expect(issues.length).to.equal(1);
+  });
+
+  it("issue, compare with variable, mirrored", async () => {
+    const issues = await findIssues(`
+  IF type-some_type = type.
+  ELSEIF type-some_other_type = type2.
+  ELSE.
+  ENDIF.`);
+    expect(issues.length).to.equal(0);
   });
 
 });
