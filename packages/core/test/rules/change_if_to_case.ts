@@ -66,7 +66,7 @@ describe("Rule: change_if_to_case", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("different field, no issue", async () => {
+  it("different field, no issue", async () => {
     const issues = await findIssues(`
     IF l_fcat-fieldname NE 'ASDF'.
     ELSEIF l_fcat-fieldname = 'EWRWEW'
