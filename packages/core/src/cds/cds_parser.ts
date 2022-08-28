@@ -1,4 +1,4 @@
-import { Comment } from "../abap/1_lexer/tokens";
+import {Comment} from "../abap/1_lexer/tokens";
 import {Combi} from "../abap/2_statements/combi";
 import {ExpressionNode} from "../abap/nodes";
 import {IFile} from "../files/_ifile";

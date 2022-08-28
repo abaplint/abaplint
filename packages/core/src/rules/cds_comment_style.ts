@@ -5,6 +5,7 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {DataDefinition} from "../objects";
 import {CDSLexer} from "../cds/cds_lexer";
+import {Comment} from "../abap/1_lexer/tokens";
 
 export class CDSCommentStyleConf extends BasicRuleConfig {
 }
@@ -46,13 +47,12 @@ https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abencds_general_synta
       if (file === undefined) {
         return issues;
       }
-  //    const tokens =
-      CDSLexer.run(file);
-//      console.dir(tokens);
-      /*
+      const tokens = CDSLexer.run(file);
       for (const t of tokens) {
+        if (t instanceof Comment && t.getStr().startsWith("--")) {
+          issues.push(Issue.atToken(file, t, `Use "//" for comments instead of "--"`, this.getMetadata().key, this.getConfig().severity));
+        }
       }
-      */
     }
 
     return issues;

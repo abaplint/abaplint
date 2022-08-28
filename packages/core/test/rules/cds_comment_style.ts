@@ -22,19 +22,19 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("comment, error", async () => {
+  it("comment, error", async () => {
     const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
 define view zhvamfoocust as select from zhvam_cust {
   key foo as sdfdsf -- hello world error
 }`;
     const issues = await findIssues(cds);
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(1);
   });
 
-  it.skip("comment, fixed", async () => {
+  it("comment, fixed", async () => {
     const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
 define view zhvamfoocust as select from zhvam_cust {
-  key foo as sdfdsf -- hello world fixed
+  key foo as sdfdsf // hello world fixed
 }`;
     const issues = await findIssues(cds);
     expect(issues.length).to.equal(0);
