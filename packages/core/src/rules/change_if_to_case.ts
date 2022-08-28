@@ -27,8 +27,8 @@ ELSEIF l_fcat-fieldname = 'BAR'
     OR l_fcat-fieldname = 'MOO'.
 ENDIF.`,
       goodExample: `CASE l_fcat-fieldname.
-  WHEN 'FOO.
-  WHEN 'BAR' OR MOO.
+  WHEN 'FOO'.
+  WHEN 'BAR' OR 'MOO'.
 ENDCASE.`,
     };
   }
