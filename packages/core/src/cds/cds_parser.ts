@@ -26,6 +26,9 @@ export class CDSParser {
       res = Combi.run(new Expressions.CDSDefineProjection(), tokens, defaultVersion);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
+      res = Combi.run(new Expressions.CDSAnnotate(), tokens, defaultVersion);
+    }
+    if (res === undefined || !(res[0] instanceof ExpressionNode)) {
       return undefined;
     }
     return res[0];

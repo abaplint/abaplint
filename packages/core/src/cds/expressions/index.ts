@@ -1,5 +1,6 @@
 export * from "./cds_aggregate";
 export * from "./cds_aggregate";
+export * from "./cds_annotate";
 export * from "./cds_annotation_array";
 export * from "./cds_annotation_object";
 export * from "./cds_annotation_simple";
