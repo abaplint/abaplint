@@ -1499,7 +1499,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check for obsolete comment style\nhttps://rules.abaplint.org/cds_comment_style"
+              "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
             },
             "cds_legacy_view": {
               "anyOf": [

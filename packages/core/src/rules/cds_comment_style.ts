@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {IRule, IRuleMetadata} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -20,7 +20,7 @@ export class CDSCommentStyle implements IRule {
       extendedInformation: `Check for obsolete comment style
 
 https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abencds_general_syntax_rules.htm`,
-      tags: [],
+      tags: [RuleTag.SingleFile],
       badExample: "-- this is a comment",
       goodExample: "// this is a comment",
     };
