@@ -18,6 +18,13 @@ describe("Rule: change_if_to_case", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("No issue, single if", async () => {
+    const issues = await findIssues(`
+    IF l_fcat-fieldname EQ 'ASDF'.
+    ENDIF.`);
+    expect(issues.length).to.equal(0);
+  });
+
   it("issue found", async () => {
     const issues = await findIssues(`
     IF l_fcat-fieldname EQ 'ASDF'.
@@ -59,7 +66,7 @@ describe("Rule: change_if_to_case", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("different field, no issue", async () => {
+  it.skip("different field, no issue", async () => {
     const issues = await findIssues(`
     IF l_fcat-fieldname NE 'ASDF'.
     ELSEIF l_fcat-fieldname = 'EWRWEW'
@@ -67,6 +74,24 @@ describe("Rule: change_if_to_case", () => {
         OR l_fcat-fieldname = 'QWERWQE'.
     ENDIF.`);
     expect(issues.length).to.equal(0);
+  });
+
+  it.skip("issue, compare with variable", async () => {
+    const issues = await findIssues(`
+  IF type = type-some_type.
+  ELSEIF type = type-some_other_type.
+  ELSE.
+  ENDIF.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it.skip("issue, compare with variable, mirrored", async () => {
+    const issues = await findIssues(`
+  IF type-some_type = type.
+  ELSEIF type-some_other_type = type.
+  ELSE.
+  ENDIF.`);
+    expect(issues.length).to.equal(1);
   });
 
 });

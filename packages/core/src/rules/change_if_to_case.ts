@@ -61,6 +61,9 @@ ENDCASE.`,
       for (const ei of i.findDirectStructures(Structures.ElseIf)) {
         conds.push(ei.findDirectStatement(Statements.ElseIf)?.findDirectExpression(Expressions.Cond));
       }
+      if (conds.length === 1) {
+        continue;
+      }
 
       const issue = this.analyze(conds);
       if (issue === true) {
@@ -73,6 +76,9 @@ ENDCASE.`,
   }
 
   private analyze(conds: (ExpressionNode | undefined)[]): boolean {
+// Scenarios:
+// Matching field chain, different constant strings
+// Matching field chain, different field chain
     let chain = "";
 
     for (const c of conds) {
