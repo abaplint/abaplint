@@ -39,7 +39,7 @@ export class Downport implements IRule {
   private highReg: IRegistry;
   private conf = new DownportConf();
   private counter: number;
-  private graph: IncludeGraph;
+  private graph: IncludeGraph | undefined;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -94,9 +94,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const version = this.lowReg.getConfig().getVersion();
     if (version === Version.v702 || version === Version.OpenABAP) {
       this.initHighReg();
-      this.graph = new IncludeGraph(reg);
     }
     return this;
+  }
+
+  private listMainForInclude(filename: string | undefined) {
+    if (filename === undefined) {
+      return [];
+    }
+    // only initialize this.graph if needed
+    if (this.graph === undefined) {
+      this.graph = new IncludeGraph(this.lowReg);
+    }
+    return this.graph.listMainForInclude(filename);
   }
 
   public run(lowObj: IObject): Issue[] {
@@ -120,7 +130,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
     // for includes do the syntax check via a main program
     if (lowObj instanceof Program && lowObj.isInclude()) {
-      const mains = this.graph.listMainForInclude(lowObj.getMainABAPFile()?.getFilename());
+      const mains = this.listMainForInclude(lowObj.getMainABAPFile()?.getFilename());
       if (mains.length <= 0) {
         return [];
       }
@@ -131,9 +141,9 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       highSyntaxObj = this.highReg.findObjectForFile(f) as ABAPObject;
     }
 
-    const highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
-
     for (const lowFile of lowObj.getABAPFiles()) {
+      let highSyntax: ISyntaxResult | undefined = undefined;
+
       const highFile = highObj.getABAPFileByName(lowFile.getFilename());
       if (highFile === undefined) {
         continue;
@@ -156,6 +166,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
             || high.findFirstExpression(Expressions.InlineData)) {
+
+          if (highSyntax === undefined) {
+            highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
+          }
+
           const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
           if (issue) {
             ret.push(issue);
