@@ -113,7 +113,6 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     const ret: Issue[] = [];
     this.counter = 1;
 
-
     const version = this.lowReg.getConfig().getVersion();
     if (version !== Version.v702 && version !== Version.OpenABAP) {
       return ret;
@@ -379,7 +378,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.replaceTableExpression(high, lowFile, highSyntax);
+    found = this.replaceTableExpression(low, high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -495,8 +494,12 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     return undefined;
   }
 
-  private downportSelectSingleInline(_low: StatementNode, high: StatementNode,
+  private downportSelectSingleInline(low: StatementNode, high: StatementNode,
                                      lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+
     const targets = high.findFirstExpression(Expressions.SQLIntoStructure)?.findDirectExpressions(Expressions.SQLTarget) || [];
     if (targets.length !== 1) {
       return undefined;
@@ -557,8 +560,12 @@ ${indentation}`);
     return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private downportSelectTableInline(_low: StatementNode, high: StatementNode,
+  private downportSelectTableInline(low: StatementNode, high: StatementNode,
                                     lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+
     const targets = high.findFirstExpression(Expressions.SQLIntoTable)?.findDirectExpressions(Expressions.SQLTarget) || [];
     if (targets.length !== 1) {
       return undefined;
@@ -694,15 +701,18 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
     return undefined;
   }
 
-  private replaceTableExpression(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+  private replaceTableExpression(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
 
-    for (const fieldChain of node.findAllExpressionsRecursive(Expressions.FieldChain)) {
+    for (const fieldChain of high.findAllExpressionsRecursive(Expressions.FieldChain)) {
       const tableExpression = fieldChain.findDirectExpression(Expressions.TableExpression);
       if (tableExpression === undefined) {
         continue;
       }
 
-      const concat = node.concatTokens().toUpperCase();
+      const concat = high.concatTokens().toUpperCase();
       if (concat.includes(" LINE_EXISTS( ") || concat.includes(" LINE_INDEX( ")) {
         // note: line_exists() must be replaced before handling table expressions
         continue;
@@ -724,10 +734,10 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
 
       const condition = this.tableCondition(tableExpression);
 
-      const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const tabixBackup = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
-      const firstToken = node.getFirstToken();
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const tabixBackup = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+      const firstToken = high.getFirstToken();
       // note that the tabix restore should be done before throwing the exception
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${pre}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
@@ -741,7 +751,7 @@ ${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, startToken.getStart(), tableExpression.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
-      return Issue.atToken(lowFile, node.getFirstToken(), "Outline table expression", this.getMetadata().key, this.conf.severity, fix);
+      return Issue.atToken(lowFile, high.getFirstToken(), "Outline table expression", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;
