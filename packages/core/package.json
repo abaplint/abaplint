@@ -12,6 +12,7 @@
         "test:only": "npm run compile && mocha",
         "test:parallel": "npm run compile && mocha --timeout 1000 --parallel --reporter dot",
         "coverage": "npm run compile && c8 mocha && c8 report --reporter=html",
+        "lexer_performance": "tsc && curl -o lexer_performance.abap https://raw.githubusercontent.com/abapGit/build/main/zabapgit.abap && node build/test/lexer_performance.js",
         "schema": "node scripts/schema.js > scripts/schema.ts && ts-json-schema-generator --tsconfig tsconfig_schema.json --jsDoc extended --path scripts/schema.ts > scripts/schema.json && node scripts/schema_post.js",
         "publish:minor": "npm --no-git-tag-version version minor && rm -rf build && npm install && npm run test && npm publish --access public",
         "publish:patch": "npm --no-git-tag-version version patch && rm -rf build && npm install && npm run test && npm publish --access public"
