@@ -74,10 +74,9 @@ https://docs.abapopenchecks.org/checks/17/`,
       this.mode = DEFINITION;
       this.moveTo = r.getFirstStatement()?.getLastToken().getEnd();
 
-      if (this.reg.getConfig().getVersion() !== Version.v702) {
-        if (r.findFirstExpression(Expressions.InlineData)) {
-          continue;
-        }
+      if (this.reg.getConfig().getVersion() !== Version.v702
+          && r.findFirstExpression(Expressions.InlineData)) {
+        continue;
       }
 
       const found = this.walk(r, file);
@@ -95,19 +94,23 @@ https://docs.abapopenchecks.org/checks/17/`,
 
     let previous: StatementNode | StructureNode | undefined = undefined;
     for (const c of r.getChildren()) {
-      if (c instanceof StatementNode && c.get() instanceof Comment) {
-        continue;
-      } else if (c instanceof StatementNode && c.get() instanceof Statements.Form) {
-        continue;
-      } else if (c instanceof StatementNode && c.get() instanceof Statements.MethodImplementation) {
-        continue;
+      const get = c.get();
+
+      if (c instanceof StatementNode) {
+        if (get instanceof Comment) {
+          continue;
+        } else if (get instanceof Statements.Form) {
+          continue;
+        } else if (get instanceof Statements.MethodImplementation) {
+          continue;
+        }
       }
 
       if (c instanceof StructureNode
-          && (c.get() instanceof Structures.Data
-          || c.get() instanceof Structures.Types
-          || c.get() instanceof Structures.Constants
-          || c.get() instanceof Structures.Statics)) {
+          && (get instanceof Structures.Data
+          || get instanceof Structures.Types
+          || get instanceof Structures.Constants
+          || get instanceof Structures.Statics)) {
         if (this.mode === AFTER) {
           // These are chained structured statements
           let fix = undefined;
@@ -131,11 +134,11 @@ https://docs.abapopenchecks.org/checks/17/`,
           this.moveTo = c.getLastToken().getEnd();
         }
       } else if (c instanceof StatementNode
-          && (c.get() instanceof Statements.Data
-          || c.get() instanceof Statements.Type
-          || c.get() instanceof Statements.Constant
-          || c.get() instanceof Statements.Static
-          || c.get() instanceof Statements.FieldSymbol)) {
+          && (get instanceof Statements.Data
+          || get instanceof Statements.Type
+          || get instanceof Statements.Constant
+          || get instanceof Statements.Static
+          || get instanceof Statements.FieldSymbol)) {
         if (this.mode === AFTER) {
           // only one fix per routine, as it reorders a lot
           let fix = undefined;
@@ -147,10 +150,10 @@ https://docs.abapopenchecks.org/checks/17/`,
         } else {
           this.moveTo = c.getLastToken().getEnd();
         }
-      } else if (c instanceof StructureNode && c.get() instanceof Structures.Define) {
+      } else if (c instanceof StructureNode && get instanceof Structures.Define) {
         this.mode = IGNORE;
         return undefined;
-      } else if (c instanceof StatementNode && c.get() instanceof Unknown) {
+      } else if (c instanceof StatementNode && get instanceof Unknown) {
         this.mode = IGNORE;
         return undefined;
       } else if (c instanceof StatementNode && this.mode === DEFINITION) {
