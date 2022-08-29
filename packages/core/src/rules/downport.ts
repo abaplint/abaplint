@@ -142,6 +142,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     for (const lowFile of lowObj.getABAPFiles()) {
+      let highSyntax: ISyntaxResult | undefined = undefined;
+
       const highFile = highObj.getABAPFileByName(lowFile.getFilename());
       if (highFile === undefined) {
         continue;
@@ -164,7 +166,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
             || high.findFirstExpression(Expressions.InlineData)) {
-          const highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
+
+          if (highSyntax === undefined) {
+            highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
+          }
+
           const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
           if (issue) {
             ret.push(issue);
