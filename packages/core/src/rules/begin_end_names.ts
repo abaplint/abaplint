@@ -24,11 +24,11 @@ export class BeginEndNames extends ABAPRule {
       shortDescription: `Check BEGIN OF and END OF names match, plus there must be statements between BEGIN and END`,
       tags: [RuleTag.Syntax, RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `DATA: BEGIN OF stru,
-      field TYPE i,
-    END OF structure_not_the_same.`,
+        field TYPE i,
+      END OF structure_not_the_same.`,
       goodExample: `DATA: BEGIN OF stru,
-      field TYPE i,
-    END OF stru.`,
+        field TYPE i,
+      END OF stru.`,
     };
   }
 
