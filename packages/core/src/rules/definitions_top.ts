@@ -66,7 +66,7 @@ https://docs.abapopenchecks.org/checks/17/`,
       return [];
     }
 
-    const routines = structure.findAllStructures(Structures.Form).concat(structure.findAllStructures(Structures.Method));
+    const routines = structure.findAllStructuresMulti([Structures.Form, Structures.Method]);
     for (const r of routines) {
       // one fix per routine
       this.fixed = false;
