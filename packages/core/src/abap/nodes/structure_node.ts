@@ -195,6 +195,32 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return ret;
   }
 
+  public findAllStructuresMulti(type: (new () => IStructure)[]): StructureNode[] {
+    const ret: StructureNode[] = [];
+    for (const t of type) {
+      if (this.get() instanceof t) {
+        return [this];
+      }
+    }
+    for (const child of this.getChildren()) {
+      if (child instanceof StatementNode) {
+        continue;
+      }
+
+      let found = false;
+      for (const t of type) {
+        if (this.get() instanceof t) {
+          ret.push(child);
+          found = true;
+        }
+      }
+      if (found === false) {
+        ret.push(...child.findAllStructuresMulti(type));
+      }
+    }
+    return ret;
+  }
+
   public findAllStructures(type: new () => IStructure): StructureNode[] {
     const ret: StructureNode[] = [];
     if (this.get() instanceof type) {
