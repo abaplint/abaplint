@@ -51,6 +51,7 @@ import {Severity} from "./severity";
 import {IMethodDefinition} from "./abap/types/_method_definition";
 import {DDLParser} from "./ddl/ddl_parser";
 import {CDSParser} from "./cds/cds_parser";
+import {RulesRunner} from "./rules_runner";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -65,6 +66,6 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
-  Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
+  Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   IRenameSettings, Info, Visibility, Severity};

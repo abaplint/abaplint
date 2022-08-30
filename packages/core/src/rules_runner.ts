@@ -14,24 +14,32 @@ export class RulesRunner {
     this.reg = reg;
   }
 
-  public runRules(objects: readonly IObject[], input?: IRunInput): readonly Issue[] {
+  public objectsToCheck(objects: Iterable<IObject>): readonly IObject[] {
+    const check: IObject[] = [];
+    const skipLogic = new SkipLogic(this.reg);
+
+    for (const obj of objects) {
+      if (skipLogic.skip(obj) || this.reg.isDependency(obj)) {
+        continue;
+      }
+      check.push(obj);
+    }
+    return check;
+  }
+
+  public runRules(objects: Iterable<IObject>, input?: IRunInput): readonly Issue[] {
     const rulePerformance: {[index: string]: number} = {};
     const issues = [];
 
     const rules = this.reg.getConfig().getEnabledRules();
-    const skipLogic = new SkipLogic(this.reg);
+    const check = this.objectsToCheck(objects);
 
-    input?.progress?.set(objects.length, "Run Syntax");
-    const check: IObject[] = [];
-    for (const obj of objects) {
+    input?.progress?.set(check.length, "Run Syntax");
+    for (const obj of check) {
       input?.progress?.tick("Run Syntax - " + obj.getName());
-      if (skipLogic.skip(obj) || this.reg.isDependency(obj)) {
-        continue;
-      }
       if (obj instanceof ABAPObject) {
         new SyntaxLogic(this.reg, obj).run();
       }
-      check.push(obj);
     }
 
     input?.progress?.set(rules.length, "Initialize Rules");

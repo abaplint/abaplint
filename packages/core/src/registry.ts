@@ -288,7 +288,7 @@ export class Registry implements IRegistry {
     if (this.isDirty() === true) {
       this.parse();
     }
-    return new RulesRunner(this).runRules([...this.getObjects()], input);
+    return new RulesRunner(this).runRules(this.getObjects(), input);
   }
 
   // todo, this will be changed to async sometime
