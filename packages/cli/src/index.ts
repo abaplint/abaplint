@@ -207,7 +207,9 @@ export async function run(arg: Arguments) {
       reg.addDependencies(deps);
       reg.addFiles(loaded); // if the object exists in repo, it should take precedence over deps
       await reg.parseAsync({progress, outputPerformance: arg.parsingPerformance});
-      issues = issues.concat(reg.findIssues({progress, outputPerformance: arg.parsingPerformance}));
+      if (arg.runFix !== true) {
+        issues = issues.concat(reg.findIssues({progress, outputPerformance: arg.parsingPerformance}));
+      }
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
       const message = error.toString() + " " + error.stack?.split("\n")[1]?.trim();
