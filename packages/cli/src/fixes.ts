@@ -13,7 +13,7 @@ export class ApplyFixes {
   // Some rules are quite expensive to initialize(like downport),
   // so running all rules every time is expensive.
   public async applyFixes(reg: IRegistry, fs: MyFS, quiet?: boolean) {
-    let iteration = 1;
+    let iteration = 0;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
 
@@ -34,7 +34,7 @@ export class ApplyFixes {
           const appliedCount = this.applyList(issues, reg).length;
           const runtime = Date.now() - before;
           if (quiet !== true) {
-            process.stderr.write(`\tIteration ${iteration.toString().padEnd(3, " ")}, ${appliedCount} fixes applied, ${runtime}ms, rule ${rule.getMetadata().key}\n`);
+            process.stderr.write(`\tIteration ${iteration}, ${appliedCount} fixes applied, ${runtime}ms, \trule ${rule.getMetadata().key}\n`);
           }
           if (appliedCount > 0) {
             changed += appliedCount;
