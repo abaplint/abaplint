@@ -1,4 +1,5 @@
-import {Issue, IRegistry, applyEditList, IEdit, IProgress, RulesRunner} from "@abaplint/core";
+/* eslint-disable max-len */
+import {Issue, IRegistry, applyEditList, IEdit, RulesRunner} from "@abaplint/core";
 
 export interface MyFS {
   writeFileSync(name: string, raw: string): void;
@@ -11,48 +12,45 @@ export class ApplyFixes {
   // Execute one rule at a time and apply fixes for that rule
   // Some rules are quite expensive to initialize(like downport),
   // so running all rules every time is expensive.
-  public async applyFixes(reg: IRegistry, fs: MyFS, bar?: IProgress) {
+  public async applyFixes(reg: IRegistry, fs: MyFS) {
     let iteration = 1;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
-
-    bar?.set(MAX_ITERATIONS, "Apply Fixes");
 
     const objects = new RulesRunner(reg).objectsToCheck(reg.getObjects());
     const rules = reg.getConfig().getEnabledRules();
 
     while(iteration <= MAX_ITERATIONS) {
-      bar?.tick("Apply Fixes, iteration " + iteration);
-
       let changed = 0;
       for (const rule of rules) {
-        rule.initialize(reg);
-
-        const issues: Issue[] = [];
-        for (const obj of objects) {
-          issues.push(...rule.run(obj));
-        }
-
-        const appliedCount = this.applyList(issues, reg).length;
-        if (appliedCount > 0) {
-          changed += appliedCount;
-          reg.parse();
+        while(iteration <= MAX_ITERATIONS) {
+          const before = Date.now();
+          rule.initialize(reg);
+          const issues: Issue[] = [];
+          for (const obj of objects) {
+            issues.push(...rule.run(obj));
+          }
+          iteration++;
+          const appliedCount = this.applyList(issues, reg).length;
+          const runtime = Date.now() - before;
+          process.stderr.write(`\tIteration ${iteration.toString().padEnd(3, " ")}, ${appliedCount} fixes applied, ${runtime}ms, rule ${rule.getMetadata().key}\n`);
+          if (appliedCount > 0) {
+            changed += appliedCount;
+            const before = Date.now();
+            reg.parse();
+            const runtime = Date.now() - before;
+            process.stderr.write(`\tParse, ${runtime}ms\n`);
+          } else {
+            break;
+          }
         }
       }
       if (changed === 0) {
         break;
       }
-
-      iteration++;
     }
 
     this.writeChangesToFS(fs, reg);
-
-  // always end the progress indicator at 100%
-    while(iteration <= MAX_ITERATIONS) {
-      bar?.tick("Fixes Applied");
-      iteration++;
-    }
   }
 
 ///////////////////////////////////////////////////
