@@ -10,7 +10,6 @@ import {expect} from "chai";
 const tests = [
   {abap: "blah blah.", cnt: 1},
   {abap: "WRITE: / 'abc'.", cnt: 0},
-  {abap: "##EXISTS\nENDMETHOD.", cnt: 0},
   {abap: "##needed.", cnt: 0},
   {abap: "moo( 'sdf' ).", cnt: 0},
   {abap: "moo( bar ).", cnt: 0},
@@ -54,8 +53,6 @@ TYPES tab TYPE SORTED TABLE OF ty_structure WITH UNIQUE KEY field1.
 TYPES: BEGIN OF MESH mesh,
          foo TYPE tab,
        END OF MESH mesh.`, cnt: 0},
-
-  {abap: `IF result IS ASSIGNED. ENDIF.`, cnt: 1},
 ];
 
 testRule(tests, ParserError);
@@ -72,5 +69,15 @@ describe("Rule: parser_error", () => {
   it("pragma should give error on 700", async () => {
     const issues = await findIssues("foo = 2 ##pragma.", Version.v700);
     expect(issues.length).to.equal(1);
+  });
+
+  it("EXISTS ENDMETHOD", async () => {
+    const issues = await findIssues("##EXISTS\nENDMETHOD.");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("non field symbol, IF result IS ASSIGNED. ENDIF.", async () => {
+    const issues = await findIssues("IF result IS ASSIGNED. ENDIF.");
+    expect(issues.length).to.equal(2);
   });
 });

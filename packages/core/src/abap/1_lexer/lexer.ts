@@ -310,7 +310,7 @@ export class Lexer {
           && buf.length > 1
           && current === "`"
           && aahead !== "``"
-          && (buf.match(/`/g) || []).length % 2 === 0
+          && (buf.split("`").length - 1) % 2 === 0
           && ahead !== "`") {
 // end of ping
         this.add();
@@ -330,7 +330,7 @@ export class Lexer {
           && current === "'"
           && buf.length > 1
           && aahead !== "''"
-          && (buf.match(/'/g) || []).length % 2 === 0
+          && (buf.split("'").length - 1) % 2 === 0
           && ahead !== "'") {
 // end of string
         this.add();

@@ -30,7 +30,7 @@ export class UnknownObject extends AbstractObject {
     const pos = new Position(1, 1);
     const file = this.getFiles()[0]!;
     const message = "Unknown object type, currently not supported in abaplint, open issue on github";
-    const issue = Issue.atPosition(file, pos, message, "registry_add", Severity.Error);
+    const issue = Issue.atPosition(file, pos, message, "parser_error", Severity.Error);
     return [issue];
   }
 

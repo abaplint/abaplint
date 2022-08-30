@@ -1,4 +1,5 @@
-import {Issue, IRegistry, applyEditList, IEdit, IProgress} from "@abaplint/core";
+/* eslint-disable max-len */
+import {Issue, IRegistry, applyEditList, IEdit, RulesRunner} from "@abaplint/core";
 
 export interface MyFS {
   writeFileSync(name: string, raw: string): void;
@@ -7,36 +8,56 @@ export interface MyFS {
 export class ApplyFixes {
   private readonly changedFiles: Set<string> = new Set<string>();
 
-  public applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: MyFS, bar?: IProgress): readonly Issue[] {
-    let changed: string[] = [];
-    let iteration = 1;
-    let issues = inputIssues;
+  // Strategy:
+  // Execute one rule at a time and apply fixes for that rule
+  // Some rules are quite expensive to initialize(like downport),
+  // so running all rules every time is expensive.
+  public async applyFixes(reg: IRegistry, fs: MyFS, quiet?: boolean) {
+    let iteration = 0;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
 
-    bar?.set(MAX_ITERATIONS, "Apply Fixes");
-    while(iteration <= MAX_ITERATIONS) {
-      bar?.tick("Apply Fixes, iteration " + iteration + ", " + issues.length + " candidates");
+    const objects = new RulesRunner(reg).objectsToCheck(reg.getObjects());
+    const rules = reg.getConfig().getEnabledRules();
 
-      changed = this.applyList(issues, reg);
-      if (changed.length === 0) {
+    while(iteration <= MAX_ITERATIONS) {
+      let changed = 0;
+      for (const rule of rules) {
+        while(iteration <= MAX_ITERATIONS) {
+          const before = Date.now();
+          rule.initialize(reg);
+          const issues: Issue[] = [];
+          for (const obj of objects) {
+            issues.push(...rule.run(obj));
+          }
+          iteration++;
+          const appliedCount = this.applyList(issues, reg).length;
+          const runtime = Date.now() - before;
+          if (quiet !== true) {
+            process.stderr.write(`\tIteration ${iteration}, ${appliedCount} fixes applied, ${runtime}ms, \trule ${rule.getMetadata().key}\n`);
+          }
+          if (appliedCount > 0) {
+            changed += appliedCount;
+            const before = Date.now();
+            reg.parse();
+            const runtime = Date.now() - before;
+            if (quiet !== true) {
+              process.stderr.write(`\tParse, ${runtime}ms\n`);
+            }
+          } else {
+            break;
+          }
+        }
+      }
+      if (changed === 0) {
         break;
       }
-      iteration++;
-
-      issues = reg.parse().findIssues();
     }
 
     this.writeChangesToFS(fs, reg);
-
-  // always end the progress indicator at 100%
-    while(iteration <= MAX_ITERATIONS) {
-      bar?.tick("Fixes Applied");
-      iteration++;
-    }
-
-    return issues;
   }
+
+///////////////////////////////////////////////////
 
   private writeChangesToFS(fs: MyFS, reg: IRegistry) {
     for (const filename of this.changedFiles.values()) {
@@ -74,7 +95,6 @@ export class ApplyFixes {
   }
 
   private applyList(issues: readonly Issue[], reg: IRegistry): string[] {
-
     const edits: IEdit[] = [];
 
     for (const i of issues) {
@@ -94,7 +114,6 @@ export class ApplyFixes {
       this.changedFiles.add(filename);
     }
     return changed;
-
   }
 
 }
