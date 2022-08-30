@@ -217,7 +217,7 @@ export async function run(arg: Arguments) {
 
     let extra = "";
     if (arg.runFix === true && reg) {
-      issues = new ApplyFixes().applyFixes(issues, reg, fs, progress) as Issue[];
+      await new ApplyFixes().applyFixes(reg, fs, progress);
       extra = "Fixes applied";
     } else if (arg.runRename === true && reg) {
       if (issues.length === 0) {

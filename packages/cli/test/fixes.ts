@@ -1,59 +1,56 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {Registry, MemoryFile, Issue, IRegistry} from "@abaplint/core";
+import {Registry, MemoryFile, IRegistry} from "@abaplint/core";
 import {ApplyFixes, MyFS} from "../src/fixes";
 
-function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: MyFS) {
-  new ApplyFixes().applyFixes(inputIssues, reg, fs);
+async function applyFixes(reg: IRegistry, fs: MyFS) {
+  await new ApplyFixes().applyFixes(reg, fs);
 }
 
 describe("Apply fixes", () => {
-  it("test 1", () => {
+  it("test 1", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "CREATE OBJECT lo_obj.");
     const reg = new Registry().addFile(file).parse();
-    const issues = reg.findIssues();
 
     const jsonFiles: any = {};
     jsonFiles[file.getFilename()] = file.getRaw();
+    const mockFS = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
 
-    const input = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
-    applyFixes(issues, reg, input);
+    await applyFixes(reg, mockFS);
 
-    const result = input.readFileSync("zfoobar.prog.abap").toString();
+    const result = mockFS.readFileSync("zfoobar.prog.abap").toString();
     expect(result).to.contain("NEW");
   });
 
-  it("test 2, subsequent fix,", () => {
+  it("test 2, subsequent fix,", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "method( var1 = value1 var2 = value2 ).");
     const reg = new Registry().addFile(file).parse();
-    const issues = reg.findIssues();
 
     const jsonFiles: any = {};
     jsonFiles[file.getFilename()] = file.getRaw();
 
     const input = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
-    applyFixes(issues, reg, input);
+    await applyFixes(reg, input);
 
     const result = input.readFileSync("zfoobar.prog.abap").toString();
     expect(result).to.equal(`method( var1 = value1\n        var2 = value2 ).`);
   });
 
-  it("test 3, overlapping fixes", () => {
+  it("test 3, overlapping fixes", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "DATA: foo, bar.");
     const reg = new Registry().addFile(file).parse();
-    const issues = reg.findIssues();
 
     const jsonFiles: any = {};
     jsonFiles[file.getFilename()] = file.getRaw();
 
     const input = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
-    applyFixes(issues, reg, input);
+    await applyFixes(reg, input);
 
     const result = input.readFileSync("zfoobar.prog.abap").toString();
     expect(result).to.equal(``);
   });
 
-  it("test 4, more overlapping fixes", () => {
+  it("test 4, more overlapping fixes", async () => {
     const abap = `FORM foo.
   DATA:
     lv_key              TYPE string,
@@ -74,13 +71,12 @@ describe("Apply fixes", () => {
 ENDFORM.`;
     const file = new MemoryFile("zfoobar.prog.abap", abap);
     const reg = new Registry().addFile(file).parse();
-    const issues = reg.findIssues();
 
     const jsonFiles: any = {};
     jsonFiles[file.getFilename()] = file.getRaw();
 
     const input = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
-    applyFixes(issues, reg, input);
+    await applyFixes(reg, input);
 
     const result = input.readFileSync("zfoobar.prog.abap").toString();
     expect(result).to.equal(`FORM foo.

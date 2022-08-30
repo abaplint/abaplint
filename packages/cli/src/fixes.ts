@@ -7,15 +7,17 @@ export interface MyFS {
 export class ApplyFixes {
   private readonly changedFiles: Set<string> = new Set<string>();
 
-  public applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: MyFS, bar?: IProgress): readonly Issue[] {
+  public async applyFixes(reg: IRegistry, fs: MyFS, bar?: IProgress) {
     let changed: string[] = [];
     let iteration = 1;
-    let issues = inputIssues;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
 
     bar?.set(MAX_ITERATIONS, "Apply Fixes");
+
+    let issues = reg.parse().findIssues();
     while(iteration <= MAX_ITERATIONS) {
+
       bar?.tick("Apply Fixes, iteration " + iteration + ", " + issues.length + " candidates");
 
       changed = this.applyList(issues, reg);
@@ -34,9 +36,9 @@ export class ApplyFixes {
       bar?.tick("Fixes Applied");
       iteration++;
     }
-
-    return issues;
   }
+
+///////////////////////////////////////////////////
 
   private writeChangesToFS(fs: MyFS, reg: IRegistry) {
     for (const filename of this.changedFiles.values()) {
@@ -74,7 +76,6 @@ export class ApplyFixes {
   }
 
   private applyList(issues: readonly Issue[], reg: IRegistry): string[] {
-
     const edits: IEdit[] = [];
 
     for (const i of issues) {
@@ -94,7 +95,6 @@ export class ApplyFixes {
       this.changedFiles.add(filename);
     }
     return changed;
-
   }
 
 }
