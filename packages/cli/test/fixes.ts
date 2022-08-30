@@ -4,7 +4,7 @@ import {Registry, MemoryFile, IRegistry} from "@abaplint/core";
 import {ApplyFixes, MyFS} from "../src/fixes";
 
 async function applyFixes(reg: IRegistry, fs: MyFS) {
-  await new ApplyFixes().applyFixes(reg, fs);
+  await new ApplyFixes().applyFixes(reg, fs, true);
 }
 
 describe("Apply fixes", () => {

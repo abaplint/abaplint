@@ -12,7 +12,7 @@ export class ApplyFixes {
   // Execute one rule at a time and apply fixes for that rule
   // Some rules are quite expensive to initialize(like downport),
   // so running all rules every time is expensive.
-  public async applyFixes(reg: IRegistry, fs: MyFS) {
+  public async applyFixes(reg: IRegistry, fs: MyFS, quiet?: boolean) {
     let iteration = 1;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
@@ -33,13 +33,17 @@ export class ApplyFixes {
           iteration++;
           const appliedCount = this.applyList(issues, reg).length;
           const runtime = Date.now() - before;
-          process.stderr.write(`\tIteration ${iteration.toString().padEnd(3, " ")}, ${appliedCount} fixes applied, ${runtime}ms, rule ${rule.getMetadata().key}\n`);
+          if (quiet !== true) {
+            process.stderr.write(`\tIteration ${iteration.toString().padEnd(3, " ")}, ${appliedCount} fixes applied, ${runtime}ms, rule ${rule.getMetadata().key}\n`);
+          }
           if (appliedCount > 0) {
             changed += appliedCount;
             const before = Date.now();
             reg.parse();
             const runtime = Date.now() - before;
-            process.stderr.write(`\tParse, ${runtime}ms\n`);
+            if (quiet !== true) {
+              process.stderr.write(`\tParse, ${runtime}ms\n`);
+            }
           } else {
             break;
           }
