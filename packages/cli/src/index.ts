@@ -217,8 +217,8 @@ export async function run(arg: Arguments) {
 
     let extra = "";
     if (arg.runFix === true && reg) {
-      issues = [];
       await new ApplyFixes().applyFixes(reg, fs);
+      issues = [...reg.findIssues()]; // used in exercism ABAP test runner
       extra = "Fixes applied";
     } else if (arg.runRename === true && reg) {
       if (issues.length === 0) {
