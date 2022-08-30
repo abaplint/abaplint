@@ -79,9 +79,7 @@ export class RulesRunner {
     return this.excludeIssues(issues);
   }
 
-//////////////////////////////////
-
-  private excludeIssues(issues: Issue[]): Issue[] {
+  public excludeIssues(issues: Issue[]): Issue[] {
     const ret: Issue[] = issues;
 
     const globalNoIssues = this.reg.getConfig().getGlobal().noIssues || [];

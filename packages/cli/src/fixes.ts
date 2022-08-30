@@ -1,4 +1,4 @@
-import {Issue, IRegistry, applyEditList, IEdit, IProgress} from "@abaplint/core";
+import {Issue, IRegistry, applyEditList, IEdit, IProgress, RulesRunner} from "@abaplint/core";
 
 export interface MyFS {
   writeFileSync(name: string, raw: string): void;
@@ -7,25 +7,43 @@ export interface MyFS {
 export class ApplyFixes {
   private readonly changedFiles: Set<string> = new Set<string>();
 
+  // Strategy:
+  // Execute one rule at a time and apply fixes for that rule
+  // Some rules are quite expensive to initialize(like downport),
+  // so running all rules every time is expensive.
   public async applyFixes(reg: IRegistry, fs: MyFS, bar?: IProgress) {
-    let changed: string[] = [];
     let iteration = 1;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
 
     bar?.set(MAX_ITERATIONS, "Apply Fixes");
 
-    let issues = reg.parse().findIssues();
-    while(iteration <= MAX_ITERATIONS) {
-      bar?.tick("Apply Fixes, iteration " + iteration + ", " + issues.length + " candidates");
+    const objects = new RulesRunner(reg).objectsToCheck(reg.getObjects());
+    const rules = reg.getConfig().getEnabledRules();
 
-      changed = this.applyList(issues, reg);
-      if (changed.length === 0) {
+    while(iteration <= MAX_ITERATIONS) {
+      bar?.tick("Apply Fixes, iteration " + iteration);
+
+      let changed = 0;
+      for (const rule of rules) {
+        rule.initialize(reg);
+
+        const issues: Issue[] = [];
+        for (const obj of objects) {
+          issues.push(...rule.run(obj));
+        }
+
+        const appliedCount = this.applyList(issues, reg).length;
+        if (appliedCount > 0) {
+          changed += appliedCount;
+          reg.parse();
+        }
+      }
+      if (changed === 0) {
         break;
       }
-      iteration++;
 
-      issues = reg.parse().findIssues();
+      iteration++;
     }
 
     this.writeChangesToFS(fs, reg);
