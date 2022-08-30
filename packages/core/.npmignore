@@ -29,3 +29,4 @@ web/*
 worklist.txt
 zcl_foo.clas.abap
 zcl_foo.clas.abap
+lexer_performance.abap

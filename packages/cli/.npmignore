@@ -4,9 +4,8 @@
 *.js.map
 build/*.tsbuildinfo
 build/test/*
-build/src/cli.*
+build/src/*
 build/src/**/*.d.ts
-!build/src/index.d.ts
 coverage/
 docs/*
 dump.json

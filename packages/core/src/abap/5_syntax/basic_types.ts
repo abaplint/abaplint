@@ -346,8 +346,8 @@ export class BasicTypes {
         {name: "option", type: new Types.CharacterType(2)},
         {name: "low", type: found},
         {name: "high", type: found},
-      ], name);
-      return new Types.TableType(structure, options);
+      ]);
+      return new Types.TableType(structure, options, name);
     } else if (text.startsWith("LIKE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.SimpleFieldChain);
       found = this.resolveLikeName(sub);

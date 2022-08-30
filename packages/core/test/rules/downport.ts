@@ -3219,4 +3219,37 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("RANGE OF", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_range TYPE RANGE OF i.
+    METHODS foo IMPORTING bar TYPE ty_range.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( VALUE #( ( low = 2 sign = 'I' option = 'EQ' ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_range TYPE RANGE OF i.
+    METHODS foo IMPORTING bar TYPE ty_range.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA temp1 TYPE lcl=>ty_range.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    temp2-low = 2.
+    temp2-sign = 'I'.
+    temp2-option = 'EQ'.
+    APPEND temp2 TO temp1.
+    foo( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });
