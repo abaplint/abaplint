@@ -34,6 +34,8 @@ export class RulesRunner {
     const rules = this.reg.getConfig().getEnabledRules();
     const check = this.objectsToCheck(objects);
 
+    // note: SyntaxLogic is cached, logic is run as first step in order
+    // not to penalize the performance of the first rule using SyntaxLogic information
     input?.progress?.set(check.length, "Run Syntax");
     for (const obj of check) {
       input?.progress?.tick("Run Syntax - " + obj.getName());
