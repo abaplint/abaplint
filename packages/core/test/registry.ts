@@ -200,7 +200,7 @@ describe("Registry, object types", () => {
     const registry = new Registry().addFile(file);
     const issues = registry.findIssues();
     expect(issues.length).to.equal(1);
-    expect(issues[0].getKey()).to.equal("registry_add");
+    expect(issues[0].getKey()).to.equal("parser_error");
     expect(issues[0].getMessage()).to.include("not supported");
   });
 
@@ -296,22 +296,15 @@ describe("exclude list", () => {
   }
 
   it("will return parser errors about unknown objects types", () => {
-
-    const config = getConfig({});
     const file = new MemoryFile("foo.abcd.abap", "BREAK-POINT.");
-
-    config.getGlobal().exclude = [];
-    const registry = new Registry(config).addFile(file);
+    const registry = new Registry().addFile(file);
     const issues = registry.findIssues();
     expect(issues.length).to.equal(1);
-    expect(issues.length).to.equal(1);
-    expect(issues[0].getKey()).to.equal("registry_add");
+    expect(issues[0].getKey()).to.equal("parser_error");
     expect(issues[0].getMessage()).to.include("not supported");
-
   });
 
   it("will not return parser errors about unknown objects types for globally excluded files", () => {
-
     const config = getConfig({});
     config.getGlobal().exclude = ["foo.abcd.abap"];
 
@@ -323,7 +316,6 @@ describe("exclude list", () => {
     registry = new Registry(config).addFile(file);
     issues = registry.findIssues();
     expect(issues.length).to.equal(0);
-
   });
 
   it("will not return parser issues globally noIssue files", () => {

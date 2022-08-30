@@ -3,16 +3,13 @@ import {IFile} from "./files/_ifile";
 import {Config} from "./config";
 import {Issue} from "./issue";
 import {ArtifactsObjects} from "./artifacts_objects";
-import {ArtifactsRules} from "./artifacts_rules";
-import {SkipLogic} from "./skip_logic";
 import {IRegistry, IRunInput} from "./_iregistry";
 import {IConfiguration} from "./_config";
-import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
-import {SyntaxLogic} from "./abap/5_syntax/syntax";
 import {ExcludeHelper} from "./utils/excludeHelper";
 import {DDICReferences} from "./ddic_references";
 import {IDDICReferences} from "./_iddic_references";
+import {RulesRunner} from "./rules_runner";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -81,7 +78,6 @@ export class Registry implements IRegistry {
   private readonly dependencies: { [type: string]: { [name: string]: boolean } } = {};
   private readonly references: IDDICReferences;
   private conf: IConfiguration;
-  private issues: Issue[] = [];
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
@@ -292,7 +288,7 @@ export class Registry implements IRegistry {
     if (this.isDirty() === true) {
       this.parse();
     }
-    return this.runRules(input);
+    return new RulesRunner(this).runRules([...this.getObjects()], input);
   }
 
   // todo, this will be changed to async sometime
@@ -300,7 +296,7 @@ export class Registry implements IRegistry {
     if (this.isDirty() === true) {
       this.parse();
     }
-    return this.runRules(undefined, iobj);
+    return new RulesRunner(this).runRules([iobj]);
   }
 
   // todo, this will be changed to async sometime
@@ -311,10 +307,8 @@ export class Registry implements IRegistry {
 
     ParsingPerformance.clear();
 
-    this.issues = [];
     for (const o of this.getObjects()) {
       this.parsePrivate(o);
-      this.issues.push(...o.getParsingIssues());
     }
     new FindGlobalDefinitions(this).run();
 
@@ -329,11 +323,9 @@ export class Registry implements IRegistry {
     ParsingPerformance.clear();
     input?.progress?.set(this.getObjectCount(false), "Lexing and parsing");
 
-    this.issues = [];
     for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
-      this.issues.push(...o.getParsingIssues());
     }
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
@@ -360,102 +352,6 @@ export class Registry implements IRegistry {
       }
     }
     return false;
-  }
-
-  private runRules(input?: IRunInput, iobj?: IObject): readonly Issue[] {
-    const rulePerformance: {[index: string]: number} = {};
-    const issues = this.issues.slice(0);
-
-    const objects = iobj ? [iobj] : this.getObjects();
-    const rules = this.conf.getEnabledRules();
-    const skipLogic = new SkipLogic(this);
-
-    input?.progress?.set(iobj ? 1 : this.getObjectCount(false), "Run Syntax");
-    const check: IObject[] = [];
-    for (const obj of objects) {
-      input?.progress?.tick("Run Syntax - " + obj.getName());
-      if (skipLogic.skip(obj) || this.isDependency(obj)) {
-        continue;
-      }
-      if (obj instanceof ABAPObject) {
-        new SyntaxLogic(this, obj).run();
-      }
-      check.push(obj);
-    }
-
-    input?.progress?.set(rules.length, "Initialize Rules");
-    for (const rule of rules) {
-      input?.progress?.tick("Initialize Rules - " + rule.getMetadata().key);
-      if (rule.initialize === undefined) {
-        throw new Error(rule.getMetadata().key + " missing initialize method");
-      }
-      rule.initialize(this);
-      rulePerformance[rule.getMetadata().key] = 0;
-    }
-
-    input?.progress?.set(check.length, "Finding Issues");
-    for (const obj of check) {
-      input?.progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
-      for (const rule of rules) {
-        const before = Date.now();
-        issues.push(...rule.run(obj));
-        const runtime = Date.now() - before;
-        rulePerformance[rule.getMetadata().key] = rulePerformance[rule.getMetadata().key] + runtime;
-      }
-    }
-
-    if (input?.outputPerformance === true) {
-      const perf: {name: string, time: number}[] = [];
-      for (const p in rulePerformance) {
-        if (rulePerformance[p] > 100) { // ignore rules if it takes less than 100ms
-          perf.push({name: p, time: rulePerformance[p]});
-        }
-      }
-      perf.sort((a, b) => {return b.time - a.time;});
-      for (const p of perf) {
-        process.stderr.write("\t" + p.time + "ms\t" + p.name + "\n");
-      }
-    }
-
-    return this.excludeIssues(issues);
-  }
-
-  private excludeIssues(issues: Issue[]): Issue[] {
-    const ret: Issue[] = issues;
-
-    const globalNoIssues = this.conf.getGlobal().noIssues || [];
-    const globalNoIssuesPatterns = globalNoIssues.map(x => new RegExp(x, "i"));
-    if (globalNoIssuesPatterns.length > 0) {
-      for (let i = ret.length - 1; i >= 0; i--) {
-        const filename = ret[i].getFilename();
-        if (ExcludeHelper.isExcluded(filename, globalNoIssuesPatterns)) {
-          ret.splice(i, 1);
-        }
-      }
-    }
-
-    // exclude issues, as now we know both the filename and issue key
-    for (const rule of ArtifactsRules.getRules()) {
-      const key = rule.getMetadata().key;
-      const ruleExclude: string[] = this.conf.readByKey(key, "exclude") ?? [];
-      if (ruleExclude.length === 0) {
-        continue;
-      }
-      const ruleExcludePatterns = ruleExclude.map(x => new RegExp(x, "i"));
-
-      for (let i = ret.length - 1; i >= 0; i--) {
-        if (ret[i].getKey() !== key) {
-          continue;
-        }
-
-        const filename = ret[i].getFilename();
-        if (ExcludeHelper.isExcluded(filename, ruleExcludePatterns)) {
-          ret.splice(i, 1);
-        }
-      }
-    }
-
-    return ret;
   }
 
   private findOrCreate(name: string, type?: string): IObject {

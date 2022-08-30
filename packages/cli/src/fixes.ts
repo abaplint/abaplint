@@ -17,7 +17,6 @@ export class ApplyFixes {
 
     let issues = reg.parse().findIssues();
     while(iteration <= MAX_ITERATIONS) {
-
       bar?.tick("Apply Fixes, iteration " + iteration + ", " + issues.length + " candidates");
 
       changed = this.applyList(issues, reg);
