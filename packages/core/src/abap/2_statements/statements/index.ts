@@ -301,3 +301,4 @@ export * from "./get_permissions";
 export * from "./set_locks";
 export * from "./enhancement";
 export * from "./end_enhancement";
+export * from "./form_definition";

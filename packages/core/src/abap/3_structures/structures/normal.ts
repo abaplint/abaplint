@@ -137,6 +137,7 @@ export class Normal implements IStructure {
                sta(Statements.Overlay),
                sta(Statements.Pack),
                sta(Statements.Perform),
+               sta(Statements.FormDefinition),
                sta(Statements.Position),
                sta(Statements.Put),
                sta(Statements.PrintControl),
