@@ -7,7 +7,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
 import {ScopeType} from "../_scope_type";
-import { AnyType, TableType, UnknownType, VoidType } from "../../types/basic";
+import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
 
 export class ValueBody {
   public runSyntax(
