@@ -17,7 +17,9 @@ export class PreferCorresponding extends ABAPRule {
       key: "prefer_corresponding",
       title: "Prefer corresponding( ) to MOVE-CORRESPONDING",
       shortDescription: `Prefer corresponding( ) to MOVE-CORRESPONDING, from v740sp05 and up`,
-      tags: [RuleTag.SingleFile, RuleTag.Upport],
+      extendedInformation:
+        `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs`,
+      tags: [RuleTag.SingleFile, RuleTag.Upport, RuleTag.Styleguide],
     };
   }
 

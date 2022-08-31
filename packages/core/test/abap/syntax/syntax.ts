@@ -6534,6 +6534,14 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.include("with dash");
   });
 
+  it("error, field not part of structure", () => {
+    const abap = `
+    TYPES foo TYPE RANGE OF i.
+    DATA(sdf) = VALUE foo( ( foobar = 2 ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("field foobar does not exist");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

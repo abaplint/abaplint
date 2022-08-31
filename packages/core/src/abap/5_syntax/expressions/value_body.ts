@@ -7,6 +7,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
 import {ScopeType} from "../_scope_type";
+import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
 
 export class ValueBody {
   public runSyntax(
@@ -39,13 +40,25 @@ export class ValueBody {
     }
 
     for (const foo of node.findDirectExpressions(Expressions.ValueBodyLine)) {
+      if (!(targetType instanceof TableType)
+          && !(targetType instanceof UnknownType)
+          && !(targetType instanceof AnyType)
+          && targetType !== undefined
+          && !(targetType instanceof VoidType)) {
+        throw new Error("Value, not a table type");
+      }
+      let rowType: AbstractType | undefined = targetType;
+      if (targetType instanceof TableType) {
+        rowType = targetType.getRowType();
+      }
+
       for (const l of foo.findDirectExpressions(Expressions.ValueBodyLines)) {
         for (const s of l.findDirectExpressions(Expressions.Source)) {
           new Source().runSyntax(s, scope, filename);
         }
       }
       for (const s of foo.findDirectExpressions(Expressions.FieldAssignment)) {
-        new FieldAssignment().runSyntax(s, scope, filename, targetType);
+        new FieldAssignment().runSyntax(s, scope, filename, rowType);
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
         new Source().runSyntax(s, scope, filename);

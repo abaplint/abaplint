@@ -2528,7 +2528,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer corresponding( ) to MOVE-CORRESPONDING, from v740sp05 and up\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/prefer_corresponding"
+              "description": "Prefer corresponding( ) to MOVE-CORRESPONDING, from v740sp05 and up\nTags: SingleFile, Upport, Styleguide\nhttps://rules.abaplint.org/prefer_corresponding"
             },
             "prefer_inline": {
               "anyOf": [
@@ -4385,6 +4385,14 @@
           "description": "Checks for FIELD-SYMBOLS ... STRUCTURE",
           "type": "boolean"
         },
+        "formDefinition": {
+          "description": "Check for FORM DEFINITION",
+          "type": "boolean"
+        },
+        "formImplementation": {
+          "description": "Check for FORM IMPLEMENTATION",
+          "type": "boolean"
+        },
         "freeMemory": {
           "description": "FREE MEMORY, without ID",
           "type": "boolean"
@@ -4488,7 +4496,9 @@
         "callTransformation",
         "regex",
         "occurences",
-        "clientSpecified"
+        "clientSpecified",
+        "formDefinition",
+        "formImplementation"
       ],
       "type": "object"
     },
@@ -4889,6 +4899,13 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "skipNames": {
+          "description": "skip specific names, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "type": "object"
