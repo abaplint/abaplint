@@ -66,6 +66,10 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public occurences: boolean = true;
   /** Check for CLIENT SPECIFIED */
   public clientSpecified: boolean = true;
+  /** Check for FORM DEFINITION */
+  public formDefinition: boolean = true;
+  /** Check for FORM IMPLEMENTATION */
+  public formImplementation: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -306,6 +310,18 @@ CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/l
         const concat = staNode.concatTokens().toUpperCase();
         if (concat.includes(" OCCURENCES ")) {
           const issue = Issue.atStatement(file, staNode, "Use \"OCCURRENCES\"", this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+      }
+
+      if (this.conf.formDefinition && sta instanceof Statements.FormDefinition) {
+        const issue = Issue.atStatement(file, staNode, "FORM DEFINITION", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.formImplementation && sta instanceof Statements.Form) {
+        if (staNode.findDirectTokenByText("IMPLEMENTATION")) {
+          const issue = Issue.atStatement(file, staNode, "FORM IMPLEMENTATION", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }
