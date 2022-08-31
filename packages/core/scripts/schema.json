@@ -4385,6 +4385,14 @@
           "description": "Checks for FIELD-SYMBOLS ... STRUCTURE",
           "type": "boolean"
         },
+        "formDefinition": {
+          "description": "Check for FORM DEFINITION",
+          "type": "boolean"
+        },
+        "formImplementation": {
+          "description": "Check for FORM IMPLEMENTATION",
+          "type": "boolean"
+        },
         "freeMemory": {
           "description": "FREE MEMORY, without ID",
           "type": "boolean"
@@ -4488,7 +4496,9 @@
         "callTransformation",
         "regex",
         "occurences",
-        "clientSpecified"
+        "clientSpecified",
+        "formDefinition",
+        "formImplementation"
       ],
       "type": "object"
     },
