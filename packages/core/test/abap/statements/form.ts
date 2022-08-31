@@ -22,6 +22,7 @@ const tests = [
   "FORM foo--.",
   "FORM foo-- .",
   "FORM foo?.",
+  "FORM foo IMPLEMENTATION.",
 
   "form foobar using\n" +
   "  foo type bar\n" +
