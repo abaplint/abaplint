@@ -8,6 +8,8 @@ import {Position} from "../position";
 import {InfoClassDefinition, InfoImplementing} from "../abap/4_file_information/_abap_file_information";
 
 export class SICFConsistencyConf extends BasicRuleConfig {
+  /** skip specific names, case insensitive */
+  public skipNames?: string[] = [];
 }
 
 export class SICFConsistency implements IRule {
@@ -32,6 +34,9 @@ export class SICFConsistency implements IRule {
 
   public setConfig(conf: SICFConsistencyConf) {
     this.conf = conf;
+    if (this.conf.skipNames === undefined) {
+      this.conf.skipNames = [];
+    }
   }
 
   public initialize(reg: IRegistry) {
@@ -54,6 +59,10 @@ export class SICFConsistency implements IRule {
     for (const h of handlers) {
       const clas = this.reg.getObject("CLAS", h) as Class | undefined;
       if (clas === undefined) {
+        if (this.conf.skipNames && this.conf.skipNames.some((a) => a.toUpperCase() === h.toUpperCase())) {
+          continue;
+        }
+
         const pattern = new RegExp(this.reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
         if (pattern.test(h) === true) {
           const message = "Handler class " + h + " not found";
