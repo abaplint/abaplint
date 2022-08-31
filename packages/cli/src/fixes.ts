@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import {Issue, IRegistry, applyEditList, IEdit, RulesRunner} from "@abaplint/core";
 
 export interface MyFS {
@@ -34,7 +33,9 @@ export class ApplyFixes {
           const appliedCount = this.applyList(issues, reg).length;
           const runtime = Date.now() - before;
           if (quiet !== true) {
-            process.stderr.write(`\tIteration ${iteration}, ${appliedCount} fixes applied, ${runtime}ms, \trule ${rule.getMetadata().key}\n`);
+            process.stderr.write(`\tIteration ${iteration.toString().padStart(3, " ")}, ${
+              appliedCount.toString().padStart(3, " ")} fixes applied, ${
+              runtime.toString().padStart(4, " ")}ms, rule ${rule.getMetadata().key}\n`);
           }
           if (appliedCount > 0) {
             changed += appliedCount;
