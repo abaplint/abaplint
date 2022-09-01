@@ -24,11 +24,14 @@ export class ApplyFixes {
       for (const rule of rules) {
         while(iteration <= MAX_ITERATIONS) {
           const before = Date.now();
+
           rule.initialize(reg);
-          const issues: Issue[] = [];
+          let issues: Issue[] = [];
           for (const obj of objects) {
             issues.push(...rule.run(obj));
           }
+          issues = new RulesRunner(reg).excludeIssues(issues);
+
           iteration++;
           const appliedCount = this.applyList(issues, reg).length;
           const runtime = Date.now() - before;
