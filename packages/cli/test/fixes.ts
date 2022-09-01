@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {Registry, MemoryFile, IRegistry} from "@abaplint/core";
+import {Registry, MemoryFile, IRegistry, Config} from "@abaplint/core";
 import {ApplyFixes, MyFS} from "../src/fixes";
 
 async function applyFixes(reg: IRegistry, fs: MyFS) {
@@ -91,5 +91,25 @@ ENDFORM.`;
   DATA(lv_text) = |abc|.
   DATA(lv_class) = |abc|.
 ENDFORM.`);
+  });
+
+  it("must not fix exclude", async () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "CREATE OBJECT lo_obj.");
+    const reg = new Registry().addFile(file);
+
+    const config = reg.getConfig().get();
+    config.rules["use_new"].exclude = ["zfoobar"];
+    reg.setConfig(new Config(JSON.stringify(config)));
+
+    reg.parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[file.getFilename()] = file.getRaw();
+    const mockFS = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
+
+    await applyFixes(reg, mockFS);
+
+    const result = mockFS.readFileSync("zfoobar.prog.abap").toString();
+    expect(result).to.contain("CREATE OBJECT");
   });
 });
