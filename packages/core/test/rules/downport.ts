@@ -2346,7 +2346,7 @@ DATA result TYPE i.
 DATA temp1 TYPE i.
 DATA(x) = 0.
 LOOP AT letter_values INTO DATA(letter_value).
-LOOP AT char_list INTO DATA(char) WHERE ( table_line = letter_value-letter ).
+LOOP AT char_list INTO DATA(char) WHERE table_line = letter_value-letter.
   x = x + letter_value-value.
 ENDLOOP.
 ENDLOOP.
@@ -3143,6 +3143,21 @@ ASSIGN tab[ 1 ] TO <row>.`;
 DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 FIELD-SYMBOLS <row> LIKE LINE OF tab.
 READ TABLE tab INDEX 1 ASSIGNING <row>.`;
+    testFix(abap, expected);
+  });
+
+  it("lower case INTO", async () => {
+    const abap = `
+data initial_numbers type standard table of i with default key.
+LOOP AT initial_numbers REFERENCE into DATA(line).
+
+ENDLOOP.`;
+    const expected = `
+data initial_numbers type standard table of i with default key.
+DATA line TYPE REF TO i.
+LOOP AT initial_numbers REFERENCE into line.
+
+ENDLOOP.`;
     testFix(abap, expected);
   });
 

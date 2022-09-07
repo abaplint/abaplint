@@ -6,7 +6,7 @@ import {FieldChain} from "./field_chain";
 
 export class For extends Expression {
   public getRunnable(): IStatementRunnable {
-    const where = seq("WHERE", ComponentCond);
+    const where = seq("WHERE (", ComponentCond, ")");
     const from = seq("FROM", Source);
     const to = seq("TO", Source);
     const inn = seq(InlineLoopDefinition, optPrio(from), optPrio(to), optPrio(where));

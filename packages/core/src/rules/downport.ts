@@ -1473,7 +1473,7 @@ ${indentation}    output = ${topTarget}.`;
       return undefined;
     }
 
-    const concat = node.concatTokens();
+    const concat = node.concatTokens().toUpperCase();
     if (concat.includes(" REFERENCE INTO ")) {
       return undefined;
     }
