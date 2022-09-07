@@ -2346,7 +2346,7 @@ DATA result TYPE i.
 DATA temp1 TYPE i.
 DATA(x) = 0.
 LOOP AT letter_values INTO DATA(letter_value).
-LOOP AT char_list INTO DATA(char) WHERE ( table_line = letter_value-letter ).
+LOOP AT char_list INTO DATA(char) WHERE table_line = letter_value-letter.
   x = x + letter_value-value.
 ENDLOOP.
 ENDLOOP.

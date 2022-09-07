@@ -35,6 +35,14 @@ ENDLOOP.`, cnt: 1, fix: false},
 ENDLOOP.`, cnt: 1, fix: true},
   {abap: `LOOP AT tab_statements ASSIGNING <fs_stmnt_tmp> WHERE type <> 'P' AND type <> 'S' AND type <> 'G' AND from <= limit.
 ENDLOOP.`, cnt: 0, fix: false},
+  {abap: `    rv_count = REDUCE #( INIT result = 0
+  FOR gen_result IN is_result-generic_result_list
+  WHERE ( status = iv_status )
+  NEXT result = result + 1 )
++ REDUCE #( INIT result = 0
+  FOR repo_result IN is_result-repo_result_list
+  WHERE ( status = iv_status )
+  NEXT result = result + 1 ).`, cnt: 0, fix: false},
 ];
 
 testRule(tests, ManyParentheses);
