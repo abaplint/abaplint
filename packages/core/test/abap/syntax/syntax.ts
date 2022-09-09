@@ -6556,6 +6556,16 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.include("Field ASC does not exist");
   });
 
+  it("SORT, table with voided row, ok", () => {
+    const abap = `
+    DATA lt_dd07v TYPE TABLE OF dd07v.
+    SORT lt_dd07v BY
+    valpos ASCENDING
+    ddlanguage ASCENDING.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
