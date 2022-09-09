@@ -4,6 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
+import {AnyType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
 
 export class Sort implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -12,8 +13,34 @@ export class Sort implements StatementSyntax {
       new Dynamic().runSyntax(s, scope, filename);
     }
 
-    for (const t of node.findDirectExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, scope, filename);
+    const tnode = node.findDirectExpression(Expressions.Target);
+    if (tnode) {
+      const ttype = new Target().runSyntax(tnode, scope, filename);
+      if (ttype instanceof TableType) {
+        const rowType = ttype.getRowType();
+        if (!(rowType instanceof VoidType)
+            && !(rowType instanceof UnknownType)
+            && !(rowType instanceof AnyType)) {
+          for (const component of node.findAllExpressions(Expressions.ComponentChain)) {
+            if (component.getChildren().length > 1) {
+              continue;
+            }
+            const cname = component.concatTokens().toUpperCase();
+            if (cname === "TABLE_LINE") {
+              continue;
+            } else if (!(rowType instanceof StructureType)) {
+              throw new Error("SORT, table row is not structured");
+            } else if (rowType.getComponentByName(cname) === undefined) {
+              throw new Error(`Field ${cname} does not exist in table row structure`);
+            }
+          }
+        }
+      } else if (ttype !== undefined
+          && !(ttype instanceof VoidType)
+          && !(ttype instanceof UnknownType)
+          && !(ttype instanceof AnyType)) {
+        throw new Error("SORT, must be a internal table");
+      }
     }
 
   }
