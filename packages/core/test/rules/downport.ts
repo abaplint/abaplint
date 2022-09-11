@@ -3267,4 +3267,42 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("FOR INDEX INTO", async () => {
+    const abap = `
+TYPES inttab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA alphas TYPE inttab.
+DATA lv_index TYPE i.
+
+APPEND 2 TO alphas.
+APPEND 2 TO alphas.
+
+DATA(indexes) = VALUE inttab(
+  FOR a IN alphas INDEX INTO i
+  ( i ) ).
+
+LOOP AT indexes INTO lv_index.
+  WRITE / lv_index.
+ENDLOOP.`;
+    const expected = `
+TYPES inttab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA alphas TYPE inttab.
+DATA lv_index TYPE i.
+
+APPEND 2 TO alphas.
+APPEND 2 TO alphas.
+
+DATA temp1 TYPE inttab.
+CLEAR temp1.
+LOOP AT alphas INTO DATA(a).
+  DATA(i) = sy-tabix.
+  APPEND i TO temp1.
+ENDLOOP.
+DATA(indexes) = temp1.
+
+LOOP AT indexes INTO lv_index.
+  WRITE / lv_index.
+ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
 });

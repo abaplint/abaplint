@@ -1541,7 +1541,14 @@ ${indentation}    output = ${topTarget}.`;
       end += indentation + "ENDWHILE";
     } else if (loopTargetField) {
       // todo, also backup sy-index / sy-tabix here?
+
+      const loop = forLoop.findDirectExpression(Expressions.InlineLoopDefinition);
+      const indexInto = loop?.findExpressionAfterToken("INTO")?.concatTokens();
+
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${cond}.\n`;
+      if (indexInto) {
+        body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
+      }
       end = "ENDLOOP";
     } else if (loopTargetField === undefined) {
       // todo, also backup sy-index / sy-tabix here?
