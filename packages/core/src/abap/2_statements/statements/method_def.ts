@@ -31,7 +31,11 @@ export class MethodDef implements IStatement {
       seq("DETERMINE ON MODIFY IMPORTING", MethodParamName, "FOR", TypeName));
 
 // todo, this is only from version something
-    const amdp = "AMDP OPTIONS CDS SESSION CLIENT current";
+    const amdp = seq(
+      "AMDP OPTIONS CDS SESSION CLIENT CURRENT",
+      optPrio(MethodDefImporting),
+      optPrio(MethodDefExporting),
+      optPrio(MethodDefRaising));
 
     const ret = seq(altPrio("CLASS-METHODS", "METHODS"),
                     MethodName,

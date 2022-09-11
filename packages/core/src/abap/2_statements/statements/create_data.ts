@@ -4,11 +4,13 @@ import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 
+// todo, similar to DATA or TYPES?
 export class CreateData implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-// todo, similar to DATA or TYPES?
-    const area = seq("AREA HANDLE", Source);
+
+    const areaHandle = seq("AREA HANDLE", Source);
+    const typeHandle = seq("TYPE HANDLE", Source);
 
     const type = seq(alt("TYPE",
                          "TYPE REF TO",
@@ -25,8 +27,7 @@ export class CreateData implements IStatement {
                          "LIKE LINE OF",
                          "LIKE STANDARD TABLE OF",
                          "LIKE SORTED TABLE OF",
-                         "LIKE TABLE OF",
-                         "TYPE HANDLE"),
+                         "LIKE TABLE OF"),
                      alt(Source, Dynamic));
 
     const length = seq("LENGTH", Source);
@@ -40,14 +41,15 @@ export class CreateData implements IStatement {
 
     const key = seq("WITH", alt(def, kdef));
 
+    const specified = seq(alt(type, like),
+                          opt(key),
+                          opt(initial),
+                          opt(length),
+                          opt(decimals));
+
     const ret = seq("CREATE DATA",
                     Target,
-                    opt(area),
-                    opt(alt(type, like)),
-                    opt(key),
-                    opt(initial),
-                    opt(length),
-                    opt(decimals));
+                    opt(alt(typeHandle, seq(opt(areaHandle), specified))));
 
     return ret;
   }
