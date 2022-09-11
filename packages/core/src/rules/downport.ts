@@ -1507,11 +1507,17 @@ ${indentation}    output = ${topTarget}.`;
     let body = "";
     let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
-    const loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    let loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    if (forLoop.findDirectExpression(Expressions.InlineLoopDefinition)?.getFirstChild()?.get() instanceof Expressions.TargetFieldSymbol) {
+      loopTargetField = undefined;
+    }
     let cond = forLoop.findDirectExpression(Expressions.ComponentCond)?.concatTokens() || "";
     if (cond !== "") {
       cond = " WHERE " + cond;
     }
+
+    const loop = forLoop.findDirectExpression(Expressions.InlineLoopDefinition);
+    const indexInto = loop?.findExpressionAfterToken("INTO")?.concatTokens();
 
     if (forLoop.findDirectTokenByText("UNTIL")
         || forLoop.findDirectTokenByText("WHILE")) {
@@ -1539,12 +1545,8 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       end += indentation + "ENDWHILE";
-    } else if (loopTargetField) {
+    } else if (loopTargetField !== undefined) {
       // todo, also backup sy-index / sy-tabix here?
-
-      const loop = forLoop.findDirectExpression(Expressions.InlineLoopDefinition);
-      const indexInto = loop?.findExpressionAfterToken("INTO")?.concatTokens();
-
       body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${cond}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
@@ -1554,6 +1556,9 @@ ${indentation}    output = ${topTarget}.`;
       // todo, also backup sy-index / sy-tabix here?
       const loopTargetFieldSymbol = forLoop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
       body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol})${cond}.\n`;
+      if (indexInto) {
+        body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
+      }
       end = "ENDLOOP";
     }
 

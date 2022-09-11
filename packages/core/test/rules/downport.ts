@@ -3305,4 +3305,42 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("FOR INDEX INTO, field symbol", async () => {
+    const abap = `
+TYPES inttab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA alphas TYPE inttab.
+DATA lv_index TYPE i.
+
+APPEND 2 TO alphas.
+APPEND 3 TO alphas.
+
+DATA(indexes) = VALUE inttab(
+  FOR <a> IN alphas INDEX INTO i
+  ( <a> ) ).
+
+LOOP AT indexes INTO lv_index.
+  WRITE / lv_index.
+ENDLOOP.`;
+    const expected = `
+TYPES inttab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA alphas TYPE inttab.
+DATA lv_index TYPE i.
+
+APPEND 2 TO alphas.
+APPEND 3 TO alphas.
+
+DATA temp1 TYPE inttab.
+CLEAR temp1.
+LOOP AT alphas ASSIGNING FIELD-SYMBOL(<a>).
+  DATA(i) = sy-tabix.
+  APPEND <a> TO temp1.
+ENDLOOP.
+DATA(indexes) = temp1.
+
+LOOP AT indexes INTO lv_index.
+  WRITE / lv_index.
+ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
 });
