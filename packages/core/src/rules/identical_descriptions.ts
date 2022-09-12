@@ -22,6 +22,8 @@ export class IdenticalDescriptions implements IRule {
 
 Only checks the master language descriptions
 
+Dependencies are skipped
+
 Works for: INTF, CLAS, DOMA, DTEL, FUNC in same FUGR`,
       tags: [],
     };
@@ -39,6 +41,9 @@ Works for: INTF, CLAS, DOMA, DTEL, FUNC in same FUGR`,
     this.descriptions = {};
     this.types = ["INTF", "CLAS", "DOMA", "DTEL"];
     for (const o of reg.getObjects()) {
+      if (reg.isDependency(o)) {
+        continue;
+      }
       const type = o.getType();
       if (this.types.includes(type)) {
         const description = o.getDescription()?.toUpperCase();
