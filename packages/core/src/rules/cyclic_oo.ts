@@ -29,7 +29,9 @@ export class CyclicOO implements IRule {
       key: "cyclic_oo",
       title: "Cyclic OO",
       shortDescription: `Finds cyclic OO references`,
-      extendedInformation: `Runs for global INTF + CLAS objects`,
+      extendedInformation: `Runs for global INTF + CLAS objects
+
+Objects must be without syntax errors for this rule to take effect`,
     };
   }
 
@@ -48,6 +50,9 @@ export class CyclicOO implements IRule {
     this.reg = reg;
     this.edges = {};
     for (const obj of this.reg.getObjectsByType("CLAS")) {
+      if (this.reg.isDependency(obj)) {
+        continue;
+      }
       const name = obj.getName().toUpperCase();
       if (!(obj instanceof Class)) {
         continue;
@@ -56,16 +61,27 @@ export class CyclicOO implements IRule {
       } else if (this.conf.skipSharedMemory === true && obj.getClassDefinition()?.isSharedMemory === true) {
         continue;
       }
-      this.buildEdges(name, new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
+      const run = new SyntaxLogic(this.reg, obj).run();
+      if (run.issues.length > 0) {
+        continue;
+      }
+      this.buildEdges(name, run.spaghetti.getTop());
     }
     for (const obj of this.reg.getObjectsByType("INTF")) {
+      if (this.reg.isDependency(obj)) {
+        continue;
+      }
       const name = obj.getName().toUpperCase();
       if (!(obj instanceof ABAPObject)) {
         continue;
       } else if (this.conf.skip.indexOf(name) >= 0) {
         continue;
       }
-      this.buildEdges(name, new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
+      const run = new SyntaxLogic(this.reg, obj).run();
+      if (run.issues.length > 0) {
+        continue;
+      }
+      this.buildEdges(name, run.spaghetti.getTop());
     }
     return this;
   }
@@ -80,7 +96,9 @@ export class CyclicOO implements IRule {
       return [];
     }
 
-    const path = this.findCycle(obj.getName(), obj.getName(), [obj.getName()]);
+    const previous: { [key: string]: boolean } = {};
+    previous[obj.getName()] = true;
+    const path = this.findCycle(obj.getName(), obj.getName(), previous);
     if (path) {
       const message = "Cyclic definition/usage: " + path;
       return [Issue.atIdentifier(id, message, this.getMetadata().key, this.conf.severity)];
@@ -91,17 +109,18 @@ export class CyclicOO implements IRule {
 
 /////////////////////////////
 
-  private findCycle(source: string, current: string, previous: readonly string[]): string | undefined {
+  private findCycle(source: string, current: string, previous: { [key: string]: boolean }): string | undefined {
     if (this.edges[current] === undefined) {
       return undefined;
     }
 
     for (const e of this.edges[current]) {
       if (e === source) {
-        return previous.join(" -> ") + " -> " + source;
+        return Object.keys(previous).join(" -> ") + " -> " + source;
       }
-      if (previous.indexOf(e) < 0) { // dont revisit vertices
-        const found = this.findCycle(source, e, previous.concat([e]));
+      if (previous[e] === undefined) { // dont revisit vertices
+        previous[e] = true;
+        const found = this.findCycle(source, e, previous);
         if (found) {
           return found;
         }
