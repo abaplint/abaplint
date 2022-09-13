@@ -37,18 +37,17 @@ https://docs.abapopenchecks.org/checks/04/`,
     // maximum line length in abap files
     const maxLineLength: number = 255;
 
-    file.getRawRows().forEach((row, rowIndex) => {
-      row = row.replace("\r", "");
-      let message = "";
+    const array = file.getRawRows();
+    for (let rowIndex = 0; rowIndex < array.length; rowIndex++) {
+      const row = array[rowIndex].replace("\r", "");
       if (row.length > maxLineLength) {
-        message = `Maximum allowed line length of ${maxLineLength} exceeded, currently  ${row.length}`;
+        const message = `Maximum allowed line length of ${maxLineLength} exceeded, currently  ${row.length}`;
+        issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key, this.conf.severity));
       } else if (row.length > this.conf.length) {
-        message = `Reduce line length to max ${this.conf.length}, currently ${row.length}`;
-      } else {
-        return;
+        const message = `Reduce line length to max ${this.conf.length}, currently ${row.length}`;
+        issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key, this.conf.severity));
       }
-      issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key, this.conf.severity));
-    });
+    }
     return issues;
   }
 
