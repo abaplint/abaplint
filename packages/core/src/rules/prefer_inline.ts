@@ -39,7 +39,7 @@ Activates if language version is v740sp02 or above.
 
 Variables must be local(METHOD or FORM).
 
-No generic or void typed variables.
+No generic or void typed variables. No syntax errors.
 
 First position used must be a full/pure write.
 
@@ -81,7 +81,11 @@ DATA(percentage) = CONV decfloat34( comment_number / abs_statement_number ) * 10
       return [];
     }
 
-    const scopes = this.findScopeCandidates(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
+    const run = new SyntaxLogic(this.reg, obj).run();
+    if (run.issues.length > 0) {
+      return [];
+    }
+    const scopes = this.findScopeCandidates(run.spaghetti.getTop());
 
     const ret: Issue[] = [];
     for (const s of scopes) {
