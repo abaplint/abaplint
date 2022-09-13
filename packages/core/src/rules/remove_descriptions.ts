@@ -112,12 +112,19 @@ Consider using ABAP Doc for documentation.`,
       return [];
     }
 
+    const reported: {[key: string]: boolean} = {}; // there might be multiple translations
     const ret: Issue[] = [];
     for (const d of xmlToArray(desc.SEOCOMPOTX)) {
       const message = "Remove description for " + d.CMPNAME;
+      if (reported[d.CMPNAME] !== undefined) {
+        continue;
+      }
+
       const position = new Position(1, 1);
       const issue = Issue.atPosition(file, position, message, this.getMetadata().key, this.conf.severity);
       ret.push(issue);
+
+      reported[d.CMPNAME] = true;
     }
     return ret;
   }
