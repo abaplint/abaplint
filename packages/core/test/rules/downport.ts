@@ -3343,7 +3343,7 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
-  it.skip("FOR FROM TO", async () => {
+  it.only("FOR FROM TO", async () => {
     const abap = `
 TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA tab TYPE ty.
