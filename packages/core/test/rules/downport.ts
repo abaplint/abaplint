@@ -3343,7 +3343,7 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
-  it.only("FOR FROM TO", async () => {
+  it("FOR FROM TO", async () => {
     const abap = `
 TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA tab TYPE ty.
@@ -3353,7 +3353,18 @@ ENDDO.
 DATA(sdf) = VALUE ty( FOR row IN tab FROM 2 TO 3 ( row ) ).
 ASSERT lines( sdf ) = 2.`;
     const expected = `
-sdfsd`;
+TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA tab TYPE ty.
+DO 5 TIMES.
+  APPEND sy-index TO tab.
+ENDDO.
+DATA temp1 TYPE ty.
+CLEAR temp1.
+LOOP AT tab INTO DATA(row) FROM 2 TO 3.
+  APPEND row TO temp1.
+ENDLOOP.
+DATA(sdf) = temp1.
+ASSERT lines( sdf ) = 2.`;
     testFix(abap, expected);
   });
 

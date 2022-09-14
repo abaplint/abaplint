@@ -1546,8 +1546,13 @@ ${indentation}    output = ${topTarget}.`;
 
       end += indentation + "ENDWHILE";
     } else if (loopTargetField !== undefined) {
+      let from = forLoop.findExpressionAfterToken("FROM")?.concatTokens();
+      from = from ? " FROM " + from : "";
+      let to = forLoop.findExpressionAfterToken("TO")?.concatTokens();
+      to = to ? " TO " + to : "";
+
       // todo, also backup sy-index / sy-tabix here?
-      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${cond}.\n`;
+      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${from}${to}${cond}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
       }
