@@ -137,18 +137,21 @@ export class StatementParser {
 
     for (let statement of wa.statements) {
       // dont use CALL METHOD, when executing lazy, it easily gives a Move for the last statment if lazy logic is evaluated
-      if (statement.get() instanceof Unknown
-          && statement.concatTokens().toUpperCase().startsWith("CALL METHOD ") === false
-          && statement.concatTokens().toUpperCase().startsWith("CALL FUNCTION ") === false) {
-        for (const {first, second} of this.buildSplits(statement.getTokens())) {
-          if (second.length === 1) {
-            continue; // probably punctuation
-          }
-          const s = this.categorizeStatement(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(second)));
-          if (!(s.get() instanceof Unknown)) {
-            result.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(first)));
-            statement = s;
-            break;
+      if (statement.get() instanceof Unknown) {
+        const concat = statement.concatTokens().toUpperCase();
+        if (concat.startsWith("CALL METHOD ") === false
+            && concat.startsWith("RAISE EXCEPTION TYPE ") === false
+            && concat.startsWith("CALL FUNCTION ") === false) {
+          for (const {first, second} of this.buildSplits(statement.getTokens())) {
+            if (second.length === 1) {
+              continue; // probably punctuation
+            }
+            const s = this.categorizeStatement(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(second)));
+            if (!(s.get() instanceof Unknown)) {
+              result.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(first)));
+              statement = s;
+              break;
+            }
           }
         }
       }
