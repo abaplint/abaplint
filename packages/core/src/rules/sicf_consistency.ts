@@ -8,7 +8,9 @@ import {Position} from "../position";
 import {InfoClassDefinition, InfoImplementing} from "../abap/4_file_information/_abap_file_information";
 
 export class SICFConsistencyConf extends BasicRuleConfig {
-  /** skip specific names, case insensitive */
+  /** skip specific names, case insensitive
+   * @uniqueItems true
+   */
   public skipNames?: string[] = [];
 }
 

@@ -45,7 +45,9 @@ class WorkArea {
 }
 
 export class UnusedTypesConf extends BasicRuleConfig {
-  /** skip specific names, case insensitive */
+  /** skip specific names, case insensitive
+   * @uniqueItems true
+   */
   public skipNames?: string[] = [];
 }
 

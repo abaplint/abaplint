@@ -9,6 +9,10 @@ import {ABAPFile} from "../abap/abap_file";
 import {ExpressionNode} from "../abap/nodes";
 
 export class ChangeIfToCaseConf extends BasicRuleConfig {
+  /** skip specific names, case insensitive regular expression
+   * @uniqueItems true
+   */
+  public skipNames?: string[] = [];
 }
 
 export class ChangeIfToCase extends ABAPRule {
@@ -117,6 +121,14 @@ ENDCASE.`,
     } else {
       return false;
     }
+
+    for (const skip of this.getConfig().skipNames || []) {
+      const reg = new RegExp(skip, "i");
+      if (chain.match(reg)) {
+        return false;
+      }
+    }
+
     for (const t of tuples) {
       if (t.left !== chain && t.right !== chain) {
         return false;
