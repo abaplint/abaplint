@@ -430,6 +430,39 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("ALIASes and super class", async () => {
+    const prog = `
+INTERFACE lif_entity.
+  METHODS get_foo.
+ENDINTERFACE.
+
+INTERFACE lif_request.
+  INTERFACES lif_entity.
+  ALIASES get_foo FOR lif_entity~get_foo.
+ENDINTERFACE.
+
+CLASS lcl_entity DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_entity.
+ENDCLASS.
+
+CLASS lcl_entity IMPLEMENTATION.
+  METHOD lif_entity~get_foo.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_entity.
+  PUBLIC SECTION.
+    INTERFACES lif_request.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("no class implementations needed", async () => {
     const prog = `
 CLASS zcl_mockup_loader_stub_base DEFINITION.
