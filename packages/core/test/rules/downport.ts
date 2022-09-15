@@ -1305,6 +1305,21 @@ todo`;
     testFix(abap, expected);
   });
 
+  it.skip("downport RAISE ... MESSAGE, WITH", async () => {
+    const abap = `
+DATA ls_return TYPE bapiret2.
+RAISE EXCEPTION TYPE zcx_foobar
+  MESSAGE ID ls_return-id TYPE ls_return-type
+  NUMBER ls_return-number WITH
+  ls_return-message_v1 ls_return-message_v2
+  ls_return-message_v3 ls_return-message_v4.`;
+
+    const expected = `
+todo`;
+
+    testFix(abap, expected);
+  });
+
   it("APPEND, outline expression", async () => {
     const abap = `
 FORM foo.
