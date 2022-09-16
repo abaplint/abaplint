@@ -3383,4 +3383,29 @@ ASSERT lines( sdf ) = 2.`;
     testFix(abap, expected);
   });
 
+  it.skip("FOR GROUPS", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+    group TYPE group,
+  END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+
+DATA(sdf) = VALUE initial_numbers(
+         FOR GROUPS grouping_group OF initial_line IN initial_numbers
+         GROUP BY ( group = initial_line-group )
+         ( group = grouping_group-group
+         ) ).
+ASSERT lines( sdf ) = 1.`;
+    const expected = `
+sdf`;
+    testFix(abap, expected);
+  });
+
 });
