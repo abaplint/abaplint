@@ -3383,11 +3383,11 @@ ASSERT lines( sdf ) = 2.`;
     testFix(abap, expected);
   });
 
-  it.skip("FOR GROUPS", async () => {
+  it("FOR GROUPS", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
-    group TYPE group,
-  END OF initial_numbers_type.
+         group TYPE group,
+       END OF initial_numbers_type.
 TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
 
 DATA initial_numbers TYPE initial_numbers.
@@ -3404,7 +3404,27 @@ DATA(sdf) = VALUE initial_numbers(
          ) ).
 ASSERT lines( sdf ) = 1.`;
     const expected = `
-sdf`;
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+
+DATA temp1 TYPE initial_numbers.
+CLEAR temp1.
+LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-group ) INTO DATA(grouping_group).
+  DATA temp2 LIKE LINE OF temp1.
+  temp2-group = grouping_group-group.
+  APPEND temp2 TO temp1.
+ENDLOOP.
+DATA(sdf) = temp1.
+ASSERT lines( sdf ) = 1.`;
     testFix(abap, expected);
   });
 

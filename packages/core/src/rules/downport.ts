@@ -1552,8 +1552,23 @@ ${indentation}    output = ${topTarget}.`;
       let to = forLoop.findExpressionAfterToken("TO")?.concatTokens();
       to = to ? " TO " + to : "";
 
+      let gby = "";
+      for (const lg of forLoop.findDirectExpressions(Expressions.LoopGroupByComponent)) {
+        if (gby !== "") {
+          gby += " ";
+        }
+        gby = lg.concatTokens();
+      }
+      if (gby !== "") {
+        gby = " GROUP BY ( " + gby + " )";
+      }
+      const groups = forLoop.findExpressionAfterToken("GROUPS");
+      if (groups) {
+        gby += " INTO DATA(" + groups.concatTokens() + ")";
+      }
+
       // todo, also backup sy-index / sy-tabix here?
-      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${from}${to}${cond}.\n`;
+      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${from}${to}${cond}${gby}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
       }
