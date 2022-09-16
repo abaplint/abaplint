@@ -3428,4 +3428,23 @@ ASSERT lines( sdf ) = 1.`;
     testFix(abap, expected);
   });
 
+  it.skip("FOR IN GROUP", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-group ) INTO DATA(grouping_group).
+
+ENDLOOP.`;
+    const expected = `
+todo`;
+    testFix(abap, expected);
+  });
+
 });

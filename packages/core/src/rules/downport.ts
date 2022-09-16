@@ -1044,6 +1044,8 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
     const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
 
+    const isReference = high.findFirstExpression(Expressions.LoopTarget)?.concatTokens().toUpperCase().startsWith("REFERENCE INTO ");
+
     let loopSourceRowType = "typeNotFound";
     const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
     if (spag !== undefined) {
@@ -1078,15 +1080,17 @@ DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DE
 DATA ${uniqueName} LIKE LINE OF ${groupTargetName}tab.
 LOOP AT ${loopSourceName} ${high.findFirstExpression(Expressions.LoopTarget)?.concatTokens()}.
 READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
-IF sy-subrc = 0.
-  <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.
-  INSERT ${loopTargetName}->* INTO TABLE <${uniqueFS}>-items.
+IF sy-subrc = 0.\n`;
+    if (groupCountName !== undefined) {
+      code += `  <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.\n`;
+    }
+    code += `  INSERT ${loopTargetName}${isReference ? "->*" : ""} INTO TABLE <${uniqueFS}>-items.
 ELSE.\n`;
     code += `  CLEAR ${uniqueName}.\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       code += `  ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
     }
-    code += `  INSERT ${loopTargetName}->* INTO TABLE ${uniqueName}-items.\n`;
+    code += `  INSERT ${loopTargetName}${isReference ? "->*" : ""} INTO TABLE ${uniqueName}-items.\n`;
     code += `  INSERT ${uniqueName} INTO TABLE ${groupTargetName}tab.\n`;
     code += `ENDIF.
 ENDLOOP.
