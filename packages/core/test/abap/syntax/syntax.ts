@@ -6566,6 +6566,22 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Double FOR loop with INDEX", () => {
+    const abap = `
+TYPES: BEGIN OF combined_data_type,
+         colx TYPE string,
+       END OF combined_data_type.
+TYPES combined_data TYPE STANDARD TABLE OF combined_data_type WITH EMPTY KEY.
+DATA alphas TYPE combined_data.
+DATA(combined_data) = VALUE combined_data(
+  FOR ls_alpha IN alphas INDEX INTO lv_index
+  FOR ls_num IN alphas FROM lv_index TO lv_index
+  LET ls_comb = VALUE combined_data_type( colx = |hello| )
+  IN ( ls_comb ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
