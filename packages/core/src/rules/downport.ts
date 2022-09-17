@@ -259,6 +259,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.downportCorrespondingSimple(high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.downportRef(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -1006,6 +1011,31 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, call function parameter", this.getMetadata().key, this.conf.severity, fix);
   }
 
+  private downportCorrespondingSimple(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.Move)
+        || high.getChildren().length !== 4
+        || high.getChildren()[2].getFirstToken().getStr().toUpperCase() !== "CORRESPONDING") {
+      return undefined;
+    }
+    const target = high.findDirectExpression(Expressions.Target);
+    if (target === undefined) {
+      console.dir("sdf1");
+      return undefined;
+    }
+    const sourceRef = high.findFirstExpression(Expressions.Source)?.findFirstExpression(Expressions.CorrespondingBody);
+    if (sourceRef === undefined || sourceRef.getChildren().length !== 1) {
+      return;
+    }
+
+    const code = `MOVE-CORRESPONDING ${sourceRef.concatTokens()} TO ${target.concatTokens()}`;
+
+    const start = high.getFirstToken().getStart();
+    const end = high.getLastToken().getStart();
+    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple CORRESPONDING move", this.getMetadata().key, this.conf.severity, fix);
+  }
+
   private downportRefSimple(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
     if (!(high.get() instanceof Statements.Move)
         || high.getChildren().length !== 4
@@ -1044,6 +1074,8 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
     const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
 
+    const isReference = high.findFirstExpression(Expressions.LoopTarget)?.concatTokens().toUpperCase().startsWith("REFERENCE INTO ");
+
     let loopSourceRowType = "typeNotFound";
     const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
     if (spag !== undefined) {
@@ -1078,15 +1110,17 @@ DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DE
 DATA ${uniqueName} LIKE LINE OF ${groupTargetName}tab.
 LOOP AT ${loopSourceName} ${high.findFirstExpression(Expressions.LoopTarget)?.concatTokens()}.
 READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
-IF sy-subrc = 0.
-  <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.
-  INSERT ${loopTargetName}->* INTO TABLE <${uniqueFS}>-items.
+IF sy-subrc = 0.\n`;
+    if (groupCountName !== undefined) {
+      code += `  <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.\n`;
+    }
+    code += `  INSERT ${loopTargetName}${isReference ? "->*" : ""} INTO TABLE <${uniqueFS}>-items.
 ELSE.\n`;
     code += `  CLEAR ${uniqueName}.\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       code += `  ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
     }
-    code += `  INSERT ${loopTargetName}->* INTO TABLE ${uniqueName}-items.\n`;
+    code += `  INSERT ${loopTargetName}${isReference ? "->*" : ""} INTO TABLE ${uniqueName}-items.\n`;
     code += `  INSERT ${uniqueName} INTO TABLE ${groupTargetName}tab.\n`;
     code += `ENDIF.
 ENDLOOP.
@@ -1552,8 +1586,23 @@ ${indentation}    output = ${topTarget}.`;
       let to = forLoop.findExpressionAfterToken("TO")?.concatTokens();
       to = to ? " TO " + to : "";
 
+      let gby = "";
+      for (const lg of forLoop.findDirectExpressions(Expressions.LoopGroupByComponent)) {
+        if (gby !== "") {
+          gby += " ";
+        }
+        gby = lg.concatTokens();
+      }
+      if (gby !== "") {
+        gby = " GROUP BY ( " + gby + " )";
+      }
+      const groups = forLoop.findExpressionAfterToken("GROUPS");
+      if (groups) {
+        gby += " INTO DATA(" + groups.concatTokens() + ")";
+      }
+
       // todo, also backup sy-index / sy-tabix here?
-      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${from}${to}${cond}.\n`;
+      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${from}${to}${cond}${gby}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
       }
