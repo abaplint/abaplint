@@ -3428,7 +3428,7 @@ ASSERT lines( sdf ) = 1.`;
     testFix(abap, expected);
   });
 
-  it.skip("FOR IN GROUP", async () => {
+  it("LOOP INTO GROUP BY keys", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
          group TYPE group,
@@ -3443,7 +3443,35 @@ LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-
 
 ENDLOOP.`;
     const expected = `
-todo`;
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+TYPES: BEGIN OF grouping_grouptype,
+         group TYPE initial_numbers_type-group,
+         items LIKE initial_numbers,
+       END OF grouping_grouptype.
+DATA grouping_grouptab TYPE STANDARD TABLE OF grouping_grouptype WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF grouping_grouptab.
+LOOP AT initial_numbers INTO DATA(initial_line).
+READ TABLE grouping_grouptab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY group = initial_line-group.
+IF sy-subrc = 0.
+  INSERT initial_line INTO TABLE <temp2>-items.
+ELSE.
+  CLEAR temp1.
+  temp1-group = initial_line-group.
+  INSERT initial_line INTO TABLE temp1-items.
+  INSERT temp1 INTO TABLE grouping_grouptab.
+ENDIF.
+ENDLOOP.
+LOOP AT grouping_grouptab INTO DATA(grouping_group).
+
+ENDLOOP.`;
     testFix(abap, expected);
   });
 
