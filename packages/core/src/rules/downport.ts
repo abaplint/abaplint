@@ -259,6 +259,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.downportCorrespondingSimple(high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.downportRef(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -1004,6 +1009,31 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, call function parameter", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private downportCorrespondingSimple(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(high.get() instanceof Statements.Move)
+        || high.getChildren().length !== 4
+        || high.getChildren()[2].getFirstToken().getStr().toUpperCase() !== "CORRESPONDING") {
+      return undefined;
+    }
+    const target = high.findDirectExpression(Expressions.Target);
+    if (target === undefined) {
+      console.dir("sdf1");
+      return undefined;
+    }
+    const sourceRef = high.findFirstExpression(Expressions.Source)?.findFirstExpression(Expressions.CorrespondingBody);
+    if (sourceRef === undefined || sourceRef.getChildren().length !== 1) {
+      return;
+    }
+
+    const code = `MOVE-CORRESPONDING ${sourceRef.concatTokens()} TO ${target.concatTokens()}`;
+
+    const start = high.getFirstToken().getStart();
+    const end = high.getLastToken().getStart();
+    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple CORRESPONDING move", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportRefSimple(high: StatementNode, lowFile: ABAPFile): Issue | undefined {

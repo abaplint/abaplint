@@ -3176,6 +3176,24 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("simple CORRESPONDING", async () => {
+    const abap = `
+TYPES: BEGIN OF foo,
+         bar TYPE i,
+       END OF foo.
+DATA foo1 TYPE foo.
+DATA foo2 TYPE foo.
+foo1 = CORRESPONDING #( foo2 ).`;
+    const expected = `
+TYPES: BEGIN OF foo,
+         bar TYPE i,
+       END OF foo.
+DATA foo1 TYPE foo.
+DATA foo2 TYPE foo.
+MOVE-CORRESPONDING foo2 TO foo1.`;
+    testFix(abap, expected);
+  });
+
   it("ASSIGN table expression, by component", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
