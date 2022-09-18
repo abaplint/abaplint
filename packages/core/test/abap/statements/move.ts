@@ -260,6 +260,25 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
     GROUP BY ( group = initial_line-group )
     ( group = grouping_group-group
     ) ).`,
+
+  `aggregated_data = VALUE aggregated_data( BASE aggregated_data
+      FOR GROUPS ls_group OF ls_numgrp IN initial_numbers
+        GROUP BY ( group = ls_numgrp-group  count = GROUP SIZE )
+        ASCENDING
+      ( REDUCE aggregated_data_type(
+        INIT ls_agr_data = VALUE aggregated_data_type( )
+         FOR ls_grp_data IN GROUP ls_group
+        NEXT ls_agr_data = VALUE #(
+                                group = ls_group-group
+                                count = ls_group-count
+                                sum = 2
+                                max = 2
+                                min = 2
+                                average = ls_agr_data-sum / ls_agr_data-count
+                               )
+
+     ) ) ).`,
+
 ];
 
 statementType(tests, "MOVE", Statements.Move);

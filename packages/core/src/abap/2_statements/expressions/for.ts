@@ -14,7 +14,10 @@ export class For extends Expression {
     const whil = seq(altPrio("UNTIL", "WHILE"), Cond);
     const itera = seq(InlineFieldDefinition, opt(then), whil);
 
-    const groupBy = seq("GROUP BY", alt(FieldChain, seq("(", plus(LoopGroupByComponent), ")")));
+    const groupBy = seq("GROUP BY",
+                        alt(FieldChain, seq("(", plus(LoopGroupByComponent), ")")),
+                        opt(seq(alt("ASCENDING", "DESCENDING"), opt("AS TEXT"))),
+                        opt("WITHOUT MEMBERS"));
 
     const groups = ver(Version.v740sp08, seq("GROUPS", FieldChain, "OF", Target, "IN", Source, optPrio(groupBy)));
 
