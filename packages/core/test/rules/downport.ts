@@ -3493,27 +3493,47 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
-  it.skip("LOOP INTO GROUP BY keys, REDUCE FOR IN GROUP", async () => {
+  it("LOOP INTO GROUP BY keys, REDUCE FOR IN GROUP", async () => {
     const abap = `
-TYPES: BEGIN OF initial_numbers_type,
-         group TYPE group,
-       END OF initial_numbers_type.
-TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
-DATA initial_numbers TYPE initial_numbers.
-DATA row LIKE LINE OF initial_numbers.
-row-group = 2.
-APPEND row TO initial_numbers.
-APPEND row TO initial_numbers.
-LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-group ) INTO DATA(grouping_group).
   DATA(sdf) = REDUCE i(
     INIT subtotal = 0
     FOR group_line IN GROUP grouping_group
     NEXT subtotal = subtotal + group_line-group ).
-  WRITE / sdf.
-ENDLOOP.`;
+  WRITE / sdf.`;
     const expected = `
-sdfsdf
-`;
+  DATA temp1 TYPE i.
+  DATA(subtotal) = 0.
+  LOOP AT grouping_group INTO DATA(group_line).
+    subtotal = subtotal + group_line-group.
+  ENDLOOP.
+  temp1 = subtotal.
+  DATA(sdf) = temp1.
+  WRITE / sdf.`;
+    testFix(abap, expected);
+  });
+
+  it("REDUCE, infer type", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND INITIAL LINE TO tab.
+APPEND INITIAL LINE TO tab.
+DATA(sdf) = REDUCE #(
+  INIT subtotal = 0
+  FOR row IN tab
+  NEXT subtotal = subtotal + 1 ).
+ASSERT sdf = 2.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND INITIAL LINE TO tab.
+APPEND INITIAL LINE TO tab.
+DATA temp1 TYPE i.
+DATA(subtotal) = 0.
+LOOP AT tab INTO DATA(row).
+  subtotal = subtotal + 1.
+ENDLOOP.
+temp1 = subtotal.
+DATA(sdf) = temp1.
+ASSERT sdf = 2.`;
     testFix(abap, expected);
   });
 
