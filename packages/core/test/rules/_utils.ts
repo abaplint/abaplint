@@ -98,6 +98,34 @@ export function testRuleFixSingle(
   expect(output.getRaw()).to.equal(expected);
 }
 
+export function testRuleFixCount(
+  input: string, expected: string, rule: IRule, conf?: IConfiguration, extraFiles?: IFile[], noIssuesAfter = true, count = 1) {
+  const reg = new Registry(conf).addFile(new MemoryFile("zfoo.prog.abap", input));
+  for (const f of extraFiles || []) {
+    reg.addFile(f);
+  }
+  reg.parse();
+  let issues = rule.initialize(reg).run(reg.getFirstObject()!);
+  expect(issues.length).to.equal(count, "single issue expected");
+
+  for (const issue of issues) {
+    const fix = issue.getFix();
+    expect(fix).to.not.equal(undefined, "Fix should exist");
+    applyEditSingle(reg, fix!);
+  }
+
+  reg.parse();
+//  console.dir(reg.getFirstObject()?.getFiles()[0].getRaw());
+
+  issues = rule.initialize(reg).run(reg.getFirstObject()!);
+//  console.dir(issues);
+  if (noIssuesAfter === true) {
+    expect(issues.length).to.equal(0, "after fix, no issue expected");
+  }
+  const output = reg.getFirstObject()!.getFiles()[0];
+  expect(output.getRaw()).to.equal(expected);
+}
+
 export function testRuleWithVariableConfig(tests: any, rule: new () => IRule, testTitle?: string) {
   const nrule = new rule();
   testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;

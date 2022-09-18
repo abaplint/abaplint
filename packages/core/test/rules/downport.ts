@@ -3,7 +3,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {Downport} from "../../src/rules";
 import {Config} from "../../src/config";
-import {testRuleFixSingle} from "./_utils";
+import {testRuleFixCount} from "./_utils";
 import {IConfiguration} from "../../src/_config";
 import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
@@ -16,8 +16,8 @@ function buildConfig(): IConfiguration {
   return conf702;
 }
 
-function testFix(input: string, expected: string, extraFiles?: IFile[]) {
-  testRuleFixSingle(input, expected, new Downport(), buildConfig(), extraFiles, false);
+function testFix(input: string, expected: string, extraFiles?: IFile[], count = 1) {
+  testRuleFixCount(input, expected, new Downport(), buildConfig(), extraFiles, false, count);
 }
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
@@ -3490,6 +3490,30 @@ ENDLOOP.
 LOOP AT grouping_grouptab INTO DATA(grouping_group).
 
 ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
+  it.skip("LOOP INTO GROUP BY keys, REDUCE FOR IN GROUP", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-group ) INTO DATA(grouping_group).
+  DATA(sdf) = REDUCE i(
+    INIT subtotal = 0
+    FOR group_line IN GROUP grouping_group
+    NEXT subtotal = subtotal + group_line-group ).
+  WRITE / sdf.
+ENDLOOP.`;
+    const expected = `
+sdfsdf
+`;
     testFix(abap, expected);
   });
 
