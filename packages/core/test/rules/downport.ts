@@ -3512,6 +3512,25 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("VALUE BASE FOR GROUPS GROUP BY GROUP SIZE", async () => {
+    const abap = `
+    aggregated_data = VALUE aggregated_data(
+      BASE aggregated_data
+      FOR GROUPS ls_group OF ls_numgrp IN initial_numbers
+      GROUP BY ( group = ls_numgrp-group  count = GROUP SIZE )
+      ( ) ).`;
+    const expected = `
+    DATA temp1 TYPE aggregated_data.
+    CLEAR temp1.
+    temp1 = aggregated_data.
+    LOOP AT initial_numbers INTO DATA(ls_numgrp) GROUP BY ( group = ls_numgrp-group count = GROUP SIZE ) INTO DATA(ls_group).
+      DATA temp2 LIKE LINE OF temp1.
+      APPEND temp2 TO temp1.
+    ENDLOOP.
+    aggregated_data = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("REDUCE, infer type", async () => {
     const abap = `
 DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
