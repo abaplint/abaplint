@@ -9,12 +9,12 @@ import {UnknownType} from "../../types/basic/unknown_type";
 import {ReferenceType} from "../_reference";
 
 export class InlineFieldDefinition {
-  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): void {
-    let type: AbstractType | TypedIdentifier | undefined = undefined;
+  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): AbstractType | undefined {
+    let type: AbstractType | undefined = undefined;
 
     const field = node.findDirectExpression(Expressions.Field)?.getFirstToken();
     if (field === undefined) {
-      return;
+      return undefined;
     }
 
     const source = node.findDirectExpression(Expressions.Source);
@@ -37,5 +37,7 @@ export class InlineFieldDefinition {
     const identifier = new TypedIdentifier(field, filename, type, [IdentifierMeta.InlineDefinition]);
     scope.addReference(field, identifier, ReferenceType.DataWriteReference, filename);
     scope.addIdentifier(identifier);
+
+    return type;
   }
 }

@@ -1601,8 +1601,13 @@ ${indentation}    output = ${topTarget}.`;
         gby += " INTO DATA(" + groups.concatTokens() + ")";
       }
 
+      let inGroup = "";
+      if(forLoop.concatTokens().toUpperCase().includes(" IN GROUP ")) {
+        inGroup = "-items";
+      }
+
       // todo, also backup sy-index / sy-tabix here?
-      body += indentation + `LOOP AT ${loopSource} INTO DATA(${loopTargetField})${from}${to}${cond}${gby}.\n`;
+      body += indentation + `LOOP AT ${loopSource}${inGroup} INTO DATA(${loopTargetField})${from}${to}${cond}${gby}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
       }

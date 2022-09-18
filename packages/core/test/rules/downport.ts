@@ -3,7 +3,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {Downport} from "../../src/rules";
 import {Config} from "../../src/config";
-import {testRuleFixSingle} from "./_utils";
+import {testRuleFixCount} from "./_utils";
 import {IConfiguration} from "../../src/_config";
 import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
@@ -16,8 +16,8 @@ function buildConfig(): IConfiguration {
   return conf702;
 }
 
-function testFix(input: string, expected: string, extraFiles?: IFile[]) {
-  testRuleFixSingle(input, expected, new Downport(), buildConfig(), extraFiles, false);
+function testFix(input: string, expected: string, extraFiles?: IFile[], count = 1) {
+  testRuleFixCount(input, expected, new Downport(), buildConfig(), extraFiles, false, count);
 }
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
@@ -3490,6 +3490,50 @@ ENDLOOP.
 LOOP AT grouping_grouptab INTO DATA(grouping_group).
 
 ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
+  it("LOOP INTO GROUP BY keys, REDUCE FOR IN GROUP", async () => {
+    const abap = `
+  DATA(sdf) = REDUCE i(
+    INIT subtotal = 0
+    FOR group_line IN GROUP grouping_group
+    NEXT subtotal = subtotal + group_line-group ).
+  WRITE / sdf.`;
+    const expected = `
+  DATA temp1 TYPE i.
+  DATA(subtotal) = 0.
+  LOOP AT grouping_group-items INTO DATA(group_line).
+    subtotal = subtotal + group_line-group.
+  ENDLOOP.
+  temp1 = subtotal.
+  DATA(sdf) = temp1.
+  WRITE / sdf.`;
+    testFix(abap, expected);
+  });
+
+  it("REDUCE, infer type", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND INITIAL LINE TO tab.
+APPEND INITIAL LINE TO tab.
+DATA(sdf) = REDUCE #(
+  INIT subtotal = 0
+  FOR row IN tab
+  NEXT subtotal = subtotal + 1 ).
+ASSERT sdf = 2.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND INITIAL LINE TO tab.
+APPEND INITIAL LINE TO tab.
+DATA temp1 TYPE i.
+DATA(subtotal) = 0.
+LOOP AT tab INTO DATA(row).
+  subtotal = subtotal + 1.
+ENDLOOP.
+temp1 = subtotal.
+DATA(sdf) = temp1.
+ASSERT sdf = 2.`;
     testFix(abap, expected);
   });
 

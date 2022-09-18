@@ -22,8 +22,12 @@ export class ReduceBody {
       scoped = new Let().runSyntax(letNode, scope, filename);
     }
 
+    let first: AbstractType | undefined = undefined;
     for (const i of node.findDirectExpressions(Expressions.InlineFieldDefinition)) {
-      new InlineFieldDefinition().runSyntax(i, scope, filename);
+      const found = new InlineFieldDefinition().runSyntax(i, scope, filename);
+      if (found && first === undefined) {
+        first = found;
+      }
     }
 
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
@@ -46,6 +50,10 @@ export class ReduceBody {
       scope.pop(node.getLastToken().getEnd());
     }
 
-    return new UnknownType("todo, ReduceBody");
+    if (first) {
+      return first;
+    } else {
+      return new UnknownType("todo, ReduceBody");
+    }
   }
 }
