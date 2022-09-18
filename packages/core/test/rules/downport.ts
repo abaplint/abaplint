@@ -3503,7 +3503,7 @@ ENDLOOP.`;
     const expected = `
   DATA temp1 TYPE i.
   DATA(subtotal) = 0.
-  LOOP AT grouping_group INTO DATA(group_line).
+  LOOP AT grouping_group-items INTO DATA(group_line).
     subtotal = subtotal + group_line-group.
   ENDLOOP.
   temp1 = subtotal.
