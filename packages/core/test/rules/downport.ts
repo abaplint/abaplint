@@ -3556,4 +3556,28 @@ ASSERT sdf = 2.`;
     testFix(abap, expected);
   });
 
+  it("Basic structured VALUE", async () => {
+// note: ABAP does not evaluate the VALUE as an expression and then assigns it
+// each part of the expression is executed separately
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+         field2 TYPE i,
+       END OF ty.
+DATA dat TYPE ty.
+dat = VALUE #(
+  field1 = 2
+  field2 = 7 ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+         field2 TYPE i,
+       END OF ty.
+DATA dat TYPE ty.
+CLEAR dat.
+dat-field1 = 2.
+dat-field2 = 7.`;
+    testFix(abap, expected);
+  });
+
 });

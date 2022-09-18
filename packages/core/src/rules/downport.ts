@@ -1243,19 +1243,25 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
       return;
     }
     const valueBody = source.findDirectExpression(Expressions.ValueBody);
-    if (valueBody === undefined || valueBody.getChildren().length !== 1) {
+    if (valueBody === undefined) {
       return;
     }
-    const fieldAssignment = valueBody.findDirectExpression(Expressions.FieldAssignment);
-    if (fieldAssignment === undefined) {
+    const fieldAssignments = valueBody.findDirectExpressions(Expressions.FieldAssignment);
+    if (fieldAssignments.length === 0) {
+      return;
+    } else if (fieldAssignments.length !== valueBody.getChildren().length) {
       return;
     }
 
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
-    const code = `CLEAR ${target.concatTokens()}.\n` + indentation + target.concatTokens() + "-" + fieldAssignment.concatTokens();
+    let code = `CLEAR ${target.concatTokens()}.\n`;
+    for (const fieldAssignment of fieldAssignments) {
+      code += indentation + target.concatTokens() + "-" + fieldAssignment.concatTokens() + `.\n`;
+    }
+    code = code.trimEnd();
 
     const start = high.getFirstToken().getStart();
-    const end = high.getLastToken().getStart();
+    const end = high.getLastToken().getEnd();
     const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple move", this.getMetadata().key, this.conf.severity, fix);
