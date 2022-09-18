@@ -1591,7 +1591,7 @@ ${indentation}    output = ${topTarget}.`;
         if (gby !== "") {
           gby += " ";
         }
-        gby = lg.concatTokens();
+        gby += lg.concatTokens();
       }
       if (gby !== "") {
         gby = " GROUP BY ( " + gby + " )";
