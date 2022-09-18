@@ -3176,6 +3176,24 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("simple CORRESPONDING", async () => {
+    const abap = `
+TYPES: BEGIN OF foo,
+         bar TYPE i,
+       END OF foo.
+DATA foo1 TYPE foo.
+DATA foo2 TYPE foo.
+foo1 = CORRESPONDING #( foo2 ).`;
+    const expected = `
+TYPES: BEGIN OF foo,
+         bar TYPE i,
+       END OF foo.
+DATA foo1 TYPE foo.
+DATA foo2 TYPE foo.
+MOVE-CORRESPONDING foo2 TO foo1.`;
+    testFix(abap, expected);
+  });
+
   it("ASSIGN table expression, by component", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -3380,6 +3398,98 @@ LOOP AT tab INTO DATA(row) FROM 2 TO 3.
 ENDLOOP.
 DATA(sdf) = temp1.
 ASSERT lines( sdf ) = 2.`;
+    testFix(abap, expected);
+  });
+
+  it("FOR GROUPS", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+
+DATA(sdf) = VALUE initial_numbers(
+         FOR GROUPS grouping_group OF initial_line IN initial_numbers
+         GROUP BY ( group = initial_line-group )
+         ( group = grouping_group-group
+         ) ).
+ASSERT lines( sdf ) = 1.`;
+    const expected = `
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+
+DATA temp1 TYPE initial_numbers.
+CLEAR temp1.
+LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-group ) INTO DATA(grouping_group).
+  DATA temp2 LIKE LINE OF temp1.
+  temp2-group = grouping_group-group.
+  APPEND temp2 TO temp1.
+ENDLOOP.
+DATA(sdf) = temp1.
+ASSERT lines( sdf ) = 1.`;
+    testFix(abap, expected);
+  });
+
+  it("LOOP INTO GROUP BY keys", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-group ) INTO DATA(grouping_group).
+
+ENDLOOP.`;
+    const expected = `
+TYPES: BEGIN OF initial_numbers_type,
+         group TYPE group,
+       END OF initial_numbers_type.
+TYPES initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+DATA initial_numbers TYPE initial_numbers.
+DATA row LIKE LINE OF initial_numbers.
+row-group = 2.
+APPEND row TO initial_numbers.
+APPEND row TO initial_numbers.
+TYPES: BEGIN OF grouping_grouptype,
+         group TYPE initial_numbers_type-group,
+         items LIKE initial_numbers,
+       END OF grouping_grouptype.
+DATA grouping_grouptab TYPE STANDARD TABLE OF grouping_grouptype WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF grouping_grouptab.
+LOOP AT initial_numbers INTO DATA(initial_line).
+READ TABLE grouping_grouptab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY group = initial_line-group.
+IF sy-subrc = 0.
+  INSERT initial_line INTO TABLE <temp2>-items.
+ELSE.
+  CLEAR temp1.
+  temp1-group = initial_line-group.
+  INSERT initial_line INTO TABLE temp1-items.
+  INSERT temp1 INTO TABLE grouping_grouptab.
+ENDIF.
+ENDLOOP.
+LOOP AT grouping_grouptab INTO DATA(grouping_group).
+
+ENDLOOP.`;
     testFix(abap, expected);
   });
 

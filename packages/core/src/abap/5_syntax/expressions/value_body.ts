@@ -6,7 +6,6 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {ScopeType} from "../_scope_type";
 import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
 
 export class ValueBody {
@@ -20,14 +19,18 @@ export class ValueBody {
       return targetType;
     }
 
+    let forScopes = 0;
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
-      new For().runSyntax(forNode, scope, filename);
+      const scoped = new For().runSyntax(forNode, scope, filename);
+      if (scoped === true) {
+        forScopes++;
+      }
     }
 
-    let scoped = false;
+    let letScoped = false;
     const letNode = node.findDirectExpression(Expressions.Let);
     if (letNode) {
-      scoped = new Let().runSyntax(letNode, scope, filename);
+      letScoped = new Let().runSyntax(letNode, scope, filename);
     }
 
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
@@ -65,11 +68,11 @@ export class ValueBody {
       }
     }
 
-    if (scoped === true) {
+    if (letScoped === true) {
       scope.pop(node.getLastToken().getEnd());
     }
 
-    while (scope.getType() === ScopeType.For) {
+    for (let i = 0; i < forScopes; i++) {
       scope.pop(node.getLastToken().getEnd());
     }
 

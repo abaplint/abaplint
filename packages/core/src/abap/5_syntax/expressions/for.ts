@@ -9,14 +9,15 @@ import {ComponentCond} from "./component_cond";
 import {Cond} from "./cond";
 
 export class For {
-  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): void {
-
+  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): boolean {
+    let scoped = false;
     const inlineLoop = node.findDirectExpressions(Expressions.InlineLoopDefinition);
     const inlineField = node.findAllExpressions(Expressions.InlineFieldDefinition);
     const addScope = inlineLoop.length > 0 || inlineField.length > 0;
     if (addScope) {
       // this scope is popped in parent expressions
       scope.push(ScopeType.For, "FOR", node.getFirstToken().getStart(), filename);
+      scoped = true;
     }
 
     for (const s of inlineLoop) {
@@ -38,5 +39,6 @@ export class For {
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
       new Cond().runSyntax(s, scope, filename);
     }
+    return scoped;
   }
 }

@@ -254,6 +254,12 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   `tab2 = VALUE #( ( LINES OF tab1 TO index ) ).`,
   `tab2 = VALUE #( ( LINES OF tab1 FROM index ) ).`,
   `tab2 = VALUE #( ( LINES OF tab1 FROM index TO index ) ).`,
+
+  `DATA(sdf) = VALUE initial_numbers(
+    FOR GROUPS grouping_group OF initial_line IN initial_numbers
+    GROUP BY ( group = initial_line-group )
+    ( group = grouping_group-group
+    ) ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);
