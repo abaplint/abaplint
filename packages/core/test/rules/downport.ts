@@ -3267,7 +3267,7 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
-  it.skip("LOOP AT GROUP BY, INTO DATA", async () => {
+  it("LOOP AT GROUP BY, INTO DATA", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
          group  TYPE group,
@@ -3283,7 +3283,34 @@ LOOP AT initial_numbers INTO DATA(number)
   ENDLOOP.
 ENDLOOP.`;
     const expected = `
-sdf`;
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+TYPES: BEGIN OF groupstype,
+         group TYPE initial_numbers_type-group,
+         items LIKE initial_numbers,
+       END OF groupstype.
+DATA groupstab TYPE STANDARD TABLE OF groupstype WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF groupstab.
+LOOP AT initial_numbers INTO DATA(number).
+READ TABLE groupstab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY group = number-group.
+IF sy-subrc = 0.
+  INSERT number INTO TABLE <temp2>-items.
+ELSE.
+  CLEAR temp1.
+  temp1-group = number-group.
+  INSERT number INTO TABLE temp1-items.
+  INSERT temp1 INTO TABLE groupstab.
+ENDIF.
+ENDLOOP.
+LOOP AT groupstab INTO DATA(groups).
+  LOOP AT groups-items INTO DATA(group).
+    WRITE / group-group.
+  ENDLOOP.
+ENDLOOP.`;
     testFix(abap, expected);
   });
 
