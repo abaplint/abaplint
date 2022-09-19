@@ -1069,11 +1069,14 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     if (group === undefined) {
       return undefined;
     }
-    const groupTargetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
+    const groupTargetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens()
+      || group.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens().replace("<", "_").replace(">", "_")
+      || "nameNotFound";
     const loopSourceName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
-    const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
+    const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens()
+      || high.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens()
+      || "nameNotFound";
     const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
-
     const isReference = high.findFirstExpression(Expressions.LoopTarget)?.concatTokens().toUpperCase().startsWith("REFERENCE INTO ");
 
     let loopSourceRowType = "typeNotFound";

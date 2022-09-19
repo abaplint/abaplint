@@ -3314,7 +3314,7 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
-  it.skip("LOOP AT GROUP BY, ASSIGNING", async () => {
+  it("LOOP AT GROUP BY, ASSIGNING", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
          group  TYPE group,
@@ -3330,7 +3330,34 @@ LOOP AT initial_numbers ASSIGNING FIELD-SYMBOL(<number>)
   ENDLOOP.
 ENDLOOP.`;
     const expected = `
-sdfsd`;
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+TYPES: BEGIN OF _groups_type,
+         group TYPE initial_numbers_type-group,
+         items LIKE initial_numbers,
+       END OF _groups_type.
+DATA _groups_tab TYPE STANDARD TABLE OF _groups_type WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF _groups_tab.
+LOOP AT initial_numbers ASSIGNING FIELD-SYMBOL(<number>).
+READ TABLE _groups_tab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY group = <number>-group.
+IF sy-subrc = 0.
+  INSERT <number> INTO TABLE <temp2>-items.
+ELSE.
+  CLEAR temp1.
+  temp1-group = <number>-group.
+  INSERT <number> INTO TABLE temp1-items.
+  INSERT temp1 INTO TABLE _groups_tab.
+ENDIF.
+ENDLOOP.
+LOOP AT _groups_tab ASSIGNING FIELD-SYMBOL(<groups>).
+  LOOP AT <groups>-items ASSIGNING FIELD-SYMBOL(<group>).
+    WRITE / <group>-group.
+  ENDLOOP.
+ENDLOOP.`;
     testFix(abap, expected);
   });
 
