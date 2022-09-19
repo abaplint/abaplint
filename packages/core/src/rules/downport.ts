@@ -2028,7 +2028,8 @@ ${indentation}    output = ${topTarget}.`;
   }
 
   private outlineFS(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
-    if (!(low.get() instanceof Unknown)) {
+    if (!(low.get() instanceof Unknown)
+        || (high.get() instanceof Statements.Loop)) {
       return undefined;
     }
 

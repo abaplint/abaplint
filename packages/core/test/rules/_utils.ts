@@ -106,6 +106,7 @@ export function testRuleFixCount(
   }
   reg.parse();
   let issues = rule.initialize(reg).run(reg.getFirstObject()!);
+//  console.dir(issues);
   expect(issues.length).to.equal(count, "single issue expected");
 
   for (const issue of issues) {

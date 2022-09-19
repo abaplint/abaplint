@@ -3314,6 +3314,26 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it.skip("LOOP AT GROUP BY, ASSIGNING", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+LOOP AT initial_numbers ASSIGNING FIELD-SYMBOL(<number>)
+                        GROUP BY <number>-group
+                        ASSIGNING FIELD-SYMBOL(<groups>).
+  LOOP AT GROUP <groups> ASSIGNING FIELD-SYMBOL(<group>).
+    WRITE / <group>-group.
+  ENDLOOP.
+ENDLOOP.`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
   it("RANGE OF", async () => {
     const abap = `
 CLASS lcl DEFINITION.
