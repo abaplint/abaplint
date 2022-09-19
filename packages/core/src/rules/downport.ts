@@ -1069,11 +1069,14 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     if (group === undefined) {
       return undefined;
     }
-    const groupTargetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
+    const groupTargetName = group.findFirstExpression(Expressions.TargetField)?.concatTokens()
+      || group.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens().replace("<", "_").replace(">", "_")
+      || "nameNotFound";
     const loopSourceName = high.findFirstExpression(Expressions.SimpleSource2)?.concatTokens() || "nameNotFound";
-    const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens() || "nameNotFound";
+    const loopTargetName = high.findFirstExpression(Expressions.TargetField)?.concatTokens()
+      || high.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens()
+      || "nameNotFound";
     const groupTarget = group.findDirectExpression(Expressions.LoopGroupByTarget)?.concatTokens() || "";
-
     const isReference = high.findFirstExpression(Expressions.LoopTarget)?.concatTokens().toUpperCase().startsWith("REFERENCE INTO ");
 
     let loopSourceRowType = "typeNotFound";
@@ -1102,6 +1105,17 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
       }
       code += `         ${name?.concatTokens()} TYPE ${type},\n`;
     }
+    const s = group.findDirectExpression(Expressions.Source);
+    let singleName = "";
+    if (s) {
+      let type = s.concatTokens();
+      type = type.replace(loopTargetName, loopSourceRowType);
+      type = type.replace("->", "-");
+      singleName = s.concatTokens().split("-")[1];
+      code += `         ${singleName} TYPE ${type},\n`;
+      condition = singleName + " = " + s.concatTokens();
+    }
+
     const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const uniqueFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     code += `         items LIKE ${loopSourceName},
@@ -1119,6 +1133,9 @@ ELSE.\n`;
     code += `  CLEAR ${uniqueName}.\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       code += `  ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
+    }
+    if (singleName !== "") {
+      code += `  ${uniqueName}-${singleName} = ${loopTargetName}-${singleName}.\n`;
     }
     code += `  INSERT ${loopTargetName}${isReference ? "->*" : ""} INTO TABLE ${uniqueName}-items.\n`;
     code += `  INSERT ${uniqueName} INTO TABLE ${groupTargetName}tab.\n`;
@@ -1140,7 +1157,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
             continue;
           }
           const subLoopSourceName = subLoopSource?.concatTokens() || "nameNotFound";
-          const subCode = `LOOP AT ${subLoopSourceName}->items`;
+          const subCode = `LOOP AT ${subLoopSourceName}${isReference ? "->" : "-"}items`;
           const subFix = EditHelper.replaceRange(lowFile, loop.getFirstToken().getStart(), subLoopSource.getLastToken().getEnd(), subCode);
           fix = EditHelper.merge(subFix, fix);
         }
@@ -1515,7 +1532,9 @@ ${indentation}    output = ${topTarget}.`;
     }
 
     const concat = node.concatTokens().toUpperCase();
-    if (concat.includes(" REFERENCE INTO ")) {
+    if (concat.includes(" REFERENCE INTO ")
+        || concat.includes(" GROUP BY ")
+        || concat.startsWith("LOOP AT GROUP ")) {
       return undefined;
     }
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
@@ -2012,7 +2031,8 @@ ${indentation}    output = ${topTarget}.`;
   }
 
   private outlineFS(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
-    if (!(low.get() instanceof Unknown)) {
+    if (!(low.get() instanceof Unknown)
+        || (high.get() instanceof Statements.Loop)) {
       return undefined;
     }
 
