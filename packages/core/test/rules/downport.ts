@@ -3214,7 +3214,7 @@ WRITE sy-tabix.`;
     testFix(abap, expected);
   });
 
-  it("LOOP AT GROUP BY", async () => {
+  it("LOOP AT GROUP BY, REFERENCE INTO", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
          group  TYPE group,
@@ -3264,6 +3264,26 @@ LOOP AT group_keytab REFERENCE INTO DATA(group_key).
   ENDLOOP.
   WRITE / group_key->count.
 ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
+  it.skip("LOOP AT GROUP BY, INTO DATA", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+LOOP AT initial_numbers INTO DATA(number)
+                        GROUP BY number-group
+                        INTO DATA(groups).
+  LOOP AT GROUP groups INTO DATA(group).
+    WRITE / group-group.
+  ENDLOOP.
+ENDLOOP.`;
+    const expected = `
+sdf`;
     testFix(abap, expected);
   });
 

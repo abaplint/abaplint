@@ -6582,6 +6582,44 @@ DATA(combined_data) = VALUE combined_data(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LOOP GROUP BY INTO DATA", () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+LOOP AT initial_numbers INTO DATA(number)
+                        GROUP BY number-group
+                        INTO DATA(groups).
+  LOOP AT GROUP groups INTO DATA(group).
+    WRITE / group-group.
+  ENDLOOP.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP GROUP BY ASSIGNING fs", () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+LOOP AT initial_numbers ASSIGNING FIELD-SYMBOL(<number>)
+                        GROUP BY <number>-group
+                        ASSIGNING FIELD-SYMBOL(<groups>).
+  LOOP AT GROUP <groups> ASSIGNING FIELD-SYMBOL(<group>).
+    WRITE / <group>-group.
+  ENDLOOP.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
