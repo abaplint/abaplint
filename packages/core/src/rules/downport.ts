@@ -1092,12 +1092,16 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     let code = `TYPES: BEGIN OF ${groupTargetName}type,\n`;
     let condition = "";
     let groupCountName: string | undefined = undefined;
+    let groupIndexName: string | undefined = undefined;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       const name = c.findFirstExpression(Expressions.ComponentName);
       let type = c.findFirstExpression(Expressions.Source)?.concatTokens() || "todo";
       if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP SIZE")) {
         type = "i";
         groupCountName = name?.concatTokens();
+      } else if (c.concatTokens()?.toUpperCase().endsWith(" = GROUP INDEX")) {
+        type = "i";
+        groupIndexName = name?.concatTokens();
       } else {
         condition += c.concatTokens();
         type = type.replace(loopTargetName, loopSourceRowType);
@@ -1118,12 +1122,16 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const uniqueFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const uniqueNameIndex = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     code += `         items LIKE ${loopSourceName},
        END OF ${groupTargetName}type.
 DATA ${groupTargetName}tab TYPE STANDARD TABLE OF ${groupTargetName}type WITH DEFAULT KEY.
 DATA ${uniqueName} LIKE LINE OF ${groupTargetName}tab.
-LOOP AT ${loopSourceName} ${high.findFirstExpression(Expressions.LoopTarget)?.concatTokens()}.
-READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
+LOOP AT ${loopSourceName} ${high.findFirstExpression(Expressions.LoopTarget)?.concatTokens()}.\n`;
+    if (groupIndexName !== undefined) {
+      code += `DATA(${uniqueNameIndex}) = sy-tabix.\n`;
+    }
+    code += `READ TABLE ${groupTargetName}tab ASSIGNING FIELD-SYMBOL(<${uniqueFS}>) WITH KEY ${condition}.
 IF sy-subrc = 0.\n`;
     if (groupCountName !== undefined) {
       code += `  <${uniqueFS}>-${groupCountName} = <${uniqueFS}>-${groupCountName} + 1.\n`;
@@ -1132,7 +1140,12 @@ IF sy-subrc = 0.\n`;
 ELSE.\n`;
     code += `  CLEAR ${uniqueName}.\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
-      code += `  ${uniqueName}-${c.concatTokens().replace("GROUP SIZE", "1")}.\n`;
+      const concat = c.concatTokens();
+      if (concat.endsWith(" GROUP INDEX")) {
+        code += `  ${uniqueName}-${groupIndexName} = ${uniqueNameIndex}.\n`;
+      } else {
+        code += `  ${uniqueName}-${concat.replace("GROUP SIZE", "1")}.\n`;
+      }
     }
     if (singleName !== "") {
       code += `  ${uniqueName}-${singleName} = ${loopTargetName}-${singleName}.\n`;
