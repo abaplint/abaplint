@@ -1179,4 +1179,17 @@ ENDINTERFACE.`;
     expect(hover?.value).to.contain("zif_aff_types_v1=>ty_original_language");
   });
 
+  it("Hover, reference inferred type", () => {
+    const abap = `TYPES: BEGIN OF aggregated_data_type,
+         count TYPE i,
+       END OF aggregated_data_type.
+DATA aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+INSERT VALUE #( count = 2 ) INTO TABLE aggregated_data REFERENCE INTO DATA(aggregated_data_row).`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 4, 80));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("count");
+  });
+
 });

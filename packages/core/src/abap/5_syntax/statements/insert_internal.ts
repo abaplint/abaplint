@@ -14,7 +14,8 @@ export class InsertInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     let targetType: AbstractType | undefined;
-    for (const t of node.findDirectExpressions(Expressions.Target)) {
+    const t = node.findDirectExpression(Expressions.Target);
+    if (t) {
       targetType = new Target().runSyntax(t, scope, filename);
     }
     if (targetType instanceof TableType) {
