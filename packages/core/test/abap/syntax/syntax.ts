@@ -6620,6 +6620,20 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("INSERT REFERENCE INTO inline definition", () => {
+    const abap = `
+TYPES: BEGIN OF aggregated_data_type,
+         count TYPE i,
+       END OF aggregated_data_type.
+DATA aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA row LIKE LINE OF aggregated_data.
+INSERT row INTO TABLE aggregated_data REFERENCE INTO DATA(aggregated_data_row).
+CLEAR aggregated_data_row.
+WRITE aggregated_data_row->count.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

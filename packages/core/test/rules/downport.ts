@@ -3550,6 +3550,25 @@ ASSERT lines( sdf ) = 2.`;
     testFix(abap, expected);
   });
 
+  it("INSERT VALUE INTO TABL REF", async () => {
+    const abap = `
+TYPES: BEGIN OF aggregated_data_type,
+         count TYPE i,
+       END OF aggregated_data_type.
+DATA aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA row LIKE LINE OF aggregated_data.
+INSERT row INTO TABLE aggregated_data REFERENCE INTO DATA(aggregated_data_row).`;
+    const expected = `
+TYPES: BEGIN OF aggregated_data_type,
+         count TYPE i,
+       END OF aggregated_data_type.
+DATA aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA row LIKE LINE OF aggregated_data.
+DATA aggregated_data_row TYPE REF TO aggregated_data_type.
+INSERT row INTO TABLE aggregated_data REFERENCE INTO aggregated_data_row.`;
+    testFix(abap, expected);
+  });
+
   it("FOR GROUPS", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
