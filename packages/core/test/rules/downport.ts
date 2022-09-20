@@ -3267,6 +3267,61 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("LOOP AT GROUP BY, REFERENCE INTO, GROUP INDEX", async () => {
+    const abap = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+LOOP AT initial_numbers REFERENCE INTO DATA(initial_number)
+    GROUP BY ( key = initial_number->group  index = GROUP INDEX )
+    ASCENDING
+    REFERENCE INTO DATA(group_key).
+  WRITE / group_key->index.
+  LOOP AT GROUP group_key REFERENCE INTO DATA(group_item).
+    WRITE / group_key->index.
+  ENDLOOP.
+  WRITE / group_key->index.
+ENDLOOP.`;
+    const expected = `
+TYPES: BEGIN OF initial_numbers_type,
+         group  TYPE group,
+         number TYPE i,
+       END OF initial_numbers_type.
+DATA initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+APPEND INITIAL LINE TO initial_numbers.
+TYPES: BEGIN OF group_keytype,
+         key TYPE initial_numbers_type-group,
+         index TYPE i,
+         items LIKE initial_numbers,
+       END OF group_keytype.
+DATA group_keytab TYPE STANDARD TABLE OF group_keytype WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF group_keytab.
+LOOP AT initial_numbers REFERENCE INTO DATA(initial_number).
+DATA(temp3) = sy-tabix.
+READ TABLE group_keytab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY key = initial_number->group.
+IF sy-subrc = 0.
+  INSERT initial_number->* INTO TABLE <temp2>-items.
+ELSE.
+  CLEAR temp1.
+  temp1-key = initial_number->group.
+  temp1-index = temp3.
+  INSERT initial_number->* INTO TABLE temp1-items.
+  INSERT temp1 INTO TABLE group_keytab.
+ENDIF.
+ENDLOOP.
+LOOP AT group_keytab REFERENCE INTO DATA(group_key).
+  WRITE / group_key->index.
+  LOOP AT group_key->items REFERENCE INTO DATA(group_item).
+    WRITE / group_key->index.
+  ENDLOOP.
+  WRITE / group_key->index.
+ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
   it("LOOP AT GROUP BY, INTO DATA", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
@@ -3492,6 +3547,25 @@ LOOP AT tab INTO DATA(row) FROM 2 TO 3.
 ENDLOOP.
 DATA(sdf) = temp1.
 ASSERT lines( sdf ) = 2.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT VALUE INTO TABL REF", async () => {
+    const abap = `
+TYPES: BEGIN OF aggregated_data_type,
+         count TYPE i,
+       END OF aggregated_data_type.
+DATA aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA row LIKE LINE OF aggregated_data.
+INSERT row INTO TABLE aggregated_data REFERENCE INTO DATA(aggregated_data_row).`;
+    const expected = `
+TYPES: BEGIN OF aggregated_data_type,
+         count TYPE i,
+       END OF aggregated_data_type.
+DATA aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA row LIKE LINE OF aggregated_data.
+DATA aggregated_data_row TYPE REF TO aggregated_data_type.
+INSERT row INTO TABLE aggregated_data REFERENCE INTO aggregated_data_row.`;
     testFix(abap, expected);
   });
 
