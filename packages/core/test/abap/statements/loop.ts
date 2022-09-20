@@ -31,6 +31,12 @@ const tests = [
   "LOOP AT tab ASSIGNING FIELD-SYMBOL(<fs>) WHERE field IS NOT INITIAL GROUP BY <fs>-key.",
   "LOOP AT tab WHERE ( field EQ 'B' ).",
   "LOOP AT tab WHERE ( field EQ 'B').",
+  `LOOP AT initial_numbers INTO DATA(initial_number)
+    GROUP BY ( group  = initial_number-group
+               size  = GROUP SIZE
+               index = GROUP INDEX )
+    ASCENDING
+    ASSIGNING FIELD-SYMBOL(<group>).`,
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

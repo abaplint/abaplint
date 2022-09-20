@@ -6,7 +6,8 @@ import {ComponentCompareSimple} from "./component_compare_simple";
 export class LoopGroupByComponent extends Expression {
   public getRunnable(): IStatementRunnable {
     const groupSize = seq(ComponentName, "=", "GROUP SIZE");
-    const components = alt(ComponentCompareSimple, groupSize);
+    const groupIndex = seq(ComponentName, "=", "GROUP INDEX");
+    const components = alt(ComponentCompareSimple, groupSize, groupIndex);
     return components;
   }
 }
