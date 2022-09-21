@@ -279,6 +279,14 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
 
      ) ) ).`,
 
+  `aggregated_data = REDUCE aggregated_data(
+  INIT aggregated = VALUE aggregated_data( )
+       data = VALUE aggregated_data_type( )
+  FOR GROUPS <group_key> OF <wa> IN initial_numbers
+    GROUP BY <wa>-group ASCENDING
+  NEXT data = VALUE #( group = <group_key> )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`,
+
 ];
 
 statementType(tests, "MOVE", Statements.Move);

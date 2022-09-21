@@ -6634,6 +6634,25 @@ WRITE aggregated_data_row->count.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("REDUCE FOR GROUPS", () => {
+    const abap = `
+TYPES: BEGIN OF aggregated_data_type,
+         group TYPE i,
+       END OF aggregated_data_type.
+TYPES aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA aggregated_data TYPE aggregated_data.
+DATA initial_numbers TYPE aggregated_data.
+aggregated_data = REDUCE aggregated_data(
+  INIT aggregated = VALUE aggregated_data( )
+       data = VALUE aggregated_data_type( )
+  FOR GROUPS group_key OF wa IN initial_numbers
+    GROUP BY wa-group ASCENDING
+  NEXT data = VALUE #( group = group_key )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

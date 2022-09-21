@@ -6,7 +6,6 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {InlineFieldDefinition} from "./inline_field_definition";
 import {UnknownType} from "../../types/basic/unknown_type";
-import {ScopeType} from "../_scope_type";
 import {ReduceNext} from "./reduce_next";
 import {Let} from "./let";
 
@@ -30,8 +29,12 @@ export class ReduceBody {
       }
     }
 
+    let forScopes = 0;
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
-      new For().runSyntax(forNode, scope, filename);
+      const scoped = new For().runSyntax(forNode, scope, filename);
+      if (scoped === true) {
+        forScopes++;
+      }
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
@@ -46,7 +49,7 @@ export class ReduceBody {
       scope.pop(node.getLastToken().getEnd());
     }
 
-    while (scope.getType() === ScopeType.For) {
+    for (let i = 0; i < forScopes; i++) {
       scope.pop(node.getLastToken().getEnd());
     }
 

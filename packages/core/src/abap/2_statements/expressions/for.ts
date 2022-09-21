@@ -1,5 +1,5 @@
 import {seq, opt, alt, ver, Expression, optPrio, altPrio, plus} from "../combi";
-import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, LoopGroupByComponent, InlineLoopDefinition, Target} from ".";
+import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, LoopGroupByComponent, InlineLoopDefinition, TargetField, TargetFieldSymbol} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
@@ -19,7 +19,8 @@ export class For extends Expression {
                         opt(seq(alt("ASCENDING", "DESCENDING"), opt("AS TEXT"))),
                         opt("WITHOUT MEMBERS"));
 
-    const groups = ver(Version.v740sp08, seq("GROUPS", FieldChain, "OF", Target, "IN", Source, optPrio(groupBy)));
+    const t = alt(TargetField, TargetFieldSymbol);
+    const groups = ver(Version.v740sp08, seq("GROUPS", t, "OF", t, "IN", Source, optPrio(groupBy)));
 
     const f = seq("FOR", alt(itera, inn, groups), optPrio(Let));
 

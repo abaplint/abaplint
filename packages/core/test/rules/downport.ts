@@ -3614,6 +3614,26 @@ ASSERT lines( sdf ) = 1.`;
     testFix(abap, expected);
   });
 
+  it.skip("REDUCE FOR GROUPS", async () => {
+    const abap = `
+TYPES: BEGIN OF aggregated_data_type,
+         group TYPE i,
+       END OF aggregated_data_type.
+TYPES aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA aggregated_data TYPE aggregated_data.
+DATA initial_numbers TYPE aggregated_data.
+aggregated_data = REDUCE aggregated_data(
+  INIT aggregated = VALUE aggregated_data( )
+       data = VALUE aggregated_data_type( )
+  FOR GROUPS group_key OF wa IN initial_numbers
+    GROUP BY wa-group ASCENDING
+  NEXT data = VALUE #( group = group_key )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`;
+    const expected = `
+sdfds`;
+    testFix(abap, expected);
+  });
+
   it("LOOP INTO GROUP BY keys", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
