@@ -1,16 +1,11 @@
-/*
 import {expect} from "chai";
-
-import {Registry, MemoryFile, IRegistry, Config} from "@abaplint/core";
-*/
-
 import * as memfs from "memfs";
 import {MemoryFile, Registry} from "@abaplint/core";
 import {Rename} from "../src/rename";
 
 describe("Apply rename", () => {
 
-  it("test 1", async () => {
+  it.only("test 1", async () => {
     const intf = `INTERFACE zif_intf PUBLIC.
   TYPES: BEGIN of ty,
            sdfsdf TYPE i,
@@ -45,6 +40,11 @@ ENDCLASS.`;
     config.rename = {"patterns": [{"type": "CLAS|INTF", "oldName": "zif_intf", "newName": "yif_sdfsdf"}]};
 
     new Rename(reg).run(config, "base", mockFS, true);
+
+    const intfNew = mockFS.readFileSync("yif_sdfsdf.intf.abap").toString();
+    expect(intfNew).to.include("INTERFACE yif_sdfsdf");
+    const clasNew = mockFS.readFileSync(file2.getFilename()).toString();
+    expect(clasNew).to.include("TYPE yif_sdfsdf=>");
   });
 
 });
