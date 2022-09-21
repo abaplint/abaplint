@@ -5,7 +5,7 @@ import {Rename} from "../src/rename";
 
 describe("Apply rename", () => {
 
-  it.only("test 1", async () => {
+  it("test 1", async () => {
     const intf = `INTERFACE zif_intf PUBLIC.
   TYPES: BEGIN of ty,
            sdfsdf TYPE i,

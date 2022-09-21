@@ -5,11 +5,16 @@ import {PartialFS} from "./partial_fs";
 
 export class Rename {
   private readonly reg: abaplint.IRegistry;
-  private readonly deletedFiles: string[] = [];
-  private readonly addedFiles: abaplint.IFile[] = [];
+  private readonly deletedFiles: Set<string>;
+  private readonly addedFiles: Set<string>;
+  private readonly updatedFiles: Set<string>;
 
   public constructor(reg: abaplint.IRegistry) {
     this.reg = reg;
+
+    this.deletedFiles = new Set<string>();
+    this.addedFiles = new Set<string>();
+    this.updatedFiles = new Set<string>();
   }
 
   public run(config: abaplint.IConfig, base: string, fs: PartialFS, quiet?: boolean) {
@@ -30,9 +35,21 @@ export class Rename {
       });
       this.addedFiles.forEach(f => {
         if (quiet !== true) {
-          console.log("write " + f.getFilename());
+          console.log("write " + f);
         }
-        fs.writeFileSync(f.getFilename(), f.getRaw());
+        const file = this.reg.getFileByName(f);
+        if (file !== undefined) {
+          fs.writeFileSync(file.getFilename(), file.getRaw());
+        }
+      });
+      this.updatedFiles.forEach(f => {
+        if (quiet !== true) {
+          console.log("update " + f);
+        }
+        const file = this.reg.getFileByName(f);
+        if (file !== undefined) {
+          fs.writeFileSync(file.getFilename(), file.getRaw());
+        }
       });
     } else {
       // output full registry contents to output folder
@@ -77,16 +94,15 @@ export class Rename {
           continue;
         }
 
-        o.getFiles().forEach(f => this.deletedFiles.push(f.getFilename()));
-
         const newStr = o.getName().replace(regex, p.newName);
         if (quiet !== true) {
           console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
         }
-        renamer.rename(o.getType(), o.getName(), newStr);
 
-        const newObject = this.reg.getObject(o.getType(), newStr);
-        newObject?.getFiles().forEach(f => this.addedFiles.push(f));
+        const result = renamer.rename(o.getType(), o.getName(), newStr);
+        result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
+        result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
+        result.addedFiles.forEach(f => { this.addedFiles.add(f); });
       }
     }
   }
