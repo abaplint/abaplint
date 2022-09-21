@@ -183,7 +183,7 @@ ENDINTERFACE.`;
     }
   });
 
-  it.only("INTF, type referenced in CLAS", () => {
+  it("INTF, type referenced in CLAS", () => {
     const intf = `INTERFACE zif_intf PUBLIC.
   TYPES: BEGIN of ty,
            sdfsdf TYPE i,
@@ -192,7 +192,7 @@ ENDINTERFACE.`;
 
     const clas = `CLASS zcl_clas DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PUBLIC SECTION.
-    METHODS foo IMPORTING field TYPE zintf=>ty.
+    METHODS foo IMPORTING field TYPE zif_intf=>ty.
 ENDCLASS.
 CLASS zcl_clas IMPLEMENTATION.
   METHOD foo.
