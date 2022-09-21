@@ -12,14 +12,14 @@ export class Rename {
     this.reg = reg;
   }
 
-  public run(config: abaplint.Config, base: string, fs: PartialFS, quiet?: boolean) {
-    const rconfig = config.get().rename;
+  public run(config: abaplint.IConfig, base: string, fs: PartialFS, quiet?: boolean) {
+    const rconfig = config.rename;
     if (rconfig === undefined) {
       return;
     }
 
     this.skip(rconfig);
-    this.rename(rconfig);
+    this.rename(rconfig, quiet);
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
       this.deletedFiles.forEach(f => {
@@ -61,7 +61,7 @@ export class Rename {
     }
   }
 
-  private rename(rconfig: abaplint.IRenameSettings) {
+  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean) {
     const renamer = new abaplint.Rename(this.reg);
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
@@ -80,7 +80,9 @@ export class Rename {
         o.getFiles().forEach(f => this.deletedFiles.push(f.getFilename()));
 
         const newStr = o.getName().replace(regex, p.newName);
-        console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
+        if (quiet !== true) {
+          console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
+        }
         renamer.rename(o.getType(), o.getName(), newStr);
 
         const newObject = this.reg.getObject(o.getType(), newStr);

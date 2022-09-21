@@ -224,7 +224,7 @@ export async function run(arg: Arguments) {
       extra = "Fixes applied";
     } else if (arg.runRename === true && reg) {
       if (issues.length === 0) {
-        new Rename(reg).run(config, base, fs);
+        new Rename(reg).run(config.get(), base, fs);
         extra = "Renames applied";
       } else {
         extra = "Renames NOT applied, issues found";
