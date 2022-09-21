@@ -1,44 +1,65 @@
 import * as abaplint from "@abaplint/core";
 import * as path from "path";
-import * as fs from "fs";
 import {FileOperations} from "./file_operations";
+import {PartialFS} from "./partial_fs";
 
 export class Rename {
   private readonly reg: abaplint.IRegistry;
-  private readonly deletedFiles: string[] = [];
-  private readonly addedFiles: abaplint.IFile[] = [];
+  private readonly deletedFiles: Set<string>;
+  private readonly addedFiles: Set<string>;
+  private readonly updatedFiles: Set<string>;
 
   public constructor(reg: abaplint.IRegistry) {
     this.reg = reg;
+
+    this.deletedFiles = new Set<string>();
+    this.addedFiles = new Set<string>();
+    this.updatedFiles = new Set<string>();
   }
 
-  public run(config: abaplint.Config, base: string) {
-    const rconfig = config.get().rename;
+  public run(config: abaplint.IConfig, base: string, fs: PartialFS, quiet?: boolean) {
+    const rconfig = config.rename;
     if (rconfig === undefined) {
       return;
     }
 
     this.skip(rconfig);
-    this.rename(rconfig);
+    this.rename(rconfig, quiet);
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
       this.deletedFiles.forEach(f => {
-        console.log("rm " + f);
+        if (quiet !== true) {
+          console.log("rm " + f);
+        }
         fs.rmSync(f);
       });
       this.addedFiles.forEach(f => {
-        console.log("write " + f.getFilename());
-        fs.writeFileSync(f.getFilename(), f.getRaw());
+        if (quiet !== true) {
+          console.log("write " + f);
+        }
+        const file = this.reg.getFileByName(f);
+        if (file !== undefined) {
+          fs.writeFileSync(file.getFilename(), file.getRaw());
+        }
+      });
+      this.updatedFiles.forEach(f => {
+        if (quiet !== true) {
+          console.log("update " + f);
+        }
+        const file = this.reg.getFileByName(f);
+        if (file !== undefined) {
+          fs.writeFileSync(file.getFilename(), file.getRaw());
+        }
       });
     } else {
       // output full registry contents to output folder
-      this.write(rconfig, base);
+      this.write(rconfig, base, fs);
     }
   }
 
   ////////////////////////
 
-  private write(rconfig: abaplint.IRenameSettings, base: string) {
+  private write(rconfig: abaplint.IRenameSettings, base: string, fs: PartialFS) {
     const outputFolder = base + path.sep + rconfig.output;
     console.log("Base: " + base);
     console.log("Output folder: " + outputFolder);
@@ -57,7 +78,7 @@ export class Rename {
     }
   }
 
-  private rename(rconfig: abaplint.IRenameSettings) {
+  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean) {
     const renamer = new abaplint.Rename(this.reg);
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
@@ -73,14 +94,15 @@ export class Rename {
           continue;
         }
 
-        o.getFiles().forEach(f => this.deletedFiles.push(f.getFilename()));
-
         const newStr = o.getName().replace(regex, p.newName);
-        console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
-        renamer.rename(o.getType(), o.getName(), newStr);
+        if (quiet !== true) {
+          console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
+        }
 
-        const newObject = this.reg.getObject(o.getType(), newStr);
-        newObject?.getFiles().forEach(f => this.addedFiles.push(f));
+        const result = renamer.rename(o.getType(), o.getName(), newStr);
+        result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
+        result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
+        result.addedFiles.forEach(f => { this.addedFiles.add(f); });
       }
     }
   }

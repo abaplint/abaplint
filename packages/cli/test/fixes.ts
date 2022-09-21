@@ -1,9 +1,10 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
 import {Registry, MemoryFile, IRegistry, Config} from "@abaplint/core";
-import {ApplyFixes, MyFS} from "../src/fixes";
+import {ApplyFixes} from "../src/fixes";
+import {PartialFS} from "../src/partial_fs";
 
-async function applyFixes(reg: IRegistry, fs: MyFS) {
+async function applyFixes(reg: IRegistry, fs: PartialFS) {
   await new ApplyFixes().applyFixes(reg, fs, true);
 }
 

@@ -1,8 +1,5 @@
 import {Issue, IRegistry, applyEditList, IEdit, RulesRunner} from "@abaplint/core";
-
-export interface MyFS {
-  writeFileSync(name: string, raw: string): void;
-}
+import {PartialFS} from "./partial_fs";
 
 export class ApplyFixes {
   private readonly changedFiles: Set<string> = new Set<string>();
@@ -11,7 +8,7 @@ export class ApplyFixes {
   // Execute one rule at a time and apply fixes for that rule
   // Some rules are quite expensive to initialize(like downport),
   // so running all rules every time is expensive.
-  public async applyFixes(reg: IRegistry, fs: MyFS, quiet?: boolean) {
+  public async applyFixes(reg: IRegistry, fs: PartialFS, quiet?: boolean) {
     let iteration = 0;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
@@ -63,7 +60,7 @@ export class ApplyFixes {
 
 ///////////////////////////////////////////////////
 
-  private writeChangesToFS(fs: MyFS, reg: IRegistry) {
+  private writeChangesToFS(fs: PartialFS, reg: IRegistry) {
     for (const filename of this.changedFiles.values()) {
       const file = reg.getFileByName(filename);
       if (file === undefined) {
