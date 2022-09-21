@@ -174,7 +174,6 @@ export class RenamerHelper {
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       for (const r of node.getData().references) {
-        console.dir(r);
         if (r.resolved?.equals(identifier)
             && r.referenceType !== ReferenceType.InferredType
             && !(r.position.getStart() instanceof VirtualPosition)) {
