@@ -1,7 +1,7 @@
 import * as abaplint from "@abaplint/core";
 import * as path from "path";
-import * as fs from "fs";
 import {FileOperations} from "./file_operations";
+import {PartialFS} from "./partial_fs";
 
 export class Rename {
   private readonly reg: abaplint.IRegistry;
@@ -12,7 +12,7 @@ export class Rename {
     this.reg = reg;
   }
 
-  public run(config: abaplint.Config, base: string) {
+  public run(config: abaplint.Config, base: string, fs: PartialFS, quiet?: boolean) {
     const rconfig = config.get().rename;
     if (rconfig === undefined) {
       return;
@@ -23,22 +23,26 @@ export class Rename {
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
       this.deletedFiles.forEach(f => {
-        console.log("rm " + f);
+        if (quiet !== true) {
+          console.log("rm " + f);
+        }
         fs.rmSync(f);
       });
       this.addedFiles.forEach(f => {
-        console.log("write " + f.getFilename());
+        if (quiet !== true) {
+          console.log("write " + f.getFilename());
+        }
         fs.writeFileSync(f.getFilename(), f.getRaw());
       });
     } else {
       // output full registry contents to output folder
-      this.write(rconfig, base);
+      this.write(rconfig, base, fs);
     }
   }
 
   ////////////////////////
 
-  private write(rconfig: abaplint.IRenameSettings, base: string) {
+  private write(rconfig: abaplint.IRenameSettings, base: string, fs: PartialFS) {
     const outputFolder = base + path.sep + rconfig.output;
     console.log("Base: " + base);
     console.log("Output folder: " + outputFolder);
