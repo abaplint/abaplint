@@ -204,7 +204,7 @@ ENDCLASS.`;
       new MemoryFile("zcl_clas.clas.abap", clas),
     ]).parse();
 
-    new Renamer(reg).rename("INTF", "zif_intf", "yif_foo");
+    const result = new Renamer(reg).rename("INTF", "zif_intf", "yif_foo");
 
     expect(reg.getObjectCount()).to.equal(2);
     for (const f of reg.getFiles()) {
@@ -216,6 +216,8 @@ ENDCLASS.`;
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }
     }
+
+    expect(result.updatedFiles.has("zcl_clas.clas.abap")).to.equal(true);
   });
 
 });

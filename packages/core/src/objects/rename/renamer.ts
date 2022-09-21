@@ -9,6 +9,12 @@ import {RenameTable} from "./rename_table";
 import {RenameTableType} from "./rename_table_type";
 import {ObjectRenamer} from "./_object_renamer";
 
+export interface IRenameResult {
+  deletedFiles: Set<string>;
+  addedFiles: Set<string>;
+  updatedFiles: Set<string>;
+}
+
 export class Renamer {
   private readonly reg: IRegistry;
 
@@ -18,7 +24,7 @@ export class Renamer {
 
   /** Applies the renaming to the objects and files in the registry,
    *  after renaming the registry is not parsed */
-  public rename(type: string, oldName: string, newName: string) {
+  public rename(type: string, oldName: string, newName: string): IRenameResult {
     const edits = this.buildEdits(type, oldName, newName);
 
     if (edits === undefined) {
@@ -27,8 +33,9 @@ export class Renamer {
       throw new Error("only documentChanges expected");
     }
 
-    this.apply(edits);
+    const result = this.apply(edits);
     this.reg.findIssues(); // hmm, this builds the ddic references
+    return result;
   }
 
   /** Builds edits, but does not apply to registry, used by LSP */
@@ -69,13 +76,20 @@ export class Renamer {
     }
   }
 
-  private apply(edits: WorkspaceEdit) {
+  private apply(edits: WorkspaceEdit): IRenameResult {
     const renames: RenameFile[] = [];
+
+    const result: IRenameResult = {
+      addedFiles: new Set<string>(),
+      deletedFiles: new Set<string>(),
+      updatedFiles: new Set<string>(),
+    };
 
     // assumption: only renames or text changes, no deletes or creates
     for (const dc of edits.documentChanges || []) {
       if (TextDocumentEdit.is(dc)) {
         this.applyEdit(dc);
+        result.updatedFiles.add(dc.textDocument.uri);
       } else if (RenameFile.is(dc)) {
         renames.push(dc);
       } else {
@@ -83,7 +97,15 @@ export class Renamer {
       }
     }
 
+    for (const rename of renames) {
+      result.updatedFiles.delete(rename.oldUri);
+      result.deletedFiles.add(rename.oldUri);
+      result.addedFiles.add(rename.newUri);
+    }
+
     this.applyRenames(renames);
+
+    return result;
   }
 
   private applyEdit(dc: TextDocumentEdit) {
