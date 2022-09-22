@@ -1075,6 +1075,9 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
 GET REFERENCE OF <${uniqueName}> INTO ${target.concatTokens()}`;
     } else {
       code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
@@ -1664,9 +1667,25 @@ ${indentation}    output = ${topTarget}.`;
       if (gby !== "") {
         gby = " GROUP BY ( " + gby + " )";
       }
+      const fc = forLoop.findDirectExpression(Expressions.FieldChain);
+      if (fc) {
+        gby = " GROUP BY " + fc.concatTokens();
+      }
+      if (forLoop.findDirectTokenByText("ASCENDING")) {
+        gby += " ASCENDING";
+      }
+      if (forLoop.findDirectTokenByText("DESCENDING")) {
+        gby += " DESCENDING";
+      }
+
       const groups = forLoop.findExpressionAfterToken("GROUPS");
       if (groups) {
-        gby += " INTO DATA(" + groups.concatTokens() + ")";
+        const concat = groups.concatTokens();
+        if (concat.startsWith("<")) {
+          gby += " ASSIGNING FIELD-SYMBOL(" + concat + ")";
+        } else {
+          gby += " INTO DATA(" + concat + ")";
+        }
       }
 
       let inGroup = "";
@@ -1674,8 +1693,12 @@ ${indentation}    output = ${topTarget}.`;
         inGroup = "-items";
       }
 
+      let into = "INTO DATA";
+      if (loopTargetField.startsWith("<")) {
+        into = "ASSIGNING FIELD-SYMBOL";
+      }
       // todo, also backup sy-index / sy-tabix here?
-      body += indentation + `LOOP AT ${loopSource}${inGroup} INTO DATA(${loopTargetField})${from}${to}${cond}${gby}.\n`;
+      body += indentation + `LOOP AT ${loopSource}${inGroup} ${into}(${loopTargetField})${from}${to}${cond}${gby}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
       }

@@ -3768,7 +3768,7 @@ dat-field2 = 7.`;
     testFix(abap, expected);
   });
 
-  it("REF table expression", async () => {
+  it("REF table expression, step 1", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
          group TYPE i,
@@ -3785,6 +3785,37 @@ DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA temp1 TYPE REF TO ty.
 APPEND INITIAL LINE TO aggregated_data.
 ASSIGN aggregated_data[ group = 0 ] TO FIELD-SYMBOL(<temp2>).
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+GET REFERENCE OF <temp2> INTO temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("REF table expression, step 2", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA temp1 TYPE REF TO ty.
+APPEND INITIAL LINE TO aggregated_data.
+ASSIGN aggregated_data[ group = 0 ] TO FIELD-SYMBOL(<temp2>).
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+GET REFERENCE OF <temp2> INTO temp1.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA temp1 TYPE REF TO ty.
+APPEND INITIAL LINE TO aggregated_data.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING FIELD-SYMBOL(<temp2>).
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
 GET REFERENCE OF <temp2> INTO temp1.`;
     testFix(abap, expected);
   });
@@ -3823,6 +3854,105 @@ LOOP AT initial_numbers INTO DATA(row).
 ENDLOOP.
 temp2 = aggregated.
 aggregated_data = temp2.`;
+    testFix(abap, expected);
+  });
+
+  it("REDUCE, group by", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+aggregated_data = REDUCE tytab(
+  INIT aggregated = VALUE tytab(  )
+  data = VALUE ty( )
+  FOR GROUPS group_key OF wa IN initial_numbers GROUP BY wa-group ASCENDING
+  NEXT data = VALUE #( group = group_key )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+DATA temp1 TYPE tytab.
+DATA(aggregated) = VALUE tytab( ).
+DATA(data) = VALUE ty( ).
+LOOP AT initial_numbers INTO DATA(wa) GROUP BY wa-group ASCENDING INTO DATA(group_key).
+  data = VALUE #( group = group_key ).
+  aggregated = VALUE #( BASE aggregated ( data ) ).
+ENDLOOP.
+temp1 = aggregated.
+aggregated_data = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("REDUCE, group by, field symbol 1", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+aggregated_data = REDUCE tytab(
+  INIT aggregated = VALUE tytab(  )
+  data = VALUE ty( )
+  FOR GROUPS group_key OF <wa> IN initial_numbers GROUP BY <wa>-group ASCENDING
+  NEXT data = VALUE #( group = group_key )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+DATA temp1 TYPE tytab.
+DATA(aggregated) = VALUE tytab( ).
+DATA(data) = VALUE ty( ).
+LOOP AT initial_numbers ASSIGNING FIELD-SYMBOL(<wa>) GROUP BY <wa>-group ASCENDING INTO DATA(group_key).
+  data = VALUE #( group = group_key ).
+  aggregated = VALUE #( BASE aggregated ( data ) ).
+ENDLOOP.
+temp1 = aggregated.
+aggregated_data = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("REDUCE, group by, field symbol 2", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+aggregated_data = REDUCE tytab(
+  INIT aggregated = VALUE tytab(  )
+  data = VALUE ty( )
+  FOR GROUPS <group_key> OF wa IN initial_numbers GROUP BY wa-group ASCENDING
+  NEXT data = VALUE #( group = <group_key> )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+DATA temp1 TYPE tytab.
+DATA(aggregated) = VALUE tytab( ).
+DATA(data) = VALUE ty( ).
+LOOP AT initial_numbers INTO DATA(wa) GROUP BY wa-group ASCENDING ASSIGNING FIELD-SYMBOL(<group_key>).
+  data = VALUE #( group = <group_key> ).
+  aggregated = VALUE #( BASE aggregated ( data ) ).
+ENDLOOP.
+temp1 = aggregated.
+aggregated_data = temp1.`;
     testFix(abap, expected);
   });
 
