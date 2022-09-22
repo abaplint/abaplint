@@ -1667,6 +1667,17 @@ ${indentation}    output = ${topTarget}.`;
       if (gby !== "") {
         gby = " GROUP BY ( " + gby + " )";
       }
+      const fc = forLoop.findDirectExpression(Expressions.FieldChain);
+      if (fc) {
+        gby = " GROUP BY " + fc.concatTokens();
+      }
+      if (forLoop.findDirectTokenByText("ASCENDING")) {
+        gby += " ASCENDING";
+      }
+      if (forLoop.findDirectTokenByText("DESCENDING")) {
+        gby += " DESCENDING";
+      }
+
       const groups = forLoop.findExpressionAfterToken("GROUPS");
       if (groups) {
         gby += " INTO DATA(" + groups.concatTokens() + ")";
