@@ -1036,7 +1036,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple CORRESPONDING move", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private downportRefSimple(high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private downportRefSimple(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(high.get() instanceof Statements.Move)
         || high.getChildren().length !== 4
         || high.getChildren()[2].getFirstToken().getStr().toUpperCase() !== "REF") {
@@ -1053,7 +1053,15 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
       return undefined;
     }
 
-    const code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
+    let code = "";
+    if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
+GET REFERENCE OF <${uniqueName}> INTO ${target.concatTokens()}`;
+    } else {
+      code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
+    }
+
     const start = high.getFirstToken().getStart();
     const end = high.getLastToken().getStart();
     const fix = EditHelper.replaceRange(lowFile, start, end, code);

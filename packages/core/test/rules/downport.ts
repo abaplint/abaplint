@@ -3775,15 +3775,17 @@ TYPES: BEGIN OF ty,
        END OF ty.
 DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA temp1 TYPE REF TO ty.
-temp1 = REF #( aggregated_data[ group = 2 ] ).`;
+APPEND INITIAL LINE TO aggregated_data.
+temp1 = REF #( aggregated_data[ group = 0 ] ).`;
     const expected = `
 TYPES: BEGIN OF ty,
          group TYPE i,
        END OF ty.
 DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA temp1 TYPE REF TO ty.
-DATA(temp2) = aggregated_data[ group = 2 ].
-GET REFERENCE OF temp2 INTO temp1.`;
+APPEND INITIAL LINE TO aggregated_data.
+ASSIGN aggregated_data[ group = 0 ] TO FIELD-SYMBOL(<temp2>).
+GET REFERENCE OF <temp2> INTO temp1.`;
     testFix(abap, expected);
   });
 
