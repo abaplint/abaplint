@@ -3789,4 +3789,41 @@ GET REFERENCE OF <temp2> INTO temp1.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE, sequencing", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND 2 TO initial_numbers.
+APPEND 3 TO initial_numbers.
+DATA temp1 TYPE tytab.
+CLEAR temp1.
+aggregated_data = REDUCE tytab(
+  INIT aggregated = temp1
+  FOR row IN initial_numbers
+  NEXT aggregated = VALUE #( BASE aggregated ( group = row ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND 2 TO initial_numbers.
+APPEND 3 TO initial_numbers.
+DATA temp1 TYPE tytab.
+CLEAR temp1.
+DATA temp2 TYPE tytab.
+DATA(aggregated) = temp1.
+LOOP AT initial_numbers INTO DATA(row).
+  aggregated = VALUE #( BASE aggregated ( group = row ) ).
+ENDLOOP.
+temp2 = aggregated.
+aggregated_data = temp2.`;
+    testFix(abap, expected);
+  });
+
 });
