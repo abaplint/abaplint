@@ -6634,7 +6634,7 @@ WRITE aggregated_data_row->count.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("REDUCE FOR GROUPS", () => {
+  it("REDUCE FOR GROUPS", () => {
     const abap = `
 TYPES: BEGIN OF aggregated_data_type,
          group TYPE i,

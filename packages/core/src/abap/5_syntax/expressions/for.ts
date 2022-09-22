@@ -7,13 +7,17 @@ import {InlineLoopDefinition} from "./inline_loop_definition";
 import {ScopeType} from "../_scope_type";
 import {ComponentCond} from "./component_cond";
 import {Cond} from "./cond";
+import {VoidType} from "../../types/basic";
+import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
+import {ReferenceType} from "../_reference";
 
 export class For {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): boolean {
     let scoped = false;
     const inlineLoop = node.findDirectExpressions(Expressions.InlineLoopDefinition);
     const inlineField = node.findAllExpressions(Expressions.InlineFieldDefinition);
-    const addScope = inlineLoop.length > 0 || inlineField.length > 0;
+    const groupsToken = node.findExpressionAfterToken("GROUPS")?.getFirstToken();
+    const addScope = inlineLoop.length > 0 || inlineField.length > 0 || groupsToken !== undefined;
     if (addScope) {
       // this scope is popped in parent expressions
       scope.push(ScopeType.For, "FOR", node.getFirstToken().getStart(), filename);
@@ -26,6 +30,13 @@ export class For {
 
     for (const f of inlineField) {
       new InlineFieldDefinition().runSyntax(f, scope, filename);
+    }
+
+    if (groupsToken !== undefined) {
+      const type = new VoidType("todoGroupBy");
+      const identifier = new TypedIdentifier(groupsToken, filename, type, [IdentifierMeta.InlineDefinition]);
+      scope.addIdentifier(identifier);
+      scope.addReference(groupsToken, identifier, ReferenceType.DataWriteReference, filename);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
