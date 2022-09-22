@@ -304,14 +304,32 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.outlineValue(low, high, lowFile, highSyntax);
-    if (found) {
-      return found;
+    let skipValue = false;
+    let skipReduce = false;
+    const valueBody = high.findFirstExpression(Expressions.ValueBody);
+    const reduceBody = high.findFirstExpression(Expressions.ReduceBody);
+    if (valueBody && reduceBody) {
+      const valueToken = valueBody.getFirstToken();
+      const reduceToken = reduceBody.getFirstToken();
+      if (valueToken.getStart().isBefore(reduceToken.getStart())) {
+        skipReduce = true;
+      } else {
+        skipValue = true;
+      }
     }
 
-    found = this.outlineReduce(low, high, lowFile, highSyntax);
-    if (found) {
-      return found;
+    if (skipValue !== true) {
+      found = this.outlineValue(low, high, lowFile, highSyntax);
+      if (found) {
+        return found;
+      }
+    }
+
+    if (skipReduce !== true) {
+      found = this.outlineReduce(low, high, lowFile, highSyntax);
+      if (found) {
+        return found;
+      }
     }
 
     found = this.outlineSwitch(low, high, lowFile, highSyntax);
@@ -1056,8 +1074,8 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     let code = "";
     if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      code = `DATA(${uniqueName}) = ${sourceRef.concatTokens()}.
-GET REFERENCE OF ${uniqueName} INTO ${target.concatTokens()}`;
+      code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
+GET REFERENCE OF <${uniqueName}> INTO ${target.concatTokens()}`;
     } else {
       code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
     }
