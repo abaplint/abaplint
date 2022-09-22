@@ -1688,8 +1688,12 @@ ${indentation}    output = ${topTarget}.`;
         inGroup = "-items";
       }
 
+      let into = "INTO DATA";
+      if (loopTargetField.startsWith("<")) {
+        into = "ASSIGNING FIELD-SYMBOL";
+      }
       // todo, also backup sy-index / sy-tabix here?
-      body += indentation + `LOOP AT ${loopSource}${inGroup} INTO DATA(${loopTargetField})${from}${to}${cond}${gby}.\n`;
+      body += indentation + `LOOP AT ${loopSource}${inGroup} ${into}(${loopTargetField})${from}${to}${cond}${gby}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
       }
