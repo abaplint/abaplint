@@ -3768,7 +3768,7 @@ dat-field2 = 7.`;
     testFix(abap, expected);
   });
 
-  it("REF table expression", async () => {
+  it("REF table expression, step 1", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
          group TYPE i,
@@ -3785,6 +3785,9 @@ DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA temp1 TYPE REF TO ty.
 APPEND INITIAL LINE TO aggregated_data.
 ASSIGN aggregated_data[ group = 0 ] TO FIELD-SYMBOL(<temp2>).
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
 GET REFERENCE OF <temp2> INTO temp1.`;
     testFix(abap, expected);
   });
