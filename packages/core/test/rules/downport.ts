@@ -3614,6 +3614,26 @@ ASSERT lines( sdf ) = 1.`;
     testFix(abap, expected);
   });
 
+  it.skip("REDUCE FOR GROUPS", async () => {
+    const abap = `
+TYPES: BEGIN OF aggregated_data_type,
+         group TYPE i,
+       END OF aggregated_data_type.
+TYPES aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+DATA aggregated_data TYPE aggregated_data.
+DATA initial_numbers TYPE aggregated_data.
+aggregated_data = REDUCE aggregated_data(
+  INIT aggregated = VALUE aggregated_data( )
+       data = VALUE aggregated_data_type( )
+  FOR GROUPS group_key OF wa IN initial_numbers
+    GROUP BY wa-group ASCENDING
+  NEXT data = VALUE #( group = group_key )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`;
+    const expected = `
+sdfds`;
+    testFix(abap, expected);
+  });
+
   it("LOOP INTO GROUP BY keys", async () => {
     const abap = `
 TYPES: BEGIN OF initial_numbers_type,
@@ -3745,6 +3765,25 @@ DATA dat TYPE ty.
 CLEAR dat.
 dat-field1 = 2.
 dat-field2 = 7.`;
+    testFix(abap, expected);
+  });
+
+  it("REF table expression", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA temp1 TYPE REF TO ty.
+temp1 = REF #( aggregated_data[ group = 2 ] ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA temp1 TYPE REF TO ty.
+DATA(temp2) = aggregated_data[ group = 2 ].
+GET REFERENCE OF temp2 INTO temp1.`;
     testFix(abap, expected);
   });
 

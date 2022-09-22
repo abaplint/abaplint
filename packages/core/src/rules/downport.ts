@@ -254,7 +254,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.downportRefSimple(high, lowFile);
+    found = this.downportRefSimple(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1036,7 +1036,7 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple CORRESPONDING move", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private downportRefSimple(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+  private downportRefSimple(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(high.get() instanceof Statements.Move)
         || high.getChildren().length !== 4
         || high.getChildren()[2].getFirstToken().getStr().toUpperCase() !== "REF") {
@@ -1048,11 +1048,19 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
       return undefined;
     }
     const sourceRef = high.findFirstExpression(Expressions.Source)?.findDirectExpression(Expressions.Source);
-    if (sourceRef === undefined || sourceRef.getChildren().length !== 1) {
-      return;
+    if (sourceRef === undefined
+        || sourceRef.getChildren().length !== 1 ) {
+      return undefined;
     }
 
-    const code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
+    let code = "";
+    if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      code = `DATA(${uniqueName}) = ${sourceRef.concatTokens()}.
+GET REFERENCE OF ${uniqueName} INTO ${target.concatTokens()}`;
+    } else {
+      code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
+    }
 
     const start = high.getFirstToken().getStart();
     const end = high.getLastToken().getStart();
@@ -1581,6 +1589,10 @@ ${indentation}    output = ${topTarget}.`;
     let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
     let loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    const of = forLoop.findExpressionAfterToken("OF")?.concatTokens();
+    if (of !== undefined) {
+      loopTargetField = of;
+    }
     if (forLoop.findDirectExpression(Expressions.InlineLoopDefinition)?.getFirstChild()?.get() instanceof Expressions.TargetFieldSymbol) {
       loopTargetField = undefined;
     }
