@@ -3923,4 +3923,37 @@ aggregated_data = temp1.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE, group by, field symbol 2", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+aggregated_data = REDUCE tytab(
+  INIT aggregated = VALUE tytab(  )
+  data = VALUE ty( )
+  FOR GROUPS <group_key> OF wa IN initial_numbers GROUP BY wa-group ASCENDING
+  NEXT data = VALUE #( group = <group_key> )
+       aggregated = VALUE #( BASE aggregated ( data ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA aggregated_data TYPE tytab.
+DATA initial_numbers TYPE tytab.
+DATA temp1 TYPE tytab.
+DATA(aggregated) = VALUE tytab( ).
+DATA(data) = VALUE ty( ).
+LOOP AT initial_numbers INTO DATA(wa) GROUP BY wa-group ASCENDING ASSIGNING FIELD-SYMBOL(<group_key>).
+  data = VALUE #( group = <group_key> ).
+  aggregated = VALUE #( BASE aggregated ( data ) ).
+ENDLOOP.
+temp1 = aggregated.
+aggregated_data = temp1.`;
+    testFix(abap, expected);
+  });
+
 });

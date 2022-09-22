@@ -1680,7 +1680,12 @@ ${indentation}    output = ${topTarget}.`;
 
       const groups = forLoop.findExpressionAfterToken("GROUPS");
       if (groups) {
-        gby += " INTO DATA(" + groups.concatTokens() + ")";
+        const concat = groups.concatTokens();
+        if (concat.startsWith("<")) {
+          gby += " ASSIGNING FIELD-SYMBOL(" + concat + ")";
+        } else {
+          gby += " INTO DATA(" + concat + ")";
+        }
       }
 
       let inGroup = "";
