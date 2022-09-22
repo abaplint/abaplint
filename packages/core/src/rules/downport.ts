@@ -1581,6 +1581,10 @@ ${indentation}    output = ${topTarget}.`;
     let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
     let loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    const of = forLoop.findExpressionAfterToken("OF")?.concatTokens();
+    if (of !== undefined) {
+      loopTargetField = of;
+    }
     if (forLoop.findDirectExpression(Expressions.InlineLoopDefinition)?.getFirstChild()?.get() instanceof Expressions.TargetFieldSymbol) {
       loopTargetField = undefined;
     }
