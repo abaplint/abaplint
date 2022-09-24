@@ -6663,6 +6663,16 @@ WRITE lv_components.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("REDUCE identical names, ok", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND 2 TO tab.
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

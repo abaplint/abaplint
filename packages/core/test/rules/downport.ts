@@ -3956,4 +3956,14 @@ aggregated_data = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("FOR loops, identical variable names, step 1", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND 2 TO tab.
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).`;
+    const expected = ``;
+    testFix(abap, expected);
+  });
+
 });
