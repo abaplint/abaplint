@@ -4,7 +4,9 @@ import {Abapdoc, AbapdocConf} from "../../src/rules/abapdoc";
 const defaultConfigTests = [
   // all public methods have abapdoc
   {
-    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+    abap: `
+    "! hello
+    CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
                 METHODS:
                   "! doc
@@ -21,7 +23,9 @@ const defaultConfigTests = [
 
   // one method is lacking abapdoc
   {
-    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+    abap: `
+    "! hello
+    CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
               METHODS:
                 "! doc
@@ -33,7 +37,9 @@ const defaultConfigTests = [
 
   // two methods are lacking abapdoc
   {
-    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+    abap: `
+    "! hello
+    CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
                 METHODS:
                   foobar RETURNING VALUE(rv_string) TYPE string,
@@ -43,7 +49,9 @@ const defaultConfigTests = [
 
   // method-definitions without chaining, one is lacking abapdoc
   {
-    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+    abap: `
+    "! hello
+    CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
                   METHODS foobar RETURNING VALUE(rv_string) TYPE string.
                   "! doc
@@ -53,7 +61,9 @@ const defaultConfigTests = [
 
   // interface: two method definitions without abapdoc
   {
-    abap: ` INTERFACE zif_foo PUBLIC.
+    abap: `
+    "! hello
+    INTERFACE zif_foo PUBLIC.
               METHODS:
                  foobar RETURNING VALUE(rv_string) TYPE string,
                  moobar RETURNING VALUE(rv_string) TYPE string.
@@ -62,7 +72,9 @@ const defaultConfigTests = [
 
   // interface: all methods have abapdoc
   {
-    abap: ` INTERFACE zif_foo PUBLIC.
+    abap: `
+    "! hello
+    INTERFACE zif_foo PUBLIC.
               METHODS:
                  "! doc
                  foobar RETURNING VALUE(rv_string) TYPE string,
@@ -73,7 +85,9 @@ const defaultConfigTests = [
 
   // local interface: no check with default config
   {
-    abap: ` INTERFACE zif_foo.
+    abap: `
+    "! hello
+    INTERFACE zif_foo.
               METHODS:
                  foobar RETURNING VALUE(rv_string) TYPE string,
                  moobar RETURNING VALUE(rv_string) TYPE string.
@@ -82,7 +96,9 @@ const defaultConfigTests = [
 
   // local class: no check with default config
   {
-    abap: ` CLASS lcl_foo DEFINITION.
+    abap: `
+    "! hello
+    CLASS lcl_foo DEFINITION.
               PUBLIC SECTION.
                 METHODS:
                   foobar RETURNING VALUE(rv_string) TYPE string,
@@ -94,7 +110,8 @@ const defaultConfigTests = [
             ENDCLASS.`, cnt: 0,
   },
   {
-    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+    abap: ` "! hello
+    CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
                 METHODS:
                   foobar REDEFINITION,
@@ -102,7 +119,8 @@ const defaultConfigTests = [
             ENDCLASS.`, cnt: 1,
   },
   {
-    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+    abap: ` "! hello
+    CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
                 METHODS:
                   foobar REDEFINITION
@@ -116,7 +134,8 @@ testRule(defaultConfigTests, Abapdoc);
 const localCheckActiveTests = [
   // local class, check active, missing abapdoc
   {
-    abap: ` CLASS lcl_foo_local DEFINITION.
+    abap: `"! hello
+    CLASS lcl_foo_local DEFINITION.
               PUBLIC SECTION.
                 METHODS:
                   foobar_loc RETURNING VALUE(rv_string) TYPE string,
@@ -130,7 +149,8 @@ const localCheckActiveTests = [
 
   // local class, check active, required abapdoc provided
   {
-    abap: ` CLASS zcl_foo_local DEFINITION PUBLIC.
+    abap: `"! hello
+    CLASS zcl_foo_local DEFINITION PUBLIC.
               PUBLIC SECTION.
               METHODS:
                 "! doc
@@ -144,5 +164,6 @@ const localCheckActiveTests = [
 
 const localCheckConfig = new AbapdocConf();
 localCheckConfig.checkLocal = true;
+localCheckConfig.classDefinition = false;
 
 testRule(localCheckActiveTests, Abapdoc, localCheckConfig);

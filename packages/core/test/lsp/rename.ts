@@ -106,7 +106,8 @@ ENDCLASS.`);
   it("rename global class, normal naming", async () => {
     const abap = new MemoryFile(
       "zcl_foobar.clas.abap",
-      `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+      `"! documentation
+CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION.
 ENDCLASS.`);
@@ -138,7 +139,7 @@ ENDCLASS.`);
 
     const result = new Rename(reg).rename({
       textDocument: {uri: abap.getFilename()},
-      position: LServer.Position.create(0, 10),
+      position: LServer.Position.create(1, 10),
       newName: newName});
     expect(result).to.not.equal(undefined);
 
@@ -157,7 +158,8 @@ ENDCLASS.`);
   it("rename global class, add namespace", async () => {
     const abap = new MemoryFile(
       "zcl_foobar.clas.abap",
-      `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+      `"! documentation
+CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION.
 ENDCLASS.`);
@@ -191,7 +193,7 @@ ENDCLASS.`);
 
     const result = new Rename(reg).rename({
       textDocument: {uri: abap.getFilename()},
-      position: LServer.Position.create(0, 10),
+      position: LServer.Position.create(1, 10),
       newName: newName});
     expect(result).to.not.equal(undefined);
 

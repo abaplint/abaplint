@@ -9,6 +9,8 @@ import {ABAPFile} from "../abap/abap_file";
 export class AbapdocConf extends BasicRuleConfig {
   /** Check local classes and interfaces for abapdoc. */
   public checkLocal: boolean = false;
+  public classDefinition: boolean = true;
+  public interfaceDefinition: boolean = true;
 }
 
 export class Abapdoc extends ABAPRule {
@@ -20,7 +22,9 @@ export class Abapdoc extends ABAPRule {
       key: "abapdoc",
       title: "Check abapdoc",
       shortDescription: `Various checks regarding abapdoc.
-Base rule checks for existence of abapdoc for public class methods and all interface methods.`,
+Base rule checks for existence of abapdoc for public class methods and all interface methods.
+
+Plus class and interface definitions.`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -44,6 +48,13 @@ Base rule checks for existence of abapdoc for public class methods and all inter
         continue;
       }
       methods = methods.concat(classDef.methods.filter(m => m.visibility === Visibility.Public));
+
+      const previousRow = classDef.identifier.getStart().getRow() - 2;
+      if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
+        const message = "Missing ABAP Doc for class " + classDef.identifier.getToken().getStr();
+        const issue = Issue.atIdentifier(classDef.identifier, message, this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
     }
 
     for (const interfaceDef of file.getInfo().listInterfaceDefinitions()) {
@@ -51,7 +62,15 @@ Base rule checks for existence of abapdoc for public class methods and all inter
         continue;
       }
       methods = methods.concat(interfaceDef.methods);
+
+      const previousRow = interfaceDef.identifier.getStart().getRow() - 2;
+      if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
+        const message = "Missing ABAP Doc for interface " + interfaceDef.identifier.getToken().getStr();
+        const issue = Issue.atIdentifier(interfaceDef.identifier, message, this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
     }
+
     for (const method of methods) {
       if (method.isRedefinition === true) {
         continue;
