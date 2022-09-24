@@ -49,5 +49,15 @@ export class Describe implements StatementSyntax {
       }
     }
 
+    const componentsTarget = node.findExpressionAfterToken("COMPONENTS");
+    if (componentsTarget?.get() instanceof Expressions.Target) {
+      const inline = componentsTarget?.findDirectExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(inline, scope, filename, new IntegerType());
+      } else {
+        new Target().runSyntax(componentsTarget, scope, filename);
+      }
+    }
+
   }
 }
