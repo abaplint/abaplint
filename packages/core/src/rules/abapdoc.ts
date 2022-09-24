@@ -49,11 +49,13 @@ Plus class and interface definitions.`,
       }
       methods = methods.concat(classDef.methods.filter(m => m.visibility === Visibility.Public));
 
-      const previousRow = classDef.identifier.getStart().getRow() - 2;
-      if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
-        const message = "Missing ABAP Doc for class " + classDef.identifier.getToken().getStr();
-        const issue = Issue.atIdentifier(classDef.identifier, message, this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+      if (this.getConfig().classDefinition === true) {
+        const previousRow = classDef.identifier.getStart().getRow() - 2;
+        if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
+          const message = "Missing ABAP Doc for class " + classDef.identifier.getToken().getStr();
+          const issue = Issue.atIdentifier(classDef.identifier, message, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
       }
     }
 
@@ -63,11 +65,13 @@ Plus class and interface definitions.`,
       }
       methods = methods.concat(interfaceDef.methods);
 
-      const previousRow = interfaceDef.identifier.getStart().getRow() - 2;
-      if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
-        const message = "Missing ABAP Doc for interface " + interfaceDef.identifier.getToken().getStr();
-        const issue = Issue.atIdentifier(interfaceDef.identifier, message, this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+      if (this.getConfig().interfaceDefinition === true) {
+        const previousRow = interfaceDef.identifier.getStart().getRow() - 2;
+        if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
+          const message = "Missing ABAP Doc for interface " + interfaceDef.identifier.getToken().getStr();
+          const issue = Issue.atIdentifier(interfaceDef.identifier, message, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
       }
     }
 
