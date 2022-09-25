@@ -2693,11 +2693,13 @@ ENDINTERFACE.
 
 DATA abap_value_mapping TYPE lif=>ty_abap_value_mapping.
 DATA foo TYPE i.
-DATA type TYPE lif=>ty_abap_value_mapping-target_type.
-type = COND #(
-  WHEN foo IS NOT INITIAL
-  THEN abap_value_mapping-target_type
-  ELSE 'bar' ).`;
+DATA temp1 TYPE lif=>ty_abap_value_mapping-target_type.
+IF foo IS NOT INITIAL.
+  temp1 = abap_value_mapping-target_type.
+ELSE.
+  temp1 = 'bar'.
+ENDIF.
+DATA(type) = temp1.`;
     testFix(abap, expected);
   });
 
@@ -3953,6 +3955,85 @@ LOOP AT initial_numbers INTO DATA(wa) GROUP BY wa-group ASCENDING ASSIGNING FIEL
 ENDLOOP.
 temp1 = aggregated.
 aggregated_data = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it.skip("FOR loops, identical variable names, step 1", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND 2 TO tab.
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).`;
+    const expected = ``;
+    testFix(abap, expected);
+  });
+
+  it("Class scoped types & type inference", async () => {
+    const abap = `
+CLASS zcl_itab_aggregation DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES group TYPE c LENGTH 1.
+    TYPES: BEGIN OF initial_numbers_type,
+             number TYPE i,
+           END OF initial_numbers_type,
+           initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+    TYPES: BEGIN OF aggregated_data_type,
+             min     TYPE i,
+           END OF aggregated_data_type,
+           aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+    METHODS perform_aggregation
+      IMPORTING
+        initial_numbers        TYPE initial_numbers
+      RETURNING
+        VALUE(aggregated_data) TYPE aggregated_data.
+ENDCLASS.
+
+CLASS zcl_itab_aggregation IMPLEMENTATION.
+  METHOD perform_aggregation.
+    FIELD-SYMBOLS <fs_ini_numbers> LIKE LINE OF initial_numbers.
+    FIELD-SYMBOLS <temp1> LIKE LINE OF aggregated_data.
+    LOOP AT initial_numbers ASSIGNING <fs_ini_numbers>.
+      WRITE COND #(
+        WHEN <fs_ini_numbers>-number < 2
+        THEN <fs_ini_numbers>-number
+        ELSE 3 ).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS zcl_itab_aggregation DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES group TYPE c LENGTH 1.
+    TYPES: BEGIN OF initial_numbers_type,
+             number TYPE i,
+           END OF initial_numbers_type,
+           initial_numbers TYPE STANDARD TABLE OF initial_numbers_type WITH DEFAULT KEY.
+    TYPES: BEGIN OF aggregated_data_type,
+             min     TYPE i,
+           END OF aggregated_data_type,
+           aggregated_data TYPE STANDARD TABLE OF aggregated_data_type WITH DEFAULT KEY.
+    METHODS perform_aggregation
+      IMPORTING
+        initial_numbers        TYPE initial_numbers
+      RETURNING
+        VALUE(aggregated_data) TYPE aggregated_data.
+ENDCLASS.
+
+CLASS zcl_itab_aggregation IMPLEMENTATION.
+  METHOD perform_aggregation.
+    FIELD-SYMBOLS <fs_ini_numbers> LIKE LINE OF initial_numbers.
+    FIELD-SYMBOLS <temp1> LIKE LINE OF aggregated_data.
+    LOOP AT initial_numbers ASSIGNING <fs_ini_numbers>.
+      DATA temp1 TYPE zcl_itab_aggregation=>initial_numbers_type-number.
+      IF <fs_ini_numbers>-number < 2.
+        temp1 = <fs_ini_numbers>-number.
+      ELSE.
+        temp1 = 3.
+      ENDIF.
+      WRITE temp1.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
     testFix(abap, expected);
   });
 

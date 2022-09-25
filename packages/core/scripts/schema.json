@@ -9,6 +9,9 @@
           "description": "Check local classes and interfaces for abapdoc.",
           "type": "boolean"
         },
+        "classDefinition": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -16,13 +19,18 @@
           },
           "type": "array"
         },
+        "interfaceDefinition": {
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
       "required": [
-        "checkLocal"
+        "checkLocal",
+        "classDefinition",
+        "interfaceDefinition"
       ],
       "type": "object"
     },
@@ -1425,7 +1433,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Various checks regarding abapdoc.\nBase rule checks for existence of abapdoc for public class methods and all interface methods.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc"
+              "description": "Various checks regarding abapdoc.\nBase rule checks for existence of abapdoc for public class methods and all interface methods.\n\nPlus class and interface definitions.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc"
             },
             "align_parameters": {
               "anyOf": [

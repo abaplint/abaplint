@@ -6653,6 +6653,26 @@ aggregated_data = REDUCE aggregated_data(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("DESCRIBE, COMPONENTS inline", () => {
+    const abap = `
+DATA lv_foo TYPE c LENGTH 1.
+DESCRIBE FIELD lv_foo TYPE DATA(lv_type) COMPONENTS DATA(lv_components).
+WRITE lv_type.
+WRITE lv_components.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("REDUCE identical names, ok", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+APPEND 2 TO tab.
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).
+WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

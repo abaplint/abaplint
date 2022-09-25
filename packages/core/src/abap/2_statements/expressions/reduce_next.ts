@@ -1,5 +1,5 @@
 import {Expression, seq, plus, altPrio, tok, ver, alt} from "../combi";
-import {Field, Source} from ".";
+import {SimpleFieldChain, Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {WDash, WPlus} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -13,7 +13,7 @@ export class ReduceNext extends Expression {
                                "*=",
                                "&&="));
 
-    const fields = seq(Field, altPrio("=", calcAssign), Source);
+    const fields = seq(SimpleFieldChain, altPrio("=", calcAssign), Source);
     return seq("NEXT", plus(fields));
   }
 }
