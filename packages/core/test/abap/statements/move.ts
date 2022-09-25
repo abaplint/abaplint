@@ -287,6 +287,22 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   NEXT data = VALUE #( group = <group_key> )
        aggregated = VALUE #( BASE aggregated ( data ) ) ).`,
 
+  `    aggregated_data = VALUE #(
+  FOR GROUPS grp OF rec IN initial_numbers
+  GROUP BY ( group = rec-group cnt = GROUP SIZE )
+  LET res = REDUCE aggregated_data_type( INIT tmp = VALUE aggregated_data_type( min = initial_numbers[ group = grp-group ]-number )
+            FOR rec2 IN GROUP grp
+            NEXT tmp-sum = tmp-sum + rec2-number
+               tmp-min = COND #( WHEN tmp-min > rec2-number THEN rec2-number ELSE tmp-min )
+               tmp-max = COND #( WHEN tmp-max < rec2-number THEN rec2-number ELSE tmp-max )
+            ) IN
+            ( group = grp-group
+              count = grp-cnt
+              sum = res-sum
+              min = res-min
+              max = res-max
+              average = res-sum / grp-cnt ) ).`,
+
 ];
 
 statementType(tests, "MOVE", Statements.Move);
