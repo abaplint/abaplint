@@ -28,7 +28,7 @@ export class BasicTypes {
   }
 
   public lookupQualifiedName(name: string | undefined): TypedIdentifier | undefined {
-// argh, todo, rewrite this entire method
+// argh, todo, rewrite this entire method, more argh
     if (name === undefined) {
       return undefined;
     }
@@ -38,15 +38,30 @@ export class BasicTypes {
       return found;
     }
 
+
     if (name.includes("=>")) {
       const split = name.split("=>");
       const ooName = split[0];
       const typeName = split[1];
       const oo = this.scope.findObjectDefinition(ooName);
       if (oo) {
-        const f = oo.getTypeDefinitions().getByName(typeName);
-        if (f) {
-          return f;
+        if (typeName.includes("-")) {
+          const split = typeName.split("-");
+          const subTypeName = split[0];
+          const fieldName = split[1];
+          const stru = oo.getTypeDefinitions().getByName(subTypeName);
+          const struType = stru?.getType();
+          if (stru && struType instanceof StructureType) {
+            const f = struType.getComponentByName(fieldName);
+            if (f) {
+              return new TypedIdentifier(stru.getToken(), stru.getFilename(), f);
+            }
+          }
+        } else {
+          const f = oo.getTypeDefinitions().getByName(typeName);
+          if (f) {
+            return f;
+          }
         }
       }
     } else if (name.includes("-")) {
