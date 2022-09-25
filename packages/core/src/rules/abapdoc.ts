@@ -9,8 +9,8 @@ import {ABAPFile} from "../abap/abap_file";
 export class AbapdocConf extends BasicRuleConfig {
   /** Check local classes and interfaces for abapdoc. */
   public checkLocal: boolean = false;
-  public classDefinition: boolean = true;
-  public interfaceDefinition: boolean = true;
+  public classDefinition: boolean = false;
+  public interfaceDefinition: boolean = false;
 }
 
 export class Abapdoc extends ABAPRule {
