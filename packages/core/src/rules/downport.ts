@@ -1132,6 +1132,9 @@ GET REFERENCE OF <${uniqueName}> INTO ${target.concatTokens()}`;
         type = "i";
         groupIndexName = name?.concatTokens();
       } else {
+        if (condition !== "") {
+          condition += " ";
+        }
         condition += c.concatTokens();
         type = type.replace(loopTargetName, loopSourceRowType);
         type = type.replace("->", "-");
@@ -1170,10 +1173,13 @@ ELSE.\n`;
     code += `  CLEAR ${uniqueName}.\n`;
     for (const c of group.findAllExpressions(Expressions.LoopGroupByComponent)) {
       const concat = c.concatTokens();
+//      console.dir(concat);
       if (concat.endsWith(" GROUP INDEX")) {
         code += `  ${uniqueName}-${groupIndexName} = ${uniqueNameIndex}.\n`;
+      } else if (concat.endsWith(" GROUP SIZE")) {
+        code += `  ${uniqueName}-${groupCountName} = 1.\n`;
       } else {
-        code += `  ${uniqueName}-${concat.replace("GROUP SIZE", "1")}.\n`;
+        code += `  ${uniqueName}-${concat}.\n`;
       }
     }
     if (singleName !== "") {

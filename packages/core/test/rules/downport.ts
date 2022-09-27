@@ -4037,4 +4037,49 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("GROUP BY multiple fields", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         artist_id TYPE i,
+         album_id  TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty.
+DATA songs TYPE tytab.
+LOOP AT songs ASSIGNING FIELD-SYMBOL(<songs>)
+  GROUP BY ( artist = <songs>-artist_id
+             album = <songs>-album_id )
+  ASCENDING
+  ASSIGNING FIELD-SYMBOL(<group>).
+ENDLOOP.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         artist_id TYPE i,
+         album_id  TYPE i,
+       END OF ty.
+TYPES tytab TYPE STANDARD TABLE OF ty.
+DATA songs TYPE tytab.
+TYPES: BEGIN OF _group_type,
+         artist TYPE ty-artist_id,
+         album TYPE ty-album_id,
+         items LIKE songs,
+       END OF _group_type.
+DATA _group_tab TYPE STANDARD TABLE OF _group_type WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF _group_tab.
+LOOP AT songs ASSIGNING FIELD-SYMBOL(<songs>).
+READ TABLE _group_tab ASSIGNING FIELD-SYMBOL(<temp2>) WITH KEY artist = <songs>-artist_id album = <songs>-album_id.
+IF sy-subrc = 0.
+  INSERT <songs> INTO TABLE <temp2>-items.
+ELSE.
+  CLEAR temp1.
+  temp1-artist = <songs>-artist_id.
+  temp1-album = <songs>-album_id.
+  INSERT <songs> INTO TABLE temp1-items.
+  INSERT temp1 INTO TABLE _group_tab.
+ENDIF.
+ENDLOOP.
+LOOP AT _group_tab ASSIGNING FIELD-SYMBOL(<group>).
+ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
 });
