@@ -4082,4 +4082,28 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("ASSIGN, fieldchain table expression", async () => {
+    const abap = `
+TYPES: BEGIN OF album_song_nested_type,
+         foo TYPE i,
+       END OF album_song_nested_type.
+TYPES: BEGIN OF artist_album_nested_type,
+         albums TYPE STANDARD TABLE OF album_song_nested_type WITH DEFAULT KEY,
+       END OF artist_album_nested_type.
+DATA nested_artist TYPE REF TO artist_album_nested_type.
+FIELD-SYMBOLS <temp1> TYPE album_song_nested_type.
+ASSIGN nested_artist->albums[ 2 ] TO <temp1>.`;
+    const expected = `
+TYPES: BEGIN OF album_song_nested_type,
+         foo TYPE i,
+       END OF album_song_nested_type.
+TYPES: BEGIN OF artist_album_nested_type,
+         albums TYPE STANDARD TABLE OF album_song_nested_type WITH DEFAULT KEY,
+       END OF artist_album_nested_type.
+DATA nested_artist TYPE REF TO artist_album_nested_type.
+FIELD-SYMBOLS <temp1> TYPE album_song_nested_type.
+READ TABLE nested_artist->albums INDEX 2 ASSIGNING <temp1>.`;
+    testFix(abap, expected);
+  });
+
 });
