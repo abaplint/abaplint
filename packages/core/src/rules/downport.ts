@@ -1254,11 +1254,9 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     }
 
     const fieldChain = high.findDirectExpression(Expressions.AssignSource)?.findDirectExpression(Expressions.Source)?.findDirectExpression(Expressions.FieldChain);
-    if (fieldChain?.getChildren().length !== 2) {
-      return undefined;
-    }
-    const tableExpression = fieldChain?.getChildren()[1];
-    if (!(tableExpression.get() instanceof Expressions.TableExpression)
+    const tableExpression = fieldChain?.getLastChild();
+    if (tableExpression === undefined
+        || !(tableExpression.get() instanceof Expressions.TableExpression)
         || !(tableExpression instanceof ExpressionNode)) {
       return undefined;
     }
@@ -1277,8 +1275,16 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
       condition = `WITH KEY ${concat}`;
     }
 
+    let pre = "";
+    for (const c of fieldChain!.getChildren() ) {
+      if (c === tableExpression) {
+        break;
+      }
+      pre += c.concatTokens();
+    }
+
     const fsTarget = high.findDirectExpression(Expressions.FSTarget);
-    const code = `READ TABLE ${fieldChain?.getChildren()[0].concatTokens()} ${condition} ASSIGNING ${fsTarget?.concatTokens()}.`;
+    const code = `READ TABLE ${pre} ${condition} ASSIGNING ${fsTarget?.concatTokens()}.`;
 
     const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
 
