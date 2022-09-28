@@ -10,14 +10,19 @@ import {Cond} from "./cond";
 import {VoidType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {ReferenceType} from "../_reference";
+import {Let} from "./let";
 
 export class For {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): boolean {
     let scoped = false;
     const inlineLoop = node.findDirectExpressions(Expressions.InlineLoopDefinition);
-    const inlineField = node.findAllExpressions(Expressions.InlineFieldDefinition);
+    const inlineField = node.findDirectExpressions(Expressions.InlineFieldDefinition);
     const groupsToken = node.findExpressionAfterToken("GROUPS")?.getFirstToken();
-    const addScope = inlineLoop.length > 0 || inlineField.length > 0 || groupsToken !== undefined;
+    const lett = node.findDirectExpression(Expressions.Let);
+    const addScope = inlineLoop.length > 0
+      || inlineField.length > 0
+      || lett !== undefined
+      || groupsToken !== undefined;
     if (addScope) {
       // this scope is popped in parent expressions
       scope.push(ScopeType.For, "FOR", node.getFirstToken().getStart(), filename);
@@ -50,6 +55,11 @@ export class For {
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
       new Cond().runSyntax(s, scope, filename);
     }
+
+    if (lett) {
+      new Let().runSyntax(lett, scope, filename, true);
+    }
+
     return scoped;
   }
 }
