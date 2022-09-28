@@ -6673,6 +6673,19 @@ WRITE / REDUCE i( INIT s = 0 FOR g IN tab NEXT s = s + g ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("inline, IN GROUP", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA initial_numbers TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+LOOP AT initial_numbers INTO DATA(g) GROUP BY g-group .
+  DATA(group_count) = REDUCE #( INIT i = 0 FOR c IN GROUP g NEXT i = i + 1 ).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

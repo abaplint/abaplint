@@ -29,7 +29,11 @@ export class InlineLoopDefinition {
       } else if (sourceType instanceof UnknownType) {
         throw new Error("Unknown type, " + sourceType.getError());
       }
-      if (rowType === undefined) {
+      if (rowType === undefined
+          && node.concatTokens().toUpperCase().includes(" IN GROUP ")
+          && sourceType !== undefined) {
+        rowType = sourceType;
+      } else if (rowType === undefined) {
         throw new Error("InlineLoopDefinition, not a table type");
       }
       const identifier = new TypedIdentifier(target.getFirstToken(), filename, rowType, [IdentifierMeta.InlineDefinition]);
