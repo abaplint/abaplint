@@ -6686,6 +6686,16 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET REFERENCE OF fs INTO inline", () => {
+    const abap = `
+DATA nested_data TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+ASSIGN nested_data[ 1 ] TO FIELD-SYMBOL(<temp1>).
+GET REFERENCE OF <temp1> INTO DATA(nested_artist).
+CLEAR nested_artist.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("FOR GROUPS + IN GROUP", () => {
     const abap = `
 TYPES: BEGIN OF ty,

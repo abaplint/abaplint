@@ -1393,13 +1393,13 @@ CONSTANTS: BEGIN OF ${structureName},\n`;
       return undefined;
     }
 
-    let uniqueName = this.uniqueName(low.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    let uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     uniqueName = `<${uniqueName}>`;
 
     const tName = target.concatTokens().split("[")[0];
     const condition = this.tableCondition(tableExpression);
 
-    const tabixBackup = this.uniqueName(low.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const tabixBackup = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     // restore tabix before exeption
     const code = `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${tName}.
