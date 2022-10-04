@@ -11,7 +11,14 @@ export class View extends AbstractObject {
     fields: {
       VIEWFIELD: string,
       TABNAME: string,
-      FIELDNAME: string}[]} | undefined;
+      FIELDNAME: string}[],
+    join: {
+      LTAB: string,
+      LFIELD: string,
+      OPERATOR: string,
+      RTAB: string,
+      RFIELD: string,
+    }[]} | undefined;
 
   public getType(): string {
     return "VIEW";
@@ -22,6 +29,13 @@ export class View extends AbstractObject {
       maxLength: 30,
       allowNamespace: true,
     };
+  }
+
+  public getJoin() {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    return this.parsedData?.join;
   }
 
   public setDirty(): void {
@@ -83,7 +97,7 @@ export class View extends AbstractObject {
 ///////////////
 
   private parseXML() {
-    this.parsedData = {fields: []};
+    this.parsedData = {fields: [], join: []};
 
     const parsed = super.parseRaw2();
     if (parsed === undefined || parsed.abapGit === undefined) {
@@ -96,6 +110,17 @@ export class View extends AbstractObject {
         VIEWFIELD: field.VIEWFIELD,
         TABNAME: field.TABNAME,
         FIELDNAME: field.FIELDNAME,
+      });
+    }
+
+    const join = parsed.abapGit["asx:abap"]["asx:values"]?.DD28J_TABLE;
+    for (const j of xmlToArray(join?.DD28J)) {
+      this.parsedData.join.push({
+        LTAB: j.LTAB,
+        LFIELD: j.LFIELD,
+        OPERATOR: j.OPERATOR,
+        RTAB: j.RTAB,
+        RFIELD: j.RFIELD,
       });
     }
   }
