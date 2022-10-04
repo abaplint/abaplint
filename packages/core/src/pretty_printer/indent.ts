@@ -154,6 +154,7 @@ export class Indent {
         || (this.options.selectionScreenBlockIndentation === true
           && type instanceof Statements.SelectionScreen
           && (statement.concatTokens().toUpperCase().includes("BEGIN OF SCREEN") ||
+          statement.concatTokens().toUpperCase().includes("BEGIN OF TABBED BLOCK") ||
           statement.concatTokens().toUpperCase().includes("BEGIN OF BLOCK") ||
           statement.concatTokens().toUpperCase().includes("BEGIN OF LINE")))
         || type instanceof Statements.StartOfSelection
