@@ -31,6 +31,13 @@ export class View extends AbstractObject {
     };
   }
 
+  public getFields() {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    return this.parsedData?.fields;
+  }
+
   public getJoin() {
     if (this.parsedData === undefined) {
       this.parseXML();
