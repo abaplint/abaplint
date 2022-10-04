@@ -293,4 +293,87 @@ describe("View, parse XML", () => {
     const casted = structure as StructureType;
     expect(casted.getComponents().length).to.equal(4);
   });
+
+  it("parse join", async () => {
+    const xml = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_VIEW" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD25V>
+    <VIEWNAME>ZAG_UNIT_TEST_V</VIEWNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <AGGTYPE>V</AGGTYPE>
+    <ROOTTAB>ZAG_UNIT_TEST_T1</ROOTTAB>
+    <DDTEXT>Unit Test</DDTEXT>
+    <VIEWCLASS>D</VIEWCLASS>
+    <VIEWGRANT>R</VIEWGRANT>
+   </DD25V>
+   <DD26V_TABLE>
+    <DD26V>
+     <VIEWNAME>ZAG_UNIT_TEST_V</VIEWNAME>
+     <TABNAME>ZAG_UNIT_TEST_T1</TABNAME>
+     <TABPOS>0001</TABPOS>
+     <FORTABNAME>ZAG_UNIT_TEST_T1</FORTABNAME>
+    </DD26V>
+    <DD26V>
+     <VIEWNAME>ZAG_UNIT_TEST_V</VIEWNAME>
+     <TABNAME>ZAG_UNIT_TEST_T2</TABNAME>
+     <TABPOS>0002</TABPOS>
+    </DD26V>
+   </DD26V_TABLE>
+   <DD27P_TABLE>
+    <DD27P>
+     <VIEWFIELD>MANDT</VIEWFIELD>
+     <TABNAME>ZAG_UNIT_TEST_T1</TABNAME>
+     <FIELDNAME>MANDT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+    </DD27P>
+    <DD27P>
+     <VIEWFIELD>KEY_FIELD</VIEWFIELD>
+     <TABNAME>ZAG_UNIT_TEST_T1</TABNAME>
+     <FIELDNAME>KEY_FIELD</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+    </DD27P>
+    <DD27P>
+     <VIEWFIELD>DATA_FIELD</VIEWFIELD>
+     <TABNAME>ZAG_UNIT_TEST_T1</TABNAME>
+     <FIELDNAME>DATA_FIELD</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <CHECKTABLE>ZAG_UNIT_TEST_T2</CHECKTABLE>
+     <SHLPORIGIN>P</SHLPORIGIN>
+    </DD27P>
+    <DD27P>
+     <VIEWFIELD>DATA</VIEWFIELD>
+     <TABNAME>ZAG_UNIT_TEST_T2</TABNAME>
+     <FIELDNAME>DATA</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <SHLPORIGIN>F</SHLPORIGIN>
+     <VALEXI>X</VALEXI>
+    </DD27P>
+   </DD27P_TABLE>
+   <DD28J_TABLE>
+    <DD28J>
+     <VIEWNAME>ZAG_UNIT_TEST_V</VIEWNAME>
+     <LTAB>ZAG_UNIT_TEST_T1</LTAB>
+     <LFIELD>DATA_FIELD</LFIELD>
+     <OPERATOR>EQ</OPERATOR>
+     <RTAB>ZAG_UNIT_TEST_T2</RTAB>
+     <RFIELD>KEY_FIELD</RFIELD>
+     <SOURCE>S</SOURCE>
+    </DD28J>
+   </DD28J_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+
+    const reg = new Registry().addFile(new MemoryFile("zag_unit_test_v.view.xml", xml));
+    await reg.parseAsync();
+    const view = reg.getFirstObject()! as View;
+    expect(view).to.not.equal(undefined);
+    expect(view.getJoin()?.length).to.equal(1);
+
+  });
 });
