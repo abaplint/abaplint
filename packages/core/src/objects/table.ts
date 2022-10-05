@@ -65,7 +65,7 @@ export class Table extends AbstractObject {
     super.setDirty();
   }
 
-  public listKeys(): string[] {
+  public listKeys(reg: IRegistry): string[] {
     if (this.parsedData === undefined) {
       this.parseXML();
     }
@@ -75,7 +75,14 @@ export class Table extends AbstractObject {
 
     const ret: string[] = [];
     for (const p of this.parsedData.fields) {
-      if (p.KEYFLAG === "X") {
+      if (p.KEYFLAG === "X" && p.FIELDNAME === ".INCLUDE") {
+        const lookup = new DDIC(reg).lookupTableOrView(p.PRECFIELD).type;
+        if (lookup instanceof Types.StructureType) {
+          for (const c of lookup.getComponents()) {
+            ret.push(c.name);
+          }
+        }
+      } else if (p.KEYFLAG === "X") {
         ret.push(p.FIELDNAME);
       }
     }
