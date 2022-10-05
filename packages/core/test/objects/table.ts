@@ -754,4 +754,82 @@ describe("Table, parse XML", () => {
     expect(components[0].name).to.equal("SUBSTRUC");
   });
 
+  it("key fields with .include", async () => {
+    const xml1 = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZLINTTABL</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>TRANSP</TABCLASS>
+        <LANGDEP>X</LANGDEP>
+        <DDTEXT>test</DDTEXT>
+        <CONTFLAG>A</CONTFLAG>
+        <EXCLASS>1</EXCLASS>
+       </DD02V>
+       <DD09L>
+        <TABNAME>ZLINTTABL</TABNAME>
+        <AS4LOCAL>A</AS4LOCAL>
+        <TABKAT>0</TABKAT>
+        <TABART>APPL0</TABART>
+        <BUFALLOW>N</BUFALLOW>
+       </DD09L>
+       <DD03P_TABLE>
+        <DD03P>
+         <FIELDNAME>.INCLUDE</FIELDNAME>
+         <KEYFLAG>X</KEYFLAG>
+         <ADMINFIELD>0</ADMINFIELD>
+         <PRECFIELD>ZLINTKEYS</PRECFIELD>
+         <NOTNULL>X</NOTNULL>
+         <MASK>      S</MASK>
+         <DDTEXT>test</DDTEXT>
+         <COMPTYPE>S</COMPTYPE>
+        </DD03P>
+        <DD03P>
+         <FIELDNAME>KEY2</FIELDNAME>
+         <KEYFLAG>X</KEYFLAG>
+         <ROLLNAME>CHAR1</ROLLNAME>
+         <ADMINFIELD>0</ADMINFIELD>
+         <NOTNULL>X</NOTNULL>
+         <COMPTYPE>E</COMPTYPE>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const xml2 = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZLINTKEYS</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>INTTAB</TABCLASS>
+        <DDTEXT>test</DDTEXT>
+        <EXCLASS>1</EXCLASS>
+       </DD02V>
+       <DD03P_TABLE>
+        <DD03P>
+         <FIELDNAME>KEY1</FIELDNAME>
+         <ROLLNAME>CHAR1</ROLLNAME>
+         <ADMINFIELD>0</ADMINFIELD>
+         <COMPTYPE>E</COMPTYPE>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zlinttabl.tabl.xml", xml1));
+    reg.addFile(new MemoryFile("zlintkeys.tabl.xml", xml2));
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const fields = tabl.listKeys(reg);
+    expect(fields.length).to.equal(2);
+    expect(fields[0]).to.equal("KEY1");
+    expect(fields[1]).to.equal("KEY2");
+  });
+
 });
