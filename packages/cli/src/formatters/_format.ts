@@ -13,8 +13,6 @@ export class Formatter {
         return new Formatters.Junit().output(issues, fileCount);
       case "codeframe":
         return new Formatters.CodeFrame().output(issues, fileCount);
-      case "checkstyle":
-        return new Formatters.Checkstyle().output(issues, fileCount);
       default:
         return new Formatters.Standard().output(issues, fileCount);
     }

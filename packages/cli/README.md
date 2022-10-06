@@ -10,7 +10,7 @@ Usage:
   abaplint -d | --default   show default configuration
 
 Options:
-  -f, --format <format>  output format (standard, total, json, summary, junit, checkstyle)
+  -f, --format <format>  output format (standard, total, json, summary, junit)
   --outformat <format>   output format, use in combination with outfile
   --outfile <file>       output issues to file in format
   --fix                  apply quick fixes to files
