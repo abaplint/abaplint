@@ -4106,4 +4106,22 @@ READ TABLE nested_artist->albums INDEX 2 ASSIGNING <temp1>.`;
     testFix(abap, expected);
   });
 
+  it("basic FILTER", async () => {
+    const abap = `
+TYPES ty TYPE SORTED TABLE OF i WITH UNIQUE DEFAULT KEY.
+DATA basket TYPE ty.
+DATA sdf LIKE basket.
+sdf = FILTER #( basket WHERE table_line = 2 ).`;
+    const expected = `
+TYPES ty TYPE SORTED TABLE OF i WITH UNIQUE DEFAULT KEY.
+DATA basket TYPE ty.
+DATA sdf LIKE basket.
+DATA temp1 TYPE ty.
+LOOP AT basket INTO DATA(temp2) WHERE table_line = 2.
+  INSERT temp2 INTO TABLE temp1.
+ENDLOOP.
+sdf = temp1.`;
+    testFix(abap, expected);
+  });
+
 });
