@@ -58,6 +58,7 @@ Current rules:
 * COND is outlined
 * REDUCE is outlined
 * SWITCH is outlined
+* FILTER is outlined
 * APPEND expression is outlined
 * INSERT expression is outlined
 * EMPTY KEY is changed to DEFAULT KEY, opposite of DEFAULT KEY in https://rules.abaplint.org/avoid_use/
@@ -333,6 +334,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.outlineSwitch(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineFilter(low, high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1731,6 +1737,61 @@ ${indentation}    output = ${topTarget}.`;
     }
 
     return {body, end};
+  }
+
+  private outlineFilter(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+
+    for (const i of high.findAllExpressionsRecursive(Expressions.Source)) {
+      const firstToken = i.getFirstToken();
+      if (firstToken.getStr().toUpperCase() !== "FILTER") {
+        continue;
+      }
+
+      const filterBody = i.findDirectExpression(Expressions.FilterBody);
+      if (filterBody === undefined) {
+        continue;
+      }
+
+      let type = this.findType(i, lowFile, highSyntax);
+      if (type === undefined) {
+        if (high.get() instanceof Statements.Move
+            && high.findDirectExpression(Expressions.Source) === i
+            && high.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.TargetField) !== undefined) {
+          type = "LIKE " + high.findDirectExpression(Expressions.Target)?.concatTokens();
+        }
+        if (type === undefined) {
+          continue;
+        }
+      } else {
+        type = "TYPE " + type;
+      }
+
+      const sourceName = filterBody.findDirectExpression(Expressions.Source)?.concatTokens();
+      if (sourceName === undefined) {
+        continue;
+      }
+
+      const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+      const loopName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+      let body = "";
+
+      body += `${indentation}DATA ${uniqueName} ${type}.\n`;
+      body += `${indentation}LOOP AT ${sourceName} INTO DATA(${loopName}) ${filterBody.concatTokens().substring(sourceName.length + 1)}.\n`;
+      body += `${indentation}  INSERT ${loopName} INTO TABLE ${uniqueName}.\n`;
+      body += `${indentation}ENDLOOP.\n`;
+
+      const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), body);
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, firstToken, "Downport FILTER", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
   }
 
   private outlineSwitch(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
