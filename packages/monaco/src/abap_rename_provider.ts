@@ -17,7 +17,7 @@ export class ABAPRenameProvider implements monaco.languages.RenameProvider {
       newName});
 
     const edit: monaco.languages.WorkspaceEdit = {edits: []};
-    for (const r of rename?.documentChanges ? rename?.documentChanges : []) {
+    for (const r of rename?.documentChanges || []) {
       if (TextDocumentEdit.is(r)) {
         for (const e of r.edits) {
           const textedit: monaco.languages.TextEdit = {range: new monaco.Range(
@@ -25,7 +25,10 @@ export class ABAPRenameProvider implements monaco.languages.RenameProvider {
             e.range.start.character + 1,
             e.range.end.line + 1,
             e.range.end.character + 1), text: newName};
-          const wte: monaco.languages.WorkspaceTextEdit = {resource: model.uri, edit: textedit};
+          const wte: monaco.languages.IWorkspaceTextEdit = {
+            resource: model.uri,
+            versionId: undefined,
+            textEdit: textedit};
           edit.edits.push(wte);
         }
       }
