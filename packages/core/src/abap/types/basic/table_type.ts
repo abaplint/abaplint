@@ -58,7 +58,7 @@ export class TableType extends AbstractType {
   }
 
   public isGeneric() {
-    return false;
+    return this.rowType.isGeneric();
   }
 
   public containsVoid() {

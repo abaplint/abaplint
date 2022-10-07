@@ -1755,23 +1755,16 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      let type = this.findType(i, lowFile, highSyntax);
-      if (type === undefined) {
-        if (high.get() instanceof Statements.Move
-            && high.findDirectExpression(Expressions.Source) === i
-            && high.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.TargetField) !== undefined) {
-          type = "LIKE " + high.findDirectExpression(Expressions.Target)?.concatTokens();
-        }
-        if (type === undefined) {
-          continue;
-        }
-      } else {
-        type = "TYPE " + type;
-      }
-
       const sourceName = filterBody.findDirectExpression(Expressions.Source)?.concatTokens();
       if (sourceName === undefined) {
         continue;
+      }
+
+      let type = this.findType(i, lowFile, highSyntax);
+      if (type === undefined) {
+        type = "LIKE " + sourceName;
+      } else {
+        type = "TYPE " + type;
       }
 
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
@@ -1779,10 +1772,10 @@ ${indentation}    output = ${topTarget}.`;
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       let body = "";
 
-      body += `${indentation}DATA ${uniqueName} ${type}.\n`;
+      body += `DATA ${uniqueName} ${type}.\n`;
       body += `${indentation}LOOP AT ${sourceName} INTO DATA(${loopName}) ${filterBody.concatTokens().substring(sourceName.length + 1)}.\n`;
       body += `${indentation}  INSERT ${loopName} INTO TABLE ${uniqueName}.\n`;
-      body += `${indentation}ENDLOOP.\n`;
+      body += `${indentation}ENDLOOP.\n${indentation}`;
 
       const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), body);
       const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);

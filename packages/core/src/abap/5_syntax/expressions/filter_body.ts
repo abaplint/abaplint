@@ -24,6 +24,6 @@ export class FilterBody {
       }
     }
 
-    return targetType ? targetType : type;
+    return type ? type : targetType;
   }
 }

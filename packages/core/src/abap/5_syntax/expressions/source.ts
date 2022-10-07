@@ -115,7 +115,13 @@ export class Source {
         case "FILTER":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          return new FilterBody().runSyntax(node.findDirectExpression(Expressions.FilterBody), scope, filename, foundType);
+          const bodyType = new FilterBody().runSyntax(node.findDirectExpression(Expressions.FilterBody), scope, filename, foundType);
+          if (foundType === undefined || foundType.isGeneric()) {
+            this.addIfInferred(node, scope, filename, bodyType);
+          } else {
+            this.addIfInferred(node, scope, filename, foundType);
+          }
+          return foundType ? foundType : bodyType;
         }
         case "CORRESPONDING":
         {

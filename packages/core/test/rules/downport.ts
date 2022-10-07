@@ -4124,4 +4124,40 @@ sdf = temp1.`;
     testFix(abap, expected);
   });
 
+  it("FILTER, class scoped types", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES book_id TYPE i.
+    TYPES basket_type TYPE SORTED TABLE OF book_id WITH NON-UNIQUE KEY table_line.
+    METHODS run IMPORTING basket TYPE basket_type.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA quantity TYPE i.
+    quantity = lines( FILTER #( basket WHERE table_line = 2 ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES book_id TYPE i.
+    TYPES basket_type TYPE SORTED TABLE OF book_id WITH NON-UNIQUE KEY table_line.
+    METHODS run IMPORTING basket TYPE basket_type.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA quantity TYPE i.
+    DATA temp1 TYPE lcl=>basket_type.
+    LOOP AT basket INTO DATA(temp2) WHERE table_line = 2.
+      INSERT temp2 INTO TABLE temp1.
+    ENDLOOP.
+    quantity = lines( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });
