@@ -68,13 +68,14 @@ export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvid
   }
 
   private map(input: LServer.WorkspaceEdit): monaco.languages.WorkspaceEdit {
-    const edits: monaco.languages.WorkspaceTextEdit[] = [];
+    const edits: monaco.languages.IWorkspaceTextEdit[] = [];
 
     for (const filename in input.changes) {
       for (const c of input.changes[filename]) {
         edits.push({
           resource: monaco.Uri.parse(filename),
-          edit: this.mapText(c)});
+          versionId: undefined,
+          textEdit: this.mapText(c)});
       }
     }
     return {edits};
@@ -87,7 +88,8 @@ export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvid
       i.range.start.line + 1,
       i.range.start.character + 1,
       i.range.end.line + 1,
-      i.range.end.character + 1), text: i.newText};
+      i.range.end.character + 1),
+    text: i.newText};
   }
 
 }
