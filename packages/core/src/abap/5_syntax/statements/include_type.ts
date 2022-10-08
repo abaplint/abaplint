@@ -21,6 +21,22 @@ export class IncludeType {
       ityp = new StructureType(ityp.getComponents().concat([{name: as, type: ityp}]));
     }
 
+    const suffix = node.findExpressionAfterToken("SUFFIX")?.concatTokens();
+    if (suffix && ityp instanceof StructureType) {
+      const components: IStructureComponent[] = [];
+      for (const c of ityp.getComponents()) {
+        if (c.name === as) {
+          components.push(c);
+          continue;
+        }
+        components.push({
+          name: c.name + suffix,
+          type: c.type,
+        });
+      }
+      ityp = new StructureType(components);
+    }
+
     if (ityp
         && ityp instanceof TypedIdentifier
         && ityp.getType() instanceof StructureType) {
