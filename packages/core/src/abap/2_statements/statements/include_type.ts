@@ -8,7 +8,7 @@ export class IncludeType implements IStatement {
   public getMatcher(): IStatementRunnable {
     const tas = seq("AS", Expressions.Field);
 
-    const renaming = seq("RENAMING WITH SUFFIX", Expressions.Source);
+    const renaming = seq("RENAMING WITH SUFFIX", Expressions.ComponentName);
 
     const ret = seq("INCLUDE",
                     alt("TYPE", "STRUCTURE"),

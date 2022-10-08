@@ -6718,6 +6718,27 @@ aggregated_data = VALUE #(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RENAMING WITH SUFFIX", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE c LENGTH 2,
+       END OF ty.
+
+TYPES BEGIN OF cul.
+INCLUDE TYPE ty AS foo1 RENAMING WITH SUFFIX _s1.
+INCLUDE TYPE ty AS foo2 RENAMING WITH SUFFIX _s2.
+TYPES END OF cul.
+
+DATA foo TYPE cul.
+
+WRITE foo-field1_s1.
+WRITE foo-foo1-field1.
+WRITE foo-field1_s2.
+WRITE foo-foo2-field1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
