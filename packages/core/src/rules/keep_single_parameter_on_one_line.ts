@@ -48,7 +48,6 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     }
 
     for (const s of file.getStatements()) {
-      // todo, add length as configurable setting
       if (this.isMultiLine(s) === false
           || this.calcStatementLength(s) > this.getConfig().length
           || this.containsNewLineValue(s)
