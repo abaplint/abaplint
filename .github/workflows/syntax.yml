@@ -6,12 +6,8 @@ jobs:
   syntax:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
     - name: npm run install
       run: npm run install
     - name: npm test
