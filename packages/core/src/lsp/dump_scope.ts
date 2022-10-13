@@ -82,7 +82,7 @@ export class DumpScope {
       ret = ret + "<br>";
     }
 
-    ret += sident + node.getData().cdefs.length + " class definitions<br>";
+    ret += sident + Object.keys(node.getData().cdefs).length + " class definitions<br>";
     ret += sident + node.getData().idefs.length + " interface definitions<br>";
     ret += sident + node.getData().forms.length + " form definitions<br>";
     ret += sident + node.getData().references.length + " references<br>";

@@ -1,4 +1,4 @@
-import {Issue, IRegistry, applyEditList, IEdit, RulesRunner} from "@abaplint/core";
+import {Issue, IRegistry, applyEditList, IEdit, RulesRunner, ABAPObject} from "@abaplint/core";
 import {PartialFS} from "./partial_fs";
 
 export class ApplyFixes {
@@ -56,9 +56,19 @@ export class ApplyFixes {
     }
 
     this.writeChangesToFS(fs, reg);
+
+    this.clearSyntaxCache(reg);
   }
 
 ///////////////////////////////////////////////////
+
+  private clearSyntaxCache(reg: IRegistry) {
+    for (const obj of reg.getObjects()) {
+      if (obj instanceof ABAPObject) {
+        obj.setDirty();
+      }
+    }
+  }
 
   private writeChangesToFS(fs: PartialFS, reg: IRegistry) {
     for (const filename of this.changedFiles.values()) {
