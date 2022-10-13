@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {Registry, MemoryFile, IRegistry, Config} from "@abaplint/core";
+import {Registry, MemoryFile, IRegistry, Config, Version} from "@abaplint/core";
 import {ApplyFixes} from "../src/fixes";
 import {PartialFS} from "../src/partial_fs";
 
@@ -94,7 +94,7 @@ ENDFORM.`;
 ENDFORM.`);
   });
 
-  it("must not fix exclude", async () => {
+  it("must not fix excluded object", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "CREATE OBJECT lo_obj.");
     const reg = new Registry().addFile(file);
 
@@ -112,5 +112,38 @@ ENDFORM.`);
 
     const result = mockFS.readFileSync("zfoobar.prog.abap").toString();
     expect(result).to.contain("CREATE OBJECT");
+  });
+
+  it("after fixing, there should be no syntax errors", async () => {
+    const prog = new MemoryFile("zfoobar.prog.abap", "zcl_bar=>run( ).");
+    const clas = new MemoryFile("zcl_bar.clas.abap", `
+CLASS zcl_bar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS zcl_bar IMPLEMENTATION.
+  METHOD run.
+    DATA lt_queue TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    LOOP AT lt_queue ASSIGNING FIELD-SYMBOL(<ls_queue>).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.    `);
+    const reg = new Registry().addFile(prog).addFile(clas);
+
+    const config = reg.getConfig().get();
+    config.syntax.version = Version.v702;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
+    reg.parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[prog.getFilename()] = prog.getRaw();
+    const mockFS = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
+
+    await applyFixes(reg, mockFS);
+
+    const syntax = reg.findIssues().filter(i => i.getKey() === "check_syntax");
+    expect(syntax.length).to.equal(0);
   });
 });
