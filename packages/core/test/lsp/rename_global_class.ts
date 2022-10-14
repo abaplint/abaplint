@@ -44,10 +44,6 @@ describe("LSP, prepare rename, global class", () => {
     expect(result!.placeholder).to.equal("zcl_foobar");
   });
 
-});
-
-describe("LSP, actual rename, variable", () => {
-
   it("simple", async () => {
     const abap = `DATA foo TYPE i.
 WRITE foo.`;
