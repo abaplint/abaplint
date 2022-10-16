@@ -4,7 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {Dynamic} from "./dynamic";
 import {MethodCallChain} from "./method_call_chain";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
-import {ClassDefinition} from "../../types";
+import {ClassDefinition, InterfaceDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ObjectOriented} from "../_object_oriented";
 import {Identifier} from "../../4_file_information/_identifier";
@@ -27,16 +27,20 @@ export class MethodSource {
         if (!(id instanceof ClassDefinition)) {
           id = scope.findObjectDefinition(id.getName());
         }
-        if (id instanceof ClassDefinition) { // todo || id instanceof InterfaceDefinition) {
+        if (id instanceof ClassDefinition || id instanceof InterfaceDefinition) {
           const methodName = last.concatTokens().toUpperCase();
           const helper = new ObjectOriented(scope);
           const {method: foundMethod} = helper.searchMethodName(id, methodName);
           if (foundMethod === undefined && methodName !== "CONSTRUCTOR") {
+            if (node.getChildren().length !== 3) {
+// todo
+              return undefined;
+            }
             throw new Error(`MethodSource, method not found \"${methodName}\"`);
           }
           const extra: IReferenceExtras = {
             ooName: id.getName(),
-            ooType: "CLAS"};
+            ooType: id instanceof ClassDefinition ? "CLAS" : "INTF"};
           scope.addReference(last.getFirstToken(), foundMethod, ReferenceType.MethodReference, filename, extra);
           return foundMethod;
         }
