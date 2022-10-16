@@ -6739,6 +6739,30 @@ WRITE foo-foo2-field1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CALLed METHOD not existing, expect error", () => {
+    const abap = `
+INTERFACE lif.
+  METHODS foo.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD lif~foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lif.
+  CREATE OBJECT lo TYPE lcl.
+  CALL METHOD lo->not_exists.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+    expect(issues[0]?.getMessage()).to.include("NOT_EXISTS");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
