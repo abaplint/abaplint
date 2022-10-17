@@ -4,6 +4,7 @@ import {Issue} from "../issue";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {CallScreen, SetScreen} from "../abap/2_statements/statements";
 
 export class OmitPrecedingZerosConf extends BasicRuleConfig {
 }
@@ -34,13 +35,18 @@ export class OmitPrecedingZeros extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    for (const i of file.getStructure()?.findAllExpressions(Expressions.Integer) || []) {
-      const token = i.getLastToken();
-      const str = token.getStr();
-      if (str.length > 1 && str.startsWith("0")) {
-        const message = "Omit preceding zeros";
-        const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity);
-        issues.push(issue);
+    for (const s of file.getStatements()) {
+      for (const i of s.findAllExpressions(Expressions.Integer)) {
+        const token = i.getLastToken();
+        const str = token.getStr();
+        if (str.length > 1 && str.startsWith("0")) {
+          if (s.get() instanceof CallScreen || s.get() instanceof SetScreen) {
+            continue;
+          }
+          const message = "Omit preceding zeros";
+          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity);
+          issues.push(issue);
+        }
       }
     }
 
