@@ -15,6 +15,8 @@ const tests = [
   {abap: "int = 123.", cnt: 0},
   {abap: "RAISE EXCEPTION TYPE ycx_see MESSAGE ID 'YSEE' NUMBER 003.", cnt: 0},
   {abap: "MESSAGE e001(abc) WITH lv_par1.", cnt: 0},
+  {abap: "call screen 0501 starting at 1 1.", cnt: 0},
+  {abap: "SET SCREEN 0100.", cnt: 0},
   {abap: "MESSAGE ID sy-msgid TYPE sy-msgty NUMBER 001.", cnt: 0},
 ];
 
