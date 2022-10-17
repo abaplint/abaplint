@@ -30,7 +30,7 @@ export class MethodSource {
         if (id instanceof ClassDefinition || id instanceof InterfaceDefinition) {
           const methodName = last.concatTokens().toUpperCase();
           const helper = new ObjectOriented(scope);
-          const {method: foundMethod} = helper.searchMethodName(id, methodName);
+          const {method: foundMethod, def: foundDef} = helper.searchMethodName(id, methodName);
           if (foundMethod === undefined && methodName !== "CONSTRUCTOR") {
             if (node.getChildren().length !== 3) {
 // todo
@@ -39,8 +39,8 @@ export class MethodSource {
             throw new Error(`MethodSource, method not found \"${methodName}\"`);
           }
           const extra: IReferenceExtras = {
-            ooName: id.getName(),
-            ooType: id instanceof ClassDefinition ? "CLAS" : "INTF"};
+            ooName: foundDef?.getName(),
+            ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
           scope.addReference(last.getFirstToken(), foundMethod, ReferenceType.MethodReference, filename, extra);
           return foundMethod;
         }
