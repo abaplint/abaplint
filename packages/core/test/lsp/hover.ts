@@ -1192,4 +1192,32 @@ INSERT VALUE #( count = 2 ) INTO TABLE aggregated_data REFERENCE INTO DATA(aggre
     expect(hover?.value).to.contain("count");
   });
 
+  it("hover method references, CALL METHOD vs normal, should be the same", () => {
+    const abap = `
+INTERFACE lif.
+  CLASS-METHODS foo.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD lif~foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  CALL METHOD lcl=>lif~foo.
+  lcl=>lif~foo( ).`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover1 = new Hover(reg).find(buildPosition(file, 15, 25));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain(`"ooName":"lif"`);
+    const hover2 = new Hover(reg).find(buildPosition(file, 16, 12));
+    expect(hover2).to.not.equal(undefined);
+    expect(hover2?.value).to.contain(`"ooName":"lif"`);
+  });
+
 });
