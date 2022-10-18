@@ -23,7 +23,11 @@ export class MainFileContents implements IRule {
       key: "main_file_contents",
       title: "Main file contents",
       shortDescription: `Checks related to report declarations.`,
-      extendedInformation: `Does not run if the target version is Cloud`,
+      extendedInformation: `Does not run if the target version is Cloud
+
+* PROGs must begin with "REPORT <name>." or "PROGRAM <name>.
+* TYPEs must begin with "TYPE-POOL <name>."
+`,
     };
   }
 
@@ -80,7 +84,25 @@ export class MainFileContents implements IRule {
         return [issue];
       } else if (name.getFirstToken().getStr().toUpperCase() !== obj.getName()) {
         const token = name.getFirstToken();
-        const issue = Issue.atToken(main, token, this.getDescription("REPORT or PROGRAM name should match filename"), this.getMetadata().key, this.conf.severity);
+        const issue = Issue.atToken(main, token, this.getDescription("REPORT or PROGRAM name must match filename"), this.getMetadata().key, this.conf.severity);
+        return [issue];
+      }
+    } else if (obj instanceof Objects.TypePool) {
+      let count = 0;
+      let first = main.getStatements()[count];
+      while (first !== undefined && first.get() instanceof Comment) {
+        count = count + 1;
+        first = main.getStatements()[count];
+      }
+      if (first === undefined || !(first.get() instanceof Statements.TypePool)) {
+        const position = new Position(1, 1);
+        const issue = Issue.atPosition(main, position, this.getDescription("Type pool must begin with TYPE-POOL"), this.getMetadata().key, this.conf.severity);
+        return [issue];
+      }
+      const name = first.getChildren()[3];
+      if (name.getFirstToken().getStr().toUpperCase() !== obj.getName()) {
+        const token = name.getFirstToken();
+        const issue = Issue.atToken(main, token, this.getDescription("TYPE-POOL name must match filename"), this.getMetadata().key, this.conf.severity);
         return [issue];
       }
     }
