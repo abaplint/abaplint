@@ -30,7 +30,7 @@ const tests = [
   {abap: "RAISE EXCEPTION NEW zcx_excel( i_message).", cnt: 1},
   {abap: "rv_empty = boolc( strlen( mv_str) = 0 ).", cnt: 1},
   {abap: "rv_empty = boolc( strlen( mv_str ) = 0 ).", cnt: 0},
-  {abap: "cl_abap_unit_assert=>assert_initial( cut->parse( `Portable Network Graphics`) ).", cnt: 1, only: true},
+  {abap: "cl_abap_unit_assert=>assert_initial( cut->parse( `Portable Network Graphics`) ).", cnt: 1},
   {abap: "cl_abap_unit_assert=>assert_initial( cut->parse( `Portable Network Graphics` ) ).", cnt: 0},
 ];
 
