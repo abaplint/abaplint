@@ -126,6 +126,14 @@ const defaultConfigTests = [
                   foobar REDEFINITION
             ENDCLASS.`, cnt: 0,
   },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+  "! <p class="shorttext synchronized" lang="en">Text</p>
+  METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 0,
+  },
 ];
 
 testRule(defaultConfigTests, Abapdoc);

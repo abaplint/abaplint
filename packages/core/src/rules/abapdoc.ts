@@ -5,6 +5,7 @@ import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import { Position } from "../position";
 
 export class AbapdocConf extends BasicRuleConfig {
   /** Check local classes and interfaces for abapdoc. */
@@ -79,14 +80,25 @@ Plus class and interface definitions.`,
       if (method.isRedefinition === true) {
         continue;
       }
-      const previousRow = method.identifier.getStart().getRow() - 2;
-      if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
+      const previousRowText = this.getPreviousRow(rows, method.identifier.getStart());
+      if (!(previousRowText.substring(0, 2) === "\"!")) {
         const message = "Missing ABAP Doc for method " + method.identifier.getToken().getStr();
         const issue = Issue.atIdentifier(method.identifier, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }
     return issues;
+  }
+
+  private getPreviousRow(rows: readonly string[], pos: Position): string {
+    const previousRow = pos.getRow() - 2;
+    const text = rows[previousRow].trim().toUpperCase();
+    if (text === "METHODS" || text === "CLASS-METHODS") {
+      const previousRow = pos.getRow() - 3;
+      const text = rows[previousRow].trim().toUpperCase();
+      return text;
+    }
+    return text;
   }
 
 }
