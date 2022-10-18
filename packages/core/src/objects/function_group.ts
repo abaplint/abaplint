@@ -38,7 +38,7 @@ export class FunctionGroup extends ABAPObject {
     const sequence = [main];
 
     for (const m of this.getModules()) {
-      const search = "." + m.getName().toLocaleLowerCase() + ".abap";
+      const search = "." + m.getName().toLocaleLowerCase().replace(/\//g, "#") + ".abap";
       for (const f of this.getABAPFiles()) {
         if (f.getFilename().toLocaleLowerCase().endsWith(search)) {
           if (sequence.indexOf(f) < 0) {

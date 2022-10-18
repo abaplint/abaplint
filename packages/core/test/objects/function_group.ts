@@ -74,4 +74,38 @@ describe("Funcion Group, parse main xml", () => {
     expect(row.name).to.equal("LZAGTEST_FUNCTION_GROUPTOP");
   });
 
+  it("test, getSequencedFiles with namespace", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <AREAT>fugr</AREAT>
+       <INCLUDES>
+        <SOBJ_NAME>/FOO/LBARTOP</SOBJ_NAME>
+        <SOBJ_NAME>/FOO/SAPLBAR</SOBJ_NAME>
+       </INCLUDES>
+       <FUNCTIONS>
+        <item>
+         <FUNCNAME>/FOO/FMNAME</FUNCNAME>
+         <SHORT_TEXT>hello</SHORT_TEXT>
+        </item>
+       </FUNCTIONS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("#foo#bar.fugr.xml", xml));
+    reg.addFile(new MemoryFile("#foo#bar.fugr.#foo#fmname.abap", `FUNCTION /foo/fmname.
+  WRITE 'hello'.
+ENDFUNCTION.`));
+    reg.addFile(new MemoryFile("#foo#bar.fugr.#foo#saplbar.abap", `INCLUDE /foo/lbartop.
+INCLUDE /foo/lbaruxx.`));
+
+    await reg.parseAsync();
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
+    const sequenced = fugr.getSequencedFiles();
+    expect(sequenced.length).to.equal(2);
+  });
+
 });
