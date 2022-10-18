@@ -168,6 +168,14 @@ LOOP AT SCREEN.
   WRITE 2.
 ENDLOOP.`, cnt: 0},
 
+  {abap: `
+REPORT zfoobar.
+TABLES pernr.
+START-OF-SELECTION.
+GET pernr.
+  WRITE pernr-pernr.
+END-OF-SELECTION.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

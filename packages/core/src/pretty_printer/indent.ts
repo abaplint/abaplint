@@ -83,6 +83,7 @@ export class Indent {
         || type instanceof Statements.Initialization
         || type instanceof Statements.AtUserCommand
         || type instanceof Statements.TopOfPage
+        || type instanceof Statements.Get
         || type instanceof Statements.EndOfSelection
         || type instanceof Statements.LoadOfProgram) {
         indent = init;
@@ -158,6 +159,7 @@ export class Indent {
           statement.concatTokens().toUpperCase().includes("BEGIN OF BLOCK") ||
           statement.concatTokens().toUpperCase().includes("BEGIN OF LINE")))
         || type instanceof Statements.StartOfSelection
+        || type instanceof Statements.Get
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.AtLineSelection
         || type instanceof Statements.LoadOfProgram
