@@ -127,6 +127,7 @@ ENDIF.`,
         && !(statement.get() instanceof Statements.Data)
         && !(statement.get() instanceof Statements.DataEnd)
         && !(statement.get() instanceof Statements.Type)
+        && !(statement.get() instanceof Statements.Form)
         && !(statement.get() instanceof Statements.TypeEnd)
         && !(statement.get() instanceof Statements.Constant)
         && !(statement.get() instanceof Statements.ConstantEnd)
