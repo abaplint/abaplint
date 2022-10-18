@@ -66,4 +66,22 @@ describe("Rule: main_file_contents", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("Type pool, ok", async () => {
+    const abap = "TYPE-POOL zmoo.";
+    const issues = await findIssues(abap, "zmoo.type.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Type pool, wrong start", async () => {
+    const abap = "WRITE 'sdf'.";
+    const issues = await findIssues(abap, "zmoo.type.abap");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Type pool, name not match, error", async () => {
+    const abap = "TYPE-POOL hello.";
+    const issues = await findIssues(abap, "world.type.abap");
+    expect(issues.length).to.equal(1);
+  });
+
 });

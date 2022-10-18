@@ -48,6 +48,8 @@ ENDIF.`, cnt: 1},
   {abap: `SELECT SINGLE * FROM tadir INTO @DATA(sdfs).
 IF sy-subrc <> 0.
 ENDIF.`, cnt: 0},
+  {abap: `FORM entry USING return_code TYPE i us_screen   TYPE abap_bool ##NEEDED.
+ENDFORM.`, cnt: 0},
 ];
 
 testRule(tests, UnnecessaryPragma);
