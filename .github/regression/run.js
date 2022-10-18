@@ -17,6 +17,7 @@ const repos = [
   "abapinho/abapTimeMachine",
   "abaplint/abaplint-sci-client",
   "abaplint/deps",
+  "exercism/abap",
   "FreHu/abap-turtle-graphics",
   "heliconialabs/abap-opentelemetry",
   "heliconialabs/abap-protobuf",
