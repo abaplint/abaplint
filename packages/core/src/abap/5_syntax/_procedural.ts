@@ -13,7 +13,7 @@ import {TableType, UnknownType, AnyType, VoidType, StructureType} from "../types
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
-import { ObjectOriented } from "./_object_oriented";
+import {ObjectOriented} from "./_object_oriented";
 
 export class Procedural {
   private readonly scope: CurrentScope;
