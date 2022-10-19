@@ -10,7 +10,7 @@ export class Target extends Expression {
     const attr = seq(tok(InstanceArrow), AttributeName);
     const comp = seq(tok(Dash), ComponentName);
 
-    const something = starPrio(altPrio(attr, comp, TableExpression));
+    const something = starPrio(altPrio(Dereference, attr, comp, TableExpression));
 
     const cast = seq(altPrio(Cast, NewObject), Arrow, FieldAll);
 
@@ -19,7 +19,7 @@ export class Target extends Expression {
 
     const fields = seq(optPrio(FieldOffset), optPrio(FieldLength));
 
-    const optional = altPrio(TableBody, fields, Dereference);
+    const optional = altPrio(TableBody, fields);
 
     return altPrio(InlineData, InlineFS, seq(start, something, optional));
   }

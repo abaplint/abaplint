@@ -11,6 +11,7 @@ import {AttributeName} from "./attribute_name";
 import {FieldOffset} from "./field_offset";
 import {ReferenceType} from "../_reference";
 import {TableExpression} from "./table_expression";
+import {Dereference} from "../../2_statements/expressions";
 
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
@@ -57,6 +58,11 @@ export class Target {
             && !(context instanceof VoidType)) {
           throw new Error("Not a object reference, target");
         }
+      } else if (current.get() instanceof Dereference) {
+        if (!(context instanceof DataReference)) {
+          throw new Error("Not a object reference, target");
+        }
+        context = context.getType();
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
       } else if (current.get() instanceof Expressions.TableBody) {

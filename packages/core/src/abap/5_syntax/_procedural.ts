@@ -13,6 +13,7 @@ import {TableType, UnknownType, AnyType, VoidType, StructureType} from "../types
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
+import {ObjectOriented} from "./_object_oriented";
 
 export class Procedural {
   private readonly scope: CurrentScope;
@@ -117,6 +118,13 @@ export class Procedural {
           if (c) {
             found = c;
           }
+        }
+      } else if (found instanceof UnknownType && param.type?.includes("=>")) {
+        const [name, field] = param.type.split("=>");
+        const def = this.scope.findObjectDefinition(name);
+        const c = new ObjectOriented(this.scope).searchTypeName(def, field);
+        if (c) {
+          found = c.getType();
         }
       }
 
