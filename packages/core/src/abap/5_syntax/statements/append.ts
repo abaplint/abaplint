@@ -9,6 +9,7 @@ import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 
+// todo: issue error for short APPEND if the source is without header line
 export class Append implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
@@ -44,6 +45,7 @@ export class Append implements StatementSyntax {
     if (source) {
       if (targetType !== undefined
           && !(targetType instanceof TableType)
+          && dataTarget !== target
           && !(targetType instanceof VoidType)) {
         throw new Error("Append, target not a table type");
       }

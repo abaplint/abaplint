@@ -105,8 +105,7 @@ export class Procedural {
       } else {
         found = ddic.lookup(param.type).type;
       }
-      if (param.direction === FunctionModuleParameterDirection.tables
-          && !(found instanceof TableType)) {
+      if (param.direction === FunctionModuleParameterDirection.tables) {
         found = new TableType(found, {withHeader: true});
       }
 

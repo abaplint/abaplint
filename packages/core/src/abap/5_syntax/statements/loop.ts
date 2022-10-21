@@ -35,6 +35,11 @@ export class Loop implements StatementSyntax {
       throw new Error("No source type determined");
     } else if (sourceType instanceof UnknownType) {
       throw new Error("Loop, not a table type, " + sourceType.getError());
+    } else if (sourceType instanceof TableType
+        && target === undefined
+        && sourceType.isWithHeader() === false
+        && node.getChildren().length === 4) {
+      throw new Error("Loop, no header line");
     } else if (!(sourceType instanceof TableType)
         && !(sourceType instanceof VoidType)
         && concat.startsWith("LOOP AT GROUP ") === false) {

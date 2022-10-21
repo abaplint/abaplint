@@ -6763,6 +6763,40 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.include("NOT_EXISTS");
   });
 
+  it("Short LOOP syntax, no header, issue error", () => {
+    const abap = `
+DATA users TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+LOOP AT users.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+    expect(issues[0]?.getMessage()).to.include("no header line");
+  });
+
+  it("Short LOOP syntax, ok", () => {
+    const abap = `
+DATA users TYPE i OCCURS 0 WITH HEADER LINE.
+LOOP AT users.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("something with something tables references and stuff", () => {
+// note: "APPEND binding" appends to the header, and the reference of the new row is INTO
+    const abap = `
+DATA binding TYPE i OCCURS 0 WITH HEADER LINE.
+TYPES: BEGIN OF ty_attr,
+         binding LIKE REF TO binding,
+       END OF   ty_attr.
+TYPES ty_t_attr TYPE STANDARD TABLE OF ty_attr WITH DEFAULT KEY.
+DATA it_attr TYPE ty_t_attr.
+DATA wa LIKE LINE OF it_attr.
+APPEND binding REFERENCE INTO wa-binding.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
