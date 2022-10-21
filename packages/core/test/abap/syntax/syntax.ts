@@ -6763,6 +6763,25 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.include("NOT_EXISTS");
   });
 
+  it("Short LOOP syntax, no header, issue error", () => {
+    const abap = `
+DATA users TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+LOOP AT users.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+    expect(issues[0]?.getMessage()).to.include("no header line");
+  });
+
+  it("Short LOOP syntax, ok", () => {
+    const abap = `
+DATA users TYPE i OCCURS 0 WITH HEADER LINE.
+LOOP AT users.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
