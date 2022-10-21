@@ -44,6 +44,7 @@ export class Append implements StatementSyntax {
     if (source) {
       if (targetType !== undefined
           && !(targetType instanceof TableType)
+          && dataTarget !== target
           && !(targetType instanceof VoidType)) {
         throw new Error("Append, target not a table type");
       }

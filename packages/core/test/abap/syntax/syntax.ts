@@ -6782,6 +6782,20 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("something with something tables references and stuff", () => {
+    const abap = `
+DATA binding TYPE i OCCURS 0 WITH HEADER LINE.
+TYPES: BEGIN OF ty_attr,
+         binding LIKE REF TO binding,
+       END OF   ty_attr.
+TYPES ty_t_attr TYPE STANDARD TABLE OF ty_attr WITH DEFAULT KEY.
+DATA it_attr TYPE ty_t_attr.
+DATA wa LIKE LINE OF it_attr.
+APPEND binding REFERENCE INTO wa-binding.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
