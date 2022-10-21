@@ -1220,4 +1220,81 @@ START-OF-SELECTION.
     expect(hover2?.value).to.contain(`"ooName":"lif"`);
   });
 
+  it("hover, namespaced function group", () => {
+    const fmname = `FUNCTION /foo/fmname.
+  WRITE 'hello'.
+ENDFUNCTION.`;
+    const bartopabap = `FUNCTION-POOL /foo/bar.`;
+    const bartopxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>/FOO/LBARTOP</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>I</SUBC>
+    <APPL>S</APPL>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const saplbarabap = `INCLUDE /foo/lbartop.
+INCLUDE /foo/lbaruxx.`;
+    const saplbarxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>/FOO/SAPLBAR</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>F</SUBC>
+    <APPL>S</APPL>
+    <RLOAD>E</RLOAD>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>fugr</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>/FOO/LBARTOP</SOBJ_NAME>
+    <SOBJ_NAME>/FOO/SAPLBAR</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>/FOO/FMNAME</FUNCNAME>
+     <SHORT_TEXT>hello</SHORT_TEXT>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const files = [
+      {filename: "#foo#bar.fugr.#foo#fmname.abap", contents: fmname},
+      {filename: "#foo#bar.fugr.#foo#lbartop.abap", contents: bartopabap},
+      {filename: "#foo#bar.fugr.#foo#lbartop.xml", contents: bartopxml},
+      {filename: "#foo#bar.fugr.#foo#saplbar.abap", contents: saplbarabap},
+      {filename: "#foo#bar.fugr.#foo#saplbar.xml", contents: saplbarxml},
+      {filename: "#foo#bar.fugr.xml", contents: xml},
+    ].map(e => new MemoryFile(e.filename, e.contents));
+
+    const reg = new Registry().addFiles(files).parse();
+
+    const hover1 = new Hover(reg).find(buildPosition(files[0], 1, 10));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain(`String`);
+  });
+
 });
