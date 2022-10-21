@@ -6783,6 +6783,7 @@ ENDLOOP.`;
   });
 
   it("something with something tables references and stuff", () => {
+// note: "APPEND binding" appends to the header, and the reference of the new row is INTO
     const abap = `
 DATA binding TYPE i OCCURS 0 WITH HEADER LINE.
 TYPES: BEGIN OF ty_attr,
