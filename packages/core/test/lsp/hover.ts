@@ -1223,6 +1223,7 @@ START-OF-SELECTION.
   it("hover, namespaced function group", () => {
     const fmname = `FUNCTION /foo/fmname.
   WRITE 'hello'.
+  DATA foobar TYPE i.
 ENDFUNCTION.`;
     const bartopabap = `FUNCTION-POOL /foo/bar.`;
     const bartopxml = `<?xml version="1.0" encoding="utf-8"?>
@@ -1295,6 +1296,11 @@ INCLUDE /foo/lbaruxx.`;
     const hover1 = new Hover(reg).find(buildPosition(files[0], 1, 10));
     expect(hover1).to.not.equal(undefined);
     expect(hover1?.value).to.contain(`String`);
+
+    const hover2 = new Hover(reg).find(buildPosition(files[0], 2, 10));
+    expect(hover2).to.not.equal(undefined);
+    expect(hover2?.value).to.contain(`Variable Definition`);
+
   });
 
 });
