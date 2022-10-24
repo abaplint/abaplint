@@ -1924,7 +1924,7 @@ ${indentation}    output = ${topTarget}.`;
         const concat = n.concatTokens();
         if (concat.toUpperCase() === "NEXT") {
           continue;
-        } else if (n.get() instanceof Expressions.SimpleFieldChain) {
+        } else if (n.get() instanceof Expressions.SimpleTarget) {
           body += indentation + "  " + concat + " ";
         } else if (n.get() instanceof Expressions.Source) {
           body += " " + concat + ".\n";

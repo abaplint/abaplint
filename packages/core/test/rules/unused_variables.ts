@@ -1174,4 +1174,16 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("REDUCE and and", async () => {
+    const abap = `
+    DATA column TYPE i VALUE 2.
+    DATA crypto_text TYPE string.
+    crypto_text = REDUCE string(
+                        INIT txt TYPE string
+                        FOR i = 0 UNTIL i = column
+                        NEXT txt &&= |a| ).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

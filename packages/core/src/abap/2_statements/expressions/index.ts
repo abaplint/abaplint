@@ -14,6 +14,7 @@ export * from "./call_transformation_parameters";
 export * from "./cast";
 export * from "./class_final";
 export * from "./class_friends";
+export * from "./simple_target";
 export * from "./class_global";
 export * from "./class_name";
 export * from "./color";
