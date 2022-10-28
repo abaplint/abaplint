@@ -24,8 +24,9 @@ export class Raise implements IStatement {
                      opt(alt(ver(Version.v750, alt(mess, messid)), ver(Version.v752, "USING MESSAGE"))),
                      optPrio(exporting));
 
-    const clas = seq(optPrio("RESUMABLE"),
-                     "EXCEPTION",
+    const pre = alt(seq(optPrio("RESUMABLE"), "EXCEPTION"), "SHORTDUMP");
+
+    const clas = seq(pre,
                      altPrio(from, ver(Version.v752, Source), SimpleSource2));
 
     const ret = seq("RAISE", altPrio(clas, ExceptionName));

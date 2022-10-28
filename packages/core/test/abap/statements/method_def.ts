@@ -106,6 +106,8 @@ const tests = [
   RAISING   cx_amdp_execution_error.`,
 
   `METHODS read FOR READ IMPORTING keys FOR READ /foo/bar RESULT result.`,
+
+  `METHODS set_foo FOR DETERMINE ON SAVE IMPORTING keys FOR foo~set_foo.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
