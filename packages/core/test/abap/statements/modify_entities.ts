@@ -38,6 +38,13 @@ const tests = [
     EXECUTE blah FROM val
     RESULT DATA(result)
     FAILED DATA(failed).`,
+
+  `MODIFY ENTITIES OF /foo/bar IN LOCAL MODE
+    ENTITY ent
+    UPDATE SET FIELDS WITH VALUE #( FOR key IN lt_dat ( %key = key-%key
+                                                        aenam = lv_user
+                                                        aedat = lv_dt ) )
+    FAILED lt_failed.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
