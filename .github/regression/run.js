@@ -34,7 +34,6 @@ const repos = [
   "Marc-Bernard-Tools/MBT-Listcube",
   "Marc-Bernard-Tools/MBT-Logical-Object-Lister",
   "Marc-Bernard-Tools/MBT-Transport-Request",
-  "microsoft/ABAP-SDK-for-Azure",
   "open-abap/open-abap",
   "open-abap/open-table-maintenance",
   "SAP/abap-file-formats-tools",
