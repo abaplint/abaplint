@@ -108,6 +108,7 @@ const tests = [
   `METHODS read FOR READ IMPORTING keys FOR READ /foo/bar RESULT result.`,
   `METHODS set_foo FOR DETERMINE ON SAVE IMPORTING keys FOR foo~set_foo.`,
   `METHODS create FOR MODIFY IMPORTING entities FOR CREATE item.`,
+  `METHODS update FOR MODIFY IMPORTING entities FOR UPDATE header.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
