@@ -45,6 +45,13 @@ const tests = [
                                                         aenam = lv_user
                                                         aedat = lv_dt ) )
     FAILED lt_failed.`,
+
+  `MODIFY ENTITIES OF /foo/bar
+    ENTITY ent
+    CREATE SET FIELDS WITH CORRESPONDING #( tab EXCEPT foo bar )
+    REPORTED DATA(lt_dat)
+    MAPPED DATA(lt_map)
+    FAILED DATA(lt_failed).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

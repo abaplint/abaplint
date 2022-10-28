@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.93.52",
+    "version": "2.93.53",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -46,10 +46,10 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@microsoft/api-extractor": "^7.33.4",
+        "@microsoft/api-extractor": "^7.33.5",
         "@types/chai": "^4.3.3",
         "@types/mocha": "^10.0.0",
-        "@types/node": "^18.11.5",
+        "@types/node": "^18.11.7",
         "chai": "^4.3.6",
         "eslint": "^8.26.0",
         "mocha": "^10.1.0",

@@ -10,6 +10,7 @@ export class ModifyEntities implements IStatement {
     const fieldsWith = seq("FIELDS (", plus(SimpleName), ") WITH", Source);
     const operation = alt(
       seq("UPDATE SET FIELDS WITH", Source),
+      seq("CREATE SET FIELDS WITH", Source),
       seq("UPDATE", fieldsWith),
       seq("DELETE FROM", Source),
       seq("EXECUTE", SimpleName, "FROM", Source),
@@ -19,9 +20,9 @@ export class ModifyEntities implements IStatement {
                   opt("IN LOCAL MODE"),
                   "ENTITY", SimpleName,
                   operation,
-                  optPrio(seq("MAPPED", Target)),
                   per(seq("FAILED", Target),
                       seq("RESULT", Target),
+                      seq("MAPPED", Target),
                       seq("REPORTED", Target)));
     return ver(Version.v754, s);
   }

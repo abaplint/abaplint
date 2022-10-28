@@ -30,6 +30,14 @@ const tests = [
      WITH CORRESPONDING #( keys )
      RESULT DATA(lt_dat)
      FAILED DATA(lt_failed).`,
+
+  `READ ENTITIES OF /foo/bar IN LOCAL MODE
+    ENTITY ent
+    FROM VALUE #(
+      FOR <key> IN keys (
+        %key = <key>
+        control = VALUE #( sdf = if_abap_behv=>mk-on ) ) )
+      RESULT DATA(lt_tab).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
