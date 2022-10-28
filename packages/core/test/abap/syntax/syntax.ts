@@ -6493,7 +6493,7 @@ DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 MOVE-CORRESPONDING tab1 TO tab2.`;
     const issues = runProgram(abap, [], Version.v702);
-    expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONSING with tables possible");
+    expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONDING with tables possible");
   });
 
   it("field symbol tokens is undefined", () => {
