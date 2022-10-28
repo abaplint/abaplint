@@ -45,6 +45,13 @@ const tests = [
     WITH CORRESPONDING #( tab )
     RESULT DATA(lt_dat)
     FAILED DATA(lt_failed).`,
+
+  `READ ENTITIES OF /foo/bar
+    ENTITY ent
+    ALL FIELDS WITH VALUE #( ( sdf = '123' ) )
+    RESULT DATA(lt_tab)
+    FAILED DATA(lt_failed)
+    REPORTED DATA(lt_reported).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
