@@ -18,6 +18,7 @@ const tests = [
   "RAISE EXCEPTION TYPE zcx_error MESSAGE s123(c$).",
   "RAISE EXCEPTION NEW zcx_excel( i_message = 'Worksheet not found.').",
   "RAISE exc.",
+  "RAISE SHORTDUMP TYPE /foo/bar MESSAGE e401(/foo/bar) WITH iv_table.",
 ];
 
 statementType(tests, "RAISE", Statements.Raise);

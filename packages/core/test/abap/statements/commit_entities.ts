@@ -10,6 +10,11 @@ const tests = [
   `COMMIT ENTITIES IN SIMULATION MODE.`,
 
   `COMMIT ENTITIES.`,
+
+  `COMMIT ENTITIES
+  RESPONSE OF /foo/bar
+  FAILED DATA(failed)
+  REPORTED DATA(reported).`,
 ];
 
 statementType(tests, "COMMIT ENTITIES", Statements.CommitEntities);

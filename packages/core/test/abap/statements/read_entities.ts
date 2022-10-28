@@ -23,6 +23,13 @@ const tests = [
     LINK DATA(link)
     FAILED DATA(failed)
     REPORTED DATA(reported).`,
+
+  `READ ENTITIES OF /foo/bar IN LOCAL MODE
+     ENTITY ent
+     FIELDS ( aedat )
+     WITH CORRESPONDING #( keys )
+     RESULT DATA(lt_dat)
+     FAILED DATA(lt_failed).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);

@@ -27,8 +27,10 @@ export class MethodDef implements IStatement {
     const behavior = altPrio(
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, "FOR ACTION", TypeName, "RESULT", MethodParamName),
+      seq("READ IMPORTING", MethodParamName, "FOR READ", TypeName, "RESULT", MethodParamName),
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, "RESULT", MethodParamName),
-      seq("DETERMINE ON MODIFY IMPORTING", MethodParamName, "FOR", TypeName));
+      seq("DETERMINE ON MODIFY IMPORTING", MethodParamName, "FOR", TypeName),
+      seq("DETERMINE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName));
 
 // todo, this is only from version something
     const amdp = seq(

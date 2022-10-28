@@ -104,6 +104,10 @@ const tests = [
             VALUE(i_airport_to)   TYPE zabap_graph_spfli_edge-AirportTo
   EXPORTING VALUE(e_routes)       TYPE tt_routes
   RAISING   cx_amdp_execution_error.`,
+
+  `METHODS read FOR READ IMPORTING keys FOR READ /foo/bar RESULT result.`,
+
+  `METHODS set_foo FOR DETERMINE ON SAVE IMPORTING keys FOR foo~set_foo.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

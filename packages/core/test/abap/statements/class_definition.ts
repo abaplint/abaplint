@@ -24,6 +24,8 @@ const tests = [
 
   "class ZCL_SHARED_MEMORY_ROOT definition public final create public shared memory enabled.",
   "CLASS cl_foo DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF blah.",
+
+  "CLASS /foo/bar DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF /foo/bar.",
 ];
 
 statementType(tests, "CLASS Definition", Statements.ClassDefinition);
