@@ -49,8 +49,12 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.Table
         || obj instanceof Objects.TableType
         || obj instanceof Objects.DataDefinition
+        || obj instanceof Objects.BusinessCatalog
+        || obj instanceof Objects.BusinessCatalogAppAssignment
+        || obj instanceof Objects.AssignmentServiceToAuthorizationGroup
         || obj instanceof Objects.DataControl
         || obj instanceof Objects.LockObject
+        || obj instanceof Objects.CDSMetadataExtension
         || obj instanceof Objects.Transformation
         || obj instanceof Objects.FunctionGroup
         || obj instanceof Objects.DataElement

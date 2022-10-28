@@ -19,11 +19,11 @@ export class MoveCorresponding implements StatementSyntax {
     const sourceType = new Source().runSyntax(s, scope, filename);
     const targetType = new Target().runSyntax(t, scope, filename);
 
-    if (scope.getVersion() < Version.v740sp05) {
+    if (scope.getVersion() < Version.v740sp05 && scope.getVersion() !== Version.Cloud) {
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {
-        throw new Error("MOVE-CORRESPONSING with tables possible from v740sp05");
+        throw new Error("MOVE-CORRESPONDING with tables possible from v740sp05");
       } else if (targetType instanceof TableType && targetType.isWithHeader() === false) {
-        throw new Error("MOVE-CORRESPONSING with tables possible from v740sp05");
+        throw new Error("MOVE-CORRESPONDING with tables possible from v740sp05");
       }
     }
   }

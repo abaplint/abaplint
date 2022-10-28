@@ -17,6 +17,8 @@ export * from "./change_document";
 export * from "./chapter_of_book_structure";
 export * from "./checkpoint_group";
 export * from "./class";
+export * from "./business_catalog";
+export * from "./business_catalog_app_assignment";
 export * from "./classification";
 export * from "./composite_enhancement_implementation";
 export * from "./composite_enhancement_spot";
