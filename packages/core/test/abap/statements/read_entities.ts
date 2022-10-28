@@ -38,6 +38,13 @@ const tests = [
         %key = <key>
         control = VALUE #( sdf = if_abap_behv=>mk-on ) ) )
       RESULT DATA(lt_tab).`,
+
+  `READ ENTITIES OF /foo/bar
+    ENTITY ent
+    FIELDS ( field )
+    WITH CORRESPONDING #( tab )
+    RESULT DATA(lt_dat)
+    FAILED DATA(lt_failed).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);

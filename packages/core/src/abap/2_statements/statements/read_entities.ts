@@ -13,7 +13,7 @@ export class ReadEntities implements IStatement {
     const fields = seq("FIELDS", tok(WParenLeftW), plus(SimpleName), tok(WParenRightW), "WITH", Source);
 
     const s = seq("READ ENTITIES OF", NamespaceSimpleName,
-                  "IN LOCAL MODE",
+                  opt("IN LOCAL MODE"),
                   "ENTITY", SimpleName,
                   opt(seq("BY", AssociationName)),
                   alt(fields, from),
