@@ -28,6 +28,7 @@ export class MethodDef implements IStatement {
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, "FOR ACTION", TypeName, "RESULT", MethodParamName),
       seq("MODIFY IMPORTING", MethodParamName, "FOR CREATE", TypeName),
+      seq("MODIFY IMPORTING", MethodParamName, "FOR DELETE", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, "FOR UPDATE", TypeName),
       seq("READ IMPORTING", MethodParamName, "FOR READ", TypeName, "RESULT", MethodParamName),
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, "RESULT", MethodParamName),

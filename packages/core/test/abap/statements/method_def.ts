@@ -109,6 +109,7 @@ const tests = [
   `METHODS set_foo FOR DETERMINE ON SAVE IMPORTING keys FOR foo~set_foo.`,
   `METHODS create FOR MODIFY IMPORTING entities FOR CREATE item.`,
   `METHODS update FOR MODIFY IMPORTING entities FOR UPDATE header.`,
+  `METHODS delete FOR MODIFY IMPORTING keys FOR DELETE links.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
