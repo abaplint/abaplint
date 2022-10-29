@@ -341,6 +341,8 @@ INTO TABLE @DATA(evilized_monster_weapons).`,
   `SELECT * INTO TABLE lt_but000
 FROM but000
 WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
+
+  `SELECT * FROM sdf WHERE tabname IN (@val, 'sdf') INTO TABLE @tab.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
