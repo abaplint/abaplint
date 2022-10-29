@@ -10,6 +10,8 @@ import {StatementNode} from "../abap/nodes/statement_node";
 import {EditHelper, IEdit} from "../edit_helper";
 
 export class AvoidUseConf extends BasicRuleConfig {
+  /** Do not emit quick fix suggestion */
+  public skipQuickFix?: boolean = false;
   /** Detects DEFINE (macro definitions) */
   public define: boolean = true;
   /** Detects statics */
@@ -72,7 +74,7 @@ TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md
         const children = statementNode.getChildren();
         if (children.length === 6 && children[3].getFirstToken().getStr().toUpperCase() === "LINES") {
           message = "DESCRIBE LINES, use lines() instead";
-          fix = this.getDescribeLinesFix(file, statementNode);
+          fix = this.conf.skipQuickFix === true ? undefined : this.getDescribeLinesFix(file, statementNode);
         }
       } else if (this.conf.statics && statement instanceof Statements.StaticBegin) {
         isStaticsBlock = true;
@@ -85,7 +87,7 @@ TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md
         message = "STATICS";
       } else if (this.conf.break && statement instanceof Statements.Break) {
         message = "BREAK/BREAK-POINT";
-        fix = EditHelper.deleteStatement(file, statementNode);
+        fix = this.conf.skipQuickFix === true ? undefined : EditHelper.deleteStatement(file, statementNode);
       }
 
       if (message) {

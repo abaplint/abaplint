@@ -143,6 +143,10 @@
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         },
+        "skipQuickFix": {
+          "description": "Do not emit quick fix suggestion",
+          "type": "boolean"
+        },
         "statics": {
           "description": "Detects statics",
           "type": "boolean"
