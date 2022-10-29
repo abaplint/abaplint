@@ -1,7 +1,7 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
 import {seq, alt, altPrio, ver, regex as reg, optPrio} from "../combi";
-import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName} from "../expressions";
+import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodDef implements IStatement {
@@ -24,14 +24,18 @@ export class MethodDef implements IStatement {
 // todo, this is only from version something
     const ddl = "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED";
 
+    const result = seq("RESULT", MethodParamName);
+    const link = seq("LINK", MethodParamName);
+    const full = seq("FULL", MethodParamName);
+
     const behavior = altPrio(
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
-      seq("MODIFY IMPORTING", MethodParamName, "FOR ACTION", TypeName, "RESULT", MethodParamName),
-      seq("MODIFY IMPORTING", MethodParamName, "FOR CREATE", TypeName),
+      seq("MODIFY IMPORTING", MethodParamName, "FOR ACTION", TypeName, result),
+      seq("MODIFY IMPORTING", MethodParamName, "FOR CREATE", alt(TypeName, EntityAssociation)),
       seq("MODIFY IMPORTING", MethodParamName, "FOR DELETE", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, "FOR UPDATE", TypeName),
-      seq("READ IMPORTING", MethodParamName, "FOR READ", TypeName, "RESULT", MethodParamName),
-      seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, "RESULT", MethodParamName),
+      seq("READ IMPORTING", MethodParamName, "FOR READ", alt(TypeName, EntityAssociation), optPrio(full), result, optPrio(link)),
+      seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, result),
       seq("DETERMINE ON MODIFY IMPORTING", MethodParamName, "FOR", TypeName),
       seq("DETERMINE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName));
 

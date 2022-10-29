@@ -303,6 +303,12 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
               max = res-max
               average = res-sum / grp-cnt ) ).`,
 
+  `DATA(sdf1) = + VALUE i( ).`,
+  `DATA(sdf2) = - VALUE i( ).`,
+  `DATA(sdf3) = + CONV i( 1 ).`,
+  `DATA(sdf4) = - CONV i( 1 ).`,
+  `DATA(sdf1) = + + VALUE i( ).`,
+  `DATA(sdf2) = + + - + VALUE i( ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

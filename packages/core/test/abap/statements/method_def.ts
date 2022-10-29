@@ -110,6 +110,8 @@ const tests = [
   `METHODS create FOR MODIFY IMPORTING entities FOR CREATE item.`,
   `METHODS update FOR MODIFY IMPORTING entities FOR UPDATE header.`,
   `METHODS delete FOR MODIFY IMPORTING keys FOR DELETE links.`,
+  `METHODS item FOR MODIFY IMPORTING enti FOR CREATE header\\_item.`,
+  `METHODS item FOR READ IMPORTING keys FOR READ header\\_item FULL resqu RESULT result LINK association_links.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
