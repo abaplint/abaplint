@@ -1,4 +1,4 @@
-import {ver, seq, tok, altPrio, optPrio, regex, Expression} from "../combi";
+import {ver, seq, tok, altPrio, optPrio, regex, Expression, starPrio} from "../combi";
 import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, ParenRightW} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
@@ -34,7 +34,7 @@ export class Source extends Expression {
                      Cond,
                      ")");
 
-    const prefix = altPrio(tok(WDashW), tok(WPlus), tok(WPlusW), "BIT-NOT");
+    const prefix = altPrio(tok(WPlus), "BIT-NOT");
 
     const old = seq(optPrio(prefix), altPrio(Constant,
                                              StringTemplate,
@@ -109,7 +109,10 @@ export class Source extends Expression {
                            rparen,
                            optPrio(after)));
 
-    const ret = altPrio(filter, reff, corr, conv, value, cond, exact, swit, reduce, old);
+    const prefix1 = altPrio(tok(WDashW), tok(WPlusW));
+
+    const ret = seq(starPrio(prefix1),
+                    altPrio(filter, reff, corr, conv, value, cond, exact, swit, reduce, old));
 
     return ret;
   }
