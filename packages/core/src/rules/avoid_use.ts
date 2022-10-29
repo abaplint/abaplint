@@ -11,7 +11,7 @@ import {EditHelper, IEdit} from "../edit_helper";
 
 export class AvoidUseConf extends BasicRuleConfig {
   /** Do not emit quick fix suggestion */
-  public skipQuickFix: boolean = false;
+  public skipQuickFix?: boolean = false;
   /** Detects DEFINE (macro definitions) */
   public define: boolean = true;
   /** Detects statics */

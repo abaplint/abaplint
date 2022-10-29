@@ -157,7 +157,6 @@
         }
       },
       "required": [
-        "skipQuickFix",
         "define",
         "statics",
         "defaultKey",
