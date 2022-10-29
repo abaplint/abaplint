@@ -343,6 +343,12 @@ FROM but000
 WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
 
   `SELECT * FROM sdf WHERE tabname IN (@val, 'sdf') INTO TABLE @tab.`,
+
+  `SELECT foo AS bar,
+    CAST( SUM( CAST( field AS DEC( 10, 3 ) ) ) AS CHAR( 10 ) ) AS something,
+    FROM @it AS t1
+    GROUP BY field1, field2
+    INTO CORRESPONDING FIELDS OF TABLE @rt_load.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
