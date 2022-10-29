@@ -418,4 +418,18 @@ sdfsdfsdfsdf entity ZFOO with {
     expect(parsed).to.equal(undefined);
   });
 
+  it("projection", () => {
+    const cds = `
+@EndUserText.label: 'View blah'
+@AccessControl.authorizationCheck: #CHECK
+define root view entity /foo/b_ar001 as projection on /foo/b_ar001 {
+    key blah,
+    field1,
+    field2
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.equal(undefined);
+  });
+
 });

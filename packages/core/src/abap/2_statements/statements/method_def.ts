@@ -1,7 +1,7 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
 import {seq, alt, altPrio, ver, regex as reg, optPrio} from "../combi";
-import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName} from "../expressions";
+import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodDef implements IStatement {
@@ -27,7 +27,7 @@ export class MethodDef implements IStatement {
     const behavior = altPrio(
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, "FOR ACTION", TypeName, "RESULT", MethodParamName),
-      seq("MODIFY IMPORTING", MethodParamName, "FOR CREATE", TypeName),
+      seq("MODIFY IMPORTING", MethodParamName, "FOR CREATE", alt(TypeName, EntityAssociation)),
       seq("MODIFY IMPORTING", MethodParamName, "FOR DELETE", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, "FOR UPDATE", TypeName),
       seq("READ IMPORTING", MethodParamName, "FOR READ", TypeName, "RESULT", MethodParamName),
