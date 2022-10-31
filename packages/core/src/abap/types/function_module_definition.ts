@@ -11,6 +11,8 @@ export interface IFunctionModuleParameter {
   name: string;
   direction: FunctionModuleParameterDirection;
   type: string | undefined;
+  optional: boolean;
+  defaultValue: string | undefined;
 }
 
 export class FunctionModuleDefinition {
@@ -53,6 +55,8 @@ export class FunctionModuleDefinition {
           name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.importing,
           type: param.TYP || param.DBFIELD,
+          optional: param.OPTIONAL === "X",
+          defaultValue: param.DEFAULT,
         });
       }
     }
@@ -66,6 +70,8 @@ export class FunctionModuleDefinition {
           name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.changing,
           type: param.TYP || param.DBFIELD,
+          optional: param.OPTIONAL === "X",
+          defaultValue: param.DEFAULT,
         });
       }
     }
@@ -79,6 +85,8 @@ export class FunctionModuleDefinition {
           name: param.PARAMETER,
           direction: FunctionModuleParameterDirection.exporting,
           type: param.TYP || param.DBFIELD,
+          optional: true,
+          defaultValue: undefined,
         });
       }
     }
@@ -93,6 +101,8 @@ export class FunctionModuleDefinition {
           direction: FunctionModuleParameterDirection.tables,
           // table types are stored in TYP
           type: param.DBSTRUCT || param.TYP,
+          optional: param.OPTIONAL === "X",
+          defaultValue: undefined,
         });
       }
     }
