@@ -105,6 +105,7 @@ export class Procedural {
       } else {
         found = ddic.lookup(param.type).type;
       }
+
       if (param.direction === FunctionModuleParameterDirection.tables) {
         if (found instanceof TableType) {
           found = new TableType(found.getRowType(), {withHeader: true});
@@ -131,15 +132,17 @@ export class Procedural {
         }
       }
 
-      if (found instanceof UnknownType && param.type) {
+      if ((found instanceof UnknownType || found instanceof VoidType) && param.type) {
         const f = ddic.lookupBuiltinType(param.type);
         if (f) {
           found = f;
         }
       }
+
       if (found instanceof UnknownType && new DDIC(this.reg).inErrorNamespace(param.type) === false) {
         found = new VoidType(param.type);
       }
+
       const type = new TypedIdentifier(nameToken, filename, found);
       this.scope.addNamedIdentifier(param.name, type);
     }
