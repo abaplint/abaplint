@@ -114,7 +114,7 @@ export class Procedural {
         }
       }
 
-      if (found instanceof UnknownType && param.type?.includes("-")) {
+      if ((found instanceof UnknownType || found instanceof VoidType) && param.type?.includes("-")) {
         const [name, field] = param.type.split("-");
         const f = ddic.lookupTableOrView(name).type;
         if (f && f instanceof StructureType) {
@@ -123,7 +123,7 @@ export class Procedural {
             found = c;
           }
         }
-      } else if (found instanceof UnknownType && param.type?.includes("=>")) {
+      } else if ((found instanceof UnknownType || found instanceof VoidType) && param.type?.includes("=>")) {
         const [name, field] = param.type.split("=>");
         const def = this.scope.findObjectDefinition(name);
         const c = new ObjectOriented(this.scope).searchTypeName(def, field);
