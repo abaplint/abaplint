@@ -6813,6 +6813,22 @@ APPEND binding REFERENCE INTO wa-binding.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LOOP at deference ref to data", () => {
+// note: this doesnt work in low versions, must be 754+
+    const abap = `
+    TYPES: BEGIN OF ty_foo,
+             data  TYPE REF TO data,
+           END OF ty_foo.
+    TYPES ty_foo_tt TYPE STANDARD TABLE OF ty_foo WITH EMPTY KEY.
+    DATA lt_result TYPE ty_foo_tt.
+    LOOP AT lt_result ASSIGNING FIELD-SYMBOL(<fs1>).
+      LOOP AT <fs1>-data->* ASSIGNING FIELD-SYMBOL(<fs2>).
+      ENDLOOP.
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
