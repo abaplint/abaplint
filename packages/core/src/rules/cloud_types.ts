@@ -42,23 +42,28 @@ export class CloudTypes implements IRule {
 
   public run(obj: IObject): Issue[] {
     if (this.reg.getConfig().getVersion() !== Version.Cloud
-        || obj instanceof Objects.Class
-        || obj instanceof Objects.Interface
-        || obj instanceof Objects.MessageClass
-        || obj instanceof Objects.Package
-        || obj instanceof Objects.Table
-        || obj instanceof Objects.TableType
-        || obj instanceof Objects.DataDefinition
+        || obj instanceof Objects.AssignmentServiceToAuthorizationGroup
+        || obj instanceof Objects.BehaviorDefinition
         || obj instanceof Objects.BusinessCatalog
         || obj instanceof Objects.BusinessCatalogAppAssignment
-        || obj instanceof Objects.AssignmentServiceToAuthorizationGroup
-        || obj instanceof Objects.DataControl
-        || obj instanceof Objects.LockObject
         || obj instanceof Objects.CDSMetadataExtension
-        || obj instanceof Objects.Transformation
-        || obj instanceof Objects.FunctionGroup
+        || obj instanceof Objects.Class
+        || obj instanceof Objects.DataControl
+        || obj instanceof Objects.DataDefinition
         || obj instanceof Objects.DataElement
-        || obj instanceof Objects.Domain) {
+        || obj instanceof Objects.Domain
+        || obj instanceof Objects.FunctionGroup
+        || obj instanceof Objects.HttpService
+        || obj instanceof Objects.IAMApp
+        || obj instanceof Objects.InboundService
+        || obj instanceof Objects.Interface
+        || obj instanceof Objects.LockObject
+        || obj instanceof Objects.MessageClass
+        || obj instanceof Objects.Package
+        || obj instanceof Objects.ServiceBinding
+        || obj instanceof Objects.Table
+        || obj instanceof Objects.TableType
+        || obj instanceof Objects.Transformation) {
       return [];
     }
 
