@@ -18,6 +18,7 @@ export * from "./cds_metadata_extension";
 export * from "./change_document";
 export * from "./chapter_of_book_structure";
 export * from "./checkpoint_group";
+export * from "./communication_scenario";
 export * from "./class";
 export * from "./classification";
 export * from "./composite_enhancement_implementation";

@@ -55,6 +55,7 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.FunctionGroup
         || obj instanceof Objects.HttpService
         || obj instanceof Objects.IAMApp
+        || obj instanceof Objects.CommunicationScenario
         || obj instanceof Objects.InboundService
         || obj instanceof Objects.Interface
         || obj instanceof Objects.LockObject
