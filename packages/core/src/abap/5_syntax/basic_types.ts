@@ -11,7 +11,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {CharacterType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
+import {CharacterType, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition} from "../types";
 import {FieldSub, TypeTableKey} from "../2_statements/expressions";
@@ -568,7 +568,21 @@ export class BasicTypes {
           return new Types.UnknownType(subs[0] + " not found in class or interface");
         }
         this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
-
+      }
+    } else if (chainText.includes("->")) {
+      const [varName, typeName] = chainText.split("->");
+      const varVar = this.scope.findVariable(varName);
+      const foo = varVar?.getType();
+      if (foo instanceof ObjectReferenceType) {
+        const id = foo.getIdentifier();
+        if (id instanceof ClassDefinition) {
+          const byName = new ObjectOriented(this.scope).searchTypeName(id, typeName);
+          foundType = byName?.getType();
+          if (byName === undefined || foundType === undefined) {
+            return new Types.UnknownType(typeName + " not found in class or interface");
+          }
+          this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
+        }
       }
     } else {
       const found = this.scope.findType(subs[0]);
