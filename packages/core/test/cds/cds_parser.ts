@@ -468,4 +468,21 @@ define root custom entity /foo/bar
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("namespaced composition", () => {
+    const cds = `
+define root view /bar/fsdfsd as select from /foo/sdf as header composition [0..*] of /foo/bar as _item
+{
+  key guid,
+  key cprog,
+      message,
+
+      /*Association*/
+      _item
+}
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
