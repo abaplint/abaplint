@@ -51,15 +51,16 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.DataControl
         || obj instanceof Objects.DataDefinition
         || obj instanceof Objects.DataElement
-        || obj instanceof Objects.ServiceBinding
-        || obj instanceof Objects.IAMApp
-        || obj instanceof Objects.InboundService
         || obj instanceof Objects.Domain
         || obj instanceof Objects.FunctionGroup
+        || obj instanceof Objects.HttpService
+        || obj instanceof Objects.IAMApp
+        || obj instanceof Objects.InboundService
         || obj instanceof Objects.Interface
         || obj instanceof Objects.LockObject
         || obj instanceof Objects.MessageClass
         || obj instanceof Objects.Package
+        || obj instanceof Objects.ServiceBinding
         || obj instanceof Objects.Table
         || obj instanceof Objects.TableType
         || obj instanceof Objects.Transformation) {

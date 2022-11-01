@@ -54,6 +54,7 @@ export * from "./gateway_vocabulary_annotation";
 export * from "./general_hierarchy_storage_extrension_name";
 export * from "./general_storage_structure";
 export * from "./general_text";
+export * from "./http_service";
 export * from "./iac_binary_data";
 export * from "./iac_language_resource";
 export * from "./iac_service";
