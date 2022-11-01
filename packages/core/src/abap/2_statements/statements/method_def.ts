@@ -28,16 +28,19 @@ export class MethodDef implements IStatement {
     const link = seq("LINK", MethodParamName);
     const full = seq("FULL", MethodParamName);
 
+    const modify = alt(
+      seq("FOR ACTION", TypeName, result),
+      seq("FOR CREATE", alt(TypeName, EntityAssociation)),
+      seq("FOR DELETE", TypeName),
+      seq("FOR UPDATE", TypeName));
+
     const behavior = altPrio(
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
-      seq("MODIFY IMPORTING", MethodParamName, "FOR ACTION", TypeName, result),
-      seq("MODIFY IMPORTING", MethodParamName, "FOR CREATE", alt(TypeName, EntityAssociation)),
-      seq("MODIFY IMPORTING", MethodParamName, "FOR DELETE", TypeName),
-      seq("MODIFY IMPORTING", MethodParamName, "FOR UPDATE", TypeName),
+      seq("MODIFY IMPORTING", MethodParamName, modify),
       seq("READ IMPORTING", MethodParamName, "FOR READ", alt(TypeName, EntityAssociation), optPrio(full), result, optPrio(link)),
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, result),
-      seq("DETERMINE ON MODIFY IMPORTING", MethodParamName, "FOR", TypeName),
-      seq("DETERMINE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName));
+      seq("DETERMINE", alt("ON MODIFY", "ON SAVE"), "IMPORTING", MethodParamName, "FOR", TypeName),
+    );
 
 // todo, this is only from version something
     const amdp = seq(
