@@ -136,6 +136,9 @@ import {InsertTextpool} from "./statements/insert_textpool";
 import {GetCursor} from "./statements/get_cursor";
 import {LoopAtScreen} from "./statements/loop_at_screen";
 import {InsertFieldGroup} from "./statements/insert_field_group";
+import {ReadEntities} from "./statements/read_entities";
+import {ModifyEntities} from "./statements/modify_entities";
+import {CommitEntities} from "./statements/commit_entities";
 
 // -----------------------------------
 
@@ -256,6 +259,9 @@ if (Object.keys(map).length === 0) {
   addToMap(new Tables());
   addToMap(new Parameter());
   addToMap(new FieldSymbol());
+  addToMap(new ReadEntities());
+  addToMap(new ModifyEntities());
+  addToMap(new CommitEntities());
 }
 
 // -----------------------------------
