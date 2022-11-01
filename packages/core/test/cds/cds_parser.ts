@@ -429,7 +429,29 @@ define root view entity /foo/b_ar001 as projection on /foo/b_ar001 {
 }`;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
-    expect(parsed).to.equal(undefined);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("namespace 1", () => {
+    const cds = `
+define root view entity /foo/basr as select from zsdfsdf {
+  key variant as var,
+      comment as comment
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("namespace 2", () => {
+    const cds = `
+define root view entity /foo/basr as select from /foo/sdf {
+  key variant as var,
+      comment as comment
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
   });
 
 });

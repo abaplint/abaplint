@@ -4,6 +4,7 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSSource extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(regex(/^[\w_]+$/), opt(CDSAs));
+    const pre = seq("/", regex(/^[\w_]+$/), "/");
+    return seq(opt(pre), regex(/^[\w_]+$/), opt(CDSAs));
   }
 }

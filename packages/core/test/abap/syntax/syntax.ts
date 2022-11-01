@@ -6797,6 +6797,22 @@ APPEND binding REFERENCE INTO wa-binding.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("READ Entities, inline definitions", () => {
+    const abap = `
+    DATA keys TYPE voided.
+
+    READ ENTITIES OF /foo/bar IN LOCAL MODE
+      ENTITY ent
+      FIELDS ( fieldname )
+      WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_dat)
+      FAILED DATA(lt_failed).
+
+    CHECK lt_failed IS INITIAL.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

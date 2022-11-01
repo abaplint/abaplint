@@ -3,6 +3,7 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSName extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(opt(":"), regex(/^\$?#?[\w_]+$/));
+    const pre = seq("/", regex(/^[\w_]+$/), "/");
+    return seq(opt(":"), opt(pre), regex(/^\$?#?[\w_]+$/));
   }
 }
