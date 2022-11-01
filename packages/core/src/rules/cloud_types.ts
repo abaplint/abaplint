@@ -51,6 +51,9 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.DataControl
         || obj instanceof Objects.DataDefinition
         || obj instanceof Objects.DataElement
+        || obj instanceof Objects.ServiceBinding
+        || obj instanceof Objects.IAMApp
+        || obj instanceof Objects.InboundService
         || obj instanceof Objects.Domain
         || obj instanceof Objects.FunctionGroup
         || obj instanceof Objects.Interface
