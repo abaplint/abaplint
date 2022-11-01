@@ -278,4 +278,20 @@ CREATE DATA bar TYPE ty_bar.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("referenced via instance type reference", async () => {
+    const abap = `
+CLASS lcl2 DEFINITION.
+  PUBLIC SECTION.
+    TYPES foo TYPE i.
+ENDCLASS.
+CLASS lcl2 IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA ref TYPE REF TO lcl2.
+  DATA foo TYPE ref->foo.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

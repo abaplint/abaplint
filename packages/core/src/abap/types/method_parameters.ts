@@ -16,12 +16,12 @@ import {ReferenceType} from "../5_syntax/_reference";
 // also consider RAISING vs EXCEPTIONS
 
 export class MethodParameters implements IMethodParameters {
+  private preferred: string | undefined;
+  private returning: TypedIdentifier | undefined;
   private readonly importing: TypedIdentifier[];
   private readonly optional: string[];
   private readonly exporting: TypedIdentifier[];
   private readonly changing: TypedIdentifier[];
-  private preferred: string | undefined;
-  private returning: TypedIdentifier | undefined;
   private readonly exceptions: string[]; // todo, not filled
   private readonly defaults: {[index: string]: ExpressionNode};
   private readonly filename: string;
@@ -174,6 +174,12 @@ export class MethodParameters implements IMethodParameters {
           this.preferred = this.preferred.substring(1);
         }
       }
+    }
+
+// RAP parameters, temporary fix
+    const rapName = node.findExpressionAfterToken("IMPORTING");
+    if (rapName) {
+      this.importing.push(new TypedIdentifier(rapName.getFirstToken(), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
     }
 
     const exporting = node.findFirstExpression(Expressions.MethodDefExporting);
