@@ -61,6 +61,7 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.MessageClass
         || obj instanceof Objects.Package
         || obj instanceof Objects.ServiceBinding
+        || obj instanceof Objects.ServiceDefinition
         || obj instanceof Objects.Table
         || obj instanceof Objects.TableType
         || obj instanceof Objects.Transformation) {
