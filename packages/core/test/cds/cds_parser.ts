@@ -454,4 +454,18 @@ define root view entity /foo/basr as select from /foo/sdf {
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("root custom", () => {
+    const cds = `
+define root custom entity /foo/bar
+{
+  key ReportGuid : abap.char( 22 );
+  S_Tab    : tabname;
+  @Consumption.filter:{ hidden:true }
+  A_Del      : abap.char( 1 );
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
