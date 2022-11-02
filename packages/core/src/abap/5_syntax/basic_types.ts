@@ -577,7 +577,7 @@ export class BasicTypes {
       const varVar = this.scope.findVariable(className);
       const foo = varVar?.getType();
       if (foo instanceof ObjectReferenceType) {
-        const typeName = subs.shift();
+        const typeName = subs[0];
         const id = foo.getIdentifier();
 
         const type = id instanceof ClassDefinition ? "CLAS" : "INTF";
