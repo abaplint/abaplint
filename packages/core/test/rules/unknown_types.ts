@@ -1753,7 +1753,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("type via reference, var defined in super, structured", () => {
+  it("type via reference, var defined in super, structured", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
