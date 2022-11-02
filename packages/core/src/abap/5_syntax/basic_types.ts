@@ -575,6 +575,11 @@ export class BasicTypes {
       const foo = varVar?.getType();
       if (foo instanceof ObjectReferenceType) {
         const id = foo.getIdentifier();
+
+        const type = id instanceof ClassDefinition ? "CLAS" : "INTF";
+        this.scope.addReference(expr.getFirstToken(), id, ReferenceType.ObjectOrientedReference, this.filename,
+                                {ooType: type, ooName: id.getName()});
+
         if (id instanceof ClassDefinition) {
           const byName = new ObjectOriented(this.scope).searchTypeName(id, typeName);
           foundType = byName?.getType();
