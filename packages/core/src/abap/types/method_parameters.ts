@@ -178,7 +178,7 @@ export class MethodParameters implements IMethodParameters {
     }
 
 // RAP parameters, temporary fix
-    const rapName = node.findExpressionAfterToken("IMPORTING");
+    let rapName = node.findExpressionAfterToken("IMPORTING");
     if (rapName) {
       const token = rapName.getFirstToken();
       this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
@@ -186,6 +186,12 @@ export class MethodParameters implements IMethodParameters {
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
       }
+    }
+    rapName = node.findExpressionAfterToken("RESULT");
+    if (rapName) {
+      const token = rapName.getFirstToken();
+      this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+
     }
 
     const exporting = node.findFirstExpression(Expressions.MethodDefExporting);
