@@ -4,6 +4,7 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSType extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(CDSName, opt(seq(".", CDSName)), opt(seq("(", regex(/\d+/), ")")));
+    const decimals = seq(",", regex(/\d+/));
+    return seq(CDSName, opt(seq(".", CDSName)), opt(seq("(", regex(/\d+/), opt(decimals), ")")));
   }
 }

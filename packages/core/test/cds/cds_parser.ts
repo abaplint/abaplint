@@ -518,4 +518,15 @@ define root custom entity /foo/bar
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("decimals", () => {
+    const cds = `
+define abstract entity footbar2
+{
+  key context : abap.dec(13,3);
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

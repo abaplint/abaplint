@@ -528,11 +528,15 @@ export class BasicTypes {
       const split = chainText.split("=>");
       className = split[0];
       rest = split[1];
+    } else if (chainText.includes("->")) {
+      const split = chainText.split("->");
+      className = split[0];
+      rest = split[1];
     }
     const subs = rest.split("-");
     let foundType: AbstractType | undefined = undefined;
 
-    if (className) {
+    if (className && chainText.includes("=>")) {
       const split = chainText.split("=>");
       const className = split[0];
 
@@ -569,11 +573,11 @@ export class BasicTypes {
         }
         this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
       }
-    } else if (chainText.includes("->")) {
-      const [varName, typeName] = chainText.split("->");
-      const varVar = this.scope.findVariable(varName);
+    } else if (className && chainText.includes("->")) {
+      const varVar = this.scope.findVariable(className);
       const foo = varVar?.getType();
       if (foo instanceof ObjectReferenceType) {
+        const typeName = subs[0];
         const id = foo.getIdentifier();
 
         const type = id instanceof ClassDefinition ? "CLAS" : "INTF";
@@ -588,10 +592,6 @@ export class BasicTypes {
           }
           this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
         }
-      }
-      // todo, ugh, hmm
-      while(subs.length > 0) {
-        subs.shift();
       }
     } else {
       const found = this.scope.findType(subs[0]);
