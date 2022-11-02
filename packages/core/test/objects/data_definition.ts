@@ -142,4 +142,23 @@ define view C_FooBar as select from I_Bar {
 
     expect(ddls.getDefinitionName()).to.equal("C_FooBar");
   });
+
+  it("get name", async () => {
+    const source = `
+@Analytics: {dataExtraction.enabled: true}
+
+define view i_name as select from t006b
+{
+  key Language,
+  key UnitOfMeasureCommercialName,
+      UnitOfMeasure
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("i_name.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    expect(ddls.getDefinitionName()).to.equal("i_name");
+  });
 });

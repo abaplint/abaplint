@@ -96,7 +96,15 @@ export class DataDefinition extends AbstractObject {
 
     this.parsedData.tree = new CDSParser().parse(this.findSourceFile());
     if (this.parsedData.tree) {
-      this.parsedData.definitionName = this.parsedData.tree?.findFirstExpression(CDSName)?.getFirstToken().getStr();
+      for (const c of this.parsedData.tree?.getChildren() || []) {
+        if (c.get() instanceof CDSAnnotation) {
+          continue;
+        }
+        if (c instanceof ExpressionNode) {
+          this.parsedData.definitionName = c.findFirstExpression(CDSName)?.getFirstToken().getStr();
+          break;
+        }
+      }
       this.findSourcesAndRelations(this.parsedData.tree);
       this.findFieldNames(this.parsedData.tree);
     } else {
