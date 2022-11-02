@@ -6830,7 +6830,6 @@ APPEND binding REFERENCE INTO wa-binding.`;
   });
 
   it("super call without super class", () => {
-// note: this doesnt work in low versions, must be 754+
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
