@@ -584,6 +584,10 @@ export class BasicTypes {
           this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
         }
       }
+      // todo, ugh, hmm
+      while(subs.length > 0) {
+        subs.shift();
+      }
     } else {
       const found = this.scope.findType(subs[0]);
       foundType = found?.getType();

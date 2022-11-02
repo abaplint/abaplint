@@ -1714,7 +1714,7 @@ TYPES moo
     expect(issues.length).to.equal(0);
   });
 
-  it.only("Sequence of stuff in intf/clas sections", () => {
+  it("Sequence of stuff in intf/clas sections", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -1729,7 +1729,6 @@ INTERFACE lif.
 ENDINTERFACE.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 
