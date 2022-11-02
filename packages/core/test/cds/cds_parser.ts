@@ -505,4 +505,17 @@ define view entity namename
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("annotation without value", () => {
+    const cds = `
+define root custom entity /foo/bar
+{
+  key Werks     : /moo/de_werks;
+  @Consumption.filter: { selectionType: #SINGLE, defaultValue: '100', hidden }
+  Group         : /moo/de_group;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
