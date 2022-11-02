@@ -1,7 +1,7 @@
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ObjectOriented} from "../_object_oriented";
-import {ObjectReferenceType} from "../../types/basic";
+import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {Identifier} from "../../1_lexer/tokens";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {Position} from "../../../position";
@@ -28,6 +28,9 @@ export class ClassImplementation implements StatementSyntax {
     const sup = scope.findClassDefinition(classDefinition.getSuperClass());
     if (sup) {
       scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
+    } else {
+      // todo: instead of the void type, do proper typing, ie. only empty constructor method
+      scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new VoidType("noSuper")));
     }
     scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(classDefinition)));
     helper.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static

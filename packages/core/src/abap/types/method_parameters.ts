@@ -10,6 +10,7 @@ import {MethodParam} from "../5_syntax/expressions/method_param";
 import {IMethodParameters} from "./_method_parameters";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {ReferenceType} from "../5_syntax/_reference";
+import {Identifier as IdentifierToken} from "../1_lexer/tokens/identifier";
 
 // todo:
 // this.exceptions = [];
@@ -177,9 +178,20 @@ export class MethodParameters implements IMethodParameters {
     }
 
 // RAP parameters, temporary fix
-    const rapName = node.findExpressionAfterToken("IMPORTING");
+    let rapName = node.findExpressionAfterToken("IMPORTING");
     if (rapName) {
-      this.importing.push(new TypedIdentifier(rapName.getFirstToken(), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
+      const token = rapName.getFirstToken();
+      this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
+      if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ON SAVE")) {
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+      }
+    }
+    rapName = node.findExpressionAfterToken("RESULT");
+    if (rapName) {
+      const token = rapName.getFirstToken();
+      this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+
     }
 
     const exporting = node.findFirstExpression(Expressions.MethodDefExporting);

@@ -1732,4 +1732,25 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("type via reference, var defined in super", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES foo TYPE i.
+    DATA ref TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM lcl.
+  PUBLIC SECTION.
+    DATA moo TYPE ref->foo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
