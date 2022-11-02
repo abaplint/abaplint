@@ -6829,6 +6829,22 @@ APPEND binding REFERENCE INTO wa-binding.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("super call without super class", () => {
+// note: this doesnt work in low versions, must be 754+
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
