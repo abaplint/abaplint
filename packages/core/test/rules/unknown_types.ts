@@ -1714,4 +1714,22 @@ TYPES moo
     expect(issues.length).to.equal(0);
   });
 
+  it("Sequence of stuff in intf/clas sections", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES foo TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+INTERFACE lif.
+  DATA ref TYPE REF TO lcl.
+  TYPES blah TYPE ref->foo.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
