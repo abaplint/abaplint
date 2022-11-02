@@ -1,13 +1,14 @@
-import {CDSComposition, CDSGroupBy, CDSSource, CDSWhere} from ".";
+import {CDSElement, CDSAs, CDSParametersSelect, CDSComposition, CDSGroupBy, CDSSource, CDSWhere} from ".";
 import {Expression, seq, str, plus, star, opt} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
-import {CDSElement} from "./cds_element";
 import {CDSJoin} from "./cds_join";
 
 export class CDSSelect extends Expression {
   public getRunnable(): IStatementRunnable {
     return seq("SELECT", opt("DISTINCT"), "FROM", CDSSource,
+               opt(CDSParametersSelect),
+               opt(CDSAs),
                star(CDSJoin),
                star(CDSComposition),
                star(CDSAssociation),

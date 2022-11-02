@@ -485,4 +485,24 @@ define root view /bar/fsdfsd as select from /foo/sdf as header composition [0..*
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("from, parametered", () => {
+    const cds = `
+define view entity namename
+  as select from entityname
+                 ( parm1:1, parm2:2, parm3:'foo' )
+                                           as source1
+    inner join   blah                     as _source2
+      on foo.sdfsdf = _source2.sdfsdf3
+  {
+    key source1.foo1,
+    key source1.foo2,
+        source1.foo3,
+        _source2.foo4
+  }
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
