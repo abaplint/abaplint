@@ -1753,4 +1753,27 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.only("type via reference, var defined in super, structured", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF foo,
+             field TYPE i,
+           END OF foo.
+    DATA ref TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM lcl.
+  PUBLIC SECTION.
+    DATA moo TYPE ref->foo-field.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
