@@ -7,8 +7,11 @@ import {Issue} from "../../src/issue";
 import {IConfiguration} from "../../src/_config";
 import {IFile} from "../../src";
 
-export function runMulti(files: {filename: string, contents: string}[]): readonly Issue[] {
+export function runMulti(files: {filename: string, contents: string}[], config?: IConfiguration): readonly Issue[] {
   const reg = new Registry();
+  if (config) {
+    reg.setConfig(config);
+  }
   for (const obj of files) {
     const file = new MemoryFile(obj.filename, obj.contents);
     reg.addFile(file);

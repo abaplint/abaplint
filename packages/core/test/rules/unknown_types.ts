@@ -1,8 +1,15 @@
 import {runMulti, testRule} from "./_utils";
 import {UnknownTypes} from "../../src/rules";
 import {expect} from "chai";
+import {Config, IConfiguration} from "../../src";
 
 // note that the errorNamespace is respected
+
+function fullErrorNamespace(): IConfiguration {
+  const conf = Config.getDefault().get();
+  conf.syntax.errorNamespace = ".";
+  return new Config(JSON.stringify(conf));
+}
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -1772,6 +1779,115 @@ ENDCLASS.
 CLASS sub IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("function module parameters", () => {
+    const file1 = `FUNCTION-POOL ZFUGR0.`;
+    const file2 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>LZFUGR0TOP</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>I</SUBC>
+    <APPL>S</APPL>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const file3 = `
+    INCLUDE LZFUGR0TOP.
+    INCLUDE LZFUGR0UXX.`;
+    const file4 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>SAPLZFUGR0</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>F</SUBC>
+    <APPL>S</APPL>
+    <RLOAD>E</RLOAD>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const file5 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>test</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZFUGR0TOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZFUGR0</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZFOOBAR</FUNCNAME>
+     <SHORT_TEXT>test</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>INPUT1</PARAMETER>
+       <TYP>SY-DATUM</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>INPUT2</PARAMETER>
+       <TYP>ABAP_BOOL</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>INPUT3</PARAMETER>
+       <TYP>I</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>INPUT1</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>INPUT2</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>INPUT3</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const file6 = `FUNCTION zfoobar.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     VALUE(INPUT1) TYPE  SY-DATUM
+*"     VALUE(INPUT2) TYPE  ABAP_BOOL
+*"     VALUE(INPUT3) TYPE  I
+*"----------------------------------------------------------------------
+
+ENDFUNCTION.`;
+
+    let issues = runMulti([
+      {filename: "zfugr0.fugr.lzfugr0top.abap", contents: file1},
+      {filename: "zfugr0.fugr.lzfugr0top.xml", contents: file2},
+      {filename: "zfugr0.fugr.saplzfugr0.abap", contents: file3},
+      {filename: "zfugr0.fugr.saplzfugr0.xml", contents: file4},
+      {filename: "zfugr0.fugr.xml", contents: file5},
+      {filename: "zfugr0.fugr.zfoobar.abap", contents: file6},
+    ], fullErrorNamespace());
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });
