@@ -1849,6 +1849,10 @@ ENDCLASS.`;
        <PARAMETER>INPUT3</PARAMETER>
        <TYP>I</TYP>
       </RSIMP>
+      <RSIMP>
+       <PARAMETER>INPUT4</PARAMETER>
+       <TYP>ABAP_ENCODING</TYP>
+      </RSIMP>
      </IMPORT>
      <DOCUMENTATION>
       <RSFDO>
@@ -1861,6 +1865,10 @@ ENDCLASS.`;
       </RSFDO>
       <RSFDO>
        <PARAMETER>INPUT3</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>INPUT4</PARAMETER>
        <KIND>P</KIND>
       </RSFDO>
      </DOCUMENTATION>
@@ -1880,6 +1888,9 @@ ENDCLASS.`;
 
 ENDFUNCTION.`;
 
+    const typepool = `TYPE-POOL abap.
+    TYPES abap_encoding TYPE c LENGTH 20.`;
+
     let issues = runMulti([
       {filename: "zfugr0.fugr.lzfugr0top.abap", contents: file1},
       {filename: "zfugr0.fugr.lzfugr0top.xml", contents: file2},
@@ -1887,6 +1898,7 @@ ENDFUNCTION.`;
       {filename: "zfugr0.fugr.saplzfugr0.xml", contents: file4},
       {filename: "zfugr0.fugr.xml", contents: file5},
       {filename: "zfugr0.fugr.zfoobar.abap", contents: file6},
+      {filename: "abap.type.abap", contents: typepool},
     ], fullErrorNamespace());
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
