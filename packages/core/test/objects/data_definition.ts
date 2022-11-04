@@ -161,4 +161,21 @@ define view i_name as select from t006b
     expect(ddls).to.not.equal(undefined);
     expect(ddls.getDefinitionName()).to.equal("i_name");
   });
+
+  it("get name, namespaced", async () => {
+    const source = `
+define view /foo/bar as select from t006b
+{
+  key Language,
+  key UnitOfMeasureCommercialName,
+      UnitOfMeasure
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("#foo#bar.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    expect(ddls.getDefinitionName()).to.equal("/foo/bar");
+  });
 });

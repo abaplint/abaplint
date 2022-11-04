@@ -1904,4 +1904,21 @@ ENDFUNCTION.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("type table, ddls typed", () => {
+    const abap = `DATA foo TYPE STANDARD TABLE OF /foo/i_bar WITH EMPTY KEY.`;
+    const ddls = `define root view entity /foo/i_bar
+as select from zsdfsd
+{
+key mat      as Mat,
+    comment   as comment
+}`;
+
+    let issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: abap},
+      {filename: "#foo#i_bar.ddls.asddls", contents: ddls},
+    ], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
