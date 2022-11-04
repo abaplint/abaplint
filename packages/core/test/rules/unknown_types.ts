@@ -1921,4 +1921,62 @@ key mat      as Mat,
     expect(issues.length).to.equal(0);
   });
 
+  it("type via reference, var", () => {
+    const abap = `
+INTERFACE lif.
+  TYPES blah TYPE i.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA r_dt TYPE REF TO lif.
+    TYPES sdf TYPE r_dt->blah.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("type via reference, var, structured", () => {
+    const abap = `
+INTERFACE lif.
+  TYPES blah TYPE i.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA r_dt TYPE REF TO lif.
+    TYPES: BEGIN OF ty_foo,
+             field TYPE r_dt->blah,
+           END OF ty_foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("type via reference, var, structured, interface to class", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES blah TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+INTERFACE lif.
+  DATA r_dt TYPE REF TO lcl.
+  TYPES: BEGIN OF ty_foo,
+           field TYPE r_dt->blah,
+         END OF ty_foo.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
