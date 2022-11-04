@@ -13,7 +13,7 @@ import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
 import {CharacterType, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
-import {ClassDefinition} from "../types";
+import {ClassDefinition, InterfaceDefinition} from "../types";
 import {FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
@@ -584,7 +584,7 @@ export class BasicTypes {
         this.scope.addReference(expr.getFirstToken(), id, ReferenceType.ObjectOrientedReference, this.filename,
                                 {ooType: type, ooName: id.getName()});
 
-        if (id instanceof ClassDefinition) {
+        if (id instanceof ClassDefinition || id instanceof InterfaceDefinition) {
           const byName = new ObjectOriented(this.scope).searchTypeName(id, typeName);
           foundType = byName?.getType();
           if (byName === undefined || foundType === undefined) {
