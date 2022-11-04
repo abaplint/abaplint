@@ -101,7 +101,7 @@ export class DataDefinition extends AbstractObject {
           continue;
         }
         if (c instanceof ExpressionNode) {
-          this.parsedData.definitionName = c.findFirstExpression(CDSName)?.getFirstToken().getStr();
+          this.parsedData.definitionName = c.findFirstExpression(CDSName)?.concatTokens().replace(/ /g, "");
           break;
         }
       }
