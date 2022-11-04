@@ -591,7 +591,7 @@ export class BasicTypes {
           }
           this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
         } else {
-          return new Types.UnknownType("Not a object reference, " + className);
+          return new Types.UnknownType("Not a object reference, " + className + ", " + id.constructor.name);
         }
       } else if (foo === undefined) {
         return new Types.UnknownType(className + " not found in scope");
