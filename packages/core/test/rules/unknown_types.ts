@@ -1716,7 +1716,7 @@ TYPES moo
   WITH NON-UNIQUE KEY foo
   WITH UNIQUE SORTED KEY key_name COMPONENTS bar foo
   INITIAL SIZE 2.`;
-    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });
@@ -1734,7 +1734,7 @@ INTERFACE lif.
   DATA ref TYPE REF TO lcl.
   TYPES blah TYPE ref->foo.
 ENDINTERFACE.`;
-    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });
@@ -1755,7 +1755,7 @@ CLASS sub DEFINITION INHERITING FROM lcl.
 ENDCLASS.
 CLASS sub IMPLEMENTATION.
 ENDCLASS.`;
-    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });
@@ -1778,7 +1778,7 @@ CLASS sub DEFINITION INHERITING FROM lcl.
 ENDCLASS.
 CLASS sub IMPLEMENTATION.
 ENDCLASS.`;
-    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });
