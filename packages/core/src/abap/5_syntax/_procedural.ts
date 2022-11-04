@@ -123,6 +123,15 @@ export class Procedural {
             found = c;
           }
         }
+        if (found === undefined || found instanceof UnknownType || found instanceof VoidType) {
+          const f = this.scope.findType(name)?.getType();
+          if (f && f instanceof StructureType) {
+            const c = f.getComponentByName(field);
+            if (c) {
+              found = c;
+            }
+          }
+        }
       } else if ((found instanceof UnknownType || found instanceof VoidType) && param.type?.includes("=>")) {
         const [name, field] = param.type.split("=>");
         const def = this.scope.findObjectDefinition(name);
@@ -136,6 +145,12 @@ export class Procedural {
         const f = ddic.lookupBuiltinType(param.type);
         if (f) {
           found = f;
+        }
+        if (found === undefined || found instanceof UnknownType || found instanceof VoidType) {
+          const f = this.scope.findType(param.type)?.getType();
+          if (f) {
+            found = f;
+          }
         }
       }
 
