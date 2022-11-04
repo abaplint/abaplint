@@ -4160,4 +4160,24 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("MESSAGE, two parameters, template", async () => {
+    const abap = `
+MESSAGE i300(abc) WITH 'hello' |world|.`;
+    const expected = `
+DATA(temp1) = |world|.
+MESSAGE i300(abc) WITH 'hello' temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("MESSAGE, two parameters, var", async () => {
+    const abap = `
+DATA var TYPE i.
+MESSAGE i300(abc) WITH var |world|.`;
+    const expected = `
+DATA var TYPE i.
+DATA(temp1) = |world|.
+MESSAGE i300(abc) WITH var temp1.`;
+    testFix(abap, expected);
+  });
+
 });
