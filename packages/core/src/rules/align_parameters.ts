@@ -126,7 +126,7 @@ DATA(sdf) = VALUE type(
     for (const p of candidate.parameters) {
       if (p.eq.getCol() !== expectedEqualsColumn) {
         const message = "Align parameters to column " + expectedEqualsColumn;
-        return Issue.atPosition(file, p.eq, message, this.getMetadata().key);
+        return Issue.atPosition(file, p.eq, message, this.getMetadata().key, this.getConfig().severity);
       }
     }
 

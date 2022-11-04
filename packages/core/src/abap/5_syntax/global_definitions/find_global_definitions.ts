@@ -88,6 +88,11 @@ export class FindGlobalDefinitions {
         count = count + this.count(p.getType());
       }
     }
+    for (const e of def.getEvents() || []) {
+      for (const p of e.getParameters()) {
+        count = count + this.count(p.getType());
+      }
+    }
 
     return count;
   }
