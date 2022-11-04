@@ -580,17 +580,18 @@ export class BasicTypes {
         const typeName = subs[0];
         const id = foo.getIdentifier();
 
-        const type = id instanceof ClassDefinition ? "CLAS" : "INTF";
-        this.scope.addReference(expr.getFirstToken(), id, ReferenceType.ObjectOrientedReference, this.filename,
-                                {ooType: type, ooName: id.getName()});
-
         if (id instanceof ClassDefinition || id instanceof InterfaceDefinition) {
+          const type = id instanceof ClassDefinition ? "CLAS" : "INTF";
+          this.scope.addReference(expr.getFirstToken(), id, ReferenceType.ObjectOrientedReference, this.filename,
+                                  {ooType: type, ooName: id.getName()});
           const byName = new ObjectOriented(this.scope).searchTypeName(id, typeName);
           foundType = byName?.getType();
           if (byName === undefined || foundType === undefined) {
             return new Types.UnknownType(typeName + " not found in class or interface");
           }
           this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
+        } else {
+          return new Types.UnknownType("Not a object reference, " + className);
         }
       } else if (foo === undefined) {
         return new Types.UnknownType(className + " not found in scope");
