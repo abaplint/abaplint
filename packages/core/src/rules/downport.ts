@@ -663,6 +663,10 @@ ${indentation}`);
     for (const s of high.findAllExpressions(Expressions.Source)) {
       if (s === likeSource) {
         continue;
+      } else if (s.getChildren().length === 1 && s.getFirstChild()?.get() instanceof Expressions.Constant) {
+        continue;
+      } else if (s.getChildren().length === 1 && s.getFirstChild()?.get() instanceof Expressions.FieldChain) {
+        continue;
       }
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);

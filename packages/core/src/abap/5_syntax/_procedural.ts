@@ -152,6 +152,12 @@ export class Procedural {
             found = f;
           }
         }
+        if (found === undefined || found instanceof UnknownType || found instanceof VoidType) {
+          const f = this.scope.findTypePoolType(param.type)?.getType();
+          if (f) {
+            found = f;
+          }
+        }
       }
 
       if (found instanceof UnknownType && new DDIC(this.reg).inErrorNamespace(param.type) === false) {
