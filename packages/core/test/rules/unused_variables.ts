@@ -1186,4 +1186,14 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Kernel call, no unused", async () => {
+    const abap = `
+    DATA hex16 TYPE x LENGTH 16.
+    CALL 'RFCControl'
+        ID 'CODE' FIELD 'U'
+        ID 'UUID' FIELD hex16.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

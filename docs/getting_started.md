@@ -48,7 +48,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
 }
 ```
 
-## Steampunk 2111 Syntax Check Configuration
+## Steampunk 2208 Syntax Check Configuration
 
 ```json
 {
@@ -57,7 +57,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
   },
   "dependencies": [
     {
-      "url": "https://github.com/abapedia/steampunk-2111-api",
+      "url": "https://github.com/abapedia/steampunk-2208-api",
       "folder": "/deps",
       "files": "/src/**/*.*"
     }

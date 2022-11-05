@@ -112,6 +112,14 @@ const tests = [
   `METHODS delete FOR MODIFY IMPORTING keys FOR DELETE links.`,
   `METHODS item FOR MODIFY IMPORTING enti FOR CREATE header\\_item.`,
   `METHODS item FOR READ IMPORTING keys FOR READ header\\_item FULL resqu RESULT result LINK association_links.`,
+
+  `METHODS modify FOR BEHAVIOR IMPORTING
+  roots_to_create FOR CREATE booking
+  roots_to_update FOR UPDATE booking
+  roots_to_delete FOR DELETE booking.`,
+
+  `METHODS read FOR BEHAVIOR IMPORTING it_booking_key FOR READ booking RESULT et_booking.`,
+  `METHODS lock FOR BEHAVIOR IMPORTING it_booking_key FOR LOCK booking.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

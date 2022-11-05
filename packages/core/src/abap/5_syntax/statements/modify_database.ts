@@ -14,7 +14,13 @@ export class ModifyDatabase implements StatementSyntax {
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
     if (dbtab !== undefined) {
-      new DatabaseTable().runSyntax(dbtab, scope, filename);
+      try {
+        new DatabaseTable().runSyntax(dbtab, scope, filename);
+      } catch (e) {
+        if (scope.findVariable(dbtab.concatTokens()) === undefined) {
+          throw e;
+        }
+      }
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {

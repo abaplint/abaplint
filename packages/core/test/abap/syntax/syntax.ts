@@ -6844,6 +6844,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("MODIFY internal table", () => {
+    const abap = `
+DATA ztab TYPE STANDARD TABLE OF i.
+DATA row LIKE LINE OF ztab.
+MODIFY ztab FROM row.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
