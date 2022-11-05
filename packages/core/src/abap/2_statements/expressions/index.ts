@@ -82,6 +82,7 @@ export * from "./inlinedata";
 export * from "./inlinefs";
 export * from "./integer";
 export * from "./interface_name";
+export * from "./kernel_id";
 export * from "./language";
 export * from "./length";
 export * from "./let";
