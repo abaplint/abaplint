@@ -182,11 +182,24 @@ export class DDIC {
       return {type: foundDTEL.parseType(this.reg), object: foundDTEL};
     }
 
+    const foundDDLS = this.lookupDDLS(name);
+    if (foundDDLS) {
+      return foundDDLS;
+    }
+
+    return undefined;
+  }
+
+  public lookupDDLS(name?: string) {
+    if (name === undefined) {
+      return undefined;
+    }
+
     const upper = name.toUpperCase();
     for (const obj of this.reg.getObjectsByType("DDLS")) {
       const ddls = obj as DataDefinition;
       if (ddls.getSQLViewName() === upper || ddls.getDefinitionName()?.toUpperCase() === upper) {
-        return {type: ddls.parseType(this.reg), object: obj};
+        return {type: ddls.parseType(this.reg), object: ddls};
       }
     }
 
@@ -240,12 +253,9 @@ export class DDIC {
     if (foundTABL) {
       return {type: foundTABL.parseType(this.reg), object: foundTABL};
     }
-    const upper = name.toUpperCase();
-    for (const obj of this.reg.getObjectsByType("DDLS")) {
-      const ddls = obj as DataDefinition;
-      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName()?.toUpperCase() === upper) {
-        return {type: ddls.parseType(this.reg), object: ddls};
-      }
+    const foundDDLS = this.lookupDDLS(name);
+    if (foundDDLS) {
+      return foundDDLS;
     }
     return this.lookupView(name);
   }
@@ -263,12 +273,9 @@ export class DDIC {
     if (foundVIEW) {
       return foundVIEW;
     }
-    const upper = name.toUpperCase();
-    for (const obj of this.reg.getObjectsByType("DDLS")) {
-      const ddls = obj as DataDefinition;
-      if (ddls.getSQLViewName() === upper || ddls.getDefinitionName()?.toUpperCase() === upper) {
-        return ddls;
-      }
+    const foundDDLS = this.lookupDDLS(name);
+    if (foundDDLS) {
+      return foundDDLS.object;
     }
     return undefined;
   }

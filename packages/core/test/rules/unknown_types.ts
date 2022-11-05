@@ -1979,4 +1979,28 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("class references", () => {
+    const clas1 = `
+CLASS zcl_foobar1 DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    TYPES typ TYPE i.
+ENDCLASS.
+CLASS zcl_foobar1 IMPLEMENTATION.
+ENDCLASS.`;
+    const clas2 = `
+CLASS zcl_foobar2 DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA ref TYPE REF TO zcl_foobar1.
+    TYPES moo TYPE ref->typ.
+ENDCLASS.
+CLASS zcl_foobar2 IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcl_foobar1.clas.abap", contents: clas1},
+      {filename: "zcl_foobar2.clas.abap", contents: clas2},
+    ], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
