@@ -202,7 +202,8 @@ export class MethodParameters implements IMethodParameters {
         this.importing.push(new TypedIdentifier(foo.getFirstToken(), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
       }
 
-      if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ON SAVE")
+      if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ")
+          || node.concatTokens().toUpperCase().includes(" FOR BEHAVIOR ")
           || node.concatTokens().toUpperCase().includes(" FOR MODIFY ")) {
         const token = rapName.getFirstToken();
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
