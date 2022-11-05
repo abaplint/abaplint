@@ -177,23 +177,6 @@ export class MethodParameters implements IMethodParameters {
       }
     }
 
-// RAP parameters, temporary fix
-    let rapName = node.findExpressionAfterToken("IMPORTING");
-    if (rapName) {
-      const token = rapName.getFirstToken();
-      this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
-      if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ON SAVE")) {
-        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
-        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
-      }
-    }
-    rapName = node.findExpressionAfterToken("RESULT");
-    if (rapName) {
-      const token = rapName.getFirstToken();
-      this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
-
-    }
-
     const exporting = node.findFirstExpression(Expressions.MethodDefExporting);
     if (exporting) {
       this.add(this.exporting, exporting, scope, [IdentifierMeta.MethodExporting]);
@@ -207,6 +190,40 @@ export class MethodParameters implements IMethodParameters {
     const returning = node.findFirstExpression(Expressions.MethodDefReturning);
     if (returning) {
       this.returning = new MethodDefReturning().runSyntax(returning, scope, this.filename, [IdentifierMeta.MethodReturning]);
+    }
+
+    this.workaroundRAP(node, scope, filename);
+  }
+
+  private workaroundRAP(node: StatementNode, scope: CurrentScope, filename: string): void {
+    let rapName = node.findExpressionAfterToken("IMPORTING");
+    if (rapName) {
+      const token = rapName.getFirstToken();
+      this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
+      if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ON SAVE")) {
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+      }
+    }
+    rapName = node.findExpressionAfterToken("RESULT");
+    if (rapName) {
+      const token = rapName.getFirstToken();
+      this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+    }
+
+    // its some kind of magic
+    if (scope.getName().toUpperCase() === "CL_ABAP_BEHAVIOR_SAVER") {
+      const tempChanging = this.changing.map(c => new TypedIdentifier(c.getToken(), filename, new VoidType("RapMethodParameter"), c.getMeta()));
+      while (this.changing.length > 0) {
+        this.changing.shift();
+      }
+      this.changing.push(...tempChanging);
+
+      const tempImporting = this.importing.map(c => new TypedIdentifier(c.getToken(), filename, new VoidType("RapMethodParameter"), c.getMeta()));
+      while (this.importing.length > 0) {
+        this.importing.shift();
+      }
+      this.importing.push(...tempImporting);
     }
   }
 
