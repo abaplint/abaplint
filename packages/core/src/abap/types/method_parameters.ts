@@ -196,24 +196,28 @@ export class MethodParameters implements IMethodParameters {
   }
 
   private workaroundRAP(node: StatementNode, scope: CurrentScope, filename: string): void {
-    let rapName = node.findExpressionAfterToken("IMPORTING");
-    if (rapName) {
+    const resultName = node.findExpressionAfterToken("RESULT");
+    const isRap = node.findExpressionAfterToken("IMPORTING");
+    if (isRap) {
       for (const foo of node.findDirectExpressions(Expressions.MethodParamName)) {
+        if (foo === resultName) {
+          continue;
+        }
         this.importing.push(new TypedIdentifier(foo.getFirstToken(), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
       }
 
       if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ")
           || node.concatTokens().toUpperCase().includes(" FOR BEHAVIOR ")
           || node.concatTokens().toUpperCase().includes(" FOR MODIFY ")) {
-        const token = rapName.getFirstToken();
+        const token = isRap.getFirstToken();
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "mapped"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
       }
     }
-    rapName = node.findExpressionAfterToken("RESULT");
-    if (rapName) {
-      const token = rapName.getFirstToken();
+
+    if (resultName) {
+      const token = resultName.getFirstToken();
       this.importing.push(new TypedIdentifier(token, filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
     }
 
