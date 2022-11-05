@@ -382,7 +382,7 @@ export class BasicTypes {
       const name = typename.concatTokens();
       const type = this.scope.getDDIC().lookupDDLS(name)?.type;
       if (type) {
-        return new Types.TableType(type, options);
+        return new Types.TableType(new VoidType("RapTodo"), options);
       } else if (this.scope.getDDIC().inErrorNamespace(name)) {
         return new Types.UnknownType(`DDLS ${name} not found`);
       } else {
@@ -417,10 +417,15 @@ export class BasicTypes {
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+
       let e = node.findFirstExpression(Expressions.Type);
       if (e === undefined) {
         e = node.findFirstExpression(Expressions.FormParamType);
       }
+      if (e === undefined) {
+        e = node.findFirstExpression(Expressions.FieldChain);
+      }
+
       const type = this.resolveLikeName(e, false);
 
       if (type === undefined) {

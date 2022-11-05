@@ -2003,4 +2003,21 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("method parameter like line of data tab", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    METHODS conv IMPORTING foo LIKE LINE OF tab.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD conv.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
