@@ -6853,6 +6853,18 @@ MODIFY ztab FROM row.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("FILTER, infer", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+       END OF ty.
+DATA lt_tab TYPE SORTED TABLE OF ty WITH UNIQUE KEY field1.
+LOOP AT FILTER #( lt_tab WHERE field1 = 2 ) INTO DATA(ls_row).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

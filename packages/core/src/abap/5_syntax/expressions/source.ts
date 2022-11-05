@@ -121,7 +121,12 @@ export class Source {
           } else {
             this.addIfInferred(node, scope, filename, foundType);
           }
-          return foundType ? foundType : bodyType;
+
+          if (foundType && !(foundType instanceof UnknownType)) {
+            return foundType;
+          } else {
+            return bodyType;
+          }
         }
         case "CORRESPONDING":
         {
