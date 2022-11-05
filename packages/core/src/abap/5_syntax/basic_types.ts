@@ -417,10 +417,15 @@ export class BasicTypes {
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+
       let e = node.findFirstExpression(Expressions.Type);
       if (e === undefined) {
         e = node.findFirstExpression(Expressions.FormParamType);
       }
+      if (e === undefined) {
+        e = node.findFirstExpression(Expressions.FieldChain);
+      }
+
       const type = this.resolveLikeName(e, false);
 
       if (type === undefined) {
