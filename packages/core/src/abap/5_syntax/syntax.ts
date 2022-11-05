@@ -117,6 +117,7 @@ import {Transfer} from "./statements/transfer";
 import {ModifyDatabase} from "./statements/modify_database";
 import {TruncateDataset} from "./statements/truncate_dataset";
 import {CallBadi} from "./statements/call_badi";
+import {CallKernel} from "./statements/call_kernel";
 import {Pack} from "./statements/pack";
 import {Unpack} from "./statements/unpack";
 import {Format} from "./statements/format";
@@ -262,6 +263,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new ReadEntities());
   addToMap(new ModifyEntities());
   addToMap(new CommitEntities());
+  addToMap(new CallKernel());
 }
 
 // -----------------------------------
