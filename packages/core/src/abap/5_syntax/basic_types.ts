@@ -376,6 +376,18 @@ export class BasicTypes {
         {name: "high", type: found},
       ], name);
       return new Types.TableType(structure, options);
+
+    } else if (typename && (text.startsWith("TYPE TABLE FOR CREATE ")
+        || text.startsWith("TYPE TABLE FOR UPDATE "))) {
+      const name = typename.concatTokens();
+      const type = this.scope.getDDIC().lookupDDLS(name)?.type;
+      if (type) {
+        return new Types.TableType(type, options);
+      } else if (this.scope.getDDIC().inErrorNamespace(name)) {
+        return new Types.UnknownType(`DDLS ${name} not found`);
+      } else {
+        return new Types.VoidType(name);
+      }
     }
 
     // fallback to old style syntax, OCCURS etc
