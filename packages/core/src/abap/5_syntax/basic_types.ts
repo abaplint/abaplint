@@ -590,7 +590,16 @@ export class BasicTypes {
       const foo = varVar?.getType();
       if (foo instanceof ObjectReferenceType) {
         const typeName = subs[0];
-        const id = foo.getIdentifier();
+        let id = foo.getIdentifier();
+
+        if (!(id instanceof ClassDefinition || id instanceof InterfaceDefinition)) {
+          const found = this.scope.findObjectDefinition(foo.getIdentifierName());
+          if (found) {
+            id = found;
+          } else {
+            return new Types.UnknownType(foo.getIdentifierName() + " not found in scope");
+          }
+        }
 
         if (id instanceof ClassDefinition || id instanceof InterfaceDefinition) {
           const type = id instanceof ClassDefinition ? "CLAS" : "INTF";
@@ -608,7 +617,7 @@ export class BasicTypes {
       } else if (foo === undefined) {
         return new Types.UnknownType(className + " not found in scope");
       } else {
-        return new Types.UnknownType("Not a object reference, " + className);
+        return new Types.UnknownType("Not a object reference, " + className + ", " + foo.constructor.name);
       }
     } else {
       const found = this.scope.findType(subs[0]);
