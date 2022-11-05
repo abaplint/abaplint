@@ -28,6 +28,7 @@ const repos = [
   "larshp/abapNTLM",
   "larshp/abapOpenChecks",
   "larshp/abapPGP",
+  "larshp/rap_tutorial",
   "Marc-Bernard-Tools/MBT-Base",
   "Marc-Bernard-Tools/MBT-Command-Field",
   "Marc-Bernard-Tools/MBT-Icon-Browser",
