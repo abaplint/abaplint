@@ -382,7 +382,7 @@ export class BasicTypes {
       const name = typename.concatTokens();
       const type = this.scope.getDDIC().lookupDDLS(name)?.type;
       if (type) {
-        return new Types.TableType(type, options);
+        return new Types.TableType(new VoidType("RapTodo"), options);
       } else if (this.scope.getDDIC().inErrorNamespace(name)) {
         return new Types.UnknownType(`DDLS ${name} not found`);
       } else {
