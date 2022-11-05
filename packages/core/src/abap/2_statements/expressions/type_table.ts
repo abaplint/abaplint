@@ -33,7 +33,15 @@ export class TypeTable extends Expression {
 
     const occurs = seq("OCCURS", Integer);
 
-    const derived = ver(Version.v754, seq("TABLE FOR", altPrio("CREATE", "FAILED", "LOCK", "ACTION IMPORT", "UPDATE", "READ RESULT", "ACTION RESULT"), TypeName));
+    const derived = ver(Version.v754, seq("TABLE FOR", altPrio(
+      "ACTION IMPORT",
+      "ACTION RESULT",
+      "CREATE",
+      "FAILED",
+      "LOCK",
+      "READ RESULT",
+      "UPDATE",
+    ), TypeName));
 
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
     const oldLike = seq(opt("REF TO"), FieldChain, alt(seq(occurs, opt(header)), header));
