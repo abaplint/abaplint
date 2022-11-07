@@ -80,6 +80,10 @@ const tests = [
   WHERE foo IN bar
   %_HINTS ORACLE 'sdfsdf'.`,
 
+  `SELECT * FROM zfoo PACKAGE SIZE 5000 INTO TABLE tab
+    WHERE compdate < del_date
+    AND   status BETWEEN 200 AND 300
+    AND   id IN lr.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
