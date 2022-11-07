@@ -19,6 +19,8 @@ export class SelectLoop extends Expression {
 
     const tab = seq(SQLIntoTable, alt(pack, seq(SQLFrom, pack), seq(pack, SQLFrom)));
 
+    const packTab = seq(pack, SQLIntoTable);
+
     const perm = per(SQLFrom,
                      where,
                      SQLUpTo,
@@ -28,7 +30,7 @@ export class SelectLoop extends Expression {
                      bypass,
                      SQLGroupBy,
                      SQLForAllEntries,
-                     alt(tab, SQLIntoStructure));
+                     alt(tab, SQLIntoStructure, packTab));
 
     const strict = seq(SQLFrom, "FIELDS", SQLFieldList, where, SQLIntoStructure, SQLUpTo);
 
