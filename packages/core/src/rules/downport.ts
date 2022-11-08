@@ -16,7 +16,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {Version} from "../version";
 import {Registry} from "../registry";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
@@ -32,6 +32,14 @@ import {BuiltIn} from "../abap/5_syntax/_builtin";
 // todo: add configuration
 
 export class DownportConf extends BasicRuleConfig {
+}
+
+class SkipToNextFile extends Error {
+  public issue: Issue;
+  public constructor(issue: Issue) {
+    super();
+    this.issue = issue;
+  }
 }
 
 export class Downport implements IRule {
@@ -172,12 +180,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
             highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
           }
 
-          const checked = this.checkStatement(low, high, lowFile, highSyntax, highFile);
-          if (checked) {
-            ret.push(checked.issue);
+          try {
 
-            if (checked.skipToNextFile === true) {
+            const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
+            if (issue) {
+              ret.push(issue);
+            }
+
+          } catch (e) {
+            if (e instanceof SkipToNextFile) {
+              ret.push(e.issue);
               break;
+            } else {
+              throw e;
             }
           }
         }
@@ -214,99 +229,99 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
   /** applies one rule at a time, multiple iterations are required to transform complex statements */
   private checkStatement(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
-                         highSyntax: ISyntaxResult, highFile: ABAPFile): {issue: Issue, skipToNextFile: boolean} | undefined {
+                         highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
     if (low.getFirstToken().getStart() instanceof VirtualPosition) {
       return undefined;
     }
 
     let found = this.downportEnum(low, high, lowFile, highSyntax, highFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.partiallyImplemented(high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.raiseException(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.emptyKey(low, high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.stringTemplateAlpha(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.moveWithOperator(low, high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.moveWithSimpleValue(low, high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.assignWithTable(low, high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.downportRefSimple(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.downportCorrespondingSimple(high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.downportRef(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.downportLoopGroup(high, lowFile, highSyntax, highFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.callFunctionParameterSimple(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.moveWithTableTarget(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.downportSelectInline(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.downportSQLExtras(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineLoopInput(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineLoopTarget(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     let skipValue = false;
@@ -326,110 +341,110 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (skipValue !== true) {
       found = this.outlineValue(low, high, lowFile, highSyntax);
       if (found) {
-        return {issue: found, skipToNextFile: false};
+        return found;
       }
     }
 
     if (skipReduce !== true) {
       found = this.outlineReduce(low, high, lowFile, highSyntax);
       if (found) {
-        return {issue: found, skipToNextFile: false};
+        return found;
       }
     }
 
     found = this.outlineSwitch(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineFilter(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineCast(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineConv(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineCond(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineCatchSimple(high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineDataSimple(high, lowFile);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineData(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.outlineFS(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.newToCreateObject(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.replaceXsdBool(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.replaceLineFunctions(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.getReference(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.replaceContains(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.replaceMethodConditional(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.replaceTableExpression(low, high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.replaceAppendExpression(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.replaceInsertExpression(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     found = this.downportMessage(high, lowFile, highSyntax);
     if (found) {
-      return {issue: found, skipToNextFile: false};
+      return found;
     }
 
     return undefined;
@@ -2112,6 +2127,10 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
+      if (this.isDuplicateName(spag, name, c.getFirstToken().getStart())) {
+        this.renameVariable(spag, name, c.getFirstToken().getStart(), lowFile, highSyntax);
+      }
+
       const found = spag.findVariable(name);
       if (found === undefined) {
         const source = f.findFirstExpression(Expressions.Source);
@@ -2130,6 +2149,36 @@ ${indentation}    output = ${topTarget}.`;
       }
     }
     return ret;
+  }
+
+  private renameVariable(spag: ISpaghettiScopeNode, name: string, pos: Position, lowFile: ABAPFile, highSyntax: ISyntaxResult) {
+    const uniqueName = this.uniqueName(pos, lowFile.getFilename(), highSyntax);
+    let fix: IEdit | undefined = undefined;
+
+    for (const r of spag.getData().references) {
+      if (r.resolved?.getName() === name && r.resolved?.getStart().equals(pos)) {
+        const replace = EditHelper.replaceRange(lowFile, r.position.getStart(), r.position.getEnd(), uniqueName);
+        if (fix === undefined) {
+          fix = replace;
+        } else {
+          fix = EditHelper.merge(replace, fix);
+        }
+      }
+    }
+
+    const issue = Issue.atPosition(lowFile, pos, "Rename before outline", this.getMetadata().key, this.conf.severity, fix);
+    throw new SkipToNextFile(issue);
+  }
+
+  private isDuplicateName(spag: ISpaghettiScopeNode, name: string, pos: Position) {
+    let isDuplicate = false;
+    for (const child of spag.getParent()?.getChildren() || []) {
+      const found = child.findVariable(name);
+      if (found?.getStart().equals(pos) === false) {
+        isDuplicate = true;
+      }
+    }
+    return isDuplicate;
   }
 
   private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, ref = false): string | undefined {
