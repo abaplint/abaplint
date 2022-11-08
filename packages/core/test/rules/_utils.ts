@@ -112,7 +112,7 @@ export function testRuleFixCount(
 //  console.dir(issues);
   expect(issues.length).to.equal(count, "single issue expected");
 
-  for (const issue of issues) {
+  for (const issue of [...issues].reverse()) {
     const fix = issue.getFix();
     expect(fix).to.not.equal(undefined, "Fix should exist");
     applyEditSingle(reg, fix!);
