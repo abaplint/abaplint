@@ -19,7 +19,7 @@ export class AttributeChain {
     if (inputContext instanceof VoidType) {
       return inputContext;
     } else if (!(inputContext instanceof ObjectReferenceType)) {
-      throw new Error("Not a object reference(AttributeChain)");
+      throw new Error("Not an object reference(AttributeChain)");
     }
 
     const children = node.getChildren().slice();

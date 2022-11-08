@@ -49,7 +49,7 @@ export class CreateObject implements StatementSyntax {
         } else if (!(found instanceof ObjectReferenceType)
             && !(found instanceof AnyType)
             && !(found instanceof GenericObjectReferenceType)) {
-          throw new Error("Target must be a object reference");
+          throw new Error("Target must be an object reference");
         } else if (found instanceof GenericObjectReferenceType && type === undefined) {
           throw new Error("Generic type, cannot be instantiated");
         } else if (found instanceof ObjectReferenceType) {

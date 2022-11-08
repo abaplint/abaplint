@@ -47,7 +47,7 @@ export class MethodSource {
       } else if (context instanceof VoidType) {
         return context;
       } else {
-        throw new Error("MethodSource, not a object reference, " + node.concatTokens());
+        throw new Error("MethodSource, not an object reference, " + node.concatTokens());
       }
     } else if (last instanceof ExpressionNode && last.get() instanceof Expressions.Dynamic) {
       new Dynamic().runSyntax(last!, scope, filename);

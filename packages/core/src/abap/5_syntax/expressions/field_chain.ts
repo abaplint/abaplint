@@ -72,7 +72,7 @@ export class FieldChain {
         if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
-          throw new Error("Not a object reference, field chain");
+          throw new Error("Not an object reference, field chain");
         }
       } else if (current.get() instanceof DereferenceExpression) {
         context = new Dereference().runSyntax(context);

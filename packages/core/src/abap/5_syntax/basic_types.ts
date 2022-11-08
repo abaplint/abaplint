@@ -617,12 +617,12 @@ export class BasicTypes {
           }
           this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
         } else {
-          return new Types.UnknownType("Not a object reference, " + className + ", " + id.constructor.name);
+          return new Types.UnknownType("Not an object reference, " + className + ", " + id.constructor.name);
         }
       } else if (foo === undefined) {
         return new Types.UnknownType(className + " not found in scope");
       } else {
-        return new Types.UnknownType("Not a object reference, " + className + ", " + foo.constructor.name);
+        return new Types.UnknownType("Not an object reference, " + className + ", " + foo.constructor.name);
       }
     } else {
       const found = this.scope.findType(subs[0]);
