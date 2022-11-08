@@ -56,13 +56,16 @@ export class Target {
         if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
-          throw new Error("Not a object reference, target");
+          throw new Error("Not an object reference, target");
         }
       } else if (current.get() instanceof Dereference) {
-        if (!(context instanceof DataReference)) {
-          throw new Error("Not a object reference, target");
+        if (!(context instanceof DataReference) && !(context instanceof VoidType)) {
+          throw new Error("Not an object reference, target");
         }
-        context = context.getType();
+
+        if (!(context instanceof VoidType)) {
+          context = context.getType();
+        }
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
       } else if (current.get() instanceof Expressions.TableBody) {

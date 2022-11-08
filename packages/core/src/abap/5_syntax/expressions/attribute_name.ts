@@ -63,7 +63,7 @@ export class AttributeName {
         throw new Error("Component \"" + name + "\" not found in data reference structure");
       }
     } else {
-      throw new Error("Not a object reference, attribute name");
+      throw new Error("Not an object reference, attribute name");
     }
 
     return ret;
