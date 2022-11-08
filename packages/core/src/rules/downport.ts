@@ -2464,16 +2464,27 @@ ${indentation}    output = ${topTarget}.`;
 
     while (true) {
       const name = "temp" + this.counter;
-
-      // todo, this should really be recursive,
-      const existsInChild = spag.getChildren().some(child => child.findVariable(name));
-      const existsDirect = spag.findVariable(name);
-
+      const exists = this.existsRecursive(spag, name);
       this.counter++;
-      if (existsDirect === undefined && existsInChild === false) {
+      if (exists === false) {
         return name;
       }
     }
+  }
+
+  private existsRecursive(spag: ISpaghettiScopeNode, name: string): boolean {
+    const existsDirect = spag.findVariable(name);
+    if (existsDirect) {
+      return true;
+    }
+
+    for (const child of spag.getChildren()) {
+      if (child.findVariable(name) || this.existsRecursive(child, name)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private replaceXsdBool(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
