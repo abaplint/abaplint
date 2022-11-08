@@ -4180,4 +4180,22 @@ MESSAGE i300(abc) WITH var temp1.`;
     testFix(abap, expected);
   });
 
+  it("Identical LET names, rename variable", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE string,
+       END OF ty.
+DATA val TYPE ty.
+val = VALUE ty( LET current = 2 IN field = |sdf{ current }| ).
+val = VALUE ty( LET current = 2 IN field = |sdf{ current }| ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         field TYPE string,
+       END OF ty.
+DATA val TYPE ty.
+val = VALUE ty( LET temp2 = 2 IN field = |sdf{ temp2 }| ).
+val = VALUE ty( LET current = 2 IN field = |sdf{ current }| ).`;
+    testFix(abap, expected);
+  });
+
 });
