@@ -4180,4 +4180,17 @@ MESSAGE i300(abc) WITH var temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("Identical LET names, rename", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE string,
+       END OF ty.
+DATA val TYPE ty.
+val = VALUE ty( LET current = 2 IN field = |sdf{ current }| ).
+val = VALUE ty( LET current = 2 IN field = |sdf{ current }| ).`;
+    const expected = `
+todo`;
+    testFix(abap, expected);
+  });
+
 });
