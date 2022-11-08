@@ -2464,9 +2464,13 @@ ${indentation}    output = ${topTarget}.`;
 
     while (true) {
       const name = "temp" + this.counter;
-      const found = spag.findVariable(name);
+
+      // todo, this should really be recursive,
+      const existsInChild = spag.getChildren().some(child => child.findVariable(name));
+      const existsDirect = spag.findVariable(name);
+
       this.counter++;
-      if (found === undefined) {
+      if (existsDirect === undefined && existsInChild === false) {
         return name;
       }
     }

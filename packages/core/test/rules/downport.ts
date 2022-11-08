@@ -4198,4 +4198,38 @@ val = VALUE ty( LET current = 2 IN field = |sdf{ current }| ).`;
     testFix(abap, expected);
   });
 
+  it("temp3 variable is used in sub scope, dont reuse the name", async () => {
+    const abap = `
+DATA temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA initial TYPE i.
+APPEND COND string( LET temp3 = initial IN
+  WHEN temp3 = 1 THEN |sdf|
+  ELSE |sdf| ) TO temp1.
+APPEND COND string( LET current_count = initial IN
+  WHEN current_count = 1 THEN |bar|
+  ELSE |sdf| ) TO temp1.`;
+    const expected = `
+DATA temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA initial TYPE i.
+DATA temp2 TYPE string.
+DATA temp3 TYPE i.
+temp3 = initial.
+IF temp3 = 1.
+  temp2 = |sdf|.
+ELSE.
+  temp2 = |sdf|.
+ENDIF.
+APPEND temp2 TO temp1.
+DATA temp4 TYPE string.
+DATA current_count TYPE i.
+current_count = initial.
+IF current_count = 1.
+  temp4 = |bar|.
+ELSE.
+  temp4 = |sdf|.
+ENDIF.
+APPEND temp4 TO temp1.`;
+    testFix(abap, expected, [], 2);
+  });
+
 });
