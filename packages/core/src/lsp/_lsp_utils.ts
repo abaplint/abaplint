@@ -16,27 +16,25 @@ export interface ICursorData {
   snode: StatementNode;
 }
 
-function getABAPObjects(reg: IRegistry): ABAPObject[] {
-  const ret: ABAPObject[] = [];
-  for (const o of reg.getObjects()) {
-    if (o instanceof ABAPObject) {
-      ret.push(o);
-    }
-  }
-  return ret;
-}
-
 export class LSPUtils {
 
-  public static getABAPFile(reg: IRegistry, name: string): ABAPFile | undefined {
-    const obj = getABAPObjects(reg);
-    for (const o of obj) {
-      for (const file of o.getABAPFiles()) {
-        if (file.getFilename().toUpperCase() === name.toUpperCase()) {
-          return file;
+  public static getABAPFile(reg: IRegistry, filename: string): ABAPFile | undefined {
+
+    const file = reg.getFileByName(filename);
+    if (file === undefined) {
+      return undefined;
+    }
+    const obj = reg.findObjectForFile(file);
+    obj?.parse();
+
+    if (obj instanceof ABAPObject) {
+      for (const abapfile of obj.getABAPFiles()) {
+        if (abapfile.getFilename().toUpperCase() === filename.toUpperCase()) {
+          return abapfile;
         }
       }
     }
+
     return undefined;
   }
 
