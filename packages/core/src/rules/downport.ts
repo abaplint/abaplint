@@ -1939,6 +1939,13 @@ ${indentation}    output = ${topTarget}.`;
         if (firstName === "") {
           firstName = name;
         }
+
+// TODO TODO TODO, WORK IN PROGRESS
+        const spag = highSyntax.spaghetti.lookupPosition(init.getFirstToken().getStart(), lowFile.getFilename());
+        if (spag && this.isDuplicateName(spag, name, init.getFirstToken().getStart())) {
+          this.renameVariable(spag, name, init.getFirstToken().getStart(), lowFile, highSyntax);
+        }
+
         const s = init.findFirstExpression(Expressions.Source)?.concatTokens();
         const t = init.findFirstExpression(Expressions.TypeName)?.concatTokens();
         if (s) {
