@@ -4276,11 +4276,11 @@ temp2-min = REDUCE i( INIT min = 10 FOR g IN members NEXT min = 2 ).`;
     const abap = `
 DATA members TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA: BEGIN OF aggr,
-        sum     TYPE i,
-        average TYPE i,
+        sum TYPE i,
+        avg TYPE i,
       END OF aggr.
 aggr-sum = REDUCE i( INIT s = 0 FOR g1 IN members NEXT s = s + 1 ).
-aggr-average = REDUCE i( INIT s = 0 FOR g2 IN members NEXT s = s + 1 ).`;
+aggr-avg = REDUCE i( INIT s = 0 FOR g2 IN members NEXT s = s + 1 ).`;
     const expected = `
 sdf`;
     testFix(abap, expected);
