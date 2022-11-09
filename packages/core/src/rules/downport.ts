@@ -27,6 +27,7 @@ import {At, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/t
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
@@ -2192,15 +2193,33 @@ ${indentation}    output = ${topTarget}.`;
     throw new SkipToNextFile(issue);
   }
 
-  private isDuplicateName(spag: ISpaghettiScopeNode, name: string, pos: Position) {
-    let isDuplicate = false;
-    for (const child of spag.getParent()?.getChildren() || []) {
-      const found = child.findVariable(name);
-      if (found?.getStart().equals(pos) === false) {
-        isDuplicate = true;
+  private findRecursiveDuplicate(spag: ISpaghettiScopeNode, name: string, skip: Position): TypedIdentifier | undefined {
+    const found = spag.findVariable(name);
+    if (found?.getStart().equals(skip) === false) {
+      return found;
+    }
+
+    for (const child of spag?.getChildren() || []) {
+      const sub = this.findRecursiveDuplicate(child, name, skip);
+      if (sub) {
+        return sub;
       }
     }
-    return isDuplicate;
+
+    return undefined;
+  }
+
+  private isDuplicateName(spag: ISpaghettiScopeNode, name: string, pos: Position) {
+    let parent = spag.getParent();
+    while (parent?.getIdentifier().stype === ScopeType.Let
+        || parent?.getIdentifier().stype === ScopeType.For) {
+      parent = parent.getParent();
+    }
+
+    if (parent === undefined) {
+      return undefined;
+    }
+    return this.findRecursiveDuplicate(parent, name, pos) !== undefined;
   }
 
   private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, ref = false): string | undefined {
