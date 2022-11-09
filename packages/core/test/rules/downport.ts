@@ -4248,7 +4248,7 @@ lt_created = VALUE #( FOR val IN lt_tab ( option = 'EQ' sign = 'I' low = val ) )
     testFix(abap, expected);
   });
 
-  it.skip("Identical FOR names in REDUCE, rename variable", async () => {
+  it("Identical FOR names in REDUCE, rename variable", async () => {
     const abap = `
 TYPES: BEGIN OF typ1,
          sum TYPE i,
@@ -4260,7 +4260,15 @@ DATA temp2 LIKE LINE OF aggrdat.
 temp2-sum = REDUCE i( INIT s = 0 FOR g IN members NEXT s = 2 ).
 temp2-min = REDUCE i( INIT min = 10 FOR g IN members NEXT min = 2 ).`;
     const expected = `
-sdf`;
+TYPES: BEGIN OF typ1,
+         sum TYPE i,
+         min TYPE i,
+       END OF typ1.
+DATA aggrdat TYPE STANDARD TABLE OF typ1 WITH DEFAULT KEY.
+DATA members TYPE STANDARD TABLE OF string.
+DATA temp2 LIKE LINE OF aggrdat.
+temp2-sum = REDUCE i( INIT s = 0 FOR temp3 IN members NEXT s = 2 ).
+temp2-min = REDUCE i( INIT min = 10 FOR g IN members NEXT min = 2 ).`;
     testFix(abap, expected);
   });
 
