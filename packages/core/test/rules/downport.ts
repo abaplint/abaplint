@@ -4232,4 +4232,20 @@ APPEND temp4 TO temp1.`;
     testFix(abap, expected, [], 2);
   });
 
+  it("Identical FOR names, rename variable", async () => {
+    const abap = `
+DATA lt_failed TYPE RANGE OF string.
+DATA lt_created TYPE RANGE OF string.
+DATA lt_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+lt_failed = VALUE #( FOR val IN lt_tab ( option = 'EQ' sign = 'I' low = val ) ).
+lt_created = VALUE #( FOR val IN lt_tab ( option = 'EQ' sign = 'I' low = val ) ).`;
+    const expected = `
+DATA lt_failed TYPE RANGE OF string.
+DATA lt_created TYPE RANGE OF string.
+DATA lt_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+lt_failed = VALUE #( FOR temp2 IN lt_tab ( option = 'EQ' sign = 'I' low = temp2 ) ).
+lt_created = VALUE #( FOR val IN lt_tab ( option = 'EQ' sign = 'I' low = val ) ).`;
+    testFix(abap, expected);
+  });
+
 });

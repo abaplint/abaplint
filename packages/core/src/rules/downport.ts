@@ -1650,14 +1650,29 @@ ${indentation}    output = ${topTarget}.`;
     let body = "";
     let end = "";
     const loopSource = forLoop.findFirstExpression(Expressions.Source)?.concatTokens();
-    let loopTargetField = forLoop.findFirstExpression(Expressions.TargetField)?.concatTokens();
-    const of = forLoop.findExpressionAfterToken("OF")?.concatTokens();
+
+    let loopTargetFieldExpression = forLoop.findFirstExpression(Expressions.TargetField);
+    let loopTargetFieldName = loopTargetFieldExpression?.concatTokens();
+    const of = forLoop.findExpressionAfterToken("OF");
     if (of !== undefined) {
-      loopTargetField = of;
+      loopTargetFieldExpression = of;
+      loopTargetFieldName = of?.concatTokens();
     }
     if (forLoop.findDirectExpression(Expressions.InlineLoopDefinition)?.getFirstChild()?.get() instanceof Expressions.TargetFieldSymbol) {
-      loopTargetField = undefined;
+      loopTargetFieldExpression = undefined;
+      loopTargetFieldName = undefined;
     }
+
+    if (loopTargetFieldExpression) {
+      const start = loopTargetFieldExpression.getFirstToken().getStart();
+      const spag = highSyntax.spaghetti.lookupPosition(start, lowFile.getFilename());
+      if (loopTargetFieldName && spag) {
+        if (this.isDuplicateName(spag, loopTargetFieldName, start)) {
+          this.renameVariable(spag, loopTargetFieldName, start, lowFile, highSyntax);
+        }
+      }
+    }
+
     let cond = forLoop.findDirectExpression(Expressions.ComponentCond)?.concatTokens() || "";
     if (cond !== "") {
       cond = " WHERE " + cond;
@@ -1692,7 +1707,7 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       end += indentation + "ENDWHILE";
-    } else if (loopTargetField !== undefined) {
+    } else if (loopTargetFieldName !== undefined) {
       let from = forLoop.findExpressionAfterToken("FROM")?.concatTokens();
       from = from ? " FROM " + from : "";
       let to = forLoop.findExpressionAfterToken("TO")?.concatTokens();
@@ -1735,16 +1750,16 @@ ${indentation}    output = ${topTarget}.`;
       }
 
       let into = "INTO DATA";
-      if (loopTargetField.startsWith("<")) {
+      if (loopTargetFieldName.startsWith("<")) {
         into = "ASSIGNING FIELD-SYMBOL";
       }
       // todo, also backup sy-index / sy-tabix here?
-      body += indentation + `LOOP AT ${loopSource}${inGroup} ${into}(${loopTargetField})${from}${to}${cond}${gby}.\n`;
+      body += indentation + `LOOP AT ${loopSource}${inGroup} ${into}(${loopTargetFieldName})${from}${to}${cond}${gby}.\n`;
       if (indexInto) {
         body += indentation + "  DATA(" + indexInto + ") = sy-tabix.\n";
       }
       end = "ENDLOOP";
-    } else if (loopTargetField === undefined) {
+    } else if (loopTargetFieldName === undefined) {
       // todo, also backup sy-index / sy-tabix here?
       const loopTargetFieldSymbol = forLoop.findFirstExpression(Expressions.TargetFieldSymbol)?.concatTokens();
       body += indentation + `LOOP AT ${loopSource} ASSIGNING FIELD-SYMBOL(${loopTargetFieldSymbol})${cond}.\n`;
@@ -2153,10 +2168,17 @@ ${indentation}    output = ${topTarget}.`;
 
   private renameVariable(spag: ISpaghettiScopeNode, name: string, pos: Position, lowFile: ABAPFile, highSyntax: ISyntaxResult) {
     const uniqueName = this.uniqueName(pos, lowFile.getFilename(), highSyntax);
+    const positions: Set<string> = new Set<string>();
     let fix: IEdit | undefined = undefined;
 
     for (const r of spag.getData().references) {
       if (r.resolved?.getName() === name && r.resolved?.getStart().equals(pos)) {
+        const key = JSON.stringify(r.position.getStart());
+        if (positions.has(key)) {
+          continue;
+        }
+        positions.add(key);
+
         const replace = EditHelper.replaceRange(lowFile, r.position.getStart(), r.position.getEnd(), uniqueName);
         if (fix === undefined) {
           fix = replace;
