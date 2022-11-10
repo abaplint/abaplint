@@ -52,25 +52,7 @@ class SpagHelper {
 
   public renameVariable(oldName: string, pos: Position, lowFile: ABAPFile, newName: string) {
     let fix: IEdit | undefined = undefined;
-/*
-    const positions: Set<string> = new Set<string>();
-    for (const r of this.spag.getData().references) {
-      if (r.resolved?.getName() === oldName && r.resolved?.getStart().equals(pos)) {
-        const key = JSON.stringify(r.position.getStart());
-        if (positions.has(key)) {
-          continue;
-        }
-        positions.add(key);
 
-        const replace = EditHelper.replaceRange(lowFile, r.position.getStart(), r.position.getEnd(), newName);
-        if (fix === undefined) {
-          fix = replace;
-        } else {
-          fix = EditHelper.merge(replace, fix);
-        }
-      }
-    }
-*/
     const references = this.findReferences(oldName, pos);
     references.sort((a, b) => {
       if (a.start.equals(b.start)) {
