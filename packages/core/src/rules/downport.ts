@@ -74,6 +74,35 @@ class SpagHelper {
     return fix;
   }
 
+  public findRecursiveDuplicate(name: string, skip: Position): TypedIdentifier | undefined {
+    const found = this.spag.findVariable(name);
+    if (found?.getStart().equals(skip) === false) {
+      return found;
+    }
+
+    for (const child of this.spag?.getChildren() || []) {
+      const sub = new SpagHelper(child).findRecursiveDuplicate(name, skip);
+      if (sub) {
+        return sub;
+      }
+    }
+
+    return undefined;
+  }
+
+  public isDuplicateName(name: string, pos: Position) {
+    let parent = this.spag.getParent();
+    while (parent?.getIdentifier().stype === ScopeType.Let
+        || parent?.getIdentifier().stype === ScopeType.For) {
+      parent = parent.getParent();
+    }
+
+    if (parent === undefined) {
+      return undefined;
+    }
+    return new SpagHelper(parent).findRecursiveDuplicate(name, pos) !== undefined;
+  }
+
 }
 
 export class Downport implements IRule {
@@ -1701,7 +1730,7 @@ ${indentation}    output = ${topTarget}.`;
       const start = loopTargetFieldExpression.getFirstToken().getStart();
       const spag = highSyntax.spaghetti.lookupPosition(start, lowFile.getFilename());
       if (loopTargetFieldName && spag) {
-        if (this.isDuplicateName(spag, loopTargetFieldName, start)) {
+        if (new SpagHelper(spag).isDuplicateName(loopTargetFieldName, start)) {
           this.renameVariable(spag, loopTargetFieldName, start, lowFile, highSyntax);
         }
       }
@@ -1975,7 +2004,7 @@ ${indentation}    output = ${topTarget}.`;
 
 // TODO TODO TODO, WORK IN PROGRESS
         const spag = highSyntax.spaghetti.lookupPosition(init.getFirstToken().getStart(), lowFile.getFilename());
-        if (spag && this.isDuplicateName(spag, name, init.getFirstToken().getStart())) {
+        if (spag && new SpagHelper(spag).isDuplicateName(name, init.getFirstToken().getStart())) {
           this.renameVariable(spag, name, init.getFirstToken().getStart(), lowFile, highSyntax);
         }
 
@@ -2183,7 +2212,7 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      if (this.isDuplicateName(spag, name, c.getFirstToken().getStart())) {
+      if (new SpagHelper(spag).isDuplicateName(name, c.getFirstToken().getStart())) {
         this.renameVariable(spag, name, c.getFirstToken().getStart(), lowFile, highSyntax);
       }
 
@@ -2212,35 +2241,6 @@ ${indentation}    output = ${topTarget}.`;
     const fix = new SpagHelper(spag).renameVariable(name, pos, lowFile, newName);
     const issue = Issue.atPosition(lowFile, pos, "Rename before outline", this.getMetadata().key, this.conf.severity, fix);
     throw new SkipToNextFile(issue);
-  }
-
-  private findRecursiveDuplicate(spag: ISpaghettiScopeNode, name: string, skip: Position): TypedIdentifier | undefined {
-    const found = spag.findVariable(name);
-    if (found?.getStart().equals(skip) === false) {
-      return found;
-    }
-
-    for (const child of spag?.getChildren() || []) {
-      const sub = this.findRecursiveDuplicate(child, name, skip);
-      if (sub) {
-        return sub;
-      }
-    }
-
-    return undefined;
-  }
-
-  private isDuplicateName(spag: ISpaghettiScopeNode, name: string, pos: Position) {
-    let parent = spag.getParent();
-    while (parent?.getIdentifier().stype === ScopeType.Let
-        || parent?.getIdentifier().stype === ScopeType.For) {
-      parent = parent.getParent();
-    }
-
-    if (parent === undefined) {
-      return undefined;
-    }
-    return this.findRecursiveDuplicate(parent, name, pos) !== undefined;
   }
 
   private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, ref = false): string | undefined {
