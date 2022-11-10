@@ -4292,4 +4292,22 @@ aggr-avg = REDUCE i( INIT s = 0 FOR g2 IN members NEXT s = s + 1 ).`;
     testFix(abap, expected);
   });
 
+  it("Arithmetics after REDUCE", async () => {
+    const abap = `
+DATA val TYPE i.
+DATA members TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+val = REDUCE i( INIT s = 0 FOR g IN members NEXT s = s + 1 ) / lines( members ).`;
+    const expected = `
+DATA val TYPE i.
+DATA members TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 TYPE i.
+DATA(s) = 0.
+LOOP AT members INTO DATA(g).
+  s = s + 1.
+ENDLOOP.
+temp1 = s.
+val = temp1 / lines( members ).`;
+    testFix(abap, expected);
+  });
+
 });

@@ -2030,7 +2030,6 @@ ${indentation}    output = ${topTarget}.`;
           firstName = name;
         }
 
-// TODO TODO TODO, WORK IN PROGRESS
         const spag = highSyntax.spaghetti.lookupPosition(init.getFirstToken().getStart(), lowFile.getFilename());
         if (spag && new SpagHelper(spag).isDuplicateName(name, init.getFirstToken().getStart())) {
           this.renameVariable(spag, name, init.getFirstToken().getStart(), lowFile, highSyntax);
@@ -2075,8 +2074,9 @@ ${indentation}    output = ${topTarget}.`;
       const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
         body +
         indentation;
+      const reduceEnd = i.findDirectTokenByText(")");
       const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), abap);
-      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), reduceEnd!.getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, firstToken, "Downport REDUCE", this.getMetadata().key, this.conf.severity, fix);
