@@ -4272,7 +4272,7 @@ temp2-min = REDUCE i( INIT min = 10 FOR g IN members NEXT min = 2 ).`;
     testFix(abap, expected);
   });
 
-  it.only("Identical FOR names in REDUCE INIT, rename variable", async () => {
+  it.skip("Identical FOR names in REDUCE INIT, rename variable", async () => {
     const abap = `
 DATA members TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA: BEGIN OF aggr,

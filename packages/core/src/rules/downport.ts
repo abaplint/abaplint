@@ -43,6 +43,39 @@ class SkipToNextFile extends Error {
   }
 }
 
+class SpagHelper {
+  private readonly spag: ISpaghettiScopeNode;
+
+  public constructor(spag: ISpaghettiScopeNode) {
+    this.spag = spag;
+  }
+
+  public renameVariable(oldName: string, pos: Position, lowFile: ABAPFile, newName: string) {
+    const positions: Set<string> = new Set<string>();
+    let fix: IEdit | undefined = undefined;
+
+    for (const r of this.spag.getData().references) {
+      if (r.resolved?.getName() === oldName && r.resolved?.getStart().equals(pos)) {
+        const key = JSON.stringify(r.position.getStart());
+        if (positions.has(key)) {
+          continue;
+        }
+        positions.add(key);
+
+        const replace = EditHelper.replaceRange(lowFile, r.position.getStart(), r.position.getEnd(), newName);
+        if (fix === undefined) {
+          fix = replace;
+        } else {
+          fix = EditHelper.merge(replace, fix);
+        }
+      }
+    }
+
+    return fix;
+  }
+
+}
+
 export class Downport implements IRule {
   private lowReg: IRegistry;
   private highReg: IRegistry;
@@ -2175,27 +2208,8 @@ ${indentation}    output = ${topTarget}.`;
   }
 
   private renameVariable(spag: ISpaghettiScopeNode, name: string, pos: Position, lowFile: ABAPFile, highSyntax: ISyntaxResult) {
-    const uniqueName = this.uniqueName(pos, lowFile.getFilename(), highSyntax);
-    const positions: Set<string> = new Set<string>();
-    let fix: IEdit | undefined = undefined;
-
-    for (const r of spag.getData().references) {
-      if (r.resolved?.getName() === name && r.resolved?.getStart().equals(pos)) {
-        const key = JSON.stringify(r.position.getStart());
-        if (positions.has(key)) {
-          continue;
-        }
-        positions.add(key);
-
-        const replace = EditHelper.replaceRange(lowFile, r.position.getStart(), r.position.getEnd(), uniqueName);
-        if (fix === undefined) {
-          fix = replace;
-        } else {
-          fix = EditHelper.merge(replace, fix);
-        }
-      }
-    }
-
+    const newName = this.uniqueName(pos, lowFile.getFilename(), highSyntax);
+    const fix = new SpagHelper(spag).renameVariable(name, pos, lowFile, newName);
     const issue = Issue.atPosition(lowFile, pos, "Rename before outline", this.getMetadata().key, this.conf.severity, fix);
     throw new SkipToNextFile(issue);
   }
