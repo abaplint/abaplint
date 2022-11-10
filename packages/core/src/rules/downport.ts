@@ -51,9 +51,9 @@ class SpagHelper {
   }
 
   public renameVariable(oldName: string, pos: Position, lowFile: ABAPFile, newName: string) {
-    const positions: Set<string> = new Set<string>();
     let fix: IEdit | undefined = undefined;
-
+/*
+    const positions: Set<string> = new Set<string>();
     for (const r of this.spag.getData().references) {
       if (r.resolved?.getName() === oldName && r.resolved?.getStart().equals(pos)) {
         const key = JSON.stringify(r.position.getStart());
@@ -70,8 +70,54 @@ class SpagHelper {
         }
       }
     }
+*/
+    const references = this.findReferences(oldName, pos);
+    references.sort((a, b) => {
+      if (a.start.equals(b.start)) {
+        return 0;
+      }
+      return a.start.isAfter(b.start) ? 1 : -1;
+    });
+
+    for (const r of references) {
+      const replace = EditHelper.replaceRange(lowFile, r.start, r.end, newName);
+      if (fix === undefined) {
+        fix = replace;
+      } else {
+        fix = EditHelper.merge(replace, fix);
+      }
+    }
 
     return fix;
+  }
+
+  private findReferences(name: string, pos: Position): {start: Position, end: Position}[] {
+    const positions: {start: Position, end: Position}[] = [];
+
+    function has(element: {start: Position, end: Position}): boolean {
+      return positions.some(a => a.start.equals(element.start));
+    }
+
+    for (const r of this.spag.getData().references) {
+      if (r.resolved?.getName() === name && r.resolved?.getStart().equals(pos)) {
+        const sub = {
+          start: r.position.getStart(),
+          end: r.position.getEnd(),
+        };
+        if (has(sub) === false) {
+          positions.push(sub);
+        }
+      }
+    }
+    for (const child of this.spag.getChildren()) {
+      const subPositions = new SpagHelper(child).findReferences(name, pos);
+      for (const sub of subPositions) {
+        if (has(sub) === false) {
+          positions.push(sub);
+        }
+      }
+    }
+    return positions;
   }
 
   public findRecursiveDuplicate(name: string, skip: Position): TypedIdentifier | undefined {
