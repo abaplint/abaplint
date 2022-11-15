@@ -529,7 +529,7 @@ define abstract entity footbar2
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
-  it.skip("test performance", () => {
+  it("test performance", () => {
     const cds = `
 define view zc_myview
   as select from zmytable as ztab
