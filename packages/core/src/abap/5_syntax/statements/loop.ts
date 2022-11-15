@@ -34,7 +34,6 @@ export class Loop implements StatementSyntax {
     if (sourceType === undefined) {
       throw new Error("No source type determined");
     } else if (sourceType instanceof UnknownType) {
-      console.dir(sourceType);
       throw new Error("Loop, not a table type, " + sourceType.getError());
     } else if (sourceType instanceof TableType
         && target === undefined

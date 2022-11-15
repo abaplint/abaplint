@@ -1157,7 +1157,6 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
     }
     const target = high.findDirectExpression(Expressions.Target);
     if (target === undefined) {
-      console.dir("sdf1");
       return undefined;
     }
     const sourceRef = high.findFirstExpression(Expressions.Source)?.findFirstExpression(Expressions.CorrespondingBody);
