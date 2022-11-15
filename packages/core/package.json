@@ -56,7 +56,7 @@
         "c8": "^7.12.0",
         "source-map-support": "^0.5.21",
         "ts-json-schema-generator": "^1.1.2",
-        "typescript": "^4.8.4"
+        "typescript": "^4.9.3"
     },
     "dependencies": {
         "fast-xml-parser": "^4.0.11",
