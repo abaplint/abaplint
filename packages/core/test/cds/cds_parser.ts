@@ -529,4 +529,48 @@ define abstract entity footbar2
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it.skip("test performance", () => {
+    const cds = `
+define view zc_myview
+  as select from zmytable as ztab
+
+{
+  key ztab.f1,
+      ztab.f2,
+
+      case
+      when ztab.Category = '1'
+      then concat('Name',
+           concat_with_space(',',concat('Street',concat_with_space(',',
+           concat('City',concat_with_space(',',concat('Country',concat_with_space(',',
+           'PostalCode',1)),1)),1)),1))
+
+      when ztab.Category = '2'
+      then concat('Name',
+           concat_with_space(',',concat('Street',concat_with_space(',',
+           concat('City',concat_with_space(',',concat('Country',concat_with_space(',',
+           'PostalCode',1)),1)),1)),1))
+      end  as Address1,
+
+      case
+      when ztab.Category = '1'
+      then concat('Name',
+           concat_with_space(',',concat('Street',concat_with_space(',',
+           concat('City',concat_with_space(',',concat('Country',concat_with_space(',',
+           'PostalCode',1)),1)),1)),1))
+
+      when ztab.Category = '2'
+      then concat('Name',
+           concat_with_space(',',concat('Street',concat_with_space(',',
+           concat('City',concat_with_space(',',concat('Country',concat_with_space(',',
+           'PostalCode',1)),1)),1)),1))
+      end  as Address2,
+
+      ztab.f3
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
