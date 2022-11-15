@@ -21,8 +21,8 @@
     "vscode-languageserver-types": "^3.17.2"
   },
   "devDependencies": {
-    "@abaplint/monaco": "^2.93.84",
-    "@abaplint/core": "^2.93.84",
+    "@abaplint/monaco": "^2.93.85",
+    "@abaplint/core": "^2.93.85",
     "css-loader": "^6.7.2",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
@@ -32,7 +32,7 @@
     "rimraf": "^3.0.2",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.4.1",
-    "typescript": "^4.8.4",
+    "typescript": "^4.9.3",
     "url-loader": "^4.1.1",
     "webpack": "^5.75.0",
     "webpack-cli": "^4.10.0",
