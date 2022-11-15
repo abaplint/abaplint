@@ -1,11 +1,11 @@
 import {CDSArithmetics, CDSCase, CDSCast, CDSName, CDSParameters, CDSString} from ".";
-import {alt, Expression, opt, regex, seq, star} from "../../abap/2_statements/combi";
+import {altPrio, Expression, opt, regex, seq, starPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSFunction extends Expression {
   public getRunnable(): IStatementRunnable {
-    const qualified = seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters))));
-    const input = alt(qualified, regex(/^\d+$/), CDSCast, CDSFunction, CDSArithmetics, CDSCase, CDSString);
+    const qualified = seq(CDSName, opt(CDSParameters), starPrio(seq(".", CDSName, opt(CDSParameters))));
+    const input = altPrio(CDSCast, CDSFunction, CDSArithmetics, CDSCase, CDSString, qualified, regex(/^\d+$/), );
 
     const coalesce = seq("COALESCE", "(", input, ",", input, ")");
     const concat = seq("CONCAT", "(", input, ",", input, ")");
@@ -32,10 +32,10 @@ export class CDSFunction extends Expression {
     const abap_system_timezone = seq("ABAP_SYSTEM_TIMEZONE", "(", input, ",", input, ")");
     const abap_user_timezone = seq("ABAP_USER_TIMEZONE", "(", input, ",", input, ",", input, ")");
 
-    return alt(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
-               concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
-               tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
-               abap_system_timezone, abap_user_timezone, bintohex, hextobin,
-               dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp);
+    return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
+                   concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
+                   tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
+                   abap_system_timezone, abap_user_timezone, bintohex, hextobin,
+                   dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp);
   }
 }
