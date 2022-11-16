@@ -258,6 +258,8 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         ret.push(Issue.atStatement(lowFile, lowStatements[0], message, this.getMetadata().key));
         */
         // hmm, add some way to disable lazyUnknown() in statement_parser.ts
+        // alternatively explicit enable it in vscode, its only relevant when a user is
+        // actively editing the files
         continue;
       }
 
