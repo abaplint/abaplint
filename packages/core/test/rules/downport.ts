@@ -4310,4 +4310,29 @@ val = temp1 / lines( members ).`;
     testFix(abap, expected);
   });
 
+  it("LOOP with line breaks", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         artist_id TYPE i,
+         album_id  TYPE i,
+       END OF ty.
+DATA songs TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+LOOP AT songs ASSIGNING FIELD-SYMBOL(<wa_song>)
+  WHERE artist_id = 2 AND
+  album_id = 2.
+ENDLOOP.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         artist_id TYPE i,
+         album_id  TYPE i,
+       END OF ty.
+DATA songs TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+FIELD-SYMBOLS <wa_song> LIKE LINE OF songs.
+LOOP AT songs ASSIGNING <wa_song>
+  WHERE artist_id = 2 AND
+  album_id = 2.
+ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
 });
