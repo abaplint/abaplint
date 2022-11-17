@@ -14,7 +14,7 @@ import {ReferenceType} from "./_reference";
 import {CharacterType, ITableKey, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {FieldSub, TypeTableKey} from "../2_statements/expressions";
+import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
 
@@ -320,14 +320,32 @@ export class BasicTypes {
       primaryKey.keyFields.push(k.concatTokens().toUpperCase());
     }
 
+    const secondaryKeys: ITableKey[] = [];
     for (let i = 1; i < typeTableKeys.length; i++) {
-//      const element = typeTableKeys[i];
-//      console.dir(element.concatTokens());
+      const row = typeTableKeys[i];
+      const name = row.findDirectExpression(Field)?.concatTokens();
+      if (name === undefined) {
+        continue;
+      }
+
+      const secondary: ITableKey = {
+        name: name,
+        type: row.findDirectTokenByText("SORTED") ? TableAccessType.sorted : TableAccessType.hashed,
+        isUnique: row?.concatTokens().toUpperCase().includes("WITH UNIQUE ") !== undefined,
+        keyFields: [],
+      };
+
+      for (const k of row?.findDirectExpressions(FieldSub) || []) {
+        secondary.keyFields.push(k.concatTokens().toUpperCase());
+      }
+
+      secondaryKeys.push(secondary);
     }
 
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
       primaryKey: primaryKey,
+      secondary: secondaryKeys,
     };
 
     let found: AbstractType | undefined = undefined;

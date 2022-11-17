@@ -1807,7 +1807,7 @@ DATA tab LIKE SORTED TABLE OF foo WITH UNIQUE KEY table_line.`;
     expect(type.getOptions().primaryKey?.type).to.equal(TableAccessType.sorted);
   });
 
-  it.skip("table, secondary key", () => {
+  it("table, secondary key", () => {
     const abap = `
 TYPES: BEGIN OF ty_node,
     name  TYPE string,
