@@ -299,11 +299,11 @@ export class BasicTypes {
     }
 
     let type: Types.TableAccessType | undefined = undefined;
-    if (text.startsWith("TYPE STANDARD TABLE ")) {
+    if (text.startsWith("TYPE STANDARD TABLE ") || text.startsWith("LIKE STANDARD TABLE ")) {
       type = TableAccessType.standard;
-    } else if (text.startsWith("TYPE SORTED TABLE ")) {
+    } else if (text.startsWith("TYPE SORTED TABLE ") || text.startsWith("LIKE SORTED TABLE ")) {
       type = TableAccessType.sorted;
-    } else if (text.startsWith("TYPE HASHED TABLE ")) {
+    } else if (text.startsWith("TYPE HASHED TABLE ") || text.startsWith("LIKE HASHED TABLE ")) {
       type = TableAccessType.hashed;
     }
 
