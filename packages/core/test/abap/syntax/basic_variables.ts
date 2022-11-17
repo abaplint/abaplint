@@ -6,7 +6,7 @@ import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
 import {MemoryFile} from "../../../src/files/memory_file";
-import { TableAccessType } from "../../../src/abap/types/basic";
+import {TableAccessType} from "../../../src/abap/types/basic";
 
 function resolveVariable(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
