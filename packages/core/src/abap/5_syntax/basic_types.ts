@@ -308,16 +308,23 @@ export class BasicTypes {
     }
 
     const primaryKeyFields: string[] = [];
-    const keys = node.findFirstExpression(TypeTableKey);
+    const typeTableKeys = node.findAllExpressions(TypeTableKey);
+
+    const keys = typeTableKeys[0];
     for (const k of keys?.findDirectExpressions(FieldSub) || []) {
       primaryKeyFields.push(k.concatTokens().toUpperCase());
+    }
+
+    for (let i = 1; i < typeTableKeys.length; i++) {
+//      const element = typeTableKeys[i];
+//      console.dir(element.concatTokens());
     }
 
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
       primaryKey: {
         type: type,
-        isUnique: text.includes(" WITH UNIQUE"),
+        isUnique: text.includes(" WITH UNIQUE"),  // todo, BUG HERE
         keyFields: primaryKeyFields,
       },
     };

@@ -6873,6 +6873,15 @@ CLEAR r->*.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("loop USING KEY primary_key", () => {
+    const abap = `
+DATA tab TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.
+LOOP AT tab INTO DATA(row) USING KEY primary_key.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("classic delete FROM database table", () => {
     const abap = `
 DATA row TYPE zrst.

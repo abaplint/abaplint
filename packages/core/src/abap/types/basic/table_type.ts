@@ -9,6 +9,7 @@ export enum TableAccessType {
 }
 
 export type ITableKey = {
+//  name: string,
   type?: TableAccessType,
   keyFields?: string[],
   isUnique?: boolean,
@@ -17,6 +18,7 @@ export type ITableKey = {
 // todo, handling of secondary keys
 export type ITableOptions = {
   primaryKey?: ITableKey,
+  secondary?: ITableKey[],
   withHeader: boolean,
 };
 
