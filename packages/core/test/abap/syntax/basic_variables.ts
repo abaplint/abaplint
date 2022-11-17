@@ -1828,6 +1828,7 @@ DATA tab TYPE SORTED TABLE OF ty_node
     const secondary = type.getOptions().secondary;
     expect(secondary?.length).to.equal(1);
     expect(secondary![0].name).to.equal("array_index");
+    expect(secondary![0].type).to.equal(TableAccessType.sorted);
     expect(secondary![0].keyFields).to.have.all.members(["INDEX"]);
   });
 
