@@ -323,6 +323,7 @@ export class BasicTypes {
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
       primaryKey: {
+        name: "primary_key",
         type: type,
         isUnique: text.includes(" WITH UNIQUE"),  // todo, BUG HERE
         keyFields: primaryKeyFields,

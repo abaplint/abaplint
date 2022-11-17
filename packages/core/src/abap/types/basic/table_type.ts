@@ -9,10 +9,10 @@ export enum TableAccessType {
 }
 
 export type ITableKey = {
-//  name: string,
+  name: string,
   type?: TableAccessType,
-  keyFields?: string[],
-  isUnique?: boolean,
+  keyFields: string[],
+  isUnique: boolean,
 };
 
 // todo, handling of secondary keys
