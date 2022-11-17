@@ -8,12 +8,17 @@ export enum TableAccessType {
   any = "ANY",
 }
 
-// todo, handling of secondary keys
-export type ITableOptions = {
+export type ITableKey = {
+  name: string,
   type?: TableAccessType,
-  keyFields?: string[],
-  isUnique?: boolean,
+  keyFields: string[],
+  isUnique: boolean,
+};
+
+export type ITableOptions = {
   withHeader: boolean,
+  primaryKey?: ITableKey,
+  secondary?: ITableKey[],
 };
 
 export class TableType extends AbstractType {
@@ -35,7 +40,7 @@ export class TableType extends AbstractType {
   }
 
   public getAccessType(): TableAccessType | undefined {
-    return this.options.type;
+    return this.options.primaryKey?.type;
   }
 
   public getRowType(): AbstractType {
@@ -43,7 +48,7 @@ export class TableType extends AbstractType {
   }
 
   public toABAP(): string {
-// this is used for downport, so use default key for now
+// todo, this is used for downport, so use default key for now
     return "STANDARD TABLE OF " + this.rowType.toABAP() + " WITH DEFAULT KEY";
   }
 

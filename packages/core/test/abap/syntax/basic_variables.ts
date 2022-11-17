@@ -6,6 +6,7 @@ import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
 import {MemoryFile} from "../../../src/files/memory_file";
+import {TableAccessType} from "../../../src/abap/types/basic";
 
 function resolveVariable(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
@@ -1741,7 +1742,7 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
     const type = identifier!.getType() as Basic.TableType;
     expect(type.isWithHeader()).to.equal(false);
-    expect(type.getOptions().keyFields).to.have.all.members(["TABLE_LINE"]);
+    expect(type.getOptions().primaryKey?.keyFields).to.have.all.members(["TABLE_LINE"]);
   });
 
   it("table, two key fields", () => {
@@ -1756,7 +1757,7 @@ DATA tab TYPE SORTED TABLE OF type WITH UNIQUE KEY int char.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
     const type = identifier!.getType() as Basic.TableType;
     expect(type.isWithHeader()).to.equal(false);
-    expect(type.getOptions().keyFields).to.have.all.members(["INT", "CHAR"]);
+    expect(type.getOptions().primaryKey?.keyFields).to.have.all.members(["INT", "CHAR"]);
   });
 
   it("type from type group", () => {
@@ -1791,6 +1792,45 @@ TYPES abap_foo TYPE c LENGTH 10.`;
     expect(type).to.not.equal(undefined);
     expect(type!.getType()).to.be.instanceof(Basic.CharacterType);
     expect(type!.getType().getQualifiedName()).to.equal("abap_foo");
+  });
+
+  it("table, LIKE SORTED", () => {
+    const abap = `
+DATA foo TYPE i.
+DATA tab LIKE SORTED TABLE OF foo WITH UNIQUE KEY table_line.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+    expect(type.isWithHeader()).to.equal(false);
+    expect(type.getOptions().primaryKey?.isUnique).to.equal(true);
+    expect(type.getOptions().primaryKey?.type).to.equal(TableAccessType.sorted);
+  });
+
+  it("table, secondary key", () => {
+    const abap = `
+TYPES: BEGIN OF ty_node,
+    name  TYPE string,
+    index TYPE i,
+  END OF ty_node.
+DATA tab TYPE SORTED TABLE OF ty_node
+  WITH UNIQUE KEY name
+  WITH NON-UNIQUE SORTED KEY array_index COMPONENTS index.`;
+
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+
+    expect(type.isWithHeader()).to.equal(false);
+    expect(type.getOptions().primaryKey?.keyFields).to.have.all.members(["NAME"]);
+
+    const secondary = type.getOptions().secondary;
+    expect(secondary?.length).to.equal(1);
+    expect(secondary![0].name).to.equal("array_index");
+    expect(secondary![0].type).to.equal(TableAccessType.sorted);
+    expect(secondary![0].isUnique).to.equal(false);
+    expect(secondary![0].keyFields).to.have.all.members(["INDEX"]);
   });
 
 });

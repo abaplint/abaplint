@@ -11,10 +11,10 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {CharacterType, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
+import {CharacterType, ITableKey, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {FieldSub, TypeTableKey} from "../2_statements/expressions";
+import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
 
@@ -292,31 +292,60 @@ export class BasicTypes {
 
   public parseTable(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
+
     const text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
     if (text === undefined) {
       return undefined;
     }
 
     let type: Types.TableAccessType | undefined = undefined;
-    if (text.includes(" STANDARD TABLE ")) {
+    if (text.startsWith("TYPE STANDARD TABLE ") || text.startsWith("LIKE STANDARD TABLE ")) {
       type = TableAccessType.standard;
-    } else if (text.includes(" SORTED TABLE ")) {
+    } else if (text.startsWith("TYPE SORTED TABLE ") || text.startsWith("LIKE SORTED TABLE ")) {
       type = TableAccessType.sorted;
-    } else if (text.includes(" HASHED TABLE ")) {
+    } else if (text.startsWith("TYPE HASHED TABLE ") || text.startsWith("LIKE HASHED TABLE ")) {
       type = TableAccessType.hashed;
     }
-    const keyFields: string[] = [];
-    if (type) {
-      const keys = node.findFirstExpression(TypeTableKey);
-      for (const k of keys?.findDirectExpressions(FieldSub) || []) {
-        keyFields.push(k.concatTokens().toUpperCase());
-      }
+
+    const typeTableKeys = node.findAllExpressions(TypeTableKey);
+
+    const firstKey = typeTableKeys[0];
+    const primaryKey: ITableKey = {
+      name: "primary_key",
+      type: type,
+      isUnique: firstKey?.concatTokens().toUpperCase().includes("WITH UNIQUE ") === true,
+      keyFields: [],
+    };
+    for (const k of firstKey?.findDirectExpressions(FieldSub) || []) {
+      primaryKey.keyFields.push(k.concatTokens().toUpperCase());
     }
+
+    const secondaryKeys: ITableKey[] = [];
+    for (let i = 1; i < typeTableKeys.length; i++) {
+      const row = typeTableKeys[i];
+      const name = row.findDirectExpression(Field)?.concatTokens();
+      if (name === undefined) {
+        continue;
+      }
+
+      const secondary: ITableKey = {
+        name: name,
+        type: row.findDirectTokenByText("SORTED") ? TableAccessType.sorted : TableAccessType.hashed,
+        isUnique: row?.concatTokens().toUpperCase().includes("WITH UNIQUE ") === true,
+        keyFields: [],
+      };
+
+      for (const k of row?.findDirectExpressions(FieldSub) || []) {
+        secondary.keyFields.push(k.concatTokens().toUpperCase());
+      }
+
+      secondaryKeys.push(secondary);
+    }
+
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
-      type: type,
-      isUnique: text.includes(" WITH UNIQUE"),
-      keyFields: keyFields,
+      primaryKey: primaryKey,
+      secondary: secondaryKeys,
     };
 
     let found: AbstractType | undefined = undefined;
