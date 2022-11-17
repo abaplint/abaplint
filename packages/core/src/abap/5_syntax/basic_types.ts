@@ -314,9 +314,11 @@ export class BasicTypes {
     }
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
-      type: type,
-      isUnique: text.includes(" WITH UNIQUE"),
-      keyFields: keyFields,
+      primaryKey: {
+        type: type,
+        isUnique: text.includes(" WITH UNIQUE"),
+        keyFields: keyFields,
+      },
     };
 
     let found: AbstractType | undefined = undefined;

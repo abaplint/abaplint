@@ -1741,7 +1741,7 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
     const type = identifier!.getType() as Basic.TableType;
     expect(type.isWithHeader()).to.equal(false);
-    expect(type.getOptions().keyFields).to.have.all.members(["TABLE_LINE"]);
+    expect(type.getOptions().primaryKey?.keyFields).to.have.all.members(["TABLE_LINE"]);
   });
 
   it("table, two key fields", () => {
@@ -1756,7 +1756,7 @@ DATA tab TYPE SORTED TABLE OF type WITH UNIQUE KEY int char.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
     const type = identifier!.getType() as Basic.TableType;
     expect(type.isWithHeader()).to.equal(false);
-    expect(type.getOptions().keyFields).to.have.all.members(["INT", "CHAR"]);
+    expect(type.getOptions().primaryKey?.keyFields).to.have.all.members(["INT", "CHAR"]);
   });
 
   it("type from type group", () => {
@@ -1791,6 +1791,23 @@ TYPES abap_foo TYPE c LENGTH 10.`;
     expect(type).to.not.equal(undefined);
     expect(type!.getType()).to.be.instanceof(Basic.CharacterType);
     expect(type!.getType().getQualifiedName()).to.equal("abap_foo");
+  });
+
+  it.skip("table, secondary key", () => {
+    const abap = `
+TYPES: BEGIN OF ty_node,
+    name  TYPE string,
+    index TYPE i,
+  END OF ty_node.
+DATA tab TYPE SORTED TABLE OF ty_node
+  WITH UNIQUE KEY name
+  WITH NON-UNIQUE SORTED KEY array_index COMPONENTS index.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+    expect(type.isWithHeader()).to.equal(false);
+    expect(type.getOptions().primaryKey?.keyFields).to.have.all.members(["NAME"]);
   });
 
 });

@@ -8,11 +8,15 @@ export enum TableAccessType {
   any = "ANY",
 }
 
-// todo, handling of secondary keys
-export type ITableOptions = {
+export type ITableKey = {
   type?: TableAccessType,
   keyFields?: string[],
   isUnique?: boolean,
+};
+
+// todo, handling of secondary keys
+export type ITableOptions = {
+  primaryKey?: ITableKey,
   withHeader: boolean,
 };
 
@@ -35,7 +39,7 @@ export class TableType extends AbstractType {
   }
 
   public getAccessType(): TableAccessType | undefined {
-    return this.options.type;
+    return this.options.primaryKey?.type;
   }
 
   public getRowType(): AbstractType {
