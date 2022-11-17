@@ -15,7 +15,6 @@ export type ITableKey = {
   isUnique: boolean,
 };
 
-// todo, handling of secondary keys
 export type ITableOptions = {
   primaryKey?: ITableKey,
   secondary?: ITableKey[],

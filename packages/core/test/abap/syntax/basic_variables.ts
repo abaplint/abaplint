@@ -1815,12 +1815,19 @@ TYPES: BEGIN OF ty_node,
 DATA tab TYPE SORTED TABLE OF ty_node
   WITH UNIQUE KEY name
   WITH NON-UNIQUE SORTED KEY array_index COMPONENTS index.`;
+
     const identifier = resolveVariable(abap, "tab");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
     const type = identifier!.getType() as Basic.TableType;
+
     expect(type.isWithHeader()).to.equal(false);
     expect(type.getOptions().primaryKey?.keyFields).to.have.all.members(["NAME"]);
+
+    const secondary = type.getOptions().secondary;
+    expect(secondary?.length).to.equal(1);
+    expect(secondary![0].name).to.equal("array_index");
+    expect(secondary![0].keyFields).to.have.all.members(["INDEX"]);
   });
 
 });
