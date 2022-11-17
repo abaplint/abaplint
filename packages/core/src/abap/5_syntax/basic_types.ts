@@ -307,19 +307,18 @@ export class BasicTypes {
       type = TableAccessType.hashed;
     }
 
-    const keyFields: string[] = [];
-    if (type) {
-      const keys = node.findFirstExpression(TypeTableKey);
-      for (const k of keys?.findDirectExpressions(FieldSub) || []) {
-        keyFields.push(k.concatTokens().toUpperCase());
-      }
+    const primaryKeyFields: string[] = [];
+    const keys = node.findFirstExpression(TypeTableKey);
+    for (const k of keys?.findDirectExpressions(FieldSub) || []) {
+      primaryKeyFields.push(k.concatTokens().toUpperCase());
     }
+
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
       primaryKey: {
         type: type,
         isUnique: text.includes(" WITH UNIQUE"),
-        keyFields: keyFields,
+        keyFields: primaryKeyFields,
       },
     };
 
