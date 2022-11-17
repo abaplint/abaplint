@@ -309,14 +309,14 @@ export class BasicTypes {
 
     const typeTableKeys = node.findAllExpressions(TypeTableKey);
 
-    const keys = typeTableKeys[0];
+    const firstKey = typeTableKeys[0];
     const primaryKey: ITableKey = {
       name: "primary_key",
       type: type,
-      isUnique: text.includes(" WITH UNIQUE"),  // todo, BUG HERE
+      isUnique: firstKey?.concatTokens().toUpperCase().includes("WITH UNIQUE ") !== undefined,
       keyFields: [],
     };
-    for (const k of keys?.findDirectExpressions(FieldSub) || []) {
+    for (const k of firstKey?.findDirectExpressions(FieldSub) || []) {
       primaryKey.keyFields.push(k.concatTokens().toUpperCase());
     }
 
