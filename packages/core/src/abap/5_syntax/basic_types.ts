@@ -313,7 +313,7 @@ export class BasicTypes {
     const primaryKey: ITableKey = {
       name: "primary_key",
       type: type,
-      isUnique: firstKey?.concatTokens().toUpperCase().includes("WITH UNIQUE ") !== undefined,
+      isUnique: firstKey?.concatTokens().toUpperCase().includes("WITH UNIQUE ") === true,
       keyFields: [],
     };
     for (const k of firstKey?.findDirectExpressions(FieldSub) || []) {
@@ -331,7 +331,7 @@ export class BasicTypes {
       const secondary: ITableKey = {
         name: name,
         type: row.findDirectTokenByText("SORTED") ? TableAccessType.sorted : TableAccessType.hashed,
-        isUnique: row?.concatTokens().toUpperCase().includes("WITH UNIQUE ") !== undefined,
+        isUnique: row?.concatTokens().toUpperCase().includes("WITH UNIQUE ") === true,
         keyFields: [],
       };
 
