@@ -292,19 +292,21 @@ export class BasicTypes {
 
   public parseTable(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
+
     const text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
     if (text === undefined) {
       return undefined;
     }
 
     let type: Types.TableAccessType | undefined = undefined;
-    if (text.includes(" STANDARD TABLE ")) {
+    if (text.startsWith("TYPE STANDARD TABLE ")) {
       type = TableAccessType.standard;
-    } else if (text.includes(" SORTED TABLE ")) {
+    } else if (text.startsWith("TYPE SORTED TABLE ")) {
       type = TableAccessType.sorted;
-    } else if (text.includes(" HASHED TABLE ")) {
+    } else if (text.startsWith("TYPE HASHED TABLE ")) {
       type = TableAccessType.hashed;
     }
+
     const keyFields: string[] = [];
     if (type) {
       const keys = node.findFirstExpression(TypeTableKey);
