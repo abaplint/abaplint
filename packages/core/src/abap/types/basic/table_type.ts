@@ -16,9 +16,9 @@ export type ITableKey = {
 };
 
 export type ITableOptions = {
+  withHeader: boolean,
   primaryKey?: ITableKey,
   secondary?: ITableKey[],
-  withHeader: boolean,
 };
 
 export class TableType extends AbstractType {
@@ -48,7 +48,7 @@ export class TableType extends AbstractType {
   }
 
   public toABAP(): string {
-// this is used for downport, so use default key for now
+// todo, this is used for downport, so use default key for now
     return "STANDARD TABLE OF " + this.rowType.toABAP() + " WITH DEFAULT KEY";
   }
 

@@ -1803,6 +1803,7 @@ DATA tab LIKE SORTED TABLE OF foo WITH UNIQUE KEY table_line.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
     const type = identifier!.getType() as Basic.TableType;
     expect(type.isWithHeader()).to.equal(false);
+    expect(type.getOptions().primaryKey?.isUnique).to.equal(true);
     expect(type.getOptions().primaryKey?.type).to.equal(TableAccessType.sorted);
   });
 

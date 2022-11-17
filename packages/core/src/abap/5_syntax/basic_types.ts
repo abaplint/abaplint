@@ -11,7 +11,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
-import {CharacterType, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
+import {CharacterType, ITableKey, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
 import {FieldChain} from "./expressions/field_chain";
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {FieldSub, TypeTableKey} from "../2_statements/expressions";
@@ -307,12 +307,17 @@ export class BasicTypes {
       type = TableAccessType.hashed;
     }
 
-    const primaryKeyFields: string[] = [];
     const typeTableKeys = node.findAllExpressions(TypeTableKey);
 
     const keys = typeTableKeys[0];
+    const primaryKey: ITableKey = {
+      name: "primary_key",
+      type: type,
+      isUnique: text.includes(" WITH UNIQUE"),  // todo, BUG HERE
+      keyFields: [],
+    };
     for (const k of keys?.findDirectExpressions(FieldSub) || []) {
-      primaryKeyFields.push(k.concatTokens().toUpperCase());
+      primaryKey.keyFields.push(k.concatTokens().toUpperCase());
     }
 
     for (let i = 1; i < typeTableKeys.length; i++) {
@@ -322,12 +327,7 @@ export class BasicTypes {
 
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
-      primaryKey: {
-        name: "primary_key",
-        type: type,
-        isUnique: text.includes(" WITH UNIQUE"),  // todo, BUG HERE
-        keyFields: primaryKeyFields,
-      },
+      primaryKey: primaryKey,
     };
 
     let found: AbstractType | undefined = undefined;
