@@ -585,4 +585,18 @@ define view foo as select distinct from bar {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("Function in WHERE", () => {
+    const cds = `
+define view entity sdf as select from fasdfs
+{
+  key uuid         as UUID,
+      requested_by as RequestedBy
+}
+where TSTMP_SECONDS_BETWEEN( foo, TSTMP_CURRENT_UTCTIMESTAMP(), 'FAIL' ) <= 31622400
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
