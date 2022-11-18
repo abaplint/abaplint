@@ -8,11 +8,11 @@ export class CDSElement extends Expression {
   public getRunnable(): IStatementRunnable {
     return seq(starPrio(CDSAnnotation),
                optPrio("KEY"),
-               altPrio(CDSCast,
-                       CDSAggregate,
+               altPrio(CDSAggregate,
                        CDSString,
                        CDSFunction,
                        CDSArithmetics,
+                       CDSCast,
                        CDSCase,
                        seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters)))),
                        regex(/^\d+$/)),

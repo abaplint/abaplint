@@ -573,4 +573,16 @@ define view zc_myview
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("cast and arithmetics", () => {
+    const cds = `
+define view foo as select distinct from bar {
+  key field1,
+  cast( field2 as abap.int4 ) + 1 as blah,
+  _Text
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
