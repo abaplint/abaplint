@@ -4,7 +4,11 @@ const path = require("path");
 
 module.exports = {
   entry: {
+    index: {
+      import: "./build/src/index.js",
+    },
     cli: {
+      dependOn: "index",
       import: "./build/src/cli.js",
     },
   },
