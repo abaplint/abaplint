@@ -806,7 +806,7 @@ export class BasicTypes {
     return new Types.UnknownType("REF, unable to resolve " + name);
   }
 
-  public findValue(node: StatementNode): string | undefined {
+  public findValue(node: StatementNode | ExpressionNode): string | undefined {
     const val = node.findFirstExpression(Expressions.Value);
     if (val === undefined) {
       throw new Error("VALUE missing in expression");
