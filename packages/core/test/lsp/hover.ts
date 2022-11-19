@@ -1311,4 +1311,13 @@ INCLUDE /foo/lbaruxx.`;
     expect(hover?.value).to.contain("ISOLA");
   });
 
+  it("Hover, conversion exit, types", () => {
+    const abap = `TYPES foo TYPE sy-langu.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("ISOLA");
+  });
+
 });

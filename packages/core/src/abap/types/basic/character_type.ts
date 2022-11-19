@@ -12,7 +12,7 @@ export class CharacterType extends AbstractType {
   }
 
   public cloneType(qualifiedName?: string) {
-    return new CharacterType(this.length, qualifiedName);
+    return new CharacterType(this.length, qualifiedName, this.getConversionExit());
   }
 
   public getLength() {
