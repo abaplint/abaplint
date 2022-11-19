@@ -464,4 +464,21 @@ describe("Objects, class, getTypeDefinitions", () => {
     const tab = attr[1].type.getType() as Basic.TableType;
     expect(tab.getRowType()).to.not.be.instanceof(Basic.VoidType);
   });
+
+  it("static attribute with initial value", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    CLASS-DATA mc_hello TYPE string READ-ONLY VALUE 'hello'.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    const attr = def!.getAttributes().getAll();
+    expect(attr.length).to.equal(1);
+    expect(attr[0].getValue()).to.equal(`'hello'`);
+  });
 });

@@ -13,9 +13,19 @@ export class DataDefinition {
       return new TypeTable().runSyntax(node, scope, filename);
     }
 
+    const valueNode = node.findFirstExpression(Expressions.Value);
+    let value: string | undefined = undefined;
+    if (valueNode) {
+      value = new BasicTypes(filename, scope).findValue(node);
+    }
+
     const bfound = new BasicTypes(filename, scope).simpleType(node);
     if (bfound) {
-      return bfound;
+      if (value) {
+        return new TypedIdentifier(bfound.getToken(), filename, bfound.getType(), bfound.getMeta(), value);
+      } else {
+        return bfound;
+      }
     }
 
     const name = node.findFirstExpression(Expressions.DefinitionName);

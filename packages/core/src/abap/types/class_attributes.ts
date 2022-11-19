@@ -207,6 +207,7 @@ export class Attributes implements IAttributes {
   private parseAttribute(node: StatementNode, visibility: Visibility, scope: CurrentScope): ClassAttribute {
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
+
     if (s instanceof Statements.Data) {
       found = new DataStatement().runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassData) {
@@ -221,7 +222,7 @@ export class Attributes implements IAttributes {
 
     scope.addIdentifier(found);
 
-    return new ClassAttribute(found, visibility, found.getMeta());
+    return new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
   }
 
 }

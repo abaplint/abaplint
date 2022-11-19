@@ -13,9 +13,8 @@ export class ClassData {
       if (found === undefined) {
         return undefined;
       }
-      const meta = found.getMeta().slice();
-      meta.push(IdentifierMeta.Static);
-      return new TypedIdentifier(found.getToken(), filename, found.getType(), meta);
+      const meta = [...found.getMeta(), IdentifierMeta.Static];
+      return new TypedIdentifier(found.getToken(), filename, found.getType(), meta, found.getValue());
     }
 
     const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
