@@ -14,7 +14,7 @@ export class VoidType extends AbstractType {
   }
 
   public toABAP(): string {
-    throw new Error("void, generic");
+    return this.voided || "VOIDEDtoABAP";
   }
 
   public toText() {

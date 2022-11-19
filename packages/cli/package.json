@@ -1,12 +1,10 @@
 {
     "name": "@abaplint/cli",
-    "version": "2.93.88",
+    "version": "2.93.91",
     "description": "abaplint - Command Line Interface",
     "bin": {
         "abaplint": "./abaplint"
     },
-    "main": "./build/src/index.js",
-    "types": "./build/src/index.d.ts",
     "scripts": {
         "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
         "compile": "tsc",
@@ -39,7 +37,7 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@abaplint/core": "^2.93.88",
+        "@abaplint/core": "^2.93.91",
         "@types/chai": "^4.3.4",
         "@types/glob": "^7.2.0",
         "@types/minimist": "^1.2.2",
@@ -48,7 +46,7 @@
         "@types/progress": "^2.0.5",
         "chai": "^4.3.7",
         "chalk": "^5.1.2",
-        "eslint": "^8.27.0",
+        "eslint": "^8.28.0",
         "glob": "^7.2.3",
         "json5": "^2.2.1",
         "memfs": "^3.4.11",
