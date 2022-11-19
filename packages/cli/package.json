@@ -1,11 +1,11 @@
 {
     "name": "@abaplint/cli",
-    "version": "2.93.89",
+    "version": "2.93.90",
     "description": "abaplint - Command Line Interface",
     "bin": {
         "abaplint": "./abaplint"
     },
-    "main": "./build/src/index.js",
+    "main": "./build/index.js",
     "types": "./build/src/index.d.ts",
     "scripts": {
         "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
