@@ -3,8 +3,8 @@ import {AbstractType} from "./_abstract_type";
 export class CharacterType extends AbstractType {
   private readonly length: number;
 
-  public constructor(length: number, qualifiedName?: string) {
-    super(qualifiedName);
+  public constructor(length: number, qualifiedName?: string, conversionExit?: string) {
+    super(qualifiedName, conversionExit);
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     }

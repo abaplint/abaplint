@@ -327,7 +327,8 @@ export class DDIC {
     length: string | undefined,
     decimals: string | undefined,
     parent: string,
-    qualify = true): AbstractType {
+    qualify = true,
+    conversionExit?: string | undefined): AbstractType {
 
 // todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length
 
@@ -348,17 +349,17 @@ export class DDIC {
         }
         return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), qualified);
       case "ACCP":
-        return new Types.CharacterType(6, qualified); // YYYYMM
+        return new Types.CharacterType(6, qualified, conversionExit); // YYYYMM
       case "LANG":
-        return new Types.CharacterType(1, qualified);
+        return new Types.CharacterType(1, qualified, conversionExit);
       case "CLNT":
-        return new Types.CharacterType(3, qualified);
+        return new Types.CharacterType(3, qualified, conversionExit);
       case "CUKY":
-        return new Types.CharacterType(5, qualified);
+        return new Types.CharacterType(5, qualified, conversionExit);
       case "UNIT":  // 2 <= len <= 3
-        return new Types.CharacterType(3, qualified);
+        return new Types.CharacterType(3, qualified, conversionExit);
       case "UTCLONG":
-        return new Types.CharacterType(27, qualified);
+        return new Types.CharacterType(27, qualified, conversionExit);
       case "NUMC": // 1 <= len <= 255
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length", parent);
@@ -369,7 +370,7 @@ export class DDIC {
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.CharacterType(parseInt(length, 10), qualified);
+        return new Types.CharacterType(parseInt(length, 10), qualified, conversionExit);
       case "RAW":  // 1 <= len <= 32000
       case "LRAW": // 256 <= len <= 32000
         if (length === undefined) {
