@@ -56,8 +56,13 @@ export class Domain extends AbstractObject {
       return new Types.UnknownType("Domain " + this.getName() + " parser error", this.getName());
     }
     const ddic = new DDIC(reg);
-    this.parsedType = ddic.textToType(this.parsedXML.datatype, this.parsedXML.length,
-                                      this.parsedXML.decimals, parent || this.getName(), parent !== undefined);
+    this.parsedType = ddic.textToType(
+      this.parsedXML.datatype,
+      this.parsedXML.length,
+      this.parsedXML.decimals,
+      parent || this.getName(),
+      parent !== undefined,
+      this.parsedXML.conversionExit);
     return this.parsedType;
   }
 

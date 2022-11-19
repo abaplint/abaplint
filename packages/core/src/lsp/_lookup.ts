@@ -137,19 +137,22 @@ export class LSPLookup {
   private static dumpType(variable: TypedIdentifier): string {
     let value = variable.toText() + "\n\nType: " + variable.getType().toText(0);
     if (variable.getValue()) {
-      value = value + "\n\nValue: ```" + variable.getValue() + "```";
+      value += "\n\nValue: ```" + variable.getValue() + "```";
     }
     if (variable.getMeta().length > 0) {
-      value = value + "\n\nMeta: " + variable.getMeta().join(", ");
+      value += "\n\nMeta: " + variable.getMeta().join(", ");
     }
     if (variable.getType().containsVoid() === true) {
-      value = value + "\n\nContains Void types";
+      value += "\n\nContains Void types";
     }
     if (variable.getType().getQualifiedName()) {
-      value = value + "\n\nQualified Type Name: ```" + variable.getType().getQualifiedName() + "```";
+      value += "\n\nQualified Type Name: ```" + variable.getType().getQualifiedName() + "```";
     }
     if (variable.getType().isGeneric() === true) {
-      value = value + "\n\nIs Generic Type";
+      value += "\n\nIs Generic Type";
+    }
+    if (variable.getType().getConversionExit() !== undefined) {
+      value += "\n\nConversion Exit: ```" + variable.getType().getConversionExit() + "```";
     }
 
     return value;

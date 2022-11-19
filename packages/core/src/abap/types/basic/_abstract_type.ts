@@ -1,13 +1,19 @@
 export abstract class AbstractType {
   private readonly qualifiedName: string | undefined;
+  private readonly conversionExit: string | undefined;
 
-  public constructor(qualifiedName?: string) {
+  public constructor(qualifiedName?: string, conversionExit?: string) {
     this.qualifiedName = qualifiedName;
+    this.conversionExit = conversionExit;
   }
 
   /** fully qualified symbolic name of the type */
   public getQualifiedName(): string | undefined {
     return this.qualifiedName;
+  }
+
+  public getConversionExit(): string | undefined {
+    return this.conversionExit;
   }
 
   public abstract toText(level: number): string;

@@ -1129,7 +1129,7 @@ export class BuiltIn {
     components.push({name: "host", type: new CharacterType(32, "sy-host")});
     components.push({name: "index", type: new IntegerType()});
     components.push({name: "input", type: new CharacterType(1, "sy-input")});
-    components.push({name: "langu", type: new CharacterType(1, "sy-langu")});
+    components.push({name: "langu", type: new CharacterType(1, "sy-langu", "ISOLA")});
     components.push({name: "ldbpg", type: new CharacterType(40, "sy-ldbpg")});
     components.push({name: "lilli", type: new IntegerType()});
     components.push({name: "linct", type: new IntegerType()});

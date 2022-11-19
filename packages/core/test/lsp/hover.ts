@@ -1300,7 +1300,15 @@ INCLUDE /foo/lbaruxx.`;
     const hover2 = new Hover(reg).find(buildPosition(files[0], 2, 10));
     expect(hover2).to.not.equal(undefined);
     expect(hover2?.value).to.contain(`Variable Definition`);
+  });
 
+  it("Hover, conversion exit", () => {
+    const abap = `DATA foo TYPE sy-langu.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("ISOLA");
   });
 
 });
