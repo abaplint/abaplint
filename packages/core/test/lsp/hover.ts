@@ -1320,7 +1320,7 @@ INCLUDE /foo/lbaruxx.`;
     expect(hover?.value).to.contain("ISOLA");
   });
 
-  it.skip("Hover, ddic type", () => {
+  it("Hover, ddic type", () => {
     const abap = `TYPES:
 BEGIN OF ty_personalization,
   hide_column TYPE abap_bool,
@@ -1333,7 +1333,6 @@ DATA foobar TYPE ty_list_report-hide_column.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 7, 7));
     expect(hover).to.not.equal(undefined);
-    console.dir(hover);
     expect(hover?.value).to.contain("ABAP_BOOL");
   });
 
