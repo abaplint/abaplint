@@ -6,7 +6,7 @@ export class ObjectReferenceType extends AbstractType {
   private readonly identifier: Identifier;
 
   public constructor(id: Identifier, qualifiedName?: string) {
-    super(qualifiedName);
+    super({qualifiedName: qualifiedName});
     this.identifier = id;
   }
 

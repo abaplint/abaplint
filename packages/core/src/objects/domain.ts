@@ -49,7 +49,7 @@ export class Domain extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry, parent?: string): AbstractType {
+  public parseType(reg: IRegistry, dataElement?: string): AbstractType {
     if (this.parsedType) {
       return this.parsedType;
     } else if (this.parsedXML === undefined) {
@@ -60,9 +60,10 @@ export class Domain extends AbstractObject {
       this.parsedXML.datatype,
       this.parsedXML.length,
       this.parsedXML.decimals,
-      parent || this.getName(),
-      parent !== undefined,
-      this.parsedXML.conversionExit);
+      this.getName(),
+      dataElement,
+      this.parsedXML.conversionExit,
+      dataElement);
     return this.parsedType;
   }
 

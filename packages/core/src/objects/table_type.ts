@@ -76,7 +76,7 @@ export class TableType extends AbstractObject {
       if (this.parsedXML.datatype === undefined) {
         type = new Types.UnknownType("Table Type, empty DATATYPE" + this.getName(), this.getName());
       } else {
-        const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName(), false);
+        const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
         type = new Types.TableType(row, {withHeader: false}, this.getName());
       }
     } else {

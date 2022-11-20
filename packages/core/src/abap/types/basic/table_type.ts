@@ -26,7 +26,7 @@ export class TableType extends AbstractType {
   private readonly options: ITableOptions;
 
   public constructor(rowType: AbstractType, options: ITableOptions, qualifiedName?: string) {
-    super(qualifiedName);
+    super({qualifiedName: qualifiedName});
     this.rowType = rowType;
     this.options = options;
   }

@@ -112,6 +112,7 @@ describe("Data element, parse main xml", () => {
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
     expect(type.getQualifiedName()).to.equal("ZDTEL");
+    expect(type.getDDICName()).to.equal("ZDTEL");
   });
 
   it("Reference to domain, outside namespace, expect void", async () => {

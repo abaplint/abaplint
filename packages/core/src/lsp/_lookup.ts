@@ -154,6 +154,9 @@ export class LSPLookup {
     if (variable.getType().getConversionExit() !== undefined) {
       value += "\n\nConversion Exit: ```" + variable.getType().getConversionExit() + "```";
     }
+    if (variable.getType().getDDICName() !== undefined) {
+      value += "\n\nDDIC Name: ```" + variable.getType().getDDICName() + "```";
+    }
 
     return value;
   }

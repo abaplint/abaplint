@@ -58,7 +58,7 @@ export class TypeEnum {
           || scope.getType() === ScopeType.Interface) {
         qualifiedName = scope.getName() + "=>" + qualifiedName;
       }
-      const id = new TypedIdentifier(name.getFirstToken(), filename, new EnumType(qualifiedName), [IdentifierMeta.Enum]);
+      const id = new TypedIdentifier(name.getFirstToken(), filename, new EnumType({qualifiedName: qualifiedName}), [IdentifierMeta.Enum]);
       scope.addType(id);
       types.push(id);
     }

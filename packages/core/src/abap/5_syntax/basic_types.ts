@@ -539,7 +539,7 @@ export class BasicTypes {
           }
         }
 
-        found = new Types.CharacterType(length, qualifiedName); // fallback
+        found = new Types.CharacterType(length, {qualifiedName: qualifiedName}); // fallback
         if (this.isOccurs(node)) {
           found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE")}, qualifiedName);
         }
