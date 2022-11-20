@@ -70,7 +70,7 @@ describe("Data element, parse main xml", () => {
     expect(type).to.be.instanceof(UnknownType);
   });
 
-  it.only("Reference to domain", async () => {
+  it("Reference to domain", async () => {
     const dtelxml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">

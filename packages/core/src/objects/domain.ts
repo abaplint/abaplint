@@ -60,9 +60,10 @@ export class Domain extends AbstractObject {
       this.parsedXML.datatype,
       this.parsedXML.length,
       this.parsedXML.decimals,
-      dataElement || this.getName(),
-      dataElement !== undefined,
-      this.parsedXML.conversionExit);
+      this.getName(),
+      dataElement,
+      this.parsedXML.conversionExit,
+      dataElement);
     return this.parsedType;
   }
 
