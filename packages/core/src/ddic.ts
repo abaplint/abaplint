@@ -330,7 +330,7 @@ export class DDIC {
     qualify = true,
     conversionExit?: string | undefined): AbstractType {
 
-// todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length
+// todo: support short strings, and length of different integers, NUMC vs CHAR, min/max length
 
     const qualified = qualify ? parent : undefined;
 

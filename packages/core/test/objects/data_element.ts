@@ -70,7 +70,7 @@ describe("Data element, parse main xml", () => {
     expect(type).to.be.instanceof(UnknownType);
   });
 
-  it("Reference to domain", async () => {
+  it.only("Reference to domain", async () => {
     const dtelxml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -112,6 +112,7 @@ describe("Data element, parse main xml", () => {
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
     expect(type.getQualifiedName()).to.equal("ZDTEL");
+    expect(type.getDDICName()).to.equal("ZDTEL");
   });
 
   it("Reference to domain, outside namespace, expect void", async () => {
