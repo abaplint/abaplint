@@ -1,13 +1,10 @@
-import {AbstractType} from "./_abstract_type";
+import {AbstractType, AbstractTypeData} from "./_abstract_type";
 
 export class CharacterType extends AbstractType {
   private readonly length: number;
 
-  public constructor(length: number, qualifiedName?: string, conversionExit?: string) {
-    super({
-      qualifiedName: qualifiedName,
-      conversionExit: conversionExit,
-    });
+  public constructor(length: number, extra?: AbstractTypeData) {
+    super(extra);
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     }
@@ -15,7 +12,9 @@ export class CharacterType extends AbstractType {
   }
 
   public cloneType(qualifiedName?: string) {
-    return new CharacterType(this.length, qualifiedName, this.getConversionExit());
+    const extra = this.getAbstractTypeData() || {};
+    extra.qualifiedName = qualifiedName;
+    return new CharacterType(this.length, extra);
   }
 
   public getLength() {

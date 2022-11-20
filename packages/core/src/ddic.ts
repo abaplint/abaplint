@@ -116,9 +116,9 @@ export class DDIC {
         }
       case "C":
         if (length) {
-          return new Types.CharacterType(length, qualifiedName);
+          return new Types.CharacterType(length, {qualifiedName: qualifiedName});
         } else {
-          return new Types.CharacterType(1, qualifiedName);
+          return new Types.CharacterType(1, {qualifiedName: qualifiedName});
         }
       case "X":
         if (length) {
@@ -349,17 +349,17 @@ export class DDIC {
         }
         return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), qualified);
       case "ACCP":
-        return new Types.CharacterType(6, qualified, conversionExit); // YYYYMM
+        return new Types.CharacterType(6, {qualifiedName: qualified, conversionExit: conversionExit}); // YYYYMM
       case "LANG":
-        return new Types.CharacterType(1, qualified, conversionExit);
+        return new Types.CharacterType(1, {qualifiedName: qualified, conversionExit: conversionExit});
       case "CLNT":
-        return new Types.CharacterType(3, qualified, conversionExit);
+        return new Types.CharacterType(3, {qualifiedName: qualified, conversionExit: conversionExit});
       case "CUKY":
-        return new Types.CharacterType(5, qualified, conversionExit);
+        return new Types.CharacterType(5, {qualifiedName: qualified, conversionExit: conversionExit});
       case "UNIT":  // 2 <= len <= 3
-        return new Types.CharacterType(3, qualified, conversionExit);
+        return new Types.CharacterType(3, {qualifiedName: qualified, conversionExit: conversionExit});
       case "UTCLONG":
-        return new Types.CharacterType(27, qualified, conversionExit);
+        return new Types.CharacterType(27, {qualifiedName: qualified, conversionExit: conversionExit});
       case "NUMC": // 1 <= len <= 255
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length", parent);
@@ -370,7 +370,7 @@ export class DDIC {
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length", parent);
         }
-        return new Types.CharacterType(parseInt(length, 10), qualified, conversionExit);
+        return new Types.CharacterType(parseInt(length, 10), {qualifiedName: qualified, conversionExit: conversionExit});
       case "RAW":  // 1 <= len <= 32000
       case "LRAW": // 256 <= len <= 32000
         if (length === undefined) {

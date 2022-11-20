@@ -67,7 +67,7 @@ export class Source {
           const method = new BuiltIn().searchBuiltin(tok);
           scope.addReference(token, method, ReferenceType.BuiltinMethodReference, filename);
           new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
-          return new CharacterType(1, "ABAP_BOOL");
+          return new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"});
         }
         case "REDUCE":
         {

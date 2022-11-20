@@ -11,6 +11,10 @@ export abstract class AbstractType {
     this.data = input;
   }
 
+  public getAbstractTypeData() {
+    return this.data;
+  }
+
   /** fully qualified symbolic name of the type */
   public getQualifiedName(): string | undefined {
     return this.data?.qualifiedName;
