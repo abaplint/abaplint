@@ -108,11 +108,11 @@ export class DDIC {
         return new Types.FloatType({qualifiedName: qualifiedName || name});
       case "P":
         if (length && decimals) {
-          return new Types.PackedType(length, decimals, qualifiedName);
+          return new Types.PackedType(length, decimals, {qualifiedName: qualifiedName});
         } else if (length) {
-          return new Types.PackedType(length, 0, qualifiedName);
+          return new Types.PackedType(length, 0, {qualifiedName: qualifiedName});
         } else {
-          return new Types.PackedType(1, 0, qualifiedName);
+          return new Types.PackedType(1, 0, {qualifiedName: qualifiedName});
         }
       case "C":
         if (length) {
@@ -344,9 +344,9 @@ export class DDIC {
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length, " + infoText, infoText);
         } else if (decimals === undefined) {
-          return new Types.PackedType(parseInt(length, 10), 0, qualifiedName);
+          return new Types.PackedType(parseInt(length, 10), 0, {qualifiedName, conversionExit, ddicName});
         }
-        return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), qualifiedName);
+        return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), {qualifiedName, conversionExit, ddicName});
       case "ACCP":
         return new Types.CharacterType(6, {qualifiedName, conversionExit, ddicName}); // YYYYMM
       case "LANG":
