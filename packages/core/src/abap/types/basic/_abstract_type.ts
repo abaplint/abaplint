@@ -1,25 +1,27 @@
-export abstract class AbstractType {
-  private readonly qualifiedName: string | undefined;
-  private readonly conversionExit: string | undefined;
-  private readonly ddicName: string | undefined;
+export type AbstractTypeData = {
+  qualifiedName?: string,
+  conversionExit?: string,
+  ddicName?: string,
+};
 
-  public constructor(qualifiedName?: string, conversionExit?: string, ddicName?: string) {
-    this.qualifiedName = qualifiedName;
-    this.conversionExit = conversionExit;
-    this.ddicName = ddicName;
+export abstract class AbstractType {
+  private readonly data: AbstractTypeData |undefined;
+
+  public constructor(input?: AbstractTypeData) {
+    this.data = input;
   }
 
   /** fully qualified symbolic name of the type */
   public getQualifiedName(): string | undefined {
-    return this.qualifiedName;
+    return this.data?.qualifiedName;
   }
 
   public getConversionExit(): string | undefined {
-    return this.conversionExit;
+    return this.data?.conversionExit;
   }
 
   public getDDICName(): string | undefined {
-    return this.ddicName;
+    return this.data?.ddicName;
   }
 
   public abstract toText(level: number): string;

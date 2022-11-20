@@ -4,7 +4,7 @@ export class DataReference extends AbstractType {
   private readonly type: AbstractType;
 
   public constructor(type: AbstractType, qualifiedName?: string) {
-    super(qualifiedName);
+    super({qualifiedName: qualifiedName});
     this.type = type;
   }
 

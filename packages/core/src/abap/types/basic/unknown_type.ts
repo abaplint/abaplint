@@ -4,7 +4,7 @@ export class UnknownType extends AbstractType {
   private readonly error: string;
 
   public constructor(error: string, qualifiedName?: string) {
-    super(qualifiedName);
+    super({qualifiedName: qualifiedName});
     this.error = error;
   }
 

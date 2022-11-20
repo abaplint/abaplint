@@ -6,7 +6,7 @@ import {Integer} from "../../2_statements/expressions";
 export class Constant {
   public runSyntax(node: ExpressionNode): AbstractType {
     if(node.findDirectExpression(Integer)) {
-      return new IntegerType("I");
+      return new IntegerType({qualifiedName: "I"});
     } else if (node.getFirstToken().getStr().startsWith("'")) {
       let len = node.getFirstToken().getStr().length - 2;
       if (len <= 0) {
@@ -14,7 +14,7 @@ export class Constant {
       }
       return new CharacterType(len);
     } else {
-      return new StringType("STRING");
+      return new StringType({qualifiedName: "STRING"});
     }
   }
 }

@@ -6,7 +6,7 @@ export class FloatingPointType extends AbstractType {
   private readonly length: number;
 
   public constructor(length: number, qualifiedName?: string) {
-    super(qualifiedName);
+    super({qualifiedName: qualifiedName});
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     }

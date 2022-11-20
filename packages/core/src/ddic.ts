@@ -68,44 +68,44 @@ export class DDIC {
   public lookupBuiltinType(name: string, length?: number, decimals?: number, qualifiedName?: string): AbstractType | undefined {
     switch (name) {
       case "STRING":
-        return new Types.StringType(qualifiedName || name);
+        return new Types.StringType({qualifiedName: qualifiedName || name});
       case "XSTRING":
-        return new Types.XStringType(qualifiedName || name);
+        return new Types.XStringType({qualifiedName: qualifiedName || name});
       case "D":
-        return new Types.DateType(qualifiedName || name);
+        return new Types.DateType({qualifiedName: qualifiedName || name});
       case "T":
-        return new Types.TimeType(qualifiedName || name);
+        return new Types.TimeType({qualifiedName: qualifiedName || name});
       case "XSEQUENCE":
-        return new Types.XSequenceType(qualifiedName);
+        return new Types.XSequenceType({qualifiedName: qualifiedName});
       case "CLIKE":
-        return new Types.CLikeType(qualifiedName);
+        return new Types.CLikeType({qualifiedName: qualifiedName});
       case "DECFLOAT":
-        return new Types.DecFloatType(qualifiedName);
+        return new Types.DecFloatType({qualifiedName: qualifiedName});
       case "ANY":
-        return new Types.AnyType(qualifiedName);
+        return new Types.AnyType({qualifiedName: qualifiedName});
       case "SIMPLE":
-        return new Types.SimpleType(qualifiedName);
+        return new Types.SimpleType({qualifiedName: qualifiedName});
       case "%_C_POINTER":
         return new Types.HexType(8, qualifiedName);
       case "TABLE":
         return new Types.TableType(new Types.AnyType(), {withHeader: false});
       case "DATA":
-        return new Types.AnyType(qualifiedName);
+        return new Types.AnyType({qualifiedName: qualifiedName});
       case "NUMERIC":
-        return new Types.NumericGenericType(qualifiedName);
+        return new Types.NumericGenericType({qualifiedName: qualifiedName});
       case "UTCLONG": // todo, take version into account
-        return new Types.UTCLongType(qualifiedName);
+        return new Types.UTCLongType({qualifiedName: qualifiedName});
       case "DECFLOAT16":
-        return new Types.DecFloat16Type(qualifiedName);
+        return new Types.DecFloat16Type({qualifiedName: qualifiedName});
       case "DECFLOAT34":
-        return new Types.DecFloat34Type(qualifiedName);
+        return new Types.DecFloat34Type({qualifiedName: qualifiedName});
       case "CSEQUENCE":
-        return new Types.CSequenceType(qualifiedName);
+        return new Types.CSequenceType({qualifiedName: qualifiedName});
       case "I":
       case "INT8": // todo, take version into account
-        return new Types.IntegerType(qualifiedName || name);
+        return new Types.IntegerType({qualifiedName: qualifiedName || name});
       case "F":
-        return new Types.FloatType(qualifiedName || name);
+        return new Types.FloatType({qualifiedName: qualifiedName || name});
       case "P":
         if (length && decimals) {
           return new Types.PackedType(length, decimals, qualifiedName);
@@ -379,7 +379,7 @@ export class DDIC {
         return new Types.HexType(parseInt(length, 10), qualified);
       case "TIMN": // Native HANA
       case "TIMS":
-        return new Types.TimeType(qualified); //HHMMSS
+        return new Types.TimeType({qualifiedName: qualified}); //HHMMSS
       case "DECFLOAT16": // len = 16
       case "DECFLOAT34": // len = 34
       case "D16R":       // len = 16
@@ -393,21 +393,21 @@ export class DDIC {
         return new Types.FloatingPointType(parseInt(length, 10), qualified);
       case "DATN": // Native HANA
       case "DATS":
-        return new Types.DateType(qualified); //YYYYMMDD
+        return new Types.DateType({qualifiedName: qualified}); //YYYYMMDD
       case "INT1":
       case "INT2":
       case "INT4":
       case "INT8":
-        return new Types.IntegerType(qualified);
+        return new Types.IntegerType({qualifiedName: qualified});
       case "SSTR":    // 1 <= len <= 1333
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return new Types.StringType(qualified);
+        return new Types.StringType({qualifiedName: qualified});
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":
-        return new Types.XStringType(qualified);
+        return new Types.XStringType({qualifiedName: qualified});
       case "D16S":
       case "D34S":
       case "DF16_SCL":

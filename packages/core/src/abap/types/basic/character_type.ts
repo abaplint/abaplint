@@ -4,7 +4,10 @@ export class CharacterType extends AbstractType {
   private readonly length: number;
 
   public constructor(length: number, qualifiedName?: string, conversionExit?: string) {
-    super(qualifiedName, conversionExit);
+    super({
+      qualifiedName: qualifiedName,
+      conversionExit: conversionExit,
+    });
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     }

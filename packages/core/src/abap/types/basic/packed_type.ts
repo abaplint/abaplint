@@ -5,7 +5,7 @@ export class PackedType extends AbstractType {
   private readonly decimals: number;
 
   public constructor(length: number, decimals: number, qualifiedName?: string) {
-    super(qualifiedName);
+    super({qualifiedName: qualifiedName});
     if (length <= 0) {
       throw new Error("Bad LENGTH");
     } else if (decimals < 0) {
