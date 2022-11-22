@@ -16,7 +16,7 @@ export class EventDefinition extends Identifier implements IEventDefinition {
     if (!(node.get() instanceof Events)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    const found = node.findFirstExpression(Expressions.Field);
+    const found = node.findFirstExpression(Expressions.EventName);
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
