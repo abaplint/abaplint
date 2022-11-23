@@ -1,8 +1,8 @@
-import * as Tokens from "./tokens";
 import {IFile} from "../../files/_ifile";
 import {Position, VirtualPosition} from "../../position";
 import {Token} from "./tokens/_token";
 import {IABAPLexerResult} from "./lexer_result";
+import {At, AtW, BracketLeft, BracketLeftW, BracketRight, BracketRightW, Comment, Dash, DashW, Identifier, InstanceArrow, InstanceArrowW, ParenLeft, ParenLeftW, ParenRight, ParenRightW, Plus, PlusW, Pragma, Punctuation, StaticArrow, StaticArrowW, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle, StringToken, WAt, WAtW, WBracketLeft, WBracketLeftW, WBracketRight, WBracketRightW, WDash, WDashW, WInstanceArrow, WInstanceArrowW, WParenLeft, WParenLeftW, WParenRight, WParenRightW, WPlus, WPlusW, WStaticArrow, WStaticArrowW} from "./tokens";
 
 enum Mode {
   Normal,
@@ -143,125 +143,125 @@ export class Lexer {
 
       let tok: Token | undefined = undefined;
       if (this.m === Mode.Comment) {
-        tok = new Tokens.Comment(pos, s);
+        tok = new Comment(pos, s);
       } else if (this.m === Mode.Ping || this.m === Mode.Str) {
-        tok = new Tokens.StringToken(pos, s);
+        tok = new StringToken(pos, s);
       } else if (this.m === Mode.Template) {
         const first = s.charAt(0);
         const last = s.charAt(s.length - 1);
         if (first === "|" && last === "|") {
-          tok = new Tokens.StringTemplate(pos, s);
+          tok = new StringTemplate(pos, s);
         } else if (first === "|" && last === "{" && whiteAfter === true) {
-          tok = new Tokens.StringTemplateBegin(pos, s);
+          tok = new StringTemplateBegin(pos, s);
         } else if (first === "}" && last === "|" && whiteBefore === true) {
-          tok = new Tokens.StringTemplateEnd(pos, s);
+          tok = new StringTemplateEnd(pos, s);
         } else if (first === "}" && last === "{" && whiteAfter === true && whiteBefore === true) {
-          tok = new Tokens.StringTemplateMiddle(pos, s);
+          tok = new StringTemplateMiddle(pos, s);
         } else {
-          tok = new Tokens.Identifier(pos, s);
+          tok = new Identifier(pos, s);
         }
       } else if (s.substr(0, 2) === "##") {
-        tok = new Tokens.Pragma(pos, s);
+        tok = new Pragma(pos, s);
       } else if (s.length === 1) {
         if (s === "." || s === ",") {
-          tok = new Tokens.Punctuation(pos, s);
+          tok = new Punctuation(pos, s);
         } else if (s === "[") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WBracketLeftW(pos, s);
+            tok = new WBracketLeftW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WBracketLeft(pos, s);
+            tok = new WBracketLeft(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.BracketLeftW(pos, s);
+            tok = new BracketLeftW(pos, s);
           } else {
-            tok = new Tokens.BracketLeft(pos, s);
+            tok = new BracketLeft(pos, s);
           }
         } else if (s === "(") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WParenLeftW(pos, s);
+            tok = new WParenLeftW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WParenLeft(pos, s);
+            tok = new WParenLeft(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.ParenLeftW(pos, s);
+            tok = new ParenLeftW(pos, s);
           } else {
-            tok = new Tokens.ParenLeft(pos, s);
+            tok = new ParenLeft(pos, s);
           }
         } else if (s === "]") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WBracketRightW(pos, s);
+            tok = new WBracketRightW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WBracketRight(pos, s);
+            tok = new WBracketRight(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.BracketRightW(pos, s);
+            tok = new BracketRightW(pos, s);
           } else {
-            tok = new Tokens.BracketRight(pos, s);
+            tok = new BracketRight(pos, s);
           }
         } else if (s === ")") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WParenRightW(pos, s);
+            tok = new WParenRightW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WParenRight(pos, s);
+            tok = new WParenRight(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.ParenRightW(pos, s);
+            tok = new ParenRightW(pos, s);
           } else {
-            tok = new Tokens.ParenRight(pos, s);
+            tok = new ParenRight(pos, s);
           }
         } else if (s === "-") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WDashW(pos, s);
+            tok = new WDashW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WDash(pos, s);
+            tok = new WDash(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.DashW(pos, s);
+            tok = new DashW(pos, s);
           } else {
-            tok = new Tokens.Dash(pos, s);
+            tok = new Dash(pos, s);
           }
         } else if (s === "+") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WPlusW(pos, s);
+            tok = new WPlusW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WPlus(pos, s);
+            tok = new WPlus(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.PlusW(pos, s);
+            tok = new PlusW(pos, s);
           } else {
-            tok = new Tokens.Plus(pos, s);
+            tok = new Plus(pos, s);
           }
         } else if (s === "@") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WAtW(pos, s);
+            tok = new WAtW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WAt(pos, s);
+            tok = new WAt(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.AtW(pos, s);
+            tok = new AtW(pos, s);
           } else {
-            tok = new Tokens.At(pos, s);
+            tok = new At(pos, s);
           }
         }
       } else if (s.length === 2) {
         if (s === "->") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WInstanceArrowW(pos, s);
+            tok = new WInstanceArrowW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WInstanceArrow(pos, s);
+            tok = new WInstanceArrow(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.InstanceArrowW(pos, s);
+            tok = new InstanceArrowW(pos, s);
           } else {
-            tok = new Tokens.InstanceArrow(pos, s);
+            tok = new InstanceArrow(pos, s);
           }
         } else if (s === "=>") {
           if (whiteBefore && whiteAfter) {
-            tok = new Tokens.WStaticArrowW(pos, s);
+            tok = new WStaticArrowW(pos, s);
           } else if (whiteBefore) {
-            tok = new Tokens.WStaticArrow(pos, s);
+            tok = new WStaticArrow(pos, s);
           } else if (whiteAfter) {
-            tok = new Tokens.StaticArrowW(pos, s);
+            tok = new StaticArrowW(pos, s);
           } else {
-            tok = new Tokens.StaticArrow(pos, s);
+            tok = new StaticArrow(pos, s);
           }
         }
       }
 
       if (tok === undefined) {
-        tok = new Tokens.Identifier(pos, s);
+        tok = new Identifier(pos, s);
       }
       this.tokens.push(tok);
     }

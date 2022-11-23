@@ -24,7 +24,7 @@ input += fs.readFileSync("../core/src/abap/1_lexer/tokens/static_arrow.ts").toSt
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/string.ts").toString("utf-8").replace(/import .*/g, "");
 input += fs.readFileSync("../core/src/files/_ifile.ts").toString("utf-8").replace(/import .*/g, "");
 input += fs.readFileSync("../core/src/abap/1_lexer/lexer_result.ts").toString("utf-8").replace(/import .*/g, "");
-// input += fs.readFileSync("../core/src/abap/1_lexer/lexer.ts").toString("utf-8").replace(/import .*/g, "");
+input += fs.readFileSync("../core/src/abap/1_lexer/lexer.ts").toString("utf-8").replace(/import .*/g, "");
 fs.writeFileSync("blah.ts", input, {encoding: "utf8", flag: "w"});
 
 const file = project.createSourceFile("input.ts", input);
