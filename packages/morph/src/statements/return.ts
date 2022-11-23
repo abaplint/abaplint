@@ -1,4 +1,4 @@
-import {ClassDeclaration, ConstructorDeclaration, ExpressionStatement, MethodDeclaration, PropertyDeclaration, ReturnStatement} from "ts-morph";
+import {ReturnStatement} from "ts-morph";
 import {handleExpressions} from "../expressions";
 
 export class MorphReturn {
