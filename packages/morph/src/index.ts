@@ -4,7 +4,10 @@ import {handleStatement} from "./statements";
 
 const project = new Project();
 
-const input = fs.readFileSync("../core/src/position.ts").toString("utf-8");
+let input = "";
+input += fs.readFileSync("../core/src/position.ts").toString("utf-8").replace(/import .*/, "");
+input += fs.readFileSync("../core/src/files/_ifile.ts").toString("utf-8").replace(/import .*/, "");
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/_token.ts").toString("utf-8").replace(/import .*/, "");
 
 const file = project.createSourceFile("input.ts", input);
 

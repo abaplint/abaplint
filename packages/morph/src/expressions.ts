@@ -1,6 +1,7 @@
-import {AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, Node, NumericLiteral, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
+import {AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NumericLiteral, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
 import {MorphBinary} from "./expressions/binary";
 import {MorphCall} from "./expressions/call";
+import {MorphNew} from "./expressions/new";
 import {MorphPropertyAccess} from "./expressions/property_access";
 
 export function handleExpression(n?: Node): string {
@@ -15,6 +16,8 @@ export function handleExpression(n?: Node): string {
     ret += new MorphBinary().run(n);
   } else if (n instanceof StringLiteral) {
     ret += "`" + n.getLiteralText() + "`";
+  } else if (n instanceof NewExpression) {
+    ret += new MorphNew().run(n);
   } else if (n instanceof SuperExpression) {
     ret += "super";
   } else if (n instanceof AsExpression) {
