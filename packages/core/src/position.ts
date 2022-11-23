@@ -50,6 +50,7 @@ export class VirtualPosition extends Position {
     if (!(p instanceof VirtualPosition)) {
       return false;
     }
-    return super.equals(this.virtual) && this.vrow === p.vrow && this.vcol === p.vcol;
+    const bar: VirtualPosition = p as VirtualPosition; // widening cast for ABAP translation
+    return super.equals(this.virtual) && this.vrow === bar.vrow && this.vcol === bar.vcol;
   }
 }

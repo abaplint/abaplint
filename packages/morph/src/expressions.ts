@@ -1,9 +1,13 @@
-import {BinaryExpression, CallExpression, FalseLiteral, Identifier, Node, NumericLiteral, ParenthesizedExpression, PropertyAccessExpression, StringLiteral, ThisExpression, TrueLiteral} from "ts-morph";
+import {AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, Node, NumericLiteral, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
 import {MorphBinary} from "./expressions/binary";
 import {MorphCall} from "./expressions/call";
 import {MorphPropertyAccess} from "./expressions/property_access";
 
-export function handleExpression(n: Node): string {
+export function handleExpression(n?: Node): string {
+  if (n === undefined) {
+    return "";
+  }
+
   let ret = "";
   const text = n.getText();
 
@@ -11,12 +15,26 @@ export function handleExpression(n: Node): string {
     ret += new MorphBinary().run(n);
   } else if (n instanceof StringLiteral) {
     ret += "`" + n.getLiteralText() + "`";
+  } else if (n instanceof SuperExpression) {
+    ret += "super";
+  } else if (n instanceof AsExpression) {
+    ret += `CAST ${n.getType().getSymbol()?.getName()}( ${handleExpression(n.getExpression())} )`;
   } else if (n instanceof CallExpression) {
     ret += new MorphCall().run(n);
   } else if (n instanceof PropertyAccessExpression) {
     ret += new MorphPropertyAccess().run(n);
   } else if (n instanceof NumericLiteral) {
     ret += text;
+  } else if (n instanceof PrefixUnaryExpression) {
+    switch (n.getOperatorToken()) {
+      case SyntaxKind.ExclamationToken:
+        ret += "NOT ";
+        break;
+      default:
+        console.dir("PrefixUnaryExpression todo");
+        break;
+    }
+    ret += handleExpression(n.getOperand());
   } else if (n instanceof FalseLiteral) {
     ret += "abap_false";
   } else if (n instanceof ParenthesizedExpression) {
@@ -31,6 +49,8 @@ export function handleExpression(n: Node): string {
     ret += " AND ";
   } else if (text === "||") {
     ret += " OR ";
+  } else if (text === "instanceof") {
+    ret += " IS INSTANCE OF ";
   } else if (text === "===") {
     ret += " EQ ";
   } else if (text === "+" || text === "-" || text === "=" || text === "<" || text === ">" || text === "<=" || text === ">=") {

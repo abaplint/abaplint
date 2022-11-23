@@ -10,15 +10,16 @@ export class MorphCall {
 
     const name = expr.getType().getSymbol()?.getName();
     const signature = expr.getType().getText();
-    const parameterNames: string[] = [];
+    let parameterNames: string[] = [];
     if (name === "substr" && signature === "(from: number, length?: number) => string") {
       parameterNames.push("off");
       parameterNames.push("len");
+    } else if (expr.constructor.name === "SuperExpression" && expr.getText() === "super") {
+      parameterNames = expr.getType().getConstructSignatures()[0].getParameters().map(p => p.getEscapedName());
+      ret += "->constructor(";
     } else {
       ret += "(";
     }
-
-//    console.dir(expr.getType().getCallSignatures()[0]?.getParameters());
 
     for (const a of s.getArguments()) {
       const name = parameterNames.pop();
