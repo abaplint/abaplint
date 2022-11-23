@@ -1,5 +1,5 @@
-import {IfStatement, ReturnStatement} from "ts-morph";
-import {handleExpression, handleExpressions} from "../expressions";
+import {IfStatement} from "ts-morph";
+import {handleExpression} from "../expressions";
 import {handleStatement} from "../statements";
 
 export class MorphIf {

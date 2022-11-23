@@ -1,4 +1,4 @@
-import {ClassDeclaration, ConstructorDeclaration, MethodDeclaration, ParameteredNode, PropertyDeclaration, ReturnTypedNode} from "ts-morph";
+import {ClassDeclaration, ConstructorDeclaration, MethodDeclaration, PropertyDeclaration} from "ts-morph";
 import {handleStatements} from "../statements";
 import {handleType} from "../types";
 import {buildParameters} from "./_helpers";

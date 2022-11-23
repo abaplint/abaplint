@@ -5,7 +5,7 @@ export class MorphPropertyAccess {
   public run(s: PropertyAccessExpression) {
 
     const left = s.getExpression();
-    const dot = s.getQuestionDotTokenNode();
+//    const dot = s.getQuestionDotTokenNode();
     const name = s.getNameNode();
 
     if (left.getType().getText() === "string" && name.getText() === "length") {

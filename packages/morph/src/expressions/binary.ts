@@ -1,4 +1,4 @@
-import {BinaryExpression, ClassDeclaration, ConstructorDeclaration, ExpressionStatement, MethodDeclaration, PropertyDeclaration} from "ts-morph";
+import {BinaryExpression} from "ts-morph";
 import {handleExpressions} from "../expressions";
 
 export class MorphBinary {

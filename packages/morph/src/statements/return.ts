@@ -1,5 +1,5 @@
 import {BinaryExpression, ReturnStatement} from "ts-morph";
-import {handleExpression, handleExpressions} from "../expressions";
+import {handleExpression} from "../expressions";
 
 export class MorphReturn {
   public run(s: ReturnStatement) {
