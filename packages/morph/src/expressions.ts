@@ -1,4 +1,4 @@
-import {AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NumericLiteral, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
+import {ArrayLiteralExpression, AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NoSubstitutionTemplateLiteral, NumericLiteral, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
 import {MorphBinary} from "./expressions/binary";
 import {MorphCall} from "./expressions/call";
 import {MorphNew} from "./expressions/new";
@@ -14,14 +14,22 @@ export function handleExpression(n?: Node): string {
 
   if (n instanceof BinaryExpression) {
     ret += new MorphBinary().run(n);
+  } else if (n instanceof NoSubstitutionTemplateLiteral) {
+    ret += "|" + n.getLiteralText() + "|";
   } else if (n instanceof StringLiteral) {
-    ret += "`" + n.getLiteralText() + "`";
+    ret += "|" + n.getLiteralText()
+      .replace(/\n/g, "\\n")
+      .replace(/\t/g, "\\t")
+      .replace(/{/g, "\\{")
+      .replace(/\|/g, "\\|") + "|";
   } else if (n instanceof NewExpression) {
     ret += new MorphNew().run(n);
   } else if (n instanceof SuperExpression) {
     ret += "super";
   } else if (n instanceof AsExpression) {
     ret += `CAST ${n.getType().getSymbol()?.getName()}( ${handleExpression(n.getExpression())} )`;
+  } else if (n instanceof ArrayLiteralExpression) {
+    ret += "VALUE #( )";
   } else if (n instanceof CallExpression) {
     ret += new MorphCall().run(n);
   } else if (n instanceof PropertyAccessExpression) {
@@ -56,6 +64,10 @@ export function handleExpression(n?: Node): string {
     ret += " IS INSTANCE OF ";
   } else if (text === "===") {
     ret += " EQ ";
+  } else if (text === "!==") {
+    ret += " NE ";
+  } else if (text === "%") {
+    ret += " MOD ";
   } else if (text === "+" || text === "-" || text === "=" || text === "<" || text === ">" || text === "<=" || text === ">=") {
     ret += " " + text + " ";
   } else {
