@@ -1,9 +1,10 @@
-import {Block, ClassDeclaration, ExpressionStatement, IfStatement, InterfaceDeclaration, ReturnStatement, Statement, VariableStatement} from "ts-morph";
+import {Block, ClassDeclaration, ExpressionStatement, IfStatement, InterfaceDeclaration, ReturnStatement, Statement, TypeAliasDeclaration, VariableStatement} from "ts-morph";
 import {MorphClassDeclaration} from "./statements/class_declaration";
 import {MorphExpression} from "./statements/expression";
 import {MorphIf} from "./statements/if";
 import {MorphInterfaceDeclaration} from "./statements/interface_declaration";
 import {MorphReturn} from "./statements/return";
+import {MorphTypeAliasDeclaration} from "./statements/type_alias_declaration";
 import {MorphVariable} from "./statements/variable";
 
 export function handleStatement(s: Statement): string {
@@ -13,6 +14,8 @@ export function handleStatement(s: Statement): string {
     return new MorphInterfaceDeclaration().run(s);
   } else if (s instanceof ExpressionStatement) {
     return new MorphExpression().run(s);
+  } else if (s instanceof TypeAliasDeclaration) {
+    return new MorphTypeAliasDeclaration().run(s);
   } else if (s instanceof VariableStatement) {
     return new MorphVariable().run(s);
   } else if (s instanceof Block) {

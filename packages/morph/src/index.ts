@@ -5,9 +5,11 @@ import {handleStatement} from "./statements";
 const project = new Project();
 
 let input = "";
-input += fs.readFileSync("../core/src/position.ts").toString("utf-8").replace(/import .*/, "");
-input += fs.readFileSync("../core/src/files/_ifile.ts").toString("utf-8").replace(/import .*/, "");
-input += fs.readFileSync("../core/src/abap/1_lexer/tokens/_token.ts").toString("utf-8").replace(/import .*/, "");
+input += fs.readFileSync("../core/src/position.ts").toString("utf-8").replace(/import .*/g, "");
+input += fs.readFileSync("../core/src/files/_ifile.ts").toString("utf-8").replace(/import .*/g, "");
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/_token.ts").toString("utf-8").replace(/import .*/g, "");
+input += fs.readFileSync("../core/src/abap/1_lexer/lexer_result.ts").toString("utf-8").replace(/import .*/g, "");
+fs.writeFileSync("blah.ts", input, {encoding: "utf8", flag: "w"});
 
 const file = project.createSourceFile("input.ts", input);
 
