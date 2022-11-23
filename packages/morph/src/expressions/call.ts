@@ -10,10 +10,14 @@ export class MorphCall {
 
     const name = expr.getType().getSymbol()?.getName();
     const signature = expr.getType().getText();
+//    console.dir(signature);
     let parameterNames: string[] = [];
 
     if (name === "trim" && signature === "() => string") {
       parameterNames.push("foo");
+    } else if (name === "replace") {
+      parameterNames.push("regex");
+      parameterNames.push("with");
     } else if (name === "substr" && signature === "(from: number, length?: number) => string") {
       parameterNames.push("off");
       parameterNames.push("len");
@@ -23,6 +27,7 @@ export class MorphCall {
     } else {
       ret += "(";
     }
+    parameterNames = parameterNames.reverse();
 
     for (const a of s.getArguments()) {
       const name = parameterNames.pop();

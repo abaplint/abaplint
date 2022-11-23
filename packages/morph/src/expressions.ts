@@ -1,4 +1,4 @@
-import {ArrayLiteralExpression, AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NoSubstitutionTemplateLiteral, NumericLiteral, ObjectLiteralExpression, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
+import {ArrayLiteralExpression, AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NoSubstitutionTemplateLiteral, NumericLiteral, ObjectLiteralExpression, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, RegularExpressionLiteral, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
 import {MorphBinary} from "./expressions/binary";
 import {MorphCall} from "./expressions/call";
 import {MorphNew} from "./expressions/new";
@@ -33,6 +33,9 @@ export function handleExpression(n?: Node): string {
     ret += `CAST ${n.getType().getSymbol()?.getName()}( ${handleExpression(n.getExpression())} )`;
   } else if (n instanceof ArrayLiteralExpression) {
     ret += "VALUE #( )";
+  } else if (n instanceof RegularExpressionLiteral) {
+    // todo, take care of case insensitive and occurrences, ie. flags from regex
+    ret += "|" + n.getLiteralText().replace(/^\//, "").replace(/\/\w+$/, "") + "|";
   } else if (n instanceof CallExpression) {
     ret += new MorphCall().run(n);
   } else if (n instanceof PropertyAccessExpression) {

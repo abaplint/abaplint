@@ -82,6 +82,16 @@ CLEAR foo.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("replace with regex", async () => {
+    const ts = `
+let foo = "sdfs";
+foo = foo.replace(/s/g, "");`;
+    const abap = `
+DATA(foo) = |sdfs|.
+foo = replace( val = foo regex = |s| with = || ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
   it("constructor in super", async () => {
     const ts = `
 export abstract class Token {
