@@ -143,7 +143,7 @@ export class MethodParameters implements IMethodParameters {
                            this.filename, {ooName: ooName.toUpperCase()});
       }
 
-      const eventName = node.findFirstExpression(Expressions.Field)?.getFirstToken().getStr();
+      const eventName = node.findFirstExpression(Expressions.EventName)?.getFirstToken().getStr();
       const event = new ObjectOriented(scope).searchEvent(def, eventName);
       for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();

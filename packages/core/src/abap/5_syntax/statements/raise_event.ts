@@ -9,7 +9,7 @@ export class RaiseEvent implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 // todo: only possible in classes
 
-    const f = node.findDirectExpression(Expressions.Field);
+    const f = node.findDirectExpression(Expressions.EventName);
     if (f?.concatTokens().includes("~")) {
       const name = f.concatTokens().split("~")[0];
       const idef = scope.findInterfaceDefinition(name);

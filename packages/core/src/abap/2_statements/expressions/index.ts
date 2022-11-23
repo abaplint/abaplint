@@ -48,6 +48,7 @@ export * from "./dynamic";
 export * from "./entity_association";
 export * from "./entity_association";
 export * from "./event_handler";
+export * from "./event_name";
 export * from "./exception_name";
 export * from "./field_all";
 export * from "./field_assignment";
