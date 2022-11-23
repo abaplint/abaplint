@@ -10,10 +10,12 @@ export class MorphPropertyAccess {
 
     if (left.getType().getText() === "string" && name.getText() === "length") {
       return "strlen( " + handleExpression(left) + " )";
-    } else if (left.getType().getText() === "string" && name.getText() === "substr") {
-      return "substring( val = " + handleExpression(left);
     } else if (left.getType().getText().endsWith("[]") && name.getText() === "length") {
       return "lines( " + handleExpression(left) + " )";
+    } else if (left.getType().getText() === "string" && name.getText() === "trim") {
+      return "condense( " + handleExpression(left);
+    } else if (left.getType().getText() === "string" && name.getText() === "substr") {
+      return "substring( val = " + handleExpression(left);
     } else {
       return handleExpression(left) + "->" + name.getText();
     }

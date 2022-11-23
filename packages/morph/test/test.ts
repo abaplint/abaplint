@@ -24,7 +24,7 @@ describe("Morph", () => {
   it("test", async () => {
     const ts = `let foo: number = 5;`;
     const abap = `DATA(foo) = 5.`;
-    expect(test(ts)).to.equal(abap);
+    expect(test(ts)).to.equal(abap.trim());
   });
 
   it("return type", async () => {
@@ -51,6 +51,18 @@ RETURN.
   ENDMETHOD.
 
 ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("trim", async () => {
+    const ts = `
+let foo: string = "foo";
+let bar: string = "foo";
+foo = bar.trim();`;
+    const abap = `
+DATA(foo) = |foo|.
+DATA(bar) = |foo|.
+foo = condense( bar ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

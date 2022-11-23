@@ -11,7 +11,10 @@ export class MorphCall {
     const name = expr.getType().getSymbol()?.getName();
     const signature = expr.getType().getText();
     let parameterNames: string[] = [];
-    if (name === "substr" && signature === "(from: number, length?: number) => string") {
+
+    if (name === "trim" && signature === "() => string") {
+      parameterNames.push("foo");
+    } else if (name === "substr" && signature === "(from: number, length?: number) => string") {
       parameterNames.push("off");
       parameterNames.push("len");
     } else if (expr.constructor.name === "SuperExpression" && expr.getText() === "super") {

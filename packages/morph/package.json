@@ -4,7 +4,7 @@
   "version": "0",
   "description": "test",
   "scripts": {
-    "test": "tsc && mocha --timeout 5000 && node build/src/index.js"
+    "test": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js"
   },
   "author": "Lars Hvam Petersen",
   "license": "MIT",
