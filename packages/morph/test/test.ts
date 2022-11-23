@@ -92,6 +92,16 @@ foo = replace( val = foo regex = |s| with = || ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("charAt", async () => {
+    const ts = `
+let foo = "sdfs";
+foo = foo.charAt( 0 );`;
+    const abap = `
+DATA(foo) = |sdfs|.
+foo = substring( val = foo len = 1 off = 0 ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
   it("constructor in super", async () => {
     const ts = `
 export abstract class Token {
@@ -128,6 +138,15 @@ ENDCLASS.
 CLASS Comment IMPLEMENTATION.
 ENDCLASS.
 NEW Comment( start = |foo| str = |bar| ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it.only("array push", async () => {
+    const ts = `
+const foo: string[] = [];
+foo.push( "hello" );`;
+    const abap = `
+sdf`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

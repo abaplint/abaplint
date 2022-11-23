@@ -12,6 +12,8 @@ export class MorphPropertyAccess {
       return "strlen( " + handleExpression(left) + " )";
     } else if (left.getType().getText().endsWith("[]") && name.getText() === "length") {
       return "lines( " + handleExpression(left) + " )";
+    } else if (left.getType().getText() === "string" && name.getText() === "charAt") {
+      return "substring( val = " + handleExpression(left) + " len = 1";
     } else if (left.getType().getText() === "string" && name.getText() === "replace") {
       return "replace( val = " + handleExpression(left);
     } else if (left.getType().getText() === "string" && name.getText() === "trim") {

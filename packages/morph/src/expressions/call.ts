@@ -18,6 +18,8 @@ export class MorphCall {
     } else if (name === "replace") {
       parameterNames.push("regex");
       parameterNames.push("with");
+    } else if (name === "charAt" && signature === "(pos: number) => string") {
+      parameterNames.push("off");
     } else if (name === "substr" && signature === "(from: number, length?: number) => string") {
       parameterNames.push("off");
       parameterNames.push("len");

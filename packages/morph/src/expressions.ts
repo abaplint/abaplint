@@ -22,6 +22,7 @@ export function handleExpression(n?: Node): string {
       .replace(/\n/g, "\\n")
       .replace(/\t/g, "\\t")
       .replace(/{/g, "\\{")
+      .replace(/}/g, "\\}")
       .replace(/\|/g, "\\|") + "|";
   } else if (n instanceof ObjectLiteralExpression) {
     ret += new MorphObjectLiteral().run(n);

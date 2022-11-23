@@ -8,7 +8,7 @@ export class MorphVariable {
 
     for (const d of s.getDeclarations()) {
       const expr = handleExpression(d.getInitializer());
-      if (expr === "undefined") {
+      if (expr === "undefined" || expr === "VALUE #( )") {
         ret += `DATA ${d.getName()} TYPE ` + handleType(d.getType()) + ".\n";
         ret += `CLEAR ${d.getName()}`;
       } else {

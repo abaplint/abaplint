@@ -166,71 +166,71 @@ export class Lexer {
         if (s === "." || s === ",") {
           tok = new Punctuation(pos, s);
         } else if (s === "[") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WBracketLeftW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WBracketLeft(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new BracketLeftW(pos, s);
           } else {
             tok = new BracketLeft(pos, s);
           }
         } else if (s === "(") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WParenLeftW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WParenLeft(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new ParenLeftW(pos, s);
           } else {
             tok = new ParenLeft(pos, s);
           }
         } else if (s === "]") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WBracketRightW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WBracketRight(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new BracketRightW(pos, s);
           } else {
             tok = new BracketRight(pos, s);
           }
         } else if (s === ")") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WParenRightW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WParenRight(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new ParenRightW(pos, s);
           } else {
             tok = new ParenRight(pos, s);
           }
         } else if (s === "-") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WDashW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WDash(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new DashW(pos, s);
           } else {
             tok = new Dash(pos, s);
           }
         } else if (s === "+") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WPlusW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WPlus(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new PlusW(pos, s);
           } else {
             tok = new Plus(pos, s);
           }
         } else if (s === "@") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WAtW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WAt(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new AtW(pos, s);
           } else {
             tok = new At(pos, s);
@@ -238,21 +238,21 @@ export class Lexer {
         }
       } else if (s.length === 2) {
         if (s === "->") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WInstanceArrowW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WInstanceArrow(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new InstanceArrowW(pos, s);
           } else {
             tok = new InstanceArrow(pos, s);
           }
         } else if (s === "=>") {
-          if (whiteBefore && whiteAfter) {
+          if (whiteBefore === true && whiteAfter === true) {
             tok = new WStaticArrowW(pos, s);
-          } else if (whiteBefore) {
+          } else if (whiteBefore === true) {
             tok = new WStaticArrow(pos, s);
-          } else if (whiteAfter) {
+          } else if (whiteAfter === true) {
             tok = new StaticArrowW(pos, s);
           } else {
             tok = new StaticArrow(pos, s);
