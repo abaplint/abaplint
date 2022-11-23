@@ -4,7 +4,10 @@ export function handleType(t: Type) {
   const text = t.getText();
   const name = t.getSymbol()?.getName();
   const arrayType = t.getArrayElementType()?.getSymbol()?.getName();
-
+/*
+  console.dir(text);
+  console.dir(name);
+*/
   switch (text) {
     case "string[]":
       return "string_table";
@@ -15,6 +18,8 @@ export function handleType(t: Type) {
     default:
       if (arrayType) {
         return "STANDARD TABLE OF REF TO " + arrayType + " WITH EMPTY KEY";
+      } else if (name === "__type") {
+        return text;
       } else if (name) {
         return "REF TO " + name;
       }

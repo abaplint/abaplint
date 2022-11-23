@@ -15,7 +15,7 @@ function test(ts: string) {
     for (const s of file.getStatements()) {
       result += handleStatement(s);
     }
-    return result;
+    return result.trim();
   }
 }
 
@@ -25,6 +25,33 @@ describe("Morph", () => {
     const ts = `let foo: number = 5;`;
     const abap = `DATA(foo) = 5.`;
     expect(test(ts)).to.equal(abap);
+  });
+
+  it("return type", async () => {
+    const ts = `
+type foo = {bar: number};
+class lcl {
+  public run(): foo {
+    return {bar: 2};
+  }
+}`;
+    const abap = `
+TYPES BEGIN OF foo.
+  TYPES bar TYPE i.
+TYPES END OF foo.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run RETURNING VALUE(return) TYPE foo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+return = VALUE #( bar = 2 ).
+RETURN.
+  ENDMETHOD.
+
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
   });
 
 });
