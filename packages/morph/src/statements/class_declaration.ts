@@ -2,7 +2,7 @@ import {ClassDeclaration, ConstructorDeclaration, MethodDeclaration, Parametered
 import {handleStatements} from "../statements";
 import {handleType} from "../types";
 
-function buildParameters(m: ReturnTypedNode & ParameteredNode): string {
+function buildParameters(m: ReturnTypedNode & ParameteredNode, noReturning?: boolean): string {
   let parameters = "";
   for (const p of m.getParameters()) {
     parameters += `${p.getName()} TYPE ${handleType(p.getType())}`;
@@ -10,7 +10,7 @@ function buildParameters(m: ReturnTypedNode & ParameteredNode): string {
   if (parameters !== "") {
     parameters = " IMPORTING " + parameters;
   }
-  if (m.getReturnType().getText() !== "void") {
+  if (m.getReturnType().getText() !== "void" && noReturning !== true) {
     // note: return is a keyword in TypeScript/JavaScript so it will never overlap
     parameters += ` RETURNING VALUE(return) TYPE ` + handleType(m.getReturnType());
   }
@@ -31,7 +31,7 @@ export class MorphClassDeclaration {
       if (m instanceof PropertyDeclaration) {
         this.definition += `    DATA ${m.getName()} TYPE ${handleType(m.getType())}.\n`;
       } else if (m instanceof ConstructorDeclaration) {
-        const parameters = buildParameters(m);
+        const parameters = buildParameters(m, true);
         this.definition += `    METHODS constructor${parameters}.\n`;
         this.implementation += `  METHOD constructor.\n`;
         this.implementation += handleStatements(m.getStatements());
