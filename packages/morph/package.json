@@ -3,10 +3,8 @@
   "private": true,
   "version": "0",
   "description": "test",
-  "main": "build/index.js",
-  "typings": "build/index.d.ts",
   "scripts": {
-    "test": "ts-node src/index.ts"
+    "test": "tsc && mocha && node build/src/index.js"
   },
   "author": "Lars Hvam Petersen",
   "license": "MIT",
@@ -17,10 +15,20 @@
     "type": "git",
     "url": "git+https://github.com/abaplint/abaplint.git"
   },
+  "mocha": {
+    "recursive": true,
+    "reporter": "progress",
+    "spec": "build/test/**/*.js",
+    "require": "source-map-support/register"
+},
   "homepage": "https://abaplint.org",
   "dependencies": {
     "ts-morph": "^17.0.1",
-    "ts-node": "^10.9.1",
+    "source-map-support": "^0.5.21",
+    "mocha": "^10.1.0",
+    "chai": "^4.3.7",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.0",
     "typescript": "^4.9.3",
     "@types/node": "^18.11.9"
   }
