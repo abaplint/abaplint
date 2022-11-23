@@ -6,7 +6,7 @@ import {MemoryFile} from "../../../src/files/memory_file";
 const tests = [
   {abap: "foo", type: Tokens.Identifier},
   {abap: "\"stsdf\"", type: Tokens.Comment},
-  {abap: " 'stsdf'", type: Tokens.String},
+  {abap: " 'stsdf'", type: Tokens.StringToken},
   {abap: "|bar|", type: Tokens.StringTemplate},
   {abap: "|bar{", type: Tokens.StringTemplateBegin},
   {abap: " }bar|", type: Tokens.StringTemplateEnd},

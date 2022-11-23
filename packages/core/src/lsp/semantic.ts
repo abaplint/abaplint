@@ -1,6 +1,6 @@
 import * as LServer from "vscode-languageserver-types";
 import {VirtualPosition, Position} from "../position";
-import {Comment, Punctuation, String, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle} from "../abap/1_lexer/tokens";
+import {Comment, Punctuation, StringToken, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle} from "../abap/1_lexer/tokens";
 import {TokenNodeRegex} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";
 import {IRegistry} from "../_iregistry";
@@ -90,7 +90,7 @@ export class SemanticHighlighting {
             || statementInstance instanceof Statements.Form
             || statementInstance instanceof Statements.EndForm) {
           tokenType = BLOCK_ABAP;
-        } else if (tokenInstance instanceof String
+        } else if (tokenInstance instanceof StringToken
             || tokenInstance instanceof StringTemplate
             || tokenInstance instanceof StringTemplateBegin
             || tokenInstance instanceof StringTemplateEnd

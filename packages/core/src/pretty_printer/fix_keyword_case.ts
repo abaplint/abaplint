@@ -21,7 +21,7 @@ export class FixCase {
     for (const child of statement.getChildren()) {
       if (child instanceof TokenNodeRegex) {
         const token = child.get();
-        if (token instanceof Tokens.String) {
+        if (token instanceof Tokens.StringToken) {
           continue;
         }
         this.replaceString(token.getStart(), this.formatNonKeyword(token.getStr()));

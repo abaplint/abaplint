@@ -1,7 +1,7 @@
 import {TokenNode} from "./token_node";
 import {Token} from "../1_lexer/tokens/_token";
 import {INode} from "./_inode";
-import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../1_lexer/tokens";
+import {Pragma, StringToken, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../1_lexer/tokens";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
 import {AbstractNode} from "./_abstract_node";
 
@@ -57,7 +57,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     let prev: Token | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Comment
-          || token instanceof String
+          || token instanceof StringToken
           || token instanceof StringTemplate
           || token instanceof StringTemplateBegin
           || token instanceof StringTemplateMiddle

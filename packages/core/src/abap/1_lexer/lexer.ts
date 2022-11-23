@@ -145,7 +145,7 @@ export class Lexer {
       if (this.m === Mode.Comment) {
         tok = new Tokens.Comment(pos, s);
       } else if (this.m === Mode.Ping || this.m === Mode.Str) {
-        tok = new Tokens.String(pos, s);
+        tok = new Tokens.StringToken(pos, s);
       } else if (this.m === Mode.Template) {
         const first = s.charAt(0);
         const last = s.charAt(s.length - 1);
