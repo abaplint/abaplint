@@ -1,4 +1,4 @@
-import {BinaryExpression, CallExpression, FalseLiteral, Identifier, Node, NumericLiteral, PropertyAccessExpression, StringLiteral, ThisExpression, TrueLiteral} from "ts-morph";
+import {BinaryExpression, CallExpression, FalseLiteral, Identifier, Node, NumericLiteral, ParenthesizedExpression, PropertyAccessExpression, StringLiteral, ThisExpression, TrueLiteral} from "ts-morph";
 import {MorphBinary} from "./expressions/binary";
 import {MorphCall} from "./expressions/call";
 import {MorphPropertyAccess} from "./expressions/property_access";
@@ -19,15 +19,21 @@ export function handleExpression(n: Node): string {
     ret += text;
   } else if (n instanceof FalseLiteral) {
     ret += "abap_false";
+  } else if (n instanceof ParenthesizedExpression) {
+    ret += "( " + handleExpression(n.getExpression()) + " )";
   } else if (n instanceof ThisExpression) {
     ret += "me";
   } else if (n instanceof TrueLiteral) {
     ret += "abap_true";
   } else if (n instanceof Identifier) {
     ret += text;
+  } else if (text === "&&") {
+    ret += " AND ";
+  } else if (text === "||") {
+    ret += " OR ";
   } else if (text === "===") {
     ret += " EQ ";
-  } else if (text === "+" || text === "-" || text === "=" || text === "<" || text === ">") {
+  } else if (text === "+" || text === "-" || text === "=" || text === "<" || text === ">" || text === "<=" || text === ">=") {
     ret += " " + text + " ";
   } else {
     console.dir(n.constructor.name + " \"" + n.getText() + "\" - handleExpressions");

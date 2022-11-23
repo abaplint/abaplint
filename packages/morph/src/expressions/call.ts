@@ -22,7 +22,7 @@ export class MorphCall {
 
     for (const a of s.getArguments()) {
       const name = parameterNames.pop();
-      if (name !== "") {
+      if (name !== undefined && name !== "") {
         ret += " " + name + " = " + handleExpression(a);
       } else {
         ret += " " + handleExpression(a);
