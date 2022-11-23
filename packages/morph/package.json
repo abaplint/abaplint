@@ -1,0 +1,26 @@
+{
+  "name": "@abaplint/morph",
+  "private": true,
+  "version": "0",
+  "description": "test",
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
+  "scripts": {
+    "test": "ts-node src/index.ts"
+  },
+  "author": "Lars Hvam Petersen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abaplint/abaplint/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abaplint/abaplint.git"
+  },
+  "homepage": "https://abaplint.org",
+  "dependencies": {
+    "ts-morph": "^17.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3"
+  }
+}
