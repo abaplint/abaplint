@@ -1,13 +1,19 @@
 import {VariableStatement} from "ts-morph";
 import {handleExpression} from "../expressions";
+import {handleType} from "../types";
 
 export class MorphVariable {
   public run(s: VariableStatement) {
     let ret = "";
 
     for (const d of s.getDeclarations()) {
-      ret += `DATA(${d.getName()}) = `;
-      ret += handleExpression(d.getInitializer());
+      const expr = handleExpression(d.getInitializer());
+      if (expr === "undefined") {
+        ret += `DATA ${d.getName()} TYPE ` + handleType(d.getType()) + ".\n";
+        ret += `CLEAR ${d.getName()}`;
+      } else {
+        ret += `DATA(${d.getName()}) = ` + expr;
+      }
     }
 
     return ret + ".\n";

@@ -66,4 +66,59 @@ foo = condense( bar ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("data def, undefined init", async () => {
+    const ts = `
+class Token { }
+let foo: Token | undefined = undefined;`;
+    const abap = `
+CLASS Token DEFINITION.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS Token IMPLEMENTATION.
+ENDCLASS.
+DATA foo TYPE REF TO Token.
+CLEAR foo.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("constructor in super", async () => {
+    const ts = `
+export abstract class Token {
+  private readonly start: string;
+  private readonly str: string;
+
+  public constructor(start: string, str: string) {
+    this.start = start;
+    this.str = str;
+  }
+}
+class Comment extends Token {
+}
+new Comment("foo", "bar");`;
+    const abap = `
+CLASS Token DEFINITION.
+  PUBLIC SECTION.
+    DATA start TYPE string.
+    DATA str TYPE string.
+    METHODS constructor IMPORTING start TYPE string str TYPE string.
+ENDCLASS.
+
+CLASS Token IMPLEMENTATION.
+  METHOD constructor.
+me->start = start.
+me->str = str.
+  ENDMETHOD.
+
+ENDCLASS.
+CLASS Comment DEFINITION INHERITING FROM Token.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS Comment IMPLEMENTATION.
+ENDCLASS.
+NEW Comment( start = |foo| str = |bar| ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
