@@ -349,6 +349,8 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     FROM @it AS t1
     GROUP BY field1, field2
     INTO CORRESPONDING FIELDS OF TABLE @rt_load.`,
+
+  `SELECT * FROM ztab INTO TABLE @DATA(lt) WHERE field IN ( @lc1,@lc2 ).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
