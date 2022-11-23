@@ -1,12 +1,15 @@
-import {Block, ClassDeclaration, ExpressionStatement, IfStatement, ReturnStatement, Statement} from "ts-morph";
+import {Block, ClassDeclaration, ExpressionStatement, IfStatement, InterfaceDeclaration, ReturnStatement, Statement} from "ts-morph";
 import {MorphClassDeclaration} from "./statements/class_declaration";
 import {MorphExpression} from "./statements/expression";
 import {MorphIf} from "./statements/if";
+import {MorphInterfaceDeclaration} from "./statements/interface_declaration";
 import {MorphReturn} from "./statements/return";
 
 export function handleStatement(s: Statement): string {
   if (s instanceof ClassDeclaration) {
     return new MorphClassDeclaration().run(s);
+  }else if (s instanceof InterfaceDeclaration) {
+    return new MorphInterfaceDeclaration().run(s);
   } else if (s instanceof ExpressionStatement) {
     return new MorphExpression().run(s);
   } else if (s instanceof Block) {
