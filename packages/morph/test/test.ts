@@ -262,4 +262,14 @@ ENDIF.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it.skip("private class attribute", async () => {
+    const ts = `
+class Position {
+  private foo: number;
+}`;
+    const abap = `
+sdfsd`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
