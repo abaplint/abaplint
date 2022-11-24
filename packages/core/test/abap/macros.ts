@@ -20,7 +20,7 @@ END-OF-DEFINITION.
 
 _if.
 _endif.`;
-    const lexerResult = Lexer.run(new MemoryFile("zmacros1.prog.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("zmacros1.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
     expect(result.statements.length).to.equal(10);
   });
@@ -31,7 +31,7 @@ DEFINE _macro.
   WRITE &1.
 END-OF-DEFINITION.
 _macro '&1'.`;
-    const lexerResult = Lexer.run(new MemoryFile("zmacros1.prog.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("zmacros1.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
     expect(result.statements.length).to.equal(5);
   });
@@ -48,7 +48,7 @@ FORM moo.
   DATA foo TYPE c LENGTH 1.
   sub.
 ENDFORM.`;
-    const lexerResult = Lexer.run(new MemoryFile("zmacros3.prog.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
     expect(result.statements.filter(s => s.get() instanceof Statements.Write).length).to.equal(3);
   });
@@ -69,7 +69,7 @@ FORM moo.
   DATA foo TYPE c LENGTH 1.
   top.
 ENDFORM.`;
-    const lexerResult = Lexer.run(new MemoryFile("zmacros3.prog.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
     expect(result.statements.filter(s => s.get() instanceof Statements.Write).length).to.equal(3);
   });
@@ -88,7 +88,7 @@ FORM moo.
   DATA foo TYPE c LENGTH 1.
   top f.
 ENDFORM.`;
-    const lexerResult = Lexer.run(new MemoryFile("zmacros3.prog.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
     const writes = result.statements.filter(s => s.get() instanceof Statements.Write);
     expect(writes.length).to.equal(1);
@@ -107,7 +107,7 @@ DEFINE top.
 END-OF-DEFINITION.
 
 top.`;
-    const lexerResult = Lexer.run(new MemoryFile("zmacros3.prog.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
     const clears = result.statements.filter(s => s.get() instanceof Statements.Clear);
     expect(clears.length).to.equal(2);

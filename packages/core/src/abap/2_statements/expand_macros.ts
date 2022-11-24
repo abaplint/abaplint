@@ -155,7 +155,7 @@ export class ExpandMacros {
     }
 
     const file = new MemoryFile("expand_macros.abap.prog", str);
-    const lexerResult = Lexer.run(file, statement.getFirstToken().getStart());
+    const lexerResult = new Lexer().run(file, statement.getFirstToken().getStart());
 
     const result = new StatementParser(this.version, this.reg).run([lexerResult], this.macros.listMacroNames());
     return result[0].statements;

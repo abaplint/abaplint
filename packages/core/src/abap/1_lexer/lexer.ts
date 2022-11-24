@@ -112,13 +112,13 @@ class Stream {
 }
 
 export class Lexer {
-  private static virtual: Position | undefined;
-  private static tokens: Token[];
-  private static m: Mode;
-  private static stream: Stream;
-  private static buffer: Buffer;
+  private virtual: Position | undefined;
+  private tokens: Token[];
+  private m: Mode;
+  private stream: Stream;
+  private buffer: Buffer;
 
-  public static run(file: IFile, virtual?: Position): IABAPLexerResult {
+  public run(file: IFile, virtual?: Position): IABAPLexerResult {
     this.virtual = virtual;
     this.tokens = [];
     this.m = Mode.Normal;
@@ -127,7 +127,7 @@ export class Lexer {
     return {file, tokens: this.tokens};
   }
 
-  private static add() {
+  private add() {
     const s = this.buffer.get().trim();
 
     if (s.length > 0) {
@@ -278,7 +278,7 @@ export class Lexer {
     this.buffer.clear();
   }
 
-  private static process(raw: string) {
+  private process(raw: string) {
     this.stream = new Stream(raw.replace(/\r/g, ""));
     this.buffer = new Buffer();
 

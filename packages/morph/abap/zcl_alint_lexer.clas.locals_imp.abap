@@ -929,15 +929,15 @@ CLASS Stream IMPLEMENTATION.
 ENDCLASS.
 CLASS lexer DEFINITION.
   PUBLIC SECTION.
-    CLASS-METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position RETURNING VALUE(return) TYPE iabaplexerresult.
+    METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position RETURNING VALUE(return) TYPE iabaplexerresult.
   PRIVATE SECTION.
-    CLASS-DATA virtual TYPE REF TO position.
-    CLASS-DATA tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
-    CLASS-DATA m TYPE i.
-    CLASS-DATA stream TYPE REF TO stream.
-    CLASS-DATA buffer TYPE REF TO buffer.
-    CLASS-METHODS add.
-    CLASS-METHODS process IMPORTING raw TYPE string.
+    DATA virtual TYPE REF TO position.
+    DATA tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
+    DATA m TYPE i.
+    DATA stream TYPE REF TO stream.
+    DATA buffer TYPE REF TO buffer.
+    METHODS add.
+    METHODS process IMPORTING raw TYPE string.
 ENDCLASS.
 
 CLASS Lexer IMPLEMENTATION.

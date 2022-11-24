@@ -37,7 +37,7 @@ export class ABAPParser {
 
 // 1: lexing
     const b1 = Date.now();
-    const lexerResult: readonly IABAPLexerResult[] = files.map(f => Lexer.run(f));
+    const lexerResult: readonly IABAPLexerResult[] = files.map(f => new Lexer().run(f));
     const lexingRuntime = Date.now() - b1;
 
 // 2: statements
