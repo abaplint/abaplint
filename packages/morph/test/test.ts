@@ -171,13 +171,4 @@ foo = Mode-Normal.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
-  it.only("split", async () => {
-    const ts = `
-let buf = "hello"    ;
-let len = buf.split("\`").length;`;
-    const abap = `
-`;
-    expect(test(ts)).to.equal(abap.trim());
-  });
-
 });

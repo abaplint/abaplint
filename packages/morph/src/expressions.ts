@@ -75,7 +75,8 @@ export function handleExpression(n?: Node): string {
     ret += " NE ";
   } else if (text === "%") {
     ret += " MOD ";
-  } else if (text === "+" || text === "-" || text === "=" || text === "<" || text === ">" || text === "<=" || text === ">=") {
+  } else if (text === "+" || text === "+=" || text === "-" || text === "="
+      || text === "<" || text === ">" || text === "<=" || text === ">=") {
     ret += " " + text + " ";
   } else {
     console.dir(n.constructor.name + " \"" + n.getText() + "\" - handleExpressions");

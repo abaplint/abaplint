@@ -34,9 +34,9 @@ class Buffer {
 
   public countIsEven(char: string): boolean {
     let count = 0;
-    for (let i = 0; i < this.buf.length; i++) {
+    for (let i = 0; i < this.buf.length; i += 1) {
       if (this.buf.charAt(i) === char) {
-        count++;
+        count += 1;
       }
     }
     return count % 2 === 0;
