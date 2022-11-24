@@ -24,6 +24,8 @@ export class MorphPropertyAccess {
       return "condense( " + handleExpression(left);
     } else if (leftText === "string" && name.getText() === "substr") {
       return "substring( val = " + handleExpression(left);
+    } else if (left.getType().isEnum() === true) {
+      return handleExpression(left) + "-" + name.getText();
     } else {
       return handleExpression(left) + "->" + name.getText();
     }

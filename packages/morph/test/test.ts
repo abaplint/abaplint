@@ -152,4 +152,23 @@ foo = VALUE #( BASE foo ( |hello| ) ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("enum", async () => {
+    const ts = `
+enum Mode {
+  Normal,
+  Ping,
+}
+let foo: Mode;
+foo = Mode.Normal;`;
+    const abap = `
+CONSTANTS BEGIN OF Mode.
+  CONSTANTS Normal TYPE i VALUE 1.
+  CONSTANTS Ping TYPE i VALUE 2.
+CONSTANTS END OF Mode.
+DATA foo TYPE i.
+CLEAR foo.
+foo = Mode-Normal.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });

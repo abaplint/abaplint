@@ -7,7 +7,12 @@ export function handleType(t: Type) {
 /*
   console.dir(text);
   console.dir(name);
-*/
+  */
+
+  if (t.isEnum() === true) {
+    return "i";
+  }
+
   switch (text) {
     case "string[]":
       return "string_table";
