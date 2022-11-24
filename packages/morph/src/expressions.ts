@@ -20,6 +20,7 @@ export function handleExpression(n?: Node): string {
     ret += "|" + n.getLiteralText() + "|";
   } else if (n instanceof StringLiteral) {
     ret += "|" + n.getLiteralText()
+      .replace(/\\/g, "\\\\")
       .replace(/\n/g, "\\n")
       .replace(/\t/g, "\\t")
       .replace(/{/g, "\\{")
