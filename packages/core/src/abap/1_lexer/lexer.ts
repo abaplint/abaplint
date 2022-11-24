@@ -31,6 +31,10 @@ class Buffer {
   public clear(): void {
     this.buf = "";
   }
+
+  public countIsEven(char: string): boolean {
+    return (this.buf.split(char).length - 1) % 2 === 0;
+  }
 }
 
 class Stream {
@@ -310,8 +314,8 @@ export class Lexer {
           && buf.length > 1
           && current === "`"
           && aahead !== "``"
-          && (buf.split("`").length - 1) % 2 === 0
-          && ahead !== "`") {
+          && ahead !== "`"
+          && this.buffer.countIsEven("`")) {
 // end of ping
         this.add();
         if (ahead === `"`) {
@@ -330,8 +334,8 @@ export class Lexer {
           && current === "'"
           && buf.length > 1
           && aahead !== "''"
-          && (buf.split("'").length - 1) % 2 === 0
-          && ahead !== "'") {
+          && ahead !== "'"
+          && this.buffer.countIsEven("'")) {
 // end of string
         this.add();
         if (ahead === "\"") {
