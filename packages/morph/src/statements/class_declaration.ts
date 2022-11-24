@@ -1,4 +1,4 @@
-import {ClassDeclaration, ConstructorDeclaration, Identifier, MethodDeclaration, PropertyDeclaration, SyntaxKind} from "ts-morph";
+import {ClassDeclaration, ConstructorDeclaration, Identifier, MethodDeclaration, PropertyDeclaration, Scope, SyntaxKind} from "ts-morph";
 import {handleStatements} from "../statements";
 import {handleType} from "../types";
 import {buildParameters} from "./_helpers";
@@ -28,12 +28,19 @@ export class MorphClassDeclaration {
 
     let definition = `CLASS ${s.getName()} DEFINITION${inherit}.
   PUBLIC SECTION.\n`;
+    let privateSection = "";
     let implementation = `CLASS ${s.getName()} IMPLEMENTATION.\n`;
 
     for (const m of s.getMembers()) {
       if (m instanceof PropertyDeclaration) {
         const st = m.isStatic() ? "CLASS-" : "";
-        definition += `    ${st}DATA ${m.getName()} TYPE ${handleType(m.getType())}.\n`;
+        const code = `    ${st}DATA ${m.getName()} TYPE ${handleType(m.getType())}.\n`;
+
+        if (m.getScope() === Scope.Private) {
+          privateSection += code;
+        } else {
+          definition += code;
+        }
       } else if (m instanceof ConstructorDeclaration) {
         const parameters = buildParameters(m, true);
         definition += `    METHODS constructor${parameters}.\n`;
@@ -42,12 +49,17 @@ export class MorphClassDeclaration {
         implementation += `  ENDMETHOD.\n\n`;
       } else if (m instanceof MethodDeclaration) {
         const st = m.isStatic() ? "CLASS-" : "";
-
+        let code = "";
         if (superDefinition?.getMember(m.getName())) {
-          definition += `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
+          code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
         } else {
           const parameters = buildParameters(m);
-          definition += `    ${st}METHODS ${m.getName()}${parameters}.\n`;
+          code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
+        }
+        if (m.getScope() === Scope.Private) {
+          privateSection += code;
+        } else {
+          definition += code;
         }
 
         implementation += `  METHOD ${m.getName()}.\n`;
@@ -58,7 +70,10 @@ export class MorphClassDeclaration {
       }
     }
 
-    definition += `ENDCLASS.\n`;
+    if (privateSection !== "") {
+      privateSection = "  PRIVATE SECTION.\n" + privateSection;
+    }
+    definition = definition + privateSection + `ENDCLASS.\n`;
     implementation += `ENDCLASS.\n`;
 
     return definition + "\n" + implementation;

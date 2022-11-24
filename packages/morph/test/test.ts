@@ -119,9 +119,10 @@ new Comment("foo", "bar");`;
     const abap = `
 CLASS Token DEFINITION.
   PUBLIC SECTION.
+    METHODS constructor IMPORTING start TYPE string str TYPE string.
+  PRIVATE SECTION.
     DATA start TYPE string.
     DATA str TYPE string.
-    METHODS constructor IMPORTING start TYPE string str TYPE string.
 ENDCLASS.
 
 CLASS Token IMPLEMENTATION.
@@ -202,8 +203,9 @@ class Position {
     const abap = `
 CLASS Position DEFINITION.
   PUBLIC SECTION.
-    DATA virtual TYPE REF TO Position.
     METHODS foo.
+  PRIVATE SECTION.
+    DATA virtual TYPE REF TO Position.
 ENDCLASS.
 
 CLASS Position IMPLEMENTATION.
@@ -228,8 +230,9 @@ let foo = new Position( 1, 2 );`;
     const abap = `
 CLASS Position DEFINITION.
   PUBLIC SECTION.
-    DATA priv TYPE i.
     METHODS constructor IMPORTING inp1 TYPE i inp2 TYPE i.
+  PRIVATE SECTION.
+    DATA priv TYPE i.
 ENDCLASS.
 
 CLASS Position IMPLEMENTATION.
@@ -262,7 +265,7 @@ ENDIF.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
-  it("static class attribute", async () => {
+  it("private static class attribute", async () => {
     const ts = `
 class Position {
   private static foo: number;
@@ -270,6 +273,7 @@ class Position {
     const abap = `
 CLASS Position DEFINITION.
   PUBLIC SECTION.
+  PRIVATE SECTION.
     CLASS-DATA foo TYPE i.
 ENDCLASS.
 

@@ -1,8 +1,6 @@
 * auto generated, do not touch
 CLASS position DEFINITION.
   PUBLIC SECTION.
-    DATA row TYPE i.
-    DATA col TYPE i.
     METHODS constructor IMPORTING row TYPE i col TYPE i.
     METHODS getcol RETURNING VALUE(return) TYPE i.
     METHODS getrow RETURNING VALUE(return) TYPE i.
@@ -10,6 +8,9 @@ CLASS position DEFINITION.
     METHODS equals IMPORTING p TYPE REF TO position RETURNING VALUE(return) TYPE abap_bool.
     METHODS isbefore IMPORTING p TYPE REF TO position RETURNING VALUE(return) TYPE abap_bool.
     METHODS isbetween IMPORTING p1 TYPE REF TO position p2 TYPE REF TO position RETURNING VALUE(return) TYPE abap_bool.
+  PRIVATE SECTION.
+    DATA row TYPE i.
+    DATA col TYPE i.
 ENDCLASS.
 
 CLASS Position IMPLEMENTATION.
@@ -53,11 +54,12 @@ CLASS Position IMPLEMENTATION.
 ENDCLASS.
 CLASS virtualposition DEFINITION INHERITING FROM position.
   PUBLIC SECTION.
-    DATA virtual TYPE REF TO position.
     DATA vrow TYPE i.
     DATA vcol TYPE i.
     METHODS constructor IMPORTING virtual TYPE REF TO position row TYPE i col TYPE i.
     METHODS equals REDEFINITION.
+  PRIVATE SECTION.
+    DATA virtual TYPE REF TO position.
 ENDCLASS.
 
 CLASS VirtualPosition IMPLEMENTATION.
@@ -81,14 +83,15 @@ CLASS VirtualPosition IMPLEMENTATION.
 ENDCLASS.
 CLASS token DEFINITION.
   PUBLIC SECTION.
-    DATA start TYPE REF TO position.
-    DATA str TYPE string.
     METHODS constructor IMPORTING start TYPE REF TO position str TYPE string.
     METHODS getstr RETURNING VALUE(return) TYPE string.
     METHODS getrow RETURNING VALUE(return) TYPE i.
     METHODS getcol RETURNING VALUE(return) TYPE i.
     METHODS getstart RETURNING VALUE(return) TYPE REF TO position.
     METHODS getend RETURNING VALUE(return) TYPE REF TO position.
+  PRIVATE SECTION.
+    DATA start TYPE REF TO position.
+    DATA str TYPE string.
 ENDCLASS.
 
 CLASS Token IMPLEMENTATION.
@@ -625,14 +628,15 @@ ENDINTERFACE.
 
 CLASS abstractfile DEFINITION.
   PUBLIC SECTION.
-    DATA filename TYPE string.
     METHODS constructor IMPORTING filename TYPE string.
     METHODS getfilename RETURNING VALUE(return) TYPE string.
-    METHODS basename RETURNING VALUE(return) TYPE string.
     METHODS getobjecttype RETURNING VALUE(return) TYPE string.
     METHODS getobjectname RETURNING VALUE(return) TYPE string.
     METHODS getraw RETURNING VALUE(return) TYPE string.
     METHODS getrawrows RETURNING VALUE(return) TYPE string_table.
+  PRIVATE SECTION.
+    DATA filename TYPE string.
+    METHODS basename RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
 CLASS AbstractFile IMPLEMENTATION.
@@ -737,10 +741,11 @@ CLASS AbstractFile IMPLEMENTATION.
 ENDCLASS.
 CLASS memoryfile DEFINITION INHERITING FROM abstractfile.
   PUBLIC SECTION.
-    DATA raw TYPE string.
     METHODS constructor IMPORTING filename TYPE string raw TYPE string.
     METHODS getraw REDEFINITION.
     METHODS getrawrows REDEFINITION.
+  PRIVATE SECTION.
+    DATA raw TYPE string.
 ENDCLASS.
 
 CLASS MemoryFile IMPLEMENTATION.
@@ -789,12 +794,13 @@ CONSTANTS pragma TYPE i VALUE 6.
 CONSTANTS END OF mode.
 CLASS buffer DEFINITION.
   PUBLIC SECTION.
-    DATA buf TYPE string.
     METHODS constructor.
     METHODS add IMPORTING s TYPE string.
     METHODS get RETURNING VALUE(return) TYPE string.
     METHODS clear.
     METHODS countiseven IMPORTING char TYPE string RETURNING VALUE(return) TYPE abap_bool.
+  PRIVATE SECTION.
+    DATA buf TYPE string.
 ENDCLASS.
 
 CLASS Buffer IMPLEMENTATION.
@@ -831,10 +837,6 @@ CLASS Buffer IMPLEMENTATION.
 ENDCLASS.
 CLASS stream DEFINITION.
   PUBLIC SECTION.
-    DATA raw TYPE string.
-    DATA offset TYPE i.
-    DATA row TYPE i.
-    DATA col TYPE i.
     METHODS constructor IMPORTING raw TYPE string.
     METHODS advance RETURNING VALUE(return) TYPE abap_bool.
     METHODS getcol RETURNING VALUE(return) TYPE i.
@@ -846,6 +848,11 @@ CLASS stream DEFINITION.
     METHODS nextnextchar RETURNING VALUE(return) TYPE string.
     METHODS getraw RETURNING VALUE(return) TYPE string.
     METHODS getoffset RETURNING VALUE(return) TYPE i.
+  PRIVATE SECTION.
+    DATA raw TYPE string.
+    DATA offset TYPE i.
+    DATA row TYPE i.
+    DATA col TYPE i.
 ENDCLASS.
 
 CLASS Stream IMPLEMENTATION.
@@ -922,12 +929,13 @@ CLASS Stream IMPLEMENTATION.
 ENDCLASS.
 CLASS lexer DEFINITION.
   PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position RETURNING VALUE(return) TYPE iabaplexerresult.
+  PRIVATE SECTION.
     CLASS-DATA virtual TYPE REF TO position.
     CLASS-DATA tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
     CLASS-DATA m TYPE i.
     CLASS-DATA stream TYPE REF TO stream.
     CLASS-DATA buffer TYPE REF TO buffer.
-    CLASS-METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position RETURNING VALUE(return) TYPE iabaplexerresult.
     CLASS-METHODS add.
     CLASS-METHODS process IMPORTING raw TYPE string.
 ENDCLASS.
