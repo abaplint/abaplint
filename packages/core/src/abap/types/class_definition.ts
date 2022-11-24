@@ -72,10 +72,12 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     scope.pop(node.getLastToken().getEnd());
 
-    const concat = this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase();
+    const cdef = this.node.findFirstStatement(Statements.ClassDefinition);
+    const concat = cdef!.concatTokens().toUpperCase();
+
     this.testing = concat.includes(" FOR TESTING");
     this.sharedMemory = concat.includes(" SHARED MEMORY ENABLED");
-    this.abstract = concat.includes(" ABSTRACT");
+    this.abstract = cdef?.findDirectTokenByText("ABSTRACT") !== undefined;
   }
 
   public getFriends() {

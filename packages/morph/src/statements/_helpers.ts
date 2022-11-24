@@ -4,7 +4,8 @@ import {handleType} from "../types";
 export function buildParameters(m: ReturnTypedNode & ParameteredNode, noReturning?: boolean): string {
   let parameters = "";
   for (const p of m.getParameters()) {
-    parameters += ` ${p.getName()} TYPE ${handleType(p.getType())}`;
+    const opt = p.isOptional() ? " OPTIONAL" : "";
+    parameters += ` ${p.getName()} TYPE ${handleType(p.getType())}` + opt;
   }
   if (parameters !== "") {
     parameters = " IMPORTING" + parameters;

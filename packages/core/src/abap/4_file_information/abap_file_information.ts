@@ -157,7 +157,8 @@ export class ABAPFileInformation implements IABAPFileInformation {
 
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
       const containsGlobal = found.findFirstExpression(Expressions.ClassGlobal);
-      const concat = found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase();
+      const cdef = found.findFirstStatement(Statements.ClassDefinition);
+      const concat = cdef?.concatTokens().toUpperCase() || "";
 
       this.classes.push({
         name: className.getStr(),
@@ -168,7 +169,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         superClassName,
         interfaces: this.getImplementing(found),
         isForTesting: concat.includes(" FOR TESTING"),
-        isAbstract: concat.includes(" ABSTRACT"),
+        isAbstract: cdef?.findDirectTokenByText("ABSTRACT") !== undefined,
         isSharedMemory: concat.includes(" SHARED MEMORY ENABLED"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
         aliases,

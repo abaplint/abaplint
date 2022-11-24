@@ -318,4 +318,23 @@ DATA(bar) = foo[ 0 + 1 ].`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("optional method parameter", async () => {
+    const ts = `
+class Position {
+  public foo(val: string, opt?: string) { }
+}`;
+    const abap = `
+CLASS Position DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING val TYPE string opt TYPE string OPTIONAL.
+ENDCLASS.
+
+CLASS Position IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });

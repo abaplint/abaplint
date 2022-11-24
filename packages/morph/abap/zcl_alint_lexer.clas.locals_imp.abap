@@ -929,7 +929,7 @@ CLASS Stream IMPLEMENTATION.
 ENDCLASS.
 CLASS lexer DEFINITION.
   PUBLIC SECTION.
-    METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position RETURNING VALUE(return) TYPE iabaplexerresult.
+    METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position OPTIONAL RETURNING VALUE(return) TYPE iabaplexerresult.
   PRIVATE SECTION.
     DATA virtual TYPE REF TO position.
     DATA tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
