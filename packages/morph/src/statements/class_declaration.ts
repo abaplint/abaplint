@@ -32,7 +32,8 @@ export class MorphClassDeclaration {
 
     for (const m of s.getMembers()) {
       if (m instanceof PropertyDeclaration) {
-        definition += `    DATA ${m.getName()} TYPE ${handleType(m.getType())}.\n`;
+        const st = m.isStatic() ? "CLASS-" : "";
+        definition += `    ${st}DATA ${m.getName()} TYPE ${handleType(m.getType())}.\n`;
       } else if (m instanceof ConstructorDeclaration) {
         const parameters = buildParameters(m, true);
         definition += `    METHODS constructor${parameters}.\n`;
@@ -40,12 +41,13 @@ export class MorphClassDeclaration {
         implementation += handleStatements(m.getStatements());
         implementation += `  ENDMETHOD.\n\n`;
       } else if (m instanceof MethodDeclaration) {
+        const st = m.isStatic() ? "CLASS-" : "";
 
         if (superDefinition?.getMember(m.getName())) {
-          definition += `    METHODS ${m.getName()} REDEFINITION.\n`;
+          definition += `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
         } else {
           const parameters = buildParameters(m);
-          definition += `    METHODS ${m.getName()}${parameters}.\n`;
+          definition += `    ${st}METHODS ${m.getName()}${parameters}.\n`;
         }
 
         implementation += `  METHOD ${m.getName()}.\n`;

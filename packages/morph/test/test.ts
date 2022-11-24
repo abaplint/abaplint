@@ -262,13 +262,19 @@ ENDIF.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
-  it.skip("private class attribute", async () => {
+  it("static class attribute", async () => {
     const ts = `
 class Position {
-  private foo: number;
+  private static foo: number;
 }`;
     const abap = `
-sdfsd`;
+CLASS Position DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA foo TYPE i.
+ENDCLASS.
+
+CLASS Position IMPLEMENTATION.
+ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
