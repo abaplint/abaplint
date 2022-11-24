@@ -216,7 +216,7 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
-  it.only("constructor parameter names", async () => {
+  it("constructor parameter names", async () => {
     const ts = `
 class Position {
   private priv: number;
