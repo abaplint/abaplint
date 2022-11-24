@@ -1,6 +1,7 @@
-import {ArrayLiteralExpression, AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NoSubstitutionTemplateLiteral, NumericLiteral, ObjectLiteralExpression, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, RegularExpressionLiteral, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral, VariableDeclaration, VariableDeclarationList} from "ts-morph";
+import {ArrayLiteralExpression, AsExpression, BinaryExpression, CallExpression, ElementAccessExpression, FalseLiteral, Identifier, NewExpression, Node, NoSubstitutionTemplateLiteral, NumericLiteral, ObjectLiteralExpression, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, RegularExpressionLiteral, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral, VariableDeclaration, VariableDeclarationList} from "ts-morph";
 import {MorphBinary} from "./expressions/binary";
 import {MorphCall} from "./expressions/call";
+import {MorphElementAccess} from "./expressions/element_access";
 import {MorphNew} from "./expressions/new";
 import {MorphObjectLiteral} from "./expressions/object_literal";
 import {MorphPropertyAccess} from "./expressions/property_access";
@@ -28,6 +29,8 @@ export function handleExpression(n?: Node): string {
       .replace(/\|/g, "\\|") + "|";
   } else if (n instanceof ObjectLiteralExpression) {
     ret += new MorphObjectLiteral().run(n);
+  } else if (n instanceof ElementAccessExpression) {
+    ret += new MorphElementAccess().run(n);
   } else if (n instanceof NewExpression) {
     ret += new MorphNew().run(n);
   } else if (n instanceof SuperExpression) {

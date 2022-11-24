@@ -646,26 +646,85 @@ CLASS AbstractFile IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD basename.
-    DATA base1 TYPE string.
-    CLEAR base1.
-    DATA base2 TYPE string.
-    CLEAR base2.
-    return = base2.
+    DATA(first) = REDUCE string_table( LET split_input = me->getfilename( )
+      split_by    = |\\|
+      offset      = 0
+      IN
+      INIT string_result = VALUE string_table( )
+       add = ||
+      FOR index = 0 WHILE index <= strlen( split_input )
+      NEXT
+      string_result = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN VALUE #( BASE string_result ( add ) )
+      ELSE string_result )
+      add    = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN ||
+      ELSE |{ add }{ split_input+index(1) }| ) ).
+    DATA(base1) = first[ lines( first ) - 1 + 1 ].
+    DATA(base2) = REDUCE string_table( LET split_input = base1
+      split_by    = |/|
+      offset      = 0
+      IN
+      INIT string_result = VALUE string_table( )
+       add = ||
+      FOR index = 0 WHILE index <= strlen( split_input )
+      NEXT
+      string_result = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN VALUE #( BASE string_result ( add ) )
+      ELSE string_result )
+      add    = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN ||
+      ELSE |{ add }{ split_input+index(1) }| ) ).
+    return = base2[ lines( base2 ) - 1 + 1 ].
     RETURN.
   ENDMETHOD.
 
   METHOD getobjecttype.
-    DATA(split) = me->basename( )->split( |.| ).
-    return = ->toUpperCase( ).
+    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+      split_by    = |.|
+      offset      = 0
+      IN
+      INIT string_result = VALUE string_table( )
+       add = ||
+      FOR index = 0 WHILE index <= strlen( split_input )
+      NEXT
+      string_result = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN VALUE #( BASE string_result ( add ) )
+      ELSE string_result )
+      add    = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN ||
+      ELSE |{ add }{ split_input+index(1) }| ) ).
+    return = to_upper( val = split[ 1 + 1 ] ).
     RETURN.
   ENDMETHOD.
 
   METHOD getobjectname.
-    DATA(split) = me->basename( )->split( |.| ).
-    = replace( val =  regex = |%23| with = |#| ).
-    = replace( val =  regex = |%3e| with = |>| ).
-    = replace( val =  regex = |%3c| with = |<| ).
-    return = replace( val = ->toUpperCase( ) regex = |#| with = |/| ).
+    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+      split_by    = |.|
+      offset      = 0
+      IN
+      INIT string_result = VALUE string_table( )
+       add = ||
+      FOR index = 0 WHILE index <= strlen( split_input )
+      NEXT
+      string_result = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN VALUE #( BASE string_result ( add ) )
+      ELSE string_result )
+      add    = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN ||
+      ELSE |{ add }{ split_input+index(1) }| ) ).
+    split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%23| with = |#| ).
+    split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3e| with = |>| ).
+    split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3c| with = |<| ).
+    return = replace( val = to_upper( val = split[ 0 + 1 ] ) regex = |#| with = |/| ).
     RETURN.
   ENDMETHOD.
 
@@ -696,7 +755,22 @@ CLASS MemoryFile IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD getrawrows.
-    return = me->raw->split( |\n| ).
+    return = REDUCE string_table( LET split_input = me->raw
+      split_by    = |\n|
+      offset      = 0
+      IN
+      INIT string_result = VALUE string_table( )
+       add = ||
+      FOR index = 0 WHILE index <= strlen( split_input )
+      NEXT
+      string_result = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN VALUE #( BASE string_result ( add ) )
+      ELSE string_result )
+      add    = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN ||
+      ELSE |{ add }{ split_input+index(1) }| ) ).
     RETURN.
   ENDMETHOD.
 

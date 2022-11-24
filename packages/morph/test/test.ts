@@ -278,4 +278,40 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("split", async () => {
+    const ts = `
+let foo = "hello";
+let result = foo.split("l");`;
+    const abap = `
+DATA(foo) = |hello|.
+DATA(result) = REDUCE string_table( LET split_input = foo
+  split_by    = |l|
+  offset      = 0
+  IN
+  INIT string_result = VALUE string_table( )
+       add = ||
+  FOR index = 0 WHILE index <= strlen( split_input )
+  NEXT
+  string_result = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN VALUE #( BASE string_result ( add ) )
+      ELSE string_result )
+    add    = COND #(
+      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      THEN ||
+      ELSE |{ add }{ split_input+index(1) }| ) ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("array element access", async () => {
+    const ts = `
+let foo: string[] = [];
+let bar = foo[0];`;
+    const abap = `
+DATA foo TYPE string_table.
+CLEAR foo.
+DATA(bar) = foo[ 0 + 1 ].`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });

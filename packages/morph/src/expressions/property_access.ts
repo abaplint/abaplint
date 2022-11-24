@@ -16,10 +16,14 @@ export class MorphPropertyAccess {
       return handleExpression(left) + " = VALUE #( BASE " + handleExpression(left) + " ";
     } else if (leftText.endsWith("[]") && name.getText() === "length") {
       return "lines( " + handleExpression(left) + " )";
+    } else if (leftText === "string" && name.getText() === "split") {
+      return `REDUCE string_table( LET split_input = ` + handleExpression(left);
     } else if (leftText === "string" && name.getText() === "charAt") {
       return "substring( val = " + handleExpression(left) + " len = 1";
     } else if (leftText === "string" && name.getText() === "replace") {
       return "replace( val = " + handleExpression(left);
+    } else if (leftText === "string" && name.getText() === "toUpperCase") {
+      return "to_upper( val = " + handleExpression(left);
     } else if (leftText === "string" && name.getText() === "trim") {
       return "condense( " + handleExpression(left);
     } else if (leftText === "string" && name.getText() === "substr") {
