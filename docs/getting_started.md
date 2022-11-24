@@ -43,6 +43,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "parser_error": true,
     "superclass_final": true,
     "unknown_types": true,
+    "line_length": true,
     "xml_consistency": true
   }
 }
@@ -78,6 +79,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "parser_error": true,
     "superclass_final": true,
     "unknown_types": true,
+    "line_length": true,
     "xml_consistency": true
   }
 }
