@@ -220,25 +220,45 @@ ENDCLASS.`;
     const ts = `
 class Position {
   private priv: number;
-  public constructor(inp: number) {
-    this.priv = inp;
+  public constructor(inp1: number, inp2: number) {
+    this.priv = inp1 + inp2;
   }
 }
-let foo = new Position( 2 );`;
+let foo = new Position( 1, 2 );`;
     const abap = `
 CLASS Position DEFINITION.
   PUBLIC SECTION.
     DATA priv TYPE i.
-    METHODS constructor IMPORTING inp TYPE i.
+    METHODS constructor IMPORTING inp1 TYPE i inp2 TYPE i.
 ENDCLASS.
 
 CLASS Position IMPLEMENTATION.
   METHOD constructor.
-me->priv = inp.
+me->priv = inp1 + inp2.
   ENDMETHOD.
 
 ENDCLASS.
-DATA(foo) = NEW Position( inp = 2 ).`;
+DATA(foo) = NEW Position( inp1 = 1 inp2 = 2 ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("if equals undefined", async () => {
+    const ts = `
+class Position {}
+let p: Position | undefined = undefined;
+if (p === undefined) {
+}`;
+    const abap = `
+CLASS Position DEFINITION.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS Position IMPLEMENTATION.
+ENDCLASS.
+DATA p TYPE REF TO Position.
+CLEAR p.
+IF p IS INITIAL.
+ENDIF.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

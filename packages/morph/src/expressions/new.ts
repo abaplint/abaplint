@@ -14,7 +14,7 @@ export class MorphNew {
     const val = s.getType().getSymbol()?.getValueDeclaration();
     let parameterNames: string[] = [];
     if (val instanceof ClassDeclaration) {
-      parameterNames = val.getConstructors()[0]?.getParameters().map(p => p.getName()) || [];
+      parameterNames = val.getConstructors()[0]?.getParameters().map(p => p.getName()).reverse() || [];
     }
     if (parameterNames.length === 0) {
       parameterNames = s.getType().compilerType.getProperties().map(p => p.escapedName.toString()).reverse();
