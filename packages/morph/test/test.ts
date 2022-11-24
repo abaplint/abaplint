@@ -141,12 +141,14 @@ NEW Comment( start = |foo| str = |bar| ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
-  it.only("array push", async () => {
+  it("array push", async () => {
     const ts = `
 const foo: string[] = [];
 foo.push( "hello" );`;
     const abap = `
-sdf`;
+DATA foo TYPE string_table.
+CLEAR foo.
+foo = VALUE #( BASE foo ( |hello| ) ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

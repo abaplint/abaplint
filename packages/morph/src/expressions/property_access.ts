@@ -7,18 +7,22 @@ export class MorphPropertyAccess {
     const left = s.getExpression();
 //    const dot = s.getQuestionDotTokenNode();
     const name = s.getNameNode();
+    const leftText = left.getType().getText();
+    // console.dir(leftText);
 
-    if (left.getType().getText() === "string" && name.getText() === "length") {
+    if (leftText === "string" && name.getText() === "length") {
       return "strlen( " + handleExpression(left) + " )";
-    } else if (left.getType().getText().endsWith("[]") && name.getText() === "length") {
+    } else if (leftText.endsWith("[]") && name.getText() === "push") {
+      return handleExpression(left) + " = VALUE #( BASE " + handleExpression(left) + " ";
+    } else if (leftText.endsWith("[]") && name.getText() === "length") {
       return "lines( " + handleExpression(left) + " )";
-    } else if (left.getType().getText() === "string" && name.getText() === "charAt") {
+    } else if (leftText === "string" && name.getText() === "charAt") {
       return "substring( val = " + handleExpression(left) + " len = 1";
-    } else if (left.getType().getText() === "string" && name.getText() === "replace") {
+    } else if (leftText === "string" && name.getText() === "replace") {
       return "replace( val = " + handleExpression(left);
-    } else if (left.getType().getText() === "string" && name.getText() === "trim") {
+    } else if (leftText === "string" && name.getText() === "trim") {
       return "condense( " + handleExpression(left);
-    } else if (left.getType().getText() === "string" && name.getText() === "substr") {
+    } else if (leftText === "string" && name.getText() === "substr") {
       return "substring( val = " + handleExpression(left);
     } else {
       return handleExpression(left) + "->" + name.getText();

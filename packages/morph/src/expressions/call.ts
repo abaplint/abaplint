@@ -7,17 +7,21 @@ export class MorphCall {
 
     const expr = s.getExpression();
     let ret = handleExpression(expr);
+    let post = "";
 
     const name = expr.getType().getSymbol()?.getName();
     const signature = expr.getType().getText();
-//    console.dir(signature);
     let parameterNames: string[] = [];
+    //    console.dir(signature);
 
     if (name === "trim" && signature === "() => string") {
-      parameterNames.push("foo");
+      parameterNames = [];
     } else if (name === "replace") {
       parameterNames.push("regex");
       parameterNames.push("with");
+    } else if (name === "push" && signature === "(...items: string[]) => number") {
+      ret += "(";
+      post = " )";
     } else if (name === "charAt" && signature === "(pos: number) => string") {
       parameterNames.push("off");
     } else if (name === "substr" && signature === "(from: number, length?: number) => string") {
@@ -40,7 +44,7 @@ export class MorphCall {
       }
     }
 
-    ret += " )";
+    ret += " )" + post;
 
     return ret;
   }
