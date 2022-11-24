@@ -337,4 +337,35 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("implements interface", async () => {
+    const ts = `
+interface IFace {
+  foo(): string;
+}
+class Position implements IFace {
+  public foo(): string {
+    return "hello";
+  }
+}`;
+    const abap = `
+INTERFACE IFace.
+  METHODS foo RETURNING VALUE(return) TYPE string.
+ENDINTERFACE.
+
+CLASS Position DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES IFace.
+    ALIASES foo FOR IFace~foo.
+ENDCLASS.
+
+CLASS Position IMPLEMENTATION.
+  METHOD foo.
+return = |hello|.
+RETURN.
+  ENDMETHOD.
+
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });

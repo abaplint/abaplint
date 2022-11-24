@@ -9,6 +9,7 @@ export class MorphClassDeclaration {
 
     let superDefinition: ClassDeclaration | undefined = undefined;
 
+    // will    s.getExtends()   work?
     let inherit = "";
     for (const i of s.getHeritageClauses()) {
       if (i.getToken() === SyntaxKind.ExtendsKeyword) {
@@ -26,8 +27,14 @@ export class MorphClassDeclaration {
       }
     }
 
+    const itype = s.getImplements()[0]?.getType();
+    let interfaces = "";
+    if (itype) {
+      interfaces = "\n    INTERFACES " + itype.getSymbol()?.getName() + ".";
+    }
+
     let definition = `CLASS ${s.getName()} DEFINITION${inherit}.
-  PUBLIC SECTION.\n`;
+  PUBLIC SECTION.${interfaces}\n`;
     let privateSection = "";
     let implementation = `CLASS ${s.getName()} IMPLEMENTATION.\n`;
 
@@ -48,18 +55,22 @@ export class MorphClassDeclaration {
         implementation += handleStatements(m.getStatements());
         implementation += `  ENDMETHOD.\n\n`;
       } else if (m instanceof MethodDeclaration) {
-        const st = m.isStatic() ? "CLASS-" : "";
-        let code = "";
-        if (superDefinition?.getMember(m.getName())) {
-          code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
+        if (itype?.getProperty(m.getName())) {
+          definition += `    ALIASES ${m.getName()} FOR ${itype.getSymbol()?.getName()}~${m.getName()}.\n`;
         } else {
-          const parameters = buildParameters(m);
-          code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
-        }
-        if (m.getScope() === Scope.Private) {
-          privateSection += code;
-        } else {
-          definition += code;
+          const st = m.isStatic() ? "CLASS-" : "";
+          let code = "";
+          if (superDefinition?.getMember(m.getName())) {
+            code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
+          } else {
+            const parameters = buildParameters(m);
+            code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
+          }
+          if (m.getScope() === Scope.Private) {
+            privateSection += code;
+          } else {
+            definition += code;
+          }
         }
 
         implementation += `  METHOD ${m.getName()}.\n`;

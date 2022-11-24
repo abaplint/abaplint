@@ -628,12 +628,13 @@ ENDINTERFACE.
 
 CLASS abstractfile DEFINITION.
   PUBLIC SECTION.
+    INTERFACES ifile.
     METHODS constructor IMPORTING filename TYPE string.
-    METHODS getfilename RETURNING VALUE(return) TYPE string.
-    METHODS getobjecttype RETURNING VALUE(return) TYPE string.
-    METHODS getobjectname RETURNING VALUE(return) TYPE string.
-    METHODS getraw RETURNING VALUE(return) TYPE string.
-    METHODS getrawrows RETURNING VALUE(return) TYPE string_table.
+    ALIASES getfilename FOR ifile~getfilename.
+    ALIASES getobjecttype FOR ifile~getobjecttype.
+    ALIASES getobjectname FOR ifile~getobjectname.
+    ALIASES getraw FOR ifile~getraw.
+    ALIASES getrawrows FOR ifile~getrawrows.
   PRIVATE SECTION.
     DATA filename TYPE string.
     METHODS basename RETURNING VALUE(return) TYPE string.
