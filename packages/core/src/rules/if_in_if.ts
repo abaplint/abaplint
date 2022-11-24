@@ -17,15 +17,34 @@ export class IfInIf extends ABAPRule {
     return {
       key: "if_in_if",
       title: "IF in IF",
-      shortDescription: `Detects nested ifs which can be refactored to a single condition using AND.`,
-      extendedInformation: `https://docs.abapopenchecks.org/checks/01/
+      shortDescription: `Detects nested ifs which can be refactored.`,
+      extendedInformation: `
+Directly nested IFs without ELSE can be refactored to a single condition using AND.
+
+ELSE condtions with directly nested IF refactored to ELSEIF.
+
+https://docs.abapopenchecks.org/checks/01/
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-the-nesting-depth-low`,
       badExample: `IF condition1.
   IF condition2.
     ...
   ENDIF.
+ENDIF.
+
+IF condition1.
+  ...
+ELSE.
+  IF condition2.
+    ...
+  ENDIF.
 ENDIF.`,
       goodExample: `IF ( condition1 ) AND ( condition2 ).
+  ...
+ENDIF.
+
+IF condition1.
+  ...
+ELSEIF condition2.
   ...
 ENDIF.`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],

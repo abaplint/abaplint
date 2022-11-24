@@ -2042,7 +2042,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects nested ifs which can be refactored to a single condition using AND.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/if_in_if"
+              "description": "Detects nested ifs which can be refactored.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/if_in_if"
             },
             "implement_methods": {
               "anyOf": [
