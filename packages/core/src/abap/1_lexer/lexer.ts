@@ -33,7 +33,13 @@ class Buffer {
   }
 
   public countIsEven(char: string): boolean {
-    return (this.buf.split(char).length - 1) % 2 === 0;
+    let count = 0;
+    for (let i = 0; i < this.buf.length; i++) {
+      if (this.buf.charAt(i) === char) {
+        count++;
+      }
+    }
+    return count % 2 === 0;
   }
 }
 
