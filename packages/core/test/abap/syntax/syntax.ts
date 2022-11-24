@@ -6939,7 +6939,7 @@ DELETE zrst FROM row.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("accessing me is not possible in static methods", () => {
+  it.skip("accessing me is not possible in static methods", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
