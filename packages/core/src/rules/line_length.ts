@@ -41,7 +41,7 @@ https://docs.abapopenchecks.org/checks/04/`,
     for (let rowIndex = 0; rowIndex < array.length; rowIndex++) {
       const row = array[rowIndex].replace("\r", "");
       if (row.length > maxLineLength) {
-        const message = `Maximum allowed line length of ${maxLineLength} exceeded, currently  ${row.length}`;
+        const message = `Maximum allowed line length of ${maxLineLength} exceeded, currently ${row.length}`;
         issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key, this.conf.severity));
       } else if (row.length > this.conf.length) {
         const message = `Reduce line length to max ${this.conf.length}, currently ${row.length}`;

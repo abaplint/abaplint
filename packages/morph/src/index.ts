@@ -41,5 +41,6 @@ if (diagnostics.length > 0) {
   for (const s of file.getStatements()) {
     result += handleStatement(s);
   }
-  fs.writeFileSync("zresult.prog.abap", result);
+  result = "* auto generated, do not touch\n" + result;
+  fs.writeFileSync("abap/zcl_alint_lexer.clas.locals_imp.abap", result);
 }

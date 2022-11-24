@@ -72,7 +72,7 @@ export function handleExpression(n?: Node): string {
   } else if (text === "&&") {
     ret += " AND ";
   } else if (text === "||") {
-    ret += " OR ";
+    ret += " OR\n";
   } else if (text === "instanceof") {
     ret += " IS INSTANCE OF ";
   } else if (text === "===") {
