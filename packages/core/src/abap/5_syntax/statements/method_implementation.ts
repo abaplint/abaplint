@@ -5,6 +5,11 @@ import {ObjectOriented} from "../_object_oriented";
 import {ScopeType} from "../_scope_type";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
+import {TypedIdentifier} from "../../types/_typed_identifier";
+import {Identifier} from "../../1_lexer/tokens";
+import {Position} from "../../../position";
+import {BuiltIn} from "../_builtin";
+import {ObjectReferenceType} from "../../types/basic";
 
 export class MethodImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -26,6 +31,7 @@ export class MethodImplementation implements StatementSyntax {
 
     if (methodDefinition.isStatic() === false) {
       scope.push(ScopeType.MethodInstance, methodName, node.getFirstToken().getStart(), filename);
+      scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(classDefinition)));
       scope.addList(classDefinition.getAttributes().getInstance());
     }
 

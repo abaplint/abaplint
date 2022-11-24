@@ -6939,6 +6939,22 @@ DELETE zrst FROM row.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("accessing me is not possible in static methods", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+    CLASS-DATA foo TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    me->foo = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("me");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
