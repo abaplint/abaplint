@@ -19,7 +19,7 @@ export class MorphCall {
     } else if (name === "replace") {
       parameterNames.push("regex");
       parameterNames.push("with");
-    } else if (name === "push" && signature === "(...items: string[]) => number") {
+    } else if (name === "push") {
       ret += "(";
       post = " )";
     } else if (name === "charAt" && signature === "(pos: number) => string") {
