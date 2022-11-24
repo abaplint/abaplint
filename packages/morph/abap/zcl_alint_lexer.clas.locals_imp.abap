@@ -623,6 +623,84 @@ INTERFACE ifile.
   METHODS getrawrows RETURNING VALUE(return) TYPE string_table.
 ENDINTERFACE.
 
+CLASS abstractfile DEFINITION.
+  PUBLIC SECTION.
+    DATA filename TYPE string.
+    METHODS constructor IMPORTING filename TYPE string.
+    METHODS getfilename RETURNING VALUE(return) TYPE string.
+    METHODS basename RETURNING VALUE(return) TYPE string.
+    METHODS getobjecttype RETURNING VALUE(return) TYPE string.
+    METHODS getobjectname RETURNING VALUE(return) TYPE string.
+    METHODS getraw RETURNING VALUE(return) TYPE string.
+    METHODS getrawrows RETURNING VALUE(return) TYPE string_table.
+ENDCLASS.
+
+CLASS AbstractFile IMPLEMENTATION.
+  METHOD constructor.
+    me->filename = filename.
+  ENDMETHOD.
+
+  METHOD getfilename.
+    return = me->filename.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD basename.
+    DATA base1 TYPE string.
+    CLEAR base1.
+    DATA base2 TYPE string.
+    CLEAR base2.
+    return = base2.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD getobjecttype.
+    DATA(split) = me->basename( )->split( |.| ).
+    return = ->toUpperCase( ).
+    RETURN.
+  ENDMETHOD.
+
+  METHOD getobjectname.
+    DATA(split) = me->basename( )->split( |.| ).
+    = replace( val =  regex = |%23| with = |#| ).
+    = replace( val =  regex = |%3e| with = |>| ).
+    = replace( val =  regex = |%3c| with = |<| ).
+    return = replace( val = ->toUpperCase( ) regex = |#| with = |/| ).
+    RETURN.
+  ENDMETHOD.
+
+  METHOD getraw.
+  ENDMETHOD.
+
+  METHOD getrawrows.
+  ENDMETHOD.
+
+ENDCLASS.
+CLASS memoryfile DEFINITION INHERITING FROM abstractfile.
+  PUBLIC SECTION.
+    DATA raw TYPE string.
+    METHODS constructor IMPORTING filename TYPE string raw TYPE string.
+    METHODS getraw REDEFINITION.
+    METHODS getrawrows REDEFINITION.
+ENDCLASS.
+
+CLASS MemoryFile IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( filename = filename ).
+    me->raw = raw.
+  ENDMETHOD.
+
+  METHOD getraw.
+    return = me->raw.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD getrawrows.
+    return = me->raw->split( |\n| ).
+    RETURN.
+  ENDMETHOD.
+
+ENDCLASS.
 TYPES BEGIN OF iabaplexerresult.
 TYPES file TYPE REF TO ifile.
 TYPES tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.

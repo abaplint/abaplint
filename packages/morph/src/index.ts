@@ -23,6 +23,8 @@ input += fs.readFileSync("../core/src/abap/1_lexer/tokens/punctuation.ts", "utf-
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/static_arrow.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/string.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/files/_ifile.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/files/_abstract_file.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/files/memory_file.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/lexer_result.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/lexer.ts", "utf-8") + "\n";
 
