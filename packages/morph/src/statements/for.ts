@@ -15,7 +15,7 @@ export class MorphFor {
       ret += handleStatement(s.getStatement());
       ret += "ENDDO.\n";
     } else {
-      ret += initializer + ".\n";
+      ret += initializer;
       ret += "WHILE " + condition + ".\n";
       ret += incrementor + ".\n";
       ret += handleStatement(s.getStatement());

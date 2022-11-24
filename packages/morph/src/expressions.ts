@@ -1,9 +1,10 @@
-import {ArrayLiteralExpression, AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NoSubstitutionTemplateLiteral, NumericLiteral, ObjectLiteralExpression, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, RegularExpressionLiteral, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral} from "ts-morph";
+import {ArrayLiteralExpression, AsExpression, BinaryExpression, CallExpression, FalseLiteral, Identifier, NewExpression, Node, NoSubstitutionTemplateLiteral, NumericLiteral, ObjectLiteralExpression, ParenthesizedExpression, PrefixUnaryExpression, PropertyAccessExpression, RegularExpressionLiteral, StringLiteral, SuperExpression, SyntaxKind, ThisExpression, TrueLiteral, VariableDeclaration, VariableDeclarationList} from "ts-morph";
 import {MorphBinary} from "./expressions/binary";
 import {MorphCall} from "./expressions/call";
 import {MorphNew} from "./expressions/new";
 import {MorphObjectLiteral} from "./expressions/object_literal";
 import {MorphPropertyAccess} from "./expressions/property_access";
+import {MorphVariableDeclaration} from "./expressions/variable_declaration";
 
 export function handleExpression(n?: Node): string {
   if (n === undefined) {
@@ -39,6 +40,10 @@ export function handleExpression(n?: Node): string {
     ret += "|" + n.getLiteralText().replace(/^\//, "").replace(/\/\w+$/, "") + "|";
   } else if (n instanceof CallExpression) {
     ret += new MorphCall().run(n);
+  } else if (n instanceof VariableDeclarationList) {
+    ret += n.getDeclarations().map(new MorphVariableDeclaration().run).join("");
+  } else if (n instanceof VariableDeclaration) {
+    ret += new MorphVariableDeclaration().run(n);
   } else if (n instanceof PropertyAccessExpression) {
     ret += new MorphPropertyAccess().run(n);
   } else if (n instanceof NumericLiteral) {
