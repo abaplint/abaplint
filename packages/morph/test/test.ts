@@ -171,4 +171,75 @@ foo = Mode-Normal.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("if not undefined", async () => {
+    const ts = `
+class Position { }
+let virtual: Position | undefined;
+if (virtual) { }`;
+    const abap = `
+CLASS Position DEFINITION.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS Position IMPLEMENTATION.
+ENDCLASS.
+DATA virtual TYPE REF TO Position.
+CLEAR virtual.
+IF virtual IS NOT INITIAL.
+ENDIF.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("if not undefined, chain", async () => {
+    const ts = `
+class Position {
+  private virtual: Position | undefined;
+
+  public foo() {
+    if (this.virtual) { }
+  }
+}`;
+    const abap = `
+CLASS Position DEFINITION.
+  PUBLIC SECTION.
+    DATA virtual TYPE REF TO Position.
+    METHODS foo.
+ENDCLASS.
+
+CLASS Position IMPLEMENTATION.
+  METHOD foo.
+IF me->virtual IS NOT INITIAL.
+ENDIF.
+  ENDMETHOD.
+
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it.only("constructor parameter names", async () => {
+    const ts = `
+class Position {
+  private priv: number;
+  public constructor(inp: number) {
+    this.priv = inp;
+  }
+}
+let foo = new Position( 2 );`;
+    const abap = `
+CLASS Position DEFINITION.
+  PUBLIC SECTION.
+    DATA priv TYPE i.
+    METHODS constructor IMPORTING inp TYPE i.
+ENDCLASS.
+
+CLASS Position IMPLEMENTATION.
+  METHOD constructor.
+me->priv = inp.
+  ENDMETHOD.
+
+ENDCLASS.
+DATA(foo) = NEW Position( inp = 2 ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
