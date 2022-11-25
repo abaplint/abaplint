@@ -80,10 +80,16 @@ class Stream {
   }
 
   public prevChar(): string {
+    if (this.offset - 1 < 0) {
+      return "";
+    }
     return this.raw.substr(this.offset - 1, 1);
   }
 
   public prevPrevChar(): string {
+    if (this.offset - 2 < 0) {
+      return "";
+    }
     return this.raw.substr(this.offset - 2, 2);
   }
 
