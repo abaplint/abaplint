@@ -1,11 +1,20 @@
 import {BinaryExpression} from "ts-morph";
-import {handleExpressions} from "../expressions";
+import {handleExpression, handleExpressions} from "../expressions";
 
 export class MorphBinary {
   public run(s: BinaryExpression) {
+    const left = handleExpression(s.getLeft());
+    const operator = handleExpression(s.getOperatorToken());
+    const right = handleExpression(s.getRight());
+
     let ret = handleExpressions(s.forEachChildAsArray());
-    if (ret.endsWith(" EQ undefined")) {
-      ret = ret.replace(" EQ undefined", " IS INITIAL");
+    if (operator.trim() === "EQ" && right === "undefined") {
+      ret = left + " IS INITIAL";
+    } else if (operator.trim() === "+"
+        && s.getLeft().getType().getText() === "string") {
+      ret = left + " && " + right;
+    } else {
+      ret = left + operator + right;
     }
     return ret;
   }

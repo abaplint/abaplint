@@ -1,6 +1,6 @@
 {
   "global": {
-    "files": "/abap/**/*.*"
+    "files": "/downport/**/*.*"
   },
   "dependencies": [
     {
@@ -9,10 +9,11 @@
     }
   ],
   "syntax": {
-    "version": "v755",
+    "version": "open-abap",
     "errorNamespace": "."
   },
   "rules": {
+    "downport": true,
     "begin_end_names": true,
     "line_length": {
       "length": 255

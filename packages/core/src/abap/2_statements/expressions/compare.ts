@@ -19,7 +19,7 @@ export class Compare extends Expression {
                      optPrio("NOT"),
                      altPrio("SUPPLIED",
                              "BOUND",
-                             ver(Version.v750, seq("INSTANCE OF", ClassName)),
+                             ver(Version.v750, seq("INSTANCE OF", ClassName), Version.OpenABAP),
                              "REQUESTED",
                              "INITIAL"));
 

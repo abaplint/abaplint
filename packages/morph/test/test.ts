@@ -368,4 +368,65 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("string concat should not be plus", async () => {
+    const ts = `
+let foo = "hello";
+let bar = "world"
+let res = foo + bar;`;
+    const abap = `
+DATA(foo) = |hello|.
+DATA(bar) = |world|.
+DATA(res) = foo && bar.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("initial value, class attribute", async () => {
+    const ts = `
+class Stream {
+  private offset = -1;
+}`;
+    const abap = `
+CLASS Stream DEFINITION.
+  PUBLIC SECTION.
+  PRIVATE SECTION.
+    DATA offset TYPE i VALUE -1.
+ENDCLASS.
+
+CLASS Stream IMPLEMENTATION.
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("return object, short name", async () => {
+    const ts = `
+type typ = {
+  num: number;
+}
+class Stream {
+  public run(): typ {
+    let num = 2;
+    return {num};
+  }
+}`;
+    const abap = `
+TYPES BEGIN OF typ.
+  TYPES num TYPE i.
+TYPES END OF typ.
+CLASS Stream DEFINITION.
+  PUBLIC SECTION.
+    METHODS run RETURNING VALUE(return) TYPE typ.
+ENDCLASS.
+
+CLASS Stream IMPLEMENTATION.
+  METHOD run.
+DATA(num) = 2.
+return = VALUE #( num = num ).
+RETURN.
+  ENDMETHOD.
+
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
+

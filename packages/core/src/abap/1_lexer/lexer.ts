@@ -80,25 +80,39 @@ class Stream {
   }
 
   public prevChar(): string {
+    if (this.offset - 1 < 0) {
+      return "";
+    }
     return this.raw.substr(this.offset - 1, 1);
   }
 
   public prevPrevChar(): string {
+    if (this.offset - 2 < 0) {
+      return "";
+    }
     return this.raw.substr(this.offset - 2, 2);
   }
 
   public currentChar(): string {
     if (this.offset < 0) {
       return "\n"; // simulate newline at start of file to handle star(*) comments
+    } else if (this.offset >= this.raw.length) {
+      return "";
     }
     return this.raw.substr(this.offset, 1);
   }
 
   public nextChar(): string {
+    if (this.offset + 2 > this.raw.length) {
+      return "";
+    }
     return this.raw.substr(this.offset + 1, 1);
   }
 
   public nextNextChar(): string {
+    if (this.offset + 3 > this.raw.length) {
+      return this.nextChar();
+    }
     return this.raw.substr(this.offset + 1, 2);
   }
 
@@ -135,9 +149,11 @@ export class Lexer {
       const row = this.stream.getRow();
 
       let whiteBefore = false;
-      const prev = this.stream.getRaw().substr(this.stream.getOffset() - s.length, 1);
-      if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
-        whiteBefore = true;
+      if (this.stream.getOffset() - s.length >= 0) {
+        const prev = this.stream.getRaw().substr(this.stream.getOffset() - s.length, 1);
+        if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
+          whiteBefore = true;
+        }
       }
 
       let whiteAfter = false;
@@ -170,7 +186,7 @@ export class Lexer {
         } else {
           tok = new Identifier(pos, s);
         }
-      } else if (s.substr(0, 2) === "##") {
+      } else if (s.length > 2 && s.substr(0, 2) === "##") {
         tok = new Pragma(pos, s);
       } else if (s.length === 1) {
         if (s === "." || s === ",") {

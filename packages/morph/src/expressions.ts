@@ -54,6 +54,9 @@ export function handleExpression(n?: Node): string {
     ret += text;
   } else if (n instanceof PrefixUnaryExpression) {
     switch (n.getOperatorToken()) {
+      case SyntaxKind.MinusToken:
+        ret += "-";
+        break;
       case SyntaxKind.ExclamationToken:
         ret += "NOT ";
         break;

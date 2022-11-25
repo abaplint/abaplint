@@ -1,4 +1,5 @@
 import {ClassDeclaration, ConstructorDeclaration, Identifier, MethodDeclaration, PropertyDeclaration, Scope, SyntaxKind} from "ts-morph";
+import { handleExpression } from "../expressions";
 import {handleStatements} from "../statements";
 import {handleType} from "../types";
 import {buildParameters} from "./_helpers";
@@ -40,8 +41,13 @@ export class MorphClassDeclaration {
 
     for (const m of s.getMembers()) {
       if (m instanceof PropertyDeclaration) {
+        let init = handleExpression(m.getInitializer());
+        if (init !== "") {
+          init = " VALUE " + init;
+        }
+
         const st = m.isStatic() ? "CLASS-" : "";
-        const code = `    ${st}DATA ${m.getName()} TYPE ${handleType(m.getType())}.\n`;
+        const code = `    ${st}DATA ${m.getName()} TYPE ${handleType(m.getType())}${init}.\n`;
 
         if (m.getScope() === Scope.Private) {
           privateSection += code;

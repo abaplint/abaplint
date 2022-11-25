@@ -4,6 +4,7 @@
   "version": "0",
   "description": "test",
   "scripts": {
+    "downport": "rm -rf downport && cp -r src downport && abaplint --fix abaplint-downport.jsonc",
     "test": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js && abaplint --fix"
   },
   "author": "Lars Hvam Petersen",
@@ -23,7 +24,7 @@
   },
   "homepage": "https://abaplint.org",
   "dependencies": {
-    "@abaplint/cli": "^2.93.97",
+    "@abaplint/cli": "^2.93.98",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.11.9",

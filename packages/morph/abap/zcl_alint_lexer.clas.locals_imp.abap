@@ -810,7 +810,7 @@ CLASS Buffer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD add.
-    me->buf = me->buf + s.
+    me->buf = me->buf && s.
   ENDMETHOD.
 
   METHOD get.
@@ -851,7 +851,7 @@ CLASS stream DEFINITION.
     METHODS getoffset RETURNING VALUE(return) TYPE i.
   PRIVATE SECTION.
     DATA raw TYPE string.
-    DATA offset TYPE i.
+    DATA offset TYPE i VALUE -1.
     DATA row TYPE i.
     DATA col TYPE i.
 ENDCLASS.
@@ -889,11 +889,19 @@ CLASS Stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD prevchar.
+    IF me->offset - 1 < 0.
+      return = ||.
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset - 1 len = 1 ).
     RETURN.
   ENDMETHOD.
 
   METHOD prevprevchar.
+    IF me->offset - 2 < 0.
+      return = ||.
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset - 2 len = 2 ).
     RETURN.
   ENDMETHOD.
@@ -902,17 +910,30 @@ CLASS Stream IMPLEMENTATION.
     IF me->offset < 0.
       return = |\n|.
       RETURN.
+    ELSE.
+      IF me->offset >= strlen( me->raw ).
+        return = ||.
+        RETURN.
+      ENDIF.
     ENDIF.
     return = substring( val = me->raw off = me->offset len = 1 ).
     RETURN.
   ENDMETHOD.
 
   METHOD nextchar.
+    IF me->offset + 2 > strlen( me->raw ).
+      return = ||.
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset + 1 len = 1 ).
     RETURN.
   ENDMETHOD.
 
   METHOD nextnextchar.
+    IF me->offset + 3 > strlen( me->raw ).
+      return = me->nextchar( ).
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset + 1 len = 2 ).
     RETURN.
   ENDMETHOD.
@@ -947,7 +968,7 @@ CLASS Lexer IMPLEMENTATION.
     me->tokens = VALUE #( ).
     me->m = mode-normal.
     me->process( file->getraw( ) ).
-    return = VALUE #( tokens = me->tokens ).
+    return = VALUE #( file = file tokens = me->tokens ).
     RETURN.
   ENDMETHOD.
 
@@ -957,12 +978,14 @@ CLASS Lexer IMPLEMENTATION.
       DATA(col) = me->stream->getcol( ).
       DATA(row) = me->stream->getrow( ).
       DATA(whitebefore) = abap_false.
-      DATA(prev) = substring( val = me->stream->getraw( ) off = me->stream->getoffset( ) - strlen( s ) len = 1 ).
-      IF prev EQ | | OR
-          prev EQ |\n| OR
-          prev EQ |\t| OR
-          prev EQ |:|.
-        whitebefore = abap_true.
+      IF me->stream->getoffset( ) - strlen( s ) >= 0.
+        DATA(prev) = substring( val = me->stream->getraw( ) off = me->stream->getoffset( ) - strlen( s ) len = 1 ).
+        IF prev EQ | | OR
+            prev EQ |\n| OR
+            prev EQ |\t| OR
+            prev EQ |:|.
+          whitebefore = abap_true.
+        ENDIF.
       ENDIF.
       DATA(whiteafter) = abap_false.
       DATA(next) = me->stream->nextchar( ).
@@ -1010,7 +1033,7 @@ CLASS Lexer IMPLEMENTATION.
               ENDIF.
             ENDIF.
           ELSE.
-            IF substring( val = s off = 0 len = 2 ) EQ |##|.
+            IF strlen( s ) > 2 AND substring( val = s off = 0 len = 2 ) EQ |##|.
               tok = NEW pragma( start = pos str = s ).
             ELSE.
               IF strlen( s ) EQ 1.
