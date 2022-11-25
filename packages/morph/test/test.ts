@@ -368,4 +368,17 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("string concat should not be plus", async () => {
+    const ts = `
+let foo = "hello";
+let bar = "world"
+let res = foo + bar;`;
+    const abap = `
+DATA(foo) = |hello|.
+DATA(bar) = |world|.
+DATA(res) = foo && bar.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
+

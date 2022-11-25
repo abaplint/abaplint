@@ -810,7 +810,7 @@ CLASS Buffer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD add.
-    me->buf = me->buf + s.
+    me->buf = me->buf && s.
   ENDMETHOD.
 
   METHOD get.
