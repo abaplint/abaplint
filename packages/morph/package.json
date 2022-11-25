@@ -4,6 +4,7 @@
   "version": "0",
   "description": "test",
   "scripts": {
+    "downport": "rm -rf downport && cp -r src downport && abaplint --fix abaplint-downport.jsonc",
     "test": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js && abaplint --fix"
   },
   "author": "Lars Hvam Petersen",
