@@ -40,7 +40,7 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: lookup.hover};
     }
 
-    if (found.token instanceof Tokens.String) {
+    if (found.token instanceof Tokens.StringToken) {
       return {kind: LServer.MarkupKind.Markdown, value: "String"};
     }
 

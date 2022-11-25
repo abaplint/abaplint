@@ -16,7 +16,7 @@ describe("statement parser", () => {
 
     const globalMacros = ["moo"];
 
-    const lexerResult = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap));
     const statements = new StatementParser(defaultVersion).run([lexerResult], globalMacros);
     expect(statements.length).to.equal(1);
     expect(statements[0].statements[0].get()).to.be.instanceof(MacroCall);
@@ -27,7 +27,7 @@ describe("statement parser", () => {
 
     const globalMacros = ["moo-bar"];
 
-    const lexerResult = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+    const lexerResult = new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap));
     const statements = new StatementParser(defaultVersion).run([lexerResult], globalMacros);
     expect(statements.length).to.equal(1);
     expect(statements[0].statements[0].get()).to.be.instanceof(MacroCall);

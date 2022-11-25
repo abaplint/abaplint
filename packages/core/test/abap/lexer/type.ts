@@ -6,7 +6,7 @@ import {MemoryFile} from "../../../src/files/memory_file";
 const tests = [
   {abap: "foo", type: Tokens.Identifier},
   {abap: "\"stsdf\"", type: Tokens.Comment},
-  {abap: " 'stsdf'", type: Tokens.String},
+  {abap: " 'stsdf'", type: Tokens.StringToken},
   {abap: "|bar|", type: Tokens.StringTemplate},
   {abap: "|bar{", type: Tokens.StringTemplateBegin},
   {abap: " }bar|", type: Tokens.StringTemplateEnd},
@@ -18,7 +18,7 @@ const tests = [
 describe("lexer types", () => {
   tests.forEach((test) => {
     it("\"" + test.abap + "\" should be " + test.type["name"], () => {
-      const tokens = Lexer.run(new MemoryFile("foo.abap", test.abap)).tokens;
+      const tokens = new Lexer().run(new MemoryFile("foo.abap", test.abap)).tokens;
       expect(tokens.length).to.equals(1);
       expect(tokens[0].constructor["name"]).to.equals(test.type["name"]);
     });

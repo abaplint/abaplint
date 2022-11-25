@@ -15,7 +15,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 // utils for testing
 
 export function getTokens(abap: string): readonly Token[] {
-  return Lexer.run(new MemoryFile("cl_foo.clas.abap", abap)).tokens;
+  return new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap)).tokens;
 }
 
 export function getFile(abap: string): IFile[] {
@@ -23,7 +23,7 @@ export function getFile(abap: string): IFile[] {
 }
 
 export function getStatements(abap: string, version?: Version): readonly StatementNode[] {
-  const lexerResult = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+  const lexerResult = new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap));
   return new StatementParser(version ? version : defaultVersion).run([lexerResult], [])[0].statements;
 }
 

@@ -1,0 +1,36 @@
+{
+  "name": "@abaplint/morph",
+  "private": true,
+  "version": "0",
+  "description": "test",
+  "scripts": {
+    "test": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js && abaplint --fix"
+  },
+  "author": "Lars Hvam Petersen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abaplint/abaplint/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abaplint/abaplint.git"
+  },
+  "mocha": {
+    "recursive": true,
+    "reporter": "progress",
+    "spec": "build/test/**/*.js",
+    "require": "source-map-support/register"
+  },
+  "homepage": "https://abaplint.org",
+  "dependencies": {
+    "@abaplint/cli": "^2.93.97",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.9",
+    "chai": "^4.3.7",
+    "mocha": "^10.1.0",
+    "source-map-support": "^0.5.21",
+    "ts-morph": "^17.0.1",
+    "typescript": "^4.9.3"
+  }
+}

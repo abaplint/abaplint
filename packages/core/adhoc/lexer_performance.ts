@@ -8,7 +8,7 @@ const file = new MemoryFile("abapgit.abap", fs.readFileSync("./lexer_performance
 let total = 0;
 for (let i = 0; i < 10; i++) {
   const before = Date.now();
-  const result = Lexer.run(file);
+  const result = new Lexer().run(file);
   const runtime = Date.now() - before;
   console.log("Runtime: " + runtime + "ms");
   total += runtime;
