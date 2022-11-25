@@ -910,6 +910,11 @@ CLASS Stream IMPLEMENTATION.
     IF me->offset < 0.
       return = |\n|.
       RETURN.
+    ELSE.
+      IF me->offset >= strlen( me->raw ).
+        return = ||.
+        RETURN.
+      ENDIF.
     ENDIF.
     return = substring( val = me->raw off = me->offset len = 1 ).
     RETURN.
@@ -963,7 +968,7 @@ CLASS Lexer IMPLEMENTATION.
     me->tokens = VALUE #( ).
     me->m = mode-normal.
     me->process( file->getraw( ) ).
-    return = VALUE #( tokens = me->tokens ).
+    return = VALUE #( file = file tokens = me->tokens ).
     RETURN.
   ENDMETHOD.
 

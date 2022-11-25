@@ -96,6 +96,8 @@ class Stream {
   public currentChar(): string {
     if (this.offset < 0) {
       return "\n"; // simulate newline at start of file to handle star(*) comments
+    } else if (this.offset >= this.raw.length) {
+      return "";
     }
     return this.raw.substr(this.offset, 1);
   }

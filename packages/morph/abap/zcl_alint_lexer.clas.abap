@@ -10,6 +10,7 @@ CLASS zcl_alint_lexer IMPLEMENTATION.
     DATA(file) = NEW memoryfile(
       filename = 'ztest.prog.abap'
       raw      = iv_code ).
-    NEW lexer( )->run( file ).
+    DATA(result) = NEW lexer( )->run( file ).
+    BREAK-POINT.
   ENDMETHOD.
 ENDCLASS.

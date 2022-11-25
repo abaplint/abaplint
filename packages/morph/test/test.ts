@@ -397,5 +397,36 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("return object, short name", async () => {
+    const ts = `
+type typ = {
+  num: number;
+}
+class Stream {
+  public run(): typ {
+    let num = 2;
+    return {num};
+  }
+}`;
+    const abap = `
+TYPES BEGIN OF typ.
+  TYPES num TYPE i.
+TYPES END OF typ.
+CLASS Stream DEFINITION.
+  PUBLIC SECTION.
+    METHODS run RETURNING VALUE(return) TYPE typ.
+ENDCLASS.
+
+CLASS Stream IMPLEMENTATION.
+  METHOD run.
+DATA(num) = 2.
+return = VALUE #( num = num ).
+RETURN.
+  ENDMETHOD.
+
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
 
