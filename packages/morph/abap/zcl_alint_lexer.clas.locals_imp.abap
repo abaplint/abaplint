@@ -965,12 +965,14 @@ CLASS Lexer IMPLEMENTATION.
       DATA(col) = me->stream->getcol( ).
       DATA(row) = me->stream->getrow( ).
       DATA(whitebefore) = abap_false.
-      DATA(prev) = substring( val = me->stream->getraw( ) off = me->stream->getoffset( ) - strlen( s ) len = 1 ).
-      IF prev EQ | | OR
-          prev EQ |\n| OR
-          prev EQ |\t| OR
-          prev EQ |:|.
-        whitebefore = abap_true.
+      IF me->stream->getoffset( ) - strlen( s ) >= 0.
+        DATA(prev) = substring( val = me->stream->getraw( ) off = me->stream->getoffset( ) - strlen( s ) len = 1 ).
+        IF prev EQ | | OR
+            prev EQ |\n| OR
+            prev EQ |\t| OR
+            prev EQ |:|.
+          whitebefore = abap_true.
+        ENDIF.
       ENDIF.
       DATA(whiteafter) = abap_false.
       DATA(next) = me->stream->nextchar( ).
