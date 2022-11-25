@@ -380,5 +380,22 @@ DATA(res) = foo && bar.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("initial value, class attribute", async () => {
+    const ts = `
+class Stream {
+  private offset = -1;
+}`;
+    const abap = `
+CLASS Stream DEFINITION.
+  PUBLIC SECTION.
+  PRIVATE SECTION.
+    DATA offset TYPE i VALUE -1.
+ENDCLASS.
+
+CLASS Stream IMPLEMENTATION.
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
 

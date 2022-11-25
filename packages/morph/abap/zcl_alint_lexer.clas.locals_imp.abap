@@ -851,7 +851,7 @@ CLASS stream DEFINITION.
     METHODS getoffset RETURNING VALUE(return) TYPE i.
   PRIVATE SECTION.
     DATA raw TYPE string.
-    DATA offset TYPE i.
+    DATA offset TYPE i VALUE -1.
     DATA row TYPE i.
     DATA col TYPE i.
 ENDCLASS.
