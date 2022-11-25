@@ -916,11 +916,19 @@ CLASS Stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD nextchar.
+    IF me->offset + 2 > strlen( me->raw ).
+      return = ||.
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset + 1 len = 1 ).
     RETURN.
   ENDMETHOD.
 
   METHOD nextnextchar.
+    IF me->offset + 3 > strlen( me->raw ).
+      return = me->nextchar( ).
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset + 1 len = 2 ).
     RETURN.
   ENDMETHOD.
@@ -1020,7 +1028,7 @@ CLASS Lexer IMPLEMENTATION.
               ENDIF.
             ENDIF.
           ELSE.
-            IF substring( val = s off = 0 len = 2 ) EQ |##|.
+            IF strlen( s ) > 2 AND substring( val = s off = 0 len = 2 ) EQ |##|.
               tok = NEW pragma( start = pos str = s ).
             ELSE.
               IF strlen( s ) EQ 1.

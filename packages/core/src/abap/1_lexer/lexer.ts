@@ -101,6 +101,9 @@ class Stream {
   }
 
   public nextChar(): string {
+    if (this.offset + 2 > this.raw.length) {
+      return "";
+    }
     return this.raw.substr(this.offset + 1, 1);
   }
 
@@ -181,7 +184,7 @@ export class Lexer {
         } else {
           tok = new Identifier(pos, s);
         }
-      } else if (s.substr(0, 2) === "##") {
+      } else if (s.length > 2 && s.substr(0, 2) === "##") {
         tok = new Pragma(pos, s);
       } else if (s.length === 1) {
         if (s === "." || s === ",") {
