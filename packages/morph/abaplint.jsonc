@@ -5,7 +5,7 @@
   "dependencies": [
     {
       "url": "https://github.com/open-abap/open-abap-core",
-      "files": "/src/ddic/ttyp/string_table.ttyp.xml"
+      "files": "/src/**/*.*"
     }
   ],
   "syntax": {
