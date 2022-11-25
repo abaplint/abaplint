@@ -24,7 +24,7 @@
   },
   "homepage": "https://abaplint.org",
   "dependencies": {
-    "@abaplint/cli": "^2.93.98",
+    "@abaplint/cli": "^2.93.99",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.11.9",
