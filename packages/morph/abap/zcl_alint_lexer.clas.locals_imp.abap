@@ -645,7 +645,7 @@ CLASS AbstractFile IMPLEMENTATION.
     me->filename = filename.
   ENDMETHOD.
 
-  METHOD getfilename.
+  METHOD ifile~getfilename.
     return = me->filename.
     RETURN.
   ENDMETHOD.
@@ -688,7 +688,7 @@ CLASS AbstractFile IMPLEMENTATION.
     RETURN.
   ENDMETHOD.
 
-  METHOD getobjecttype.
+  METHOD ifile~getobjecttype.
     DATA(split) = REDUCE string_table( LET split_input = me->basename( )
       split_by    = |.|
       offset      = 0
@@ -709,7 +709,7 @@ CLASS AbstractFile IMPLEMENTATION.
     RETURN.
   ENDMETHOD.
 
-  METHOD getobjectname.
+  METHOD ifile~getobjectname.
     DATA(split) = REDUCE string_table( LET split_input = me->basename( )
       split_by    = |.|
       offset      = 0
@@ -733,10 +733,10 @@ CLASS AbstractFile IMPLEMENTATION.
     RETURN.
   ENDMETHOD.
 
-  METHOD getraw.
+  METHOD ifile~getraw.
   ENDMETHOD.
 
-  METHOD getrawrows.
+  METHOD ifile~getrawrows.
   ENDMETHOD.
 
 ENDCLASS.

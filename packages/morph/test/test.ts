@@ -359,7 +359,7 @@ CLASS Position DEFINITION.
 ENDCLASS.
 
 CLASS Position IMPLEMENTATION.
-  METHOD foo.
+  METHOD IFace~foo.
 return = |hello|.
 RETURN.
   ENDMETHOD.
