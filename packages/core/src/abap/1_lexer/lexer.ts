@@ -105,6 +105,9 @@ class Stream {
   }
 
   public nextNextChar(): string {
+    if (this.offset + 3 > this.raw.length) {
+      return this.nextChar();
+    }
     return this.raw.substr(this.offset + 1, 2);
   }
 
