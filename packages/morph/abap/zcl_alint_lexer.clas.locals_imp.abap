@@ -889,11 +889,19 @@ CLASS Stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD prevchar.
+    IF me->offset - 1 < 0.
+      return = ||.
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset - 1 len = 1 ).
     RETURN.
   ENDMETHOD.
 
   METHOD prevprevchar.
+    IF me->offset - 2 < 0.
+      return = ||.
+      RETURN.
+    ENDIF.
     return = substring( val = me->raw off = me->offset - 2 len = 2 ).
     RETURN.
   ENDMETHOD.

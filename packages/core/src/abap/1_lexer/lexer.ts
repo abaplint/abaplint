@@ -141,9 +141,11 @@ export class Lexer {
       const row = this.stream.getRow();
 
       let whiteBefore = false;
-      const prev = this.stream.getRaw().substr(this.stream.getOffset() - s.length, 1);
-      if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
-        whiteBefore = true;
+      if (this.stream.getOffset() - s.length >= 0) {
+        const prev = this.stream.getRaw().substr(this.stream.getOffset() - s.length, 1);
+        if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
+          whiteBefore = true;
+        }
       }
 
       let whiteAfter = false;
