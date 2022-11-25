@@ -657,16 +657,16 @@ CLASS AbstractFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index1 = 0 WHILE index1 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index1(1) }| ) ).
     DATA(base1) = first[ lines( first ) - 1 + 1 ].
     DATA(base2) = REDUCE string_table( LET split_input = base1
       split_by    = |/|
@@ -674,16 +674,16 @@ CLASS AbstractFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index2 = 0 WHILE index2 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index2 = strlen( split_input ) OR split_input+index2(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index2 = strlen( split_input ) OR split_input+index2(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index2(1) }| ) ).
     return = base2[ lines( base2 ) - 1 + 1 ].
     RETURN.
   ENDMETHOD.
@@ -695,16 +695,16 @@ CLASS AbstractFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index3 = 0 WHILE index3 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index3(1) }| ) ).
     return = to_upper( val = split[ 1 + 1 ] ).
     RETURN.
   ENDMETHOD.
@@ -716,16 +716,16 @@ CLASS AbstractFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index4 = 0 WHILE index4 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index4 = strlen( split_input ) OR split_input+index4(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index4 = strlen( split_input ) OR split_input+index4(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index4(1) }| ) ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%23| with = |#| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3e| with = |>| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3c| with = |<| ).
@@ -767,16 +767,16 @@ CLASS MemoryFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index5 = 0 WHILE index5 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index5(1) }| ) ).
     RETURN.
   ENDMETHOD.
 

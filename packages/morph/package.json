@@ -5,8 +5,9 @@
   "description": "test",
   "scripts": {
     "build": "rm -rf output && abap_transpile abap_transpile.json",
-    "downport": "rm -rf downport && cp -r src downport && abaplint --fix abaplint-downport.jsonc",
-    "test": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js && abaplint --fix"
+    "downport": "rm -rf downport && cp -r abap downport && abaplint --fix abaplint-downport.jsonc",
+    "ts_to_abap": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js && abaplint --fix",
+    "test": "npm run ts_to_abap && npm run downport && npm run build"
   },
   "author": "Lars Hvam Petersen",
   "license": "MIT",
