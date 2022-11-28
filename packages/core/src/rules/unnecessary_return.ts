@@ -3,6 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import { StatementFlow } from "../abap/flow/statement_flow";
 
 export class UnnecessaryReturnConf extends BasicRuleConfig {
 }
@@ -43,6 +44,7 @@ ENDMETHOD.`,
       return [];
     }
 
+    new StatementFlow().build(structure);
 // todo
 
     return issues;
