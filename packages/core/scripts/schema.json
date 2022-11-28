@@ -2924,6 +2924,17 @@
               ],
               "description": "Finds pragmas which can be removed\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_pragma"
             },
+            "unnecessary_return": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryReturnConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds unnecessary RETURN statements\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_return"
+            },
             "unreachable_code": {
               "anyOf": [
                 {
@@ -5406,6 +5417,23 @@
       "type": "object"
     },
     "UnnecessaryPragmaConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UnnecessaryReturnConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
