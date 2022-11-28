@@ -11,6 +11,12 @@ async function findIssues(abap: string) {
 
 describe("Rule: unnecessary_return", () => {
 
+  it("parser error", async () => {
+    const abap = `dsflkjdsflkjfds ljdsfds`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it.only("test FORM", async () => {
     const abap = `
 FORM foo.

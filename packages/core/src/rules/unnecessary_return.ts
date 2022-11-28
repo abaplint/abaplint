@@ -35,8 +35,15 @@ ENDMETHOD.`,
     this.conf = conf;
   }
 
-  public runParsed(_file: ABAPFile) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+
+    const structure = file.getStructure();
+    if (structure === undefined) {
+      return [];
+    }
+
+// todo
 
     return issues;
   }
