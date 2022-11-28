@@ -7,7 +7,7 @@ import {Token} from "../1_lexer/tokens/_token";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
-// Loop branching: LOOP, DO, WHILE,SELECT(loop), WITH, PROVIDE
+// Loop branching: LOOP, DO, WHILE, SELECT(loop), WITH, PROVIDE
 //
 // Branching: IF, CASE, CASE TYPE OF, TRY, ON, CATCH SYSTEM-EXCEPTIONS, AT
 //
