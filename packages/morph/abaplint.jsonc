@@ -17,6 +17,7 @@
     "line_length": {
       "length": 255
     },
+    "unnecessary_return": true,
     "keyword_case": true,
     "in_statement_indentation": true,
     "check_ddic": true,
