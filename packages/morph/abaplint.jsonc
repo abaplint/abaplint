@@ -18,6 +18,7 @@
       "length": 255
     },
     "unnecessary_return": true,
+    "omit_parameter_name": true,
     "keyword_case": true,
     "in_statement_indentation": true,
     "check_ddic": true,

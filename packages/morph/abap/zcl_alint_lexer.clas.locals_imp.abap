@@ -751,7 +751,7 @@ ENDCLASS.
 
 CLASS MemoryFile IMPLEMENTATION.
   METHOD constructor.
-    super->constructor( filename = filename ).
+    super->constructor( filename ).
     me->raw = raw.
   ENDMETHOD.
 
