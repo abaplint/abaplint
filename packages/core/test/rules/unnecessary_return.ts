@@ -1,12 +1,17 @@
 import {expect} from "chai";
 import {MemoryFile, Registry} from "../../src";
 import {UnnecessaryReturn} from "../../src/rules";
+import {testRuleFixCount} from "./_utils";
 
 async function findIssues(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new UnnecessaryReturn();
   return rule.initialize(reg).run(reg.getFirstObject()!);
+}
+
+function testFix(input: string, expected: string) {
+  testRuleFixCount(input, expected, new UnnecessaryReturn());
 }
 
 describe("Rule: unnecessary_return", () => {
@@ -24,6 +29,18 @@ FORM foo.
 ENDFORM.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
+  });
+
+  it("test FORM fix", async () => {
+    const abap = `
+FORM foo.
+RETURN.
+ENDFORM.`;
+    const expected = `
+FORM foo.
+
+ENDFORM.`;
+    testFix(abap, expected);
   });
 
   it("test METHOD", async () => {
