@@ -1,5 +1,9 @@
 import {IfInIf} from "../../src/rules";
-import {testRule} from "./_utils";
+import {testRule, testRuleFixCount} from "./_utils";
+
+function testFix(input: string, expected: string) {
+  testRuleFixCount(input, expected, new IfInIf());
+}
 
 const tests = [
   {abap: `parser error`, cnt: 0},
@@ -45,3 +49,22 @@ const tests = [
 ];
 
 testRule(tests, IfInIf);
+
+describe("Rule: if in f", () => {
+
+  it("test fix", async () => {
+    const abap = `
+IF 1 = 2.
+ELSE.
+IF 3 = 4.
+ENDIF.
+ENDIF.`;
+    const expected = `
+IF 1 = 2.
+ELSEIF 3 = 4.
+ENDIF.
+`;
+    testFix(abap, expected);
+  });
+
+});

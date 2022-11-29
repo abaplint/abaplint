@@ -1,10 +1,12 @@
 import {Issue} from "../issue";
+import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
+import {EditHelper, IEdit} from "../edit_helper";
 
 export class IfInIfConf extends BasicRuleConfig {
 }
@@ -51,10 +53,6 @@ ENDIF.`,
     };
   }
 
-  private getMessage(): string {
-    return "IF in IF. Use IF cond1 AND cond2 instead";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -75,6 +73,7 @@ ENDIF.`,
       return [];
     }
 
+    let fixed = false;
     let possible = stru.findAllStructures(Structures.If);
     possible = possible.concat(stru.findAllStructures(Structures.Else));
 
@@ -106,8 +105,25 @@ ENDIF.`,
         continue;
       }
 
+      let message = "IF in IF. Use IF cond1 AND cond2 instead";
+
+      let fix: IEdit | undefined = undefined;
+      if (i.get() instanceof Structures.Else) {
+        message = "Change ELSE part to ELSEIF";
+        const els = i.findFirstStatement(Statements.Else);
+        const iff = i.findFirstStructure(Structures.If)?.findDirectStatement(Statements.If);
+        const endif = i.findFirstStructure(Structures.If)?.findDirectStatement(Statements.EndIf);
+        if (fixed === false && iff && els && endif) {
+          const fix1 = EditHelper.deleteRange(file, els.getLastToken().getStart(), iff?.getFirstToken().getStart());
+          const fix2 = EditHelper.deleteStatement(file, endif);
+          fix = EditHelper.merge(fix1, fix2);
+          // max one fix per file at a time
+          fixed = true;
+        }
+      }
+
       const token = i.getFirstToken();
-      const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+      const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity, fix);
       issues.push(issue);
     }
 
