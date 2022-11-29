@@ -44,8 +44,10 @@ ENDMETHOD.`,
       return [];
     }
 
-    new StatementFlow().build(structure);
-// todo
+    const flows = new StatementFlow().build(structure);
+    for (const _graph of flows) {
+//      console.log(graph.toDigraph());
+    }
 
     return issues;
   }

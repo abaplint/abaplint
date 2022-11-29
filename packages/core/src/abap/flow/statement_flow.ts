@@ -52,6 +52,8 @@ export class StatementFlow {
     return ret.map(f => f.reduce());
   }
 
+////////////////////
+
   private findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
     return f.findDirectStructure(Structures.Body)?.getChildren() || [];
   }
