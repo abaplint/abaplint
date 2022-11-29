@@ -117,7 +117,7 @@ class Comment extends Token {
 }
 new Comment("foo", "bar");`;
     const abap = `
-CLASS Token DEFINITION.
+CLASS Token DEFINITION ABSTRACT.
   PUBLIC SECTION.
     METHODS constructor IMPORTING start TYPE string str TYPE string.
   PRIVATE SECTION.
@@ -424,6 +424,22 @@ return = VALUE #( num = num ).
 RETURN.
   ENDMETHOD.
 
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("abstract method", async () => {
+    const ts = `
+abstract class foo {
+  public abstract getRawRows(): string[];
+}`;
+    const abap = `
+CLASS foo DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS getRawRows ABSTRACT RETURNING VALUE(return) TYPE string_table.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
 ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });

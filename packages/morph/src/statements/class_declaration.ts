@@ -1,5 +1,5 @@
 import {ClassDeclaration, ConstructorDeclaration, Identifier, MethodDeclaration, PropertyDeclaration, Scope, SyntaxKind} from "ts-morph";
-import { handleExpression } from "../expressions";
+import {handleExpression} from "../expressions";
 import {handleStatements} from "../statements";
 import {handleType} from "../types";
 import {buildParameters} from "./_helpers";
@@ -33,8 +33,9 @@ export class MorphClassDeclaration {
     if (itype) {
       interfaces = "\n    INTERFACES " + itype.getSymbol()?.getName() + ".";
     }
+    const classAbstract = s.isAbstract() ? " ABSTRACT" : "";
 
-    let definition = `CLASS ${s.getName()} DEFINITION${inherit}.
+    let definition = `CLASS ${s.getName()} DEFINITION${inherit}${classAbstract}.
   PUBLIC SECTION.${interfaces}\n`;
     let privateSection = "";
     let implementation = `CLASS ${s.getName()} IMPLEMENTATION.\n`;
@@ -72,7 +73,8 @@ export class MorphClassDeclaration {
             code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
           } else {
             const parameters = buildParameters(m);
-            code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
+            const methodAbstract = m.isAbstract() ? " ABSTRACT" : "";
+            code = `    ${st}METHODS ${m.getName()}${methodAbstract}${parameters}.\n`;
           }
           if (m.getScope() === Scope.Private) {
             privateSection += code;
@@ -81,9 +83,11 @@ export class MorphClassDeclaration {
           }
         }
 
-        implementation += `  METHOD ${pre}${m.getName()}.\n`;
-        implementation += handleStatements(m.getStatements());
-        implementation += `  ENDMETHOD.\n\n`;
+        if (m.isAbstract() === false) {
+          implementation += `  METHOD ${pre}${m.getName()}.\n`;
+          implementation += handleStatements(m.getStatements());
+          implementation += `  ENDMETHOD.\n\n`;
+        }
       } else {
         console.dir(m.constructor.name + " - todo class_declaration");
       }

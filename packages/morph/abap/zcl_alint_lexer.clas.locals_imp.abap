@@ -81,7 +81,7 @@ CLASS VirtualPosition IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
-CLASS token DEFINITION.
+CLASS token DEFINITION ABSTRACT.
   PUBLIC SECTION.
     METHODS constructor IMPORTING start TYPE REF TO position str TYPE string.
     METHODS getstr RETURNING VALUE(return) TYPE string.
@@ -626,7 +626,7 @@ INTERFACE ifile.
   METHODS getrawrows RETURNING VALUE(return) TYPE string_table.
 ENDINTERFACE.
 
-CLASS abstractfile DEFINITION.
+CLASS abstractfile DEFINITION ABSTRACT.
   PUBLIC SECTION.
     INTERFACES ifile.
     METHODS constructor IMPORTING filename TYPE string.
@@ -641,6 +641,12 @@ CLASS abstractfile DEFINITION.
 ENDCLASS.
 
 CLASS AbstractFile IMPLEMENTATION.
+  METHOD ifile~getrawrows.
+    RETURN. " todo, implement method
+  ENDMETHOD.
+  METHOD ifile~getraw.
+    RETURN. " todo, implement method
+  ENDMETHOD.
   METHOD constructor.
     me->filename = filename.
   ENDMETHOD.
@@ -731,12 +737,6 @@ CLASS AbstractFile IMPLEMENTATION.
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3c| with = |<| ).
     return = replace( val = to_upper( val = split[ 0 + 1 ] ) regex = |#| with = |/| ).
     RETURN.
-  ENDMETHOD.
-
-  METHOD ifile~getraw.
-  ENDMETHOD.
-
-  METHOD ifile~getrawrows.
   ENDMETHOD.
 
 ENDCLASS.
