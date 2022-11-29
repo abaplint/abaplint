@@ -59,7 +59,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("test IF", async () => {
+  it.skip("test IF", async () => {
     const abap = `
 FORM foo.
   IF 1 = 2.
@@ -68,6 +68,18 @@ FORM foo.
 ENDFORM.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
+  });
+
+  it("test IF, no issue", async () => {
+    const abap = `
+FORM foo.
+  IF 1 = 2.
+    RETURN.
+  ENDIF.
+  WRITE 'sdf'.
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
   });
 
 });

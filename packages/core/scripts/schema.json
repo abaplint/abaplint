@@ -2933,7 +2933,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds unnecessary RETURN statements\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_return"
+              "description": "Finds unnecessary RETURN statements\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_return"
             },
             "unreachable_code": {
               "anyOf": [

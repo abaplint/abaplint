@@ -4,8 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import * as Statements from "../abap/2_statements/statements";
-import {StatementFlow} from "../abap/flow/statement_flow";
-import {EditHelper, IEdit} from "../edit_helper";
+import {EditHelper} from "../edit_helper";
 
 export class UnnecessaryReturnConf extends BasicRuleConfig {
 }
@@ -18,8 +17,8 @@ export class UnnecessaryReturn extends ABAPRule {
       key: "unnecessary_return",
       title: "Unnecessary Return",
       shortDescription: `Finds unnecessary RETURN statements`,
-      extendedInformation: `todo`,
-      tags: [RuleTag.SingleFile],
+      extendedInformation: `Finds unnecessary RETURN statements`,
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `METHOD hello.
   ...
   RETURN.
@@ -46,34 +45,22 @@ ENDMETHOD.`,
       return [];
     }
 
-    const flows = new StatementFlow().build(structure);
-    for (const graph of flows) {
-      for (const edge of graph.listEdges()) {
-        if (edge.from.startsWith("Return:") && edge.to === "end#1") {
-          const row = Number.parseInt(edge.from.match(/:(\d+),/)![1], 10);
-          const message = "Unnecessary RETURN";
-          const node = this.findNode(file, row);
-          let fix: IEdit | undefined = undefined;
-          if (node) {
-            fix = EditHelper.deleteStatement(file, node);
-            issues.push(Issue.atStatement(file, node, message, this.getMetadata().key, this.getConfig().severity, fix));
-          } else {
-            issues.push(Issue.atRow(file, row, message, this.getMetadata().key, this.getConfig().severity));
-          }
-        }
+    const statements = file.getStatements();
+    for (let i = 0; i < statements.length - 1; i++) {
+      const node = statements[i];
+      const next = statements[i + 1];
+      if (node.get() instanceof Statements.Return
+          && (next.get() instanceof Statements.EndMethod
+          || next.get() instanceof Statements.EndForm
+          || next.get() instanceof Statements.EndFunction)) {
+
+        const message = "Unnecessary RETURN";
+        const fix = EditHelper.deleteStatement(file, node);
+        issues.push(Issue.atStatement(file, node, message, this.getMetadata().key, this.getConfig().severity, fix));
       }
     }
 
     return issues;
-  }
-
-  private findNode(file: ABAPFile, row: number) {
-    for (const s of file.getStatements()) {
-      if (s.getStart().getRow() === row && s.get() instanceof Statements.Return) {
-        return s;
-      }
-    }
-    return undefined;
   }
 
 }
