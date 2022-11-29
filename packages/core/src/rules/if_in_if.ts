@@ -23,7 +23,7 @@ export class IfInIf extends ABAPRule {
       extendedInformation: `
 Directly nested IFs without ELSE can be refactored to a single condition using AND.
 
-ELSE condtions with directly nested IF refactored to ELSEIF.
+ELSE condtions with directly nested IF refactored to ELSEIF, quickfixes are suggested for this case.
 
 https://docs.abapopenchecks.org/checks/01/
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-the-nesting-depth-low`,
@@ -49,7 +49,7 @@ IF condition1.
 ELSEIF condition2.
   ...
 ENDIF.`,
-      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
 
