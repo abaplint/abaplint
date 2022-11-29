@@ -1021,7 +1021,6 @@ CLASS Lexer IMPLEMENTATION.
         ELSE.
           tok = NEW identifier( start = pos str = s ).
                   
-                
               
         ENDIF.
       ELSEIF strlen( s ) > 2 AND substring( val = s off = 0 len = 2 ) EQ |##|.
@@ -1115,12 +1114,7 @@ CLASS Lexer IMPLEMENTATION.
                                   
           ENDIF.
                               
-                            
                           
-                        
-                      
-                    
-                  
         ENDIF.
       ELSEIF strlen( s ) EQ 2.
         IF s EQ |->|.
@@ -1150,10 +1144,7 @@ CLASS Lexer IMPLEMENTATION.
                     
         ENDIF.
                 
-              
             
-          
-        
       ENDIF.
       IF tok IS INITIAL.
         tok = NEW identifier( start = pos str = s ).
@@ -1252,18 +1243,7 @@ CLASS Lexer IMPLEMENTATION.
                                     ( buf EQ |-| AND ahead NE |>| ) ).
         me->add( ).
                                 
-                              
                             
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
       ENDIF.
       IF NOT me->stream->advance( ).
         EXIT.
