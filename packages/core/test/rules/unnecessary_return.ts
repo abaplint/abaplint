@@ -17,10 +17,37 @@ describe("Rule: unnecessary_return", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("test FORM", async () => {
+  it("test FORM", async () => {
     const abap = `
 FORM foo.
   RETURN.
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("test METHOD", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE i.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("test IF", async () => {
+    const abap = `
+FORM foo.
+  IF 1 = 2.
+    RETURN.
+  ENDIF.
 ENDFORM.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);

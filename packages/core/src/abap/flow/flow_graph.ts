@@ -1,7 +1,3 @@
-export type Node = {
-  key: string,
-};
-
 export class FlowGraph {
   private edges: {[from: string]: {[to: string]: boolean}};
   private readonly startNode: string;
