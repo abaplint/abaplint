@@ -11,16 +11,20 @@ import * as Basic from "../../types/basic";
 import {ScopeType} from "../_scope_type";
 
 export class Types {
-  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
-
     const components: IStructureComponent[] = [];
     let voidd: VoidType | undefined = undefined;
+
+    if (qualifiedNamePrefix === undefined) {
+      qualifiedNamePrefix = "";
+    }
+
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode) {
         if (ctyp instanceof Statements.Type) {
-          const found = new Type().runSyntax(c, scope, filename, name.getStr() + "-");
+          const found = new Type().runSyntax(c, scope, filename, qualifiedNamePrefix + name.getStr() + "-");
           if (found) {
             components.push({name: found.getName(), type: found.getType()});
           }
@@ -33,7 +37,7 @@ export class Types {
           }
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {
-        const found = new Types().runSyntax(c, scope, filename);
+        const found = new Types().runSyntax(c, scope, filename, qualifiedNamePrefix + name.getStr() + "-");
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
@@ -46,10 +50,10 @@ export class Types {
       return undefined;
     }
 
-    let qualifiedName = name.getStr();
+    let qualifiedName = qualifiedNamePrefix + name.getStr();
     if (scope.getType() === ScopeType.ClassDefinition
         || scope.getType() === ScopeType.Interface) {
-      qualifiedName = scope.getName() + "=>" + qualifiedName;
+      qualifiedName = scope.getName() + "=>" + qualifiedNamePrefix + qualifiedName;
     }
 
     return new TypedIdentifier(name, filename, new Basic.StructureType(components, qualifiedName));
