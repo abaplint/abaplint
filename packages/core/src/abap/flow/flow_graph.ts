@@ -1,21 +1,22 @@
 export class FlowGraph {
   private edges: {[from: string]: {[to: string]: boolean}};
-  private readonly start: string;
-  private readonly end: string;
-  private label = "undefined";
+  private readonly startNode: string;
+  private readonly endNode: string;
+  private label: string;
 
   public constructor(counter: number) {
     this.edges = {};
-    this.start = "start#" + counter;
-    this.end = "end#" + counter;
+    this.label = "undefined";
+    this.startNode = "start#" + counter;
+    this.endNode = "end#" + counter;
   }
 
   public getStart(): string {
-    return this.start;
+    return this.startNode;
   }
 
   public getEnd(): string {
-    return this.end;
+    return this.endNode;
   }
 
   public addEdge(from: string, to: string) {
@@ -43,6 +44,19 @@ export class FlowGraph {
       }
     }
     return list;
+  }
+
+  public listInto(to: string, skipStart = true): string[] {
+    const ret: string[] = [];
+    for (const e of this.listEdges()) {
+      if (skipStart === true && e.from === this.getStart()) {
+        continue;
+      }
+      if (e.to === to) {
+        ret.push(e.from);
+      }
+    }
+    return ret;
   }
 
   public listNodes() {
@@ -115,7 +129,7 @@ ${this.toTextEdges()}
     return Array.from(set.values());
   }
 
-  /** removes all nodes containing "#" that have one ingoing and one outgoing edge */
+  /** removes all nodes containing "#" that have one in-going and one out-going edge */
   public reduce() {
     for (const node of this.listNodes()) {
       if (node.includes("#") === false) {

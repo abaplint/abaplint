@@ -137,6 +137,7 @@ import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
 import {UnnecessaryPragmaConf} from "../src/rules/unnecessary_pragma";
+import {UnnecessaryReturnConf} from "../src/rules/unnecessary_return";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
 import {UnsecureFAEConf} from "../src/rules/unsecure_fae";
 import {UnusedDDICConf} from "../src/rules/unused_ddic";
@@ -301,6 +302,7 @@ export interface IConfig {
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
+    "unnecessary_return"?: UnnecessaryReturnConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
     "unsecure_fae"?: UnsecureFAEConf | boolean,
     "unused_ddic"?: UnusedDDICConf | boolean,

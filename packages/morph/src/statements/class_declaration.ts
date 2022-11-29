@@ -61,8 +61,10 @@ export class MorphClassDeclaration {
         implementation += handleStatements(m.getStatements());
         implementation += `  ENDMETHOD.\n\n`;
       } else if (m instanceof MethodDeclaration) {
+        let pre = "";
         if (itype?.getProperty(m.getName())) {
           definition += `    ALIASES ${m.getName()} FOR ${itype.getSymbol()?.getName()}~${m.getName()}.\n`;
+          pre = itype.getSymbol()?.getName() + "~";
         } else {
           const st = m.isStatic() ? "CLASS-" : "";
           let code = "";
@@ -79,7 +81,7 @@ export class MorphClassDeclaration {
           }
         }
 
-        implementation += `  METHOD ${m.getName()}.\n`;
+        implementation += `  METHOD ${pre}${m.getName()}.\n`;
         implementation += handleStatements(m.getStatements());
         implementation += `  ENDMETHOD.\n\n`;
       } else {

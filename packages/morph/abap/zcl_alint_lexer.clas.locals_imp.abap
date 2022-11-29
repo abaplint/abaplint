@@ -645,7 +645,7 @@ CLASS AbstractFile IMPLEMENTATION.
     me->filename = filename.
   ENDMETHOD.
 
-  METHOD getfilename.
+  METHOD ifile~getfilename.
     return = me->filename.
     RETURN.
   ENDMETHOD.
@@ -657,16 +657,16 @@ CLASS AbstractFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index1 = 0 WHILE index1 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index1(1) }| ) ).
     DATA(base1) = first[ lines( first ) - 1 + 1 ].
     DATA(base2) = REDUCE string_table( LET split_input = base1
       split_by    = |/|
@@ -674,58 +674,58 @@ CLASS AbstractFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index2 = 0 WHILE index2 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index2 = strlen( split_input ) OR split_input+index2(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index2 = strlen( split_input ) OR split_input+index2(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index2(1) }| ) ).
     return = base2[ lines( base2 ) - 1 + 1 ].
     RETURN.
   ENDMETHOD.
 
-  METHOD getobjecttype.
+  METHOD ifile~getobjecttype.
     DATA(split) = REDUCE string_table( LET split_input = me->basename( )
       split_by    = |.|
       offset      = 0
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index3 = 0 WHILE index3 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index3(1) }| ) ).
     return = to_upper( val = split[ 1 + 1 ] ).
     RETURN.
   ENDMETHOD.
 
-  METHOD getobjectname.
+  METHOD ifile~getobjectname.
     DATA(split) = REDUCE string_table( LET split_input = me->basename( )
       split_by    = |.|
       offset      = 0
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index4 = 0 WHILE index4 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index4 = strlen( split_input ) OR split_input+index4(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index4 = strlen( split_input ) OR split_input+index4(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index4(1) }| ) ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%23| with = |#| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3e| with = |>| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3c| with = |<| ).
@@ -733,10 +733,10 @@ CLASS AbstractFile IMPLEMENTATION.
     RETURN.
   ENDMETHOD.
 
-  METHOD getraw.
+  METHOD ifile~getraw.
   ENDMETHOD.
 
-  METHOD getrawrows.
+  METHOD ifile~getrawrows.
   ENDMETHOD.
 
 ENDCLASS.
@@ -767,16 +767,16 @@ CLASS MemoryFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index = 0 WHILE index <= strlen( split_input )
+      FOR index5 = 0 WHILE index5 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).
+      ELSE |{ add }{ split_input+index5(1) }| ) ).
     RETURN.
   ENDMETHOD.
 
@@ -785,14 +785,6 @@ TYPES BEGIN OF iabaplexerresult.
 TYPES file TYPE REF TO ifile.
 TYPES tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
 TYPES END OF iabaplexerresult.
-CONSTANTS BEGIN OF mode.
-CONSTANTS normal TYPE i VALUE 1.
-CONSTANTS ping TYPE i VALUE 2.
-CONSTANTS str TYPE i VALUE 3.
-CONSTANTS template TYPE i VALUE 4.
-CONSTANTS comment TYPE i VALUE 5.
-CONSTANTS pragma TYPE i VALUE 6.
-CONSTANTS END OF mode.
 CLASS buffer DEFINITION.
   PUBLIC SECTION.
     METHODS constructor.
@@ -953,6 +945,12 @@ CLASS lexer DEFINITION.
   PUBLIC SECTION.
     METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position OPTIONAL RETURNING VALUE(return) TYPE iabaplexerresult.
   PRIVATE SECTION.
+    DATA modenormal TYPE i VALUE 1.
+    DATA modeping TYPE i VALUE 2.
+    DATA modestr TYPE i VALUE 3.
+    DATA modetemplate TYPE i VALUE 4.
+    DATA modecomment TYPE i VALUE 5.
+    DATA modepragma TYPE i VALUE 6.
     DATA virtual TYPE REF TO position.
     DATA tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
     DATA m TYPE i.
@@ -966,7 +964,7 @@ CLASS Lexer IMPLEMENTATION.
   METHOD run.
     me->virtual = virtual.
     me->tokens = VALUE #( ).
-    me->m = mode-normal.
+    me->m = me->modenormal.
     me->process( file->getraw( ) ).
     return = VALUE #( file = file tokens = me->tokens ).
     RETURN.
@@ -1005,14 +1003,14 @@ CLASS Lexer IMPLEMENTATION.
       ENDIF.
       DATA tok TYPE REF TO token.
       CLEAR tok.
-      IF me->m EQ mode-comment.
+      IF me->m EQ me->modecomment.
         tok = NEW comment( start = pos str = s ).
       ELSE.
-        IF me->m EQ mode-ping OR
-            me->m EQ mode-str.
+        IF me->m EQ me->modeping OR
+            me->m EQ me->modestr.
           tok = NEW stringtoken( start = pos str = s ).
         ELSE.
-          IF me->m EQ mode-template.
+          IF me->m EQ me->modetemplate.
             DATA(first) = substring( val = s len = 1 off = 0 ).
             DATA(last) = substring( val = s len = 1 off = strlen( s ) - 1 ).
             IF first EQ |\|| AND last EQ |\||.
@@ -1210,59 +1208,59 @@ CLASS Lexer IMPLEMENTATION.
       DATA(ahead) = me->stream->nextchar( ).
       DATA(aahead) = me->stream->nextnextchar( ).
       DATA(prev) = me->stream->prevchar( ).
-      IF ahead EQ |'| AND me->m EQ mode-normal.
+      IF ahead EQ |'| AND me->m EQ me->modenormal.
         me->add( ).
-        me->m = mode-str.
+        me->m = me->modestr.
       ELSE.
         IF ( ahead EQ |\|| OR
-            ahead EQ |\}| ) AND me->m EQ mode-normal.
+            ahead EQ |\}| ) AND me->m EQ me->modenormal.
           me->add( ).
-          me->m = mode-template.
+          me->m = me->modetemplate.
         ELSE.
-          IF ahead EQ |`| AND me->m EQ mode-normal.
+          IF ahead EQ |`| AND me->m EQ me->modenormal.
             me->add( ).
-            me->m = mode-ping.
+            me->m = me->modeping.
           ELSE.
-            IF aahead EQ |##| AND me->m EQ mode-normal.
+            IF aahead EQ |##| AND me->m EQ me->modenormal.
               me->add( ).
-              me->m = mode-pragma.
+              me->m = me->modepragma.
             ELSE.
               IF ( ahead EQ |"| OR
-                  ( ahead EQ |*| AND current EQ |\n| ) ) AND me->m EQ mode-normal.
+                  ( ahead EQ |*| AND current EQ |\n| ) ) AND me->m EQ me->modenormal.
                 me->add( ).
-                me->m = mode-comment.
+                me->m = me->modecomment.
               ELSE.
-                IF me->m EQ mode-pragma AND ( ahead EQ |,| OR
+                IF me->m EQ me->modepragma AND ( ahead EQ |,| OR
                     ahead EQ |:| OR
                     ahead EQ |.| OR
                     ahead EQ | | OR
                     ahead EQ |\n| ).
                   me->add( ).
-                  me->m = mode-normal.
+                  me->m = me->modenormal.
                 ELSE.
-                  IF me->m EQ mode-ping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
+                  IF me->m EQ me->modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
                     me->add( ).
                     IF ahead EQ |"|.
-                      me->m = mode-comment.
+                      me->m = me->modecomment.
                     ELSE.
-                      me->m = mode-normal.
+                      me->m = me->modenormal.
                     ENDIF.
                   ELSE.
-                    IF me->m EQ mode-template AND strlen( buf ) > 1 AND ( current EQ |\|| OR
+                    IF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
                         current EQ |\{| ) AND ( prev NE |\\| OR
                         me->stream->prevprevchar( ) EQ |\\\\| ).
                       me->add( ).
-                      me->m = mode-normal.
+                      me->m = me->modenormal.
                     ELSE.
-                      IF me->m EQ mode-str AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
+                      IF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
                         me->add( ).
                         IF ahead EQ |"|.
-                          me->m = mode-comment.
+                          me->m = me->modecomment.
                         ELSE.
-                          me->m = mode-normal.
+                          me->m = me->modenormal.
                         ENDIF.
                       ELSE.
-                        IF me->m EQ mode-normal AND ( ahead EQ | | OR
+                        IF me->m EQ me->modenormal AND ( ahead EQ | | OR
                             ahead EQ |:| OR
                             ahead EQ |.| OR
                             ahead EQ |,| OR
@@ -1279,18 +1277,18 @@ CLASS Lexer IMPLEMENTATION.
                             ahead EQ |\n| ).
                           me->add( ).
                         ELSE.
-                          IF ahead EQ |\n| AND me->m NE mode-template.
+                          IF ahead EQ |\n| AND me->m NE me->modetemplate.
                             me->add( ).
-                            me->m = mode-normal.
+                            me->m = me->modenormal.
                           ELSE.
-                            IF me->m EQ mode-template AND current EQ |\n|.
+                            IF me->m EQ me->modetemplate AND current EQ |\n|.
                               me->add( ).
                             ELSE.
                               IF current EQ |>| AND ( prev EQ |-| OR
-                                  prev EQ |=| ) AND ahead NE | | AND me->m EQ mode-normal.
+                                  prev EQ |=| ) AND ahead NE | | AND me->m EQ me->modenormal.
                                 me->add( ).
                               ELSE.
-                                IF me->m EQ mode-normal AND ( buf EQ |.| OR
+                                IF me->m EQ me->modenormal AND ( buf EQ |.| OR
                                     buf EQ |,| OR
                                     buf EQ |:| OR
                                     buf EQ |(| OR

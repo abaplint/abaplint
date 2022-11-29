@@ -1,9 +1,10 @@
 import {CallExpression} from "ts-morph";
 import {handleExpression} from "../expressions";
 
+let counter = 1;
+
 export class MorphCall {
   public run(s: CallExpression) {
-//    s.getArguments
 
     const expr = s.getExpression();
     let ret = handleExpression(expr);
@@ -35,16 +36,17 @@ export class MorphCall {
   IN
   INIT string_result = VALUE string_table( )
        add = ||
-  FOR index = 0 WHILE index <= strlen( split_input )
+  FOR index${counter} = 0 WHILE index${counter} <= strlen( split_input )
   NEXT
   string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index${counter} = strlen( split_input ) OR split_input+index${counter}(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
     add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index${counter} = strlen( split_input ) OR split_input+index${counter}(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) )`;
+      ELSE |{ add }{ split_input+index${counter}(1) }| ) )`;
+      counter++;
     } else if (name === "charAt" && signature === "(pos: number) => string") {
       parameterNames.push("off");
       post = " )";

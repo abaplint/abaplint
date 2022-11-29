@@ -10,11 +10,11 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA(file) = NEW memoryfile(
       filename = 'ztest.prog.abap'
-      raw      = |WRITE 'hello world'.| ).
+      raw      = |hello world| ).
     DATA(result) = NEW lexer( )->run( file ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = 3
+      act = 2
       exp = lines( result-tokens ) ).
 
   ENDMETHOD.

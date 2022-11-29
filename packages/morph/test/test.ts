@@ -294,16 +294,16 @@ DATA(result) = REDUCE string_table( LET split_input = foo
   IN
   INIT string_result = VALUE string_table( )
        add = ||
-  FOR index = 0 WHILE index <= strlen( split_input )
+  FOR index1 = 0 WHILE index1 <= strlen( split_input )
   NEXT
   string_result = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
     add    = COND #(
-      WHEN index = strlen( split_input ) OR split_input+index(1) = split_by
+      WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index(1) }| ) ).`;
+      ELSE |{ add }{ split_input+index1(1) }| ) ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
@@ -359,7 +359,7 @@ CLASS Position DEFINITION.
 ENDCLASS.
 
 CLASS Position IMPLEMENTATION.
-  METHOD foo.
+  METHOD IFace~foo.
 return = |hello|.
 RETURN.
   ENDMETHOD.
