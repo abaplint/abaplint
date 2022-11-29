@@ -444,5 +444,25 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it.only("abstract method from intf", async () => {
+    const ts = `
+interface IFile {
+  getRaw(): string;
+}
+
+abstract class AbstractFile implements IFile {
+  public abstract getRaw(): string;
+}
+
+class MemoryFile extends AbstractFile {
+  public getRaw() {
+    return "hello";
+  }
+}`;
+    const abap = `
+sdf`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
 

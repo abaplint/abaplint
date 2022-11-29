@@ -73,8 +73,7 @@ export class MorphClassDeclaration {
             code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
           } else {
             const parameters = buildParameters(m);
-            const methodAbstract = m.isAbstract() ? " ABSTRACT" : "";
-            code = `    ${st}METHODS ${m.getName()}${methodAbstract}${parameters}.\n`;
+            code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
           }
           if (m.getScope() === Scope.Private) {
             privateSection += code;
@@ -83,11 +82,9 @@ export class MorphClassDeclaration {
           }
         }
 
-        if (m.isAbstract() === false) {
-          implementation += `  METHOD ${pre}${m.getName()}.\n`;
-          implementation += handleStatements(m.getStatements());
-          implementation += `  ENDMETHOD.\n\n`;
-        }
+        implementation += `  METHOD ${pre}${m.getName()}.\n`;
+        implementation += handleStatements(m.getStatements());
+        implementation += `  ENDMETHOD.\n\n`;
       } else {
         console.dir(m.constructor.name + " - todo class_declaration");
       }
