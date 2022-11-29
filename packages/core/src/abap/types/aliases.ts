@@ -22,6 +22,15 @@ export class Aliases implements IAliases {
     return this.aliases;
   }
 
+  public getByName(name: string): Alias | undefined {
+    for (const a of this.aliases) {
+      if (a.getName().toLowerCase() === name.toLowerCase()) {
+        return a;
+      }
+    }
+    return undefined;
+  }
+
 /////////////////////////
 
   private parse(node: StructureNode, scope: CurrentScope, filename: string): void {

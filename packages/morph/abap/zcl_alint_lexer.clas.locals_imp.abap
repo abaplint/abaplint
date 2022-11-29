@@ -905,7 +905,7 @@ CLASS Stream IMPLEMENTATION.
     ELSEIF me->offset >= strlen( me->raw ).
       return = ||.
       RETURN.
-      
+
     ENDIF.
     return = substring( val = me->raw off = me->offset len = 1 ).
     
@@ -1005,7 +1005,7 @@ CLASS Lexer IMPLEMENTATION.
       IF me->m EQ me->modecomment.
         tok = NEW comment( start = pos str = s ).
       ELSEIF me->m EQ me->modeping OR
-            me->m EQ me->modestr.
+          me->m EQ me->modestr.
         tok = NEW stringtoken( start = pos str = s ).
       ELSEIF me->m EQ me->modetemplate.
         DATA(first) = substring( val = s len = 1 off = 0 ).
@@ -1020,14 +1020,14 @@ CLASS Lexer IMPLEMENTATION.
           tok = NEW stringtemplatemiddle( start = pos str = s ).
         ELSE.
           tok = NEW identifier( start = pos str = s ).
-                  
-              
+
+
         ENDIF.
       ELSEIF strlen( s ) > 2 AND substring( val = s off = 0 len = 2 ) EQ |##|.
         tok = NEW pragma( start = pos str = s ).
       ELSEIF strlen( s ) EQ 1.
         IF s EQ |.| OR
-                    s EQ |,|.
+            s EQ |,|.
           tok = NEW punctuation( start = pos str = s ).
         ELSEIF s EQ |[|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1038,8 +1038,8 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW bracketleftw( start = pos str = s ).
           ELSE.
             tok = NEW bracketleft( start = pos str = s ).
-                        
-                      
+
+
           ENDIF.
         ELSEIF s EQ |(|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1050,8 +1050,8 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW parenleftw( start = pos str = s ).
           ELSE.
             tok = NEW parenleft( start = pos str = s ).
-                          
-                        
+
+
           ENDIF.
         ELSEIF s EQ |]|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1062,8 +1062,8 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW bracketrightw( start = pos str = s ).
           ELSE.
             tok = NEW bracketright( start = pos str = s ).
-                            
-                          
+
+
           ENDIF.
         ELSEIF s EQ |)|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1074,8 +1074,8 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW parenrightw( start = pos str = s ).
           ELSE.
             tok = NEW parenright( start = pos str = s ).
-                              
-                            
+
+
           ENDIF.
         ELSEIF s EQ |-|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1086,8 +1086,8 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW dashw( start = pos str = s ).
           ELSE.
             tok = NEW dash( start = pos str = s ).
-                                
-                              
+
+
           ENDIF.
         ELSEIF s EQ |+|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1098,8 +1098,8 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW plusw( start = pos str = s ).
           ELSE.
             tok = NEW plus( start = pos str = s ).
-                                  
-                                
+
+
           ENDIF.
         ELSEIF s EQ |@|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1110,11 +1110,11 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW atw( start = pos str = s ).
           ELSE.
             tok = NEW at( start = pos str = s ).
-                                    
-                                  
+
+
           ENDIF.
-                              
-                          
+
+
         ENDIF.
       ELSEIF strlen( s ) EQ 2.
         IF s EQ |->|.
@@ -1126,8 +1126,8 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW instancearroww( start = pos str = s ).
           ELSE.
             tok = NEW instancearrow( start = pos str = s ).
-                        
-                      
+
+
           ENDIF.
         ELSEIF s EQ |=>|.
           IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
@@ -1138,13 +1138,13 @@ CLASS Lexer IMPLEMENTATION.
             tok = NEW staticarroww( start = pos str = s ).
           ELSE.
             tok = NEW staticarrow( start = pos str = s ).
-                          
-                        
+
+
           ENDIF.
-                    
+
         ENDIF.
-                
-            
+
+
       ENDIF.
       IF tok IS INITIAL.
         tok = NEW identifier( start = pos str = s ).
@@ -1168,7 +1168,7 @@ CLASS Lexer IMPLEMENTATION.
         me->add( ).
         me->m = me->modestr.
       ELSEIF ( ahead EQ |\|| OR
-            ahead EQ |\}| ) AND me->m EQ me->modenormal.
+          ahead EQ |\}| ) AND me->m EQ me->modenormal.
         me->add( ).
         me->m = me->modetemplate.
       ELSEIF ahead EQ |`| AND me->m EQ me->modenormal.
@@ -1178,14 +1178,14 @@ CLASS Lexer IMPLEMENTATION.
         me->add( ).
         me->m = me->modepragma.
       ELSEIF ( ahead EQ |"| OR
-                  ( ahead EQ |*| AND current EQ |\n| ) ) AND me->m EQ me->modenormal.
+          ( ahead EQ |*| AND current EQ |\n| ) ) AND me->m EQ me->modenormal.
         me->add( ).
         me->m = me->modecomment.
       ELSEIF me->m EQ me->modepragma AND ( ahead EQ |,| OR
-                    ahead EQ |:| OR
-                    ahead EQ |.| OR
-                    ahead EQ | | OR
-                    ahead EQ |\n| ).
+          ahead EQ |:| OR
+          ahead EQ |.| OR
+          ahead EQ | | OR
+          ahead EQ |\n| ).
         me->add( ).
         me->m = me->modenormal.
       ELSEIF me->m EQ me->modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
@@ -1196,8 +1196,8 @@ CLASS Lexer IMPLEMENTATION.
           me->m = me->modenormal.
         ENDIF.
       ELSEIF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
-                        current EQ |\{| ) AND ( prev NE |\\| OR
-                        me->stream->prevprevchar( ) EQ |\\\\| ).
+          current EQ |\{| ) AND ( prev NE |\\| OR
+          me->stream->prevprevchar( ) EQ |\\\\| ).
         me->add( ).
         me->m = me->modenormal.
       ELSEIF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
@@ -1208,20 +1208,20 @@ CLASS Lexer IMPLEMENTATION.
           me->m = me->modenormal.
         ENDIF.
       ELSEIF me->m EQ me->modenormal AND ( ahead EQ | | OR
-                            ahead EQ |:| OR
-                            ahead EQ |.| OR
-                            ahead EQ |,| OR
-                            ahead EQ |-| OR
-                            ahead EQ |+| OR
-                            ahead EQ |(| OR
-                            ahead EQ |)| OR
-                            ahead EQ |[| OR
-                            ahead EQ |]| OR
-                            ( ahead EQ |@| AND strlen( condense( buf ) ) EQ 0 ) OR
-                            aahead EQ |->| OR
-                            aahead EQ |=>| OR
-                            ahead EQ |\t| OR
-                            ahead EQ |\n| ).
+          ahead EQ |:| OR
+          ahead EQ |.| OR
+          ahead EQ |,| OR
+          ahead EQ |-| OR
+          ahead EQ |+| OR
+          ahead EQ |(| OR
+          ahead EQ |)| OR
+          ahead EQ |[| OR
+          ahead EQ |]| OR
+          ( ahead EQ |@| AND strlen( condense( buf ) ) EQ 0 ) OR
+          aahead EQ |->| OR
+          aahead EQ |=>| OR
+          ahead EQ |\t| OR
+          ahead EQ |\n| ).
         me->add( ).
       ELSEIF ahead EQ |\n| AND me->m NE me->modetemplate.
         me->add( ).
@@ -1229,21 +1229,21 @@ CLASS Lexer IMPLEMENTATION.
       ELSEIF me->m EQ me->modetemplate AND current EQ |\n|.
         me->add( ).
       ELSEIF current EQ |>| AND ( prev EQ |-| OR
-                                  prev EQ |=| ) AND ahead NE | | AND me->m EQ me->modenormal.
+          prev EQ |=| ) AND ahead NE | | AND me->m EQ me->modenormal.
         me->add( ).
       ELSEIF me->m EQ me->modenormal AND ( buf EQ |.| OR
-                                    buf EQ |,| OR
-                                    buf EQ |:| OR
-                                    buf EQ |(| OR
-                                    buf EQ |)| OR
-                                    buf EQ |[| OR
-                                    buf EQ |]| OR
-                                    buf EQ |+| OR
-                                    buf EQ |@| OR
-                                    ( buf EQ |-| AND ahead NE |>| ) ).
+          buf EQ |,| OR
+          buf EQ |:| OR
+          buf EQ |(| OR
+          buf EQ |)| OR
+          buf EQ |[| OR
+          buf EQ |]| OR
+          buf EQ |+| OR
+          buf EQ |@| OR
+          ( buf EQ |-| AND ahead NE |>| ) ).
         me->add( ).
-                                
-                            
+
+
       ENDIF.
       IF NOT me->stream->advance( ).
         EXIT.
