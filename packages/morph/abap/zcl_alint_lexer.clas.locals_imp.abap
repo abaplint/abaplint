@@ -902,11 +902,10 @@ CLASS Stream IMPLEMENTATION.
     IF me->offset < 0.
       return = |\n|.
       RETURN.
-    ELSE.
-      IF me->offset >= strlen( me->raw ).
-        return = ||.
-        RETURN.
-      ENDIF.
+    ELSEIF me->offset >= strlen( me->raw ).
+      return = ||.
+      RETURN.
+      
     ENDIF.
     return = substring( val = me->raw off = me->offset len = 1 ).
     
@@ -1005,190 +1004,156 @@ CLASS Lexer IMPLEMENTATION.
       CLEAR tok.
       IF me->m EQ me->modecomment.
         tok = NEW comment( start = pos str = s ).
-      ELSE.
-        IF me->m EQ me->modeping OR
+      ELSEIF me->m EQ me->modeping OR
             me->m EQ me->modestr.
-          tok = NEW stringtoken( start = pos str = s ).
+        tok = NEW stringtoken( start = pos str = s ).
+      ELSEIF me->m EQ me->modetemplate.
+        DATA(first) = substring( val = s len = 1 off = 0 ).
+        DATA(last) = substring( val = s len = 1 off = strlen( s ) - 1 ).
+        IF first EQ |\|| AND last EQ |\||.
+          tok = NEW stringtemplate( start = pos str = s ).
+        ELSEIF first EQ |\|| AND last EQ |\{| AND whiteafter EQ abap_true.
+          tok = NEW stringtemplatebegin( start = pos str = s ).
+        ELSEIF first EQ |\}| AND last EQ |\|| AND whitebefore EQ abap_true.
+          tok = NEW stringtemplateend( start = pos str = s ).
+        ELSEIF first EQ |\}| AND last EQ |\{| AND whiteafter EQ abap_true AND whitebefore EQ abap_true.
+          tok = NEW stringtemplatemiddle( start = pos str = s ).
         ELSE.
-          IF me->m EQ me->modetemplate.
-            DATA(first) = substring( val = s len = 1 off = 0 ).
-            DATA(last) = substring( val = s len = 1 off = strlen( s ) - 1 ).
-            IF first EQ |\|| AND last EQ |\||.
-              tok = NEW stringtemplate( start = pos str = s ).
-            ELSE.
-              IF first EQ |\|| AND last EQ |\{| AND whiteafter EQ abap_true.
-                tok = NEW stringtemplatebegin( start = pos str = s ).
-              ELSE.
-                IF first EQ |\}| AND last EQ |\|| AND whitebefore EQ abap_true.
-                  tok = NEW stringtemplateend( start = pos str = s ).
-                ELSE.
-                  IF first EQ |\}| AND last EQ |\{| AND whiteafter EQ abap_true AND whitebefore EQ abap_true.
-                    tok = NEW stringtemplatemiddle( start = pos str = s ).
-                  ELSE.
-                    tok = NEW identifier( start = pos str = s ).
-                  ENDIF.
-                ENDIF.
-              ENDIF.
-            ENDIF.
-          ELSE.
-            IF strlen( s ) > 2 AND substring( val = s off = 0 len = 2 ) EQ |##|.
-              tok = NEW pragma( start = pos str = s ).
-            ELSE.
-              IF strlen( s ) EQ 1.
-                IF s EQ |.| OR
-                    s EQ |,|.
-                  tok = NEW punctuation( start = pos str = s ).
-                ELSE.
-                  IF s EQ |[|.
-                    IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                      tok = NEW wbracketleftw( start = pos str = s ).
-                    ELSE.
-                      IF whitebefore EQ abap_true.
-                        tok = NEW wbracketleft( start = pos str = s ).
-                      ELSE.
-                        IF whiteafter EQ abap_true.
-                          tok = NEW bracketleftw( start = pos str = s ).
-                        ELSE.
-                          tok = NEW bracketleft( start = pos str = s ).
-                        ENDIF.
-                      ENDIF.
-                    ENDIF.
-                  ELSE.
-                    IF s EQ |(|.
-                      IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                        tok = NEW wparenleftw( start = pos str = s ).
-                      ELSE.
-                        IF whitebefore EQ abap_true.
-                          tok = NEW wparenleft( start = pos str = s ).
-                        ELSE.
-                          IF whiteafter EQ abap_true.
-                            tok = NEW parenleftw( start = pos str = s ).
-                          ELSE.
-                            tok = NEW parenleft( start = pos str = s ).
-                          ENDIF.
-                        ENDIF.
-                      ENDIF.
-                    ELSE.
-                      IF s EQ |]|.
-                        IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                          tok = NEW wbracketrightw( start = pos str = s ).
-                        ELSE.
-                          IF whitebefore EQ abap_true.
-                            tok = NEW wbracketright( start = pos str = s ).
-                          ELSE.
-                            IF whiteafter EQ abap_true.
-                              tok = NEW bracketrightw( start = pos str = s ).
-                            ELSE.
-                              tok = NEW bracketright( start = pos str = s ).
-                            ENDIF.
-                          ENDIF.
-                        ENDIF.
-                      ELSE.
-                        IF s EQ |)|.
-                          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                            tok = NEW wparenrightw( start = pos str = s ).
-                          ELSE.
-                            IF whitebefore EQ abap_true.
-                              tok = NEW wparenright( start = pos str = s ).
-                            ELSE.
-                              IF whiteafter EQ abap_true.
-                                tok = NEW parenrightw( start = pos str = s ).
-                              ELSE.
-                                tok = NEW parenright( start = pos str = s ).
-                              ENDIF.
-                            ENDIF.
-                          ENDIF.
-                        ELSE.
-                          IF s EQ |-|.
-                            IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                              tok = NEW wdashw( start = pos str = s ).
-                            ELSE.
-                              IF whitebefore EQ abap_true.
-                                tok = NEW wdash( start = pos str = s ).
-                              ELSE.
-                                IF whiteafter EQ abap_true.
-                                  tok = NEW dashw( start = pos str = s ).
-                                ELSE.
-                                  tok = NEW dash( start = pos str = s ).
-                                ENDIF.
-                              ENDIF.
-                            ENDIF.
-                          ELSE.
-                            IF s EQ |+|.
-                              IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                                tok = NEW wplusw( start = pos str = s ).
-                              ELSE.
-                                IF whitebefore EQ abap_true.
-                                  tok = NEW wplus( start = pos str = s ).
-                                ELSE.
-                                  IF whiteafter EQ abap_true.
-                                    tok = NEW plusw( start = pos str = s ).
-                                  ELSE.
-                                    tok = NEW plus( start = pos str = s ).
-                                  ENDIF.
-                                ENDIF.
-                              ENDIF.
-                            ELSE.
-                              IF s EQ |@|.
-                                IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                                  tok = NEW watw( start = pos str = s ).
-                                ELSE.
-                                  IF whitebefore EQ abap_true.
-                                    tok = NEW wat( start = pos str = s ).
-                                  ELSE.
-                                    IF whiteafter EQ abap_true.
-                                      tok = NEW atw( start = pos str = s ).
-                                    ELSE.
-                                      tok = NEW at( start = pos str = s ).
-                                    ENDIF.
-                                  ENDIF.
-                                ENDIF.
-                              ENDIF.
-                            ENDIF.
-                          ENDIF.
-                        ENDIF.
-                      ENDIF.
-                    ENDIF.
-                  ENDIF.
-                ENDIF.
-              ELSE.
-                IF strlen( s ) EQ 2.
-                  IF s EQ |->|.
-                    IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                      tok = NEW winstancearroww( start = pos str = s ).
-                    ELSE.
-                      IF whitebefore EQ abap_true.
-                        tok = NEW winstancearrow( start = pos str = s ).
-                      ELSE.
-                        IF whiteafter EQ abap_true.
-                          tok = NEW instancearroww( start = pos str = s ).
-                        ELSE.
-                          tok = NEW instancearrow( start = pos str = s ).
-                        ENDIF.
-                      ENDIF.
-                    ENDIF.
-                  ELSE.
-                    IF s EQ |=>|.
-                      IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-                        tok = NEW wstaticarroww( start = pos str = s ).
-                      ELSE.
-                        IF whitebefore EQ abap_true.
-                          tok = NEW wstaticarrow( start = pos str = s ).
-                        ELSE.
-                          IF whiteafter EQ abap_true.
-                            tok = NEW staticarroww( start = pos str = s ).
-                          ELSE.
-                            tok = NEW staticarrow( start = pos str = s ).
-                          ENDIF.
-                        ENDIF.
-                      ENDIF.
-                    ENDIF.
-                  ENDIF.
-                ENDIF.
-              ENDIF.
-            ENDIF.
-          ENDIF.
+          tok = NEW identifier( start = pos str = s ).
+                  
+                
+              
         ENDIF.
+      ELSEIF strlen( s ) > 2 AND substring( val = s off = 0 len = 2 ) EQ |##|.
+        tok = NEW pragma( start = pos str = s ).
+      ELSEIF strlen( s ) EQ 1.
+        IF s EQ |.| OR
+                    s EQ |,|.
+          tok = NEW punctuation( start = pos str = s ).
+        ELSEIF s EQ |[|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW wbracketleftw( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wbracketleft( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW bracketleftw( start = pos str = s ).
+          ELSE.
+            tok = NEW bracketleft( start = pos str = s ).
+                        
+                      
+          ENDIF.
+        ELSEIF s EQ |(|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW wparenleftw( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wparenleft( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW parenleftw( start = pos str = s ).
+          ELSE.
+            tok = NEW parenleft( start = pos str = s ).
+                          
+                        
+          ENDIF.
+        ELSEIF s EQ |]|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW wbracketrightw( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wbracketright( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW bracketrightw( start = pos str = s ).
+          ELSE.
+            tok = NEW bracketright( start = pos str = s ).
+                            
+                          
+          ENDIF.
+        ELSEIF s EQ |)|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW wparenrightw( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wparenright( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW parenrightw( start = pos str = s ).
+          ELSE.
+            tok = NEW parenright( start = pos str = s ).
+                              
+                            
+          ENDIF.
+        ELSEIF s EQ |-|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW wdashw( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wdash( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW dashw( start = pos str = s ).
+          ELSE.
+            tok = NEW dash( start = pos str = s ).
+                                
+                              
+          ENDIF.
+        ELSEIF s EQ |+|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW wplusw( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wplus( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW plusw( start = pos str = s ).
+          ELSE.
+            tok = NEW plus( start = pos str = s ).
+                                  
+                                
+          ENDIF.
+        ELSEIF s EQ |@|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW watw( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wat( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW atw( start = pos str = s ).
+          ELSE.
+            tok = NEW at( start = pos str = s ).
+                                    
+                                  
+          ENDIF.
+                              
+                            
+                          
+                        
+                      
+                    
+                  
+        ENDIF.
+      ELSEIF strlen( s ) EQ 2.
+        IF s EQ |->|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW winstancearroww( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW winstancearrow( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW instancearroww( start = pos str = s ).
+          ELSE.
+            tok = NEW instancearrow( start = pos str = s ).
+                        
+                      
+          ENDIF.
+        ELSEIF s EQ |=>|.
+          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
+            tok = NEW wstaticarroww( start = pos str = s ).
+          ELSEIF whitebefore EQ abap_true.
+            tok = NEW wstaticarrow( start = pos str = s ).
+          ELSEIF whiteafter EQ abap_true.
+            tok = NEW staticarroww( start = pos str = s ).
+          ELSE.
+            tok = NEW staticarrow( start = pos str = s ).
+                          
+                        
+          ENDIF.
+                    
+        ENDIF.
+                
+              
+            
+          
+        
       ENDIF.
       IF tok IS INITIAL.
         tok = NEW identifier( start = pos str = s ).
@@ -1211,56 +1176,47 @@ CLASS Lexer IMPLEMENTATION.
       IF ahead EQ |'| AND me->m EQ me->modenormal.
         me->add( ).
         me->m = me->modestr.
-      ELSE.
-        IF ( ahead EQ |\|| OR
+      ELSEIF ( ahead EQ |\|| OR
             ahead EQ |\}| ) AND me->m EQ me->modenormal.
-          me->add( ).
-          me->m = me->modetemplate.
-        ELSE.
-          IF ahead EQ |`| AND me->m EQ me->modenormal.
-            me->add( ).
-            me->m = me->modeping.
-          ELSE.
-            IF aahead EQ |##| AND me->m EQ me->modenormal.
-              me->add( ).
-              me->m = me->modepragma.
-            ELSE.
-              IF ( ahead EQ |"| OR
+        me->add( ).
+        me->m = me->modetemplate.
+      ELSEIF ahead EQ |`| AND me->m EQ me->modenormal.
+        me->add( ).
+        me->m = me->modeping.
+      ELSEIF aahead EQ |##| AND me->m EQ me->modenormal.
+        me->add( ).
+        me->m = me->modepragma.
+      ELSEIF ( ahead EQ |"| OR
                   ( ahead EQ |*| AND current EQ |\n| ) ) AND me->m EQ me->modenormal.
-                me->add( ).
-                me->m = me->modecomment.
-              ELSE.
-                IF me->m EQ me->modepragma AND ( ahead EQ |,| OR
+        me->add( ).
+        me->m = me->modecomment.
+      ELSEIF me->m EQ me->modepragma AND ( ahead EQ |,| OR
                     ahead EQ |:| OR
                     ahead EQ |.| OR
                     ahead EQ | | OR
                     ahead EQ |\n| ).
-                  me->add( ).
-                  me->m = me->modenormal.
-                ELSE.
-                  IF me->m EQ me->modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
-                    me->add( ).
-                    IF ahead EQ |"|.
-                      me->m = me->modecomment.
-                    ELSE.
-                      me->m = me->modenormal.
-                    ENDIF.
-                  ELSE.
-                    IF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
+        me->add( ).
+        me->m = me->modenormal.
+      ELSEIF me->m EQ me->modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
+        me->add( ).
+        IF ahead EQ |"|.
+          me->m = me->modecomment.
+        ELSE.
+          me->m = me->modenormal.
+        ENDIF.
+      ELSEIF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
                         current EQ |\{| ) AND ( prev NE |\\| OR
                         me->stream->prevprevchar( ) EQ |\\\\| ).
-                      me->add( ).
-                      me->m = me->modenormal.
-                    ELSE.
-                      IF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
-                        me->add( ).
-                        IF ahead EQ |"|.
-                          me->m = me->modecomment.
-                        ELSE.
-                          me->m = me->modenormal.
-                        ENDIF.
-                      ELSE.
-                        IF me->m EQ me->modenormal AND ( ahead EQ | | OR
+        me->add( ).
+        me->m = me->modenormal.
+      ELSEIF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
+        me->add( ).
+        IF ahead EQ |"|.
+          me->m = me->modecomment.
+        ELSE.
+          me->m = me->modenormal.
+        ENDIF.
+      ELSEIF me->m EQ me->modenormal AND ( ahead EQ | | OR
                             ahead EQ |:| OR
                             ahead EQ |.| OR
                             ahead EQ |,| OR
@@ -1275,20 +1231,16 @@ CLASS Lexer IMPLEMENTATION.
                             aahead EQ |=>| OR
                             ahead EQ |\t| OR
                             ahead EQ |\n| ).
-                          me->add( ).
-                        ELSE.
-                          IF ahead EQ |\n| AND me->m NE me->modetemplate.
-                            me->add( ).
-                            me->m = me->modenormal.
-                          ELSE.
-                            IF me->m EQ me->modetemplate AND current EQ |\n|.
-                              me->add( ).
-                            ELSE.
-                              IF current EQ |>| AND ( prev EQ |-| OR
+        me->add( ).
+      ELSEIF ahead EQ |\n| AND me->m NE me->modetemplate.
+        me->add( ).
+        me->m = me->modenormal.
+      ELSEIF me->m EQ me->modetemplate AND current EQ |\n|.
+        me->add( ).
+      ELSEIF current EQ |>| AND ( prev EQ |-| OR
                                   prev EQ |=| ) AND ahead NE | | AND me->m EQ me->modenormal.
-                                me->add( ).
-                              ELSE.
-                                IF me->m EQ me->modenormal AND ( buf EQ |.| OR
+        me->add( ).
+      ELSEIF me->m EQ me->modenormal AND ( buf EQ |.| OR
                                     buf EQ |,| OR
                                     buf EQ |:| OR
                                     buf EQ |(| OR
@@ -1298,20 +1250,20 @@ CLASS Lexer IMPLEMENTATION.
                                     buf EQ |+| OR
                                     buf EQ |@| OR
                                     ( buf EQ |-| AND ahead NE |>| ) ).
-                                  me->add( ).
-                                ENDIF.
-                              ENDIF.
-                            ENDIF.
-                          ENDIF.
-                        ENDIF.
-                      ENDIF.
-                    ENDIF.
-                  ENDIF.
-                ENDIF.
-              ENDIF.
-            ENDIF.
-          ENDIF.
-        ENDIF.
+        me->add( ).
+                                
+                              
+                            
+                          
+                        
+                      
+                    
+                  
+                
+              
+            
+          
+        
       ENDIF.
       IF NOT me->stream->advance( ).
         EXIT.
