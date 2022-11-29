@@ -641,12 +641,6 @@ CLASS abstractfile DEFINITION ABSTRACT.
 ENDCLASS.
 
 CLASS AbstractFile IMPLEMENTATION.
-  METHOD ifile~getrawrows.
-    RETURN. " todo, implement method
-  ENDMETHOD.
-  METHOD ifile~getraw.
-    RETURN. " todo, implement method
-  ENDMETHOD.
   METHOD constructor.
     me->filename = filename.
   ENDMETHOD.
@@ -737,6 +731,12 @@ CLASS AbstractFile IMPLEMENTATION.
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3c| with = |<| ).
     return = replace( val = to_upper( val = split[ 0 + 1 ] ) regex = |#| with = |/| ).
     RETURN.
+  ENDMETHOD.
+
+  METHOD ifile~getraw.
+  ENDMETHOD.
+
+  METHOD ifile~getrawrows.
   ENDMETHOD.
 
 ENDCLASS.

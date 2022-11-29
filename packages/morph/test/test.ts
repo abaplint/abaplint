@@ -436,15 +436,18 @@ abstract class foo {
     const abap = `
 CLASS foo DEFINITION ABSTRACT.
   PUBLIC SECTION.
-    METHODS getRawRows ABSTRACT RETURNING VALUE(return) TYPE string_table.
+    METHODS getRawRows RETURNING VALUE(return) TYPE string_table.
 ENDCLASS.
 
 CLASS foo IMPLEMENTATION.
+  METHOD getRawRows.
+  ENDMETHOD.
+
 ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
-  it.only("abstract method from intf", async () => {
+  it("abstract method from intf", async () => {
     const ts = `
 interface IFile {
   getRaw(): string;
@@ -460,7 +463,33 @@ class MemoryFile extends AbstractFile {
   }
 }`;
     const abap = `
-sdf`;
+INTERFACE IFile.
+  METHODS getRaw RETURNING VALUE(return) TYPE string.
+ENDINTERFACE.
+
+CLASS AbstractFile DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES IFile.
+    ALIASES getRaw FOR IFile~getRaw.
+ENDCLASS.
+
+CLASS AbstractFile IMPLEMENTATION.
+  METHOD IFile~getRaw.
+  ENDMETHOD.
+
+ENDCLASS.
+CLASS MemoryFile DEFINITION INHERITING FROM AbstractFile.
+  PUBLIC SECTION.
+    METHODS getRaw REDEFINITION.
+ENDCLASS.
+
+CLASS MemoryFile IMPLEMENTATION.
+  METHOD getRaw.
+return = |hello|.
+RETURN.
+  ENDMETHOD.
+
+ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
