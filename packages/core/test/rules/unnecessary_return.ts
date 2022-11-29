@@ -17,7 +17,7 @@ describe("Rule: unnecessary_return", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.only("test FORM", async () => {
+  it.skip("test FORM", async () => {
     const abap = `
 FORM foo.
   RETURN.

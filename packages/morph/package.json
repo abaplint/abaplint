@@ -30,7 +30,7 @@
     "@abaplint/runtime": "^2.3.63",
     "@abaplint/transpiler-cli": "^2.3.63",
     "@types/chai": "^4.3.4",
-    "@types/mocha": "^10.0.0",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.9",
     "chai": "^4.3.7",
     "mocha": "^10.1.0",
