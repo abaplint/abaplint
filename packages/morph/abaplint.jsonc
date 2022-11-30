@@ -17,6 +17,12 @@
     "line_length": {
       "length": 255
     },
+    "unnecessary_return": true,
+    "omit_parameter_name": true,
+    "if_in_if": true,
+    "sequential_blank": {
+      "lines": 3
+    },
     "keyword_case": true,
     "in_statement_indentation": true,
     "check_ddic": true,

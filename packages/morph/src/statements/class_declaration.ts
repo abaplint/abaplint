@@ -1,5 +1,5 @@
 import {ClassDeclaration, ConstructorDeclaration, Identifier, MethodDeclaration, PropertyDeclaration, Scope, SyntaxKind} from "ts-morph";
-import { handleExpression } from "../expressions";
+import {handleExpression} from "../expressions";
 import {handleStatements} from "../statements";
 import {handleType} from "../types";
 import {buildParameters} from "./_helpers";
@@ -33,8 +33,9 @@ export class MorphClassDeclaration {
     if (itype) {
       interfaces = "\n    INTERFACES " + itype.getSymbol()?.getName() + ".";
     }
+    const classAbstract = s.isAbstract() ? " ABSTRACT" : "";
 
-    let definition = `CLASS ${s.getName()} DEFINITION${inherit}.
+    let definition = `CLASS ${s.getName()} DEFINITION${inherit}${classAbstract}.
   PUBLIC SECTION.${interfaces}\n`;
     let privateSection = "";
     let implementation = `CLASS ${s.getName()} IMPLEMENTATION.\n`;

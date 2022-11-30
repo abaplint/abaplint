@@ -1336,4 +1336,18 @@ DATA foobar TYPE ty_list_report-hide_column.`;
     expect(hover?.value).to.contain("ABAP_BOOL");
   });
 
+  it("Hover, nested type, qualified name", () => {
+    const abap = `TYPES: BEGIN OF zlist,
+    BEGIN OF zlist1,
+      foo TYPE i,
+    END OF zlist1,
+  END OF zlist.
+DATA bar TYPE zlist-zlist1.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 5, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zlist-zlist1");
+  });
+
 });
