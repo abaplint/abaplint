@@ -53,7 +53,7 @@ export class Types {
     let qualifiedName = qualifiedNamePrefix + name.getStr();
     if (scope.getType() === ScopeType.ClassDefinition
         || scope.getType() === ScopeType.Interface) {
-      qualifiedName = scope.getName() + "=>" + qualifiedNamePrefix + qualifiedName;
+      qualifiedName = scope.getName() + "=>" + qualifiedName;
     }
 
     return new TypedIdentifier(name, filename, new Basic.StructureType(components, qualifiedName));

@@ -1350,4 +1350,25 @@ DATA bar TYPE zlist-zlist1.`;
     expect(hover?.value).to.contain("zlist-zlist1");
   });
 
+  it("Hover, nested type, qualified name, class", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF nsimple,
+        BEGIN OF list1,
+          element TYPE string,
+        END OF list1,
+      END OF nsimple.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>nsimple-list1.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 12, 9));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("lcl=>nsimple-list1");
+  });
+
 });
