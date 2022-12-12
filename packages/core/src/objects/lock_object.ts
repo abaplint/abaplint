@@ -1,3 +1,6 @@
+import {DDIC} from "../ddic";
+import {IObjectAndToken} from "../_iddic_references";
+import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 
 export class LockObject extends AbstractObject {
@@ -20,6 +23,21 @@ export class LockObject extends AbstractObject {
   public getPrimaryTable(): string | undefined {
     this.parse();
     return this.parsedXML?.primaryTable;
+  }
+
+  public parseType(reg: IRegistry): void {
+    this.parse();
+
+    const references: IObjectAndToken[] = [];
+    const ddic = new DDIC(reg);
+
+    if (this.parsedXML?.primaryTable) {
+      const found = ddic.lookupTableOrView2(this.parsedXML?.primaryTable);
+      if (found) {
+        references.push({object: found});
+      }
+    }
+    reg.getDDICReferences().setUsing(this, references);
   }
 
   public parse() {
