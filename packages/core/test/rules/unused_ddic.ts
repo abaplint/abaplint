@@ -549,4 +549,105 @@ EXPORT foo = <bar>
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TABL used in ENQU", async () => {
+    const enqu = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_ENQU" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD25V>
+    <VIEWNAME>EZABAPGIT_UNIT_T</VIEWNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <AGGTYPE>E</AGGTYPE>
+    <ROOTTAB>ZABAPGIT_UNIT_TE</ROOTTAB>
+    <DDTEXT>Test</DDTEXT>
+   </DD25V>
+   <DD26E_TABLE>
+    <DD26E>
+     <VIEWNAME>EZABAPGIT_UNIT_T</VIEWNAME>
+     <TABNAME>ZABAPGIT_UNIT_TE</TABNAME>
+     <TABPOS>0001</TABPOS>
+     <FORTABNAME>ZABAPGIT_UNIT_TE</FORTABNAME>
+     <ENQMODE>E</ENQMODE>
+    </DD26E>
+   </DD26E_TABLE>
+   <DD27P_TABLE>
+    <DD27P>
+     <VIEWNAME>EZABAPGIT_UNIT_T</VIEWNAME>
+     <OBJPOS>0001</OBJPOS>
+     <VIEWFIELD>MANDT</VIEWFIELD>
+     <TABNAME>ZABAPGIT_UNIT_TE</TABNAME>
+     <FIELDNAME>MANDT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ENQMODE>E</ENQMODE>
+    </DD27P>
+    <DD27P>
+     <VIEWNAME>EZABAPGIT_UNIT_T</VIEWNAME>
+     <OBJPOS>0002</OBJPOS>
+     <VIEWFIELD>BNAME</VIEWFIELD>
+     <TABNAME>ZABAPGIT_UNIT_TE</TABNAME>
+     <FIELDNAME>BNAME</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ENQMODE>E</ENQMODE>
+     <MEMORYID>XUS</MEMORYID>
+    </DD27P>
+   </DD27P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const tabl = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZABAPGIT_UNIT_TE</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <CLIDEP>X</CLIDEP>
+    <DDTEXT>Test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZABAPGIT_UNIT_TE</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>MANDT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>MANDT</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>BNAME</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>XUBNAME</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>FIELD</FIELDNAME>
+     <ROLLNAME>XUBNAME</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const files = [
+      new MemoryFile(`zabapgit_unit_te.tabl.xml`, tabl),
+      new MemoryFile(`ezabapgit_unit_t.enqu.xml`, enqu),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
