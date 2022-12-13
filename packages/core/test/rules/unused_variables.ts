@@ -1196,4 +1196,22 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SEARCH, no unused", async () => {
+    const abap = `
+    DATA foo TYPE c LENGTH 2.
+    SEARCH 'sdf' FOR foo.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("MODIFY internal, no unused", async () => {
+    const abap = `
+    DATA lv_index TYPE i.
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA row LIKE LINE OF tab.
+    MODIFY tab FROM row INDEX lv_index.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
