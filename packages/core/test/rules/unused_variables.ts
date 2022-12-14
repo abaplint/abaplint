@@ -1238,4 +1238,17 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("nested VALUE from constants", async () => {
+    const abap = `
+CONSTANTS: BEGIN OF c_tabmain,
+             tab1 LIKE sy-ucomm VALUE 'TAB1',
+           END OF c_tabmain.
+DATA: BEGIN OF g_tabmain,
+        pressed_tab LIKE sy-ucomm VALUE c_tabmain-tab1,
+      END OF g_tabmain.
+CLEAR g_tabmain.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
