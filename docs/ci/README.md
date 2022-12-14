@@ -3,9 +3,9 @@
 There are several ways to enable automated linting of your code in popular cloud git repositories. This will allow auto-linting of commits to the default branch and auto checks for upcoming pull requests from colleagues or contributors.
 
 ## GitHub App
-One click install, [GitHub App](https://github.com/marketplace/abaplint)
+abaplint can be installed using the [GitHub App](https://github.com/marketplace/abaplint), it takes just a few clicks.
 
-Gives annotations and suggested changes.
+abaplint.app gives annotations, suggested changes, additional insights and more.
 
 ## Github Actions
 Add [abaplint-action](https://github.com/abaplint/actions-abaplint) to the action, this will give annotated errors in the actions log.
