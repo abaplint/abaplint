@@ -2537,7 +2537,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check pragmas placment and case\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_style"
+              "description": "Check pragmas placement and case\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_style"
             },
             "prefer_corresponding": {
               "anyOf": [

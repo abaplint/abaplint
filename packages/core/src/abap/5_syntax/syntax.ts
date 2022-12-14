@@ -24,6 +24,9 @@ import {Perform} from "./statements/perform";
 import {Type} from "./statements/type";
 import {Constant} from "./statements/constant";
 import {Static} from "./statements/static";
+import {Search} from "./statements/search";
+import {Translate} from "./statements/translate";
+import {ModifyInternal} from "./statements/modify_internal";
 import {Data as DataStatement} from "./statements/data";
 import {Parameter} from "./statements/parameter";
 import {FieldSymbol} from "./statements/fieldsymbol";
@@ -264,6 +267,9 @@ if (Object.keys(map).length === 0) {
   addToMap(new ModifyEntities());
   addToMap(new CommitEntities());
   addToMap(new CallKernel());
+  addToMap(new Search());
+  addToMap(new Translate());
+  addToMap(new ModifyInternal());
 }
 
 // -----------------------------------
