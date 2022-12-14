@@ -1238,7 +1238,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("nested VALUE from constants", async () => {
+  it("nested VALUE from constants", async () => {
     const abap = `
 CONSTANTS: BEGIN OF c_tabmain,
              tab1 LIKE sy-ucomm VALUE 'TAB1',
