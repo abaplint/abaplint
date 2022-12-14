@@ -1196,4 +1196,59 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("call method, single value", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1 IMPORTING value TYPE i.
+    METHODS method2 IMPORTING value TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    CALL METHOD method2( value ).
+  ENDMETHOD.
+
+  METHOD method2.
+    WRITE value.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("call method, named parameter", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1 IMPORTING value TYPE i.
+    METHODS method2 IMPORTING value TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    CALL METHOD method2( value = value ).
+  ENDMETHOD.
+
+  METHOD method2.
+    WRITE value.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("nested VALUE from constants", async () => {
+    const abap = `
+CONSTANTS: BEGIN OF c_tabmain,
+             tab1 LIKE sy-ucomm VALUE 'TAB1',
+           END OF c_tabmain.
+DATA: BEGIN OF g_tabmain,
+        pressed_tab LIKE sy-ucomm VALUE c_tabmain-tab1,
+      END OF g_tabmain.
+CLEAR g_tabmain.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

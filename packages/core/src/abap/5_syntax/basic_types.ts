@@ -704,6 +704,7 @@ export class BasicTypes {
   }
 
   private resolveConstantValue(expr: ExpressionNode): string | undefined {
+// todo: rewrite this method
     if (!(expr.get() instanceof Expressions.SimpleFieldChain)) {
       throw new Error("resolveConstantValue");
     }
@@ -717,6 +718,8 @@ export class BasicTypes {
       if (typeof val === "string") {
         this.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.filename);
         return val;
+      } else if (found?.getType() instanceof StructureType) {
+        this.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.filename);
       }
       return undefined;
     } else if (firstNode.get() instanceof Expressions.ClassName
