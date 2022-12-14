@@ -1196,4 +1196,46 @@ cl_ci_atc_unit_driver=>create_asserter( )->check_and_assert(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("call method, single value", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1 IMPORTING value TYPE i.
+    METHODS method2 IMPORTING value TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    CALL METHOD method2( value ).
+  ENDMETHOD.
+
+  METHOD method2.
+    WRITE value.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("call method, named parameter", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1 IMPORTING value TYPE i.
+    METHODS method2 IMPORTING value TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    CALL METHOD method2( value = value ).
+  ENDMETHOD.
+
+  METHOD method2.
+    WRITE value.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
