@@ -30,7 +30,11 @@ describe("Rule: mix modify_only_own_db_tabes", () => {
   });
 
   it("delete own, err", async () => {
-    const abap = "DELETE FROM bar WHERE moo = @bar.";
+    const abap = `
+FORM sdffsd.
+  DATA bar TYPE i.
+  DELETE FROM bar WHERE moo = @bar.
+ENDFORM.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
   });
@@ -47,11 +51,13 @@ describe("Rule: mix modify_only_own_db_tabes", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("modify internal, ok", async () => {
+  it("modify internal, ok", async () => {
     const abap = `
-DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
-DATA row LIKE LINE OF foo.
-MODIFY foo FROM row.`;
+FORM foo.
+  DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA row LIKE LINE OF foo.
+  MODIFY foo FROM row.
+ENDFORM.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(0);
   });
@@ -61,7 +67,10 @@ const dontReportDynamic = new ModifyOnlyOwnDBTablesConf();
 dontReportDynamic.reportDynamic = false;
 
 const tests2 = [
-  {abap: "DELETE FROM bar WHERE moo = @bar.", cnt: 1},
+  {abap: `FORM foo.
+  DATA bar TYPE i.
+  DELETE FROM bar WHERE moo = @bar.
+ENDFORM.`, cnt: 1},
   {abap: "INSERT (lv_tab) FROM @lv_data.", cnt: 0},
 ];
 

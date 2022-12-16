@@ -6,6 +6,8 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 
 export class ModifyOnlyOwnDBTablesConf extends BasicRuleConfig {
   public reportDynamic: boolean = true;
@@ -22,8 +24,8 @@ export class ModifyOnlyOwnDBTables implements IRule {
       key: "modify_only_own_db_tables",
       title: "Modify only own DB tables",
       shortDescription: `Modify only own DB tables`,
-      extendedInformation: "https://docs.abapopenchecks.org/checks/26/",
-      tags: [RuleTag.Security, RuleTag.SingleFile],
+      extendedInformation: `https://docs.abapopenchecks.org/checks/26/`,
+      tags: [RuleTag.Security],
     };
   }
 
@@ -40,13 +42,12 @@ export class ModifyOnlyOwnDBTables implements IRule {
     return this;
   }
 
-// const spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
-
   public run(obj: IObject): readonly Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
+    let spaghetti: ISpaghettiScope | undefined = undefined;
     const output: Issue[] = [];
 
     for (const file of obj.getABAPFiles()) {
@@ -77,9 +78,16 @@ export class ModifyOnlyOwnDBTables implements IRule {
 
           const concat = databaseTable.concatTokens().toUpperCase();
           if (regExp.test(concat) === false) {
-          // must contain a ReferenceType.TableVoidReference
-
-            output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
+            // must contain a ReferenceType.TableVoidReference
+            if (spaghetti === undefined) {
+              spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
+            }
+            const start = databaseTable.getFirstToken().getStart();
+            const scope = spaghetti.lookupPosition(start, file.getFilename());
+            const found = scope?.findTableVoidReference(start);
+            if (found) {
+              output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
+            }
           }
         }
       }
