@@ -24,7 +24,9 @@ export class ChangeIfToCase extends ABAPRule {
       title: "Change IF to CASE",
       shortDescription: `Finds IF constructs that can be changed to CASE`,
       // eslint-disable-next-line max-len
-      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-case-to-else-if-for-multiple-alternative-conditions`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-case-to-else-if-for-multiple-alternative-conditions
+
+If the first comparison is a boolean compare, no issue is reported.`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       badExample: `IF l_fcat-fieldname EQ 'FOO'.
 ELSEIF l_fcat-fieldname = 'BAR'
@@ -58,6 +60,10 @@ ENDCASE.`,
 
       const ifStatement = i.findDirectStatement(Statements.If);
       if (ifStatement === undefined) {
+        continue;
+      }
+
+      if (ifStatement.concatTokens().match(/ (abap_true|abap_false)\s*\./i)) {
         continue;
       }
 
