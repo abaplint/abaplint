@@ -1371,4 +1371,15 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain("lcl=>nsimple-list1");
   });
 
+  it("Hover, special MODIFY", () => {
+    const abap = `DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA row LIKE LINE OF foo.
+MODIFY foo FROM row.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 8));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Identifier");
+  });
+
 });
