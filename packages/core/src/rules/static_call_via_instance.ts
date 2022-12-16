@@ -12,6 +12,8 @@ import {MethodDefinition} from "../abap/types";
 import {Position} from "../position";
 
 export class StaticCallViaInstanceConf extends BasicRuleConfig {
+  /** Allow in test class includes */
+  public allowInTestclassIncludes?: boolean = false;
 }
 
 export class StaticCallViaInstance extends ABAPRule {
@@ -36,8 +38,12 @@ export class StaticCallViaInstance extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, obj: ABAPObject) {
+  public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
     const issues: Issue[] = [];
+
+    if (this.getConfig().allowInTestclassIncludes === true && file.getFilename().includes(".testclasses.")) {
+      return [];
+    }
 
     const staticMethodCalls = this.listMethodCalls(file.getFilename(), new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
 
@@ -56,7 +62,6 @@ export class StaticCallViaInstance extends ABAPRule {
           break;
         }
       }
-
     }
 
     return issues;

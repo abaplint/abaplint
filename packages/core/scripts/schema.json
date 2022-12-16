@@ -5225,6 +5225,10 @@
     "StaticCallViaInstanceConf": {
       "additionalProperties": false,
       "properties": {
+        "allowInTestclassIncludes": {
+          "description": "Allow in test class includes",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
