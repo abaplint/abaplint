@@ -54,6 +54,7 @@ export interface ISpaghettiScopeNode {
   findScopeForVariable(name: string): IScopeIdentifier | undefined;
   findWriteReference(pos: Position): TypedIdentifier | undefined;
   findTableReference(pos: Position): string | undefined;
+  findTableVoidReference(pos: Position): boolean;
 }
 
 export interface ISpaghettiScope {

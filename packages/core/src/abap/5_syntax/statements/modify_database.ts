@@ -5,6 +5,7 @@ import {Dynamic} from "../expressions/dynamic";
 import {DatabaseTable} from "../expressions/database_table";
 import {StatementSyntax} from "../_statement_syntax";
 import {Source} from "../expressions/source";
+import {ReferenceType} from "../_reference";
 
 export class ModifyDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -14,12 +15,15 @@ export class ModifyDatabase implements StatementSyntax {
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
     if (dbtab !== undefined) {
-      try {
-        new DatabaseTable().runSyntax(dbtab, scope, filename);
-      } catch (e) {
-        if (scope.findVariable(dbtab.concatTokens()) === undefined) {
-          throw e;
+      if (node.getChildren().length === 5) {
+        const found = scope.findVariable(dbtab.concatTokens());
+        if (found) {
+          scope.addReference(dbtab.getFirstToken(), found, ReferenceType.DataWriteReference, filename);
+        } else {
+          new DatabaseTable().runSyntax(dbtab, scope, filename);
         }
+      } else {
+        new DatabaseTable().runSyntax(dbtab, scope, filename);
       }
     }
 

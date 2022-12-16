@@ -103,4 +103,34 @@ describe("Rule: change_if_to_case", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("boolean compare 1, no error", async () => {
+    const issues = await findIssues(`
+IF val = abap_true .
+"
+ELSEIF val = abap_false.
+"
+ENDIF.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("boolean compare 2, no error", async () => {
+    const issues = await findIssues(`
+IF val <> abap_true .
+"
+ELSEIF val = abap_false.
+"
+ENDIF.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("boolean compare 3, no error", async () => {
+    const issues = await findIssues(`
+IF val <> abap_false .
+"
+ELSEIF val = abap_false.
+"
+ENDIF.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });

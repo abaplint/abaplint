@@ -2317,7 +2317,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Modify only own DB tables\nTags: Security, SingleFile\nhttps://rules.abaplint.org/modify_only_own_db_tables"
+              "description": "Modify only own DB tables\nTags: Security\nhttps://rules.abaplint.org/modify_only_own_db_tables"
             },
             "msag_consistency": {
               "anyOf": [
@@ -5225,6 +5225,10 @@
     "StaticCallViaInstanceConf": {
       "additionalProperties": false,
       "properties": {
+        "allowInTestclassIncludes": {
+          "description": "Allow in test class includes",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {

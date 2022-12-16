@@ -11,6 +11,8 @@ import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types/method_definition";
 import {EditHelper} from "../edit_helper";
+import {BuiltInMethod} from "../abap/5_syntax/_builtin";
+import {IMethodParameters} from "../abap/types/_method_parameters";
 
 export class OmitParameterNameConf extends BasicRuleConfig {
 }
@@ -84,7 +86,7 @@ EXPORTING must already be omitted for this rule to take effect, https://rules.ab
           continue;
         }
 
-        const i = ref.getParameters().getDefaultImporting();
+        const i = ref.getDefaultImporting();
         if (i === undefined) {
           continue;
         }
@@ -108,18 +110,22 @@ EXPORTING must already be omitted for this rule to take effect, https://rules.ab
 
 ///////////////////
 
-  private findMethodReference(token: Token, spaghetti: ISpaghettiScope, filename: string): undefined | MethodDefinition {
+  private findMethodReference(token: Token, spaghetti: ISpaghettiScope, filename: string): undefined | IMethodParameters {
     const scope = spaghetti.lookupPosition(token.getStart(), filename);
     if (scope === undefined) {
       return undefined;
     }
 
     for (const r of scope.getData().references) {
-      if (r.referenceType !== ReferenceType.MethodReference) {
+      if (r.referenceType !== ReferenceType.MethodReference
+          && r.referenceType !== ReferenceType.BuiltinMethodReference) {
         continue;
-      } else if (r.position.getStart().equals(token.getStart())
-          && r.resolved instanceof MethodDefinition) {
-        return r.resolved;
+      } else if (r.position.getStart().equals(token.getStart())) {
+        if (r.resolved instanceof BuiltInMethod) {
+          return r.resolved;
+        } else if (r.resolved instanceof MethodDefinition) {
+          return r.resolved.getParameters();
+        }
       }
     }
 

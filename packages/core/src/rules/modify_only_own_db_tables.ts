@@ -1,10 +1,13 @@
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
-import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPFile} from "../abap/abap_file";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {IRegistry} from "../_iregistry";
+import {IObject} from "../objects/_iobject";
+import {ABAPObject} from "../objects/_abap_object";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 
 export class ModifyOnlyOwnDBTablesConf extends BasicRuleConfig {
   public reportDynamic: boolean = true;
@@ -12,16 +15,17 @@ export class ModifyOnlyOwnDBTablesConf extends BasicRuleConfig {
   public ownTables: string = "^[yz]";
 }
 
-export class ModifyOnlyOwnDBTables extends ABAPRule {
+export class ModifyOnlyOwnDBTables implements IRule {
   private conf = new ModifyOnlyOwnDBTablesConf();
+  protected reg: IRegistry;
 
   public getMetadata(): IRuleMetadata {
     return {
       key: "modify_only_own_db_tables",
       title: "Modify only own DB tables",
       shortDescription: `Modify only own DB tables`,
-      extendedInformation: "https://docs.abapopenchecks.org/checks/26/",
-      tags: [RuleTag.Security, RuleTag.SingleFile],
+      extendedInformation: `https://docs.abapopenchecks.org/checks/26/`,
+      tags: [RuleTag.Security],
     };
   }
 
@@ -33,37 +37,58 @@ export class ModifyOnlyOwnDBTables extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
-    const output: Issue[] = [];
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
 
-    const struc = file.getStructure();
-    if (struc === undefined) {
+  public run(obj: IObject): readonly Issue[] {
+    if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
-    const regExp = new RegExp(this.getConfig().ownTables, "i");
+    let spaghetti: ISpaghettiScope | undefined = undefined;
+    const output: Issue[] = [];
 
-    for (const s of file.getStatements()) {
-      const g = s.get();
-      if (g instanceof Statements.DeleteDatabase
+    for (const file of obj.getABAPFiles()) {
+      const struc = file.getStructure();
+      if (struc === undefined) {
+        return [];
+      }
+
+      const regExp = new RegExp(this.getConfig().ownTables, "i");
+
+      for (const s of file.getStatements()) {
+        const g = s.get();
+        if (g instanceof Statements.DeleteDatabase
           || g instanceof Statements.UpdateDatabase
           || g instanceof Statements.InsertDatabase
           || g instanceof Statements.ModifyDatabase) {
-        const databaseTable = s.findFirstExpression(Expressions.DatabaseTable);
-        if (databaseTable === undefined) {
-          continue;
-        }
-
-        if (databaseTable.getFirstChild()?.get() instanceof Expressions.Dynamic) {
-          if (this.getConfig().reportDynamic === true) {
-            output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
+          const databaseTable = s.findFirstExpression(Expressions.DatabaseTable);
+          if (databaseTable === undefined) {
+            continue;
           }
-          continue;
-        }
 
-        const concat = databaseTable.concatTokens().toUpperCase();
-        if (regExp.test(concat) === false && concat !== "SCREEN") {
-          output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
+          if (databaseTable.getFirstChild()?.get() instanceof Expressions.Dynamic) {
+            if (this.getConfig().reportDynamic === true) {
+              output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
+            }
+            continue;
+          }
+
+          const concat = databaseTable.concatTokens().toUpperCase();
+          if (regExp.test(concat) === false) {
+            // must contain a ReferenceType.TableVoidReference
+            if (spaghetti === undefined) {
+              spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
+            }
+            const start = databaseTable.getFirstToken().getStart();
+            const scope = spaghetti.lookupPosition(start, file.getFilename());
+            const found = scope?.findTableVoidReference(start);
+            if (found) {
+              output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
+            }
+          }
         }
       }
     }

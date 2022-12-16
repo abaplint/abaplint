@@ -153,6 +153,15 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("built-in method", async () => {
+    const abap = `
+DATA foo TYPE string.
+foo = 'hello'.
+foo = to_upper( val = foo ).`;
+    const issues = await findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
 });
 
 describe("Rule: omit_parameter_name, quick fixes", () => {

@@ -20,7 +20,7 @@ interface IBuiltinMethod {
   return: AbstractType;
 }
 
-class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodParameters {
+export class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodParameters {
   private readonly method: IBuiltinMethod;
   private readonly row: number;
 
