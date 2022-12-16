@@ -62,7 +62,7 @@ export class ModifyOnlyOwnDBTables extends ABAPRule {
         }
 
         const concat = databaseTable.concatTokens().toUpperCase();
-        if (regExp.test(concat) === false && concat !== "SCREEN") {
+        if (regExp.test(concat) === false) {
           output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
         }
       }
