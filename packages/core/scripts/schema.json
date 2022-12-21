@@ -3226,7 +3226,7 @@
           "type": "string"
         },
         "globalConstants": {
-          "description": "List of full named global constants",
+          "description": "List of full named global constants (regex not possible)",
           "items": {
             "type": "string"
           },
@@ -3234,7 +3234,7 @@
           "uniqueItems": true
         },
         "globalMacros": {
-          "description": "List of full named global macros",
+          "description": "List of full named global macros (regex not possible)",
           "items": {
             "type": "string"
           },

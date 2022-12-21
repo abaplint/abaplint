@@ -139,7 +139,7 @@ export class Table extends AbstractObject {
           components.push({name: field.FIELDNAME, type: found});
         }
       } else if (comptype === "S" && field.FIELDNAME.startsWith(".INCLU-")) {
-        const lookup = ddic.lookupTableOrView(field.ROLLNAME);
+        const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         if (lookup.object) {
           references.push({object: lookup.object});
         }

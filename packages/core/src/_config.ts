@@ -38,11 +38,11 @@ export interface ISyntaxSettings {
   version?: Version;
   /** Report error for objects in this regex namespace. Types not in namespace will be void. Case insensitive */
   errorNamespace: string;
-  /** List of full named global constants
+  /** List of full named global constants (regex not possible)
    * @uniqueItems true
   */
   globalConstants?: string[];
-  /** List of full named global macros
+  /** List of full named global macros (regex not possible)
    * @uniqueItems true
   */
   globalMacros?: string[];
