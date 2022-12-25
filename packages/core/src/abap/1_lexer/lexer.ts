@@ -305,30 +305,27 @@ export class Lexer {
       const prev = this.stream.prevChar();
 
       if (this.m === this.ModeNormal) {
-        if (ahead === "'" && this.m === this.ModeNormal) {
+        if (ahead === "'") {
 // start string
           this.add();
           this.m = this.ModeStr;
-        } else if ((ahead === "|" || ahead === "}")
-            && this.m === this.ModeNormal) {
+        } else if (ahead === "|" || ahead === "}") {
 // start template
           this.add();
           this.m = this.ModeTemplate;
-        } else if (ahead === "`" && this.m === this.ModeNormal) {
+        } else if (ahead === "`") {
 // start ping
           this.add();
           this.m = this.ModePing;
-        } else if (aahead === "##" && this.m === this.ModeNormal) {
+        } else if (aahead === "##") {
 // start pragma
           this.add();
           this.m = this.ModePragma;
-        } else if ((ahead === "\"" || (ahead === "*" && current === "\n"))
-            && this.m === this.ModeNormal) {
+        } else if (ahead === "\"" || (ahead === "*" && current === "\n")) {
 // start comment
           this.add();
           this.m = this.ModeComment;
-        } else if (this.m === this.ModeNormal
-            && (ahead === " "
+        } else if (ahead === " "
             || ahead === ":"
             || ahead === "."
             || ahead === ","
@@ -342,16 +339,14 @@ export class Lexer {
             || aahead === "->"
             || aahead === "=>"
             || ahead === "\t"
-            || ahead === "\n")) {
+            || ahead === "\n") {
           this.add();
         } else if (current === ">"
             && ahead !== " "
-            && (prev === "-" || prev === "=")
-            && this.m === this.ModeNormal) {
+            && (prev === "-" || prev === "=")) {
 // arrows
           this.add();
-        } else if (this.m === this.ModeNormal
-            && (buf === "."
+        } else if (buf === "."
             || buf === ","
             || buf === ":"
             || buf === "("
@@ -360,11 +355,8 @@ export class Lexer {
             || buf === "]"
             || buf === "+"
             || buf === "@"
-            || (buf === "-" && ahead !== ">"))) {
+            || (buf === "-" && ahead !== ">")) {
           this.add();
-        } else if (ahead === "\n" && this.m !== this.ModeTemplate) {
-          this.add();
-          this.m = this.ModeNormal;
         }
       } else if (this.m === this.ModePragma && (ahead === "," || ahead === ":" || ahead === "." || ahead === " " || ahead === "\n")) {
 // end of pragma
