@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, per, ver} from "../combi";
+import {seq, alt, per, ver, altPrio, optPrio} from "../combi";
 import {ClassName, SuperClassName, ClassGlobal, ClassFinal, ClassFriends, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -7,9 +7,9 @@ import {IStatementRunnable} from "../statement_runnable";
 export class ClassDefinition implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const create = seq("CREATE", alt("PUBLIC", "PROTECTED", "PRIVATE"));
+    const create = seq("CREATE", altPrio("PUBLIC", "PROTECTED", "PRIVATE"));
 
-    const level = alt("CRITICAL", "HARMLESS", "DANGEROUS");
+    const level = altPrio("CRITICAL", "HARMLESS", "DANGEROUS");
     const risk = seq("RISK LEVEL", level);
 
     const time = alt("LONG", "MEDIUM", "SHORT");
@@ -27,7 +27,7 @@ export class ClassDefinition implements IStatement {
                      ver(Version.v754, seq("FOR BEHAVIOR OF", NamespaceSimpleName)),
                      ClassFriends);
 
-    const def = seq("DEFINITION", opt(blah));
+    const def = seq("DEFINITION", optPrio(blah));
 
     return seq("CLASS", ClassName, def);
   }
