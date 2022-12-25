@@ -10,8 +10,7 @@ for (let i = 0; i < 10; i++) {
   const before = Date.now();
   const result = new Lexer().run(file);
   const runtime = Date.now() - before;
-  console.log("Runtime: " + runtime + "ms");
+  console.log("Runtime: " + runtime + "ms, Tokens: " + result.tokens.length);
   total += runtime;
-  console.log("Tokens: " + result.tokens.length);
 }
-console.log("Total: " + total);
+console.log("Total: " + total + "ms");
