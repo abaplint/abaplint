@@ -1,4 +1,4 @@
-import {seq, alt, opt, per, Expression} from "../combi";
+import {seq, alt, opt, per, Expression, optPrio} from "../combi";
 import * as Expressions from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,10 +10,10 @@ export class DataDefinition extends Expression {
                            Expressions.Decimals,
                            Expressions.Value));
 
-    const table = seq(Expressions.TypeTable, opt("READ-ONLY"));
+    const table = seq(Expressions.TypeTable, optPrio("READ-ONLY"));
 
     return seq(Expressions.DefinitionName,
-               opt(Expressions.ConstantFieldLength),
+               optPrio(Expressions.ConstantFieldLength),
                alt(simple, table));
 
   }

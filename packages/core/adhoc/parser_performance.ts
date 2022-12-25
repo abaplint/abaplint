@@ -13,7 +13,6 @@ for (let i = 0; i < 4; i++) {
   const before = Date.now();
   new StatementParser(Version.v702).run([lexerResult], []);
   const runtime = Date.now() - before;
-  console.log("Runtime: " + runtime + "ms");
   total += runtime;
 }
 console.log("Total: " + total + "ms");
