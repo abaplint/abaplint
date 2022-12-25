@@ -346,7 +346,7 @@ export class Lexer {
             && (prev === "-" || prev === "=")) {
 // arrows
           this.add();
-        } else if (buf === "."
+        } else if (buf.length === 1 && (buf === "."
             || buf === ","
             || buf === ":"
             || buf === "("
@@ -355,7 +355,7 @@ export class Lexer {
             || buf === "]"
             || buf === "+"
             || buf === "@"
-            || (buf === "-" && ahead !== ">")) {
+            || (buf === "-" && ahead !== ">"))) {
           this.add();
         }
       } else if (this.m === this.ModePragma && (ahead === "," || ahead === ":" || ahead === "." || ahead === " " || ahead === "\n")) {
