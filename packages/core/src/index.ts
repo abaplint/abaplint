@@ -52,6 +52,7 @@ import {IMethodDefinition} from "./abap/types/_method_definition";
 import {DDLParser} from "./ddl/ddl_parser";
 import {CDSParser} from "./cds/cds_parser";
 import {RulesRunner} from "./rules_runner";
+import {RuleTag} from "./rules/_irule";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -68,4 +69,4 @@ export {MemoryFile, Issue, Config, Version, ReferenceType,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
-  IRenameSettings, Info, Visibility, Severity};
+  IRenameSettings, Info, Visibility, Severity, RuleTag};
