@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, per, ver, altPrio, optPrio} from "../combi";
+import {seq, per, ver, altPrio, optPrio} from "../combi";
 import {ClassName, SuperClassName, ClassGlobal, ClassFinal, ClassFriends, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class ClassDefinition implements IStatement {
     const level = altPrio("CRITICAL", "HARMLESS", "DANGEROUS");
     const risk = seq("RISK LEVEL", level);
 
-    const time = alt("LONG", "MEDIUM", "SHORT");
+    const time = altPrio("LONG", "MEDIUM", "SHORT");
     const duration = seq("DURATION", time);
 
     const blah = per(ClassGlobal,

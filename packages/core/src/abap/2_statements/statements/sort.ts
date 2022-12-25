@@ -18,7 +18,7 @@ export class Sort implements IStatement {
 
     const normal = seq(Target, opt(per(order, by, "STABLE", text)));
 
-    const target = alt(normal, text);
+    const target = altPrio(text, normal);
 
     return seq("SORT", target);
   }

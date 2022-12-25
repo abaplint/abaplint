@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, per} from "../combi";
+import {seq, alt, opt, per, altPrio} from "../combi";
 import {Target, Source, FindType} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -17,17 +17,17 @@ export class Replace implements IStatement {
 
     const source = seq(opt("OF"), FindType, Source);
 
-    const cas = alt("IGNORING CASE", "RESPECTING CASE");
+    const cas = altPrio("IGNORING CASE", "RESPECTING CASE");
 
     const repl = seq("REPLACEMENT COUNT", Target);
     const replo = seq("REPLACEMENT OFFSET", Target);
     const repll = seq("REPLACEMENT LENGTH", Target);
     const repli = seq("REPLACEMENT LINE", Target);
 
-    const occ = alt("ALL OCCURRENCES",
-                    "ALL OCCURENCES",
-                    "FIRST OCCURENCE",
-                    "FIRST OCCURRENCE");
+    const occ = altPrio("ALL OCCURRENCES",
+                        "ALL OCCURENCES",
+                        "FIRST OCCURENCE",
+                        "FIRST OCCURRENCE");
 
     const mode = alt("IN CHARACTER MODE",
                      "IN BYTE MODE");

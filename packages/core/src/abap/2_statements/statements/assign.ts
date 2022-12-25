@@ -7,9 +7,8 @@ export class Assign implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-
-    const type = seq("TYPE", alt(Dynamic, TypeName));
-    const like = seq("LIKE", alt(Dynamic, Source));
+    const type = seq("TYPE", altPrio(Dynamic, TypeName));
+    const like = seq("LIKE", altPrio(Dynamic, Source));
     const handle = seq("TYPE HANDLE", Source);
     const range = seq("RANGE", Source);
     const decimals = seq("DECIMALS", Source);

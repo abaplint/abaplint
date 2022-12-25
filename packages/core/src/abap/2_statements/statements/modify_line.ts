@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, plus, optPrio} from "../combi";
+import {verNot, str, seq, alt, opt, per, plus, optPrio, altPrio} from "../combi";
 import {Source, Color} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -27,8 +27,8 @@ export class ModifyLine implements IStatement {
     const options = per(index, value, format, page, lineFormat, lineValue, ocp, intensified, Color);
 
     const ret = seq("MODIFY",
-                    alt("CURRENT LINE",
-                        seq("LINE", Source)),
+                    altPrio("CURRENT LINE",
+                            seq("LINE", Source)),
                     opt(options));
 
     return verNot(Version.Cloud, ret);
