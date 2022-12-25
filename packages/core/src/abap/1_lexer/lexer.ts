@@ -11,8 +11,9 @@ class Buffer {
     this.buf = "";
   }
 
-  public add(s: string): void {
+  public add(s: string): string {
     this.buf = this.buf + s;
+    return this.buf;
   }
 
   public get(): string {
@@ -323,8 +324,7 @@ export class Lexer {
 
     for (;;) {
       const current = this.stream.currentChar();
-      this.buffer.add(current);
-      const buf = this.buffer.get();
+      const buf = this.buffer.add(current);
       const ahead = this.stream.nextChar();
       const aahead = this.stream.nextNextChar();
 
