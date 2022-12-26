@@ -13,11 +13,13 @@ import {IABAPLexerResult} from "../1_lexer/lexer_result";
 import {ExpandMacros} from "./expand_macros";
 import {Pragma} from "../1_lexer/tokens";
 import {IRegistry} from "../../_iregistry";
+import {IStatementRunnable} from "./statement_runnable";
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
 class StatementMap {
-  private readonly map: {[index: string]: IStatement[]};
+  // this also serves as container for statement matcher singletons,
+  private readonly map: {[index: string]: {statement: IStatement, matcher?: IStatementRunnable}[]};
 
   public constructor() {
     this.map = {};
@@ -29,20 +31,25 @@ class StatementMap {
       }
       for (const first of f) {
         if (this.map[first]) {
-          this.map[first].push(stat);
+          this.map[first].push({statement: stat});
         } else {
-          this.map[first] = [stat];
+          this.map[first] = [{statement: stat}];
         }
       }
     }
   }
 
-  public lookup(str: string): readonly IStatement[] {
+  public lookup(str: string): readonly {statement: IStatement, matcher: IStatementRunnable}[] {
     const res = this.map[str.toUpperCase()];
     if (res === undefined) {
       return [];
     }
-    return res;
+    if (res[0].matcher === undefined) {
+      for (const r of res) {
+        r.matcher = r.statement.getMatcher();
+      }
+    }
+    return res as readonly {statement: IStatement, matcher: IStatementRunnable}[];
   }
 }
 
@@ -258,20 +265,20 @@ export class StatementParser {
     }
 
     for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
-      const match = Combi.run(st.getMatcher(), filtered, this.version);
+      const match = Combi.run(st.matcher, filtered, this.version);
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
-        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match);
+        return new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
       }
     }
     // next try the statements without specific keywords
     for (const st of StatementParser.map.lookup("")) {
-      const match = Combi.run(st.getMatcher(), filtered, this.version);
+      const match = Combi.run(st.matcher, filtered, this.version);
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
-        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match);
+        return new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
       }
     }
 
@@ -295,21 +302,23 @@ export class StatementParser {
       add.push(token);
 
       const str = token.getStr();
-      if (str === ".") {
-        wa.addUnknown(pre, add, colon);
-        add = [];
-        pre = [];
-        colon = undefined;
-      } else if (str === "," && pre.length > 0) {
-        wa.addUnknown(pre, add, colon);
-        add = [];
-      } else if (str === ":" && colon === undefined) {
-        colon = token;
-        add.pop(); // do not add colon token to statement
-        pre.push(...add);
-        add = [];
-      } else if (str === ":") {
-        add.pop(); // do not add colon token to statement
+      if (str.length === 1) {
+        if (str === ".") {
+          wa.addUnknown(pre, add, colon);
+          add = [];
+          pre = [];
+          colon = undefined;
+        } else if (str === "," && pre.length > 0) {
+          wa.addUnknown(pre, add, colon);
+          add = [];
+        } else if (str === ":" && colon === undefined) {
+          colon = token;
+          add.pop(); // do not add colon token to statement
+          pre.push(...add);
+          add = [];
+        } else if (str === ":") {
+          add.pop(); // do not add colon token to statement
+        }
       }
     }
 
