@@ -1034,20 +1034,25 @@ export function tok(t: new (p: Position, s: string) => any): IStatementRunnable 
   return new Token(t.name);
 }
 
-const singletons: {[index: string]: Expression} = {};
+const expressionSingletons: {[index: string]: Expression} = {};
+const stringSingletons: {[index: string]: IStatementRunnable} = {};
 type InputType = (new () => Expression) | string | IStatementRunnable;
+
 function map(s: InputType): IStatementRunnable {
   const type = typeof s;
   if (type === "string") {
-    return str(s as string);
+    if (stringSingletons[s as string] === undefined) {
+      stringSingletons[s as string] = str(s as string);
+    }
+    return stringSingletons[s as string];
   } else if (type === "function") {
     // @ts-ignore
     const name = s.name;
-    if (singletons[name] === undefined) {
+    if (expressionSingletons[name] === undefined) {
       // @ts-ignore
-      singletons[name] = new s();
+      expressionSingletons[name] = new s();
     }
-    return singletons[name];
+    return expressionSingletons[name];
   } else {
     return s as IStatementRunnable;
   }
