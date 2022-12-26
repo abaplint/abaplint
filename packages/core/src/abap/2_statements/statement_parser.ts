@@ -295,21 +295,23 @@ export class StatementParser {
       add.push(token);
 
       const str = token.getStr();
-      if (str === ".") {
-        wa.addUnknown(pre, add, colon);
-        add = [];
-        pre = [];
-        colon = undefined;
-      } else if (str === "," && pre.length > 0) {
-        wa.addUnknown(pre, add, colon);
-        add = [];
-      } else if (str === ":" && colon === undefined) {
-        colon = token;
-        add.pop(); // do not add colon token to statement
-        pre.push(...add);
-        add = [];
-      } else if (str === ":") {
-        add.pop(); // do not add colon token to statement
+      if (str.length === 1) {
+        if (str === ".") {
+          wa.addUnknown(pre, add, colon);
+          add = [];
+          pre = [];
+          colon = undefined;
+        } else if (str === "," && pre.length > 0) {
+          wa.addUnknown(pre, add, colon);
+          add = [];
+        } else if (str === ":" && colon === undefined) {
+          colon = token;
+          add.pop(); // do not add colon token to statement
+          pre.push(...add);
+          add = [];
+        } else if (str === ":") {
+          add.pop(); // do not add colon token to statement
+        }
       }
     }
 
