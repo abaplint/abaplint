@@ -388,7 +388,7 @@ class Star implements IStatementRunnable {
   }
 }
 
-class StarPrioroity implements IStatementRunnable {
+class StarPriority implements IStatementRunnable {
 
   private readonly sta: IStatementRunnable;
 
@@ -489,7 +489,7 @@ class PlusPriority implements IStatementRunnable {
 
   public constructor(plu: IStatementRunnable) {
     this.plu = plu;
-    this.sub = new Sequence([this.plu, new StarPrioroity(this.plu)]);
+    this.sub = new Sequence([this.plu, new StarPriority(this.plu)]);
   }
 
   public listKeywords(): string[] {
@@ -1082,7 +1082,7 @@ export function star(first: InputType): IStatementRunnable {
   return new Star(map(first));
 }
 export function starPrio(first: InputType): IStatementRunnable {
-  return new StarPrioroity(map(first));
+  return new StarPriority(map(first));
 }
 export function plus(first: InputType): IStatementRunnable {
   return new Plus(map(first));

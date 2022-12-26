@@ -11,8 +11,9 @@ class Buffer {
     this.buf = "";
   }
 
-  public add(s: string): void {
+  public add(s: string): string {
     this.buf = this.buf + s;
+    return this.buf;
   }
 
   public get(): string {
@@ -296,36 +297,76 @@ export class Lexer {
     this.stream = new Stream(raw.replace(/\r/g, ""));
     this.buffer = new Buffer();
 
+    const splits: {[name: string]: boolean} = {};
+    splits[" "] = true;
+    splits[":"] = true;
+    splits["."] = true;
+    splits[","] = true;
+    splits["-"] = true;
+    splits["+"] = true;
+    splits["("] = true;
+    splits[")"] = true;
+    splits["["] = true;
+    splits["]"] = true;
+    splits["\t"] = true;
+    splits["\n"] = true;
+
+    const bufs: {[name: string]: boolean} = {};
+    bufs["."] = true;
+    bufs[","] = true;
+    bufs[":"] = true;
+    bufs["("] = true;
+    bufs[")"] = true;
+    bufs["["] = true;
+    bufs["]"] = true;
+    bufs["+"] = true;
+    bufs["@"] = true;
+
     for (;;) {
       const current = this.stream.currentChar();
-      this.buffer.add(current);
-      const buf = this.buffer.get();
+      const buf = this.buffer.add(current);
       const ahead = this.stream.nextChar();
       const aahead = this.stream.nextNextChar();
-      const prev = this.stream.prevChar();
 
-      if (ahead === "'" && this.m === this.ModeNormal) {
+      if (this.m === this.ModeNormal) {
+        if (ahead === "'") {
 // start string
-        this.add();
-        this.m = this.ModeStr;
-      } else if ((ahead === "|" || ahead === "}")
-          && this.m === this.ModeNormal) {
+          this.add();
+          this.m = this.ModeStr;
+        } else if (ahead === "|" || ahead === "}") {
 // start template
-        this.add();
-        this.m = this.ModeTemplate;
-      } else if (ahead === "`" && this.m === this.ModeNormal) {
+          this.add();
+          this.m = this.ModeTemplate;
+        } else if (ahead === "`") {
 // start ping
-        this.add();
-        this.m = this.ModePing;
-      } else if (aahead === "##" && this.m === this.ModeNormal) {
+          this.add();
+          this.m = this.ModePing;
+        } else if (aahead === "##") {
 // start pragma
-        this.add();
-        this.m = this.ModePragma;
-      } else if ((ahead === "\"" || (ahead === "*" && current === "\n"))
-          && this.m === this.ModeNormal) {
+          this.add();
+          this.m = this.ModePragma;
+        } else if (ahead === "\""
+            || (ahead === "*" && current === "\n")) {
 // start comment
-        this.add();
-        this.m = this.ModeComment;
+          this.add();
+          this.m = this.ModeComment;
+        } else if (splits[ahead]) {
+          this.add();
+        } else if (ahead === "@" && buf.trim().length === 0) {
+          this.add();
+        } else if (aahead === "->"
+            || aahead === "=>") {
+          this.add();
+        } else if (current === ">"
+            && ahead !== " "
+            && (this.stream.prevChar() === "-" || this.stream.prevChar() === "=")) {
+// arrows
+          this.add();
+        } else if (buf.length === 1
+            && (bufs[buf]
+            || (buf === "-" && ahead !== ">"))) {
+          this.add();
+        }
       } else if (this.m === this.ModePragma && (ahead === "," || ahead === ":" || ahead === "." || ahead === " " || ahead === "\n")) {
 // end of pragma
         this.add();
@@ -346,7 +387,7 @@ export class Lexer {
       } else if (this.m === this.ModeTemplate
           && buf.length > 1
           && (current === "|" || current === "{")
-          && (prev !== "\\" || this.stream.prevPrevChar() === "\\\\")) {
+          && (this.stream.prevChar() !== "\\" || this.stream.prevPrevChar() === "\\\\")) {
 // end of template
         this.add();
         this.m = this.ModeNormal;
@@ -363,45 +404,10 @@ export class Lexer {
         } else {
           this.m = this.ModeNormal;
         }
-      } else if (this.m === this.ModeNormal
-          && (ahead === " "
-          || ahead === ":"
-          || ahead === "."
-          || ahead === ","
-          || ahead === "-"
-          || ahead === "+"
-          || ahead === "("
-          || ahead === ")"
-          || ahead === "["
-          || ahead === "]"
-          || (ahead === "@" && buf.trim().length === 0)
-          || aahead === "->"
-          || aahead === "=>"
-          || ahead === "\t"
-          || ahead === "\n")) {
-        this.add();
       } else if (ahead === "\n" && this.m !== this.ModeTemplate) {
         this.add();
         this.m = this.ModeNormal;
       } else if (this.m === this.ModeTemplate && current === "\n") {
-        this.add();
-      } else if (current === ">"
-          && (prev === "-" || prev === "=")
-          && ahead !== " "
-          && this.m === this.ModeNormal) {
-// arrows
-        this.add();
-      } else if (this.m === this.ModeNormal
-          && (buf === "."
-          || buf === ","
-          || buf === ":"
-          || buf === "("
-          || buf === ")"
-          || buf === "["
-          || buf === "]"
-          || buf === "+"
-          || buf === "@"
-          || (buf === "-" && ahead !== ">"))) {
         this.add();
       }
 

@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, plus} from "../combi";
+import {seq, plus, altPrio, optPrio} from "../combi";
 import {EventName, MethodParamOptional} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,7 +9,7 @@ export class Events implements IStatement {
 
     const exporting = seq("EXPORTING", plus(MethodParamOptional));
 
-    return seq(alt("CLASS-EVENTS", "EVENTS"), EventName, opt(exporting));
+    return seq(altPrio("CLASS-EVENTS", "EVENTS"), EventName, optPrio(exporting));
   }
 
 }

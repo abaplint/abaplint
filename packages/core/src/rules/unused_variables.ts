@@ -115,7 +115,7 @@ Unused variables are not reported if the object contains syntax errors. Errors f
     this.buildWorkarea(top, obj);
 
     if (this.workarea.count() === 0) {
-      return this.buildIssues(obj); // exit early if all types are used
+      return this.buildIssues(obj); // exit early if all variables are used
     }
     this.findUses(top, obj);
 
@@ -129,7 +129,7 @@ Unused variables are not reported if the object contains syntax errors. Errors f
         const syntax = new SyntaxLogic(this.reg, o).run();
         this.findUses(syntax.spaghetti.getTop(), o);
         if (this.workarea.count() === 0) {
-          return this.buildIssues(obj); // exit early if all types are used
+          return this.buildIssues(obj); // exit early if all variables are used
         }
       }
     }
