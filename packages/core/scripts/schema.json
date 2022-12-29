@@ -788,11 +788,16 @@
         "skipSharedMemory": {
           "description": "Skips shared memory enabled classes",
           "type": "boolean"
+        },
+        "skipTestclasses": {
+          "description": "Skip testclass inclues",
+          "type": "boolean"
         }
       },
       "required": [
         "skip",
-        "skipSharedMemory"
+        "skipSharedMemory",
+        "skipTestclasses"
       ],
       "type": "object"
     },
