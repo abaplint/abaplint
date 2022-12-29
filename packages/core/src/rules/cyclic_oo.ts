@@ -15,8 +15,10 @@ export class CyclicOOConf extends BasicRuleConfig {
    * @uniqueItems true
   */
   public skip: string[] = [];
-  /** Skips shared memory enabled classes*/
+  /** Skips shared memory enabled classes */
   public skipSharedMemory: boolean = true;
+  /** Skip testclass inclues */
+  public skipTestclasses: boolean = true;
 }
 
 export class CyclicOO implements IRule {
@@ -138,6 +140,12 @@ Objects must be without syntax errors for this rule to take effect`,
           || r.resolved.getFilename() === BuiltIn.filename) {
         continue;
       }
+
+      if (this.conf.skipTestclasses === true
+          && r.position.getFilename().includes(".testclasses.abap")) {
+        continue;
+      }
+
       if (r.referenceType === ReferenceType.ObjectOrientedReference
           && r.extra?.ooName) {
         if (this.edges[from] === undefined) {
