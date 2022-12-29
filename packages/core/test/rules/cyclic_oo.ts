@@ -28,7 +28,7 @@ describe("Rule: cyclic oo", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("test 3", async () => {
+  it("test 3, cyclic", async () => {
     const zbar = `
     INTERFACE zbar.
       TYPES type1 TYPE i.
@@ -44,6 +44,22 @@ describe("Rule: cyclic oo", () => {
       new MemoryFile("zfoo.intf.abap", zfoo),
     ]);
     expect(issues.length).to.equal(1);
+  });
+
+  it("two separate", async () => {
+    const zbar = `
+    INTERFACE zbar.
+      TYPES type1 TYPE i.
+    ENDINTERFACE.`;
+    const zfoo = `
+    INTERFACE zfoo.
+      TYPES type2 TYPE i.
+    ENDINTERFACE.`;
+    const issues = await runSingle([
+      new MemoryFile("zbar.intf.abap", zbar),
+      new MemoryFile("zfoo.intf.abap", zfoo),
+    ]);
+    expect(issues.length).to.equal(0);
   });
 
 });

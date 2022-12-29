@@ -142,7 +142,8 @@ Objects must be without syntax errors for this rule to take effect`,
       }
 
       if (this.conf.skipTestclasses === true
-          && r.position.getFilename().includes(".testclasses.abap")) {
+          && ( r.position.getFilename().includes(".testclasses.")
+          || r.resolved.getFilename().includes(".testclasses.") ) ) {
         continue;
       }
 
