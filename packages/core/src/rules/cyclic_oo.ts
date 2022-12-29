@@ -67,6 +67,7 @@ Objects must be without syntax errors for this rule to take effect`,
       }
       this.buildEdges(name, run.spaghetti.getTop());
     }
+
     for (const obj of this.reg.getObjectsByType("INTF")) {
       if (this.reg.isDependency(obj)) {
         continue;
@@ -144,6 +145,12 @@ Objects must be without syntax errors for this rule to take effect`,
         }
         const name = r.extra.ooName.toUpperCase();
         if (name !== from && this.edges[from].indexOf(name) < 0) {
+
+          const obj = this.reg.getObject("INTF", name) || this.reg.getObject("CLAS", name);
+          if (obj && this.reg.isDependency(obj)) {
+            continue;
+          }
+
           this.edges[from].push(name);
         }
       }
