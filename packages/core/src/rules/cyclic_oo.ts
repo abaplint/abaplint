@@ -105,7 +105,7 @@ References in testclass includes are ignored`,
     previous[obj.getName()] = true;
     const path = this.findCycle(obj.getName(), obj.getName(), previous);
     if (path) {
-      const message = "Cyclic definition/usage: " + path;
+      const message = "Cyclic definition/usage: " + obj.getName() + " -> " + path;
       return [Issue.atIdentifier(id, message, this.getMetadata().key, this.conf.severity)];
     }
 
