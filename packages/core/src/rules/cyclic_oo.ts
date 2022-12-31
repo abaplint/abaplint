@@ -33,7 +33,9 @@ export class CyclicOO implements IRule {
       shortDescription: `Finds cyclic OO references`,
       extendedInformation: `Runs for global INTF + CLAS objects
 
-Objects must be without syntax errors for this rule to take effect`,
+Objects must be without syntax errors for this rule to take effect
+
+References in testclass includes are ignored`,
     };
   }
 
@@ -103,7 +105,7 @@ Objects must be without syntax errors for this rule to take effect`,
     previous[obj.getName()] = true;
     const path = this.findCycle(obj.getName(), obj.getName(), previous);
     if (path) {
-      const message = "Cyclic definition/usage: " + path;
+      const message = "Cyclic definition/usage: " + obj.getName() + " -> " + path;
       return [Issue.atIdentifier(id, message, this.getMetadata().key, this.conf.severity)];
     }
 
@@ -119,13 +121,13 @@ Objects must be without syntax errors for this rule to take effect`,
 
     for (const e of this.edges[current]) {
       if (e === source) {
-        return Object.keys(previous).join(" -> ") + " -> " + source;
+        return e;
       }
       if (previous[e] === undefined) { // dont revisit vertices
         previous[e] = true;
         const found = this.findCycle(source, e, previous);
         if (found) {
-          return found;
+          return e + " -> " + found;
         }
       }
     }
@@ -142,7 +144,8 @@ Objects must be without syntax errors for this rule to take effect`,
       }
 
       if (this.conf.skipTestclasses === true
-          && r.position.getFilename().includes(".testclasses.abap")) {
+          && ( r.position.getFilename().includes(".testclasses.")
+          || r.resolved.getFilename().includes(".testclasses.") ) ) {
         continue;
       }
 
