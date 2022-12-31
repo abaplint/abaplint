@@ -33,7 +33,9 @@ export class CyclicOO implements IRule {
       shortDescription: `Finds cyclic OO references`,
       extendedInformation: `Runs for global INTF + CLAS objects
 
-Objects must be without syntax errors for this rule to take effect`,
+Objects must be without syntax errors for this rule to take effect
+
+References in testclass includes are ignored`,
     };
   }
 
@@ -119,13 +121,13 @@ Objects must be without syntax errors for this rule to take effect`,
 
     for (const e of this.edges[current]) {
       if (e === source) {
-        return Object.keys(previous).join(" -> ") + " -> " + source;
+        return e;
       }
       if (previous[e] === undefined) { // dont revisit vertices
         previous[e] = true;
         const found = this.findCycle(source, e, previous);
         if (found) {
-          return found;
+          return e + " -> " + found;
         }
       }
     }
