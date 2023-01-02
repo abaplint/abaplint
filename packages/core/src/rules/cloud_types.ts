@@ -43,11 +43,16 @@ export class CloudTypes implements IRule {
   public run(obj: IObject): Issue[] {
     if (this.reg.getConfig().getVersion() !== Version.Cloud
         || obj instanceof Objects.AssignmentServiceToAuthorizationGroup
+        || obj instanceof Objects.AuthorizationCheckField
+        || obj instanceof Objects.AuthorizationObject
+        || obj instanceof Objects.AuthorizationObjectExtension
         || obj instanceof Objects.BehaviorDefinition
         || obj instanceof Objects.BusinessCatalog
         || obj instanceof Objects.BusinessCatalogAppAssignment
         || obj instanceof Objects.CDSMetadataExtension
+        || obj instanceof Objects.RestrictionField
         || obj instanceof Objects.Class
+        || obj instanceof Objects.CommunicationScenario
         || obj instanceof Objects.DataControl
         || obj instanceof Objects.DataDefinition
         || obj instanceof Objects.DataElement
@@ -55,12 +60,12 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.FunctionGroup
         || obj instanceof Objects.HttpService
         || obj instanceof Objects.IAMApp
-        || obj instanceof Objects.CommunicationScenario
         || obj instanceof Objects.InboundService
         || obj instanceof Objects.Interface
         || obj instanceof Objects.LockObject
         || obj instanceof Objects.MessageClass
         || obj instanceof Objects.Package
+        || obj instanceof Objects.RestrictionType
         || obj instanceof Objects.ServiceBinding
         || obj instanceof Objects.ServiceDefinition
         || obj instanceof Objects.Table
