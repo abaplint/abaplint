@@ -1251,4 +1251,12 @@ CLEAR g_tabmain.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("READ TEXTPOOL into", async () => {
+    const abap = `
+DATA textpool TYPE table_of_textpool.
+READ TEXTPOOL 'sdf' INTO textpool LANGUAGE sy-langu.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

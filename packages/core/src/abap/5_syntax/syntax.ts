@@ -48,6 +48,7 @@ import {Split} from "./statements/split";
 import {Assign} from "./statements/assign";
 import {Convert} from "./statements/convert";
 import {Describe} from "./statements/describe";
+import {ReadTextpool} from "./statements/read_textpool";
 import {Find} from "./statements/find";
 import {Message} from "./statements/message";
 import {GetTime} from "./statements/get_time";
@@ -270,6 +271,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Search());
   addToMap(new Translate());
   addToMap(new ModifyInternal());
+  addToMap(new ReadTextpool());
 }
 
 // -----------------------------------
