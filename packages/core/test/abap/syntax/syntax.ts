@@ -7017,7 +7017,7 @@ CLEAR foo-lowzz.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("offset with class constant", () => {
+  it("offset with class constant", () => {
     const abap = `
 CLASS lcl_constant DEFINITION.
   PUBLIC SECTION.
