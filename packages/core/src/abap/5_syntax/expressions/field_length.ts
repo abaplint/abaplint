@@ -1,25 +1,14 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {ReferenceType} from "../_reference";
-import {SourceFieldSymbol} from "./source_field_symbol";
+import {FieldChain} from "./field_chain";
 
 export class FieldLength {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
 
-    const field = node.findDirectExpression(Expressions.SourceField);
+    const field = node.findDirectExpression(Expressions.SimpleFieldChain2);
     if (field) {
-      const token = field.getFirstToken();
-      const found = scope.findVariable(token.getStr());
-      if (found === undefined) {
-        throw new Error("\"" + field.getFirstToken().getStr() + "\" not found, FieldLength");
-      }
-      scope.addReference(token, found, ReferenceType.DataReadReference, filename);
-    }
-
-    const symbol = node.findDirectExpression(Expressions.SourceFieldSymbol);
-    if (symbol) {
-      new SourceFieldSymbol().runSyntax(symbol, scope, filename);
+      new FieldChain().runSyntax(field, scope, filename);
     }
 
   }
