@@ -7033,6 +7033,20 @@ MOVE lv_telegram+0(lcl_constant=>c_header_length) TO lv_telegram2.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LOOP into data reference into", () => {
+    const abap = `
+TYPES: BEGIN OF ty_pil,
+         pid TYPE i,
+         lbay TYPE i,
+       END OF ty_pil.
+DATA lt_pil TYPE TABLE OF ty_pil.
+LOOP AT lt_pil INTO DATA(ls_pil) GROUP BY ( pid = ls_pil-pid ) ASCENDING REFERENCE INTO DATA(ls_pil2_ref).
+  WRITE 'Hello World'.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

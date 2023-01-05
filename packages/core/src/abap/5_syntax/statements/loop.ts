@@ -48,8 +48,9 @@ export class Loop implements StatementSyntax {
     }
 
     if (sourceType instanceof TableType) {
+      const targetConcat = node.findDirectExpression(Expressions.LoopTarget)?.concatTokens().toUpperCase();
       sourceType = sourceType.getRowType();
-      if (concat.includes(" REFERENCE INTO ")) {
+      if (targetConcat?.startsWith("REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
       }
     }
