@@ -1251,4 +1251,21 @@ CLEAR g_tabmain.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("READ TEXTPOOL into", async () => {
+    const abap = `
+DATA textpool TYPE table_of_textpool.
+READ TEXTPOOL 'sdf' INTO textpool LANGUAGE sy-langu.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("offset", async () => {
+    const abap = `
+DATA lv_msg_var TYPE c LENGTH 20.
+CONSTANTS lc_offset_of_last_character TYPE i VALUE 10.
+CLEAR lv_msg_var+lc_offset_of_last_character(1).`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

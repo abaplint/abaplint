@@ -139,6 +139,7 @@ export * from "./report_name";
 export * from "./select_loop";
 export * from "./select";
 export * from "./simple_field_chain";
+export * from "./simple_field_chain2";
 export * from "./simple_name";
 export * from "./simple_source1";
 export * from "./simple_source2";

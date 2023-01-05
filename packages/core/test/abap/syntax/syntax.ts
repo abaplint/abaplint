@@ -7017,6 +7017,22 @@ CLEAR foo-lowzz.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("offset with class constant", () => {
+    const abap = `
+CLASS lcl_constant DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS c_header_length TYPE i VALUE 28.
+ENDCLASS.
+
+DATA:
+  lv_telegram TYPE string VALUE 'ABCDEFGHIJ',
+  lv_telegram2 TYPE string.
+
+MOVE lv_telegram+0(lcl_constant=>c_header_length) TO lv_telegram2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
