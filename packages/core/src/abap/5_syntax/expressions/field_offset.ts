@@ -1,6 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
+import {ReferenceType} from "../_reference";
 import {FieldChain} from "./field_chain";
 
 export class FieldOffset {
@@ -8,7 +9,7 @@ export class FieldOffset {
 
     const field = node.findDirectExpression(Expressions.SimpleFieldChain2);
     if (field) {
-      new FieldChain().runSyntax(field, scope, filename);
+      new FieldChain().runSyntax(field, scope, filename, ReferenceType.DataReadReference);
     }
 
   }
