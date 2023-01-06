@@ -1816,7 +1816,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that definitions are placed at the beginning of METHODs and FORMs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
+              "description": "Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
             },
             "description_empty": {
               "anyOf": [

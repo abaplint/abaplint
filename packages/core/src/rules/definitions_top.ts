@@ -33,7 +33,7 @@ export class DefinitionsTop extends ABAPRule {
     return {
       key: "definitions_top",
       title: "Place definitions in top of routine",
-      shortDescription: `Checks that definitions are placed at the beginning of METHODs and FORMs.`,
+      shortDescription: `Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.`,
       extendedInformation: `If the routine has inline definitions then no issues are reported
 
 https://docs.abapopenchecks.org/checks/17/`,
@@ -66,7 +66,7 @@ https://docs.abapopenchecks.org/checks/17/`,
       return [];
     }
 
-    const routines = structure.findAllStructuresMulti([Structures.Form, Structures.Method]);
+    const routines = structure.findAllStructuresMulti([Structures.Form, Structures.Method, Structures.FunctionModule]);
     for (const r of routines) {
       // one fix per routine
       this.fixed = false;
@@ -98,6 +98,8 @@ https://docs.abapopenchecks.org/checks/17/`,
 
       if (c instanceof StatementNode) {
         if (get instanceof Comment) {
+          continue;
+        } else if (get instanceof Statements.FunctionModule) {
           continue;
         } else if (get instanceof Statements.Form) {
           continue;
