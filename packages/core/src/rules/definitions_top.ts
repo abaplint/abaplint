@@ -99,6 +99,8 @@ https://docs.abapopenchecks.org/checks/17/`,
       if (c instanceof StatementNode) {
         if (get instanceof Comment) {
           continue;
+        } else if (get instanceof Statements.FunctionModule) {
+          continue;
         } else if (get instanceof Statements.Form) {
           continue;
         } else if (get instanceof Statements.MethodImplementation) {
