@@ -38,7 +38,7 @@ export class PreferCorresponding extends ABAPRule {
       return issues;
     }
 
-    const message = "Use CORRESPONDING type( ... ) instead";
+    const message = "Use CORRESPONDING type( ... ) instead of MOVE-CORRESPONDING";
     for (const stat of file.getStatements()) {
       if (stat.get() instanceof Statements.MoveCorresponding
           && stat.getChildren().length === 7) {
