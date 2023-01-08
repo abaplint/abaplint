@@ -1,13 +1,12 @@
 import {IStatement} from "./_statement";
 import {seq, opt, alt, star} from "../combi";
-import {SQLSource, DatabaseTable, Dynamic, SQLFieldName, SQLCond, DatabaseConnection, SQLClient} from "../expressions";
+import {SQLSource, DatabaseTable, Dynamic, SQLFieldAndValue, SQLCond, DatabaseConnection, SQLClient} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class UpdateDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const param = seq(SQLFieldName, "=", SQLSource);
-    const parameters = seq(param, star(seq(opt(","), param)));
+    const parameters = seq(SQLFieldAndValue, star(seq(opt(","), SQLFieldAndValue)));
 
     const set = seq("SET",
                     alt(parameters, Dynamic),
