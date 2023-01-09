@@ -1,3 +1,5 @@
+import {UnknownType, VoidType} from "../abap/types/basic";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {DDIC} from "../ddic";
 import {IObjectAndToken} from "../_iddic_references";
 import {IRegistry} from "../_iregistry";
@@ -29,19 +31,26 @@ export class AuthorizationCheckField extends AbstractObject {
     return this.parsedXML?.rollname;
   }
 
-  public parseType(reg: IRegistry): void {
+  public parseType(reg: IRegistry): AbstractType {
     this.parse();
 
     const references: IObjectAndToken[] = [];
     const ddic = new DDIC(reg);
 
     if (this.parsedXML?.rollname) {
-      const found = ddic.lookupDataElement(this.parsedXML?.rollname);
+      const found = ddic.lookupDataElement(this.parsedXML.rollname);
       if (found.object) {
         references.push({object: found.object});
+        reg.getDDICReferences().setUsing(this, references);
+        return found.type;
+      } else if (ddic.inErrorNamespace(this.parsedXML.rollname)) {
+        return new UnknownType(this.parsedXML.rollname + " not found");
+      } else {
+        return new VoidType(this.parsedXML.rollname);
       }
+    } else {
+      return new UnknownType("Parsing error");
     }
-    reg.getDDICReferences().setUsing(this, references);
   }
 
   public parse() {
