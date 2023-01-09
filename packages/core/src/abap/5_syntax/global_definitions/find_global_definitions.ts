@@ -9,7 +9,7 @@ import * as BasicTypes from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {IProgress} from "../../../progress";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {DataElement, LockObject, Table, TableType, View} from "../../../objects";
+import {AuthorizationCheckField, DataElement, LockObject, Table, TableType, View} from "../../../objects";
 
 // todo: rewrite all of this to use a graph based deterministic approach instead
 
@@ -34,6 +34,7 @@ export class FindGlobalDefinitions {
           || o instanceof View
           || o instanceof TableType
           || o instanceof LockObject
+          || o instanceof AuthorizationCheckField
           || o instanceof Table) {
         o.parseType(this.reg); // make sure the references are set after parsing finishes
       }

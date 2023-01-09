@@ -1,3 +1,5 @@
+import {UnknownType, VoidType} from "../abap/types/basic";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {DDIC} from "../ddic";
 import {IObjectAndToken} from "../_iddic_references";
 import {IRegistry} from "../_iregistry";
@@ -25,19 +27,26 @@ export class LockObject extends AbstractObject {
     return this.parsedXML?.primaryTable;
   }
 
-  public parseType(reg: IRegistry): void {
+  public parseType(reg: IRegistry): AbstractType {
     this.parse();
 
     const references: IObjectAndToken[] = [];
     const ddic = new DDIC(reg);
 
     if (this.parsedXML?.primaryTable) {
-      const found = ddic.lookupTableOrView2(this.parsedXML?.primaryTable);
+      const found = ddic.lookupTableOrView2(this.parsedXML.primaryTable);
       if (found) {
         references.push({object: found});
+        reg.getDDICReferences().setUsing(this, references);
+        return found.parseType(reg);
+      } else if (ddic.inErrorNamespace(this.parsedXML.primaryTable)) {
+        return new UnknownType(this.parsedXML.primaryTable + " not found");
+      } else {
+        return new VoidType(this.parsedXML.primaryTable);
       }
+    } else {
+      return new UnknownType("Parsing error");
     }
-    reg.getDDICReferences().setUsing(this, references);
   }
 
   public parse() {
