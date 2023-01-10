@@ -20,7 +20,9 @@ export class SQLFunction extends Expression {
     const castTypes = altPrio(
       seq("CHAR", tok(ParenLeftW), Integer, tok(WParenRightW)),
       seq("DEC", tok(ParenLeftW), Integer, ",", Integer, tok(WParenRightW)),
-      "FLTP");
+      "FLTP",
+      "NUMC",
+      "INT8");
 
     const abs = ver(Version.v740sp05, seq("abs", tok(ParenLeftW), param, tok(WParenRightW)));
     const cast = ver(Version.v750, seq("cast", tok(ParenLeftW), param, "AS", castTypes, tok(WParenRightW)));
