@@ -22,6 +22,11 @@ export class LockObject extends AbstractObject {
     };
   }
 
+  public setDirty(): void {
+    this.parsedXML = undefined;
+    super.setDirty();
+  }
+
   public getPrimaryTable(): string | undefined {
     this.parse();
     return this.parsedXML?.primaryTable;

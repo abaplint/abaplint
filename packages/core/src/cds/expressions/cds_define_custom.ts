@@ -8,7 +8,7 @@ export class CDSDefineCustom extends Expression {
   public getRunnable(): IStatementRunnable {
     const field = seq(star(CDSAnnotation), opt(str("KEY")), CDSName, ":", CDSType, ";");
 
-    return seq(star(CDSAnnotation), str("DEFINE ROOT CUSTOM ENTITY"), CDSName, str("{"),
+    return seq(star(CDSAnnotation), str("DEFINE"), opt(str("ROOT")), str("CUSTOM ENTITY"), CDSName, str("{"),
                plus(field),
                str("}"), opt(";"));
   }

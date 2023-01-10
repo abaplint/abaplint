@@ -21,6 +21,11 @@ export class AuthorizationCheckField extends AbstractObject {
     };
   }
 
+  public setDirty(): void {
+    this.parsedXML = undefined;
+    super.setDirty();
+  }
+
   public getDescription(): string | undefined {
     // todo
     return undefined;

@@ -599,4 +599,16 @@ where TSTMP_SECONDS_BETWEEN( foo, TSTMP_CURRENT_UTCTIMESTAMP(), 'FAIL' ) <= 3162
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("define custom entity", () => {
+    const cds = `
+define custom entity /foo/sdf
+{
+  key statu : /foo/sdfff;
+      txt   : char40;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
