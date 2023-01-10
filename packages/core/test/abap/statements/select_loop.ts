@@ -84,6 +84,25 @@ const tests = [
     WHERE compdate < del_date
     AND   status BETWEEN 200 AND 300
     AND   id IN lr.`,
+
+  `SELECT a~lgnum            AS lgnum,
+    a~lgtyp            AS lgtyp,
+    a~access_group     AS aisle,
+    SUM( CAST( CAST( a~par_value AS NUMC ) AS INT8 ) ) AS loc_cnt_empty_total
+    FROM /mycomp/stmval AS a
+    WHERE a~lgnum = 'DE01'
+    AND a~lgtyp = 'LG01'
+    AND a~par_name = 'TEST'
+    GROUP BY a~lgnum, a~lgtyp, a~access_group
+    INTO CORRESPONDING FIELDS OF @ls_aisle_ptwy_index.`,
+
+  `SELECT 'X'
+  FROM /mycomp/wplog
+ WHERE lgnum      = @ms_wplace-lgnum
+   AND wp_id      = @ms_wplace-wp_id
+   AND uname      = @iv_uname
+   AND logout_ts  = @space
+  INTO @DATA(lv_exists).`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

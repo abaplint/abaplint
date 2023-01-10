@@ -1,5 +1,5 @@
 import {seq, ver, Expression, optPrio, opt, alt, star} from "../combi";
-import {SQLFieldName, Dynamic, SQLField, SQLAsName} from ".";
+import {SQLFieldName, Dynamic, SQLField, SQLAsName, Constant} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLPath} from "./sql_path";
@@ -10,7 +10,7 @@ export class SQLFieldListLoop extends Expression {
     const comma = opt(ver(Version.v740sp05, ","));
     const as = seq("AS", SQLAsName);
     const someField = seq(SQLField, comma);
-    const fieldList = seq(star(someField), alt(SQLFieldName, SQLPath), optPrio(as), comma, star(someField));
+    const fieldList = seq(star(someField), alt(SQLFieldName, SQLPath, Constant), optPrio(as), comma, star(someField));
 
     const fields = alt("*", Dynamic, fieldList);
     return fields;
