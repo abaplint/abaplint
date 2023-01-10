@@ -95,6 +95,14 @@ const tests = [
     AND a~par_name = 'TEST'
     GROUP BY a~lgnum, a~lgtyp, a~access_group
     INTO CORRESPONDING FIELDS OF @ls_aisle_ptwy_index.`,
+
+  `SELECT 'X'
+  FROM /mycomp/wplog
+ WHERE lgnum      = @ms_wplace-lgnum
+   AND wp_id      = @ms_wplace-wp_id
+   AND uname      = @iv_uname
+   AND logout_ts  = @space
+  INTO @DATA(lv_exists).`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
