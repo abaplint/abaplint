@@ -1,3 +1,8 @@
+import {UnknownType, VoidType} from "../abap/types/basic";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
+import {DDIC} from "../ddic";
+import {IObjectAndToken} from "../_iddic_references";
+import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 
 export class MaintenanceAndTransportObject extends AbstractObject {
@@ -41,6 +46,30 @@ export class MaintenanceAndTransportObject extends AbstractObject {
   public getObjectType(): string | undefined {
     this.parse();
     return this.parsedXML?.objectType;
+  }
+
+  public parseType(reg: IRegistry): AbstractType {
+    this.parse();
+
+    const references: IObjectAndToken[] = [];
+    const ddic = new DDIC(reg);
+
+    if (this.parsedXML?.objectName && this.parsedXML.objectType === "S") {
+      const found = ddic.lookupTableOrView2(this.parsedXML.objectName);
+      if (found) {
+        references.push({object: found});
+        reg.getDDICReferences().setUsing(this, references);
+        return found.parseType(reg);
+      } else if (ddic.inErrorNamespace(this.parsedXML.objectName)) {
+        return new UnknownType(this.parsedXML.objectName + " not found");
+      } else {
+        return new VoidType(this.parsedXML.objectName);
+      }
+    } else if (this.parsedXML?.objectType !== "S" && this.parsedXML?.objectName){
+      return new VoidType(this.parsedXML.objectName);
+    } else {
+      return new UnknownType("Parsing error");
+    }
   }
 
   public parse() {

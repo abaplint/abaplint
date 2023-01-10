@@ -48,6 +48,7 @@ export class CheckDDIC implements IRule {
         || obj instanceof Objects.View
         || obj instanceof Objects.AuthorizationCheckField
         || obj instanceof Objects.LockObject
+        || obj instanceof Objects.MaintenanceAndTransportObject
         || obj instanceof Objects.TableType) {
       found = obj.parseType(this.reg);
     } else {
