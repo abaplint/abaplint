@@ -93,6 +93,8 @@ export class MethodParameters implements IMethodParameters {
     for (const i of this.getImporting()) {
       if (this.getOptional().some(o => o.toUpperCase() === i.getName().toUpperCase()) === true) {
         continue;
+      } else if (this.preferred?.toUpperCase() === i.getName().toUpperCase()) {
+        continue;
       }
       ret.push(i);
     }

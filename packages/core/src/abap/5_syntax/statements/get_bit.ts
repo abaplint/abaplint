@@ -4,6 +4,8 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {IntegerType} from "../../types/basic";
+import {InlineData} from "../expressions/inline_data";
 
 export class GetBit implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -13,7 +15,12 @@ export class GetBit implements StatementSyntax {
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, scope, filename);
+      const inline = t?.findDirectExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(t, scope, filename, new IntegerType());
+      } else {
+        new Target().runSyntax(t, scope, filename);
+      }
     }
 
   }

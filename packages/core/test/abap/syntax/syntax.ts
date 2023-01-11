@@ -7047,6 +7047,39 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET bit inline", () => {
+    const abap = `
+DATA lv_source_hex TYPE xstring.
+DATA lv_source TYPE char16.
+GET BIT sy-index OF lv_source_hex INTO DATA(lv_res).
+lv_source = lv_source && lv_res.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("PREFERRED PARAMETER is optional", () => {
+    const abap = `
+CLASS lcl_tele_mapping DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS replaceit
+      IMPORTING
+        iv_new    TYPE i OPTIONAL
+        iv_string TYPE string
+          PREFERRED PARAMETER iv_string.
+ENDCLASS.
+
+CLASS lcl_tele_mapping IMPLEMENTATION.
+  METHOD replaceit.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_tele_mapping=>replaceit( iv_new = 2 ).
+  lcl_tele_mapping=>replaceit( 'A' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
