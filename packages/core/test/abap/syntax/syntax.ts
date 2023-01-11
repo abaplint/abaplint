@@ -7047,6 +7047,16 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET bit inline", () => {
+    const abap = `
+DATA lv_source_hex TYPE xstring.
+DATA lv_source TYPE char16.
+GET BIT sy-index OF lv_source_hex INTO DATA(lv_res).
+lv_source = lv_source && lv_res.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
