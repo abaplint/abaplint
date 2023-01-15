@@ -46,4 +46,17 @@ ENDCLASS.`;
     expect(def[0].range.start.line).to.equal(5);
   });
 
+  it("PROG, goto FORM from PERFORM", () => {
+    const prog1 = new MemoryFile("zprog1.prog.abap", `
+      FORM foo.
+      ENDFORM.
+      START-OF-SELECTION.
+        PERFORM foo.`);
+
+    const reg = new Registry().addFile(prog1).parse();
+    const impl = new Implementation(reg).find({uri: prog1.getFilename()}, LServer.Position.create(4, 18));
+
+    expect(impl.length).to.equal(1);
+  });
+
 });
