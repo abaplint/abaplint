@@ -7080,6 +7080,37 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("CALL METHOD, foobar voided, ok", () => {
+    const abap = `
+INTERFACE if_srv.
+  METHODS update_batch.
+  METHODS update_line.
+ENDINTERFACE.
+
+CLASS cl_srv_batch DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_srv.
+    ALIASES update_batch FOR if_srv~update_batch.
+    ALIASES update_line FOR if_srv~update_line.
+
+  PROTECTED SECTION.
+    DATA foobar TYPE REF TO voided.
+ENDCLASS.
+
+CLASS cl_srv_batch IMPLEMENTATION.
+  METHOD update_batch.
+  ENDMETHOD.
+
+  METHOD update_line.
+    CALL METHOD me->foobar->update_batch
+      EXPORTING
+        iv_docid = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
