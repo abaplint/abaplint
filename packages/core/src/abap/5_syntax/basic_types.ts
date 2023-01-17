@@ -439,6 +439,11 @@ export class BasicTypes {
     if (text === undefined) {
       text = node.findFirstExpression(Expressions.FormParamType)?.concatTokens().toUpperCase();
     }
+    if (text === undefined
+        && node.get() instanceof Statements.Parameter
+        && node.findDirectTokenByText("LIKE")) {
+      text = "LIKE " + typeName?.concatTokens();
+    }
     if (text === undefined) {
       text = "TYPE";
     }
@@ -489,6 +494,9 @@ export class BasicTypes {
       }
       if (sub === undefined) {
         sub = node.findFirstExpression(Expressions.FieldChain);
+      }
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.TypeName);
       }
       found = this.resolveLikeName(sub);
 

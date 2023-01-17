@@ -2020,4 +2020,15 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("PARAMETERS LIKE variable", () => {
+    const abap = `
+DATA: BEGIN OF zfoo,
+        intf TYPE c LENGTH 30,
+      END OF zfoo.
+PARAMETERS p_intf LIKE zfoo-intf DEFAULT 'ZIF_INTERFACE'.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -17,6 +17,7 @@ import {Class, Interface} from "../objects";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {ABAPFile} from "../abap/abap_file";
 import {IMethodDefinition} from "..";
+import {FormDefinition} from "../abap/types";
 
 export interface LSPLookupResult {
   /** in markdown */
@@ -117,13 +118,25 @@ export class LSPLookup {
       }
 
       let definition: LServer.Location | undefined = undefined;
+      let implementation: LServer.Location | undefined = undefined;
+
       if (refs[0].resolved) {
         definition = LSPUtils.identiferToLocation(refs[0].resolved);
         if (definition.uri === BuiltIn.filename) {
           definition = undefined;
         }
+        if (refs[0].resolved instanceof FormDefinition) {
+          implementation = definition;
+        }
       }
-      return {hover: hoverValue, definition, definitionId: refs[0].resolved, scope: bottomScope};
+
+      return {
+        hover: hoverValue,
+        definition: definition,
+        implementation: implementation,
+        definitionId: refs[0].resolved,
+        scope: bottomScope,
+      };
     }
 
     if (hoverValue !== "") {

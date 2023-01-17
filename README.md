@@ -1,7 +1,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@abaplint/cli?label=%40abaplint%2Fcli)](https://www.npmjs.com/package/@abaplint/cli)
 [![npm (scoped)](https://img.shields.io/npm/v/@abaplint/core?label=%40abaplint%2Fcore)](https://www.npmjs.com/package/@abaplint/core)
 [![Build Status](https://github.com/abaplint/abaplint/workflows/Main/badge.svg)](https://github.com/abaplint/abaplint/actions)
-[![Slack](https://abapgit-slackinviter.herokuapp.com/badge.svg)](https://abapgit-slackinviter.herokuapp.com/)
+[![Slack](https://img.shields.io/badge/Join-Slack-blue)](https://communityinviter.com/apps/abapgit/abap)
 
 # abaplint
 
