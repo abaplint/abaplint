@@ -42,9 +42,14 @@ Note that macros/DEFINE cannot be used in the ABAP Cloud programming model`,
       const statement = statementNode.get();
       const fix: IEdit | undefined = undefined;
 
+      /*
+      console.dir(statement);
+      console.dir(statementNode.getTokens());
+      */
       if (!(statement instanceof MacroCall)) {
         continue;
       }
+
 
       issues.push(Issue.atStatement(file, statementNode, message, this.getMetadata().key, this.conf.severity, fix));
     }

@@ -32,30 +32,14 @@ const tests = [
 testRule(tests, ExpandMacros);
 
 
-describe.skip("Rule: expand_macros, quick fixes", () => {
+describe("Rule: expand_macros, quick fixes", () => {
 
-  it("quick fix 1", async () => {
-    const abap = `CLASS lcl_bar DEFINITION.
-  PUBLIC SECTION.
-    METHODS bar.
-ENDCLASS.
-CLASS lcl_bar IMPLEMENTATION.
-  METHOD bar.
-    WRITE 2.
-    DATA foo TYPE c.
-  ENDMETHOD.
-ENDCLASS.`;
-    const expected = `CLASS lcl_bar DEFINITION.
-  PUBLIC SECTION.
-    METHODS bar.
-ENDCLASS.
-CLASS lcl_bar IMPLEMENTATION.
-  METHOD bar.
-    DATA foo TYPE c.
-    WRITE 2.
-` + "    " + `
-  ENDMETHOD.
-ENDCLASS.`;
+  it.skip("quick fix 1", async () => {
+    const abap = `DEFINE _hello.
+  WRITE 'hello'.
+end-of-definition.
+_hello.`;
+    const expected = `sdf`;
     testFix(abap, expected);
   });
 
