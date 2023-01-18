@@ -1,4 +1,4 @@
-import {seq, alt, tok, Expression, altPrio, star} from "../combi";
+import {seq, altPrio, tok, alt, Expression, star} from "../combi";
 import {Dash, InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {ClassName, Dynamic, AttributeName, SourceField, SourceFieldSymbol, ComponentName, MethodCall} from ".";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,10 +10,10 @@ export class MethodSource extends Expression {
 // note: its allowed to end with MethodCall, however if this is done it will give a syntax error via syntax check
 
     const afterArrow = alt(AttributeName, MethodCall, Dynamic);
-    const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
+    const arrow = altPrio(tok(InstanceArrow), tok(StaticArrow));
     const attr = seq(arrow, afterArrow);
     const comp = seq(tok(Dash), ComponentName);
-    const attrOrComp = alt(attr, comp);
+    const attrOrComp = altPrio(attr, comp);
     const staticClass = seq(ClassName, tok(StaticArrow));
     const clas = seq(staticClass, afterArrow);
 
