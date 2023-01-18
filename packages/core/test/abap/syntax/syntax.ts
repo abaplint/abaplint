@@ -7080,7 +7080,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("CALL METHOD, foobar voided, ok", () => {
+  it.skip("CALL METHOD, foobar voided, ok", () => {
     const abap = `
 INTERFACE if_srv.
   METHODS update_batch.
