@@ -122,24 +122,6 @@ export class FieldChain {
     } else if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceField) {
       return new SourceField().runSyntax(node, scope, filename, type);
-      /*
-      const token = node.getFirstToken();
-      const name = token.getStr();
-      const found = scope.findVariable(name);
-      if (found === undefined) {
-        throw new Error("\"" + name + "\" not found, findTop");
-      }
-      if (type) {
-        scope.addReference(token, found, type, filename);
-      }
-      if (name.includes("~")) {
-        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
-        if (idef) {
-          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, filename);
-        }
-      }
-      return found.getType();
-      */
     } else if (node.get() instanceof Expressions.ClassName) {
       const classTok = node.getFirstToken();
       const classNam = classTok.getStr();
