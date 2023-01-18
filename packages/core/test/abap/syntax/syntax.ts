@@ -7081,7 +7081,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("CALL METHOD, foobar voided, ok", () => {
+  it("CALL METHOD, foobar voided, ok", () => {
     const abap = `
 INTERFACE if_srv.
   METHODS update_batch.
