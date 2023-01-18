@@ -34,12 +34,29 @@ testRule(tests, ExpandMacros);
 
 describe("Rule: expand_macros, quick fixes", () => {
 
-  it.skip("quick fix 1", async () => {
+  it("quick fix 1", async () => {
     const abap = `DEFINE _hello.
   WRITE 'hello'.
 end-of-definition.
 _hello.`;
-    const expected = `sdf`;
+    const expected = `DEFINE _hello.
+  WRITE 'hello'.
+end-of-definition.
+WRITE 'hello' .`;
+    testFix(abap, expected);
+  });
+
+  it("quick fix, something after", async () => {
+    const abap = `DEFINE _hello.
+  WRITE 'hello'.
+end-of-definition.
+_hello.
+DATA foo.`;
+    const expected = `DEFINE _hello.
+  WRITE 'hello'.
+end-of-definition.
+WRITE 'hello' .
+DATA foo.`;
     testFix(abap, expected);
   });
 

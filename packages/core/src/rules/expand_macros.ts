@@ -3,8 +3,9 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {IEdit} from "../edit_helper";
+import {EditHelper} from "../edit_helper";
 import {MacroCall} from "../abap/2_statements/statements/_statement";
+import {VirtualPosition} from "../position";
 
 export class ExpandMacrosConf extends BasicRuleConfig {
 
@@ -38,19 +39,26 @@ Note that macros/DEFINE cannot be used in the ABAP Cloud programming model`,
     const issues: Issue[] = [];
     const message = "Expand macro call";
 
-    for (const statementNode of file.getStatements()) {
+    const statements = file.getStatements();
+    for (let i = 0; i < statements.length; i++) {
+      const statementNode = statements[i];
       const statement = statementNode.get();
-      const fix: IEdit | undefined = undefined;
 
-      /*
-      console.dir(statement);
-      console.dir(statementNode.getTokens());
-      */
       if (!(statement instanceof MacroCall)) {
         continue;
       }
 
+      let replace = "";
+      for (let j = i + 1; j < statements.length; j++) {
+        const sub = statements[j];
+        if (sub.getFirstToken().getStart() instanceof VirtualPosition) {
+          replace += sub.concatTokens();
+        } else {
+          break;
+        }
+      }
 
+      const fix = EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replace);
       issues.push(Issue.atStatement(file, statementNode, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
