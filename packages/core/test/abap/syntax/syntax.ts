@@ -5262,7 +5262,7 @@ ENDCLASS.`;
   CALL METHOD out->something( ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
-    expect(issues[0]?.getMessage()).to.contain("SOMETHING");
+    expect(issues[0]?.getMessage().toUpperCase()).to.contain("SOMETHING");
   });
 
   it("unassign, field not found", () => {
@@ -6288,7 +6288,8 @@ ENDCLASS.`;
       {filename: "cx_root.clas.abap", contents: root},
     ]);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.include("method not found");
+    expect(issues[0].getMessage()).to.include("not found");
+    expect(issues[0].getMessage()).to.include("sdfsdfsdfs");
   });
 
   it("FOR ALL ENTRIES IN []", () => {
@@ -6760,7 +6761,7 @@ START-OF-SELECTION.
   CALL METHOD lo->not_exists.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.not.equal(undefined);
-    expect(issues[0]?.getMessage()).to.include("NOT_EXISTS");
+    expect(issues[0]?.getMessage().toUpperCase()).to.include("NOT_EXISTS");
   });
 
   it("Short LOOP syntax, no header, issue error", () => {
@@ -7076,6 +7077,52 @@ ENDCLASS.
 START-OF-SELECTION.
   lcl_tele_mapping=>replaceit( iv_new = 2 ).
   lcl_tele_mapping=>replaceit( 'A' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CALL METHOD, foobar voided, ok", () => {
+    const abap = `
+INTERFACE if_srv.
+  METHODS update_batch.
+  METHODS update_line.
+ENDINTERFACE.
+
+CLASS cl_srv_batch DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_srv.
+    ALIASES update_batch FOR if_srv~update_batch.
+    ALIASES update_line FOR if_srv~update_line.
+
+  PROTECTED SECTION.
+    DATA foobar TYPE REF TO voided.
+ENDCLASS.
+
+CLASS cl_srv_batch IMPLEMENTATION.
+  METHOD update_batch.
+  ENDMETHOD.
+
+  METHOD update_line.
+    CALL METHOD me->foobar->update_batch
+      EXPORTING
+        iv_docid = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CALL METHOD, simple, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    CALL METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });

@@ -14,6 +14,7 @@ import {TableExpression} from "./table_expression";
 import {Dereference as DereferenceExpression} from "../../2_statements/expressions";
 import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
+import {SourceField} from "./source_field";
 
 export class FieldChain {
 
@@ -118,23 +119,9 @@ export class FieldChain {
     if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceFieldSymbol) {
       return new SourceFieldSymbol().runSyntax(node, scope, filename);
-    } else if (node.get() instanceof Expressions.SourceField) {
-      const token = node.getFirstToken();
-      const name = token.getStr();
-      const found = scope.findVariable(name);
-      if (found === undefined) {
-        throw new Error("\"" + name + "\" not found, findTop");
-      }
-      if (type) {
-        scope.addReference(token, found, type, filename);
-      }
-      if (name.includes("~")) {
-        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
-        if (idef) {
-          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, filename);
-        }
-      }
-      return found.getType();
+    } else if (node instanceof ExpressionNode
+        && node.get() instanceof Expressions.SourceField) {
+      return new SourceField().runSyntax(node, scope, filename, type);
     } else if (node.get() instanceof Expressions.ClassName) {
       const classTok = node.getFirstToken();
       const classNam = classTok.getStr();
