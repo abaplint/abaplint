@@ -2426,7 +2426,7 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
-  it.only("CALL METHOD something->", () => {
+  it("CALL METHOD something->", () => {
     const abap = `CALL METHOD something->('BLAH').`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
@@ -5262,7 +5262,7 @@ ENDCLASS.`;
   CALL METHOD out->something( ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
-    expect(issues[0]?.getMessage()).to.contain("SOMETHING");
+    expect(issues[0]?.getMessage().toUpperCase()).to.contain("SOMETHING");
   });
 
   it("unassign, field not found", () => {
@@ -6288,7 +6288,8 @@ ENDCLASS.`;
       {filename: "cx_root.clas.abap", contents: root},
     ]);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.include("method not found");
+    expect(issues[0].getMessage()).to.include("not found");
+    expect(issues[0].getMessage()).to.include("sdfsdfsdfs");
   });
 
   it("FOR ALL ENTRIES IN []", () => {
@@ -6760,7 +6761,7 @@ START-OF-SELECTION.
   CALL METHOD lo->not_exists.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.not.equal(undefined);
-    expect(issues[0]?.getMessage()).to.include("NOT_EXISTS");
+    expect(issues[0]?.getMessage().toUpperCase()).to.include("NOT_EXISTS");
   });
 
   it("Short LOOP syntax, no header, issue error", () => {
