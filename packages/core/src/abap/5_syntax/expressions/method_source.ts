@@ -34,7 +34,7 @@ export class MethodSource {
     }
 
     if (context instanceof VoidType) {
-      // todo, if there are more dynamic with variables, they will get unreferenced
+      // todo, if there are more dynamic with variables, the references for the variables are not added?
       return context;
     }
 
