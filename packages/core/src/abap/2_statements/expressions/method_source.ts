@@ -1,45 +1,24 @@
-import {seq, alt, tok, Expression, optPrio, altPrio, star} from "../combi";
+import {seq, alt, tok, Expression, altPrio, star} from "../combi";
 import {Dash, InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
-import {ClassName, MethodName, Dynamic, AttributeName, SourceField, SourceFieldSymbol, ComponentName, MethodCall} from ".";
+import {ClassName, Dynamic, AttributeName, SourceField, SourceFieldSymbol, ComponentName, MethodCall} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodSource extends Expression {
   public getRunnable(): IStatementRunnable {
-    /*
-    const mname = alt(MethodName, Dynamic);
-    const cname = alt(FieldChain, MethodCallChain, Dynamic);
 
-    // this is a bit tricky, this part is required as FieldChain takes a AttributeName
-    const stati = seq(ClassName, tok(StaticArrow), mname);
+// note: AttributeName can be both an attribute and a method name, the syntax check will tell
+// note: its allowed to end with MethodCall, however if this is done it will give a syntax error via syntax check
 
-    const part1 = seq(cname, alt(tok(InstanceArrow), tok(StaticArrow)));
-
-    return alt(stati, seq(starPrio(part1), mname));
-    */
-
-// ******************
-
-
+    const afterArrow = alt(AttributeName, MethodCall, Dynamic);
     const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
-    const attr = seq(arrow, alt(AttributeName, MethodCall));
+    const attr = seq(arrow, afterArrow);
     const comp = seq(tok(Dash), ComponentName);
     const attrOrComp = alt(attr, comp);
-
-//    const fields = star(altPrio(attr, comp));
-
-//    const after = star(seq(fields, tok(InstanceArrow), alt(MethodName, Dynamic)));
-
-//    const localVariable = seq(FieldChain, tok(InstanceArrow));
     const staticClass = seq(ClassName, tok(StaticArrow));
+    const clas = seq(staticClass, afterArrow);
 
-//    const ret = seq(optPrio(altPrio(localVariable, staticClass)), MethodCall, after);
+    const start = seq(altPrio(clas, SourceField, SourceFieldSymbol, Dynamic), star(attrOrComp));
 
-    const actual = alt(MethodName, Dynamic);
-
-    const clas = seq(staticClass, alt(AttributeName, MethodCall));
-
-    const start = seq(altPrio(clas, SourceField, SourceFieldSymbol, Dynamic), star(attrOrComp), arrow);
-
-    return seq(optPrio(alt(staticClass, start)), actual);
+    return start;
   }
 }

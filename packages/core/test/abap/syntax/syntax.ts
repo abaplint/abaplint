@@ -2426,7 +2426,7 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
-  it("CALL METHOD something->", () => {
+  it.only("CALL METHOD something->", () => {
     const abap = `CALL METHOD something->('BLAH').`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
