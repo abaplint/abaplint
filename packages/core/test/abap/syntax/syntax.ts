@@ -7112,7 +7112,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("CALL METHOD, simple, ok", () => {
+  it("CALL METHOD, simple, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

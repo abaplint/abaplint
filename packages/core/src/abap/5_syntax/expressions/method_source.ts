@@ -28,7 +28,8 @@ export class MethodSource {
     }
 
     let context: AbstractType | IMethodDefinition | undefined = this.findTop(first, scope, filename);
-    if (first.get() instanceof Expressions.MethodCall) {
+    if (context === undefined) {
+      context = scope.findVariable("me")?.getType();
       children.unshift(first);
     }
 
@@ -53,7 +54,8 @@ export class MethodSource {
           || current.get() instanceof StaticArrow) {
 // todo, handling static vs instance
 
-      } else if (current.get() instanceof Expressions.AttributeName) {
+      } else if (current.get() instanceof Expressions.AttributeName
+          || current.get() instanceof Expressions.SourceField) {
         try {
           if (context instanceof AbstractType) {
             const attr = new AttributeName().runSyntax(context, current, scope, filename, ReferenceType.DataReadReference);
@@ -82,7 +84,6 @@ export class MethodSource {
             ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
           scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, extra);
 
-//          const ret = method.getParameters().getReturning()?.getType();
           context = method;
         }
 
@@ -124,15 +125,19 @@ export class MethodSource {
       scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, filename);
       return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceField) {
-      return new SourceField().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
+      try {
+        return new SourceField().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
+      } catch {
+        return undefined;
+      }
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceFieldSymbol) {
       return new SourceFieldSymbol().runSyntax(first, scope, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dynamic) {
       new Dynamic().runSyntax(first, scope, filename);
       return new VoidType("Dynamic");
-    } else {
-      return scope.findVariable("me")?.getType();
     }
+
+    return undefined;
   }
 
 }
