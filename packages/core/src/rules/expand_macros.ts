@@ -65,9 +65,18 @@ _hello.`,
           break;
         }
       }
+      if (statementNode.getColon()) {
+        replace += "\n";
+      }
 
-      const fix = EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replace);
+      const fix1 = EditHelper.deleteStatement(file, statementNode);
+      const fix2 = EditHelper.insertAt(file, statementNode.getStart(), replace);
+      const fix = EditHelper.merge(fix1, fix2);
+
       issues.push(Issue.atStatement(file, statementNode, message, this.getMetadata().key, this.conf.severity, fix));
+
+      // only one fix at a time per file
+      break;
     }
 
     return issues;

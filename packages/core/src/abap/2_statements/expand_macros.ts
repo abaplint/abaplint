@@ -105,7 +105,7 @@ export class ExpandMacros {
       if (type instanceof Unknown || type instanceof MacroCall) {
         const macroName = this.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
-          result.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens())));
+          result.push(new StatementNode(new MacroCall(), statement.getColon()).setChildren(this.tokensToNodes(statement.getTokens())));
 
           const expanded = this.expandContents(macroName, statement);
           const handled = this.handleMacros(expanded);

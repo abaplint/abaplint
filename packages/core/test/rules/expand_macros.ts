@@ -91,4 +91,32 @@ x1 = x1 BIT-AND x2.`;
     testFix(abap, expected);
   });
 
+  it("chained macro call, first step", async () => {
+    const abap = `DEFINE _write.
+  WRITE &1.
+end-of-definition.
+_write: 'hello', 'world'.`;
+    const expected = `DEFINE _write.
+  WRITE &1.
+end-of-definition.
+WRITE 'hello'.
+_write: 'world'.`;
+    testFix(abap, expected, false);
+  });
+
+  it("chained macro call, second step", async () => {
+    const abap = `DEFINE _write.
+  WRITE &1.
+end-of-definition.
+WRITE 'hello'.
+_write: 'world'.`;
+    const expected = `DEFINE _write.
+  WRITE &1.
+end-of-definition.
+WRITE 'hello'.
+WRITE 'world'.
+`;
+    testFix(abap, expected, false);
+  });
+
 });
