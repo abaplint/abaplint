@@ -1161,6 +1161,23 @@
       ],
       "type": "object"
     },
+    "ExpandMacrosConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ExportingConf": {
       "additionalProperties": false,
       "properties": {
@@ -1894,6 +1911,17 @@
                 }
               ],
               "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/exit_or_check"
+            },
+            "expand_macros": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ExpandMacrosConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Allows expanding macro calls with quick fixes\nTags: Styleguide, Quickfix, Upport\nhttps://rules.abaplint.org/expand_macros"
             },
             "exporting": {
               "anyOf": [

@@ -35,13 +35,13 @@ export class Position {
 
 /** used for macro calls */
 export class VirtualPosition extends Position {
-  private readonly virtual: Position;
+//  private readonly virtual: Position;
   public readonly vrow: number;
   public readonly vcol: number;
 
   public constructor(virtual: Position, row: number, col: number) {
     super(virtual.getRow(), virtual.getCol());
-    this.virtual = virtual;
+//    this.virtual = virtual;
     this.vrow = row;
     this.vcol = col;
   }
@@ -50,7 +50,6 @@ export class VirtualPosition extends Position {
     if (!(p instanceof VirtualPosition)) {
       return false;
     }
-    const bar: VirtualPosition = p as VirtualPosition; // widening cast for ABAP translation
-    return super.equals(this.virtual) && this.vrow === bar.vrow && this.vcol === bar.vcol;
+    return super.equals(this) && this.vrow === p.vrow && this.vcol === p.vcol;
   }
 }

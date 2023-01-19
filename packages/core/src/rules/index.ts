@@ -41,6 +41,7 @@ export * from "./empty_line_in_statement";
 export * from "./empty_statement";
 export * from "./empty_structure";
 export * from "./exit_or_check";
+export * from "./expand_macros";
 export * from "./exporting";
 export * from "./forbidden_identifier";
 export * from "./forbidden_pseudo_and_pragma";
