@@ -23,6 +23,11 @@ export class ExpandMacros extends ABAPRule {
       extendedInformation: `Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
 
 Note that macros/DEFINE cannot be used in the ABAP Cloud programming model`,
+      badExample: `DEFINE _hello.
+  WRITE 'hello'.
+END-OF-DEFINITION.
+_hello.`,
+      goodExample: `WRITE 'hello'.`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.Upport],
     };
   }
