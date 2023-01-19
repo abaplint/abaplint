@@ -42,7 +42,7 @@ _hello.`;
     const expected = `DEFINE _hello.
   WRITE 'hello'.
 end-of-definition.
-WRITE 'hello' .`;
+WRITE 'hello'.`;
     testFix(abap, expected);
   });
 
@@ -55,7 +55,7 @@ DATA foo.`;
     const expected = `DEFINE _hello.
   WRITE 'hello'.
 end-of-definition.
-WRITE 'hello' .
+WRITE 'hello'.
 DATA foo.`;
     testFix(abap, expected);
   });
@@ -70,8 +70,24 @@ _hello.`;
   WRITE 'hello'.
   WRITE 'world'.
 end-of-definition.
-WRITE 'hello' .
-WRITE 'world' .`;
+WRITE 'hello'.
+WRITE 'world'.`;
+    testFix(abap, expected);
+  });
+
+  it("BIT-AND", async () => {
+    const abap = `DATA x1 TYPE x LENGTH 1.
+DATA x2 TYPE x LENGTH 1.
+DEFINE _bit.
+  x1 = x1 BIT-AND x2.
+end-of-definition.
+_bit.`;
+    const expected = `DATA x1 TYPE x LENGTH 1.
+DATA x2 TYPE x LENGTH 1.
+DEFINE _bit.
+  x1 = x1 BIT-AND x2.
+end-of-definition.
+x1 = x1 BIT-AND x2.`;
     testFix(abap, expected);
   });
 

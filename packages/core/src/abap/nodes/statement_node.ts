@@ -1,4 +1,4 @@
-import {Position} from "../../position";
+import {Position, VirtualPosition} from "../../position";
 import {AbstractNode} from "./_abstract_node";
 import {INode} from "./_inode";
 import {TokenNode} from "./token_node";
@@ -98,6 +98,29 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
         str = token.getStr();
       } else if (prev && prev.getStr().length + prev.getCol() === token.getCol()
           && prev.getRow() === token.getRow()) {
+        str = str + token.getStr();
+      } else {
+        str = str + " " + token.getStr();
+      }
+      prev = token;
+    }
+    return str;
+  }
+
+  public concatTokensVirtual(): string {
+    let str = "";
+    let prev: Token | undefined;
+    for (const token of this.getTokens()) {
+      if (token instanceof Pragma) {
+        continue;
+      }
+      const vprev = prev?.getStart() as VirtualPosition | undefined;
+      const vtoke = token?.getStart() as VirtualPosition | undefined;
+      if (str === "") {
+        str = token.getStr();
+      } else if (prev && vprev && vtoke
+          && prev.getStr().length + vprev.vcol === vtoke.vcol
+          && vprev.vrow === vtoke.vrow) {
         str = str + token.getStr();
       } else {
         str = str + " " + token.getStr();

@@ -60,7 +60,7 @@ _hello.`,
           if (replace !== "") {
             replace += "\n";
           }
-          replace += sub.concatTokens();
+          replace += sub.concatTokensVirtual();
         } else {
           break;
         }
