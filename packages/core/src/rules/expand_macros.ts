@@ -56,7 +56,9 @@ _hello.`,
       let replace = "";
       for (let j = i + 1; j < statements.length; j++) {
         const sub = statements[j];
-        if (sub.getFirstToken().getStart() instanceof VirtualPosition) {
+        if (sub.get() instanceof MacroCall && sub.getFirstToken().getStart() instanceof VirtualPosition) {
+          continue;
+        } else if (sub.getFirstToken().getStart() instanceof VirtualPosition) {
           if (replace !== "") {
             replace += "\n";
           }
