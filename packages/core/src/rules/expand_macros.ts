@@ -57,6 +57,9 @@ _hello.`,
       for (let j = i + 1; j < statements.length; j++) {
         const sub = statements[j];
         if (sub.getFirstToken().getStart() instanceof VirtualPosition) {
+          if (replace !== "") {
+            replace += "\n";
+          }
           replace += sub.concatTokens();
         } else {
           break;

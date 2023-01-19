@@ -60,4 +60,19 @@ DATA foo.`;
     testFix(abap, expected);
   });
 
+  it("multi line", async () => {
+    const abap = `DEFINE _hello.
+  WRITE 'hello'.
+  WRITE 'world'.
+end-of-definition.
+_hello.`;
+    const expected = `DEFINE _hello.
+  WRITE 'hello'.
+  WRITE 'world'.
+end-of-definition.
+WRITE 'hello' .
+WRITE 'world' .`;
+    testFix(abap, expected);
+  });
+
 });
