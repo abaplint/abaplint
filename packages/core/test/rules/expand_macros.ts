@@ -119,4 +119,25 @@ WRITE 'world'.
     testFix(abap, expected, false);
   });
 
+  it("nested, two parameters", async () => {
+    const abap = `DEFINE _moo.
+  DATA &1 TYPE i.
+END-OF-DEFINITION.
+DEFINE _hello.
+  WRITE &1.
+  _moo &2.
+END-OF-DEFINITION.
+_hello 'hello' sdf.`;
+    const expected = `DEFINE _moo.
+  DATA &1 TYPE i.
+END-OF-DEFINITION.
+DEFINE _hello.
+  WRITE &1.
+  _moo &2.
+END-OF-DEFINITION.
+WRITE 'hello'.
+DATA sdf TYPE i.`;
+    testFix(abap, expected, false);
+  });
+
 });
