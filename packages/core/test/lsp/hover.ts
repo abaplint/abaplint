@@ -1382,4 +1382,44 @@ MODIFY foo FROM row.`;
     expect(hover?.value).to.contain("Identifier");
   });
 
+  it.only("Hover, TYPES from ddic", () => {
+    const abap = `INTERFACE lif_test_types.
+  TYPES foobar TYPE abap_encod.
+ENDINTERFACE.`;
+
+    const dtel = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ABAP_ENCOD</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>20</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>ABAP_ENCOD</DDTEXT>
+    <REPTEXT>ABAP_ENCOD</REPTEXT>
+    <SCRTEXT_S>ABAP_ENCOD</SCRTEXT_S>
+    <SCRTEXT_M>ABAP_ENCOD</SCRTEXT_M>
+    <SCRTEXT_L>ABAP_ENCOD</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000020</LENG>
+    <OUTPUTLEN>000020</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const file1 = new MemoryFile("zprog.prog.abap", abap);
+    const file2 = new MemoryFile("abap_encod.dtel.xml", dtel);
+    const reg = new Registry().addFiles([file1, file2]).parse();
+    const hover = new Hover(reg).find(buildPosition(file1, 1, 10));
+    expect(hover).to.not.equal(undefined);
+    console.dir(hover);
+    expect(hover?.value).to.contain("Qualified Type Name: ```LIF_TEST_TYPES=>FOOBAR```");
+    // todo, add/check DDIC name too?
+  });
+
 });
