@@ -22,7 +22,6 @@ export class Domain extends AbstractObject {
     conversionExit?: string,
     values?: DomainValue[],
   } | undefined;
-  private parsedType: AbstractType | undefined;
 
   public getType(): string {
     return "DOMA";
@@ -45,18 +44,20 @@ export class Domain extends AbstractObject {
 
   public setDirty(): void {
     this.parsedXML = undefined;
-    this.parsedType = undefined;
     super.setDirty();
   }
 
   public parseType(reg: IRegistry, dataElement?: string): AbstractType {
-    if (this.parsedType) {
-      return this.parsedType;
-    } else if (this.parsedXML === undefined) {
+    // dont cache the DOMA parsed type, they are cached on DTEL level
+    // also note that the type carries the name of the DTEL
+    if (this.parsedXML === undefined) {
+      this.parse();
+    }
+    if (this.parsedXML === undefined) {
       return new Types.UnknownType("Domain " + this.getName() + " parser error", this.getName());
     }
     const ddic = new DDIC(reg);
-    this.parsedType = ddic.textToType(
+    return ddic.textToType(
       this.parsedXML.datatype,
       this.parsedXML.length,
       this.parsedXML.decimals,
@@ -64,7 +65,6 @@ export class Domain extends AbstractObject {
       dataElement,
       this.parsedXML.conversionExit,
       dataElement);
-    return this.parsedType;
   }
 
   public parse() {
