@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import {IFile} from "../../src/files/_ifile";
 import {MemoryFile} from "../../src/files/memory_file";
-import {Registry} from "../../src";
+import {Position, Registry, SyntaxLogic} from "../../src";
+import {Class} from "../../src/objects";
 
 describe("qualified name", () => {
   it.only("strange", async () => {
@@ -78,6 +79,17 @@ ENDCLASS.`;
 
     const reg = new Registry().addFiles(files).parse();
     expect(reg.getObjectCount()).to.equal(4);
+
+    const obj = reg.getObject("CLAS", "ZCL_FOOBAR") as Class;
+    const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(2, 1), "zcl_foobar.clas.abap");
+    expect(scope).to.not.equal(undefined);
+    const def = scope!.findClassDefinition("ZCL_FOOBAR");
+    expect(def).to.not.equal(undefined);
+    for (const a of def!.getAttributes().getAll()) {
+      expect(a.getName()).to.equal("mv_compress");
+      expect(a.getType().getQualifiedName()).to.equal("CHAR1");
+      expect(a.getType().getDDICName()).to.equal("CHAR1");
+    }
   });
 
 });
