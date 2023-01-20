@@ -64,7 +64,7 @@ export class DataElement extends AbstractObject {
           lookup = {type: new Types.UnknownType("DATATYPE unexpectely empty in " + this.getName())};
         } else {
           lookup = {type: ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals,
-                                          this.getName(), this.getName())};
+                                          this.getName(), this.getName(), undefined, this.getName())};
         }
       }
     }

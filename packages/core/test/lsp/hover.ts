@@ -1382,7 +1382,7 @@ MODIFY foo FROM row.`;
     expect(hover?.value).to.contain("Identifier");
   });
 
-  it.only("Hover, TYPES from ddic", () => {
+  it("Hover, TYPES from ddic", () => {
     const abap = `INTERFACE lif_test_types.
   TYPES foobar TYPE abap_encod.
 ENDINTERFACE.`;
@@ -1417,9 +1417,8 @@ ENDINTERFACE.`;
     const reg = new Registry().addFiles([file1, file2]).parse();
     const hover = new Hover(reg).find(buildPosition(file1, 1, 10));
     expect(hover).to.not.equal(undefined);
-    console.dir(hover);
-    expect(hover?.value).to.contain("Qualified Type Name: ```LIF_TEST_TYPES=>FOOBAR```");
-    // todo, add/check DDIC name too?
+    expect(hover?.value).to.contain("Qualified Type Name: ```lif_test_types=>foobar```");
+    expect(hover?.value).to.contain("DDIC Name: ```ABAP_ENCOD```");
   });
 
 });
