@@ -5,7 +5,7 @@ import {Position, Registry, SyntaxLogic} from "../../src";
 import {Class} from "../../src/objects";
 
 describe("qualified name", () => {
-  it.only("strange", async () => {
+  it.skip("strange", async () => {
     const files: IFile[] = [];
 
     const amoo_dtel = `<?xml version="1.0" encoding="utf-8"?>
