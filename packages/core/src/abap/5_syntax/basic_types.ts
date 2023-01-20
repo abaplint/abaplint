@@ -248,6 +248,11 @@ export class BasicTypes {
       } else if (ddic.type instanceof VoidType) {
         this.scope.addReference(typeName.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       }
+
+      if (ddic.type instanceof CharacterType && qualifiedName) {
+        ddic.type = ddic.type.cloneType(qualifiedName);
+      }
+
       return ddic.type;
     }
 
