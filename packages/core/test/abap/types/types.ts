@@ -5,6 +5,7 @@ import {getABAPObjects} from "../../get_abap";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {IRegistry} from "../../../src/_iregistry";
 import {MemoryFile} from "../../../src/files/memory_file";
+import {StructureType} from "../../../src/abap/types/basic";
 
 function run(reg: IRegistry) {
   const clas = getABAPObjects(reg)[0] as Class;
@@ -29,6 +30,10 @@ DATA ls_data TYPE t_data.`;
     expect(scope).to.not.equal(undefined);
     const data = scope!.findVariable("ls_data");
     expect(data).to.not.equal(undefined);
-// todo
+    const type = data?.getType() as StructureType | undefined;
+    expect(type).to.not.equal(undefined);
+
+    expect(type?.getComponentByName("FIELD1")?.getQualifiedName()).to.contain("BOOL");
+    expect(type?.getComponentByName("FIELD2")?.getQualifiedName()).to.contain("FIELD2");
   });
 });
