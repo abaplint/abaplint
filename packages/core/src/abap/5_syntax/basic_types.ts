@@ -196,6 +196,15 @@ export class BasicTypes {
     return type;
   }
 
+  private cloneType(type: AbstractType, qualifiedName?: string): AbstractType {
+    if (type instanceof CharacterType
+        && qualifiedName) {
+          //        && qualifiedName.includes("-") === false
+      type = type.cloneType(qualifiedName);
+    }
+    return type;
+  }
+
   public resolveTypeName(typeName: ExpressionNode | undefined,
                          length?: number, decimals?: number, qualifiedName?: string): AbstractType | undefined {
 
@@ -203,12 +212,9 @@ export class BasicTypes {
       return undefined;
     }
 
-    let chain = this.resolveTypeChain(typeName);
+    const chain = this.resolveTypeChain(typeName);
     if (chain) {
-      if (chain instanceof CharacterType && qualifiedName) {
-        chain = chain.cloneType(qualifiedName);
-      }
-      return chain;
+      return this.cloneType(chain, qualifiedName);
     }
 
     const chainText = typeName.concatTokens().toUpperCase();
@@ -249,11 +255,7 @@ export class BasicTypes {
         this.scope.addReference(typeName.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       }
 
-      if (ddic.type instanceof CharacterType && qualifiedName) {
-        ddic.type = ddic.type.cloneType(qualifiedName);
-      }
-
-      return ddic.type;
+      return this.cloneType(ddic.type, qualifiedName);
     }
 
     return undefined;

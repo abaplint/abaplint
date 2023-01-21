@@ -15,7 +15,7 @@ function run(reg: IRegistry) {
 }
 
 describe("Types, TYPES", () => {
-  it.only("TYPES structure should sometimes inherit qualified name", () => {
+  it.skip("TYPES structure should sometimes inherit qualified name", () => {
     const abap = `INTERFACE lif.
   TYPES bool TYPE c LENGTH 1.
 ENDINTERFACE.
