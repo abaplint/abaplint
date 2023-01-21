@@ -15,7 +15,7 @@ function run(reg: IRegistry) {
 }
 
 describe("Types, TYPES", () => {
-  it.skip("TYPES structure should sometimes inherit qualified name", () => {
+  it("TYPES structure should sometimes inherit qualified name", () => {
     const abap = `INTERFACE lif.
   TYPES bool TYPE c LENGTH 1.
 ENDINTERFACE.
@@ -33,7 +33,7 @@ DATA ls_data TYPE t_data.`;
     const type = data?.getType() as StructureType | undefined;
     expect(type).to.not.equal(undefined);
 
-    expect(type?.getComponentByName("FIELD1")?.getQualifiedName()).to.contain("BOOL");
-    expect(type?.getComponentByName("FIELD2")?.getQualifiedName()).to.contain("FIELD2");
+    expect(type?.getComponentByName("FIELD1")?.getQualifiedName()?.toUpperCase()).to.contain("BOOL");
+    expect(type?.getComponentByName("FIELD2")?.getQualifiedName()?.toUpperCase()).to.contain("FIELD2");
   });
 });

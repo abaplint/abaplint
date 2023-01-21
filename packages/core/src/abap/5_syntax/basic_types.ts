@@ -197,9 +197,11 @@ export class BasicTypes {
   }
 
   private cloneType(type: AbstractType, qualifiedName?: string): AbstractType {
+    // nested types(containing "-") will inherit the qualified names if possible
+    // todo, this needs to be extended to all AbstractTypes instead of just CharacterType
     if (type instanceof CharacterType
-        && qualifiedName) {
-          //        && qualifiedName.includes("-") === false
+        && qualifiedName
+        && qualifiedName.includes("-") === false) {
       type = type.cloneType(qualifiedName);
     }
     return type;
