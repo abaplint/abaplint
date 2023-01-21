@@ -34,6 +34,6 @@ DATA ls_data TYPE t_data.`;
     expect(type).to.not.equal(undefined);
 
     expect(type?.getComponentByName("FIELD1")?.getQualifiedName()?.toUpperCase()).to.contain("BOOL");
-    expect(type?.getComponentByName("FIELD2")?.getQualifiedName()?.toUpperCase()).to.contain("FIELD2");
+    expect(type?.getComponentByName("FIELD2")?.getQualifiedName()?.toUpperCase()).to.contain("T_DATA-FIELD2");
   });
 });
