@@ -8,7 +8,7 @@ Run `npm install @abaplint/cli -g` to install the abaplint command line client l
 
 Run `abaplint` in a folder to check the contents
 
-A `abaplint.json` file can be added/adjusted to enable and disable [rules](https://rules.abaplint.org/), note that vscode knows the json schema for the configuration, so it provides intellisense when editing.
+A `abaplint.json` file can be added/adjusted to enable and disable [rules](https://rules.abaplint.org/), note that vscode knows the json schema for the configuration, so it provides intellisense when editing. Default (all rules) config can be generated with `abaplint -d > abaplint.json` (run this in the root directory of the code repository).
 
 ## Starting On-Premise Configuration
 

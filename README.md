@@ -13,6 +13,8 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 ## Documentation
 
+[Getting started (local installation)](docs/getting_started.md)
+
 [Configuration and rule documentation](https://rules.abaplint.org)
 
 [Continuous Integration setup](docs/ci/README.md)
