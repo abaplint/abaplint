@@ -27,10 +27,12 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-is-n
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
       goodExample: `IF variable IS NOT INITIAL.
 IF variable NP 'TODO*'.
-IF variable <> 42.`,
+IF variable <> 42.
+IF variable CO 'hello'.`,
       badExample: `IF NOT variable IS INITIAL.
 IF NOT variable CP 'TODO*'.
-IF NOT variable = 42.`,
+IF NOT variable = 42.
+IF NOT variable CA 'hello'.`,
     };
   }
 
