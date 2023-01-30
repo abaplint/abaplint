@@ -112,4 +112,17 @@ describe("Program, isInclude", () => {
     expect(texts["bar"]).to.equal(undefined);
   });
 
+  it("invalid xml for texts", async () => {
+    const abap = "WRITE hello.";
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
+
+    const xml = "nopey no";
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+
+    await reg.parseAsync();
+    const prog = getABAPObjects(reg)[0] as Program;
+    // just check it does not crash,
+    prog.getTexts();
+  });
+
 });
