@@ -88,7 +88,7 @@ export abstract class ABAPObject extends AbstractObject {
   protected findTexts(parsed: any) {
     this.texts = {};
 
-    if (parsed?.abapGit["asx:abap"]?.["asx:values"]?.TPOOL?.item === undefined) {
+    if (parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.TPOOL?.item === undefined) {
       return;
     }
 
