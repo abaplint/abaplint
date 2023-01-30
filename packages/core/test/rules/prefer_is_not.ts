@@ -17,6 +17,7 @@ const tests = [
   {abap: "foo = boolc( NOT variable = 42 ).", cnt: 1, fix: true},
 
   {abap: `if not is_valid( ). endif.`, cnt: 0, fix: false},
+  {abap: `rv_keep = boolc( NOT is_node-name CA 'xX' ).`, cnt: 1, fix: false},
 ];
 
 testRule(tests, PreferIsNot);
