@@ -100,6 +100,37 @@ describe("rule, xml_consistency, mismatch xml and abap", () => {
   });
 });
 
+describe("description too long", () => {
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+  <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+   <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+     <VSEOCLASS>
+      <CLSNAME>ZCL_LARS</CLSNAME>
+      <LANGU>E</LANGU>
+      <DESCRIPT>abapGit - ENHO - Enhancement Implementation of Function Groups</DESCRIPT>
+      <STATE>1</STATE>
+      <CLSCCINCL>X</CLSCCINCL>
+      <FIXPT>X</FIXPT>
+      <UNICODE>X</UNICODE>
+     </VSEOCLASS>
+    </asx:values>
+   </asx:abap>
+  </abapGit>`;
+
+  const abap = `
+    CLASS zcl_lars DEFINITION PUBLIC CREATE PUBLIC .
+    ENDCLASS.
+    CLASS zcl_lars IMPLEMENTATION.
+    ENDCLASS.`;
+
+  it("test", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml)).addFile(new MemoryFile("zcl_lars.clas.abap", abap));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(1);
+  });
+});
+
 describe("rule, xml_consistency, INTF mismatch xml and abap", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">

@@ -55,6 +55,8 @@ export class XMLConsistency implements IRule {
       const name = obj.getNameFromXML();
       if (name === undefined) {
         issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getMetadata().key, this.conf.severity));
+      } else if (obj.getDescription() && obj.getDescription()!.length > 60) {
+        issues.push(Issue.atRow(file, 1, "Description too long", this.getMetadata().key, this.conf.severity));
       } else if (name !== obj.getName().toUpperCase()) {
         issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getMetadata().key, this.conf.severity));
       } else if (obj.getMainABAPFile()?.getStructure() !== undefined && obj.getClassDefinition() === undefined) {
@@ -66,6 +68,8 @@ export class XMLConsistency implements IRule {
       const name = obj.getNameFromXML();
       if (name === undefined) {
         issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getMetadata().key, this.conf.severity));
+      } else if (obj.getDescription() && obj.getDescription()!.length > 60) {
+        issues.push(Issue.atRow(file, 1, "Description too long", this.getMetadata().key, this.conf.severity));
       } else if (name !== obj.getName().toUpperCase()) {
         issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getMetadata().key, this.conf.severity));
       } else if (obj.getDefinition() !== undefined && obj.getDefinition()?.getName().toUpperCase() !== name.toUpperCase()) {
