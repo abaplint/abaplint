@@ -309,6 +309,8 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   `DATA(sdf4) = - CONV i( 1 ).`,
   `DATA(sdf1) = + + VALUE i( ).`,
   `DATA(sdf2) = + + - + VALUE i( ).`,
+
+  `DATA(x) = COND i( WHEN mo_server->ms_db-id_prev_app IS INITIAL THEN THROW _('CX_STACK_EMPTY - NO CALLING APP FOUND') ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

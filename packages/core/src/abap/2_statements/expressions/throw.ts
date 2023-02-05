@@ -1,6 +1,6 @@
-import {seq, opt, Expression, tok, alt} from "../combi";
+import {seq, opt, Expression, tok, alt, altPrio} from "../combi";
 import {ClassName, ParameterListS, Source} from ".";
-import {ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
+import {ParenLeft, ParenLeftW, ParenRightW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Throw extends Expression {
@@ -9,8 +9,8 @@ export class Throw extends Expression {
     return seq("THROW",
                opt("RESUMABLE"),
                ClassName,
-               tok(ParenLeftW),
+               altPrio(tok(ParenLeftW), tok(ParenLeft)),
                opt(alt(Source, ParameterListS)),
-               tok(WParenRightW));
+               altPrio(tok(WParenRightW), tok(ParenRightW)));
   }
 }

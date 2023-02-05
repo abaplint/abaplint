@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {ObjectReferenceType, VoidType} from "../../types/basic";
+import {GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Source} from "./source";
@@ -29,6 +29,8 @@ export class Cast {
       const found = scope.findObjectDefinition(typeName);
       if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
         tt = new VoidType(typeName);
+      } else if (typeName.toUpperCase() === "OBJECT") {
+        return new GenericObjectReferenceType();
       } else if (found === undefined) {
 // todo, this should be an UnknownType instead?
         throw new Error("Type \"" + typeName + "\" not found in scope, Cast");
