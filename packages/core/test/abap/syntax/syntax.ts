@@ -7127,6 +7127,14 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("object is a predefined type, CAST", () => {
+    const abap = `
+DATA io_app TYPE REF TO object.
+io_app = CAST object( io_app ).`;
+    const issues = runProgram(abap, [], undefined, ".");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
