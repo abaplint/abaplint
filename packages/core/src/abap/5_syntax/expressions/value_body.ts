@@ -19,18 +19,18 @@ export class ValueBody {
       return targetType;
     }
 
+    let letScoped = false;
+    const letNode = node.findDirectExpression(Expressions.Let);
+    if (letNode) {
+      letScoped = new Let().runSyntax(letNode, scope, filename);
+    }
+
     let forScopes = 0;
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
       const scoped = new For().runSyntax(forNode, scope, filename);
       if (scoped === true) {
         forScopes++;
       }
-    }
-
-    let letScoped = false;
-    const letNode = node.findDirectExpression(Expressions.Let);
-    if (letNode) {
-      letScoped = new Let().runSyntax(letNode, scope, filename);
     }
 
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {

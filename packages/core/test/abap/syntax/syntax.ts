@@ -7135,7 +7135,7 @@ io_app = CAST object( io_app ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("VALUE LET tab", () => {
+  it("VALUE LET tab", () => {
     const abap = `
 TYPES: BEGIN OF ty_row,
          name TYPE string,
