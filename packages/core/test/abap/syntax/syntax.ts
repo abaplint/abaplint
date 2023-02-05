@@ -7135,6 +7135,21 @@ io_app = CAST object( io_app ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("VALUE LET tab", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         name TYPE string,
+       END OF ty_row.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+DATA val TYPE ty_tab.
+DATA(sdf) = VALUE ty_tab(
+  LET tab = val IN
+  FOR row IN tab
+  ( name = to_upper( row-name ) ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
