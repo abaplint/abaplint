@@ -55,7 +55,7 @@ export class Table extends AbstractObject {
 
   public getAllowedNaming() {
     return {
-      maxLength: 16,
+      maxLength: 30,
       allowNamespace: true,
     };
   }

@@ -3,6 +3,7 @@ import {IObject} from "../objects/_iobject";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
+import {Table, TableCategory} from "../objects";
 
 export class AllowedObjectNamingConf extends BasicRuleConfig {
 }
@@ -35,6 +36,11 @@ export class AllowedObjectNaming implements IRule {
     const allowed = obj.getAllowedNaming();
     const name = obj.getName();
     let message = "";
+
+    if (obj instanceof Table && obj.getTableCategory() === TableCategory.Transparent) {
+      // structures can be 30, transparent tables 16 characters
+      allowed.maxLength = 16;
+    }
 
     if (name.length > allowed.maxLength) {
       message = "Name exceeds max length";

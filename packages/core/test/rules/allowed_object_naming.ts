@@ -108,9 +108,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("TABL, too long", async () => {
+  it("TABL, ok, structure names can be 30", async () => {
     const issues = await findIssues("name_name_name_name.tabl.xml");
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(0);
   });
 
 });
