@@ -18,7 +18,7 @@ export class Cast {
     let tt: AbstractType | undefined = undefined;
 
     const typeExpression = node.findDirectExpression(Expressions.TypeNameOrInfer);
-    const typeName = typeExpression?.getFirstToken().getStr();
+    const typeName = typeExpression?.concatTokens();
     if (typeName === undefined) {
       throw new Error("Cast, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
