@@ -7159,7 +7159,7 @@ PARAMETERS p_helloworld TYPE i.`;
     expect(message).to.contain("p_helloworld");
   });
 
-  it.only("casting data references", () => {
+  it("casting data references", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
