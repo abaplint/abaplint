@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {DataReference, GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
+import {DataReference, GenericObjectReferenceType, ObjectReferenceType, UnknownType, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Source} from "./source";
@@ -30,7 +30,7 @@ export class Cast {
     if (tt === undefined && typeExpression) {
       const basic = new BasicTypes(filename, scope);
       tt = basic.parseType(typeExpression);
-      if (tt === undefined || tt instanceof VoidType) {
+      if (tt === undefined || tt instanceof VoidType || tt instanceof UnknownType) {
         const found = scope.findObjectDefinition(typeName);
         if (found) {
           tt = new ObjectReferenceType(found, typeName);
