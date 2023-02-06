@@ -54,8 +54,14 @@ export class Table extends AbstractObject {
   }
 
   public getAllowedNaming() {
+    let length = 30;
+
+    if (this.getTableCategory() === TableCategory.Transparent) {
+      length = 16;
+    }
+
     return {
-      maxLength: 30,
+      maxLength: length,
       allowNamespace: true,
     };
   }
