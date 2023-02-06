@@ -2936,7 +2936,8 @@ result = VALUE #(
 DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA temp1 LIKE result.
 CLEAR temp1.
-DATA(lv_start) = 2 + 2.
+DATA lv_start TYPE i.
+lv_start = 2 + 2.
 DATA i TYPE i.
 i = lv_start.
 DATA temp2 LIKE sy-index.
