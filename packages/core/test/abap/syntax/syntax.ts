@@ -7150,6 +7150,15 @@ DATA(sdf) = VALUE ty_tab(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("parameter name too long", () => {
+    const abap = `
+PARAMETERS p_helloworld TYPE i.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.contain("p_helloworld");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -10,6 +10,10 @@ export class Parameter implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
 
+    if (nameToken && nameToken.getStr().length > 8) {
+      throw new Error("Parameter name too long, " + nameToken.getStr());
+    }
+
     const bfound = new BasicTypes(filename, scope).parseType(node);
     if (nameToken && bfound) {
       scope.addIdentifier(new TypedIdentifier(nameToken, filename, bfound));
