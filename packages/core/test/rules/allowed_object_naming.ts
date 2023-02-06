@@ -98,4 +98,19 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("DTEL, okay", async () => {
+    const issues = await findIssues("name.dtel.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("TABL, okay", async () => {
+    const issues = await findIssues("name.tabl.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("TABL, too long", async () => {
+    const issues = await findIssues("name_name_name_name.tabl.xml");
+    expect(issues.length).to.equal(1);
+  });
+
 });
