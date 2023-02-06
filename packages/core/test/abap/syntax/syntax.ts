@@ -7159,6 +7159,26 @@ PARAMETERS p_helloworld TYPE i.`;
     expect(message).to.contain("p_helloworld");
   });
 
+  it.only("casting data references", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             field TYPE string,
+           END OF ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  TYPES foo TYPE REF TO lcl=>ty.
+  DATA lr_data TYPE REF TO foo.
+  DATA(lr_cont) = CAST lcl=>ty( lr_data->* ).
+  WRITE lr_cont->field.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
