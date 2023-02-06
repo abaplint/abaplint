@@ -11,6 +11,10 @@ export class SelectOption implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
 
+    if (nameToken && nameToken.getStr().length > 8) {
+      throw new Error("Select-option name too long, " + nameToken.getStr());
+    }
+
     for(const d of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, scope, filename);
     }
