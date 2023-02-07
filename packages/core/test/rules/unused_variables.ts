@@ -1268,4 +1268,12 @@ CLEAR lv_msg_var+lc_offset_of_last_character(1).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("WRITE AT", async () => {
+    const abap = `
+CONSTANTS c_width TYPE i VALUE 200.
+WRITE: / 'Begin', AT c_width 'End'.`;
+    const issues = await runSingle(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
