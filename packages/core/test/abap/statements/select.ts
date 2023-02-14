@@ -345,7 +345,7 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   `SELECT * FROM sdf WHERE tabname IN (@val, 'sdf') INTO TABLE @tab.`,
 
   `SELECT foo AS bar,
-    CAST( SUM( CAST( field AS DEC( 10, 3 ) ) ) AS CHAR( 10 ) ) AS something,
+    CAST( SUM( CAST( field AS DEC( 10, 3 ) ) ) AS CHAR( 10 ) ) AS something
     FROM @it AS t1
     GROUP BY field1, field2
     INTO CORRESPONDING FIELDS OF TABLE @rt_load.`,
@@ -375,11 +375,9 @@ const versionsFail = [
   FROM but000
   WHERE  but000~partner IN ( '1000' , '2000' , '3000' ).`, ver: Version.v702},
   // missing comma,
-  /*
   {abap: `SELECT foo bar, moo
   FROM ztab INTO TABLE @DATA(tab)
   ORDER BY PRIMARY KEY.`, ver: Version.v750},
-  */
 ];
 
 statementVersionFail(versionsFail, "SELECT");
