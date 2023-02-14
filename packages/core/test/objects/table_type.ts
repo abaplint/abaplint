@@ -3,7 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import * as Objects from "../../src/objects";
 import * as Types from "../../src/abap/types/basic";
-import {DataReference, GenericObjectReferenceType} from "../../src/abap/types/basic";
+import {DataReference, GenericObjectReferenceType, TableAccessType} from "../../src/abap/types/basic";
 
 describe("Table Type, parse XML", () => {
 
@@ -234,6 +234,99 @@ describe("Table Type, parse XML", () => {
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
     expect(row).to.be.instanceof(DataReference);
+  });
+
+  it.only("secondary non-unique sorted key", async () => {
+    const xml1 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTTYP</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZSTRU</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <DATATYPE>STRU</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <KEYFDCOUNT>0001</KEYFDCOUNT>
+    <DDTEXT>test</DDTEXT>
+   </DD40V>
+   <DD42V>
+    <DD42V>
+     <TYPENAME>ZTTYP</TYPENAME>
+     <SECKEYNAME>KEYNAME</SECKEYNAME>
+     <KEYFDPOS>0001</KEYFDPOS>
+     <ROWTYPEPOS>0001</ROWTYPEPOS>
+     <KEYFIELD>FIELD1</KEYFIELD>
+    </DD42V>
+   </DD42V>
+   <DD43V>
+    <DD43V>
+     <TYPENAME>ZTTYP</TYPENAME>
+     <SECKEYNAME>KEYNAME</SECKEYNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <ACCESSMODE>S</ACCESSMODE>
+     <KIND>K</KIND>
+     <KEYDESCRIPTION>description</KEYDESCRIPTION>
+    </DD43V>
+   </DD43V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const xml2 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZSTRU</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>X</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>INT4</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  INT4</MASK>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>X</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>INT4</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  INT4</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zttyp.ttyp.xml", xml1),
+      new MemoryFile("zstru.tabl.xml", xml2),
+    ]);
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Objects.TableType;
+
+    const type = tabl.parseType(reg) as Types.TableType | undefined;
+    expect(type).to.be.instanceof(Types.TableType);
+    const secondary = type?.getOptions().secondary;
+    expect(secondary).to.not.equal(undefined);
+    expect(secondary!.length).to.equal(1);
+
+    expect(secondary![0].isUnique).to.equal(false);
+    expect(secondary![0].keyFields[0]).to.equal("FIELD1");
+    expect(secondary![0].name).to.equal("KEYNAME");
+    expect(secondary![0].type).to.equal(TableAccessType.sorted);
   });
 
 });

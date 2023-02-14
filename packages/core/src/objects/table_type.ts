@@ -5,14 +5,18 @@ import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {IObjectAndToken} from "../_iddic_references";
 import {AnyType, DataReference, GenericObjectReferenceType} from "../abap/types/basic";
+import {xmlToArray} from "../xml_utils";
 
 export class TableType extends AbstractObject {
   private parsedXML: {
     rowtype?: string,
-    rowkind?: string
-    datatype?: string
-    leng?: string
-    decimals?: string} | undefined = undefined;
+    rowkind?: string,
+    datatype?: string,
+    leng?: string,
+    decimals?: string,
+    dd42v: {keyname: string, keyfield: string}[];
+    dd43v: {keyname: string, accessmode: string, kind: string, unique: boolean}[];
+  } | undefined = undefined;
 
   public getType(): string {
     return "TTYP";
@@ -94,19 +98,39 @@ export class TableType extends AbstractObject {
       return;
     }
 
-    this.parsedXML = {};
+    this.parsedXML = {
+      dd42v: [],
+      dd43v: [],
+    };
 
     const parsed = super.parseRaw2();
     if (parsed === undefined || parsed.abapGit === undefined) {
       return;
     }
 
-    const dd40v = parsed.abapGit["asx:abap"]["asx:values"].DD40V;
+    const values = parsed.abapGit["asx:abap"]["asx:values"];
+
+    const dd40v = values.DD40V;
     this.parsedXML.rowtype = dd40v.ROWTYPE ? dd40v.ROWTYPE : "";
     this.parsedXML.rowkind = dd40v.ROWKIND ? dd40v.ROWKIND : "";
     this.parsedXML.datatype = dd40v.DATATYPE;
     this.parsedXML.leng = dd40v.LENG;
     this.parsedXML.decimals = dd40v.DECIMALS;
+
+    for (const x of xmlToArray(values.DD42V?.DD42V)) {
+      this.parsedXML.dd42v.push({
+        keyname: x.SECKEYNAME || "",
+        keyfield: x.KEYFIELD || "",
+      });
+    }
+    for (const x of xmlToArray(values.DD43V?.DD43V)) {
+      this.parsedXML.dd43v.push({
+        keyname: x.SECKEYNAME || "",
+        accessmode: x.ACCESSMODE || "",
+        kind: x.KIND || "",
+        unique: x.SECKEYUNIQUE === "X",
+      });
+    }
   }
 
 }
