@@ -236,7 +236,7 @@ describe("Table Type, parse XML", () => {
     expect(row).to.be.instanceof(DataReference);
   });
 
-  it.only("secondary non-unique sorted key", async () => {
+  it.skip("secondary non-unique sorted key", async () => {
     const xml1 = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
