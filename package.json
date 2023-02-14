@@ -36,6 +36,6 @@
         "typescript": "^4.9.5",
         "chai": "^4.3.7",
         "xml-js": "^1.6.11",
-        "vscode-languageserver-types": "^3.17.2"
+        "vscode-languageserver-types": "^3.17.3"
     }
 }
