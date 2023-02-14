@@ -4,7 +4,7 @@ import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {IObjectAndToken} from "../_iddic_references";
-import {AnyType, DataReference, GenericObjectReferenceType, ITableOptions} from "../abap/types/basic";
+import {AnyType, DataReference, GenericObjectReferenceType, ITableOptions, TableAccessType} from "../abap/types/basic";
 import {xmlToArray} from "../xml_utils";
 
 export class TableType extends AbstractObject {
@@ -39,6 +39,41 @@ export class TableType extends AbstractObject {
     super.setDirty();
   }
 
+  private buildTableOptions(): ITableOptions {
+    const tableOptions: ITableOptions = {
+      withHeader: false,
+      secondary: [],
+    };
+
+    for (const k of this.parsedXML?.dd43v || []) {
+      const fields: string[] = [];
+      for (const f of this.parsedXML?.dd42v || []) {
+        if (f.keyname === k.keyname) {
+          fields.push(f.keyfield);
+        }
+      }
+      let accessType: TableAccessType = TableAccessType.standard;
+      switch (k.accessmode) {
+        case "S":
+          accessType = TableAccessType.sorted;
+          break;
+        case "H":
+          accessType = TableAccessType.hashed;
+          break;
+        default:
+          break;
+      }
+      tableOptions.secondary?.push({
+        name: k.keyname,
+        type: accessType,
+        keyFields: fields,
+        isUnique: k.unique,
+      });
+    }
+
+    return tableOptions;
+  }
+
   public parseType(reg: IRegistry): AbstractType {
     this.parseXML();
 
@@ -46,7 +81,7 @@ export class TableType extends AbstractObject {
 
     const references: IObjectAndToken[] = [];
     let type: AbstractType;
-    const tableOptions: ITableOptions = {withHeader: false};
+    const tableOptions = this.buildTableOptions();
 
     if (this.parsedXML === undefined) {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
