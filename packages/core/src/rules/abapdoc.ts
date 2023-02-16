@@ -25,8 +25,10 @@ export class Abapdoc extends ABAPRule {
       shortDescription: `Various checks regarding abapdoc.
 Base rule checks for existence of abapdoc for public class methods and all interface methods.
 
-Plus class and interface definitions.`,
-      tags: [RuleTag.SingleFile],
+Plus class and interface definitions.
+
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-only-for-public-apis`,
+      tags: [RuleTag.SingleFile, RuleTag.Styleguide],
     };
   }
 
