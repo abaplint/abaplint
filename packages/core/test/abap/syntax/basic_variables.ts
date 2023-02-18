@@ -1833,4 +1833,15 @@ DATA tab TYPE SORTED TABLE OF ty_node
     expect(secondary![0].keyFields).to.have.all.members(["INDEX"]);
   });
 
+  it("DATA TYPE string", () => {
+    const abap = `DATA: BEGIN OF gs_test_data,
+    text       TYPE string VALUE 'foo',
+    empty_text TYPE string VALUE '',
+  END OF gs_test_data.`;
+    const identifier = resolveVariable(abap, "gs_test_data");
+    expect(identifier).to.not.equal(undefined);
+    const obj = identifier?.getValue() as any;
+    expect(obj?.text).to.equal("'foo'");
+  });
+
 });
