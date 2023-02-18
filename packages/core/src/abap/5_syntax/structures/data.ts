@@ -13,6 +13,7 @@ export class Data {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
     let table: boolean = false;
+    const values: {[index: string]: string} = {};
 
     const components: IStructureComponent[] = [];
     for (const c of node.getChildren()) {
@@ -21,6 +22,7 @@ export class Data {
         const found = new DataSyntax().runSyntax(c, scope, filename);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
+          values[found.getName()] = found.getValue() as string;
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Data) {
         const found = new Data().runSyntax(c, scope, filename);
@@ -69,7 +71,7 @@ export class Data {
     if (table === true) {
       return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components), {withHeader: true}));
     } else {
-      return new TypedIdentifier(name, filename, new Basic.StructureType(components));
+      return new TypedIdentifier(name, filename, new Basic.StructureType(components), undefined, values);
     }
   }
 }

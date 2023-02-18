@@ -10,6 +10,7 @@ import {ClassData as ClassDataSyntax} from "../statements/class_data";
 export class ClassData {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+    const values: {[index: string]: string} = {};
 
     const components: IStructureComponent[] = [];
     for (const c of node.getChildren()) {
@@ -18,11 +19,12 @@ export class ClassData {
         const found = new ClassDataSyntax().runSyntax(c, scope, filename);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
+          values[found.getName()] = found.getValue() as string;
         }
       }
       // todo, nested structures and INCLUDES
     }
 
-    return new TypedIdentifier(name, filename, new Basic.StructureType(components), [IdentifierMeta.Static]);
+    return new TypedIdentifier(name, filename, new Basic.StructureType(components), [IdentifierMeta.Static], values);
   }
 }
