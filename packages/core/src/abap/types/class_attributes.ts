@@ -141,14 +141,14 @@ export class Attributes implements IAttributes {
         if (ctyp instanceof Structures.Data) {
           const found = new DataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            const attr = new ClassAttribute(found, visibility, found.getMeta());
+            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
             this.instance.push(attr);
             scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.ClassData) {
           const found = new ClassDataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            const attr = new ClassAttribute(found, visibility, found.getMeta());
+            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
             this.static.push(attr);
             scope.addIdentifier(attr);
           }
