@@ -5,11 +5,16 @@ on:
     branches-ignore:
       - 'main'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   regression:
     # Check if the event is not triggered by a fork, this is stupid but its github
     if: github.ref != 'refs/heads/main' && github.repository == 'abaplint/abaplint'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
     - uses: actions/checkout@v3
       with:
