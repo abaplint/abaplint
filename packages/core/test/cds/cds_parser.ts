@@ -338,7 +338,7 @@ define view zhvamfoocust as select from I_asdfsd {
   it("provider contract projection", () => {
     const cds = `
 define root view entity name1
-  provider contract name2
+  provider contract transactional_interface
   as projection on name3
 {
   key field1,
