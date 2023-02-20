@@ -178,4 +178,21 @@ define view /foo/bar as select from t006b
     expect(ddls).to.not.equal(undefined);
     expect(ddls.getDefinitionName()).to.equal("/foo/bar");
   });
+
+  it("parse, double redirect to same name", async () => {
+    const source = `
+define view entity I_foo1 as projection on I_foo2
+{
+  key     Field1,
+          _Foo : redirected to I_sdfsd,
+          _Bar : redirected to parent I_sdfsd
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("#foo#bar.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    ddls.parseType(reg);
+  });
 });

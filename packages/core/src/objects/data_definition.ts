@@ -133,7 +133,11 @@ export class DataDefinition extends AbstractObject {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
         const list = e.findDirectExpressions(CDSName);
-        found = list[list.length - 1];
+        if (e.concatTokens().toUpperCase().includes(" REDIRECTED TO ")) {
+          found = list[0];
+        } else {
+          found = list[list.length - 1];
+        }
       }
       if (found === undefined) {
         continue;
