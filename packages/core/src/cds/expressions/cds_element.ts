@@ -14,6 +14,7 @@ export class CDSElement extends Expression {
                        CDSArithmetics,
                        CDSCast,
                        CDSCase,
+                       seq(CDSName, ": REDIRECTED TO", opt("PARENT"), CDSName),
                        seq(CDSName, opt(CDSParameters), star(seq(".", CDSName, opt(CDSParameters)))),
                        regex(/^\d+$/)),
                opt(CDSAs));
