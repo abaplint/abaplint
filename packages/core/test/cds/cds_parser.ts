@@ -611,4 +611,18 @@ define custom entity /foo/sdf
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("root view entity provider contract as projection", () => {
+    const cds = `
+define root view entity I_FOO
+  provider contract transactional_interface
+  as projection on R_sdf as FooBar
+{
+  key Field1,
+      Field2
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

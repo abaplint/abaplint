@@ -1,4 +1,4 @@
-import {CDSAnnotation, CDSElement, CDSName} from ".";
+import {CDSAnnotation, CDSAs, CDSElement, CDSName, CDSProviderContract} from ".";
 import {Version} from "../..";
 import {Expression, seq, star, plus, opt, str, ver} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
@@ -11,9 +11,10 @@ export class CDSDefineProjection extends Expression {
                "VIEW",
                ver(Version.v755, opt("ENTITY")),
                CDSName,
-               opt(seq("PROVIDER CONTRACT", CDSName)),
+               opt(CDSProviderContract),
                "AS PROJECTION ON",
                CDSName,
+               opt(CDSAs),
                str("{"),
                plus(CDSElement),
                star(seq(",", CDSElement)),
