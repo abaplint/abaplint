@@ -338,7 +338,7 @@ define view zhvamfoocust as select from I_asdfsd {
   it("provider contract projection", () => {
     const cds = `
 define root view entity name1
-  provider contract name2
+  provider contract transactional_interface
   as projection on name3
 {
   key field1,
@@ -605,6 +605,33 @@ define custom entity /foo/sdf
 {
   key statu : /foo/sdfff;
       txt   : char40;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("root view entity provider contract as projection", () => {
+    const cds = `
+define root view entity I_FOO
+  provider contract transactional_interface
+  as projection on R_sdf as FooBar
+{
+  key Field1,
+      Field2
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("redirected to", () => {
+    const cds = `
+define view entity I_foo1 as projection on I_foo2
+{
+  key     Field1,
+          _Foo : redirected to I_sdfsd,
+          _Bar : redirected to parent I_sdfsds
 }`;
     const file = new MemoryFile("foobar.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
