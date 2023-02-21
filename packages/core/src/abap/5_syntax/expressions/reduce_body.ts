@@ -11,7 +11,12 @@ import {Let} from "./let";
 import {ScopeType} from "../_scope_type";
 
 export class ReduceBody {
-  public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string): AbstractType | undefined {
+  public runSyntax(
+    node: ExpressionNode | undefined,
+    scope: CurrentScope,
+    filename: string,
+    targetType: AbstractType | undefined): AbstractType | undefined {
+
     if (node === undefined) {
       return;
     }
@@ -28,7 +33,7 @@ export class ReduceBody {
         scope.push(ScopeType.Let, "LET", node.getFirstToken().getStart(), filename);
         scoped = true;
       }
-      const found = new InlineFieldDefinition().runSyntax(i, scope, filename);
+      const found = new InlineFieldDefinition().runSyntax(i, scope, filename, targetType);
       if (found && first === undefined) {
         first = found;
       }

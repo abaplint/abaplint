@@ -72,7 +72,7 @@ export class Source {
         case "REDUCE":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename);
+          const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename, foundType);
           if (foundType === undefined) {
             this.addIfInferred(node, scope, filename, bodyType);
           }

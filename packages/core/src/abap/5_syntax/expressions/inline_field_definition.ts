@@ -9,7 +9,12 @@ import {UnknownType} from "../../types/basic/unknown_type";
 import {ReferenceType} from "../_reference";
 
 export class InlineFieldDefinition {
-  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): AbstractType | undefined {
+  public runSyntax(
+    node: ExpressionNode | StatementNode,
+    scope: CurrentScope,
+    filename: string,
+    targetType?: AbstractType): AbstractType | undefined {
+
     let type: AbstractType | undefined = undefined;
 
     const field = node.findDirectExpression(Expressions.Field)?.getFirstToken();
@@ -24,6 +29,9 @@ export class InlineFieldDefinition {
     const typeName = node.findDirectExpression(Expressions.TypeName);
     if (typeName) {
       type = new BasicTypes(filename, scope).parseType(typeName);
+    }
+    if (targetType !== undefined) {
+      type = targetType;
     }
     if (type === undefined) {
       type = new UnknownType("InlineFieldDefinition, fallback");

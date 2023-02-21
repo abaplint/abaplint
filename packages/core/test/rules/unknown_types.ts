@@ -2031,4 +2031,18 @@ PARAMETERS p_intf LIKE zfoo-intf DEFAULT 'ZIF_INTERFACE'.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("REDUCE with VALUE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+DATA t_tab TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+t_tab = REDUCE #( INIT ret = VALUE #( )
+    FOR n = 1 WHILE n < 101 NEXT ret =
+    VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
