@@ -11,7 +11,7 @@ import {ComponentCond} from "../expressions/component_cond";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
-import { AbstractType } from "../../types/basic/_abstract_type";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
