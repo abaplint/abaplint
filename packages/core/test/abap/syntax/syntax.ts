@@ -7179,6 +7179,32 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LOOP, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         obj_type TYPE string,
+       END OF ty.
+DATA lt_objects TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA lr_object TYPE REF TO ty.
+LOOP AT lt_objects REFERENCE INTO lr_object WHERE obj_type IS INITIAL.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Check fields in LOOP condition", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE string,
+       END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+LOOP AT tab INTO DATA(sdfsd) WHERE blah = 'SYS'.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("blah");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

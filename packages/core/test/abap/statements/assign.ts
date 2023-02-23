@@ -35,6 +35,7 @@ const tests = [
   "ASSIGN var TO <fs> TYPE 'N'.",
   "ASSIGN TABLE FIELD foobar TO <fs>.",
   "ASSIGN <tab>[ ('VBELN') = <item>-vbeln ] TO FIELD-SYMBOL(<inv>).",
+  "ASSIGN ('sdfsdf') TO <fs> ELSE UNASSIGN.",
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);

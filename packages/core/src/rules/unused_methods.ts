@@ -13,6 +13,7 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 import {EditHelper} from "../edit_helper";
+import {Unknown} from "../abap/2_statements/statements/_statement";
 
 export class UnusedMethodsConf extends BasicRuleConfig {
 }
@@ -69,6 +70,8 @@ export class UnusedMethods implements IRule {
       shortDescription: `Checks for unused methods`,
       extendedInformation: `Checks private and protected methods.
 
+Unused methods are not reported if the object contains parser or syntax errors.
+
 Skips:
 * methods FOR TESTING
 * methods SETUP + TEARDOWN + CLASS_SETUP + CLASS_TEARDOWN in testclasses
@@ -102,6 +105,14 @@ Skips:
       return [];
     } else if (obj instanceof Program && obj.isInclude() === true) {
       return [];
+    }
+
+    for (const file of obj.getABAPFiles()) {
+      for (const statement of file.getStatements()) {
+        if (statement.get() instanceof Unknown) {
+          return []; // contains parser errors
+        }
+      }
     }
 
     // dont report anything when there are syntax errors

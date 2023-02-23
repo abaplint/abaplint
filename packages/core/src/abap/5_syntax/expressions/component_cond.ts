@@ -1,21 +1,22 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
+import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
 import {ComponentCompare} from "./component_compare";
 
 export class ComponentCond {
 
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, type?: AbstractType): void {
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCondSub)) {
       const c = t.findDirectExpression(Expressions.ComponentCond);
       if (c) {
-        new ComponentCond().runSyntax(c, scope, filename);
+        new ComponentCond().runSyntax(c, scope, filename, type);
       }
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      new ComponentCompare().runSyntax(t, scope, filename);
+      new ComponentCompare().runSyntax(t, scope, filename, type);
     }
 
   }

@@ -7,11 +7,11 @@ import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {InlineFS} from "../expressions/inline_fs";
 import {FSTarget} from "../expressions/fstarget";
-import {ComponentCompare} from "../expressions/component_compare";
 import {ComponentCond} from "../expressions/component_cond";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -29,6 +29,7 @@ export class Loop implements StatementSyntax {
       firstSource = sources[0];
     }
     let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename, targetType) : undefined;
+    let rowType: AbstractType | undefined = undefined;
 
     const concat = node.concatTokens().toUpperCase();
     if (sourceType === undefined) {
@@ -49,7 +50,8 @@ export class Loop implements StatementSyntax {
 
     if (sourceType instanceof TableType) {
       const targetConcat = node.findDirectExpression(Expressions.LoopTarget)?.concatTokens().toUpperCase();
-      sourceType = sourceType.getRowType();
+      rowType = sourceType.getRowType();
+      sourceType = rowType;
       if (targetConcat?.startsWith("REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
       }
@@ -77,12 +79,8 @@ export class Loop implements StatementSyntax {
       }
     }
 
-    for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      new ComponentCompare().runSyntax(t, scope, filename);
-    }
-
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, scope, filename);
+      new ComponentCond().runSyntax(t, scope, filename, rowType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {

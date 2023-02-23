@@ -13,6 +13,7 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
 import {StatementNode} from "../abap/nodes";
+import {Unknown} from "../abap/2_statements/statements/_statement";
 
 class WorkArea {
   private readonly workarea: TypedIdentifier[] = [];
@@ -61,6 +62,7 @@ export class UnusedTypes implements IRule {
       key: "unused_types",
       title: "Unused types",
       shortDescription: `Checks for unused TYPE definitions`,
+      extendedInformation: `Unused types are not reported if the object contains parser or syntax errors.`,
       tags: [RuleTag.Quickfix],
       pragma: "##NEEDED",
     };
@@ -87,11 +89,20 @@ export class UnusedTypes implements IRule {
       return [];
     }
 
+    for (const file of obj.getABAPFiles()) {
+      for (const statement of file.getStatements()) {
+        if (statement.get() instanceof Unknown) {
+          return []; // contains parser errors
+        }
+      }
+    }
+
     // dont report unused variables when there are syntax errors
     const syntax = new SyntaxLogic(this.reg, obj).run();
     if (syntax.issues.length > 0) {
       return [];
     }
+
     this.workarea = new WorkArea();
     this.traverse(syntax.spaghetti.getTop(), obj, true);
     this.traverse(syntax.spaghetti.getTop(), obj, false);
