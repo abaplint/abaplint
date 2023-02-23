@@ -13,7 +13,7 @@ import {Identifier} from "../abap/4_file_information/_identifier";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes/statement_node";
 import * as Statements from "../abap/2_statements/statements";
-import {Comment} from "../abap/2_statements/statements/_statement";
+import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 
 
@@ -74,7 +74,9 @@ export class UnusedVariables implements IRule {
 
 Note that this currently does not work if the source code uses macros.
 
-Unused variables are not reported if the object contains syntax errors. Errors found in INCLUDES are reported for the main program.`,
+Unused variables are not reported if the object contains parser or syntax errors.
+
+Errors found in INCLUDES are reported for the main program.`,
       tags: [RuleTag.Quickfix],
       pragma: "##NEEDED",
       pseudoComment: "EC NEEDED",
@@ -104,10 +106,18 @@ Unused variables are not reported if the object contains syntax errors. Errors f
       return [];
     }
 
+    for (const file of obj.getABAPFiles()) {
+      for (const statement of file.getStatements()) {
+        if (statement.get() instanceof Unknown) {
+          return []; // contains parser errors
+        }
+      }
+    }
+
     // dont report unused variables when there are syntax errors
     const syntax = new SyntaxLogic(this.reg, obj).run();
     if (syntax.issues.length > 0) {
-      return [];
+      return []; // contains syntax errors
     }
 
     this.workarea = new WorkArea();

@@ -1276,4 +1276,12 @@ WRITE: / 'Begin', AT c_width 'End'.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("parser error, dont report unused", async () => {
+    const abap = `
+CONSTANTS c_width TYPE i VALUE 200.
+parser error c_width.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
