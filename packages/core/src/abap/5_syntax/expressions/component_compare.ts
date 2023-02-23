@@ -26,7 +26,7 @@ export class ComponentCompare {
           throw new Error("ComponentCompare, source not structured");
         }
         if (type.getComponentByName(fieldName) === undefined) {
-          throw new Error("Component " + fieldName + " not part of structure");
+          throw new Error("Component \"" + fieldName + "\" not part of structure");
         }
         // todo, check type compatibility
       }
