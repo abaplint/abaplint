@@ -9,7 +9,8 @@ export class InlineData extends Expression {
     const right = altPrio(tok(ParenRightW), tok(ParenRight));
     const left = tok(ParenLeft);
     const data = seq("DATA", left, TargetField, right);
+    const final = seq("FINAL", left, TargetField, right);
 
-    return ver(Version.v740sp02, data);
+    return altPrio(ver(Version.v740sp02, data), ver(Version.v757, final)) ;
   }
 }
