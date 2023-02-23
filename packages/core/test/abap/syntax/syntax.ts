@@ -7179,7 +7179,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("LOOP, ok", () => {
+  it("LOOP, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          obj_type TYPE string,
