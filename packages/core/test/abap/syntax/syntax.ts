@@ -7179,6 +7179,19 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("LOOP, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         obj_type TYPE string,
+       END OF ty.
+DATA lt_objects TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA lr_object TYPE REF TO ty.
+LOOP AT lt_objects REFERENCE INTO lr_object WHERE obj_type IS INITIAL.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Check fields in LOOP condition", () => {
     const abap = `
 TYPES: BEGIN OF ty,
