@@ -7179,7 +7179,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("Check fields in LOOP condition", () => {
+  it("Check fields in LOOP condition", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          foo TYPE string,

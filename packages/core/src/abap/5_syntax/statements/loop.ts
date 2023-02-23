@@ -77,7 +77,7 @@ export class Loop implements StatementSyntax {
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, scope, filename);
+      new ComponentCond().runSyntax(t, scope, filename, sourceType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
