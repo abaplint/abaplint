@@ -33,10 +33,15 @@ ENDCLASS.
 CLASS YCX_OBJECT_NOT_PROCESSED IMPLEMENTATION.
 ENDCLASS.`;
 
+const cx_no_check = `CLASS cx_no_check DEFINITION INHERITING FROM cx_root PUBLIC.
+ENDCLASS.
+CLASS cx_no_check IMPLEMENTATION.
+ENDCLASS.`;
 
 async function findIssues(abap: string, filename: string, extra: MemoryFile[] = []): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, abap));
   reg.addFile(new MemoryFile("cx_root.clas.abap", cx_root));
+  reg.addFile(new MemoryFile("cx_no_check.clas.abap", cx_no_check));
   reg.addFile(new MemoryFile("cx_static_check.clas.abap", cx_static_check));
   reg.addFile(new MemoryFile("cx_salv_error.clas.abap", cx_salv_error));
   reg.addFile(new MemoryFile("cx_salv_not_found.clas.abap", cx_salv_not_found));
@@ -331,6 +336,26 @@ ENDCLASS.`;
     const sub2 = new MemoryFile("ysub.prog.xml", inclxml);
     const issues = await findIssues(progabap, "ytop.prog.abap", [sub1, sub2]);
     expect(issues.length).to.equal(1);
+  });
+
+  it("ignore cx_no_check", async () => {
+    const progabap = `
+CLASS lx DEFINITION INHERITING FROM cx_no_check.
+ENDCLASS.
+CLASS lx IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    RAISE EXCEPTION TYPE lx.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "ytop.prog.abap");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });

@@ -24,6 +24,7 @@ export class UncaughtException extends ABAPRule {
   private conf = new UncaughtExceptionConf();
 
   private globalExceptions: {[index: string]: string | undefined};
+  private localExceptions: {[index: string]: string | undefined};
   private issues: Issue[] = [];
   private sinked: string[] | undefined;
   private syntax: ISyntaxResult;
@@ -63,6 +64,8 @@ export class UncaughtException extends ABAPRule {
     if (stru === undefined) {
       return [];
     }
+
+    this.findLocalExceptions(obj);
 
     this.syntax = new SyntaxLogic(this.reg, obj).run();
     if (this.syntax.issues.length > 0) {
@@ -206,7 +209,11 @@ export class UncaughtException extends ABAPRule {
       return true;
     }
 
-    // todo, check local class hierarchy
+    const lsup = this.localExceptions[name.toUpperCase()];
+    if (lsup === "CX_DYNAMIC_CHECK" || lsup === "CX_NO_CHECK") {
+      return true;
+    }
+
     return this.sinked.some(a => a.toUpperCase() === name.toUpperCase())
       || ( sup !== undefined && this.isSinked(sup) === true );
   }
@@ -224,6 +231,18 @@ export class UncaughtException extends ABAPRule {
       }
 
       this.globalExceptions[o.getName().toUpperCase()] = def.superClassName?.toUpperCase();
+    }
+  }
+
+  private findLocalExceptions(obj: ABAPObject) {
+    this.localExceptions = {};
+
+    for (const file of obj.getABAPFiles()) {
+      for (const def of file.getInfo().listClassDefinitions()) {
+        if (def.isLocal === true && def.superClassName !== undefined) {
+          this.localExceptions[def.name.toUpperCase()] = def.superClassName?.toUpperCase();
+        }
+      }
     }
   }
 
