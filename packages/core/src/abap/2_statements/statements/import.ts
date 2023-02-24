@@ -1,8 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, regex, per, plus, tok} from "../combi";
+import {seq, opt, alt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
-import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Import implements IStatement {
@@ -46,7 +45,7 @@ export class Import implements IStatement {
 
     const ret = seq("IMPORT", target, "FROM", source, opt(options));
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }
