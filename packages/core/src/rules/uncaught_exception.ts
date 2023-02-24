@@ -198,8 +198,6 @@ export class UncaughtException extends ABAPRule {
   }
 
   private isSinked(name: string | undefined): boolean {
-    // todo: ignore dynamic and no_check exceptions
-
     if (this.sinked === undefined || name === undefined) {
       return true;
     }
@@ -215,7 +213,8 @@ export class UncaughtException extends ABAPRule {
     }
 
     return this.sinked.some(a => a.toUpperCase() === name.toUpperCase())
-      || ( sup !== undefined && this.isSinked(sup) === true );
+      || ( sup !== undefined && this.isSinked(sup) === true )
+      || ( lsup !== undefined && this.isSinked(lsup) === true );
   }
 
   private findGlobalExceptions() {

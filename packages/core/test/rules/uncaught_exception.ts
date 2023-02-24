@@ -358,4 +358,27 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ignore cx_no_check, hierachy", async () => {
+    const progabap = `
+CLASS lx DEFINITION INHERITING FROM cx_no_check.
+ENDCLASS.
+CLASS lx IMPLEMENTATION.
+ENDCLASS.
+
+CLASS _ DEFINITION INHERITING FROM lx.
+ENDCLASS.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    RAISE EXCEPTION TYPE _.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "ytop.prog.abap");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
