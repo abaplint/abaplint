@@ -21,7 +21,7 @@
   "homepage": "https://abaplint.org",
   "devDependencies": {
     "typescript": "^4.9.5",
-    "monaco-editor-core": "^0.36.0",
+    "monaco-editor-core": "^0.36.1",
     "vscode-languageserver-types": "^3.17.3"
   },
   "dependencies": {
