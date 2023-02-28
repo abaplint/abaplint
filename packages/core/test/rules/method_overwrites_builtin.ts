@@ -1,6 +1,8 @@
 import {MethodOverwritesBuiltIn} from "../../src/rules/method_overwrites_builtin";
 import {testRule} from "./_utils";
 
+// ignore interface methods, https://github.com/abaplint/abaplint/issues/2889
+
 const tests = [
   {abap: `CLASS lcl_abc DEFINITION.
             PUBLIC SECTION.
@@ -16,7 +18,7 @@ const tests = [
         ENDCLASS.`, cnt: 0},
   {abap: `INTERFACE lif_foo.
             METHODS xsdbool.
-          ENDINTERFACE.`, cnt: 1},
+          ENDINTERFACE.`, cnt: 0},
 ];
 
 testRule(tests, MethodOverwritesBuiltIn);
