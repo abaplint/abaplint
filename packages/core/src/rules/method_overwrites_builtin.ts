@@ -19,7 +19,9 @@ export class MethodOverwritesBuiltIn extends ABAPRule {
       shortDescription: `Checks Method names that overwrite builtin SAP functions`,
       extendedInformation: `https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abenbuilt_in_functions_overview.htm
 
-https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obscuring-built-in-functions`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obscuring-built-in-functions
+
+Interface method names are ignored`,
       tags: [RuleTag.Naming, RuleTag.SingleFile, RuleTag.Styleguide],
     };
   }
@@ -38,9 +40,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obscu
 
     for (const classDef of file.getInfo().listClassDefinitions()) {
       methods = methods.concat(classDef.methods);
-    }
-    for (const intfDef of file.getInfo().listInterfaceDefinitions()) {
-      methods = methods.concat(intfDef.methods);
     }
 
     const builtIn = new BuiltIn();

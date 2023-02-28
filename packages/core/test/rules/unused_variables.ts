@@ -1284,4 +1284,12 @@ parser error c_width.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("submit dynamic", async () => {
+    const abap = `
+    DATA lv_report TYPE progname VALUE 'ZSSDF'.
+    SUBMIT (lv_report) AND RETURN.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

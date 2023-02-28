@@ -4336,4 +4336,18 @@ ENDLOOP.`;
     testFix(abap, expected);
   });
 
+  it("COND with THROW", async () => {
+    const abap = `
+DATA(x) = COND i( WHEN 1 = 1 THEN THROW cx_smime( ) ).`;
+    const expected = `
+DATA temp1 TYPE i.
+IF 1 = 1.
+  RAISE EXCEPTION NEW cx_smime( ).
+ELSE.
+  CLEAR temp1.
+ENDIF.
+DATA(x) = temp1.`;
+    testFix(abap, expected);
+  });
+
 });
