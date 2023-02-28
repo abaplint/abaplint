@@ -52,6 +52,12 @@ const tests = [
         END OF bar,
       END OF moo.`, cnt: 0},
 
+  {abap: `
+TYPES: BEGIN OF t,
+         attri      sdfsd,
+         name_value TYPE STANDARD TABLE OF string WITH EMPTY KEY,
+       END OF t.`, cnt: 0},
+
 ];
 
 testRule(tests, BeginEndNames);
