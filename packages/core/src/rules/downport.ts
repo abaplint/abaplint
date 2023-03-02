@@ -1157,22 +1157,33 @@ ${indentation}RAISE EXCEPTION ${uniqueName2}.`;
         || high.getChildren()[2].getFirstToken().getStr().toUpperCase() !== "CORRESPONDING") {
       return undefined;
     }
+
     const target = high.findDirectExpression(Expressions.Target);
     if (target === undefined) {
       return undefined;
     }
+
     const sourceRef = high.findFirstExpression(Expressions.Source)?.findFirstExpression(Expressions.CorrespondingBody);
-    if (sourceRef === undefined || sourceRef.getChildren().length !== 1) {
-      return;
+    if (sourceRef?.getChildren().length === 1) {
+      const code = `MOVE-CORRESPONDING ${sourceRef.concatTokens()} TO ${target.concatTokens()}`;
+
+      const start = high.getFirstToken().getStart();
+      const end = high.getLastToken().getStart();
+      const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+      return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple CORRESPONDING move", this.getMetadata().key, this.conf.severity, fix);
+    } else if (sourceRef?.getChildren().length === 5 && sourceRef.getFirstChild()?.concatTokens().toUpperCase() === "BASE") {
+      let code = `${target.concatTokens()} = ${sourceRef.getChildren()[2].concatTokens()}.\n`;
+      code += `MOVE-CORRESPONDING ${sourceRef.getChildren()[4].concatTokens()} TO ${target.concatTokens()}`;
+
+      const start = high.getFirstToken().getStart();
+      const end = high.getLastToken().getStart();
+      const fix = EditHelper.replaceRange(lowFile, start, end, code);
+
+      return Issue.atToken(lowFile, high.getFirstToken(), "Downport, CORRESPONDING BASE move", this.getMetadata().key, this.conf.severity, fix);
     }
 
-    const code = `MOVE-CORRESPONDING ${sourceRef.concatTokens()} TO ${target.concatTokens()}`;
-
-    const start = high.getFirstToken().getStart();
-    const end = high.getLastToken().getStart();
-    const fix = EditHelper.replaceRange(lowFile, start, end, code);
-
-    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple CORRESPONDING move", this.getMetadata().key, this.conf.severity, fix);
+    return undefined;
   }
 
   private downportRefSimple(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
