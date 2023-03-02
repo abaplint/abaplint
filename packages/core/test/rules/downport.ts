@@ -4350,4 +4350,22 @@ DATA(x) = temp1.`;
     testFix(abap, expected);
   });
 
+  it.only("CORRESPONDING BASE", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+         field2 TYPE i,
+       END OF ty.
+TYPES: BEGIN OF ty2,
+         field2 TYPE i,
+       END OF ty2.
+DATA ls_item TYPE ty2.
+DATA ls_new TYPE ty.
+ls_item-field2 = 2.
+ls_new = CORRESPONDING #( BASE ( VALUE #( field1 = 1 ) ) ls_item ).`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
 });
