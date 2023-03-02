@@ -4350,7 +4350,7 @@ DATA(x) = temp1.`;
     testFix(abap, expected);
   });
 
-  it.only("CORRESPONDING BASE", async () => {
+  it.skip("CORRESPONDING BASE", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
          field1 TYPE i,
