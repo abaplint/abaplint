@@ -9,7 +9,6 @@ const repos = [
   "abap2xlsx/abap2xlsx",
   "abapGit/abapgit-review-example",
   "abapGit/abapGit",
-  "abapGit/ADT_Backend",
   "abapGit/background_modes",
   "abapGit/ci_tools",
   "abapGit/CI",
