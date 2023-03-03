@@ -22,7 +22,9 @@ export class Data {
         const found = new DataSyntax().runSyntax(c, scope, filename);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
-          values[found.getName()] = found.getValue() as string;
+          if (found.getValue() !== undefined) {
+            values[found.getName()] = found.getValue() as string;
+          }
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Data) {
         const found = new Data().runSyntax(c, scope, filename);
@@ -71,7 +73,8 @@ export class Data {
     if (table === true) {
       return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components), {withHeader: true}));
     } else {
-      return new TypedIdentifier(name, filename, new Basic.StructureType(components), undefined, values);
+      const val = Object.keys(values).length > 0 ? values : undefined;
+      return new TypedIdentifier(name, filename, new Basic.StructureType(components), undefined, val);
     }
   }
 }
