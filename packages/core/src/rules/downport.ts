@@ -475,6 +475,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.outlineGetReferenceSimple(high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineDataSimple(high, lowFile);
     if (found) {
       return found;
@@ -953,6 +958,32 @@ ${indentation}`);
 ${indentation}CATCH ${className} INTO ${targetName}.`;
 
     const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), code);
+
+    return Issue.atToken(lowFile, node.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  private outlineGetReferenceSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(node.get() instanceof Statements.GetReference)) {
+      return undefined;
+    }
+
+    const target = node.findFirstExpression(Expressions.Target);
+    if (!(target?.getFirstChild()?.get() instanceof Expressions.InlineData)) {
+      return undefined;
+    }
+
+    const source = node.findFirstExpression(Expressions.Source);
+    if (!(source?.getFirstChild()?.get() instanceof Expressions.FieldChain)) {
+      return undefined;
+    }
+
+    const targetName = target.findFirstExpression(Expressions.TargetField)?.concatTokens() || "errorError";
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+    const firstToken = target.getFirstToken();
+    const lastToken = target.getLastToken();
+    const fix1 = EditHelper.insertAt(lowFile, node.getStart(), `DATA ${targetName} LIKE REF TO ${source.concatTokens()}.\n${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), lastToken.getEnd(), targetName);
+    const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, node.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }

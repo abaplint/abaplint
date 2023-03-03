@@ -1844,4 +1844,15 @@ DATA tab TYPE SORTED TABLE OF ty_node
     expect(obj?.text).to.equal("'foo'");
   });
 
+  it("DATA BEGIN, should not have value", () => {
+    const abap = `
+  DATA: BEGIN OF ms_db,
+          foo TYPE string,
+        END OF ms_db.`;
+    const identifier = resolveVariable(abap, "ms_db");
+    expect(identifier).to.not.equal(undefined);
+    const obj = identifier?.getValue() as any;
+    expect(obj).to.equal(undefined);
+  });
+
 });
