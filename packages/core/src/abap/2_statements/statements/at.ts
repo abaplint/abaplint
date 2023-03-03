@@ -14,7 +14,7 @@ export class At implements IStatement {
     const atEnd = seq("END OF", field);
     const group = regex(/^\w+$/);
 
-    const ret = seq("AT", altPrio("FIRST", "LAST", atNew, atEnd, group));
+    const ret = seq("AT", altPrio(atNew, atEnd, group));
 
     return ret;
   }

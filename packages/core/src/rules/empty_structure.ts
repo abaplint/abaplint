@@ -80,6 +80,8 @@ export class EmptyStructure extends ABAPRule {
     }
     if (this.getConfig().at === true) {
       candidates.push(...stru.findAllStructures(Structures.At));
+      candidates.push(...stru.findAllStructures(Structures.AtFirst));
+      candidates.push(...stru.findAllStructures(Structures.AtLast));
     }
 
     for (const l of candidates) {
