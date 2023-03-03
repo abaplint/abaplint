@@ -221,6 +221,8 @@ export class Normal implements IStructure {
                sub(Structures.Provide),
                sub(Structures.CatchSystemExceptions),
                sub(Structures.At),
+               sub(Structures.AtFirst),
+               sub(Structures.AtLast),
                sub(Structures.Constants),
                sub(Structures.Types),
                sub(Structures.Statics),

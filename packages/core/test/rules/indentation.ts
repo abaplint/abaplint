@@ -176,6 +176,16 @@ GET pernr.
   WRITE pernr-pernr.
 END-OF-SELECTION.`, cnt: 0},
 
+  {abap: `
+LOOP AT tab INTO row.
+  AT FIRST.
+    WRITE 2.
+  ENDAT.
+  AT LAST.
+    WRITE 2.
+  ENDAT.
+ENDLOOP.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

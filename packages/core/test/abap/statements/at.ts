@@ -2,10 +2,8 @@ import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
-  "AT FIRST.",
   "AT NEW field.",
   "AT END OF field.",
-  "AT LAST.",
   "AT NEW (ls_foo-field).",
   "AT END OF (ls_foo-field).",
   "AT NEW <foo>.",
