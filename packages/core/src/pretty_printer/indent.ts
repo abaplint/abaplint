@@ -136,6 +136,8 @@ export class Indent {
         || type instanceof Statements.Interface
         || type instanceof Statements.Do
         || type instanceof Statements.At
+        || type instanceof Statements.AtFirst
+        || type instanceof Statements.AtLast
         || type instanceof Statements.ExecSQL
         || type instanceof Statements.Catch
         || type instanceof Statements.Define
