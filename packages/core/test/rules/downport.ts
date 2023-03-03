@@ -4379,14 +4379,18 @@ MOVE-CORRESPONDING ls_item TO ls_new.`;
     testFix(abap, expected);
   });
 
-  it.only("REF non qualified type name", async () => {
+  it("REF non qualified type name", async () => {
     const abap = `
 DATA: BEGIN OF ms_db,
         foo TYPE string,
       END OF ms_db.
 GET REFERENCE OF ms_db INTO DATA(val).`;
     const expected = `
-sdfsd`;
+DATA: BEGIN OF ms_db,
+        foo TYPE string,
+      END OF ms_db.
+DATA val LIKE REF TO ms_db.
+GET REFERENCE OF ms_db INTO val.`;
     testFix(abap, expected);
   });
 
