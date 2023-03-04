@@ -2511,7 +2511,7 @@ ${indentation}    output = ${topTarget}.`;
       } else if (c.get() instanceof Expressions.Source) {
         code += indent + "  " + uniqueName + " = " + c.concatTokens() + ".\n";
       } else if (c.get() instanceof Expressions.Throw) {
-        code += indent + "  " + c.concatTokens().replace("THROW", "RAISE EXCEPTION NEW") + ".\n";
+        code += indent + "  " + c.concatTokens().replace(/THROW /i, "RAISE EXCEPTION NEW ") + ".\n";
       } else {
         throw "buildCondBody, unexpected expression, " + c.get().constructor.name;
       }

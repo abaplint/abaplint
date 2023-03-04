@@ -4350,6 +4350,20 @@ DATA(x) = temp1.`;
     testFix(abap, expected);
   });
 
+  it("COND with THROW, lower case", async () => {
+    const abap = `
+DATA(x) = COND i( WHEN 1 = 1 THEN throw cx_smime( ) ).`;
+    const expected = `
+DATA temp1 TYPE i.
+IF 1 = 1.
+  RAISE EXCEPTION NEW cx_smime( ).
+ELSE.
+  CLEAR temp1.
+ENDIF.
+DATA(x) = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("CORRESPONDING BASE", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
