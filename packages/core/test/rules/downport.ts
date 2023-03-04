@@ -4350,13 +4350,16 @@ DATA(x) = temp1.`;
     testFix(abap, expected);
   });
 
-  it.only("SELECT, complex @ value", async () => {
+  it("SELECT, complex @ value", async () => {
     const abap = `
 SELECT SINGLE FROM z2ui5_t_draft
 FIELDS *
 WHERE uuid = @( client->get_val( ) ) INTO @ls_db.`;
     const expected = `
-sdfds`;
+DATA(temp1) = client->get_val( ).
+SELECT SINGLE FROM z2ui5_t_draft
+FIELDS *
+WHERE uuid = @temp1 INTO @ls_db.`;
     testFix(abap, expected);
   });
 
