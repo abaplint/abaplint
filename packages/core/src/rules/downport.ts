@@ -23,7 +23,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {ObjectReferenceType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
-import {At, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
+import {At, ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
@@ -550,7 +550,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 
 //////////////////////////////////////////
 
-  private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
     }
@@ -580,7 +580,17 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     for (const c of candidates.reverse()) {
       if (c.getFirstToken() instanceof WAt
           || c.getFirstToken() instanceof At) {
-        addFix(c.getFirstToken());
+        const tokens = c.getAllTokens();
+        if (tokens[1] instanceof ParenLeftW && tokens[tokens.length - 1] instanceof WParenRightW) {
+          const source = c.findDirectExpression(Expressions.Source);
+          const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+          const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA(${uniqueName}) = ${source?.concatTokens()}.\n`);
+          const fix2 = EditHelper.replaceRange(lowFile, c.getFirstToken().getStart(), c.getLastToken().getEnd(), "@" + uniqueName);
+          const fix = EditHelper.merge(fix2, fix1);
+          return Issue.atToken(lowFile, low.getFirstToken(), "SQL, outline complex @", this.getMetadata().key, this.conf.severity, fix);
+        } else {
+          addFix(c.getFirstToken());
+        }
       }
     }
 
@@ -2511,7 +2521,7 @@ ${indentation}    output = ${topTarget}.`;
       } else if (c.get() instanceof Expressions.Source) {
         code += indent + "  " + uniqueName + " = " + c.concatTokens() + ".\n";
       } else if (c.get() instanceof Expressions.Throw) {
-        code += indent + "  " + c.concatTokens().replace("THROW", "RAISE EXCEPTION NEW") + ".\n";
+        code += indent + "  " + c.concatTokens().replace(/THROW /i, "RAISE EXCEPTION NEW ") + ".\n";
       } else {
         throw "buildCondBody, unexpected expression, " + c.get().constructor.name;
       }
