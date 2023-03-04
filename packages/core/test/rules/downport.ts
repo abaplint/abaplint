@@ -4350,6 +4350,16 @@ DATA(x) = temp1.`;
     testFix(abap, expected);
   });
 
+  it.only("SELECT, complex @ value", async () => {
+    const abap = `
+SELECT SINGLE FROM z2ui5_t_draft
+FIELDS *
+WHERE uuid = @( client->get_val( ) ) INTO @ls_db.`;
+    const expected = `
+sdfds`;
+    testFix(abap, expected);
+  });
+
   it("COND with THROW, lower case", async () => {
     const abap = `
 DATA(x) = COND i( WHEN 1 = 1 THEN throw cx_smime( ) ).`;
