@@ -2477,11 +2477,12 @@ ${indentation}    output = ${topTarget}.`;
       const indent = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const bodyCode = this.buildCondBody(body, uniqueName, indent, lowFile, highSyntax);
 
+      const last = i.findDirectTokenByText(")")!;
+
       const abap = `DATA ${uniqueName} ${type}.\n` + bodyCode;
       const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), abap);
-      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), i.getLastToken().getEnd(), uniqueName);
+      const fix2 = EditHelper.replaceRange(lowFile, i.getFirstToken().getStart(), last.getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
-
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport COND", this.getMetadata().key, this.conf.severity, fix);
     }
 
