@@ -83,13 +83,6 @@ export class EditorWidget extends Widget {
 
       this.editor.onDidChangeModelContent(this.changed.bind(this));
 
-// hack to remap F1, see https://github.com/microsoft/monaco-editor/issues/649
-// @ts-ignore
-      this.editor._standaloneKeybindingService._getResolver()._lookupMap.get(
-        "editor.action.quickCommand")[0].resolvedKeybinding._parts[0].keyCode = monaco.KeyCode.F3;
-// @ts-ignore
-      this.editor._standaloneKeybindingService.updateResolver();
-
       this.editor.addAction({
         id: "abaplint.prettyprint",
         label: "Pretty Print",
