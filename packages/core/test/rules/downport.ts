@@ -4421,4 +4421,13 @@ GET REFERENCE OF ms_db INTO val.`;
     testFix(abap, expected);
   });
 
+  it.only("something after cond", async () => {
+    const abap = `
+DATA lv_test TYPE string.
+lv_test = COND #( WHEN 1 = 1 THEN 'AAA' ELSE 'BBB' ) && 'CCC'.`;
+    const expected = `
+sdfsd`;
+    testFix(abap, expected);
+  });
+
 });
