@@ -4437,4 +4437,32 @@ lv_test = temp1 && 'CCC'.`;
     testFix(abap, expected);
   });
 
+  it.skip("SELECT AS", async () => {
+    const abap = `
+  SELECT 'I' AS direction, keyval, alias
+    FROM zin
+    WHERE mandt = @sy-mandt
+    ORDER BY direction, keyval
+    INTO TABLE @lt_target.`;
+    const expected = `
+sdf`;
+    testFix(abap, expected);
+  });
+
+  it.skip("SELECT UNION", async () => {
+    const abap = `
+  SELECT 'I' AS direction, keyval, alias
+    FROM zin
+    WHERE mandt = @sy-mandt
+  UNION
+  SELECT 'O' AS direction, keyval, alias
+    FROM zout
+    WHERE mandt = @sy-mandt
+  ORDER BY direction, keyval
+  INTO TABLE @lt_target.`;
+    const expected = `
+sdf`;
+    testFix(abap, expected);
+  });
+
 });
