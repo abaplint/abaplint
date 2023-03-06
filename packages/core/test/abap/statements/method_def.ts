@@ -120,6 +120,7 @@ const tests = [
 
   `METHODS read FOR BEHAVIOR IMPORTING it_booking_key FOR READ booking RESULT et_booking.`,
   `METHODS lock FOR BEHAVIOR IMPORTING it_booking_key FOR LOCK booking.`,
+  `METHODS lock FOR LOCK IMPORTING keys FOR LOCK /foo/bar.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

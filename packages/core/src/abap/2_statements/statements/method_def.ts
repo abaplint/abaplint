@@ -41,7 +41,7 @@ export class MethodDef implements IStatement {
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, result),
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR CREATE", TypeName, MethodParamName, "FOR UPDATE", TypeName, MethodParamName, "FOR DELETE", TypeName),
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR READ", TypeName, result),
-      seq("BEHAVIOR IMPORTING", MethodParamName, "FOR LOCK", TypeName),
+      seq(alt("BEHAVIOR", "LOCK"), "IMPORTING", MethodParamName, "FOR LOCK", TypeName),
       seq("DETERMINE", alt("ON MODIFY", "ON SAVE"), "IMPORTING", MethodParamName, "FOR", TypeName),
     );
 
