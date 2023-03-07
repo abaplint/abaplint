@@ -9,7 +9,7 @@ export class GatewayVocabularyAnnotation extends AbstractObject {
   public getAllowedNaming() {
     return {
       maxLength: 36,
-      allowNamespace: false,
+      allowNamespace: true,
     };
   }
 

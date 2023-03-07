@@ -113,4 +113,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("IWVB, ok, namespace", async () => {
+    const issues = await findIssues("#foo#bar.iwvb.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });
