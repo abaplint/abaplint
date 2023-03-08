@@ -7204,7 +7204,7 @@ TYPES ty_overwrite_tt TYPE STANDARD TABLE OF ty_overwrite WITH DEFAULT KEY
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, standard with secondary unique keys", () => {
+  it("ok, standard with secondary unique keys", () => {
     const abap = `
   TYPES:
     BEGIN OF ty_mapping_field,
