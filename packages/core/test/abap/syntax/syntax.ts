@@ -7192,6 +7192,18 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, standard with secondary unique keys", () => {
+    const abap = `
+TYPES: BEGIN OF ty_overwrite,
+         obj_type TYPE string,
+         obj_name TYPE string,
+       END OF ty_overwrite.
+TYPES ty_overwrite_tt TYPE STANDARD TABLE OF ty_overwrite WITH DEFAULT KEY
+  WITH UNIQUE HASHED KEY object_type_and_name COMPONENTS obj_type obj_name.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Check fields in LOOP condition", () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -7203,6 +7215,18 @@ ENDLOOP.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.contain("blah");
+  });
+
+  it("Error, standard with unique key", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         i TYPE i,
+         s TYPE string,
+       END OF ty_row.
+DATA itab TYPE STANDARD TABLE OF ty_row WITH UNIQUE KEY i.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("STANDARD tables cannot have UNIQUE key");
   });
 
 // todo, static method cannot access instance attributes
