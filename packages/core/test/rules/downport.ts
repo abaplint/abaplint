@@ -4465,4 +4465,15 @@ sdf`;
     testFix(abap, expected);
   });
 
+  it.only("LOOP over REF TO TABLE", async () => {
+    const abap = `
+TYPES ty_t_string TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_stringtab TYPE STANDARD TABLE OF ty_t_string WITH DEFAULT KEY.
+LOOP AT lt_stringtab REFERENCE INTO DATA(lr_row).
+ENDLOOP.`;
+    const expected = `
+sdf`;
+    testFix(abap, expected);
+  });
+
 });

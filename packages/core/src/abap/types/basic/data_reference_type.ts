@@ -17,6 +17,10 @@ export class DataReference extends AbstractType {
   }
 
   public toABAP(): string {
+    const type = this.type.toABAP();
+    if (type.includes(" TABLE OF ")) {
+      return ""; // hmm, should this return undefined?
+    }
     return "REF TO " + this.type.toABAP();
   }
 

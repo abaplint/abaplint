@@ -2427,9 +2427,14 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      let type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
+      let type = found.getType().getQualifiedName()
+        ? found.getType().getQualifiedName()?.toLowerCase()
+        : found.getType().toABAP();
       if (found.getType() instanceof ObjectReferenceType) {
         type = found.getType().toABAP();
+      }
+      if (type === "") {
+        continue;
       }
 
       const code = `DATA ${name} TYPE ${type}.\n` +
