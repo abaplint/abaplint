@@ -43,6 +43,7 @@ statementVersion(versions, "TYPE", Statements.Type);
 
 
 const fails = [
+  `TYPES ty_itab TYPE STANDARD TABLE string.`,
   `TYPES moo TYPE SORTED TABLE OF foo_bar WITH NON-UNIQUE KEY and with.`,
 ];
 statementExpectFail(fails, "TYPES");
