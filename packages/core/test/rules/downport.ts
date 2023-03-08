@@ -656,7 +656,8 @@ ENDFORM.`;
 
     const expected = `
     DATA table TYPE STANDARD TABLE OF string.
-    DATA inline TYPE REF TO string.
+    DATA temp1 LIKE LINE OF table.
+    DATA inline LIKE REF TO temp1.
     LOOP AT table REFERENCE INTO inline.
     ENDLOOP.`;
 
@@ -3172,7 +3173,8 @@ LOOP AT initial_numbers REFERENCE into DATA(line).
 ENDLOOP.`;
     const expected = `
 data initial_numbers type standard table of i with default key.
-DATA line TYPE REF TO i.
+DATA temp1 LIKE LINE OF initial_numbers.
+DATA line LIKE REF TO temp1.
 LOOP AT initial_numbers REFERENCE into line.
 
 ENDLOOP.`;
@@ -4465,14 +4467,19 @@ sdf`;
     testFix(abap, expected);
   });
 
-  it.only("LOOP over REF TO TABLE", async () => {
+  it("LOOP over REF TO TABLE", async () => {
     const abap = `
 TYPES ty_t_string TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_stringtab TYPE STANDARD TABLE OF ty_t_string WITH DEFAULT KEY.
 LOOP AT lt_stringtab REFERENCE INTO DATA(lr_row).
 ENDLOOP.`;
     const expected = `
-sdf`;
+TYPES ty_t_string TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_stringtab TYPE STANDARD TABLE OF ty_t_string WITH DEFAULT KEY.
+DATA temp1 LIKE LINE OF lt_stringtab.
+DATA lr_row LIKE REF TO temp1.
+LOOP AT lt_stringtab REFERENCE INTO lr_row.
+ENDLOOP.`;
     testFix(abap, expected);
   });
 
