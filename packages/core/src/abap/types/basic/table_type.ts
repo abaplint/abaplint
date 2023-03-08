@@ -29,6 +29,9 @@ export class TableType extends AbstractType {
     super({qualifiedName: qualifiedName});
     this.rowType = rowType;
     this.options = options;
+    if (options.primaryKey?.type === TableAccessType.standard && options.primaryKey.isUnique === true) {
+      throw new Error("STANDARD tables cannot have UNIQUE key");
+    }
   }
 
   public getOptions(): ITableOptions {
