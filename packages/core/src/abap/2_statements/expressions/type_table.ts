@@ -11,8 +11,7 @@ export class TypeTable extends Expression {
     const initial = seq("INITIAL SIZE", Constant);
 
     const normal1 = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
-                        "TABLE",
-                        opt("OF"),
+                        "TABLE OF",
                         opt("REF TO"),
                         opt(TypeName));
 
