@@ -10,6 +10,8 @@ export class TypeTable extends Expression {
     const header = "WITH HEADER LINE";
     const initial = seq("INITIAL SIZE", Constant);
 
+    const generic = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")), "TABLE");
+
     const normal1 = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                         "TABLE OF",
                         opt("REF TO"),
@@ -26,9 +28,10 @@ export class TypeTable extends Expression {
 
     // a maximum of 15 secondary table keys can be defined
     // "WITH" is not allowed as a field name in keys
-    const typetable = seq(normal1,
+    const typetable = alt(generic,
+                      seq(normal1,
                           alt(opt(per(header, initial, plusPrio(TypeTableKey))),
-                              seq(plus(TypeTableKey), optPrio(initial))));
+                              seq(plus(TypeTableKey), optPrio(initial)))));
 
     const occurs = seq("OCCURS", Integer);
 
