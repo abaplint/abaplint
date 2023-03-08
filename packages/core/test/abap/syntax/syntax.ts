@@ -7204,6 +7204,20 @@ TYPES ty_overwrite_tt TYPE STANDARD TABLE OF ty_overwrite WITH DEFAULT KEY
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("ok, standard with secondary unique keys", () => {
+    const abap = `
+  TYPES:
+    BEGIN OF ty_mapping_field,
+      abap TYPE string,
+      json TYPE string,
+    END OF ty_mapping_field,
+    ty_mapping_fields TYPE STANDARD TABLE OF ty_mapping_field
+      WITH UNIQUE SORTED KEY abap COMPONENTS abap
+      WITH UNIQUE SORTED KEY json COMPONENTS json.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Check fields in LOOP condition", () => {
     const abap = `
 TYPES: BEGIN OF ty,
