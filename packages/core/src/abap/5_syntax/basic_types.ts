@@ -319,18 +319,24 @@ export class BasicTypes {
     const typeTableKeys = node.findAllExpressions(TypeTableKey);
 
     const firstKey = typeTableKeys[0];
+    const isNamed = firstKey?.findDirectExpression(Field) !== undefined;
     const primaryKey: ITableKey = {
       name: "primary_key",
       type: type,
-      isUnique: firstKey?.concatTokens().toUpperCase().includes("WITH UNIQUE ") === true,
+      isUnique: isNamed ? false : firstKey?.concatTokens().toUpperCase().includes("WITH UNIQUE ") === true,
       keyFields: [],
     };
-    for (const k of firstKey?.findDirectExpressions(FieldSub) || []) {
-      primaryKey.keyFields.push(k.concatTokens().toUpperCase());
+    let start = 1;
+    if (isNamed === false) {
+      for (const k of firstKey?.findDirectExpressions(FieldSub) || []) {
+        primaryKey.keyFields.push(k.concatTokens().toUpperCase());
+      }
+    } else {
+      start = 0;
     }
 
     const secondaryKeys: ITableKey[] = [];
-    for (let i = 1; i < typeTableKeys.length; i++) {
+    for (let i = start; i < typeTableKeys.length; i++) {
       const row = typeTableKeys[i];
       const name = row.findDirectExpression(Field)?.concatTokens();
       if (name === undefined) {

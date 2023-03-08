@@ -1747,7 +1747,7 @@ ${indentation}    output = ${topTarget}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Outline LOOP input", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private outlineLoopTarget(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private outlineLoopTarget(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 // also allows outlining of voided types
     if (!(node.get() instanceof Statements.Loop)) {
       return undefined;
@@ -1759,17 +1759,20 @@ ${indentation}    output = ${topTarget}.`;
     }
 
     const concat = node.concatTokens().toUpperCase();
-    if (concat.includes(" REFERENCE INTO ")
-        || concat.includes(" GROUP BY ")
-        || concat.startsWith("LOOP AT GROUP ")) {
+    if (concat.includes(" GROUP BY ") || concat.startsWith("LOOP AT GROUP ")) {
       return undefined;
     }
+    const isReference = concat.includes(" REFERENCE INTO ");
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
     const dataTarget = node.findDirectExpression(Expressions.LoopTarget)?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
     if (dataTarget) {
       const targetName = dataTarget.findDirectExpression(Expressions.TargetField)?.concatTokens() || "DOWNPORT_ERROR";
-      const code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
+      let code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
+      if (isReference) {
+        const likeName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+        code = `DATA ${likeName} LIKE LINE OF ${sourceName}.\n${indentation}DATA ${targetName} LIKE REF TO ${likeName}.\n${indentation}`;
+      }
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
       const fix2 = EditHelper.replaceRange(lowFile, dataTarget.getFirstToken().getStart(), dataTarget.getLastToken().getEnd(), targetName);
       const fix = EditHelper.merge(fix2, fix1);
@@ -2427,9 +2430,14 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
-      let type = found.getType().getQualifiedName() ? found.getType().getQualifiedName()?.toLowerCase() : found.getType().toABAP();
+      let type = found.getType().getQualifiedName()
+        ? found.getType().getQualifiedName()?.toLowerCase()
+        : found.getType().toABAP();
       if (found.getType() instanceof ObjectReferenceType) {
         type = found.getType().toABAP();
+      }
+      if (type === "") {
+        continue;
       }
 
       const code = `DATA ${name} TYPE ${type}.\n` +
