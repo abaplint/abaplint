@@ -721,7 +721,7 @@ export class BasicTypes {
       }
       foundType = foundType.getComponentByName(subs[0]);
       if (foundType === undefined) {
-        return new Types.UnknownType(`Field "${subs[0]} not found in structure"`);
+        return new Types.UnknownType(`Field "${subs[0]}" not found in structure`);
       }
       subs.shift();
     }
