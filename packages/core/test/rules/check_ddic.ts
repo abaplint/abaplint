@@ -148,4 +148,36 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.not.equal(undefined);
   });
 
+  it("TABL, error expected", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZFOOBAR2</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>SDF</FIELDNAME>
+     <ROLLNAME>ZACTIVE</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <VALEXI>X</VALEXI>
+     <SHLPORIGIN>F</SHLPORIGIN>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar2.tabl.xml", xml));
+    await reg.parseAsync();
+
+    const issues = new CheckDDIC().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+  });
+
 });
