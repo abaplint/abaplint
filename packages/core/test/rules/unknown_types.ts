@@ -1,15 +1,8 @@
-import {runMulti, testRule} from "./_utils";
+import {fullErrorNamespace, runMulti, testRule} from "./_utils";
 import {UnknownTypes} from "../../src/rules";
 import {expect} from "chai";
-import {Config, IConfiguration} from "../../src";
 
 // note that the errorNamespace is respected
-
-function fullErrorNamespace(): IConfiguration {
-  const conf = Config.getDefault().get();
-  conf.syntax.errorNamespace = ".";
-  return new Config(JSON.stringify(conf));
-}
 
 const tests = [
   {abap: "parser error", cnt: 0},
