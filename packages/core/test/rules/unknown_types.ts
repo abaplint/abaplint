@@ -2045,4 +2045,21 @@ t_tab = REDUCE #( INIT ret = VALUE #( )
     expect(issues.length).to.equal(0);
   });
 
+  it.only("Type is outside errorNamespace, but known, field does not exists, expect error", () => {
+    const abap = `
+TYPES: BEGIN OF ty1,
+         field1 TYPE string,
+       END OF ty1.
+
+TYPES: BEGIN OF ty2,
+         field1 TYPE ty1-field1,
+         field2 TYPE ty1-field2,
+       END OF ty2.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    console.dir(issues);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.not.contain("field2");
+  });
+
 });
