@@ -1292,4 +1292,17 @@ parser error c_width.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("Used in table_line READ TABLE", async () => {
+    const abap = `
+  INTERFACE lif.
+    DATA foo TYPE string.
+  ENDINTERFACE.
+
+  START-OF-SELECTION.
+    DATA tab TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
+    READ TABLE tab WITH KEY table_line->foo = 'bar' TRANSPORTING NO FIELDS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

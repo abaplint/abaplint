@@ -171,7 +171,7 @@ export class Source {
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
 //        console.dir("dash");
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
-        context = new ComponentChain().runSyntax(context, first);
+        context = new ComponentChain().runSyntax(context, first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeChain) {
         context = new AttributeChain().runSyntax(context, first, scope, filename, ReferenceType.DataReadReference);
       }

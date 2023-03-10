@@ -7243,7 +7243,7 @@ DATA itab TYPE STANDARD TABLE OF ty_row WITH UNIQUE KEY i.`;
     expect(issues[0].getMessage()).to.contain("STANDARD tables cannot have UNIQUE key");
   });
 
-  it.skip("Error, field does not exist", () => {
+  it("Error, field does not exist", () => {
     const abap = `
 INTERFACE lif.
   DATA foo TYPE string.
@@ -7254,7 +7254,7 @@ START-OF-SELECTION.
   READ TABLE tab WITH KEY table_line->wrong = 'bar' TRANSPORTING NO FIELDS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
-    expect(issues[0].getMessage()).to.contain("WRONG");
+    expect(issues[0].getMessage()).to.contain("wrong");
   });
 
 // todo, static method cannot access instance attributes
