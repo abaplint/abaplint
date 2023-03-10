@@ -7,6 +7,7 @@ import {DataReference, ObjectReferenceType, UnknownType} from "../../types/basic
 import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {CurrentScope} from "../_current_scope";
+import {ObjectOriented} from "../_object_oriented";
 
 export class ComponentChain {
   public runSyntax(context: AbstractType | undefined, node: ExpressionNode,
@@ -59,7 +60,9 @@ export class ComponentChain {
             throw new Error(id.getName() + " not found in scope");
           }
 
-          const found = def.getAttributes().findByName(name);
+          const helper = new ObjectOriented(scope);
+          const found = helper.searchAttributeName(def, name);
+
           context = found?.getType();
           if (context === undefined) {
             throw new Error("Attribute \"" + name + "\" not found");

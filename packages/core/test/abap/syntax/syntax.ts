@@ -7276,6 +7276,24 @@ READ TABLE tab WITH KEY table_line->* = 2 TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, read table via alias field", () => {
+    const abap = `
+INTERFACE top.
+  DATA bar TYPE string.
+ENDINTERFACE.
+
+INTERFACE lif.
+  INTERFACES top.
+  ALIASES name FOR top~bar.
+ENDINTERFACE.
+
+DATA tab TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
+
+READ TABLE tab WITH KEY table_line->name = 'sdf' TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
