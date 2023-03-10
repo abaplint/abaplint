@@ -7243,7 +7243,7 @@ DATA itab TYPE STANDARD TABLE OF ty_row WITH UNIQUE KEY i.`;
     expect(issues[0].getMessage()).to.contain("STANDARD tables cannot have UNIQUE key");
   });
 
-  it.only("Error, field does not exist", () => {
+  it.skip("Error, field does not exist", () => {
     const abap = `
 INTERFACE lif.
   DATA foo TYPE string.

@@ -1,35 +1,34 @@
-import {INode} from "../../nodes/_inode";
+import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType} from "../../types/basic/void_type";
 import {StructureType} from "../../types/basic/structure_type";
+import {ExpressionNode} from "../../nodes";
 
 export class ComponentChain {
-  public runSyntax(context: AbstractType | undefined, node: INode): AbstractType | undefined {
-    if (context instanceof VoidType) {
-      return context;
-    }
+  public runSyntax(context: AbstractType | undefined, node: ExpressionNode): AbstractType | undefined {
 
-    const name = node.getFirstToken().getStr();
-
-    if (!(context instanceof StructureType)) {
-      if (name.toUpperCase() === "TABLE_LINE") {
+    const children = node.getChildren();
+    for (let i = 0; i < children.length; i++) {
+      if (context instanceof VoidType) {
         return context;
       }
-      throw new Error("ComponentChain, not a structure");
+
+      const child = children[i];
+      if (i === 0 && child.concatTokens().toUpperCase() === "TABLE_LINE") {
+        continue;
+      } else if (child.get() instanceof Expressions.ComponentName) {
+        if (!(context instanceof StructureType)) {
+          throw new Error("ComponentChain, not a structure");
+        }
+        const name = child.concatTokens();
+        context = context.getComponentByName(name);
+        if (context === undefined) {
+          throw new Error("Component \"" + name + "\" not found in structure");
+        }
+      }
     }
 
-    if (name.toUpperCase() === "TABLE_LINE") {
-      return context;
-    }
-
-    const ret = context.getComponentByName(name);
-    if (ret === undefined) {
-      throw new Error("Component \"" + name + "\" not found in structure");
-    }
-
-// todo, add more here
-
-    return ret;
+    return context;
   }
 
 }
