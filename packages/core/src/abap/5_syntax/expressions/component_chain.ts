@@ -4,9 +4,10 @@ import {VoidType} from "../../types/basic/void_type";
 import {StructureType} from "../../types/basic/structure_type";
 import {ExpressionNode} from "../../nodes";
 import {DataReference, ObjectReferenceType, UnknownType} from "../../types/basic";
-import {ClassDefinition, InterfaceDefinition} from "../../types";
+import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {CurrentScope} from "../_current_scope";
+import {ObjectOriented} from "../_object_oriented";
 
 export class ComponentChain {
   public runSyntax(context: AbstractType | undefined, node: ExpressionNode,
@@ -54,20 +55,24 @@ export class ComponentChain {
           }
         } else if (context instanceof ObjectReferenceType) {
           const id = context.getIdentifier();
-          if (id instanceof InterfaceDefinition || id instanceof ClassDefinition) {
-            const found = id.getAttributes().findByName(name);
-            context = found?.getType();
-            if (context === undefined) {
-              throw new Error("Attribute \"" + name + "\" not found");
-            } else {
-              const extra: IReferenceExtras = {
-                ooName: id.getName(),
-                ooType: id instanceof ClassDefinition ? "CLAS" : "INTF"};
-              scope.addReference(child.getFirstToken(), found, ReferenceType.DataWriteReference, filename, extra);
-            }
-          } else {
-            throw new Error("ComponentChain, unexpected type2");
+          const def = scope.findObjectDefinition(id.getName());
+          if (def === undefined) {
+            throw new Error(id.getName() + " not found in scope");
           }
+
+          const helper = new ObjectOriented(scope);
+          const found = helper.searchAttributeName(def, name);
+
+          context = found?.getType();
+          if (context === undefined) {
+            throw new Error("Attribute \"" + name + "\" not found");
+          } else {
+            const extra: IReferenceExtras = {
+              ooName: id.getName(),
+              ooType: id instanceof ClassDefinition ? "CLAS" : "INTF"};
+            scope.addReference(child.getFirstToken(), found, ReferenceType.DataWriteReference, filename, extra);
+          }
+
         } else {
           throw new Error("ComponentChain, not a structure");
         }
