@@ -43,14 +43,15 @@ export class ComponentChain {
         } else if (context instanceof ObjectReferenceType) {
           const id = context.getIdentifier();
           if (id instanceof InterfaceDefinition || id instanceof ClassDefinition) {
-            context = id.getAttributes().findByName(name)?.getType();
+            const found = id.getAttributes().findByName(name);
+            context = found?.getType();
             if (context === undefined) {
               throw new Error("Attribute \"" + name + "\" not found");
             } else {
               const extra: IReferenceExtras = {
                 ooName: id.getName(),
                 ooType: id instanceof ClassDefinition ? "CLAS" : "INTF"};
-              scope.addReference(child.getFirstToken(), id, ReferenceType.DataWriteReference, filename, extra);
+              scope.addReference(child.getFirstToken(), found, ReferenceType.DataWriteReference, filename, extra);
             }
           } else {
             throw new Error("ComponentChain, unexpected type2");
