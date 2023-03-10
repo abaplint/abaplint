@@ -7243,6 +7243,20 @@ DATA itab TYPE STANDARD TABLE OF ty_row WITH UNIQUE KEY i.`;
     expect(issues[0].getMessage()).to.contain("STANDARD tables cannot have UNIQUE key");
   });
 
+  it.only("Error, field does not exist", () => {
+    const abap = `
+INTERFACE lif.
+  DATA foo TYPE string.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  DATA tab TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
+  READ TABLE tab WITH KEY table_line->wrong = 'bar' TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("WRONG");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
