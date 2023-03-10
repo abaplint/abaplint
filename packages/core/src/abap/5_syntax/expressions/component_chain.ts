@@ -38,11 +38,15 @@ export class ComponentChain {
           }
         }
       } else if (child.get() instanceof Expressions.ComponentName) {
+        const name = child.concatTokens();
+
         if (context instanceof DataReference) {
           context = context.getType();
+          if (name === "*") {
+            continue;
+          }
         }
 
-        const name = child.concatTokens();
         if (context instanceof StructureType) {
           context = context.getComponentByName(name);
           if (context === undefined) {
