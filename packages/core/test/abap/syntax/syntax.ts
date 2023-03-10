@@ -7243,6 +7243,39 @@ DATA itab TYPE STANDARD TABLE OF ty_row WITH UNIQUE KEY i.`;
     expect(issues[0].getMessage()).to.contain("STANDARD tables cannot have UNIQUE key");
   });
 
+  it("Error, field does not exist", () => {
+    const abap = `
+INTERFACE lif.
+  DATA foo TYPE string.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  DATA tab TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
+  READ TABLE tab WITH KEY table_line->wrong = 'bar' TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("wrong");
+  });
+
+  it("ok, read table data reference", () => {
+    const abap = `
+TYPES: BEGIN OF foo,
+         field TYPE i,
+       END OF foo.
+DATA tab TYPE STANDARD TABLE OF REF TO foo WITH DEFAULT KEY.
+READ TABLE tab WITH KEY table_line->field = 2 TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, read table data reference, dereference", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF REF TO i WITH DEFAULT KEY.
+READ TABLE tab WITH KEY table_line->* = 2 TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

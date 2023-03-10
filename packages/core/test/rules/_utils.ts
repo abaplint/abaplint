@@ -5,7 +5,13 @@ import {IRule} from "../../src/rules/_irule";
 import {applyEditSingle} from "../../src/edit_helper";
 import {Issue} from "../../src/issue";
 import {IConfiguration} from "../../src/_config";
-import {IFile} from "../../src";
+import {Config, IFile} from "../../src";
+
+export function fullErrorNamespace(): IConfiguration {
+  const conf = Config.getDefault().get();
+  conf.syntax.errorNamespace = ".";
+  return new Config(JSON.stringify(conf));
+}
 
 export function runMulti(files: {filename: string, contents: string}[], config?: IConfiguration): readonly Issue[] {
   const reg = new Registry();

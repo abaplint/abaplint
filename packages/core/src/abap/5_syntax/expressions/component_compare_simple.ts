@@ -12,7 +12,7 @@ export class ComponentCompareSimple {
     for (const c of node.getChildren()) {
       if (c instanceof ExpressionNode) {
         if (c.get() instanceof Expressions.ComponentChainSimple) {
-          targetType = new ComponentChain().runSyntax(rowType, c);
+          targetType = new ComponentChain().runSyntax(rowType, c, scope, filename);
         } else if (c.get() instanceof Expressions.Dynamic) {
           targetType = undefined;
         } else if (c.get() instanceof Expressions.Source) {
