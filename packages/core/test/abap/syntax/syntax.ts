@@ -7257,6 +7257,17 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("wrong");
   });
 
+  it("ok, read table data reference", () => {
+    const abap = `
+TYPES: BEGIN OF foo,
+         field TYPE i,
+       END OF foo.
+DATA tab TYPE STANDARD TABLE OF REF TO foo WITH DEFAULT KEY.
+READ TABLE tab WITH KEY table_line->field = 2 TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

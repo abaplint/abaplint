@@ -3,7 +3,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType} from "../../types/basic/void_type";
 import {StructureType} from "../../types/basic/structure_type";
 import {ExpressionNode} from "../../nodes";
-import {ObjectReferenceType, UnknownType} from "../../types/basic";
+import {DataReference, ObjectReferenceType, UnknownType} from "../../types/basic";
 import {ClassDefinition, InterfaceDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {CurrentScope} from "../_current_scope";
@@ -28,12 +28,20 @@ export class ComponentChain {
           if (!(context instanceof StructureType)) {
             throw new Error("ComponentChain, not a structure");
           }
-        } else if (concat === "->" || concat === "=>") {
+        } else if (concat === "=>") {
           if (!(context instanceof ObjectReferenceType)) {
-            throw new Error("ComponentChain, not a object reference");
+            throw new Error("ComponentChain, not a reference");
+          }
+        } else if (concat === "->") {
+          if (!(context instanceof ObjectReferenceType) && !(context instanceof DataReference)) {
+            throw new Error("ComponentChain, not a reference");
           }
         }
       } else if (child.get() instanceof Expressions.ComponentName) {
+        if (context instanceof DataReference) {
+          context = context.getType();
+        }
+
         const name = child.concatTokens();
         if (context instanceof StructureType) {
           context = context.getComponentByName(name);
