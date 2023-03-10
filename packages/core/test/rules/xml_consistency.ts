@@ -218,4 +218,10 @@ describe("xml consistency", () => {
     const issues = await run(reg);
     expect(issues.length).to.equals(0);
   });
+
+  it.only("not ok ampersand", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_klaus.devc.xml", "<foo>sdfsd & sfds</foo>"));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(1);
+  });
 });
