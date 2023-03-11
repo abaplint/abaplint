@@ -7,6 +7,8 @@ import {ComponentCompare} from "../expressions/component_compare";
 import {ComponentCond} from "../expressions/component_cond";
 import {StatementSyntax} from "../_statement_syntax";
 import {ILookupResult} from "../../../ddic";
+import {AbstractType} from "../../types/basic/_abstract_type";
+import {TableType} from "../../types/basic";
 
 export class DeleteInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -15,6 +17,7 @@ export class DeleteInternal implements StatementSyntax {
       new Source().runSyntax(s, scope, filename);
     }
 
+    let targetType: AbstractType | undefined = undefined;
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
       let tabl: ILookupResult | undefined = undefined;
@@ -26,16 +29,19 @@ export class DeleteInternal implements StatementSyntax {
         }
       }
       if (tabl === undefined) {
-        new Target().runSyntax(target, scope, filename);
+        targetType = new Target().runSyntax(target, scope, filename);
+        if (targetType instanceof TableType) {
+          targetType = targetType.getRowType();
+        }
       }
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      new ComponentCompare().runSyntax(t, scope, filename);
+      new ComponentCompare().runSyntax(t, scope, filename, targetType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, scope, filename);
+      new ComponentCond().runSyntax(t, scope, filename, targetType);
     }
 
   }
