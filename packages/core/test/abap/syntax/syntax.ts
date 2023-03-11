@@ -7294,6 +7294,28 @@ READ TABLE tab WITH KEY table_line->name = 'sdf' TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, delete internal", () => {
+    const abap = `
+INTERFACE lif.
+  DATA data TYPE string.
+ENDINTERFACE.
+DATA tab TYPE STANDARD TABLE OF REF TO lif WITH EMPTY KEY.
+DELETE tab WHERE table_line->data <> 'true'..`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it.only("error, delete internal", () => {
+    const abap = `
+INTERFACE lif.
+  DATA data TYPE string.
+ENDINTERFACE.
+DATA tab TYPE STANDARD TABLE OF REF TO lif WITH EMPTY KEY.
+DELETE tab WHERE table_line->wrong <> 'true'..`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("wrong");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
