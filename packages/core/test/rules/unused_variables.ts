@@ -1306,4 +1306,15 @@ parser error c_width.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Used in DELETE", async () => {
+    const abap = `
+INTERFACE lif.
+  DATA data TYPE string.
+ENDINTERFACE.
+DATA tab TYPE STANDARD TABLE OF REF TO lif WITH EMPTY KEY.
+DELETE tab WHERE table_line->data <> 'true'.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

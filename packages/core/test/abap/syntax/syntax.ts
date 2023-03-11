@@ -5125,7 +5125,7 @@ READ TABLE lt_map WITH KEY blah = iv_tag TRANSPORTING NO FIELDS.`;
   FIELD-SYMBOLS <bar> TYPE ANY TABLE.
   READ TABLE <bar> WITH KEY moo = 2 TRANSPORTING NO FIELDS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(`ComponentChain, not a structure`);
+    expect(issues[0]?.getMessage()).to.equal(`ComponentChain, not a structure, AnyType`);
   });
 
   it("shift in byte mode should produce syntax error", () => {
@@ -7292,6 +7292,28 @@ DATA tab TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
 READ TABLE tab WITH KEY table_line->name = 'sdf' TRANSPORTING NO FIELDS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, delete internal", () => {
+    const abap = `
+INTERFACE lif.
+  DATA data TYPE string.
+ENDINTERFACE.
+DATA tab TYPE STANDARD TABLE OF REF TO lif WITH EMPTY KEY.
+DELETE tab WHERE table_line->data <> 'true'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, delete internal", () => {
+    const abap = `
+INTERFACE lif.
+  DATA data TYPE string.
+ENDINTERFACE.
+DATA tab TYPE STANDARD TABLE OF REF TO lif WITH EMPTY KEY.
+DELETE tab WHERE table_line->wrong <> 'true'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("wrong");
   });
 
 // todo, static method cannot access instance attributes

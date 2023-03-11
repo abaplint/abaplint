@@ -14,6 +14,10 @@ export class ComponentChain {
                    scope: CurrentScope,
                    filename: string): AbstractType | undefined {
 
+    if (context === undefined) {
+      return undefined;
+    }
+
     const children = node.getChildren();
     for (let i = 0; i < children.length; i++) {
       if (context instanceof VoidType || context instanceof UnknownType) {
@@ -74,7 +78,7 @@ export class ComponentChain {
           }
 
         } else {
-          throw new Error("ComponentChain, not a structure");
+          throw new Error("ComponentChain, not a structure, " + context?.constructor.name);
         }
       }
     }
