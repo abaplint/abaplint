@@ -2807,10 +2807,13 @@ ${indentation}    output = ${topTarget}.`;
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
           indentation + uniqueName + ` = ${sy}.\n` +
           indentation ;
-        let insertAt = node.getFirstToken().getStart();
+        let insertAt: Position | undefined = node.getFirstToken().getStart();
         if (node.get() instanceof ElseIf) {
           // assumption: no side effects in IF conditions
           insertAt = this.findStartOfIf(node, highFile);
+          if (insertAt === undefined) {
+            continue;
+          }
         }
         const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
         const start = expression.getFirstToken().getStart();
@@ -2825,14 +2828,14 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position {
+  private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position | undefined {
     const structure = highFile.getStructure();
     for (const c of structure?.findAllStructuresRecursive(Structures.If) || []) {
       if (c.findDirectStructure(Structures.ElseIf)?.getFirstStatement() === node) {
         return c.getFirstToken().getStart();
       }
     }
-    return node.getFirstToken().getStart();
+    return undefined;
   }
 
   private newToCreateObject(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

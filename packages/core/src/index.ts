@@ -53,12 +53,13 @@ import {DDLParser} from "./ddl/ddl_parser";
 import {CDSParser} from "./cds/cds_parser";
 import {RulesRunner} from "./rules_runner";
 import {RuleTag} from "./rules/_irule";
+import {CyclomaticComplexityStats} from "./utils/cyclomatic_complexity_stats";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
 
 // file used to build typings, index.d.ts
-export {MemoryFile, Issue, Config, Version, ReferenceType,
+export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
