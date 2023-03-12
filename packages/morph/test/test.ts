@@ -19,7 +19,7 @@ function test(ts: string) {
   }
 }
 
-describe("Morph", () => {
+describe("Morph TS to ABAP", () => {
 
   it("test", async () => {
     const ts = `let foo: number = 5;`;
@@ -490,6 +490,17 @@ RETURN.
   ENDMETHOD.
 
 ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("splits", async () => {
+    const ts = `
+const splits: {[name: string]: boolean} = {};
+splits[" "] = true;`;
+    const abap = `
+DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+CLEAR splits.
+APPEND | | TO splits.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

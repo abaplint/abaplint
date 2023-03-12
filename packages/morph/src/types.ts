@@ -7,8 +7,7 @@ export function handleType(t: Type) {
 /*
   console.dir(text);
   console.dir(name);
-  */
-
+*/
   if (t.isEnum() === true) {
     return "i";
   }
@@ -20,6 +19,8 @@ export function handleType(t: Type) {
       return "i";
     case "boolean":
       return "abap_bool";
+    case "{ [name: string]: boolean; }":
+      return "STANDARD TABLE OF string WITH EMPTY KEY";
     default:
       if (arrayType) {
         return "STANDARD TABLE OF REF TO " + arrayType + " WITH EMPTY KEY";

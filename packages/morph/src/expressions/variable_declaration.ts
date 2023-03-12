@@ -7,6 +7,7 @@ export class MorphVariableDeclaration {
     let ret = "";
 
     const expr = handleExpression(d.getInitializer());
+//    console.dir(expr);
     if (expr === "undefined" || expr === "VALUE #( )" || expr === "") {
       ret += `DATA ${d.getName()} TYPE ` + handleType(d.getType()) + ".\n";
       ret += `CLEAR ${d.getName()}.\n`;
