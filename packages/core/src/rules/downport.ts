@@ -28,6 +28,7 @@ import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
+import { ElseIf } from "../abap/2_statements/statements";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
@@ -505,7 +506,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.replaceLineFunctions(high, lowFile, highSyntax);
+    found = this.replaceLineFunctions(high, lowFile, highSyntax, highFile);
     if (found) {
       return found;
     }
@@ -2767,7 +2768,7 @@ ${indentation}    output = ${topTarget}.`;
     return undefined;
   }
 
-  private replaceLineFunctions(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+  private replaceLineFunctions(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
     for (const r of spag?.getData().references || []) {
@@ -2806,17 +2807,32 @@ ${indentation}    output = ${topTarget}.`;
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
           indentation + uniqueName + ` = ${sy}.\n` +
           indentation ;
-        const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+        let insertAt = node.getFirstToken().getStart();
+        if (node.get() instanceof ElseIf) {
+          // assumption: no side effects in IF conditions
+          insertAt = this.findStartOfIf(node, highFile);
+        }
+        const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
         const start = expression.getFirstToken().getStart();
         const end = expression.getLastToken().getEnd();
         const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName + (func === "LINE_EXISTS" ? " = 0" : ""));
         const fix = EditHelper.merge(fix2, fix1);
 
-        return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
+        return Issue.atToken(lowFile, token, "Replace line function", this.getMetadata().key, this.conf.severity, fix);
       }
     }
 
     return undefined;
+  }
+
+  private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position {
+    const structure = highFile.getStructure();
+    for (const c of structure?.findAllStructuresRecursive(Structures.If) || []) {
+      if (c.findDirectStructure(Structures.ElseIf)?.getFirstStatement() === node) {
+        return c.getFirstToken().getStart();
+      }
+    }
+    return node.getFirstToken().getStart();
   }
 
   private newToCreateObject(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
