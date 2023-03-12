@@ -3,15 +3,18 @@ import {handleExpression, handleExpressions} from "../expressions";
 
 export class MorphBinary {
   public run(s: BinaryExpression) {
+
     const eLeft = s.getLeft();
     const left = handleExpression(s.getLeft());
     const operator = handleExpression(s.getOperatorToken());
-    const right = handleExpression(s.getRight());
+    const eRight = s.getRight();
+    const right = handleExpression(eRight);
 /*
     console.dir(left);
     console.dir(operator);
     console.dir(right);
 */
+
     let ret = handleExpressions(s.forEachChildAsArray());
     if (operator.trim() === "EQ" && right === "undefined") {
       ret = left + " IS INITIAL";

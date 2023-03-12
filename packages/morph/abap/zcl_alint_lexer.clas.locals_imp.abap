@@ -58,14 +58,11 @@ CLASS virtualposition DEFINITION INHERITING FROM position.
     DATA vcol TYPE i.
     METHODS constructor IMPORTING virtual TYPE REF TO position row TYPE i col TYPE i.
     METHODS equals REDEFINITION.
-  PRIVATE SECTION.
-    DATA virtual TYPE REF TO position.
 ENDCLASS.
 
 CLASS VirtualPosition IMPLEMENTATION.
   METHOD constructor.
     super->constructor( row = virtual->getrow( ) col = virtual->getcol( ) ).
-    me->virtual = virtual.
     me->vrow = row.
     me->vcol = col.
   ENDMETHOD.
@@ -75,8 +72,8 @@ CLASS VirtualPosition IMPLEMENTATION.
       return = abap_false.
       RETURN.
     ENDIF.
-    DATA(bar) = CAST virtualposition( p ).
-    return = xsdbool( super->equals( me->virtual ) AND me->vrow EQ bar->vrow AND me->vcol EQ bar->vcol ).
+    DATA(casted) = CAST virtualposition( p ).
+    return = xsdbool( super->equals( me ) AND me->vrow EQ casted->vrow AND me->vcol EQ casted->vcol ).
     
   ENDMETHOD.
 
@@ -705,7 +702,7 @@ CLASS AbstractFile IMPLEMENTATION.
       WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
       ELSE |{ add }{ split_input+index3(1) }| ) ).
-    return = to_upper( val = split[ 1 + 1 ] ).
+    return = to_upper( split[ 1 + 1 ] ).
     
   ENDMETHOD.
 
@@ -788,7 +785,7 @@ TYPES END OF iabaplexerresult.
 CLASS buffer DEFINITION.
   PUBLIC SECTION.
     METHODS constructor.
-    METHODS add IMPORTING s TYPE string.
+    METHODS add IMPORTING s TYPE string RETURNING VALUE(return) TYPE string.
     METHODS get RETURNING VALUE(return) TYPE string.
     METHODS clear.
     METHODS countiseven IMPORTING char TYPE string RETURNING VALUE(return) TYPE abap_bool.
@@ -803,6 +800,8 @@ CLASS Buffer IMPLEMENTATION.
 
   METHOD add.
     me->buf = me->buf && s.
+    return = me->buf.
+    
   ENDMETHOD.
 
   METHOD get.
@@ -1157,30 +1156,70 @@ CLASS Lexer IMPLEMENTATION.
   METHOD process.
     me->stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
     me->buffer = NEW buffer( ).
+    DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    CLEAR splits.
+    APPEND | | TO splits.
+    APPEND |:| TO splits.
+    APPEND |.| TO splits.
+    APPEND |,| TO splits.
+    APPEND |-| TO splits.
+    APPEND |+| TO splits.
+    APPEND |(| TO splits.
+    APPEND |)| TO splits.
+    APPEND |[| TO splits.
+    APPEND |]| TO splits.
+    APPEND |\t| TO splits.
+    APPEND |\n| TO splits.
+    DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    CLEAR bufs.
+    APPEND |.| TO bufs.
+    APPEND |,| TO bufs.
+    APPEND |:| TO bufs.
+    APPEND |(| TO bufs.
+    APPEND |)| TO bufs.
+    APPEND |[| TO bufs.
+    APPEND |]| TO bufs.
+    APPEND |+| TO bufs.
+    APPEND |@| TO bufs.
     DO.
       DATA(current) = me->stream->currentchar( ).
-      me->buffer->add( current ).
-      DATA(buf) = me->buffer->get( ).
+      DATA(buf) = me->buffer->add( current ).
       DATA(ahead) = me->stream->nextchar( ).
       DATA(aahead) = me->stream->nextnextchar( ).
-      DATA(prev) = me->stream->prevchar( ).
-      IF ahead EQ |'| AND me->m EQ me->modenormal.
-        me->add( ).
-        me->m = me->modestr.
-      ELSEIF ( ahead EQ |\|| OR
-          ahead EQ |\}| ) AND me->m EQ me->modenormal.
-        me->add( ).
-        me->m = me->modetemplate.
-      ELSEIF ahead EQ |`| AND me->m EQ me->modenormal.
-        me->add( ).
-        me->m = me->modeping.
-      ELSEIF aahead EQ |##| AND me->m EQ me->modenormal.
-        me->add( ).
-        me->m = me->modepragma.
-      ELSEIF ( ahead EQ |"| OR
-          ( ahead EQ |*| AND current EQ |\n| ) ) AND me->m EQ me->modenormal.
-        me->add( ).
-        me->m = me->modecomment.
+      IF me->m EQ me->modenormal.
+        IF line_exists( splits[ table_line = ahead ] ).
+          me->add( ).
+        ELSEIF ahead EQ |'|.
+          me->add( ).
+          me->m = me->modestr.
+        ELSEIF ahead EQ |\|| OR
+            ahead EQ |\}|.
+          me->add( ).
+          me->m = me->modetemplate.
+        ELSEIF ahead EQ |`|.
+          me->add( ).
+          me->m = me->modeping.
+        ELSEIF aahead EQ |##|.
+          me->add( ).
+          me->m = me->modepragma.
+        ELSEIF ahead EQ |"| OR
+            ( ahead EQ |*| AND current EQ |\n| ).
+          me->add( ).
+          me->m = me->modecomment.
+        ELSEIF ahead EQ |@| AND strlen( condense( buf ) ) EQ 0.
+          me->add( ).
+        ELSEIF aahead EQ |->| OR
+            aahead EQ |=>|.
+          me->add( ).
+        ELSEIF current EQ |>| AND ahead NE | | AND ( me->stream->prevchar( ) EQ |-| OR
+            me->stream->prevchar( ) EQ |=| ).
+          me->add( ).
+        ELSEIF strlen( buf ) EQ 1 AND ( line_exists( bufs[ table_line = buf ] ) OR
+            ( buf EQ |-| AND ahead NE |>| ) ).
+          me->add( ).
+
+
+        ENDIF.
       ELSEIF me->m EQ me->modepragma AND ( ahead EQ |,| OR
           ahead EQ |:| OR
           ahead EQ |.| OR
@@ -1196,7 +1235,7 @@ CLASS Lexer IMPLEMENTATION.
           me->m = me->modenormal.
         ENDIF.
       ELSEIF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
-          current EQ |\{| ) AND ( prev NE |\\| OR
+          current EQ |\{| ) AND ( me->stream->prevchar( ) NE |\\| OR
           me->stream->prevprevchar( ) EQ |\\\\| ).
         me->add( ).
         me->m = me->modenormal.
@@ -1207,40 +1246,10 @@ CLASS Lexer IMPLEMENTATION.
         ELSE.
           me->m = me->modenormal.
         ENDIF.
-      ELSEIF me->m EQ me->modenormal AND ( ahead EQ | | OR
-          ahead EQ |:| OR
-          ahead EQ |.| OR
-          ahead EQ |,| OR
-          ahead EQ |-| OR
-          ahead EQ |+| OR
-          ahead EQ |(| OR
-          ahead EQ |)| OR
-          ahead EQ |[| OR
-          ahead EQ |]| OR
-          ( ahead EQ |@| AND strlen( condense( buf ) ) EQ 0 ) OR
-          aahead EQ |->| OR
-          aahead EQ |=>| OR
-          ahead EQ |\t| OR
-          ahead EQ |\n| ).
-        me->add( ).
       ELSEIF ahead EQ |\n| AND me->m NE me->modetemplate.
         me->add( ).
         me->m = me->modenormal.
       ELSEIF me->m EQ me->modetemplate AND current EQ |\n|.
-        me->add( ).
-      ELSEIF current EQ |>| AND ( prev EQ |-| OR
-          prev EQ |=| ) AND ahead NE | | AND me->m EQ me->modenormal.
-        me->add( ).
-      ELSEIF me->m EQ me->modenormal AND ( buf EQ |.| OR
-          buf EQ |,| OR
-          buf EQ |:| OR
-          buf EQ |(| OR
-          buf EQ |)| OR
-          buf EQ |[| OR
-          buf EQ |]| OR
-          buf EQ |+| OR
-          buf EQ |@| OR
-          ( buf EQ |-| AND ahead NE |>| ) ).
         me->add( ).
 
 
