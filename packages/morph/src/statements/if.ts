@@ -4,8 +4,10 @@ import {handleStatement} from "../statements";
 
 export class MorphIf {
   public run(s: IfStatement) {
-    let expr = handleExpression(s.getExpression());
-    const cname = s.getExpression().constructor.name;
+    const sexp = s.getExpression();
+    let expr = handleExpression(sexp);
+
+    const cname = sexp.constructor.name;
     if (cname === "Identifier" || cname === "PropertyAccessExpression") {
       expr += " IS NOT INITIAL";
     }

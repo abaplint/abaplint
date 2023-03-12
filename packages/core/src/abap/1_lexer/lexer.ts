@@ -329,7 +329,9 @@ export class Lexer {
       const aahead = this.stream.nextNextChar();
 
       if (this.m === this.ModeNormal) {
-        if (ahead === "'") {
+        if (splits[ahead]) {
+          this.add();
+        } else if (ahead === "'") {
 // start string
           this.add();
           this.m = this.ModeStr;
@@ -350,8 +352,6 @@ export class Lexer {
 // start comment
           this.add();
           this.m = this.ModeComment;
-        } else if (splits[ahead]) {
-          this.add();
         } else if (ahead === "@" && buf.trim().length === 0) {
           this.add();
         } else if (aahead === "->"

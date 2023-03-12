@@ -14,7 +14,10 @@ export function handleExpression(n?: Node): string {
 
   let ret = "";
   const text = n.getText();
-
+/*
+  console.dir(n.constructor.name);
+  console.dir(text);
+*/
   if (n instanceof BinaryExpression) {
     ret += new MorphBinary().run(n);
   } else if (n instanceof NoSubstitutionTemplateLiteral) {
