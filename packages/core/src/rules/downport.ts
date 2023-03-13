@@ -2855,23 +2855,15 @@ ${indentation}    output = ${topTarget}.`;
 
   private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position | undefined {
     const structure = highFile.getStructure();
-    /*
-    console.dir("find,");
-    console.dir(node.getFirstToken().getStart());
-    */
+
     for (const c of structure?.findAllStructuresRecursive(Structures.If) || []) {
-      /*
-      console.dir("IF");
-      console.dir(c.getFirstToken().getStart());
-      */
-      if (c.findDirectStructure(Structures.ElseIf)?.getFirstStatement() === node) {
-        return c.getFirstToken().getStart();
+      for (const ei of c.findDirectStructures(Structures.ElseIf)) {
+        if (ei.getFirstStatement() === node) {
+          return c.getFirstToken().getStart();
+        }
       }
     }
-    /*
-    writeFileSync("./foo.abap", highFile.getRaw());
-    throw new Error("no find start");
-    */
+
     return undefined;
   }
 

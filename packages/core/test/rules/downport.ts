@@ -4527,4 +4527,23 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
+  it("extra elseif, nesting vs line_exists()", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+ELSEIF 1 = 2.
+ELSEIF line_exists( tab[ table_line = 'moo' ] ).
+ENDIF.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+temp1 = sy-subrc.
+IF 1 = 2.
+ELSEIF 1 = 2.
+ELSEIF temp1 = 0.
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
 });
