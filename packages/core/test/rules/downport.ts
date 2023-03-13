@@ -68,13 +68,13 @@ describe("Rule: downport", () => {
   });
 
   it("downport voided LOOP fs", async () => {
-    const abap = `FROM bar.
+    const abap = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   LOOP AT lt_rows ASSIGNING FIELD-SYMBOL(<lv_row>).
   ENDLOOP.
 ENDFORM.`;
 
-    const expected = `FROM bar.
+    const expected = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   FIELD-SYMBOLS <lv_row> LIKE LINE OF lt_rows.
   LOOP AT lt_rows ASSIGNING <lv_row>.
@@ -85,13 +85,13 @@ ENDFORM.`;
   });
 
   it("downport voided LOOP data", async () => {
-    const abap = `FROM bar.
+    const abap = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   LOOP AT lt_rows INTO DATA(moo).
   ENDLOOP.
 ENDFORM.`;
 
-    const expected = `FROM bar.
+    const expected = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   DATA moo LIKE LINE OF lt_rows.
   LOOP AT lt_rows INTO moo.
