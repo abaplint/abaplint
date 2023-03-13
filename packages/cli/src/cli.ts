@@ -12,7 +12,7 @@ const arg: Arguments = {
   configFilename: parsed._[0],
   format,
   compress: parsed["c"],
-  parsingPerformance: parsed["p"],
+  performanceInformation: parsed["p"],
   showHelp: parsed["h"] !== undefined || parsed["help"] !== undefined,
   showVersion: parsed["v"] !== undefined || parsed["version"] !== undefined,
   outputDefaultConfig: parsed["d"] !== undefined || parsed["default"] !== undefined,

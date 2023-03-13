@@ -4500,4 +4500,31 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
+  it("double nesting vs line_exists()", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+  WRITE 'foo'.
+  IF 1 = 2.
+    WRITE 'foo'.
+  ELSEIF line_exists( tab[ table_line = 'moo' ] ).
+    WRITE 'foo'.
+  ENDIF.
+ENDIF.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+  WRITE 'foo'.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF 1 = 2.
+    WRITE 'foo'.
+  ELSEIF temp1 = 0.
+    WRITE 'foo'.
+  ENDIF.
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
 });

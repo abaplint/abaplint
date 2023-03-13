@@ -2696,6 +2696,12 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
+      const concat = chain.concatTokens().toUpperCase();
+      if (concat.startsWith("LINE_EXISTS( ") || concat.startsWith("LINE_INDEX( ")) {
+        // these are handled separately
+        continue;
+      }
+
       let predicate = false;
       const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
       for (const r of spag?.getData().references || []) {
@@ -2849,11 +2855,23 @@ ${indentation}    output = ${topTarget}.`;
 
   private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position | undefined {
     const structure = highFile.getStructure();
+    /*
+    console.dir("find,");
+    console.dir(node.getFirstToken().getStart());
+    */
     for (const c of structure?.findAllStructuresRecursive(Structures.If) || []) {
+      /*
+      console.dir("IF");
+      console.dir(c.getFirstToken().getStart());
+      */
       if (c.findDirectStructure(Structures.ElseIf)?.getFirstStatement() === node) {
         return c.getFirstToken().getStart();
       }
     }
+    /*
+    writeFileSync("./foo.abap", highFile.getRaw());
+    throw new Error("no find start");
+    */
     return undefined;
   }
 

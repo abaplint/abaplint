@@ -128,7 +128,7 @@ export type Arguments = {
   configFilename?: string,
   format: string,
   compress?: boolean,
-  parsingPerformance?: boolean,
+  performanceInformation?: boolean,
   showHelp?: boolean,
   showVersion?: boolean,
   outputDefaultConfig?: boolean,
@@ -206,9 +206,9 @@ export async function run(arg: Arguments) {
       reg = new Registry(config);
       reg.addDependencies(deps);
       reg.addFiles(loaded); // if the object exists in repo, it should take precedence over deps
-      await reg.parseAsync({progress, outputPerformance: arg.parsingPerformance});
+      await reg.parseAsync({progress, outputPerformance: arg.performanceInformation});
       if (arg.runFix !== true) {
-        issues = issues.concat(reg.findIssues({progress, outputPerformance: arg.parsingPerformance}));
+        issues = issues.concat(reg.findIssues({progress, outputPerformance: arg.performanceInformation}));
       }
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
@@ -219,7 +219,7 @@ export async function run(arg: Arguments) {
 
     let extra = "";
     if (arg.runFix === true && reg) {
-      await new ApplyFixes().applyFixes(reg, fs);
+      await new ApplyFixes().applyFixes(reg, fs, {quiet: false, extraInfo: arg.performanceInformation});
       issues = [...reg.findIssues()]; // used in exercism ABAP test runner
       extra = "Fixes applied";
     } else if (arg.runRename === true && reg) {
