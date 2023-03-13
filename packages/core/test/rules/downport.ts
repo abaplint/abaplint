@@ -68,13 +68,13 @@ describe("Rule: downport", () => {
   });
 
   it("downport voided LOOP fs", async () => {
-    const abap = `FROM bar.
+    const abap = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   LOOP AT lt_rows ASSIGNING FIELD-SYMBOL(<lv_row>).
   ENDLOOP.
 ENDFORM.`;
 
-    const expected = `FROM bar.
+    const expected = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   FIELD-SYMBOLS <lv_row> LIKE LINE OF lt_rows.
   LOOP AT lt_rows ASSIGNING <lv_row>.
@@ -85,13 +85,13 @@ ENDFORM.`;
   });
 
   it("downport voided LOOP data", async () => {
-    const abap = `FROM bar.
+    const abap = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   LOOP AT lt_rows INTO DATA(moo).
   ENDLOOP.
 ENDFORM.`;
 
-    const expected = `FROM bar.
+    const expected = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
   DATA moo LIKE LINE OF lt_rows.
   LOOP AT lt_rows INTO moo.
@@ -4495,6 +4495,52 @@ DATA temp1 LIKE sy-subrc.
 READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
 temp1 = sy-subrc.
 IF 1 = 2.
+ELSEIF temp1 = 0.
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
+  it("double nesting vs line_exists()", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+  WRITE 'foo'.
+  IF 1 = 2.
+    WRITE 'foo'.
+  ELSEIF line_exists( tab[ table_line = 'moo' ] ).
+    WRITE 'foo'.
+  ENDIF.
+ENDIF.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+  WRITE 'foo'.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF 1 = 2.
+    WRITE 'foo'.
+  ELSEIF temp1 = 0.
+    WRITE 'foo'.
+  ENDIF.
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
+  it("extra elseif, nesting vs line_exists()", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+ELSEIF 1 = 2.
+ELSEIF line_exists( tab[ table_line = 'moo' ] ).
+ENDIF.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+temp1 = sy-subrc.
+IF 1 = 2.
+ELSEIF 1 = 2.
 ELSEIF temp1 = 0.
 ENDIF.`;
     testFix(abap, expected);

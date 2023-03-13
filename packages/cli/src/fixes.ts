@@ -8,7 +8,7 @@ export class ApplyFixes {
   // Execute one rule at a time and apply fixes for that rule
   // Some rules are quite expensive to initialize(like downport),
   // so running all rules every time is expensive.
-  public async applyFixes(reg: IRegistry, fs: PartialFS, quiet?: boolean) {
+  public async applyFixes(reg: IRegistry, fs: PartialFS, extra?: {quiet?: boolean, extraInfo?: boolean}) {
     let iteration = 0;
     this.changedFiles.clear();
     const MAX_ITERATIONS = 50000;
@@ -30,19 +30,25 @@ export class ApplyFixes {
           issues = new RulesRunner(reg).excludeIssues(issues);
 
           iteration++;
-          const appliedCount = this.applyList(issues, reg).length;
+          const applied = this.applyList(issues, reg);
+          const appliedCount = applied.files.length;
           const runtime = Date.now() - before;
-          if (quiet !== true) {
+          if (extra?.quiet !== true) {
             process.stderr.write(`\tIteration ${iteration.toString().padStart(3, " ")}, ${
               appliedCount.toString().padStart(3, " ")} fixes applied, ${
               runtime.toString().padStart(4, " ")}ms, rule ${rule.getMetadata().key}\n`);
+            if (extra?.extraInfo === true) {
+              for (const i of applied.appliedIssues) {
+                process.stderr.write("\t\t" + i.getKey() + ": " + i.getMessage() + "\n");
+              }
+            }
           }
           if (appliedCount > 0) {
             changed += appliedCount;
             const before = Date.now();
             reg.parse();
             const runtime = Date.now() - before;
-            if (quiet !== true) {
+            if (extra?.quiet !== true) {
               process.stderr.write(`\tParse, ${runtime}ms\n`);
             }
           } else {
@@ -105,8 +111,9 @@ export class ApplyFixes {
     return false;
   }
 
-  private applyList(issues: readonly Issue[], reg: IRegistry): string[] {
+  private applyList(issues: readonly Issue[], reg: IRegistry): {files: string[], appliedIssues: Issue[]} {
     const edits: IEdit[] = [];
+    const appliedIssues: Issue[] = [];
 
     for (const i of issues) {
       const edit = i.getFix();
@@ -116,6 +123,7 @@ export class ApplyFixes {
         continue;
       }
 
+      appliedIssues.push(i);
       edits.push(edit);
     }
 
@@ -124,7 +132,11 @@ export class ApplyFixes {
     for (const filename of changed) {
       this.changedFiles.add(filename);
     }
-    return changed;
+
+    return {
+      files: changed,
+      appliedIssues: appliedIssues,
+    };
   }
 
 }

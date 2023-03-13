@@ -210,6 +210,21 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     return this.graph.listMainForInclude(filename);
   }
 
+  private containsError(highObj: ABAPObject): boolean {
+    for (const file of highObj.getABAPFiles()) {
+      for (const statement of file.getStatements()) {
+        if (statement.get() instanceof Unknown) {
+          return true; // contains parser errors
+        }
+      }
+      if (file.getStructure() === undefined) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public run(lowObj: IObject): Issue[] {
     const ret: Issue[] = [];
     this.counter = 1;
@@ -227,6 +242,10 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     let highSyntaxObj = highObj;
+
+    if (this.containsError(highObj)) {
+      return ret;
+    }
 
     // for includes do the syntax check via a main program
     if (lowObj instanceof Program && lowObj.isInclude()) {
@@ -2677,6 +2696,12 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
+      const concat = chain.concatTokens().toUpperCase();
+      if (concat.startsWith("LINE_EXISTS( ") || concat.startsWith("LINE_INDEX( ")) {
+        // these are handled separately
+        continue;
+      }
+
       let predicate = false;
       const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
       for (const r of spag?.getData().references || []) {
@@ -2830,11 +2855,15 @@ ${indentation}    output = ${topTarget}.`;
 
   private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position | undefined {
     const structure = highFile.getStructure();
+
     for (const c of structure?.findAllStructuresRecursive(Structures.If) || []) {
-      if (c.findDirectStructure(Structures.ElseIf)?.getFirstStatement() === node) {
-        return c.getFirstToken().getStart();
+      for (const ei of c.findDirectStructures(Structures.ElseIf)) {
+        if (ei.getFirstStatement() === node) {
+          return c.getFirstToken().getStart();
+        }
       }
     }
+
     return undefined;
   }
 

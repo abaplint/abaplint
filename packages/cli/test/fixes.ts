@@ -5,7 +5,7 @@ import {ApplyFixes} from "../src/fixes";
 import {PartialFS} from "../src/partial_fs";
 
 async function applyFixes(reg: IRegistry, fs: PartialFS) {
-  await new ApplyFixes().applyFixes(reg, fs, true);
+  await new ApplyFixes().applyFixes(reg, fs, {quiet: true});
 }
 
 describe("Apply fixes", () => {
