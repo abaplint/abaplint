@@ -229,15 +229,14 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return false;
   }
 
-  // TODO, this method can be deleted? its only used in tests?
+  // this method is used in the transpiler
   public findScopeForVariable(name: string): IScopeIdentifier | undefined {
     let search: SpaghettiScopeNode | undefined = this;
+    const upper = name.toUpperCase();
 
     while (search !== undefined) {
-      for (const local in search.getData().vars) {
-        if (local === name.toUpperCase()) {
-          return search.getIdentifier();
-        }
+      if (search.getData().vars[upper] !== undefined) {
+        return search.getIdentifier();
       }
       search = search.getParent();
     }
