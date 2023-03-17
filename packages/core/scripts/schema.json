@@ -1459,7 +1459,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Various checks regarding abapdoc.\nBase rule checks for existence of abapdoc for public class methods and all interface methods.\n\nPlus class and interface definitions.\n\nhttps://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-only-for-public-apis\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
+              "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
             "align_parameters": {
               "anyOf": [
