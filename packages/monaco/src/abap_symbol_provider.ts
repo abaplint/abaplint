@@ -27,7 +27,7 @@ export class ABAPSymbolProvider implements monaco.languages.DocumentSymbolProvid
           endColumn: symbol.range.end.character + 1,
         },
         name: symbol.name,
-        kind: symbol.kind,
+        kind: symbol.kind as monaco.languages.SymbolKind,
         detail: symbol.detail ? symbol.detail : "",
         tags: [],
         selectionRange: {
