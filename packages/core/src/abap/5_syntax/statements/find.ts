@@ -17,12 +17,15 @@ export class Find implements StatementSyntax {
 
     const rfound = node.findExpressionAfterToken("RESULTS");
     if (rfound && rfound.get() instanceof Expressions.Target) {
+      const sub = new StructureType([
+        {name: "OFFSET", type: new IntegerType()},
+        {name: "LENGTH", type: new IntegerType()}], "SUBMATCH_RESULT", "SUBMATCH_RESULT");
       const type = new StructureType([
         {name: "LINE", type: new IntegerType()},
         {name: "OFFSET", type: new IntegerType()},
         {name: "LENGTH", type: new IntegerType()},
-        {name: "SUBMATCHES", type: new TableType(new StringType(), {withHeader: false})},
-      ], "MATCH_RESULT");
+        {name: "SUBMATCHES", type: new TableType(sub, {withHeader: false})},
+      ], "MATCH_RESULT", "MATCH_RESULT");
       if (node.concatTokens().toUpperCase().startsWith("FIND FIRST")) {
         this.inline(rfound, scope, filename, type);
       } else {

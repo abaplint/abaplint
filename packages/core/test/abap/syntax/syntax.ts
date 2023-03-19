@@ -7316,6 +7316,20 @@ DELETE tab WHERE table_line->wrong <> 'true'.`;
     expect(issues[0].getMessage()).to.contain("wrong");
   });
 
+  it("submatches", () => {
+    const abap = `
+DATA abap_doc_string TYPE string.
+DATA foo TYPE string.
+FIND FIRST OCCURRENCE OF REGEX 'sdfsdf' IN abap_doc_string RESULTS DATA(content_encoding_occurrences).
+DATA(match) = content_encoding_occurrences-submatches.
+IF lines( match ) >= 1.
+  DATA(first_match) = match[ 1 ].
+  foo = abap_doc_string+first_match-offset(first_match-length).
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
