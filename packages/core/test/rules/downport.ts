@@ -4577,4 +4577,23 @@ t_tab = temp1.`;
     testFix(abap, expected);
   });
 
+  it("Anonymous table type", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+DATA t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
+     ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+TYPES temp1 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp1.
+t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
+     ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
+    testFix(abap, expected);
+  });
+
 });

@@ -283,18 +283,17 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         continue;
       }
 
+      if (highSyntax === undefined) {
+        highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
+      }
+
       for (let i = 0; i < lowStatements.length; i++) {
         const low = lowStatements[i];
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
             || high.findFirstExpression(Expressions.InlineData)) {
 
-          if (highSyntax === undefined) {
-            highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
-          }
-
           try {
-
             const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
             if (issue) {
               ret.push(issue);
@@ -306,6 +305,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
               break;
             } else {
               throw e;
+            }
+          }
+        }
+      }
+
+      if (ret.length === 0) {
+// this is a hack in order not to change too many unit tests
+        for (let i = 0; i < lowStatements.length; i++) {
+          const high = highStatements[i];
+          if (high.get() instanceof Statements.Data) {
+            const issue = this.anonymousTableType(high, lowFile, highSyntax);
+            if (issue) {
+              ret.push(issue);
             }
           }
         }
@@ -795,6 +807,26 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  // the anonymous type minght be used in inferred type statements, define it so it can be referred
+  private anonymousTableType(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Data)) {
+      return undefined;
+    }
+
+    const tt = high.findFirstExpression(Expressions.TypeTable);
+    if (tt === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const code = `TYPES ${uniqueName} ${tt.concatTokens()}.\n`;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, tt.getFirstToken().getStart(), tt.getLastToken().getEnd(), "TYPE " + uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+    return Issue.atToken(lowFile, high.getFirstToken(), "Add type for table definition", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportMessage(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
