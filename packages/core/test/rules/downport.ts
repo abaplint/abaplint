@@ -4546,4 +4546,18 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
+  it.only("REDUCE with inferred INIT value", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE ty_tab.
+t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
+     ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
+    const expected = `
+sdf`;
+    testFix(abap, expected);
+  });
+
 });
