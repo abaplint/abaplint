@@ -2239,14 +2239,10 @@ ${indentation}    output = ${topTarget}.`;
       let data = "";
       let previous: ExpressionNode | TokenNode | undefined = undefined;
 
-      if (valueBody?.findDirectExpression(Expressions.ValueBodyLine) !== undefined
-          && valueBody?.findDirectExpression(Expressions.For) === undefined) {
+      if (valueBody?.findDirectExpression(Expressions.ValueBodyLine) !== undefined) {
         structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-        data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
-      } else if (valueBody?.findDirectExpression(Expressions.ValueBodyLine) !== undefined
-          && valueBody?.findDirectExpression(Expressions.For)?.findDirectTokenByText("GROUPS") !== undefined) {
-        structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-        data = indentation + `  DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+        const extra = valueBody?.findDirectExpression(Expressions.For) ? "  " : "";
+        data = indentation + extra + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
       }
 
       for (const a of valueBody?.getChildren() || []) {
