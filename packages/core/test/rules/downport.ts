@@ -4546,7 +4546,7 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
-  it.only("REDUCE with inferred INIT value", async () => {
+  it("REDUCE with inferred INIT value", async () => {
     const abap = `
 TYPES: BEGIN OF ty_row,
          title TYPE string,
@@ -4556,7 +4556,24 @@ DATA t_tab TYPE ty_tab.
 t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
      ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
     const expected = `
-sdf`;
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+DATA(ret) = VALUE ty_tab( ).
+DATA n TYPE i.
+n = 1.
+DATA temp2 LIKE sy-index.
+temp2 = sy-index.
+WHILE n < 10.
+  sy-index = temp2.
+  ret = VALUE #( BASE ret ( title = 'Hans' ) ).
+  n = n + 1.
+ENDWHILE.
+temp1 = ret.
+t_tab = temp1.`;
     testFix(abap, expected);
   });
 

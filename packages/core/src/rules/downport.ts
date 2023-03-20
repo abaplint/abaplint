@@ -2114,7 +2114,11 @@ ${indentation}    output = ${topTarget}.`;
         const s = init.findFirstExpression(Expressions.Source)?.concatTokens();
         const t = init.findFirstExpression(Expressions.TypeName)?.concatTokens();
         if (s) {
-          body += indentation + `DATA(${name}) = ${s}.\n`;
+          if (s.toUpperCase().startsWith("VALUE #")) {
+            body += indentation + `DATA(${name}) = ${s.replace("#", type)}.\n`;
+          } else {
+            body += indentation + `DATA(${name}) = ${s}.\n`;
+          }
         } else {
           body += indentation + `DATA ${name} TYPE ${t}.\n`;
         }
