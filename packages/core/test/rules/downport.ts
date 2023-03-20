@@ -1414,10 +1414,10 @@ DATA temp1 TYPE ty_tab.
 CLEAR temp1.
 DATA i TYPE i.
 i = 0.
-DATA temp2 LIKE sy-index.
-temp2 = sy-index.
+DATA temp3 LIKE sy-index.
+temp3 = sy-index.
 WHILE NOT i = 2.
-  sy-index = temp2.
+  sy-index = temp3.
   APPEND |hello| TO temp1.
   i = i + 1.
 ENDWHILE.
@@ -2141,10 +2141,10 @@ ENDFORM.`;
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
     seed = 0.
-    DATA temp2 LIKE sy-index.
-    temp2 = sy-index.
+    DATA temp3 LIKE sy-index.
+    temp3 = sy-index.
     WHILE seed <= 1.
-      sy-index = temp2.
+      sy-index = temp3.
       APPEND row && seed TO temp1.
       seed = seed + 1.
     ENDWHILE.
@@ -2191,10 +2191,10 @@ ENDLOOP.
   LOOP AT garden_rows INTO DATA(row).
     DATA seed TYPE i.
     seed = 0.
-    DATA temp2 LIKE sy-index.
-    temp2 = sy-index.
+    DATA temp3 LIKE sy-index.
+    temp3 = sy-index.
     WHILE seed <= 1.
-      sy-index = temp2.
+      sy-index = temp3.
     DATA offset TYPE i.
     offset = 2.
       APPEND row && offset TO temp1.
@@ -2491,10 +2491,10 @@ result = temp1.`;
   CLEAR temp1.
   DATA i TYPE i.
   i = count.
-  DATA temp2 LIKE sy-index.
-  temp2 = sy-index.
+  DATA temp3 LIKE sy-index.
+  temp3 = sy-index.
   WHILE i GT 5.
-    sy-index = temp2.
+    sy-index = temp3.
     APPEND |dsf| TO temp1.
     APPEND || TO temp1.
     i = i - 1.
@@ -2516,10 +2516,10 @@ result = temp1.`;
     CLEAR temp1.
     DATA i TYPE i.
     i = 0.
-    DATA temp2 LIKE sy-index.
-    temp2 = sy-index.
+    DATA temp3 LIKE sy-index.
+    temp3 = sy-index.
     WHILE i < 2.
-      sy-index = temp2.
+      sy-index = temp3.
       APPEND |{ sy-index }| TO temp1.
       APPEND || TO temp1.
       i = i + 1.
@@ -2941,10 +2941,10 @@ DATA lv_start TYPE i.
 lv_start = 2 + 2.
 DATA i TYPE i.
 i = lv_start.
-DATA temp2 LIKE sy-index.
-temp2 = sy-index.
+DATA temp3 LIKE sy-index.
+temp3 = sy-index.
 WHILE NOT i > lv_start * 2.
-  sy-index = temp2.
+  sy-index = temp3.
   APPEND lv_start TO temp1.
   i = i + 1.
 ENDWHILE.
@@ -4246,7 +4246,7 @@ lt_created = VALUE #( FOR val IN lt_tab ( option = 'EQ' sign = 'I' low = val ) )
 DATA lt_failed TYPE RANGE OF string.
 DATA lt_created TYPE RANGE OF string.
 DATA lt_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-lt_failed = VALUE #( FOR temp2 IN lt_tab ( option = 'EQ' sign = 'I' low = temp2 ) ).
+lt_failed = VALUE #( FOR temp3 IN lt_tab ( option = 'EQ' sign = 'I' low = temp3 ) ).
 lt_created = VALUE #( FOR val IN lt_tab ( option = 'EQ' sign = 'I' low = val ) ).`;
     testFix(abap, expected);
   });
@@ -4627,6 +4627,26 @@ temp2-title = 'title_04'.
 temp2-value = 'value_04'.
 APPEND temp2 TO temp1.
 i_tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it.skip("basic value FOR", async () => {
+    const abap = `
+TYPES: BEGIN OF stru,
+         name  TYPE string,
+         value TYPE string,
+       END OF stru.
+TYPES resty TYPE STANDARD TABLE OF stru WITH DEFAULT KEY.
+TYPES ty TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA result TYPE resty.
+DATA lt_types TYPE ty.
+DATA lv_types TYPE string.
+SPLIT lv_types AT ',' INTO TABLE lt_types.
+result = VALUE #( FOR row IN lt_types (
+  name = row
+  value = row ) ).`;
+    const expected = `
+sdfs`;
     testFix(abap, expected);
   });
 
