@@ -4596,7 +4596,7 @@ t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
     testFix(abap, expected);
   });
 
-  it.only("lines with common def", async () => {
+  it("lines with common def", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
          descr TYPE string,
@@ -4609,7 +4609,24 @@ i_tab = VALUE #( descr = 'this is a description'
                  ( title = 'title_01' value = 'value_01' )
                  ( title = 'title_04' value = 'value_04' ) ).`;
     const expected = `
-sdfs`;
+TYPES: BEGIN OF ty,
+         descr TYPE string,
+         title TYPE string,
+         value TYPE string,
+       END OF ty.
+TYPES ty_tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA i_tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+CLEAR temp1.
+DATA temp2 LIKE LINE OF temp1.
+temp2-descr = 'this is a description'.
+temp2-title = 'title_01'.
+temp2-value = 'value_01'.
+APPEND temp2 TO temp1.
+temp2-title = 'title_04'.
+temp2-value = 'value_04'.
+APPEND temp2 TO temp1.
+i_tab = temp1.`;
     testFix(abap, expected);
   });
 

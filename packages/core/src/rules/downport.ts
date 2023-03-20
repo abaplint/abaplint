@@ -2209,6 +2209,8 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
+      const valueBody = s.findDirectExpression(Expressions.ValueBody);
+
       let type = this.findType(s, lowFile, highSyntax);
       if (type === undefined) {
         if (high.get() instanceof Statements.Move && high.findDirectExpression(Expressions.Source) === s) {
@@ -2218,10 +2220,14 @@ ${indentation}    output = ${topTarget}.`;
           continue;
         }
       } else {
+        /*
+        if (valueBody?.findDirectExpression(Expressions.ValueBodyLine)) {
+          type = "TYPE LINE OF " + type;
+        } else {
+          */
         type = "TYPE " + type;
       }
 
-      const valueBody = s.findDirectExpression(Expressions.ValueBody);
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       let indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       let body = "";
@@ -2235,6 +2241,17 @@ ${indentation}    output = ${topTarget}.`;
       let added = false;
       let data = "";
       let previous: ExpressionNode | TokenNode | undefined = undefined;
+
+      if (valueBody?.findDirectExpression(Expressions.ValueBodyLine) !== undefined
+          && valueBody?.findDirectExpression(Expressions.For) === undefined) {
+        structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+        data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+      } else if (valueBody?.findDirectExpression(Expressions.ValueBodyLine) !== undefined
+          && valueBody?.findDirectExpression(Expressions.For)?.findDirectTokenByText("GROUPS") !== undefined) {
+        structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+        data = indentation + `  DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+      }
+
       for (const a of valueBody?.getChildren() || []) {
         if (a.get() instanceof Expressions.FieldAssignment) {
           if (added === false) {
@@ -2258,10 +2275,6 @@ ${indentation}    output = ${topTarget}.`;
         if (a instanceof ExpressionNode && a.get() instanceof Expressions.ValueBodyLine) {
           let skip = false;
           for (const b of a?.getChildren() || []) {
-            if (b.concatTokens() === "(" && added === false) {
-              structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-              data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
-            }
             if (b.get() instanceof Expressions.FieldAssignment) {
               if (added === false) {
                 body += data;
