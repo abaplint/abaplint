@@ -287,11 +287,13 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
       }
 
+      let containsUnknown = false;
       for (let i = 0; i < lowStatements.length; i++) {
         const low = lowStatements[i];
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
             || high.findFirstExpression(Expressions.InlineData)) {
+          containsUnknown = true;
 
           try {
             const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
@@ -310,7 +312,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         }
       }
 
-      if (ret.length === 0) {
+      if (ret.length === 0 && containsUnknown) {
 // this is a hack in order not to change too many unit tests
         for (let i = 0; i < lowStatements.length; i++) {
           const high = highStatements[i];
@@ -2220,11 +2222,6 @@ ${indentation}    output = ${topTarget}.`;
           continue;
         }
       } else {
-        /*
-        if (valueBody?.findDirectExpression(Expressions.ValueBodyLine)) {
-          type = "TYPE LINE OF " + type;
-        } else {
-          */
         type = "TYPE " + type;
       }
 
