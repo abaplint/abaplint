@@ -4546,4 +4546,88 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
+  it("REDUCE with inferred INIT value", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE ty_tab.
+t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
+     ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+DATA(ret) = VALUE ty_tab( ).
+DATA n TYPE i.
+n = 1.
+DATA temp2 LIKE sy-index.
+temp2 = sy-index.
+WHILE n < 10.
+  sy-index = temp2.
+  ret = VALUE #( BASE ret ( title = 'Hans' ) ).
+  n = n + 1.
+ENDWHILE.
+temp1 = ret.
+t_tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("Anonymous table type", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+DATA t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
+     ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty_row,
+         title TYPE string,
+       END OF ty_row.
+TYPES temp1 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp1.
+t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
+     ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
+    testFix(abap, expected);
+  });
+
+  it("lines with common def", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         descr TYPE string,
+         title TYPE string,
+         value TYPE string,
+       END OF ty.
+TYPES ty_tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA i_tab TYPE ty_tab.
+i_tab = VALUE #( descr = 'this is a description'
+                 ( title = 'title_01' value = 'value_01' )
+                 ( title = 'title_04' value = 'value_04' ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         descr TYPE string,
+         title TYPE string,
+         value TYPE string,
+       END OF ty.
+TYPES ty_tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA i_tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+CLEAR temp1.
+DATA temp2 LIKE LINE OF temp1.
+temp2-descr = 'this is a description'.
+temp2-title = 'title_01'.
+temp2-value = 'value_01'.
+APPEND temp2 TO temp1.
+temp2-title = 'title_04'.
+temp2-value = 'value_04'.
+APPEND temp2 TO temp1.
+i_tab = temp1.`;
+    testFix(abap, expected);
+  });
+
 });

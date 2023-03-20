@@ -283,18 +283,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
         continue;
       }
 
+      if (highSyntax === undefined) {
+        highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
+      }
+
+      let containsUnknown = false;
       for (let i = 0; i < lowStatements.length; i++) {
         const low = lowStatements[i];
         const high = highStatements[i];
         if ((low.get() instanceof Unknown && !(high.get() instanceof Unknown))
             || high.findFirstExpression(Expressions.InlineData)) {
-
-          if (highSyntax === undefined) {
-            highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
-          }
+          containsUnknown = true;
 
           try {
-
             const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
             if (issue) {
               ret.push(issue);
@@ -306,6 +307,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
               break;
             } else {
               throw e;
+            }
+          }
+        }
+      }
+
+      if (ret.length === 0 && containsUnknown) {
+// this is a hack in order not to change too many unit tests
+        for (let i = 0; i < lowStatements.length; i++) {
+          const high = highStatements[i];
+          if (high.get() instanceof Statements.Data) {
+            const issue = this.anonymousTableType(high, lowFile, highSyntax);
+            if (issue) {
+              ret.push(issue);
             }
           }
         }
@@ -795,6 +809,26 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  // the anonymous type minght be used in inferred type statements, define it so it can be referred
+  private anonymousTableType(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Data)) {
+      return undefined;
+    }
+
+    const tt = high.findFirstExpression(Expressions.TypeTable);
+    if (tt === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const code = `TYPES ${uniqueName} ${tt.concatTokens()}.\n`;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, tt.getFirstToken().getStart(), tt.getLastToken().getEnd(), "TYPE " + uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+    return Issue.atToken(lowFile, high.getFirstToken(), "Add type for table definition", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportMessage(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -2114,7 +2148,11 @@ ${indentation}    output = ${topTarget}.`;
         const s = init.findFirstExpression(Expressions.Source)?.concatTokens();
         const t = init.findFirstExpression(Expressions.TypeName)?.concatTokens();
         if (s) {
-          body += indentation + `DATA(${name}) = ${s}.\n`;
+          if (s.toUpperCase().startsWith("VALUE #")) {
+            body += indentation + `DATA(${name}) = ${s.replace("#", type)}.\n`;
+          } else {
+            body += indentation + `DATA(${name}) = ${s}.\n`;
+          }
         } else {
           body += indentation + `DATA ${name} TYPE ${t}.\n`;
         }
@@ -2173,6 +2211,8 @@ ${indentation}    output = ${topTarget}.`;
         continue;
       }
 
+      const valueBody = s.findDirectExpression(Expressions.ValueBody);
+
       let type = this.findType(s, lowFile, highSyntax);
       if (type === undefined) {
         if (high.get() instanceof Statements.Move && high.findDirectExpression(Expressions.Source) === s) {
@@ -2185,7 +2225,6 @@ ${indentation}    output = ${topTarget}.`;
         type = "TYPE " + type;
       }
 
-      const valueBody = s.findDirectExpression(Expressions.ValueBody);
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       let indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       let body = "";
@@ -2199,6 +2238,17 @@ ${indentation}    output = ${topTarget}.`;
       let added = false;
       let data = "";
       let previous: ExpressionNode | TokenNode | undefined = undefined;
+
+      if (valueBody?.findDirectExpression(Expressions.ValueBodyLine) !== undefined
+          && valueBody?.findDirectExpression(Expressions.For) === undefined) {
+        structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+        data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+      } else if (valueBody?.findDirectExpression(Expressions.ValueBodyLine) !== undefined
+          && valueBody?.findDirectExpression(Expressions.For)?.findDirectTokenByText("GROUPS") !== undefined) {
+        structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+        data = indentation + `  DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
+      }
+
       for (const a of valueBody?.getChildren() || []) {
         if (a.get() instanceof Expressions.FieldAssignment) {
           if (added === false) {
@@ -2222,10 +2272,6 @@ ${indentation}    output = ${topTarget}.`;
         if (a instanceof ExpressionNode && a.get() instanceof Expressions.ValueBodyLine) {
           let skip = false;
           for (const b of a?.getChildren() || []) {
-            if (b.concatTokens() === "(" && added === false) {
-              structureName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
-              data = indentation + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
-            }
             if (b.get() instanceof Expressions.FieldAssignment) {
               if (added === false) {
                 body += data;
