@@ -361,7 +361,13 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return undefined;
     }
 
-    let found = this.downportEnum(low, high, lowFile, highSyntax, highFile);
+    // downport XSDBOOL() early, as it is valid 702 syntax
+    let found = this.replaceXsdBool(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.downportEnum(low, high, lowFile, highSyntax, highFile);
     if (found) {
       return found;
     }
@@ -530,11 +536,6 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     found = this.newToCreateObject(low, high, lowFile, highSyntax);
-    if (found) {
-      return found;
-    }
-
-    found = this.replaceXsdBool(high, lowFile, highSyntax);
     if (found) {
       return found;
     }

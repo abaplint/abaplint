@@ -710,6 +710,22 @@ inline_struct_table = struct_table.`;
     testFix(abap, expected);
   });
 
+  it("xsdbool, another", async () => {
+    const abap = `
+  DATA foo TYPE abap_bool.
+  DATA moo TYPE i.
+  foo = xsdbool( moo = 2 ).
+  DATA(sdf) = 2.`;
+
+    const expected = `
+  DATA foo TYPE abap_bool.
+  DATA moo TYPE i.
+  foo = boolc( moo = 2 ).
+  DATA(sdf) = 2.`;
+
+    testFix(abap, expected);
+  });
+
   it("VALUE appending to table", async () => {
     const abap = `
 TYPES: BEGIN OF ty_hash,
