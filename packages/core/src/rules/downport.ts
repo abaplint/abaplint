@@ -323,7 +323,17 @@ Only one transformation is applied to a statement at a time, so multiple steps m
             }
           }
         }
+      } else if (ret.length === 0 && / xsdbool\(/i.test(lowFile.getRaw())) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const high = highStatements[i];
+          const issue = this.replaceXsdBool(high, lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
       }
+
     }
 
     return ret;
