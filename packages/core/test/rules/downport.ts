@@ -4680,4 +4680,45 @@ sdfs`;
     testFix(abap, expected);
   });
 
+  it("infer type STRING", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING text TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE abap_bool.
+    bar( text = SWITCH #( sdf WHEN abap_true THEN |display| ELSE |edit| ) ).
+  ENDMETHOD.
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING text TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE abap_bool.
+    DATA temp1 TYPE string.
+    CASE sdf.
+      WHEN abap_true.
+        temp1 = |display|.
+      WHEN OTHERS.
+        temp1 = |edit|.
+    ENDCASE.
+    bar( text = temp1 ).
+  ENDMETHOD.
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });

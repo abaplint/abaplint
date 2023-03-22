@@ -73,7 +73,7 @@ export class Source {
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename, foundType);
-          if (foundType === undefined) {
+          if (foundType === undefined || foundType.isGeneric() === true) {
             this.addIfInferred(node, scope, filename, bodyType);
           }
           return foundType ? foundType : bodyType;
@@ -82,7 +82,7 @@ export class Source {
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), scope, filename);
-          if (foundType === undefined) {
+          if (foundType === undefined || foundType.isGeneric() === true) {
             this.addIfInferred(node, scope, filename, bodyType);
           }
           return foundType ? foundType : bodyType;
@@ -91,7 +91,7 @@ export class Source {
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename, foundType);
-          if (foundType === undefined) {
+          if (foundType === undefined || foundType.isGeneric() === true) {
             this.addIfInferred(node, scope, filename, bodyType);
           }
           return foundType ? foundType : bodyType;

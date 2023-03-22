@@ -5,7 +5,7 @@ export type AbstractTypeData = {
 };
 
 export abstract class AbstractType {
-  private readonly data: AbstractTypeData |undefined;
+  private readonly data: AbstractTypeData | undefined;
 
   public constructor(input?: AbstractTypeData) {
     this.data = input;
