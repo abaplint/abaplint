@@ -726,6 +726,20 @@ inline_struct_table = struct_table.`;
     testFix(abap, expected);
   });
 
+  it("xsdbool, alone", async () => {
+    const abap = `
+  DATA foo TYPE abap_bool.
+  DATA moo TYPE i.
+  foo = xsdbool( moo = 2 ).`;
+
+    const expected = `
+  DATA foo TYPE abap_bool.
+  DATA moo TYPE i.
+  foo = boolc( moo = 2 ).`;
+
+    testFix(abap, expected);
+  });
+
   it("VALUE appending to table", async () => {
     const abap = `
 TYPES: BEGIN OF ty_hash,
@@ -4663,6 +4677,47 @@ result = VALUE #( FOR row IN lt_types (
   value = row ) ).`;
     const expected = `
 sdfs`;
+    testFix(abap, expected);
+  });
+
+  it("infer type STRING", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING text TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE abap_bool.
+    bar( text = SWITCH #( sdf WHEN abap_true THEN |display| ELSE |edit| ) ).
+  ENDMETHOD.
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING text TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE abap_bool.
+    DATA temp1 TYPE string.
+    CASE sdf.
+      WHEN abap_true.
+        temp1 = |display|.
+      WHEN OTHERS.
+        temp1 = |edit|.
+    ENDCASE.
+    bar( text = temp1 ).
+  ENDMETHOD.
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
     testFix(abap, expected);
   });
 

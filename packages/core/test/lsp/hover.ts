@@ -1421,4 +1421,27 @@ ENDINTERFACE.`;
     expect(hover?.value).to.contain("DDIC Name: ```ABAP_ENCOD```");
   });
 
+  it("Hover, prefer STRING over generic type when inferred", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING text TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE abap_bool.
+    bar( text = SWITCH #( sdf WHEN abap_true THEN |display| ELSE |edit| ) ).
+  ENDMETHOD.
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zprog.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 8, 23));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Identifier");
+    expect(hover?.value).to.contain("STRING");
+  });
+
 });

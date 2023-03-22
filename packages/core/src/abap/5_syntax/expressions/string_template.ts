@@ -11,6 +11,6 @@ export class StringTemplate {
       new Source().runSyntax(s, scope, filename, new StringType({qualifiedName: "STRING"}));
     }
 
-    return new StringType();
+    return new StringType({qualifiedName: "STRING"});
   }
 }
