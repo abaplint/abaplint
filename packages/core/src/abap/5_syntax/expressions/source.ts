@@ -90,7 +90,7 @@ export class Source {
         case "COND":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename, foundType);
+          const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename);
           if (foundType === undefined || foundType.isGeneric() === true) {
             this.addIfInferred(node, scope, filename, bodyType);
           }

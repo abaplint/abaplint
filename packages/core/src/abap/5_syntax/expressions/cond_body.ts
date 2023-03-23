@@ -10,11 +10,10 @@ export class CondBody {
   public runSyntax(
     node: ExpressionNode | undefined,
     scope: CurrentScope,
-    filename: string,
-    targetType: AbstractType | undefined): AbstractType | undefined {
+    filename: string): AbstractType | undefined {
 
     if (node === undefined) {
-      return targetType;
+      return undefined;
     }
 
     let scoped = false;
@@ -40,6 +39,6 @@ export class CondBody {
       scope.pop(node.getLastToken().getEnd());
     }
 
-    return targetType ? targetType : type;
+    return type;
   }
 }

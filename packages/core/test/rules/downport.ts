@@ -4680,7 +4680,7 @@ sdfs`;
     testFix(abap, expected);
   });
 
-  it("infer type STRING", async () => {
+  it("SWITCH, infer type STRING", async () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -4712,6 +4712,46 @@ CLASS lcl IMPLEMENTATION.
       WHEN OTHERS.
         temp1 = |edit|.
     ENDCASE.
+    bar( text = temp1 ).
+  ENDMETHOD.
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("COND, infer type STRING", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING text TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE abap_bool.
+    bar( text = COND #( WHEN sdf = 'csv' THEN |plain_text| ELSE |sdf| ) ).
+  ENDMETHOD.
+  METHOD bar.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING text TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE abap_bool.
+    DATA temp1 TYPE string.
+    IF sdf = 'csv'.
+      temp1 = |plain_text|.
+    ELSE.
+      temp1 = |sdf|.
+    ENDIF.
     bar( text = temp1 ).
   ENDMETHOD.
   METHOD bar.
