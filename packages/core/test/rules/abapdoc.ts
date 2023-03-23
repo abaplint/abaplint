@@ -1,5 +1,5 @@
-import {testRule} from "./_utils";
-import {Abapdoc, AbapdocConf} from "../../src/rules/abapdoc";
+import { testRule } from "./_utils";
+import { Abapdoc, AbapdocConf } from "../../src/rules/abapdoc";
 
 const defaultConfigTests = [
   // all public methods have abapdoc
@@ -127,12 +127,52 @@ const defaultConfigTests = [
             ENDCLASS.`, cnt: 0,
   },
   {
-    abap: `
-INTERFACE if_test PUBLIC.
+    abap: `INTERFACE if_test PUBLIC.
   "! <p class="shorttext synchronized" lang="en">Text</p>
   METHODS
     calculate RAISING cx_test.
 ENDINTERFACE.`, cnt: 0,
+  },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+  "! <p class="shorttext synchronized" lang="en"></p>
+  METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 1,
+  },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+    "! <p class="shorttext synchronized" lang="en"></p>
+    "!
+    "! @parameter input | <p class="shorttext synchronized" lang="en"></p>
+    METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 2,
+  },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+"! <p class="shorttext synchronized" lang="en"></p>
+"!
+"! @parameter input | <p class="shorttext synchronized" lang="en"></p>
+"! @parameter result | <p class="shorttext synchronized" lang="en"></p>
+
+    METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 1,
+  },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+"! <p class="shorttext synchronized" lang="en"></p>
+"!
+"! @parameter | <p class="shorttext synchronized" lang="en"></p>
+"! <p class="shorttext synchronized" lang="en">Parameter 2</p>
+    METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 2,
   },
 ];
 
