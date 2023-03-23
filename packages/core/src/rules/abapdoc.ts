@@ -1,11 +1,11 @@
-import { ABAPRule } from "./_abap_rule";
-import { BasicRuleConfig } from "./_basic_rule_config";
-import { Issue } from "../issue";
-import { Visibility } from "../abap/4_file_information/visibility";
-import { InfoMethodDefinition } from "../abap/4_file_information/_abap_file_information";
-import { IRuleMetadata, RuleTag } from "./_irule";
-import { ABAPFile } from "../abap/abap_file";
-import { Position } from "../position";
+import {ABAPRule} from "./_abap_rule";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {Issue} from "../issue";
+import {Visibility} from "../abap/4_file_information/visibility";
+import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ABAPFile} from "../abap/abap_file";
+import {Position} from "../position";
 
 export class AbapdocConf extends BasicRuleConfig {
   /** Check local classes and interfaces for abapdoc. */
