@@ -43,6 +43,7 @@ export class MethodDef implements IStatement {
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR READ", TypeName, result),
       seq(alt("BEHAVIOR", "LOCK"), "IMPORTING", MethodParamName, "FOR LOCK", TypeName),
       seq("DETERMINE", alt("ON MODIFY", "ON SAVE"), "IMPORTING", MethodParamName, "FOR", TypeName),
+      seq("GLOBAL AUTHORIZATION IMPORTING REQUEST", MethodParamName, "FOR", TypeName, result),
     );
 
 // todo, this is only from version something
