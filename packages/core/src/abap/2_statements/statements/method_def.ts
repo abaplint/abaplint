@@ -29,7 +29,7 @@ export class MethodDef implements IStatement {
     const full = seq("FULL", MethodParamName);
 
     const modify = alt(
-      seq("FOR ACTION", TypeName, result),
+      seq("FOR ACTION", TypeName, optPrio(result)),
       seq("FOR CREATE", alt(TypeName, EntityAssociation)),
       seq("FOR DELETE", TypeName),
       seq("FOR UPDATE", TypeName));
