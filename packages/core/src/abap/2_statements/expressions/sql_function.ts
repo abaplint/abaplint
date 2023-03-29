@@ -35,9 +35,10 @@ export class SQLFunction extends Expression {
     const lower = ver(Version.v751, seq("lower", tok(ParenLeftW), param, tok(WParenRightW)));
     const mod = ver(Version.v740sp05, seq("mod", tok(ParenLeftW), param, ",", param, tok(WParenRightW)));
     const replace = ver(Version.v750, seq("replace", tok(ParenLeftW), param, ",", param, ",", param, tok(WParenRightW)));
+    const round = ver(Version.v750, seq("round", tok(ParenLeftW), param, ",", param, tok(WParenRightW)));
     const upper = ver(Version.v751, seq("upper", tok(ParenLeftW), param, tok(WParenRightW)));
     const uuid = ver(Version.v754, seq("uuid", tok(ParenLeftW), tok(WParenRightW)));
 
-    return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace, length, lower, upper);
+    return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace, length, lower, upper, round);
   }
 }
