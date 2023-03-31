@@ -53,7 +53,7 @@
         "minimist": "^1.2.8",
         "mocha": "^10.2.0",
         "progress": "^2.0.3",
-        "typescript": "^5.0.2",
+        "typescript": "^5.0.3",
         "webpack": "^5.77.0",
         "webpack-cli": "^5.0.1",
         "xml-js": "^1.6.11"
