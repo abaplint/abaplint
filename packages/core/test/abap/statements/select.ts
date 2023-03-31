@@ -351,6 +351,7 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     INTO CORRESPONDING FIELDS OF TABLE @rt_load.`,
 
   `SELECT * FROM ztab INTO TABLE @DATA(lt) WHERE field IN ( @lc1,@lc2 ).`,
+  `SELECT CAST( round( SUM( CAST( field AS DEC( 13, 3 ) ) ), 0 ) AS CHAR( 17 ) ) AS something FROM ztab INTO TABLE @DATA(lt).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
