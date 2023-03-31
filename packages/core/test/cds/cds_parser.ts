@@ -638,4 +638,14 @@ define view entity I_foo1 as projection on I_foo2
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("mod", () => {
+    const cds = `
+define view zsdfsd as select from Blah as foo {
+  mod(foo.Name, 10) as sdfsdf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
