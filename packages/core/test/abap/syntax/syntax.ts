@@ -7037,7 +7037,7 @@ MOVE lv_telegram+0(lcl_constant=>c_header_length) TO lv_telegram2.`;
   it("LOOP into data reference into", () => {
     const abap = `
 TYPES: BEGIN OF ty_pil,
-         pid TYPE i,
+         pid  TYPE i,
          lbay TYPE i,
        END OF ty_pil.
 DATA lt_pil TYPE TABLE OF ty_pil.
@@ -7328,6 +7328,29 @@ IF lines( match ) >= 1.
 ENDIF.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FS tables, ok", () => {
+    const abap = `
+DATA lt_tables TYPE STANDARD TABLE OF string.
+FIELD-SYMBOLS <f1> TYPE HASHED TABLE.
+FIELD-SYMBOLS <f2> TYPE STANDARD TABLE.
+FIELD-SYMBOLS <f3> TYPE ANY TABLE.
+FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("DATA hashed table key not defined, expect error", () => {
+    const abap = `DATA lt_tables TYPE HASHED TABLE OF string.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
+  it("DATA type any, expect error", () => {
+    const abap = `DATA lt_tables TYPE any.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
   });
 
 // todo, static method cannot access instance attributes

@@ -38,7 +38,6 @@ const repos = [
   "open-abap/open-table-maintenance",
   "SAP/abap-file-formats-tools",
   "SAP/abap-file-formats",
-  "SAP/code-pal-for-abap",
   "sbcgua/abap-string-map",
   "sbcgua/ajson",
   "sbcgua/mockup_loader",

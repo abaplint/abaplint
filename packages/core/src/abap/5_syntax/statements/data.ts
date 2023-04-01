@@ -10,7 +10,12 @@ export class Data {
 
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
-      return new DataDefinition().runSyntax(dd, scope, filename);
+      const id = new DataDefinition().runSyntax(dd, scope, filename);
+      if (id?.getType().isGeneric() === true
+          && id?.getType().containsVoid() === false) {
+        throw new Error("DATA definition cannot be generic");
+      }
+      return id;
     }
 
     const name = node.findFirstExpression(Expressions.DefinitionName);

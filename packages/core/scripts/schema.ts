@@ -50,6 +50,7 @@ import {ForbiddenPseudoAndPragmaConf} from "../src/rules/forbidden_pseudo_and_pr
 import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
+import {FullyTypeITabsConf} from "../src/rules/fully_type_itabs";
 import {FunctionModuleRecommendationsConf} from "../src/rules/function_module_recommendations";
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
 import {GlobalClassConf} from "../src/rules/global_class";
@@ -216,6 +217,7 @@ export interface IConfig {
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
+    "fully_type_itabs"?: FullyTypeITabsConf | boolean,
     "function_module_recommendations"?: FunctionModuleRecommendationsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
     "global_class"?: GlobalClassConf | boolean,

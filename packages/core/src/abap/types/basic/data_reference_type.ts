@@ -25,7 +25,8 @@ export class DataReference extends AbstractType {
   }
 
   public isGeneric() {
-    return this.type.isGeneric();
+    // a DATA definition can be "REF TO data", so its not generic
+    return false;
   }
 
   public containsVoid() {
