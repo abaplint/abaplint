@@ -66,6 +66,10 @@ export class TableType extends AbstractType {
   }
 
   public isGeneric() {
+    if (this.options.primaryKey?.type !== TableAccessType.standard
+        && this.options.primaryKey?.keyFields.length === 0) {
+      return true;
+    }
     return this.rowType.isGeneric();
   }
 

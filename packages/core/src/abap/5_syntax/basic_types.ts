@@ -308,11 +308,16 @@ export class BasicTypes {
     }
 
     let type: Types.TableAccessType | undefined = undefined;
-    if (text.startsWith("TYPE STANDARD TABLE ") || text.startsWith("LIKE STANDARD TABLE ")) {
+    if (text.startsWith("TYPE STANDARD TABLE ")
+        || text.startsWith("TYPE TABLE ")
+        || text.startsWith("LIKE TABLE ")
+        || text.startsWith("LIKE STANDARD TABLE ")) {
       type = TableAccessType.standard;
-    } else if (text.startsWith("TYPE SORTED TABLE ") || text.startsWith("LIKE SORTED TABLE ")) {
+    } else if (text.startsWith("TYPE SORTED TABLE ")
+        || text.startsWith("LIKE SORTED TABLE ")) {
       type = TableAccessType.sorted;
-    } else if (text.startsWith("TYPE HASHED TABLE ") || text.startsWith("LIKE HASHED TABLE ")) {
+    } else if (text.startsWith("TYPE HASHED TABLE ")
+        || text.startsWith("LIKE HASHED TABLE ")) {
       type = TableAccessType.hashed;
     }
 
@@ -330,6 +335,9 @@ export class BasicTypes {
     if (isNamed === false) {
       for (const k of firstKey?.findDirectExpressions(FieldSub) || []) {
         primaryKey.keyFields.push(k.concatTokens().toUpperCase());
+      }
+      if (primaryKey.keyFields.length === 0 && text.includes(" DEFAULT KEY")) {
+        primaryKey.keyFields.push("TABLE_LINE");
       }
     } else {
       start = 0;
@@ -406,6 +414,7 @@ export class BasicTypes {
         {name: "low", type: found},
         {name: "high", type: found},
       ]);
+      options.primaryKey!.type = TableAccessType.standard;
       return new Types.TableType(structure, options, name);
     } else if (text.startsWith("LIKE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.SimpleFieldChain);
@@ -419,8 +428,8 @@ export class BasicTypes {
         {name: "low", type: found},
         {name: "high", type: found},
       ], name);
+      options.primaryKey!.type = TableAccessType.standard;
       return new Types.TableType(structure, options);
-
     } else if (typename && (text.startsWith("TYPE TABLE FOR CREATE ")
         || text.startsWith("TYPE TABLE FOR UPDATE "))) {
       const name = typename.concatTokens();

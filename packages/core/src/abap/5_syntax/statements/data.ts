@@ -11,7 +11,8 @@ export class Data {
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
       const id = new DataDefinition().runSyntax(dd, scope, filename);
-      if (id?.getType().isGeneric() === true) {
+      if (id?.getType().isGeneric() === true
+          && id?.getType().containsVoid() === false) {
         throw new Error("DATA definition cannot be generic");
       }
       return id;

@@ -7037,7 +7037,7 @@ MOVE lv_telegram+0(lcl_constant=>c_header_length) TO lv_telegram2.`;
   it("LOOP into data reference into", () => {
     const abap = `
 TYPES: BEGIN OF ty_pil,
-         pid TYPE i,
+         pid  TYPE i,
          lbay TYPE i,
        END OF ty_pil.
 DATA lt_pil TYPE TABLE OF ty_pil.
@@ -7341,7 +7341,7 @@ FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("DATA hashed table key not defined, expect error", () => {
+  it("DATA hashed table key not defined, expect error", () => {
     const abap = `DATA lt_tables TYPE HASHED TABLE OF string.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("generic");
