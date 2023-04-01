@@ -7330,6 +7330,17 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("FS tables, ok", () => {
+    const abap = `
+DATA lt_tables TYPE STANDARD TABLE OF string.
+FIELD-SYMBOLS <f1> TYPE HASHED TABLE.
+FIELD-SYMBOLS <f2> TYPE STANDARD TABLE.
+FIELD-SYMBOLS <f3> TYPE ANY TABLE.
+FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
