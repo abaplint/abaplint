@@ -7,7 +7,8 @@ export class GenericObjectReferenceType extends AbstractType {
   }
 
   public isGeneric() {
-    return true;
+    // a DATA definition can be "REF TO object", so its not generic
+    return false;
   }
 
   public toABAP(): string {

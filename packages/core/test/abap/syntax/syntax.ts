@@ -7341,6 +7341,18 @@ FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("DATA hashed table key not defined, expect error", () => {
+    const abap = `DATA lt_tables TYPE HASHED TABLE OF string.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
+  it("DATA type any, expect error", () => {
+    const abap = `DATA lt_tables TYPE any.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

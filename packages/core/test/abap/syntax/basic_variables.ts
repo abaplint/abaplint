@@ -541,13 +541,6 @@ DATA: ls_struc TYPE ty_struc,
     expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
-  it("TYPE any", () => {
-    const abap = `DATA properties TYPE any.`;
-    const identifier = resolveVariable(abap, "properties");
-    expect(identifier).to.not.equal(undefined);
-    expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
-  });
-
   it("LIKE sy", () => {
     const abap = `DATA sdf LIKE sy.`;
     const identifier = resolveVariable(abap, "sdf");
@@ -848,7 +841,7 @@ ENDCLASS.`;
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.GenericObjectReferenceType);
-    expect(type?.isGeneric()).to.equal(true);
+    expect(type?.isGeneric()).to.equal(false);
   });
 
   it("DATA foo TYPE REF TO data.", () => {
@@ -858,7 +851,7 @@ ENDCLASS.`;
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.DataReference);
-    expect(type?.isGeneric()).to.equal(true);
+    expect(type?.isGeneric()).to.equal(false);
   });
 
   it("sy-datum", () => {
@@ -1566,8 +1559,8 @@ DATA(sdf) = ref->*-int.`;
 
   it("loop at ANY should give ANY", () => {
     const abap = `
-    DATA tab TYPE ANY TABLE.
-    LOOP AT tab ASSIGNING FIELD-SYMBOL(<sdf>).
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<sdf>).
     ENDLOOP.`;
     const identifier = resolveVariable(abap, "<sdf>");
     expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
