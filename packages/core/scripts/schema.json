@@ -1335,6 +1335,23 @@
       ],
       "type": "object"
     },
+    "FullyTypeITabsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "FunctionModuleRecommendationsConf": {
       "additionalProperties": false,
       "properties": {
@@ -1988,6 +2005,17 @@
                 }
               ],
               "description": "Checks constants for full typing - no implicit typing allowed.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
+            },
+            "fully_type_itabs": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FullyTypeITabsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
             },
             "function_module_recommendations": {
               "anyOf": [
