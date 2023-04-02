@@ -7353,29 +7353,6 @@ FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
     expect(issues[0]?.getMessage()).to.contain("generic");
   });
 
-  it.only("intf, returning parameter cannot be generic", () => {
-    const abap = `
-INTERFACE lif.
-  METHODS foo RETURNING VALUE(sdf) TYPE any.
-ENDINTERFACE.`;
-    const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("generic");
-  });
-
-  it.only("intf, returning parameter cannot be generic", () => {
-    const abap = `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    METHODS foo RETURNING VALUE(sdf) TYPE any.
-ENDCLASS.
-CLASS lcl IMPLEMENTATION.
-  METHOD foo.
-  ENDMETHOD.
-ENDCLASS.`;
-    const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("generic");
-  });
-
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

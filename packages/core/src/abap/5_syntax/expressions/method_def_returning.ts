@@ -17,8 +17,12 @@ export class MethodDefReturning {
       throw new Error("method_parameter.ts, unexpected structure");
     }
 
-    const found = new BasicTypes(filename, scope).parseType(type);
-//    console.dir(found);
+    let found = new BasicTypes(filename, scope).parseType(type);
+
+    if (found?.isGeneric() === true) {
+      found = new UnknownType("RETURNING parameter must be fully specified");
+    }
+
     if (found) {
       return new TypedIdentifier(name.getFirstToken(), filename, found, meta);
     } else {
