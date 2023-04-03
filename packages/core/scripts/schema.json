@@ -2840,7 +2840,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "start_at_tab": {
               "anyOf": [
