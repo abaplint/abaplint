@@ -20,7 +20,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
       title: "Escape SQL host variables",
       shortDescription: `Escape SQL host variables, from 740sp05`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obsolete-language-elements`,
-      tags: [RuleTag.Upport, RuleTag.Styleguide],
+      tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix],
       badExample: `SELECT * FROM tab INTO TABLE res WHERE field = val.`,
       goodExample: `SELECT * FROM tab INTO TABLE @res WHERE field = @val.`,
     };

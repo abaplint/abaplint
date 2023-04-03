@@ -1,5 +1,9 @@
 import {SQLEscapeHostVariables} from "../../src/rules";
-import {testRule} from "./_utils";
+import {testRule, testRuleFixSingle} from "./_utils";
+
+function testFix(input: string, expected: string, noIssuesAfter = true) {
+  testRuleFixSingle(input, expected, new SQLEscapeHostVariables(), undefined, undefined, noIssuesAfter);
+}
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -25,3 +29,14 @@ const tests = [
 ];
 
 testRule(tests, SQLEscapeHostVariables);
+
+
+describe("Rule: sql_escape_host_variables, quick fixes", () => {
+
+  it.only("quick fix 1", async () => {
+    const abap = `SELECT SINGLE bname FROM usr02 INTO lv_bname.`;
+    const expected = `SELECT SINGLE bname FROM usr02 INTO @lv_bname.`;
+    testFix(abap, expected);
+  });
+
+});
