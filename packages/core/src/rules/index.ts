@@ -126,6 +126,7 @@ export * from "./space_before_dot";
 export * from "./sql_escape_host_variables";
 export * from "./start_at_tab";
 export * from "./static_call_via_instance";
+export * from "./strict_sql";
 export * from "./superclass_final";
 export * from "./superfluous_value";
 export * from "./sy_modification";

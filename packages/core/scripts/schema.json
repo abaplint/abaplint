@@ -1883,7 +1883,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Experimental downport functionality\nTags: Experimental, Downport, Quickfix\nhttps://rules.abaplint.org/downport"
+              "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -2840,7 +2840,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix\nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "start_at_tab": {
               "anyOf": [
@@ -2863,6 +2863,17 @@
                 }
               ],
               "description": "Static method call via instance variable\nTags: Styleguide\nhttps://rules.abaplint.org/static_call_via_instance"
+            },
+            "strict_sql": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StrictSQLConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Strict SQL\nTags: Upport, Syntax\nhttps://rules.abaplint.org/strict_sql"
             },
             "superclass_final": {
               "anyOf": [
@@ -5290,6 +5301,23 @@
           "description": "Allow in test class includes",
           "type": "boolean"
         },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "StrictSQLConf": {
+      "additionalProperties": false,
+      "properties": {
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
