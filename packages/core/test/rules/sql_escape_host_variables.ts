@@ -24,7 +24,7 @@ const tests = [
   {abap: "DELETE FROM zabaplint_pack WHERE devclass = 2.", cnt: 0},
   {abap: "INSERT dbtab FROM TABLE lt_insert.", cnt: 1},
   {abap: "UPDATE zsdfds SET aendt = sy-datum aenuhr = sy-uzeit WHERE wsss = is_message-sdf AND bar = is_message-sdfsd.", cnt: 1},
-  {abap: "SELECT cimstp segtyp INTO (ls_idocsyn-segtyp, ls_idocsyn-parseg) FROM cimsyn WHERE cimtyp = bar ORDER BY nr DESCENDING. ENDSELECT.", cnt: 1},
+  {abap: "SELECT cimstp segtyp INTO (ls_idocsyn-segtyp, ls_idocsyn-parseg) FROM cimsyn WHERE cimtyp = bar ORDER BY nr DESCENDING. ENDSELECT.", cnt: 2},
   {abap: "MODIFY SCREEN FROM line.", cnt: 0},
 ];
 
