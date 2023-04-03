@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {InlineData} from "../expressions/inline_data";
-import {StringType, StructureType, IntegerType, TableType} from "../../types/basic";
+import {StringType, StructureType, IntegerType, TableType, TableKeyType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -24,12 +24,12 @@ export class Find implements StatementSyntax {
         {name: "LINE", type: new IntegerType()},
         {name: "OFFSET", type: new IntegerType()},
         {name: "LENGTH", type: new IntegerType()},
-        {name: "SUBMATCHES", type: new TableType(sub, {withHeader: false})},
+        {name: "SUBMATCHES", type: new TableType(sub, {withHeader: false, keyType: TableKeyType.default})},
       ], "MATCH_RESULT", "MATCH_RESULT");
       if (node.concatTokens().toUpperCase().startsWith("FIND FIRST")) {
         this.inline(rfound, scope, filename, type);
       } else {
-        this.inline(rfound, scope, filename, new TableType(type, {withHeader: false}, "MATCH_RESULT_TAB"));
+        this.inline(rfound, scope, filename, new TableType(type, {withHeader: false, keyType: TableKeyType.default}, "MATCH_RESULT_TAB"));
       }
     }
 

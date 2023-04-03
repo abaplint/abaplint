@@ -45,7 +45,7 @@ export class Statics {
         }
         if (found instanceof Basic.VoidType) {
           if (table === true) {
-            return new TypedIdentifier(name, filename, new Basic.TableType(found, {withHeader: true}));
+            return new TypedIdentifier(name, filename, new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default}));
           } else {
             return new TypedIdentifier(name, filename, found);
           }
@@ -63,7 +63,8 @@ export class Statics {
     }
 
     if (table === true) {
-      return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components), {withHeader: true}));
+      return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components),
+                                                                     {withHeader: true, keyType: Basic.TableKeyType.default}));
     } else {
       return new TypedIdentifier(name, filename, new Basic.StructureType(components));
     }

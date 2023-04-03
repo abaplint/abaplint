@@ -159,7 +159,7 @@ export class BasicTypes {
           }
         } else if (child.concatTokens() === "[]") {
           if (type instanceof Types.TableType) {
-            type = new TableType(type.getRowType(), {withHeader: false});
+            type = new TableType(type.getRowType(), {withHeader: false, keyType: Types.TableKeyType.default});
           }
         } else { // field name
           let sub: AbstractType | undefined = undefined;
@@ -327,7 +327,7 @@ export class BasicTypes {
     const isNamed = firstKey?.findDirectExpression(Field) !== undefined;
     const primaryKey: ITableKey = {
       name: "primary_key",
-      type: type,
+      type: type || TableAccessType.standard,
       isUnique: isNamed ? false : firstKey?.concatTokens().toUpperCase().includes("WITH UNIQUE ") === true,
       keyFields: [],
     };
@@ -367,6 +367,7 @@ export class BasicTypes {
 
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
+      keyType: Types.TableKeyType.default,
       primaryKey: primaryKey,
       secondary: secondaryKeys,
     };
@@ -507,7 +508,7 @@ export class BasicTypes {
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE")});
+      return new Types.TableType(new Types.AnyType(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), keyType: Types.TableKeyType.default});
     } else if (text.startsWith("LIKE ")) {
       let sub = node.findFirstExpression(Expressions.Type);
       if (sub === undefined) {
@@ -525,7 +526,7 @@ export class BasicTypes {
       found = this.resolveLikeName(sub);
 
       if (found && this.isOccurs(node)) {
-        found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE")}, qualifiedName);
+        found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE"), keyType: Types.TableKeyType.default}, qualifiedName);
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
@@ -549,14 +550,14 @@ export class BasicTypes {
 
       const concat = node.concatTokens().toUpperCase();
       if (found && this.isOccurs(node)) {
-        found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE")}, qualifiedName);
+        found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE"), keyType: Types.TableKeyType.default}, qualifiedName);
       } else if (found && concat.includes(" WITH HEADER LINE")) {
         if (found instanceof Types.VoidType) {
-          found = new Types.TableType(found, {withHeader: true});
+          found = new Types.TableType(found, {withHeader: true, keyType: Types.TableKeyType.default});
         } else if (!(found instanceof Types.TableType)) {
           throw new Error("WITH HEADER LINE can only be used with internal table");
         } else {
-          found = new Types.TableType(found.getRowType(), {withHeader: true});
+          found = new Types.TableType(found.getRowType(), {withHeader: true, keyType: Types.TableKeyType.default});
         }
       }
 
@@ -573,7 +574,7 @@ export class BasicTypes {
 
         found = new Types.CharacterType(length, {qualifiedName: qualifiedName}); // fallback
         if (this.isOccurs(node)) {
-          found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE")}, qualifiedName);
+          found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE"), keyType: Types.TableKeyType.default}, qualifiedName);
         }
       }
 

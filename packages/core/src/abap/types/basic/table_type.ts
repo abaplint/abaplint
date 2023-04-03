@@ -8,15 +8,22 @@ export enum TableAccessType {
   any = "ANY",
 }
 
+export enum TableKeyType {
+  default = "DEFAULT",
+  user = "USER",
+  empty = "EMPTY",
+}
+
 export type ITableKey = {
   name: string,
-  type?: TableAccessType,
+  type: TableAccessType,
   keyFields: string[],
   isUnique: boolean,
 };
 
 export type ITableOptions = {
   withHeader: boolean,
+  keyType: TableKeyType,
   primaryKey?: ITableKey,
   secondary?: ITableKey[],
 };
