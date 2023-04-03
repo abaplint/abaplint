@@ -1,4 +1,5 @@
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -51,6 +52,18 @@ Also see separate rule sql_escape_host_variables`,
     for (const s of file.getStatements()) {
       if (s.get() instanceof Statements.Select
           || s.get() instanceof Statements.SelectLoop) {
+
+        const expr = s.findDirectExpression(Expressions.Select);
+        const where = expr?.findDirectExpression(Expressions.SQLCond);
+        const into = expr?.findDirectExpression(Expressions.SQLIntoStructure)
+          || expr?.findDirectExpression(Expressions.SQLIntoTable);
+        if (into === undefined || where === undefined) {
+          continue;
+        }
+        if (where.getFirstToken().getStart().isBefore(into.getFirstToken().getStart())) {
+          continue;
+        }
+
         const message = "INTO/APPENDING must be last in strict SQL";
         const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
