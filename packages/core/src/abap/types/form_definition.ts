@@ -8,7 +8,7 @@ import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
-import {TableType, UnknownType, VoidType} from "./basic";
+import {TableKeyType, TableType, UnknownType, VoidType} from "./basic";
 
 export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
@@ -66,11 +66,11 @@ export class FormDefinition extends Identifier implements IFormDefinition {
 
         const isStructure = param.findDirectTokenByText("STRUCTURE") !== undefined;
         if (isStructure) {
-          type = new TableType(type, {withHeader: true});
+          type = new TableType(type, {withHeader: true, keyType: TableKeyType.default});
         }
 
         if (type instanceof TableType) {
-          type = new TableType(type.getRowType(), {withHeader: true});
+          type = new TableType(type.getRowType(), {withHeader: true, keyType: TableKeyType.default});
         } else if (!(type instanceof UnknownType) && !(type instanceof VoidType)) {
           type = new UnknownType("FORM TABLES type must be table type");
         }

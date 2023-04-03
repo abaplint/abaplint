@@ -42,6 +42,7 @@ export class TableType extends AbstractObject {
   private buildTableOptions(): ITableOptions {
     const tableOptions: ITableOptions = {
       withHeader: false,
+      keyType: Types.TableKeyType.user,
       secondary: [],
     };
 

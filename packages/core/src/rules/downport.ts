@@ -145,7 +145,7 @@ export class Downport implements IRule {
     return {
       key: "downport",
       title: "Downport statement",
-      shortDescription: `Experimental downport functionality`,
+      shortDescription: `Downport functionality`,
       extendedInformation: `Much like the 'commented_code' rule this rule loops through unknown statements and tries parsing with
 a higher level language version. If successful, various rules are applied to downport the statement.
 Target downport version is always v702, thus rule is only enabled if target version is v702.
@@ -178,7 +178,7 @@ Current rules:
 * MESSAGE with non simple source
 
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
-      tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
+      tags: [RuleTag.Downport, RuleTag.Quickfix],
     };
   }
 

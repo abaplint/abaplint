@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {UnknownType, TableType, StructureType, CharacterType, VoidType} from "../../types/basic";
+import {UnknownType, TableType, StructureType, CharacterType, VoidType, TableKeyType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
@@ -42,7 +42,7 @@ export class SelectOption implements StatementSyntax {
         {name: "LOW", type: found},
         {name: "HIGH", type: found},
       ]);
-      scope.addIdentifier(new TypedIdentifier(nameToken, filename, new TableType(stru, {withHeader: true})));
+      scope.addIdentifier(new TypedIdentifier(nameToken, filename, new TableType(stru, {withHeader: true, keyType: TableKeyType.default})));
       return;
     }
 

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType, TableKeyType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -251,7 +251,7 @@ export class BuiltIn {
     {
       name: "CONCAT_LINES_OF",
       mandatory: {
-        "table": new TableType(new AnyType(), {withHeader: false}),
+        "table": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
       },
       optional: {
         "sep": new StringType(),
@@ -572,7 +572,7 @@ export class BuiltIn {
     {
       name: "LINES",
       mandatory: {
-        "val": new TableType(new AnyType(), {withHeader: false}),
+        "val": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
       },
       return: new IntegerType(),
     },

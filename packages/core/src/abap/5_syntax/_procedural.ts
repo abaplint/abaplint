@@ -9,7 +9,7 @@ import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
 import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {TableType, UnknownType, AnyType, VoidType, StructureType} from "../types/basic";
+import {TableType, UnknownType, AnyType, VoidType, StructureType, TableKeyType} from "../types/basic";
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
@@ -108,9 +108,9 @@ export class Procedural {
 
       if (param.direction === FunctionModuleParameterDirection.tables) {
         if (found instanceof TableType) {
-          found = new TableType(found.getRowType(), {withHeader: true});
+          found = new TableType(found.getRowType(), {withHeader: true, keyType: TableKeyType.default});
         } else {
-          found = new TableType(found, {withHeader: true});
+          found = new TableType(found, {withHeader: true, keyType: TableKeyType.default});
         }
       }
 

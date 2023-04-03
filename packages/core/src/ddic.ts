@@ -88,7 +88,7 @@ export class DDIC {
       case "%_C_POINTER":
         return new Types.HexType(8, qualifiedName);
       case "TABLE":
-        return new Types.TableType(new Types.AnyType(), {withHeader: false});
+        return new Types.TableType(new Types.AnyType(), {withHeader: false, keyType: Types.TableKeyType.default});
       case "DATA":
         return new Types.AnyType({qualifiedName: qualifiedName});
       case "NUMERIC":
