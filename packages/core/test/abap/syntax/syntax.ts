@@ -7359,6 +7359,18 @@ FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, not generic", () => {
+    const abap = `
+types: BEGIN OF TY_TOKEN_ST,
+         api_name type string,
+         token type string,
+       END OF ty_token_st.
+types ty_token_tt type hashed TABLE OF ty_token_st with UNIQUE key primary_key components api_name.
+data MT_TOKEN type TY_TOKEN_TT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
