@@ -37,7 +37,8 @@ export class SQLEscapeHostVariables extends ABAPRule {
   public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
 
-    if (obj.getType() === "INTF") {
+    const type = obj.getType();
+    if (type === "INTF" || type === "TYPE") {
       return [];
     }
 
@@ -47,30 +48,13 @@ export class SQLEscapeHostVariables extends ABAPRule {
     }
 
     for (const s of file.getStatements()) {
-      const str = s.concatTokens().toUpperCase();
-      if (s.get() instanceof Statements.Select
-          || s.get() instanceof Statements.SelectLoop) {
-// this is not completely correct and does not catch all, but okay for now
-// todo: replace with logic from "else if" branch below, when/if it proves to work
-        if (str.includes(" INTO ( @")
-            || str.includes(" INTO (@")
-            || str.includes(" INTO @")
-            || str.includes(" INTO TABLE @")
-            || str.includes(" INTO CORRESPONDING FIELDS OF @")
-            || str.includes(" INTO CORRESPONDING FIELDS OF TABLE @")
-            || str.includes(" APPENDING TABLE @")
-            || ( str.includes(" APPENDING ") === false && str.includes(" INTO ") === false )
-            || str.includes(" APPENDING CORRESPONDING FIELDS OF TABLE @")) {
-          continue;
-        } else {
-          const message = "Escape SQL host variables";
-          const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
-        }
-      } else if (s.get() instanceof Statements.UpdateDatabase
+      if (s.get() instanceof Statements.UpdateDatabase
           || s.get() instanceof Statements.ModifyDatabase
+          || s.get() instanceof Statements.Select
+          || s.get() instanceof Statements.SelectLoop
           || s.get() instanceof Statements.InsertDatabase
           || s.get() instanceof Statements.DeleteDatabase) {
+
         for (const o of s.findAllExpressions(Expressions.SQLSource)) {
           const first = o.getFirstChild();
           if ((first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain)
@@ -80,6 +64,18 @@ export class SQLEscapeHostVariables extends ABAPRule {
             issues.push(issue);
             break;
           }
+        }
+
+        for (const o of s.findAllExpressions(Expressions.SQLTarget)) {
+          const escaped = o.findDirectTokenByText("@");
+          if (escaped !== undefined) {
+            continue;
+          }
+
+          const message = "Escape SQL host variables";
+          const issue = Issue.atToken(file, o.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+          break;
         }
       }
     }
