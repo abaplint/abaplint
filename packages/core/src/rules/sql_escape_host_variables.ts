@@ -41,7 +41,8 @@ export class SQLEscapeHostVariables extends ABAPRule {
       return [];
     }
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp02
+        && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];
     }
 
@@ -70,9 +71,6 @@ export class SQLEscapeHostVariables extends ABAPRule {
           || s.get() instanceof Statements.ModifyDatabase
           || s.get() instanceof Statements.InsertDatabase
           || s.get() instanceof Statements.DeleteDatabase) {
-        if (str.startsWith("MODIFY SCREEN FROM ")) {
-          continue;
-        }
         for (const o of s.findAllExpressions(Expressions.SQLSource)) {
           const first = o.getFirstChild();
           if ((first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain)
