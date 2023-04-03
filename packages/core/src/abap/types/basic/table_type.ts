@@ -74,6 +74,7 @@ export class TableType extends AbstractType {
 
   public isGeneric() {
     if (this.options.primaryKey?.type !== TableAccessType.standard
+        && this.options.keyType === TableKeyType.user
         && this.options.primaryKey?.keyFields.length === 0) {
       return true;
     }

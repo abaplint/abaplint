@@ -336,9 +336,6 @@ export class BasicTypes {
       for (const k of firstKey?.findDirectExpressions(FieldSub) || []) {
         primaryKey.keyFields.push(k.concatTokens().toUpperCase());
       }
-      if (primaryKey.keyFields.length === 0 && text.includes(" DEFAULT KEY")) {
-        primaryKey.keyFields.push("TABLE_LINE");
-      }
     } else {
       start = 0;
     }
@@ -365,9 +362,16 @@ export class BasicTypes {
       secondaryKeys.push(secondary);
     }
 
+    let keyType = Types.TableKeyType.user;
+    if (text.includes(" EMPTY KEY")) {
+      keyType = Types.TableKeyType.empty;
+    } else if (text.includes(" DEFAULT KEY")) {
+      keyType = Types.TableKeyType.default;
+    }
+
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
-      keyType: Types.TableKeyType.default,
+      keyType: keyType,
       primaryKey: primaryKey,
       secondary: secondaryKeys,
     };

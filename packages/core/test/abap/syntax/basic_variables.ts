@@ -1848,4 +1848,30 @@ DATA tab TYPE SORTED TABLE OF ty_node
     expect(obj).to.equal(undefined);
   });
 
+  it("table DEFAULT KEY", () => {
+    const abap = `
+    TYPES: BEGIN OF ts_field,
+             name  TYPE string,
+             value TYPE string,
+           END OF ts_field.
+    DATA lt_fields TYPE STANDARD TABLE OF ts_field WITH DEFAULT KEY.`;
+    const identifier = resolveVariable(abap, "lt_fields");
+    expect(identifier).to.not.equal(undefined);
+    const tt = identifier?.getType() as Basic.TableType;
+    expect(tt.getOptions().keyType).to.equal(Basic.TableKeyType.default);
+  });
+
+  it("table EMPTY KEY", () => {
+    const abap = `
+    TYPES: BEGIN OF ts_field,
+             name  TYPE string,
+             value TYPE string,
+           END OF ts_field.
+    DATA lt_fields TYPE STANDARD TABLE OF ts_field WITH EMPTY KEY.`;
+    const identifier = resolveVariable(abap, "lt_fields");
+    expect(identifier).to.not.equal(undefined);
+    const tt = identifier?.getType() as Basic.TableType;
+    expect(tt.getOptions().keyType).to.equal(Basic.TableKeyType.empty);
+  });
+
 });

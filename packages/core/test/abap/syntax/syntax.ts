@@ -7353,6 +7353,12 @@ FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
     expect(issues[0]?.getMessage()).to.contain("generic");
   });
 
+  it("ok, not generic", () => {
+    const abap = `DATA table TYPE SORTED TABLE OF i WITH NON-UNIQUE DEFAULT KEY.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
