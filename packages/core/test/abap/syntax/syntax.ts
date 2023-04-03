@@ -7359,7 +7359,7 @@ FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("ok, not generic", () => {
+  it("ok, not generic, primary_key", () => {
     const abap = `
 types: BEGIN OF TY_TOKEN_ST,
          api_name type string,

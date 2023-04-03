@@ -324,7 +324,8 @@ export class BasicTypes {
     const typeTableKeys = node.findAllExpressions(TypeTableKey);
 
     const firstKey = typeTableKeys[0];
-    const isNamed = firstKey?.findDirectExpression(Field) !== undefined;
+    const isNamed = firstKey?.findDirectExpression(Field) !== undefined
+      && firstKey?.findDirectExpression(Field)?.concatTokens().toUpperCase() !== "PRIMARY_KEY";
     const primaryKey: ITableKey = {
       name: "primary_key",
       type: type || TableAccessType.standard,
