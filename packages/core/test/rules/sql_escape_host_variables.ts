@@ -33,7 +33,7 @@ testRule(tests, SQLEscapeHostVariables);
 
 describe("Rule: sql_escape_host_variables, quick fixes", () => {
 
-  it.skip("quick fix 1", async () => {
+  it("quick fix 1", async () => {
     const abap = `SELECT SINGLE bname FROM usr02 INTO lv_bname.`;
     const expected = `SELECT SINGLE bname FROM usr02 INTO @lv_bname.`;
     testFix(abap, expected);

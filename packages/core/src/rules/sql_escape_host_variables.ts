@@ -7,6 +7,7 @@ import {Version} from "../version";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
+import {EditHelper} from "../edit_helper";
 
 export class SQLEscapeHostVariablesConf extends BasicRuleConfig {
 }
@@ -60,7 +61,9 @@ export class SQLEscapeHostVariables extends ABAPRule {
           if ((first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain)
               || (first?.get() instanceof Expressions.SimpleSource3 && first.getChildren()[0].get() instanceof Expressions.FieldChain)) {
             const message = "Escape SQL host variables";
-            const issue = Issue.atToken(file, first.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+            const firstToken = o.getFirstChild()!.getFirstToken();
+            const fix = EditHelper.replaceToken(file, firstToken, "@" + firstToken?.getStr());
+            const issue = Issue.atToken(file, first.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
             issues.push(issue);
             break;
           }
@@ -73,7 +76,9 @@ export class SQLEscapeHostVariables extends ABAPRule {
           }
 
           const message = "Escape SQL host variables";
-          const issue = Issue.atToken(file, o.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+          const firstToken = o.getFirstChild()!.getFirstToken();
+          const fix = EditHelper.replaceToken(file, firstToken, "@" + firstToken?.getStr());
+          const issue = Issue.atToken(file, o.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
           issues.push(issue);
           break;
         }
