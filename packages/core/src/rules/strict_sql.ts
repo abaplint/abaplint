@@ -58,6 +58,7 @@ Activates from v750 and up`,
 
         const expr = s.findDirectExpression(Expressions.Select);
         const where = expr?.findDirectExpression(Expressions.SQLCond);
+        const order = expr?.findDirectExpression(Expressions.SQLOrderBy);
         const into = expr?.findDirectExpression(Expressions.SQLIntoStructure)
           || expr?.findDirectExpression(Expressions.SQLIntoTable);
         if (into === undefined || where === undefined) {
@@ -67,8 +68,11 @@ Activates from v750 and up`,
         }
 
         const fix1 = EditHelper.deleteRange(file, into.getFirstToken().getStart(), into.getLastToken().getEnd());
-        const whereLast = where.getLastToken();
-        const fix2 = EditHelper.insertAt(file, whereLast.getEnd(), " " + into.concatTokens());
+        let last = where.getLastToken();
+        if (order && order.getLastToken().getEnd().isAfter(last.getEnd())) {
+          last = order.getLastToken();
+        }
+        const fix2 = EditHelper.insertAt(file, last.getEnd(), " " + into.concatTokens());
         const fix = EditHelper.merge(fix2, fix1);
         const message = "INTO/APPENDING must be last in strict SQL";
         const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
