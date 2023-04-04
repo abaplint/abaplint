@@ -56,7 +56,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
           || s.get() instanceof Statements.InsertDatabase
           || s.get() instanceof Statements.DeleteDatabase) {
 
-        for (const o of s.findAllExpressions(Expressions.SQLSource)) {
+        for (const o of s.findAllExpressionsMulti([Expressions.SQLSource, Expressions.SQLSourceSimple])) {
           const first = o.getFirstChild();
           if ((first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain)
               || (first?.get() instanceof Expressions.SimpleSource3 && first.getChildren()[0].get() instanceof Expressions.FieldChain)) {

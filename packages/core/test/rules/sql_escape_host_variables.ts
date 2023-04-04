@@ -27,6 +27,8 @@ const tests = [
   {abap: "SELECT cimstp segtyp INTO (ls_idocsyn-segtyp, ls_idocsyn-parseg) FROM cimsyn WHERE cimtyp = bar ORDER BY nr DESCENDING. ENDSELECT.", cnt: 2},
   {abap: "MODIFY SCREEN FROM line.", cnt: 0},
   {abap: "SELECT COUNT(*) FROM e070 WHERE trkorr = iv_transport AND trstatus = 'R'.", cnt: 1},
+  {abap: "DELETE (iv_name) FROM TABLE <lg_del>.", cnt: 1},
+  {abap: "DELETE (iv_name) FROM TABLE @<lg_del>.", cnt: 0},
 ];
 
 testRule(tests, SQLEscapeHostVariables);

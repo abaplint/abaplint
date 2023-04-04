@@ -12,6 +12,8 @@ const tests = [
   {abap: `SELECT * FROM (iv_name) WHERE (lv_where) APPENDING TABLE @<lg_tab>.`, cnt: 0},
   {abap: `SELECT SINGLE data_str FROM (c_tabname) INTO @rv_data WHERE type = @iv_type AND value = @iv_value.`, cnt: 1},
   {abap: `SELECT SINGLE data_str FROM (c_tabname) WHERE type = @iv_type AND value = @iv_value INTO @rv_data.`, cnt: 0},
+  {abap: `SELECT * FROM (c_tabname) INTO TABLE @rt_content WHERE type = @iv_type ORDER BY PRIMARY KEY.`, cnt: 1},
+  {abap: `SELECT * FROM (c_tabname) WHERE type = @iv_type ORDER BY PRIMARY KEY INTO TABLE @rt_content.`, cnt: 0},
 ];
 
 testRule(tests, StrictSQL);
@@ -27,6 +29,12 @@ describe("Rule: strict_sql, quick fixes", () => {
   it("quick fix 2", async () => {
     const abap = `SELECT SINGLE data_str FROM (c_tabname) INTO @rv_data WHERE type = @iv_type AND value = @iv_value.`;
     const expected = `SELECT SINGLE data_str FROM (c_tabname)  WHERE type = @iv_type AND value = @iv_value INTO @rv_data.`;
+    testFix(abap, expected);
+  });
+
+  it("quick fix 3", async () => {
+    const abap = `SELECT * FROM (c_tabname) INTO TABLE @rt_content WHERE type = @iv_type ORDER BY PRIMARY KEY.`;
+    const expected = `SELECT * FROM (c_tabname)  WHERE type = @iv_type ORDER BY PRIMARY KEY INTO TABLE @rt_content.`;
     testFix(abap, expected);
   });
 
