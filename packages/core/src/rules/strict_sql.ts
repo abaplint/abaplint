@@ -7,6 +7,7 @@ import {Version} from "../version";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
+import {EditHelper} from "../edit_helper";
 
 export class StrictSQLConf extends BasicRuleConfig {
 }
@@ -24,7 +25,7 @@ export class StrictSQL extends ABAPRule {
 https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abenopensql_strict_mode_750.htm
 
 Also see separate rule sql_escape_host_variables`,
-      tags: [RuleTag.Upport, RuleTag.Syntax],
+      tags: [RuleTag.Upport, RuleTag.Syntax, RuleTag.Quickfix],
     };
   }
 
@@ -59,13 +60,16 @@ Also see separate rule sql_escape_host_variables`,
           || expr?.findDirectExpression(Expressions.SQLIntoTable);
         if (into === undefined || where === undefined) {
           continue;
-        }
-        if (where.getFirstToken().getStart().isBefore(into.getFirstToken().getStart())) {
+        } else if (where.getFirstToken().getStart().isBefore(into.getFirstToken().getStart())) {
           continue;
         }
 
+        const fix1 = EditHelper.deleteRange(file, into.getFirstToken().getStart(), into.getLastToken().getEnd());
+        const whereLast = where.getLastToken();
+        const fix2 = EditHelper.insertAt(file, whereLast.getEnd(), " " + into.concatTokens());
+        const fix = EditHelper.merge(fix2, fix1);
         const message = "INTO/APPENDING must be last in strict SQL";
-        const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+        const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
         break;
       }
