@@ -24,7 +24,9 @@ export class StrictSQL extends ABAPRule {
 
 https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abenopensql_strict_mode_750.htm
 
-Also see separate rule sql_escape_host_variables`,
+Also see separate rule sql_escape_host_variables
+
+Activates from v750 and up`,
       tags: [RuleTag.Upport, RuleTag.Syntax, RuleTag.Quickfix],
     };
   }
@@ -45,7 +47,7 @@ Also see separate rule sql_escape_host_variables`,
       return [];
     }
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02
+    if (this.reg.getConfig().getVersion() < Version.v750
         && this.reg.getConfig().getVersion() !== Version.Cloud) {
       return [];
     }
