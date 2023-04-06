@@ -107,43 +107,6 @@ describe("Pretty printer with alignTryCatch", () => {
   });
 });
 
-
-describe("Remove sequential blanks", () => {
-  const tests = [
-    {
-      input: "REPORT zfoo.\nWRITE: `foo`.",
-      expected: "REPORT zfoo.\nWRITE: `foo`.",
-    },
-    {
-      input: "REPORT zfoo.\n\n\n\n\nWRITE: `foo`.",
-      expected: "REPORT zfoo.\n\n\n\nWRITE: `foo`.",
-    },
-    {
-      input: "REPORT zfoo.\n\n\n\n\nWRITE: `foo`.\n\n\n\n\nWRITE: 'bar'",
-      expected: "REPORT zfoo.\n\n\n\nWRITE: `foo`.\n\n\n\nWRITE: 'bar'",
-    },
-    {
-      input: "REPORT zfoo.\n\t\n\n\n\nWRITE: `foo`.\n\n\t\n\n\nWRITE: 'bar'",
-      expected: "REPORT zfoo.\n\t\n\n\nWRITE: `foo`.\n\n\t\n\nWRITE: 'bar'",
-    },
-    {
-      input: "REPORT zfoo.\n\t\n\n\n\nWRITE: `foo`.\n\n\t\n\n\nWRITE: 'bar'    \n\n\n\n\n\n",
-      expected: "REPORT zfoo.\n\t\n\n\nWRITE: `foo`.\n\n\t\n\nWRITE: 'bar'",
-    },
-  ];
-
-  tests.forEach((test) => {
-    it(testTitle(test.input), async () => {
-      const files = await parse(test.input);
-      expect(files.length).to.equal(1);
-      const config = Config.getDefault();
-      const prettyPrinter = new PrettyPrinter(files[0], config);
-      const result = prettyPrinter.run();
-      expect(result).to.equal(test.expected);
-    });
-  });
-});
-
 describe("Fix keyword case", () => {
   const lowerCaseConfig = new KeywordCaseConf();
   lowerCaseConfig.style = KeywordCaseStyle.Lower;

@@ -63,10 +63,14 @@ export class LanguageServer {
     const text = new PrettyPrinter(file, this.reg.getConfig()).run();
     const rows = file.getRawRows();
 
-    return [{
-      range: LServer.Range.create(0, 0, rows.length, rows[rows.length - 1].length + 1),
-      newText: text,
-    }];
+    if (text === file.getRaw()) {
+      return [];
+    } else {
+      return [{
+        range: LServer.Range.create(0, 0, rows.length, rows[rows.length - 1].length + 1),
+        newText: text,
+      }];
+    }
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_publishDiagnostics
