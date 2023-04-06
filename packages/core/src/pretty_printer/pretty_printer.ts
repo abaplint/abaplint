@@ -2,7 +2,6 @@ import {Unknown, MacroContent, MacroCall, Comment} from "../abap/2_statements/st
 import {FixCase} from "./fix_keyword_case";
 import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";
-import {RemoveSequentialBlanks} from "./remove_sequential_blanks";
 import {IConfiguration} from "../_config";
 import {VirtualPosition} from "../position";
 import {ABAPFile} from "../abap/abap_file";
@@ -45,9 +44,6 @@ export class PrettyPrinter {
 
     const indentation = new Indent(this.options);
     this.result = indentation.execute(this.file, this.result);
-
-    const removeBlanks = new RemoveSequentialBlanks(this.config);
-    this.result = removeBlanks.execute(this.file, this.result);
 
     return this.result;
   }

@@ -8,7 +8,7 @@ export class CallFunction implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const starting = seq("STARTING NEW TASK", SimpleSource2);
+    const starting = verNot(Version.Cloud, seq("STARTING NEW TASK", SimpleSource2));
     const update = verNot(Version.Cloud, str("IN UPDATE TASK"));
     const unit = seq("UNIT", Source);
     const background = verNot(Version.Cloud, seq("IN BACKGROUND", altPrio("TASK", unit)));
