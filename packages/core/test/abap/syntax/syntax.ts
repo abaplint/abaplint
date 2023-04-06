@@ -7371,6 +7371,18 @@ data MT_TOKEN type TY_TOKEN_TT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CALL not found function module in cloud, should give error", () => {
+    const abap = `CALL FUNCTION 'NOT_RELEASED'.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("found");
+  });
+
+  it("CALL not found function module in cloud destination, ok", () => {
+    const abap = `CALL FUNCTION 'NOT_RELEASED' DESTINATION 'SDF'.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

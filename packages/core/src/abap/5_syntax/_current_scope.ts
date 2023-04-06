@@ -20,6 +20,7 @@ import {EnhancementSpot} from "../../objects/enhancement_spot";
 import {TypePool} from "../../objects/type_pool";
 import {SyntaxLogic} from "./syntax";
 import {IDDICReferences} from "../../_iddic_references";
+import {FunctionGroup} from "../../objects";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -181,6 +182,19 @@ export class CurrentScope {
   }
 
 ///////////////////////////
+
+  public findFunctionModule(name: string | undefined) {
+    if (name === undefined) {
+      return undefined;
+    }
+    for (const fugr of this.reg.getObjectsByType("FUGR")) {
+      const func = (fugr as FunctionGroup).getModule(name);
+      if (func !== undefined) {
+        return func;
+      }
+    }
+    return undefined;
+  }
 
   public findObjectDefinition(name: string | undefined): IClassDefinition | IInterfaceDefinition | undefined {
     if (name === undefined) {
