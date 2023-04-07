@@ -7383,6 +7383,16 @@ data MT_TOKEN type TY_TOKEN_TT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CREATE OBJECT, ref to interface", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+DATA foo TYPE REF TO lif.
+CREATE OBJECT foo.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
