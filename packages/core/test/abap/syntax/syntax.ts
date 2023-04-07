@@ -7389,8 +7389,14 @@ INTERFACE lif.
 ENDINTERFACE.
 DATA foo TYPE REF TO lif.
 CREATE OBJECT foo.`;
-    const issues = runProgram(abap, [], Version.Cloud);
+    const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
+  });
+
+  it.skip("CALL not found class in cloud, should give error", () => {
+    const abap = `CALL METHOD ('CL_NOT_RELEASED')=>foobar.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("found");
   });
 
 // todo, static method cannot access instance attributes
