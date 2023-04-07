@@ -14,6 +14,7 @@ import {Dash, InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {AttributeName} from "./attribute_name";
 import {ComponentName} from "./component_name";
 import {ClassDefinition} from "../../types";
+import {Version} from "../../../version";
 
 export class MethodSource {
 
@@ -31,6 +32,16 @@ export class MethodSource {
     if (context === undefined) {
       context = scope.findVariable("me")?.getType();
       children.unshift(first);
+    }
+
+    if (scope.getVersion() === Version.Cloud
+        && first.get() instanceof Expressions.Dynamic
+        && first instanceof ExpressionNode
+        && children[0]?.concatTokens() === "=>") {
+      const name = first.findDirectExpression(Expressions.Constant)?.concatTokens().replace(/'/, "");
+      if (scope.findClassDefinition(name) === undefined) {
+        throw new Error(`Class "${name}" not found/released`);
+      }
     }
 
     if (context instanceof VoidType) {
