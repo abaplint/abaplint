@@ -7396,7 +7396,7 @@ CREATE OBJECT foo.`;
   it("CALL not found class in cloud, should give error", () => {
     const abap = `CALL METHOD ('CL_NOT_RELEASED')=>foobar.`;
     const issues = runProgram(abap, [], Version.Cloud);
-    expect(issues[0]?.getMessage()).to.contain("found");
+    expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
   it("CALL not found class in cloud, ok", () => {
