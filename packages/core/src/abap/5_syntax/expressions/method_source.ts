@@ -38,8 +38,8 @@ export class MethodSource {
         && first.get() instanceof Expressions.Dynamic
         && first instanceof ExpressionNode
         && children[0]?.concatTokens() === "=>") {
-      const name = first.findDirectExpression(Expressions.Constant)?.concatTokens().replace(/'/, "");
-      if (name !== undefined && scope.existsObject(name).found === false) {
+      const name = first.findDirectExpression(Expressions.Constant)?.concatTokens().replace(/'/g, "");
+      if (name !== undefined && scope.findClassDefinition(name) === undefined) {
         throw new Error(`Class "${name}" not found/released`);
       }
     }
