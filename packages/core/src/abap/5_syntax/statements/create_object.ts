@@ -6,7 +6,7 @@ import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {ReferenceType} from "../_reference";
 import {AnyType, GenericObjectReferenceType, ObjectReferenceType, UnknownType, VoidType} from "../../types/basic";
-import {ClassDefinition} from "../../types";
+import {ClassDefinition, InterfaceDefinition} from "../../types";
 import {StatementSyntax} from "../_statement_syntax";
 import {IClassDefinition} from "../../types/_class_definition";
 import {ObjectOriented} from "../_object_oriented";
@@ -56,7 +56,9 @@ export class CreateObject implements StatementSyntax {
           throw new Error("Generic type, cannot be instantiated");
         } else if (found instanceof ObjectReferenceType) {
           const id = found.getIdentifier();
-          if (id instanceof ClassDefinition && cdef === undefined) {
+          if (id instanceof InterfaceDefinition && cdef === undefined) {
+            throw new Error("Interface reference, cannot be instantiated");
+          } else if (id instanceof ClassDefinition && cdef === undefined) {
             cdef = id;
           }
           if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {

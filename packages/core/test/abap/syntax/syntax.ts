@@ -7383,6 +7383,31 @@ data MT_TOKEN type TY_TOKEN_TT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CREATE OBJECT, ref to interface", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+DATA foo TYPE REF TO lif.
+CREATE OBJECT foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
+  });
+
+  it("CALL not found class in cloud, should give error", () => {
+    const abap = `CALL METHOD ('CL_NOT_RELEASED')=>foobar.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not found");
+  });
+
+  it("CALL not found class in cloud, ok", () => {
+    const abap = `
+    DATA lv_name TYPE string.
+    lv_name = 'CL_NOT_RELEASED'.
+    CALL METHOD (lv_name)=>foobar.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
