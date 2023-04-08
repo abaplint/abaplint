@@ -7408,6 +7408,16 @@ CREATE OBJECT foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CREATE OBJECT, dynamic type, ok", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+DATA li_auth TYPE REF TO lif.
+CREATE OBJECT li_auth TYPE ('ZCL_ABAPGIT_AUTH_EXIT').`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

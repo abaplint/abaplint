@@ -2,6 +2,8 @@ body {
   background-color: #333;
   color: #ccc;
   font-family: sans-serif;
+
+  overflow-y: scroll; /* Show vertical scrollbar */
 }
 
 .content {
@@ -47,27 +49,28 @@ a:visited {
   box-shadow: 0 0 20px rgb(0 255 0 / 70%);
 }
 
-.chip-head {
-  display: flex;
-  position: relative;
-  overflow: hidden;
-  background-color: #ccc;
-  flex-shrink: 0;
-  align-items: center;
-  user-select: none;
+.chip-content-enabled {
   border-radius: 50%;
+  background-color: #ccc;
   justify-content: center;
   width: 36px;
   height: 36px;
-}
 
-.chip-content {
   display: flex;
   align-items: center;
   user-select: none;
   white-space: nowrap;
-  padding-left: 12px;
-  padding-right: 12px;
+}
+
+.chip-content-disabled {
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  user-select: none;
+  white-space: nowrap;
 }
 
 input {

@@ -56,7 +56,7 @@ export class CreateObject implements StatementSyntax {
           throw new Error("Generic type, cannot be instantiated");
         } else if (found instanceof ObjectReferenceType) {
           const id = found.getIdentifier();
-          if (id instanceof InterfaceDefinition && cdef === undefined) {
+          if (id instanceof InterfaceDefinition && type === undefined) {
             throw new Error("Interface reference, cannot be instantiated");
           } else if (id instanceof ClassDefinition && cdef === undefined) {
             cdef = id;
