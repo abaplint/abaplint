@@ -7418,6 +7418,27 @@ CREATE OBJECT li_auth TYPE ('ZCL_ABAPGIT_AUTH_EXIT').`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("call method, incompatible types of characters", () => {
+    const abap = `
+TYPES ty_char20 TYPE c LENGTH 20.
+TYPES ty_char30 TYPE c LENGTH 30.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE ty_char20.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA input TYPE ty_char30.
+    foo( input ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+    expect(issues[0]?.getMessage()).to.contain("incompatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
