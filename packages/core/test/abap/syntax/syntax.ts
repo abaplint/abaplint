@@ -7601,6 +7601,27 @@ dat1 = dat2.`;
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
+  it("instantiating global interface, error", () => {
+    const clas = `
+      CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          METHODS bar..
+      ENDCLASS.
+      CLASS ZCL_FOOBAR IMPLEMENTATION.
+        METHOD bar.
+          DATA val TYPE REF TO zif_foobar.
+          CREATE OBJECT val.
+        ENDMETHOD.
+      ENDCLASS.`;
+    const intf =
+      "INTERFACE zif_foobar PUBLIC.\n" +
+      "ENDINTERFACE.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar.intf.abap", contents: intf}]);
+    expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

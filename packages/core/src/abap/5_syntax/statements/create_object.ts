@@ -58,6 +58,10 @@ export class CreateObject implements StatementSyntax {
           const id = found.getIdentifier();
           if (id instanceof InterfaceDefinition && type === undefined) {
             throw new Error("Interface reference, cannot be instantiated");
+          } else if (found instanceof ObjectReferenceType
+              && type === undefined
+              && scope.findInterfaceDefinition(found.getQualifiedName())) {
+            throw new Error("Interface reference, cannot be instantiated");
           } else if (id instanceof ClassDefinition && cdef === undefined) {
             cdef = id;
           }
