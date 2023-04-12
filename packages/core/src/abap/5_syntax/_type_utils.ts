@@ -197,6 +197,15 @@ export class TypeUtils {
     return true;
   }
 
+  private structureContainsString(structure: StructureType): boolean {
+    for (const c of structure.getComponents()) {
+      if (c.type instanceof StringType) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public isAssignableStrict(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
 /*
     console.dir(source);
@@ -208,10 +217,8 @@ export class TypeUtils {
       }
       return source.getLength() === target.getLength();
     } else if (source instanceof StringType && target instanceof StructureType) {
-      for (const c of target.getComponents()) {
-        if (c.type instanceof StringType) {
-          return false;
-        }
+      if (this.structureContainsString(target)) {
+        return false;
       }
       return true;
     }
@@ -258,10 +265,14 @@ export class TypeUtils {
     } else if (target instanceof StructureType) {
       if (source instanceof TableType && source.isWithHeader()) {
         return this.isAssignable(source.getRowType(), target);
-      } else if (source instanceof StructureType
-          || source instanceof VoidType
+      } else if (source instanceof VoidType
           || source instanceof AnyType
           || source instanceof UnknownType) {
+        return true;
+      } else if (source instanceof StructureType) {
+        if (this.structureContainsString(target) && !this.structureContainsString(source)) {
+          return false;
+        }
         return true;
       } else if (target.containsVoid() === true) {
         return true;

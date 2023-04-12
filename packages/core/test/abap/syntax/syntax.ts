@@ -7565,7 +7565,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
-  it.only("not compatible, table types", () => {
+  it("not compatible, table types", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          kind TYPE string,
@@ -7579,6 +7579,24 @@ TYPES: BEGIN OF ty_result,
 DATA tab2 TYPE STANDARD TABLE OF ty_result WITH DEFAULT KEY.
 
 tab1 = tab2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
+  it("not compatible, structure types", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         kind TYPE string,
+       END OF ty.
+DATA dat1 TYPE ty.
+
+TYPES: BEGIN OF ty_result,
+         sobjtype TYPE c LENGTH 4,
+         sobjname TYPE c LENGTH 40,
+       END OF ty_result.
+DATA dat2 TYPE ty_result.
+
+dat1 = dat2.`;
     const issues = runProgram(abap, [], Version.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
