@@ -7565,6 +7565,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
+  it.only("not compatible, table types", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         kind TYPE string,
+       END OF ty.
+DATA tab1 TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+
+TYPES: BEGIN OF ty_result,
+         sobjtype TYPE c LENGTH 4,
+         sobjname TYPE c LENGTH 40,
+       END OF ty_result.
+DATA tab2 TYPE STANDARD TABLE OF ty_result WITH DEFAULT KEY.
+
+tab1 = tab2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
