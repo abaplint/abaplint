@@ -7476,6 +7476,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("call method, error, derived from constant too long", () => {
+    const abap = `
+TYPES ty_char2 TYPE c LENGTH 2.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE ty_char2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 'foo' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
