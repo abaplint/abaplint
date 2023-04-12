@@ -194,6 +194,13 @@ export class TypeUtils {
     return true;
   }
 
+  public isAssignableStrict(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+    if (source instanceof CharacterType && target instanceof CharacterType) {
+      return source.getLength() === target.getLength();
+    }
+    return this.isAssignable(source, target);
+  }
+
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
 /*
     console.dir(source);
