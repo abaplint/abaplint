@@ -314,7 +314,11 @@ export class CurrentScope {
   }
 
   /** Lookup interface in local and global scope */
-  public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
+  public findInterfaceDefinition(name: string | undefined): IInterfaceDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
     const ilocal = this.current?.findInterfaceDefinition(name);
     if (ilocal) {
       return ilocal;

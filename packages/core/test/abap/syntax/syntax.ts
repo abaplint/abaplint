@@ -7565,6 +7565,63 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
+  it("not compatible, table types", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         kind TYPE string,
+       END OF ty.
+DATA tab1 TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+
+TYPES: BEGIN OF ty_result,
+         sobjtype TYPE c LENGTH 4,
+         sobjname TYPE c LENGTH 40,
+       END OF ty_result.
+DATA tab2 TYPE STANDARD TABLE OF ty_result WITH DEFAULT KEY.
+
+tab1 = tab2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
+  it("not compatible, structure types", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         kind TYPE string,
+       END OF ty.
+DATA dat1 TYPE ty.
+
+TYPES: BEGIN OF ty_result,
+         sobjtype TYPE c LENGTH 4,
+         sobjname TYPE c LENGTH 40,
+       END OF ty_result.
+DATA dat2 TYPE ty_result.
+
+dat1 = dat2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
+  it("instantiating global interface, error", () => {
+    const clas = `
+      CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          METHODS bar..
+      ENDCLASS.
+      CLASS ZCL_FOOBAR IMPLEMENTATION.
+        METHOD bar.
+          DATA val TYPE REF TO zif_foobar.
+          CREATE OBJECT val.
+        ENDMETHOD.
+      ENDCLASS.`;
+    const intf =
+      "INTERFACE zif_foobar PUBLIC.\n" +
+      "ENDINTERFACE.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar.intf.abap", contents: intf}]);
+    expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
