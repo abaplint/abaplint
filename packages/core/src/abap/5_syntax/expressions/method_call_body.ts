@@ -20,6 +20,7 @@ export class MethodCallBody {
       new MethodCallParam().runSyntax(param, scope, method, filename);
     }
 
+    // for PARAMETER-TABLE and EXCEPTION-TABLE
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
