@@ -1089,7 +1089,7 @@ export class BuiltIn {
     ret.push(this.buildConstant("col_positive", new IntegerType(), "5"));
     ret.push(this.buildConstant("col_total", new IntegerType(), "3"));
 
-    ret.push(this.buildConstant("space", new CharacterType(1), "' '"));
+    ret.push(this.buildConstant("space", new CharacterType(1, {derivedFromConstant: true}), "' '"));
 
     for (const e of extras) {
       const id = new TokenIdentifier(new Position(this.row++, 1), e);
