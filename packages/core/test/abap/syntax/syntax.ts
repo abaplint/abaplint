@@ -7544,6 +7544,27 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("not compatible, tables", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             kind TYPE string,
+           END OF ty.
+    DATA mt_result TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+    TYPES rt TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    METHODS foo RETURNING VALUE(rt) TYPE rt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    mt_result = foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
