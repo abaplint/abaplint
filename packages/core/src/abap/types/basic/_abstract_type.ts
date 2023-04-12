@@ -1,6 +1,7 @@
 export type AbstractTypeData = {
   qualifiedName?: string,
   conversionExit?: string,
+  derivedFromConstant?: boolean,
   ddicName?: string,
 };
 

@@ -7458,7 +7458,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it.only("call method, ok, compatible", () => {
+  it("call method, ok, compatible", () => {
     const abap = `
 TYPES ty_char20 TYPE c LENGTH 20.
 
@@ -7476,7 +7476,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("call method, error, derived from constant too long", () => {
+  it("call method, error, derived from constant too long", () => {
     const abap = `
 TYPES ty_char2 TYPE c LENGTH 2.
 

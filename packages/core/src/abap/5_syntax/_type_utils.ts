@@ -196,6 +196,9 @@ export class TypeUtils {
 
   public isAssignableStrict(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
     if (source instanceof CharacterType && target instanceof CharacterType) {
+      if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+        return source.getLength() <= target.getLength();
+      }
       return source.getLength() === target.getLength();
     }
     return this.isAssignable(source, target);
