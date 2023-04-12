@@ -39,6 +39,12 @@ statementType(tests, "MESSAGE", Statements.Message);
 
 const testsVersionOk = [
   {abap: `MESSAGE 'sdf' TYPE 'S'.`, ver: Version.v702},
+  {abap: `MESSAGE e100(/foo/bar) WITH <fs>-sdf <fs>-sdf <fs>-sdf INTO l_message.`, ver: Version.Cloud},
+  {abap: `MESSAGE ID l_return-id
+  TYPE l_return-type
+  NUMBER l_return-number
+  WITH l_return-message_v1 l_return-message_v2 l_return-message_v3 l_return-message_v4
+  INTO l_message.`, ver: Version.Cloud},
 ];
 
 statementVersionOk(testsVersionOk, "MESSAGE", Statements.Message);
@@ -46,6 +52,11 @@ statementVersionOk(testsVersionOk, "MESSAGE", Statements.Message);
 const testsVersionFail = [
   {abap: `MESSAGE |sdf| TYPE 'S'.`, ver: Version.v702},
   {abap: `message e101(00) with io_cx_excel->if_message~get_text( ) into lv_dummy.`, ver: Version.v702},
+  {abap: `MESSAGE s000(oo) WITH mv_text rv_result.`, ver: Version.Cloud},
+  {abap: `MESSAGE ix_exception TYPE 'S' DISPLAY LIKE 'E'.`, ver: Version.Cloud},
+  {abap: `MESSAGE 'Commit was successful' TYPE 'S'.`, ver: Version.Cloud},
+  {abap: `MESSAGE lv_text TYPE 'S'.`, ver: Version.Cloud},
+  {abap: `MESSAGE s000(oo) WITH mv_text rv_result.`, ver: Version.Cloud},
 ];
 
 statementVersionFail(testsVersionFail, "MESSAGE");
