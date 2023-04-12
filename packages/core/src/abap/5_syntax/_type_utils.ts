@@ -1,6 +1,7 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
+import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
 
 export class TypeUtils {
@@ -25,6 +26,7 @@ export class TypeUtils {
         || type instanceof AnyType
         || type instanceof CharacterType
         || type instanceof SimpleType
+        || type instanceof CGenericType
         || type instanceof CLikeType
         || type instanceof DateType
         || type instanceof CSequenceType
@@ -51,6 +53,7 @@ export class TypeUtils {
       }
       return true;
     } else if (type instanceof StringType
+        || type instanceof CharacterType
         || type instanceof VoidType
         || type instanceof AnyType
         || type instanceof UnknownType
@@ -64,11 +67,11 @@ export class TypeUtils {
         || type instanceof DecFloat34Type
         || type instanceof NumericGenericType
         || type instanceof CSequenceType
+        || type instanceof CGenericType
         || type instanceof DateType
         || type instanceof CLikeType
         || type instanceof PackedType
-        || type instanceof TimeType
-        || type instanceof CharacterType) {
+        || type instanceof TimeType) {
       return true;
     }
     return false;

@@ -1,4 +1,5 @@
 export * from "./any_type";
+export * from "./cgeneric_type";
 export * from "./character_type";
 export * from "./clike_type";
 export * from "./csequence_type";
