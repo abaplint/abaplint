@@ -28,7 +28,8 @@ export class MethodParam {
       }
     }
 
-    if (type.concatTokens().toUpperCase() === "TYPE C") {
+    const concat = type.concatTokens().toUpperCase();
+    if (concat === "TYPE C" || concat.startsWith("TYPE C ")) {
       return new TypedIdentifier(name.getFirstToken(), filename, new CGenericType(), meta);
     }
 
