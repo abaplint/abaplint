@@ -198,11 +198,22 @@ export class TypeUtils {
   }
 
   public isAssignableStrict(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+/*
+    console.dir(source);
+    console.dir(target);
+*/
     if (source instanceof CharacterType && target instanceof CharacterType) {
       if (source.getAbstractTypeData()?.derivedFromConstant === true) {
         return source.getLength() <= target.getLength();
       }
       return source.getLength() === target.getLength();
+    } else if (source instanceof StringType && target instanceof StructureType) {
+      for (const c of target.getComponents()) {
+        if (c.type instanceof StringType) {
+          return false;
+        }
+      }
+      return true;
     }
     return this.isAssignable(source, target);
   }
@@ -216,11 +227,12 @@ export class TypeUtils {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
       }
-      if (source instanceof TableType
-          || source instanceof VoidType
+      if (source instanceof VoidType
           || source instanceof AnyType
           || source instanceof UnknownType) {
         return true;
+      } else if (source instanceof TableType) {
+        return this.isAssignableStrict(source.getRowType(), target.getRowType());
       }
       return false;
     } else if (target instanceof ObjectReferenceType && source instanceof ObjectReferenceType) {
