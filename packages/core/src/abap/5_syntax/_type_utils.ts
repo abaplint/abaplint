@@ -217,6 +217,8 @@ export class TypeUtils {
           return source.getLength() <= target.getLength();
         }
         return source.getLength() === target.getLength();
+      } else if (target instanceof IntegerType) {
+        return false;
       }
     } else if (source instanceof StringType && target instanceof StructureType) {
       if (this.structureContainsString(target)) {

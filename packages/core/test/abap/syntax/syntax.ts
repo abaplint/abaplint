@@ -7669,7 +7669,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it.skip("input not compatible, basic C and I", () => {
+  it("input not compatible, basic C and I", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -7689,7 +7689,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it("different field names, ok", () => {
+  it("different field names, same types, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
