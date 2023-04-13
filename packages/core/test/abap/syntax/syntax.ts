@@ -7717,6 +7717,34 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("different field names, different types, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass1 TYPE c LENGTH 30,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass2 TYPE i,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

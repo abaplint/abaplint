@@ -231,6 +231,11 @@ export class TypeUtils {
       if (sourceComponents.length !== targetComponents.length) {
         return false;
       }
+      for (let i = 0; i < sourceComponents.length; i++) {
+        if (this.isAssignableStrict(sourceComponents[i].type, targetComponents[i].type) === false) {
+          return false;
+        }
+      }
       return true;
     }
     return this.isAssignable(source, target);
