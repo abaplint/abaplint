@@ -218,6 +218,9 @@ export class TypeUtils {
         }
         return source.getLength() === target.getLength();
       } else if (target instanceof IntegerType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
         return false;
       }
     } else if (source instanceof StringType && target instanceof StructureType) {
