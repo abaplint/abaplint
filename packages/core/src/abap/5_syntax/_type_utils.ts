@@ -211,13 +211,22 @@ export class TypeUtils {
     console.dir(source);
     console.dir(target);
 */
-    if (source instanceof CharacterType && target instanceof CharacterType) {
-      if (source.getAbstractTypeData()?.derivedFromConstant === true) {
-        return source.getLength() <= target.getLength();
+    if (source instanceof CharacterType) {
+      if (target instanceof CharacterType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return source.getLength() <= target.getLength();
+        }
+        return source.getLength() === target.getLength();
       }
-      return source.getLength() === target.getLength();
     } else if (source instanceof StringType && target instanceof StructureType) {
       if (this.structureContainsString(target)) {
+        return false;
+      }
+      return true;
+    } else if (source instanceof StructureType && target instanceof StructureType) {
+      const sourceComponents = source.getComponents();
+      const targetComponents = target.getComponents();
+      if (sourceComponents.length !== targetComponents.length) {
         return false;
       }
       return true;

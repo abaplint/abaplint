@@ -7640,7 +7640,7 @@ data1 = data2.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("input not compatible", () => {
+  it("input not compatible", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -7666,7 +7666,55 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap, [], Version.Cloud);
-    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it.skip("input not compatible, basic C and I", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE c LENGTH 30.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("different field names, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass1 TYPE c LENGTH 30,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass2 TYPE c LENGTH 30,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 // todo, static method cannot access instance attributes
