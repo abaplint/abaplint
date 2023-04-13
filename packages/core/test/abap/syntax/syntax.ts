@@ -7779,6 +7779,18 @@ lt_notif_key = lt_notif.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("voided lines call", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE string,
+       END OF ty.
+DATA voided TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA lv TYPE i.
+lv = lines( voided ).`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

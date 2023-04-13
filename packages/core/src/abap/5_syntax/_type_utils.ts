@@ -260,6 +260,11 @@ export class TypeUtils {
       } else if (source instanceof TableType) {
         const targetRowType = target.getRowType();
         const sourceRowType = source.getRowType();
+        if (targetRowType instanceof VoidType || targetRowType instanceof AnyType || targetRowType instanceof UnknownType) {
+          return true;
+        } else if (sourceRowType instanceof VoidType || sourceRowType instanceof AnyType || sourceRowType instanceof UnknownType) {
+          return true;
+        }
         if (targetRowType instanceof StructureType && this.structureContainsString(targetRowType)) {
           if (!(sourceRowType instanceof StructureType)) {
             return false;
