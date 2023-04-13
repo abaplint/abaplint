@@ -7760,6 +7760,25 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("types compatible", () => {
+    const abap = `
+TYPES: BEGIN OF lty_notif,
+         mandt TYPE c LENGTH 3,
+         guid  TYPE c LENGTH 10,
+       END OF lty_notif.
+
+TYPES: BEGIN OF lty_notif_key,
+         mandt TYPE c LENGTH 3,
+       END OF lty_notif_key.
+
+DATA lt_notif TYPE STANDARD TABLE OF lty_notif.
+DATA lt_notif_key TYPE STANDARD TABLE OF lty_notif_key.
+
+lt_notif_key = lt_notif.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

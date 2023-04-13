@@ -258,7 +258,23 @@ export class TypeUtils {
           || source instanceof UnknownType) {
         return true;
       } else if (source instanceof TableType) {
-        return this.isAssignableStrict(source.getRowType(), target.getRowType());
+        const targetRowType = target.getRowType();
+        const sourceRowType = source.getRowType();
+        if (targetRowType instanceof StructureType && this.structureContainsString(targetRowType)) {
+          if (!(sourceRowType instanceof StructureType)) {
+            return false;
+          } else if (!(this.structureContainsString(sourceRowType))) {
+            return false;
+          }
+        }
+        if (sourceRowType instanceof StructureType && this.structureContainsString(sourceRowType)) {
+          if (!(targetRowType instanceof StructureType)) {
+            return false;
+          } else if (!(this.structureContainsString(targetRowType))) {
+            return false;
+          }
+        }
+        return true;
       }
       return false;
     } else if (target instanceof ObjectReferenceType && source instanceof ObjectReferenceType) {
