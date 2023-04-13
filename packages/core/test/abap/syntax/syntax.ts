@@ -7622,6 +7622,145 @@ dat1 = dat2.`;
     expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
   });
 
+  it("structures, compatible, ok", () => {
+    const abap = `
+DATA: BEGIN OF data1,
+        devclass TYPE c LENGTH 30,
+        ctext    TYPE c LENGTH 60,
+        as4user  TYPE c LENGTH 8,
+      END OF data1.
+
+DATA: BEGIN OF data2,
+        devclass TYPE c LENGTH 30,
+      END OF data2.
+
+data2 = data1.
+data1 = data2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("input not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass TYPE c LENGTH 30,
+             dat      TYPE c LENGTH 2,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass TYPE c LENGTH 30,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("input not compatible, basic C and I", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE c LENGTH 30.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("different field names, same types, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass1 TYPE c LENGTH 30,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass2 TYPE c LENGTH 30,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("different field names, different types, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass1 TYPE c LENGTH 30,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass2 TYPE i,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("types compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING val TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( '1' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
