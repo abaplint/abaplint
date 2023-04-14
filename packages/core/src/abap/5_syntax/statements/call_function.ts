@@ -18,7 +18,7 @@ export class CallFunction implements StatementSyntax {
       new FieldChain().runSyntax(chain, scope, filename, ReferenceType.DataReadReference);
     } else if (scope.getVersion() === Version.Cloud
         && node.findDirectExpression(Expressions.Destination) === undefined) {
-      const functionName = name?.concatTokens().replace(/'/, "");
+      const functionName = name?.concatTokens().replace(/'/g, "");
       if (scope.findFunctionModule(functionName) === undefined) {
         throw new Error(`Function module "${functionName}" not found/released`);
       }

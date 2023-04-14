@@ -40,6 +40,7 @@ statementType(tests, "MESSAGE", Statements.Message);
 const testsVersionOk = [
   {abap: `MESSAGE 'sdf' TYPE 'S'.`, ver: Version.v702},
   {abap: `MESSAGE e100(/foo/bar) WITH <fs>-sdf <fs>-sdf <fs>-sdf INTO l_message.`, ver: Version.Cloud},
+  {abap: `MESSAGE e099(zcustom) RAISING input_not_valid.`, ver: Version.Cloud},
   {abap: `MESSAGE ID l_return-id
   TYPE l_return-type
   NUMBER l_return-number
