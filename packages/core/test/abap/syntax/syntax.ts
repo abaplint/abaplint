@@ -7982,7 +7982,19 @@ ENDCLASS.`;
 
   it("sy-repid", () => {
     const abap = `WRITE sy-repid.`;
-    const issues = runProgram(abap, [], Version.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, ".");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LIKE sy-repid", () => {
+    const abap = `DATA lv_program LIKE sy-repid.`;
+    const issues = runProgram(abap, [], Version.Cloud, ".");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TYPE sy-repid", () => {
+    const abap = `DATA lv_program TYPE sy-repid.`;
+    const issues = runProgram(abap, [], Version.Cloud, ".");
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
