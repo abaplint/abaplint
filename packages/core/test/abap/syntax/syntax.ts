@@ -7791,7 +7791,7 @@ lv = lines( voided ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("SY type field sequence", () => {
+  it("SY type field sequence", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
