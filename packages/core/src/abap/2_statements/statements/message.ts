@@ -27,7 +27,7 @@ export class Message implements IStatement {
     const foo = seq(MessageSource, opt(options), opt(mwith));
     const text = seq(s, type, optPrio(like), optPrio(raising));
 
-    const cloud = seq(MessageSource, opt(seq("WITH", Source, opt(Source), opt(Source), opt(Source))), into);
+    const cloud = seq(MessageSource, opt(seq("WITH", Source, opt(Source), opt(Source), opt(Source))), altPrio(into, raising));
 
     const ret = seq("MESSAGE", altPrio(verNot(Version.Cloud, foo), verNot(Version.Cloud, text), ver(Version.Cloud, cloud)));
 
