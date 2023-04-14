@@ -7980,6 +7980,11 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("sy-repid", () => {
+    const abap = `WRITE sy-repid.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

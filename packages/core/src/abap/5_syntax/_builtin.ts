@@ -1284,7 +1284,11 @@ export class BuiltIn {
     const id2 = new TokenIdentifier(new Position(this.row++, 1), "syst");
     const syst = new TypedIdentifier(id2, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn]);
 
-    return [sy, syst];
+    // https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abennews-610-system.htm
+    const id3 = new TokenIdentifier(new Position(this.row++, 1), "sy-repid");
+    const syrepid = new TypedIdentifier(id3, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn]);
+
+    return [sy, syst, syrepid];
   }
 
   private buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
