@@ -38,7 +38,6 @@ export class BasicTypes {
       return found;
     }
 
-
     if (name.includes("=>")) {
       const split = name.split("=>");
       const ooName = split[0];
@@ -118,7 +117,7 @@ export class BasicTypes {
       throw new Error("resolveLikeName, chain undefined");
     }
     const fullName = chain.concatTokens();
-    const children = [...chain.getChildren()];
+    let children = [...chain.getChildren()];
 
     if (children.length === 0) {
       return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
@@ -130,6 +129,13 @@ export class BasicTypes {
     } else {
       const name = children.shift()!.getFirstToken().getStr();
       let found = this.scope.findVariable(name);
+
+      const full = this.scope.findVariable(fullName); // workaround for eg "sy-repid"
+      if (full) {
+        children = [];
+        found = full;
+      }
+
       type = found?.getType();
 
       if (found === undefined) {
@@ -601,8 +607,15 @@ export class BasicTypes {
 
   // todo, rewrite this method
   private resolveTypeChain(expr: ExpressionNode): AbstractType | undefined {
+
     const chainText = expr.concatTokens().toUpperCase();
-    if (chainText.includes("=>") === false && chainText.includes("-") === false) {
+    if (chainText.includes("-")) {
+      // workaround for stuff like "sy-repid"
+      const built = this.scope.findType(chainText);
+      if (built) {
+        return built.getType();
+      }
+    } else if (chainText.includes("=>") === false && chainText.includes("-") === false) {
       return undefined;
     }
 
