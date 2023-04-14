@@ -613,6 +613,7 @@ export class BasicTypes {
       // workaround for stuff like "sy-repid"
       const built = this.scope.findType(chainText);
       if (built) {
+        this.scope.addReference(expr.getFirstToken(), built, ReferenceType.TypeReference, this.filename);
         return built.getType();
       }
     } else if (chainText.includes("=>") === false && chainText.includes("-") === false) {
