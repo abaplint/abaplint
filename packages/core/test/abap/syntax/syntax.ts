@@ -7996,6 +7996,35 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("voided row table type vs string", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             field1 TYPE c LENGTH 1,
+             field2 TYPE string,
+           END OF ty1.
+    TYPES tt1 TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+
+    TYPES: BEGIN OF ty2,
+             field1 TYPE c LENGTH 1,
+             field2 TYPE voided,
+           END OF ty2.
+    TYPES tt2 TYPE STANDARD TABLE OF ty2 WITH DEFAULT KEY.
+
+    METHODS method IMPORTING iv TYPE tt1.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method.
+    DATA foo TYPE tt2.
+    method( foo ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
