@@ -7986,6 +7986,16 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Loop at voided row into data ref", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+LOOP AT tab REFERENCE INTO DATA(sdf).
+  WRITE sdf->field.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
