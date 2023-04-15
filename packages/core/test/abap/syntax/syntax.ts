@@ -7791,6 +7791,239 @@ lv = lines( voided ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SY type field sequence", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_syst_st,
+             index      TYPE i,
+             pagno      TYPE i,
+             tabix      TYPE i,
+             tfill      TYPE i,
+             tlopc      TYPE i,
+             tmaxl      TYPE i,
+             toccu      TYPE i,
+             ttabc      TYPE i,
+             tstis      TYPE i,
+             ttabi      TYPE i,
+             dbcnt      TYPE i,
+             fdpos      TYPE i,
+             colno      TYPE i,
+             linct      TYPE i,
+             linno      TYPE i,
+             linsz      TYPE i,
+             pagct      TYPE i,
+             macol      TYPE i,
+             marow      TYPE i,
+             tleng      TYPE i,
+             sfoff      TYPE i,
+             willi      TYPE i,
+             lilli      TYPE i,
+             subrc      TYPE i,
+             fleng      TYPE i,
+             cucol      TYPE i,
+             curow      TYPE i,
+             lsind      TYPE i,
+             listi      TYPE i,
+             stepl      TYPE i,
+             tpagi      TYPE i,
+             winx1      TYPE i,
+             winy1      TYPE i,
+             winx2      TYPE i,
+             winy2      TYPE i,
+             winco      TYPE i,
+             winro      TYPE i,
+             windi      TYPE i,
+             srows      TYPE i,
+             scols      TYPE i,
+             loopc      TYPE i,
+             folen      TYPE i,
+             fodec      TYPE i,
+             tzone      TYPE i,
+             dayst(1)   TYPE c,
+             ftype(1)   TYPE c,
+             appli(2)   TYPE x,
+             fdayw      TYPE int1,
+             ccurs      TYPE p LENGTH 5 DECIMALS 0,
+             ccurt      TYPE p LENGTH 5 DECIMALS 0,
+             debug(1)   TYPE c,
+             ctype(1)   TYPE c,
+             input(1)   TYPE c,
+             langu(1)   TYPE c,
+             modno      TYPE i,
+             batch(1)   TYPE c,
+             binpt(1)   TYPE c,
+             calld(1)   TYPE c,
+             dynnr(4)   TYPE c,
+             dyngr(4)   TYPE c,
+             newpa(1)   TYPE c,
+             pri40(1)   TYPE c,
+             rstrt(1)   TYPE c,
+             wtitl(1)   TYPE c,
+             cpage      TYPE i,
+             dbnam(20)  TYPE c,
+             mandt      TYPE c LENGTH 3,
+             prefx(3)   TYPE c,
+             fmkey(3)   TYPE c,
+             pexpi(1)   TYPE n,
+             prini(1)   TYPE n,
+             primm(1)   TYPE c,
+             prrel(1)   TYPE c,
+             playo(5)   TYPE c,
+             prbig(1)   TYPE c,
+             playp(1)   TYPE c,
+             prnew(1)   TYPE c,
+             prlog(1)   TYPE c,
+             pdest(4)   TYPE c,
+             plist(12)  TYPE c,
+             pauth(2)   TYPE n,
+             prdsn(6)   TYPE c,
+             pnwpa(1)   TYPE c,
+             callr(8)   TYPE c,
+             repi2(40)  TYPE c,
+             rtitl(70)  TYPE c,
+             prrec(12)  TYPE c,
+             prtxt(68)  TYPE c,
+             prabt(12)  TYPE c,
+             lpass(4)   TYPE c,
+             nrpag(1)   TYPE c,
+             paart(16)  TYPE c,
+             prcop(3)   TYPE n,
+             batzs(1)   TYPE c,
+             bspld(1)   TYPE c,
+             brep4(4)   TYPE c,
+             batzo(1)   TYPE c,
+             batzd(1)   TYPE c,
+             batzw(1)   TYPE c,
+             batzm(1)   TYPE c,
+             ctabl(4)   TYPE c,
+             dbsys(10)  TYPE c,
+             dcsys(4)   TYPE c,
+             macdb(4)   TYPE c,
+             sysid(8)   TYPE c,
+             opsys(10)  TYPE c,
+             pfkey(20)  TYPE c,
+             saprl(4)   TYPE c,
+             tcode(20)  TYPE c,
+             ucomm(70)  TYPE c,
+             cfwae(5)   TYPE c,
+             chwae(5)   TYPE c,
+             spono(10)  TYPE n,
+             sponr(10)  TYPE n,
+             waers(5)   TYPE c,
+             cdate      TYPE d,
+             datum      TYPE d,
+             slset(14)  TYPE c,
+             subty(1)   TYPE x,
+             subcs(1)   TYPE c,
+             group(1)   TYPE c,
+             ffile(8)   TYPE c,
+             uzeit      TYPE t,
+             dsnam(8)   TYPE c,
+             tabid(8)   TYPE c,
+             tfdsn(8)   TYPE c,
+             uname(12)  TYPE c,
+             lstat(16)  TYPE c,
+             abcde(26)  TYPE c,
+             marky(1)   TYPE c,
+             sfnam(30)  TYPE c,
+             tname(30)  TYPE c,
+             msgli(60)  TYPE c,
+             title(70)  TYPE c,
+             entry(72)  TYPE c,
+             lisel(255) TYPE c,
+             uline(255) TYPE c,
+             xcode(70)  TYPE c,
+             cprog(40)  TYPE c,
+             xprog(40)  TYPE c,
+             xform(30)  TYPE c,
+             ldbpg(40)  TYPE c,
+             tvar0(20)  TYPE c,
+             tvar1(20)  TYPE c,
+             tvar2(20)  TYPE c,
+             tvar3(20)  TYPE c,
+             tvar4(20)  TYPE c,
+             tvar5(20)  TYPE c,
+             tvar6(20)  TYPE c,
+             tvar7(20)  TYPE c,
+             tvar8(20)  TYPE c,
+             tvar9(20)  TYPE c,
+             msgid(20)  TYPE c,
+             msgty(1)   TYPE c,
+             msgno(3)   TYPE n,
+             msgv1(50)  TYPE c,
+             msgv2(50)  TYPE c,
+             msgv3(50)  TYPE c,
+             msgv4(50)  TYPE c,
+             oncom(1)   TYPE c,
+             vline(1)   TYPE c,
+             winsl(79)  TYPE c,
+             staco      TYPE i,
+             staro      TYPE i,
+             datar(1)   TYPE c,
+             host(32)   TYPE c,
+             locdb(1)   TYPE c,
+             locop(1)   TYPE c,
+             datlo      TYPE d,
+             timlo      TYPE t,
+             zonlo(6)   TYPE c,
+           END OF ty_syst_st.
+    METHODS method1 IMPORTING foo TYPE ty_syst_st.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    method1( sy ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("sy-repid", () => {
+    const abap = `WRITE sy-repid.`;
+    const issues = runProgram(abap, [], Version.Cloud, ".");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Loop at voided row into data ref", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+LOOP AT tab REFERENCE INTO DATA(sdf).
+  WRITE sdf->field.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("voided row table type vs string", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             field1 TYPE c LENGTH 1,
+             field2 TYPE string,
+           END OF ty1.
+    TYPES tt1 TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+
+    TYPES: BEGIN OF ty2,
+             field1 TYPE c LENGTH 1,
+             field2 TYPE voided,
+           END OF ty2.
+    TYPES tt2 TYPE STANDARD TABLE OF ty2 WITH DEFAULT KEY.
+
+    METHODS method IMPORTING iv TYPE tt1.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method.
+    DATA foo TYPE tt2.
+    method( foo ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

@@ -206,6 +206,15 @@ export class TypeUtils {
     return false;
   }
 
+  private structureContainsVoid(structure: StructureType): boolean {
+    for (const c of structure.getComponents()) {
+      if (c.type instanceof VoidType) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public isAssignableStrict(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
 /*
     console.dir(source);
@@ -265,17 +274,20 @@ export class TypeUtils {
         } else if (sourceRowType instanceof VoidType || sourceRowType instanceof AnyType || sourceRowType instanceof UnknownType) {
           return true;
         }
-        if (targetRowType instanceof StructureType && this.structureContainsString(targetRowType)) {
+        if (targetRowType instanceof StructureType
+            && this.structureContainsString(targetRowType)) {
           if (!(sourceRowType instanceof StructureType)) {
             return false;
-          } else if (!(this.structureContainsString(sourceRowType))) {
+          } else if (!(this.structureContainsString(sourceRowType))
+              && this.structureContainsVoid(sourceRowType) === false) {
             return false;
           }
-        }
-        if (sourceRowType instanceof StructureType && this.structureContainsString(sourceRowType)) {
+        } else if (sourceRowType instanceof StructureType
+            && this.structureContainsString(sourceRowType)) {
           if (!(targetRowType instanceof StructureType)) {
             return false;
-          } else if (!(this.structureContainsString(targetRowType))) {
+          } else if (!(this.structureContainsString(targetRowType))
+          && this.structureContainsVoid(targetRowType) === false) {
             return false;
           }
         }

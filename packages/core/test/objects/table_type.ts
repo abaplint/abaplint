@@ -329,4 +329,36 @@ describe("Table Type, parse XML", () => {
     expect(secondary![0].type).to.equal(TableAccessType.sorted);
   });
 
+  it("Voided row type", async () => {
+    const xml1 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZRE_T_FUNCINCL</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>RS38L_INCL</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <DATATYPE>STRU</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>Nome do módulo de função e include</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zttypdataref.ttyp.xml", xml1),
+    ]);
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Objects.TableType;
+
+    const type = tabl.parseType(reg);
+    expect(type).to.be.instanceof(Types.TableType);
+    const row = (type as Types.TableType).getRowType();
+    expect(row).to.be.instanceof(Types.VoidType);
+  });
+
 });
