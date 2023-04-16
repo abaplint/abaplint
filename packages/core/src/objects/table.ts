@@ -7,7 +7,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference, GenericObjectReferenceType} from "../abap/types/basic";
 import {IObjectAndToken} from "../_iddic_references";
-import { Version } from "../version";
+import {Version} from "../version";
 
 export enum EnhancementCategory {
   NotClassified = "0",

@@ -4,7 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
 import {GenericObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../../src/abap/types/basic";
 import {Config} from "../../src/config";
-import { Version } from "../../src";
+import {Version} from "../../src";
 
 describe("Table, parse XML", () => {
   const xml1 =
