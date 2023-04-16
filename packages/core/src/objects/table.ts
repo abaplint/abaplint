@@ -7,6 +7,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference, GenericObjectReferenceType} from "../abap/types/basic";
 import {IObjectAndToken} from "../_iddic_references";
+import { Version } from "../version";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -28,6 +29,7 @@ export enum TableCategory {
 export class Table extends AbstractObject {
   private parsedData: {
     tableCategory?: TableCategory | undefined,
+    dataClass?: string,
     enhancementCategory?: EnhancementCategory,
     fields: {
       FIELDNAME: string,
@@ -101,6 +103,11 @@ export class Table extends AbstractObject {
       if (this.parsedData === undefined) {
         return new Types.UnknownType("Table, parser error");
       }
+    }
+
+    if (reg.getConfig().getVersion() === Version.Cloud
+        && this.parsedData.dataClass === "USER3") {
+      return new Types.UnknownType("Data class = USER3 not allowed in cloud");
     }
 
     const references: IObjectAndToken[] = [];
@@ -282,6 +289,7 @@ export class Table extends AbstractObject {
 
 // table category
     this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS;
+    this.parsedData.dataClass = parsed.abapGit["asx:abap"]["asx:values"]?.DD09L?.TABART;
 
 // fields
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD03P_TABLE;
