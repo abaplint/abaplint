@@ -123,6 +123,7 @@ const tests = [
   `METHODS lock FOR LOCK IMPORTING keys FOR LOCK /foo/bar.`,
   `METHODS foo FOR MODIFY IMPORTING sdf FOR ACTION sdf~sdf.`,
   `METHODS sdf FOR GLOBAL AUTHORIZATION IMPORTING REQUEST sdf FOR sdf RESULT sdf.`,
+  `METHODS get_auth FOR INSTANCE AUTHORIZATION IMPORTING keys REQUEST requested_authorizations FOR ent RESULT result.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
