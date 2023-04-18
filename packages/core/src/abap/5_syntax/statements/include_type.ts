@@ -44,6 +44,8 @@ export class IncludeType {
       components.push(...stru.getComponents());
     } else if (ityp && ityp instanceof StructureType) {
       components.push(...ityp.getComponents());
+    } else if (ityp && ityp instanceof VoidType) {
+      return ityp;
     } else if (scope.getDDIC().inErrorNamespace(name) === false) {
       return new VoidType(name);
     } else {
