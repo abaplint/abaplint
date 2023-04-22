@@ -8025,6 +8025,44 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("String template, missing return parameter", () => {
+    const abap = `
+CLASS lcl_heap DEFINITION.
+  PUBLIC SECTION.
+    METHODS add.
+ENDCLASS.
+CLASS lcl_heap IMPLEMENTATION.
+  METHOD add.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_heap TYPE REF TO lcl_heap.
+  CREATE OBJECT lo_heap.
+  WRITE |<sdf{ lo_heap->add( ) }>|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("No target type determined");
+  });
+
+  it("String template, not character like return type", () => {
+    const abap = `
+CLASS lcl_heap DEFINITION.
+  PUBLIC SECTION.
+    METHODS add RETURNING VALUE(ref) TYPE REF TO lcl_heap.
+ENDCLASS.
+CLASS lcl_heap IMPLEMENTATION.
+  METHOD add.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_heap TYPE REF TO lcl_heap.
+  CREATE OBJECT lo_heap.
+  WRITE |<sdf{ lo_heap->add( ) }>|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Not character like");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
