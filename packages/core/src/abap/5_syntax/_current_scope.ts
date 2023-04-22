@@ -225,29 +225,36 @@ export class CurrentScope {
 
   // todo, found + type can be removed from method output?
   public existsObject(name: string | undefined): {found: boolean, id?: Identifier, type?: ReferenceType,
-    ooType?: IReferenceExtras["ooType"]} {
+    ooType?: IReferenceExtras["ooType"], RTTIName?: string} {
     if (name === undefined) {
       return {found: false};
     }
 
+    let RTTIPrefix = "";
+    if (this.parentObj.getType() === "PROG") {
+      RTTIPrefix = "\\PROGRAM=" + this.parentObj.getName();
+    } else if (this.parentObj.getType() === "CLAS") {
+      RTTIPrefix = "\\CLASS-POOL=" + this.parentObj.getName();
+    }
+
     const findLocalClass = this.current?.findClassDefinition(name);
     if (findLocalClass) {
-      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
+      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS", RTTIName: RTTIPrefix + "\\CLASS=" + findLocalClass.getName()};
     }
 
     const globalClas = this.reg.getObject("CLAS", name);
     if (globalClas) {
-      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
+      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "CLAS", RTTIName: "\\CLASS=" + globalClas.getName()};
     }
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
     if (findLocalInterface) {
-      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
+      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF", RTTIName: RTTIPrefix + "\\INTERFACE=" + findLocalInterface.getName()};
     }
 
     const globalIntf = this.reg.getObject("INTF", name);
     if (globalIntf) {
-      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
+      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF", RTTIName: "\\INTERFACE=" + globalIntf.getName()};
     }
 
     const def = this.current?.findDeferred(name);

@@ -1444,4 +1444,17 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("STRING");
   });
 
+  it("Hover ref type", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+DATA bar TYPE REF TO lcl_bar.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 4, 6));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("RTTI Name");
+  });
+
 });
