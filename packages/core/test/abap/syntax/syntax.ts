@@ -4534,13 +4534,11 @@ MOVE lv_int1 TO lv_str.`;
 
   it("Move string to hexlike structre, not ok", () => {
     const abap = `
-  DATA iv_msg TYPE string.
-DATA:
-  BEGIN OF ls_msg,
-    a1 TYPE x LENGTH 50,
-    a2 TYPE x LENGTH 50,
-  END OF ls_msg.
-
+DATA iv_msg TYPE string.
+DATA: BEGIN OF ls_msg,
+        a1 TYPE x LENGTH 50,
+        a2 TYPE x LENGTH 50,
+      END OF ls_msg.
 ls_msg = iv_msg.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
@@ -8061,6 +8059,37 @@ START-OF-SELECTION.
   WRITE |<sdf{ lo_heap->add( ) }>|.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("Not character like");
+  });
+
+  it("write hex via string template", () => {
+    const abap = `
+DATA foo TYPE x LENGTH 10.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("write xstring via string template", () => {
+    const abap = `
+DATA foo TYPE xstring.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("write xsequence via string template", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    WRITE |{ bar }|.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 // todo, static method cannot access instance attributes
