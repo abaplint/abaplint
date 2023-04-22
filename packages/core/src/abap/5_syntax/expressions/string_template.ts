@@ -14,7 +14,7 @@ export class StringTemplate {
       if (type === undefined) {
         throw new Error("No target type determined");
       } else if (new TypeUtils(scope).isCharLike(type) === false) {
-        throw new Error("Not character like");
+        throw new Error("Not character like, " + type.constructor.name);
       }
 
       for (const formatSource of templateSource.findDirectExpression(Expressions.StringTemplateFormatting)
