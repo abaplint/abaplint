@@ -61,9 +61,6 @@ export class TypeUtils {
         || type instanceof IntegerType
         || type instanceof SimpleType
         || type instanceof FloatType
-        || type instanceof HexType
-        || type instanceof XStringType
-        || type instanceof XSequenceType
         || type instanceof FloatingPointType
         || type instanceof DecFloatType
         || type instanceof DecFloat16Type
@@ -93,6 +90,7 @@ export class TypeUtils {
     } else if (type instanceof XStringType
         || type instanceof HexType
         || type instanceof VoidType
+        || type instanceof XSequenceType
         || type instanceof AnyType
         || type instanceof UnknownType) {
       return true;

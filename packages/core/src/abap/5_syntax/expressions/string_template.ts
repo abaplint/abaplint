@@ -8,12 +8,14 @@ import {TypeUtils} from "../_type_utils";
 
 export class StringTemplate {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType {
+    const typeUtils = new TypeUtils(scope);
+
     for (const templateSource of node.findAllExpressions(Expressions.StringTemplateSource)) {
       const s = templateSource.findDirectExpression(Expressions.Source);
       const type = new Source().runSyntax(s, scope, filename, new StringType({qualifiedName: "STRING"}));
       if (type === undefined) {
         throw new Error("No target type determined");
-      } else if (new TypeUtils(scope).isCharLike(type) === false) {
+      } else if (typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false) {
         throw new Error("Not character like, " + type.constructor.name);
       }
 

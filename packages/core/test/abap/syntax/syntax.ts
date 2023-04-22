@@ -4532,7 +4532,7 @@ MOVE lv_int1 TO lv_str.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("Move string to hexlike structre, not ok", () => {
+  it("Move string to hexlike structure, not ok", () => {
     const abap = `
 DATA iv_msg TYPE string.
 DATA: BEGIN OF ls_msg,
