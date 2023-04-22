@@ -1,6 +1,6 @@
 # @abaplint/core
 
-[abaplint](https://abaplint.org/) core library
+[abaplint](https://abaplint.org) core library
 
 Exposes functionality like the parser and rules, which can be used in other projects.
 
