@@ -841,7 +841,7 @@ export class BasicTypes {
       if (search.found === true && search.id) {
         this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename,
                                 {ooType: search.ooType, ooName: name});
-        return new Types.ObjectReferenceType(search.id, name);
+        return new Types.ObjectReferenceType(search.id, {qualifiedName: name, RTTIName: search.RTTIName});
       }
     }
 
