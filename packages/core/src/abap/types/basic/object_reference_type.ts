@@ -1,12 +1,12 @@
 import {Identifier} from "../../4_file_information/_identifier";
-import {AbstractType} from "./_abstract_type";
+import {AbstractType, AbstractTypeData} from "./_abstract_type";
 
 // use GenericObjectReferenceType for REF TO OBJECT
 export class ObjectReferenceType extends AbstractType {
   private readonly identifier: Identifier;
 
-  public constructor(id: Identifier, qualifiedName?: string) {
-    super({qualifiedName: qualifiedName});
+  public constructor(id: Identifier, extra?: AbstractTypeData) {
+    super(extra);
     this.identifier = id;
   }
 

@@ -33,7 +33,7 @@ export class Cast {
       if (tt === undefined || tt instanceof VoidType || tt instanceof UnknownType) {
         const found = scope.findObjectDefinition(typeName);
         if (found) {
-          tt = new ObjectReferenceType(found, typeName);
+          tt = new ObjectReferenceType(found, {qualifiedName: typeName});
         }
       } else {
         tt = new DataReference(tt, typeName);

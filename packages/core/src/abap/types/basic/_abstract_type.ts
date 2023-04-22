@@ -3,6 +3,7 @@ export type AbstractTypeData = {
   conversionExit?: string,
   derivedFromConstant?: boolean,
   ddicName?: string,
+  RTTIName?: string,
 };
 
 export abstract class AbstractType {
@@ -19,6 +20,10 @@ export abstract class AbstractType {
   /** fully qualified symbolic name of the type */
   public getQualifiedName(): string | undefined {
     return this.data?.qualifiedName;
+  }
+
+  public getRTTIName(): string | undefined {
+    return this.data?.RTTIName;
   }
 
   public getConversionExit(): string | undefined {

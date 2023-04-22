@@ -147,12 +147,18 @@ export class DDIC {
     const clas = this.reg.getObject("CLAS", name);
     const globalClas = clas?.getIdentifier();
     if (globalClas) {
-      return {type: new ObjectReferenceType(globalClas, name), object: clas};
+      return {
+        type: new ObjectReferenceType(globalClas, {qualifiedName: name, RTTIName: "\\CLASS=" + name}),
+        object: clas,
+      };
     }
     const intf = this.reg.getObject("INTF", name);
     const globalIntf = intf?.getIdentifier();
     if (globalIntf) {
-      return {type: new ObjectReferenceType(globalIntf, name), object: intf};
+      return {
+        type: new ObjectReferenceType(globalIntf, {qualifiedName: name, RTTIName: "\\INTERFACE=" + name}),
+        object: intf,
+      };
     }
     if (this.inErrorNamespace(name) === true) {
       return {type: new UnknownType(name)};
