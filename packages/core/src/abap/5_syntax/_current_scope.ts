@@ -230,16 +230,19 @@ export class CurrentScope {
       return {found: false};
     }
 
-    let RTTIPrefix = "";
+    let prefixRTTI = "";
     if (this.parentObj.getType() === "PROG") {
-      RTTIPrefix = "\\PROGRAM=" + this.parentObj.getName();
+      prefixRTTI = "\\PROGRAM=" + this.parentObj.getName();
     } else if (this.parentObj.getType() === "CLAS") {
-      RTTIPrefix = "\\CLASS-POOL=" + this.parentObj.getName();
+      prefixRTTI = "\\CLASS-POOL=" + this.parentObj.getName();
     }
 
     const findLocalClass = this.current?.findClassDefinition(name);
     if (findLocalClass) {
-      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS", RTTIName: RTTIPrefix + "\\CLASS=" + findLocalClass.getName()};
+      if (findLocalClass.isGlobal() === true) {
+        prefixRTTI = "";
+      }
+      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS", RTTIName: prefixRTTI + "\\CLASS=" + findLocalClass.getName()};
     }
 
     const globalClas = this.reg.getObject("CLAS", name);
@@ -249,7 +252,10 @@ export class CurrentScope {
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
     if (findLocalInterface) {
-      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF", RTTIName: RTTIPrefix + "\\INTERFACE=" + findLocalInterface.getName()};
+      if (findLocalInterface.isGlobal() === true) {
+        prefixRTTI = "";
+      }
+      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF", RTTIName: prefixRTTI + "\\INTERFACE=" + findLocalInterface.getName()};
     }
 
     const globalIntf = this.reg.getObject("INTF", name);
