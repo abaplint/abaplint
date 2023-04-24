@@ -1,5 +1,5 @@
-import {testRule} from "./_utils";
-import {Abapdoc, AbapdocConf} from "../../src/rules/abapdoc";
+import { testRule } from "./_utils";
+import { Abapdoc, AbapdocConf } from "../../src/rules/abapdoc";
 
 const defaultConfigTests = [
   // all public methods have abapdoc
@@ -173,6 +173,26 @@ INTERFACE if_test PUBLIC.
     METHODS
     calculate RAISING cx_test.
 ENDINTERFACE.`, cnt: 2,
+  },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+"! <p class="shorttext synchronized" lang="en"></p>
+"!
+"! @parameter parameters | parameters structure:<ul><li></li></ul>
+    METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 2,
+  },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+"! <p class="shorttext synchronized" lang="en">Test</p>
+"!
+"! @parameter parameters | parameters structure:<ul><li>test param 1</li></ul>
+    METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 0,
   },
 ];
 
