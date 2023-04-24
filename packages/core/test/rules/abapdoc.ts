@@ -1,5 +1,5 @@
-import { testRule } from "./_utils";
-import { Abapdoc, AbapdocConf } from "../../src/rules/abapdoc";
+import {testRule} from "./_utils";
+import {Abapdoc, AbapdocConf} from "../../src/rules/abapdoc";
 
 const defaultConfigTests = [
   // all public methods have abapdoc
