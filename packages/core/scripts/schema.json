@@ -3213,6 +3213,7 @@
           "type": "boolean"
         },
         "skipGeneratedFunctionGroups": {
+          "description": "Skips generated table maintenances, determined via TOBJ object",
           "type": "boolean"
         },
         "skipGeneratedGatewayClasses": {
