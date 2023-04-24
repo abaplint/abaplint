@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {StructureType, CharacterType, IntegerType, TableType} from "../../types/basic";
+import {StructureType, CharacterType, IntegerType, TableType, TableKeyType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 
 export class Controls implements StatementSyntax {
@@ -36,7 +36,7 @@ export class Controls implements StatementSyntax {
         {name: "LINE_SELECTOR", type: new CharacterType(1)},
         {name: "H_GRID", type: new CharacterType(1)},
         {name: "V_GRID", type: new CharacterType(1)},
-        {name: "COLS", type: new TableType(cols, {withHeader: false})},
+        {name: "COLS", type: new TableType(cols, {withHeader: false, keyType: TableKeyType.default})},
         {name: "INVISIBLE", type: new CharacterType(1)},
       ]);
       const id = new TypedIdentifier(token, filename, type);

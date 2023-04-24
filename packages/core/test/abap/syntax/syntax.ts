@@ -4532,15 +4532,13 @@ MOVE lv_int1 TO lv_str.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("Move string to hexlike structre, not ok", () => {
+  it("Move string to hexlike structure, not ok", () => {
     const abap = `
-  DATA iv_msg TYPE string.
-DATA:
-  BEGIN OF ls_msg,
-    a1 TYPE x LENGTH 50,
-    a2 TYPE x LENGTH 50,
-  END OF ls_msg.
-
+DATA iv_msg TYPE string.
+DATA: BEGIN OF ls_msg,
+        a1 TYPE x LENGTH 50,
+        a2 TYPE x LENGTH 50,
+      END OF ls_msg.
 ls_msg = iv_msg.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
@@ -7037,7 +7035,7 @@ MOVE lv_telegram+0(lcl_constant=>c_header_length) TO lv_telegram2.`;
   it("LOOP into data reference into", () => {
     const abap = `
 TYPES: BEGIN OF ty_pil,
-         pid TYPE i,
+         pid  TYPE i,
          lbay TYPE i,
        END OF ty_pil.
 DATA lt_pil TYPE TABLE OF ty_pil.
@@ -7326,6 +7324,770 @@ IF lines( match ) >= 1.
   DATA(first_match) = match[ 1 ].
   foo = abap_doc_string+first_match-offset(first_match-length).
 ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FS tables, ok", () => {
+    const abap = `
+DATA lt_tables TYPE STANDARD TABLE OF string.
+FIELD-SYMBOLS <f1> TYPE HASHED TABLE.
+FIELD-SYMBOLS <f2> TYPE STANDARD TABLE.
+FIELD-SYMBOLS <f3> TYPE ANY TABLE.
+FIELD-SYMBOLS <f4> TYPE INDEX TABLE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("DATA hashed table key not defined, expect error", () => {
+    const abap = `DATA lt_tables TYPE HASHED TABLE OF string.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
+  it("DATA type any, expect error", () => {
+    const abap = `DATA lt_tables TYPE any.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
+  it("ok, not generic", () => {
+    const abap = `DATA table TYPE SORTED TABLE OF i WITH NON-UNIQUE DEFAULT KEY.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, not generic, primary_key", () => {
+    const abap = `
+types: BEGIN OF TY_TOKEN_ST,
+         api_name type string,
+         token type string,
+       END OF ty_token_st.
+types ty_token_tt type hashed TABLE OF ty_token_st with UNIQUE key primary_key components api_name.
+data MT_TOKEN type TY_TOKEN_TT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CALL not found function module in cloud, should give error", () => {
+    const abap = `CALL FUNCTION 'NOT_RELEASED'.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("found");
+  });
+
+  it("CALL not found function module in cloud destination, ok", () => {
+    const abap = `CALL FUNCTION 'NOT_RELEASED' DESTINATION 'SDF'.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE OBJECT, ref to interface", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+DATA foo TYPE REF TO lif.
+CREATE OBJECT foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
+  });
+
+  it("CALL not found class in cloud, should give error", () => {
+    const abap = `CALL METHOD ('CL_NOT_RELEASED')=>foobar.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not found");
+  });
+
+  it("CALL not found class in cloud, ok", () => {
+    const abap = `
+    DATA lv_name TYPE string.
+    lv_name = 'CL_NOT_RELEASED'.
+    CALL METHOD (lv_name)=>foobar.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE OBJECT, dynamic type, ok", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+DATA li_auth TYPE REF TO lif.
+CREATE OBJECT li_auth TYPE ('ZCL_ABAPGIT_AUTH_EXIT').`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("call method, incompatible types of characters, non named import", () => {
+    const abap = `
+TYPES ty_char20 TYPE c LENGTH 20.
+TYPES ty_char30 TYPE c LENGTH 30.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE ty_char20.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA input TYPE ty_char30.
+    foo( input ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("call method, incompatible types of characters, named import", () => {
+    const abap = `
+TYPES ty_char20 TYPE c LENGTH 20.
+TYPES ty_char30 TYPE c LENGTH 30.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE ty_char20.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA input TYPE ty_char30.
+    foo( var = input ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("call method, ok, compatible", () => {
+    const abap = `
+TYPES ty_char20 TYPE c LENGTH 20.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE ty_char20.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 'foo' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("call method, ok, compatible, space", () => {
+    const abap = `
+TYPES ty_char2 TYPE c LENGTH 2.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE ty_char2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( space ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("call method, error, derived from constant too long", () => {
+    const abap = `
+TYPES ty_char2 TYPE c LENGTH 2.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE ty_char2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 'foo' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("call method, ok, generic", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE c.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 'sdf' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("call method, ok, generic, with default", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE c DEFAULT 'sdf'.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 'sdf' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("not compatible, tables", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             kind TYPE string,
+           END OF ty.
+    DATA mt_result TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+    TYPES rt TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    METHODS foo RETURNING VALUE(rt) TYPE rt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    mt_result = foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
+  it("not compatible, table types", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         kind TYPE string,
+       END OF ty.
+DATA tab1 TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+
+TYPES: BEGIN OF ty_result,
+         sobjtype TYPE c LENGTH 4,
+         sobjname TYPE c LENGTH 40,
+       END OF ty_result.
+DATA tab2 TYPE STANDARD TABLE OF ty_result WITH DEFAULT KEY.
+
+tab1 = tab2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
+  it("not compatible, structure types", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         kind TYPE string,
+       END OF ty.
+DATA dat1 TYPE ty.
+
+TYPES: BEGIN OF ty_result,
+         sobjtype TYPE c LENGTH 4,
+         sobjname TYPE c LENGTH 40,
+       END OF ty_result.
+DATA dat2 TYPE ty_result.
+
+dat1 = dat2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
+  it("instantiating global interface, error", () => {
+    const clas = `
+      CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          METHODS bar..
+      ENDCLASS.
+      CLASS ZCL_FOOBAR IMPLEMENTATION.
+        METHOD bar.
+          DATA val TYPE REF TO zif_foobar.
+          CREATE OBJECT val.
+        ENDMETHOD.
+      ENDCLASS.`;
+    const intf =
+      "INTERFACE zif_foobar PUBLIC.\n" +
+      "ENDINTERFACE.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar.intf.abap", contents: intf}]);
+    expect(issues[0]?.getMessage()).to.contain("Interface reference, cannot be instantiated");
+  });
+
+  it("structures, compatible, ok", () => {
+    const abap = `
+DATA: BEGIN OF data1,
+        devclass TYPE c LENGTH 30,
+        ctext    TYPE c LENGTH 60,
+        as4user  TYPE c LENGTH 8,
+      END OF data1.
+
+DATA: BEGIN OF data2,
+        devclass TYPE c LENGTH 30,
+      END OF data2.
+
+data2 = data1.
+data1 = data2.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("input not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass TYPE c LENGTH 30,
+             dat      TYPE c LENGTH 2,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass TYPE c LENGTH 30,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("input not compatible, basic C and I", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE c LENGTH 30.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("different field names, same types, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass1 TYPE c LENGTH 30,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass2 TYPE c LENGTH 30,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("different field names, different types, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             devclass1 TYPE c LENGTH 30,
+           END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+             devclass2 TYPE i,
+           END OF ty2.
+
+    METHODS foo.
+    METHODS bar IMPORTING data TYPE ty2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data1 TYPE ty1.
+    bar( data1 ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("types compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING val TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( '1' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("types compatible", () => {
+    const abap = `
+TYPES: BEGIN OF lty_notif,
+         mandt TYPE c LENGTH 3,
+         guid  TYPE c LENGTH 10,
+       END OF lty_notif.
+
+TYPES: BEGIN OF lty_notif_key,
+         mandt TYPE c LENGTH 3,
+       END OF lty_notif_key.
+
+DATA lt_notif TYPE STANDARD TABLE OF lty_notif.
+DATA lt_notif_key TYPE STANDARD TABLE OF lty_notif_key.
+
+lt_notif_key = lt_notif.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("voided lines call", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE string,
+       END OF ty.
+DATA voided TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA lv TYPE i.
+lv = lines( voided ).`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SY type field sequence", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_syst_st,
+             index      TYPE i,
+             pagno      TYPE i,
+             tabix      TYPE i,
+             tfill      TYPE i,
+             tlopc      TYPE i,
+             tmaxl      TYPE i,
+             toccu      TYPE i,
+             ttabc      TYPE i,
+             tstis      TYPE i,
+             ttabi      TYPE i,
+             dbcnt      TYPE i,
+             fdpos      TYPE i,
+             colno      TYPE i,
+             linct      TYPE i,
+             linno      TYPE i,
+             linsz      TYPE i,
+             pagct      TYPE i,
+             macol      TYPE i,
+             marow      TYPE i,
+             tleng      TYPE i,
+             sfoff      TYPE i,
+             willi      TYPE i,
+             lilli      TYPE i,
+             subrc      TYPE i,
+             fleng      TYPE i,
+             cucol      TYPE i,
+             curow      TYPE i,
+             lsind      TYPE i,
+             listi      TYPE i,
+             stepl      TYPE i,
+             tpagi      TYPE i,
+             winx1      TYPE i,
+             winy1      TYPE i,
+             winx2      TYPE i,
+             winy2      TYPE i,
+             winco      TYPE i,
+             winro      TYPE i,
+             windi      TYPE i,
+             srows      TYPE i,
+             scols      TYPE i,
+             loopc      TYPE i,
+             folen      TYPE i,
+             fodec      TYPE i,
+             tzone      TYPE i,
+             dayst(1)   TYPE c,
+             ftype(1)   TYPE c,
+             appli(2)   TYPE x,
+             fdayw      TYPE int1,
+             ccurs      TYPE p LENGTH 5 DECIMALS 0,
+             ccurt      TYPE p LENGTH 5 DECIMALS 0,
+             debug(1)   TYPE c,
+             ctype(1)   TYPE c,
+             input(1)   TYPE c,
+             langu(1)   TYPE c,
+             modno      TYPE i,
+             batch(1)   TYPE c,
+             binpt(1)   TYPE c,
+             calld(1)   TYPE c,
+             dynnr(4)   TYPE c,
+             dyngr(4)   TYPE c,
+             newpa(1)   TYPE c,
+             pri40(1)   TYPE c,
+             rstrt(1)   TYPE c,
+             wtitl(1)   TYPE c,
+             cpage      TYPE i,
+             dbnam(20)  TYPE c,
+             mandt      TYPE c LENGTH 3,
+             prefx(3)   TYPE c,
+             fmkey(3)   TYPE c,
+             pexpi(1)   TYPE n,
+             prini(1)   TYPE n,
+             primm(1)   TYPE c,
+             prrel(1)   TYPE c,
+             playo(5)   TYPE c,
+             prbig(1)   TYPE c,
+             playp(1)   TYPE c,
+             prnew(1)   TYPE c,
+             prlog(1)   TYPE c,
+             pdest(4)   TYPE c,
+             plist(12)  TYPE c,
+             pauth(2)   TYPE n,
+             prdsn(6)   TYPE c,
+             pnwpa(1)   TYPE c,
+             callr(8)   TYPE c,
+             repi2(40)  TYPE c,
+             rtitl(70)  TYPE c,
+             prrec(12)  TYPE c,
+             prtxt(68)  TYPE c,
+             prabt(12)  TYPE c,
+             lpass(4)   TYPE c,
+             nrpag(1)   TYPE c,
+             paart(16)  TYPE c,
+             prcop(3)   TYPE n,
+             batzs(1)   TYPE c,
+             bspld(1)   TYPE c,
+             brep4(4)   TYPE c,
+             batzo(1)   TYPE c,
+             batzd(1)   TYPE c,
+             batzw(1)   TYPE c,
+             batzm(1)   TYPE c,
+             ctabl(4)   TYPE c,
+             dbsys(10)  TYPE c,
+             dcsys(4)   TYPE c,
+             macdb(4)   TYPE c,
+             sysid(8)   TYPE c,
+             opsys(10)  TYPE c,
+             pfkey(20)  TYPE c,
+             saprl(4)   TYPE c,
+             tcode(20)  TYPE c,
+             ucomm(70)  TYPE c,
+             cfwae(5)   TYPE c,
+             chwae(5)   TYPE c,
+             spono(10)  TYPE n,
+             sponr(10)  TYPE n,
+             waers(5)   TYPE c,
+             cdate      TYPE d,
+             datum      TYPE d,
+             slset(14)  TYPE c,
+             subty(1)   TYPE x,
+             subcs(1)   TYPE c,
+             group(1)   TYPE c,
+             ffile(8)   TYPE c,
+             uzeit      TYPE t,
+             dsnam(8)   TYPE c,
+             tabid(8)   TYPE c,
+             tfdsn(8)   TYPE c,
+             uname(12)  TYPE c,
+             lstat(16)  TYPE c,
+             abcde(26)  TYPE c,
+             marky(1)   TYPE c,
+             sfnam(30)  TYPE c,
+             tname(30)  TYPE c,
+             msgli(60)  TYPE c,
+             title(70)  TYPE c,
+             entry(72)  TYPE c,
+             lisel(255) TYPE c,
+             uline(255) TYPE c,
+             xcode(70)  TYPE c,
+             cprog(40)  TYPE c,
+             xprog(40)  TYPE c,
+             xform(30)  TYPE c,
+             ldbpg(40)  TYPE c,
+             tvar0(20)  TYPE c,
+             tvar1(20)  TYPE c,
+             tvar2(20)  TYPE c,
+             tvar3(20)  TYPE c,
+             tvar4(20)  TYPE c,
+             tvar5(20)  TYPE c,
+             tvar6(20)  TYPE c,
+             tvar7(20)  TYPE c,
+             tvar8(20)  TYPE c,
+             tvar9(20)  TYPE c,
+             msgid(20)  TYPE c,
+             msgty(1)   TYPE c,
+             msgno(3)   TYPE n,
+             msgv1(50)  TYPE c,
+             msgv2(50)  TYPE c,
+             msgv3(50)  TYPE c,
+             msgv4(50)  TYPE c,
+             oncom(1)   TYPE c,
+             vline(1)   TYPE c,
+             winsl(79)  TYPE c,
+             staco      TYPE i,
+             staro      TYPE i,
+             datar(1)   TYPE c,
+             host(32)   TYPE c,
+             locdb(1)   TYPE c,
+             locop(1)   TYPE c,
+             datlo      TYPE d,
+             timlo      TYPE t,
+             zonlo(6)   TYPE c,
+           END OF ty_syst_st.
+    METHODS method1 IMPORTING foo TYPE ty_syst_st.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    method1( sy ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("sy-repid", () => {
+    const abap = `WRITE sy-repid.`;
+    const issues = runProgram(abap, [], Version.Cloud, ".");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Loop at voided row into data ref", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+LOOP AT tab REFERENCE INTO DATA(sdf).
+  WRITE sdf->field.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("voided row table type vs string", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             field1 TYPE c LENGTH 1,
+             field2 TYPE string,
+           END OF ty1.
+    TYPES tt1 TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+
+    TYPES: BEGIN OF ty2,
+             field1 TYPE c LENGTH 1,
+             field2 TYPE voided,
+           END OF ty2.
+    TYPES tt2 TYPE STANDARD TABLE OF ty2 WITH DEFAULT KEY.
+
+    METHODS method IMPORTING iv TYPE tt1.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method.
+    DATA foo TYPE tt2.
+    method( foo ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("String template, missing return parameter", () => {
+    const abap = `
+CLASS lcl_heap DEFINITION.
+  PUBLIC SECTION.
+    METHODS add.
+ENDCLASS.
+CLASS lcl_heap IMPLEMENTATION.
+  METHOD add.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_heap TYPE REF TO lcl_heap.
+  CREATE OBJECT lo_heap.
+  WRITE |<sdf{ lo_heap->add( ) }>|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("No target type determined");
+  });
+
+  it("String template, not character like return type", () => {
+    const abap = `
+CLASS lcl_heap DEFINITION.
+  PUBLIC SECTION.
+    METHODS add RETURNING VALUE(ref) TYPE REF TO lcl_heap.
+ENDCLASS.
+CLASS lcl_heap IMPLEMENTATION.
+  METHOD add.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_heap TYPE REF TO lcl_heap.
+  CREATE OBJECT lo_heap.
+  WRITE |<sdf{ lo_heap->add( ) }>|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Not character like");
+  });
+
+  it("write hex via string template", () => {
+    const abap = `
+DATA foo TYPE x LENGTH 10.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("write xstring via string template", () => {
+    const abap = `
+DATA foo TYPE xstring.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("write xsequence via string template", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    WRITE |{ bar }|.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });

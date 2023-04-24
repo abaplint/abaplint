@@ -29,7 +29,7 @@ export class MethodDef implements IStatement {
     const full = seq("FULL", MethodParamName);
 
     const modify = alt(
-      seq("FOR ACTION", TypeName, result),
+      seq("FOR ACTION", TypeName, optPrio(result)),
       seq("FOR CREATE", alt(TypeName, EntityAssociation)),
       seq("FOR DELETE", TypeName),
       seq("FOR UPDATE", TypeName));
@@ -43,6 +43,8 @@ export class MethodDef implements IStatement {
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR READ", TypeName, result),
       seq(alt("BEHAVIOR", "LOCK"), "IMPORTING", MethodParamName, "FOR LOCK", TypeName),
       seq("DETERMINE", alt("ON MODIFY", "ON SAVE"), "IMPORTING", MethodParamName, "FOR", TypeName),
+      seq("GLOBAL AUTHORIZATION IMPORTING REQUEST", MethodParamName, "FOR", TypeName, result),
+      seq("INSTANCE AUTHORIZATION IMPORTING", MethodParamName, "REQUEST", MethodParamName, "FOR", TypeName, result),
     );
 
 // todo, this is only from version something

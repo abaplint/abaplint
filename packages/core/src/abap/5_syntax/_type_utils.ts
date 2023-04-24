@@ -1,6 +1,7 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XSequenceType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
+import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
 
 export class TypeUtils {
@@ -25,6 +26,7 @@ export class TypeUtils {
         || type instanceof AnyType
         || type instanceof CharacterType
         || type instanceof SimpleType
+        || type instanceof CGenericType
         || type instanceof CLikeType
         || type instanceof DateType
         || type instanceof CSequenceType
@@ -51,6 +53,7 @@ export class TypeUtils {
       }
       return true;
     } else if (type instanceof StringType
+        || type instanceof CharacterType
         || type instanceof VoidType
         || type instanceof AnyType
         || type instanceof UnknownType
@@ -64,11 +67,11 @@ export class TypeUtils {
         || type instanceof DecFloat34Type
         || type instanceof NumericGenericType
         || type instanceof CSequenceType
+        || type instanceof CGenericType
         || type instanceof DateType
         || type instanceof CLikeType
         || type instanceof PackedType
-        || type instanceof TimeType
-        || type instanceof CharacterType) {
+        || type instanceof TimeType) {
       return true;
     }
     return false;
@@ -87,6 +90,7 @@ export class TypeUtils {
     } else if (type instanceof XStringType
         || type instanceof HexType
         || type instanceof VoidType
+        || type instanceof XSequenceType
         || type instanceof AnyType
         || type instanceof UnknownType) {
       return true;
@@ -194,6 +198,62 @@ export class TypeUtils {
     return true;
   }
 
+  private structureContainsString(structure: StructureType): boolean {
+    for (const c of structure.getComponents()) {
+      if (c.type instanceof StringType) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private structureContainsVoid(structure: StructureType): boolean {
+    for (const c of structure.getComponents()) {
+      if (c.type instanceof VoidType) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public isAssignableStrict(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+/*
+    console.dir(source);
+    console.dir(target);
+*/
+    if (source instanceof CharacterType) {
+      if (target instanceof CharacterType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return source.getLength() <= target.getLength();
+        }
+        return source.getLength() === target.getLength();
+      } else if (target instanceof IntegerType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
+        return false;
+      }
+    } else if (source instanceof StringType && target instanceof StructureType) {
+      if (this.structureContainsString(target)) {
+        return false;
+      }
+      return true;
+    } else if (source instanceof StructureType && target instanceof StructureType) {
+      const sourceComponents = source.getComponents();
+      const targetComponents = target.getComponents();
+      if (sourceComponents.length !== targetComponents.length) {
+        return false;
+      }
+      for (let i = 0; i < sourceComponents.length; i++) {
+        if (this.isAssignableStrict(sourceComponents[i].type, targetComponents[i].type) === false) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return this.isAssignable(source, target);
+  }
+
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
 /*
     console.dir(source);
@@ -203,10 +263,35 @@ export class TypeUtils {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
       }
-      if (source instanceof TableType
-          || source instanceof VoidType
+      if (source instanceof VoidType
           || source instanceof AnyType
           || source instanceof UnknownType) {
+        return true;
+      } else if (source instanceof TableType) {
+        const targetRowType = target.getRowType();
+        const sourceRowType = source.getRowType();
+        if (targetRowType instanceof VoidType || targetRowType instanceof AnyType || targetRowType instanceof UnknownType) {
+          return true;
+        } else if (sourceRowType instanceof VoidType || sourceRowType instanceof AnyType || sourceRowType instanceof UnknownType) {
+          return true;
+        }
+        if (targetRowType instanceof StructureType
+            && this.structureContainsString(targetRowType)) {
+          if (!(sourceRowType instanceof StructureType)) {
+            return false;
+          } else if (!(this.structureContainsString(sourceRowType))
+              && this.structureContainsVoid(sourceRowType) === false) {
+            return false;
+          }
+        } else if (sourceRowType instanceof StructureType
+            && this.structureContainsString(sourceRowType)) {
+          if (!(targetRowType instanceof StructureType)) {
+            return false;
+          } else if (!(this.structureContainsString(targetRowType))
+          && this.structureContainsVoid(targetRowType) === false) {
+            return false;
+          }
+        }
         return true;
       }
       return false;
@@ -233,10 +318,14 @@ export class TypeUtils {
     } else if (target instanceof StructureType) {
       if (source instanceof TableType && source.isWithHeader()) {
         return this.isAssignable(source.getRowType(), target);
-      } else if (source instanceof StructureType
-          || source instanceof VoidType
+      } else if (source instanceof VoidType
           || source instanceof AnyType
           || source instanceof UnknownType) {
+        return true;
+      } else if (source instanceof StructureType) {
+        if (this.structureContainsString(target) && !this.structureContainsString(source)) {
+          return false;
+        }
         return true;
       } else if (target.containsVoid() === true) {
         return true;

@@ -2,8 +2,9 @@ const search = new Set();
 
 function clickChip(_event, chip) {
   for (const child of chip.children) {
-    child.classList.toggle("chip-head");
-    child.classList.toggle("chip-content");
+//    child.classList.toggle("chip-head");
+    child.classList.toggle("chip-content-enabled");
+    child.classList.toggle("chip-content-disabled");
   }
   chip.classList.toggle("shadow1");
   chip.classList.toggle("shadow2");

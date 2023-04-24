@@ -161,6 +161,9 @@ export class LSPLookup {
     if (variable.getType().getQualifiedName()) {
       value += "\n\nQualified Type Name: ```" + variable.getType().getQualifiedName() + "```";
     }
+    if (variable.getType().getRTTIName()) {
+      value += "\n\nRTTI Name: ```" + variable.getType().getRTTIName() + "```";
+    }
     if (variable.getType().isGeneric() === true) {
       value += "\n\nIs Generic Type";
     }

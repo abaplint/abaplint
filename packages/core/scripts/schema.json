@@ -1335,6 +1335,23 @@
       ],
       "type": "object"
     },
+    "FullyTypeITabsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "FunctionModuleRecommendationsConf": {
       "additionalProperties": false,
       "properties": {
@@ -1866,7 +1883,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Experimental downport functionality\nTags: Experimental, Downport, Quickfix\nhttps://rules.abaplint.org/downport"
+              "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -1988,6 +2005,17 @@
                 }
               ],
               "description": "Checks constants for full typing - no implicit typing allowed.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
+            },
+            "fully_type_itabs": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FullyTypeITabsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
             },
             "function_module_recommendations": {
               "anyOf": [
@@ -2812,7 +2840,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "start_at_tab": {
               "anyOf": [
@@ -2835,6 +2863,17 @@
                 }
               ],
               "description": "Static method call via instance variable\nTags: Styleguide\nhttps://rules.abaplint.org/static_call_via_instance"
+            },
+            "strict_sql": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StrictSQLConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Strict SQL\nTags: Upport, Syntax, Quickfix\nhttps://rules.abaplint.org/strict_sql"
             },
             "superclass_final": {
               "anyOf": [
@@ -5262,6 +5301,23 @@
           "description": "Allow in test class includes",
           "type": "boolean"
         },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "StrictSQLConf": {
+      "additionalProperties": false,
+      "properties": {
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {

@@ -8,15 +8,22 @@ export enum TableAccessType {
   any = "ANY",
 }
 
+export enum TableKeyType {
+  default = "DEFAULT",
+  user = "USER",
+  empty = "EMPTY",
+}
+
 export type ITableKey = {
   name: string,
-  type?: TableAccessType,
+  type: TableAccessType,
   keyFields: string[],
   isUnique: boolean,
 };
 
 export type ITableOptions = {
   withHeader: boolean,
+  keyType: TableKeyType,
   primaryKey?: ITableKey,
   secondary?: ITableKey[],
 };
@@ -66,6 +73,11 @@ export class TableType extends AbstractType {
   }
 
   public isGeneric() {
+    if (this.options.primaryKey?.type !== TableAccessType.standard
+        && this.options.keyType === TableKeyType.user
+        && this.options.primaryKey?.keyFields.length === 0) {
+      return true;
+    }
     return this.rowType.isGeneric();
   }
 

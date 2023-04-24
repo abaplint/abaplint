@@ -32,10 +32,12 @@ export class CDSFunction extends Expression {
     const abap_system_timezone = seq("ABAP_SYSTEM_TIMEZONE", "(", input, ",", input, ")");
     const abap_user_timezone = seq("ABAP_USER_TIMEZONE", "(", input, ",", input, ",", input, ")");
 
+    const mod = seq("MOD", "(", input, ",", input, ")");
+
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
                    tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
-                   dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp);
+                   dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod);
   }
 }

@@ -2054,4 +2054,61 @@ TYPES: BEGIN OF ty2,
     expect(issues[0].getMessage()).to.not.contain("field2");
   });
 
+  it("intf, returning parameter cannot be generic", () => {
+    const abap = `
+INTERFACE lif.
+  METHODS foo RETURNING VALUE(sdf) TYPE any.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("RETURNING parameter must be fully specified");
+  });
+
+  it("intf, returning parameter cannot be generic", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RETURNING VALUE(sdf) TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("RETURNING parameter must be fully specified");
+  });
+
+  it("LIKE sy-repid", () => {
+    const abap = `DATA lv_program LIKE sy-repid.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("TYPE sy-repid", () => {
+    const abap = `DATA lv_program TYPE sy-repid.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("TYPE sy-repid, method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE sy-repid.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+    `;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

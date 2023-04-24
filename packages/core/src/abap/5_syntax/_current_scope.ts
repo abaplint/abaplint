@@ -20,6 +20,7 @@ import {EnhancementSpot} from "../../objects/enhancement_spot";
 import {TypePool} from "../../objects/type_pool";
 import {SyntaxLogic} from "./syntax";
 import {IDDICReferences} from "../../_iddic_references";
+import {FunctionGroup} from "../../objects";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -182,6 +183,19 @@ export class CurrentScope {
 
 ///////////////////////////
 
+  public findFunctionModule(name: string | undefined) {
+    if (name === undefined) {
+      return undefined;
+    }
+    for (const fugr of this.reg.getObjectsByType("FUGR")) {
+      const func = (fugr as FunctionGroup).getModule(name);
+      if (func !== undefined) {
+        return func;
+      }
+    }
+    return undefined;
+  }
+
   public findObjectDefinition(name: string | undefined): IClassDefinition | IInterfaceDefinition | undefined {
     if (name === undefined) {
       return undefined;
@@ -211,29 +225,42 @@ export class CurrentScope {
 
   // todo, found + type can be removed from method output?
   public existsObject(name: string | undefined): {found: boolean, id?: Identifier, type?: ReferenceType,
-    ooType?: IReferenceExtras["ooType"]} {
+    ooType?: IReferenceExtras["ooType"], RTTIName?: string} {
     if (name === undefined) {
       return {found: false};
     }
 
+    let prefixRTTI = "";
+    if (this.parentObj.getType() === "PROG") {
+      prefixRTTI = "\\PROGRAM=" + this.parentObj.getName();
+    } else if (this.parentObj.getType() === "CLAS") {
+      prefixRTTI = "\\CLASS-POOL=" + this.parentObj.getName();
+    }
+
     const findLocalClass = this.current?.findClassDefinition(name);
     if (findLocalClass) {
-      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
+      if (findLocalClass.isGlobal() === true) {
+        prefixRTTI = "";
+      }
+      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference, ooType: "CLAS", RTTIName: prefixRTTI + "\\CLASS=" + findLocalClass.getName()};
     }
 
     const globalClas = this.reg.getObject("CLAS", name);
     if (globalClas) {
-      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "CLAS"};
+      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "CLAS", RTTIName: "\\CLASS=" + globalClas.getName()};
     }
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
     if (findLocalInterface) {
-      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
+      if (findLocalInterface.isGlobal() === true) {
+        prefixRTTI = "";
+      }
+      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference, ooType: "INTF", RTTIName: prefixRTTI + "\\INTERFACE=" + findLocalInterface.getName()};
     }
 
     const globalIntf = this.reg.getObject("INTF", name);
     if (globalIntf) {
-      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF"};
+      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference, ooType: "INTF", RTTIName: "\\INTERFACE=" + globalIntf.getName()};
     }
 
     const def = this.current?.findDeferred(name);
@@ -300,7 +327,11 @@ export class CurrentScope {
   }
 
   /** Lookup interface in local and global scope */
-  public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
+  public findInterfaceDefinition(name: string | undefined): IInterfaceDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
     const ilocal = this.current?.findInterfaceDefinition(name);
     if (ilocal) {
       return ilocal;

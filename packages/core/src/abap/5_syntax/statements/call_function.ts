@@ -6,6 +6,7 @@ import {Target} from "../expressions/target";
 import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
+import {Version} from "../../../version";
 
 export class CallFunction implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -15,6 +16,12 @@ export class CallFunction implements StatementSyntax {
     const chain = name?.findFirstExpression(Expressions.FieldChain);
     if (chain) {
       new FieldChain().runSyntax(chain, scope, filename, ReferenceType.DataReadReference);
+    } else if (scope.getVersion() === Version.Cloud
+        && node.findDirectExpression(Expressions.Destination) === undefined) {
+      const functionName = name?.concatTokens().replace(/'/g, "");
+      if (scope.findFunctionModule(functionName) === undefined) {
+        throw new Error(`Function module "${functionName}" not found/released`);
+      }
     }
 
     // just recurse

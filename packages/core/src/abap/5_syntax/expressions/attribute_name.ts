@@ -8,6 +8,7 @@ import {CurrentScope} from "../_current_scope";
 import {DataReference} from "../../types/basic/data_reference_type";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
+import {AnyType} from "../../types/basic";
 
 export class AttributeName {
   public runSyntax(
@@ -52,7 +53,7 @@ export class AttributeName {
     } else if (context instanceof DataReference) {
       const sub = context.getType();
       const name = node.getFirstToken().getStr();
-      if (name === "*") {
+      if (name === "*" || sub instanceof VoidType || sub instanceof AnyType) {
         return sub;
       }
       if (!(sub instanceof StructureType)) {

@@ -12,7 +12,7 @@ export class Constant {
       if (len <= 0) {
         len = 1;
       }
-      return new CharacterType(len);
+      return new CharacterType(len, {derivedFromConstant: true});
     } else {
       return new StringType({qualifiedName: "STRING"});
     }

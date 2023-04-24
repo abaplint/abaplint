@@ -149,7 +149,7 @@ export class MethodParameters {
       const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
       if (parameter === undefined) {
         throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
-      } else if (new TypeUtils(scope).isAssignable(item.sourceType, parameter.getType()) === false) {
+      } else if (new TypeUtils(scope).isAssignableStrict(item.sourceType, parameter.getType()) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
       this.requiredParameters.delete(item.name);

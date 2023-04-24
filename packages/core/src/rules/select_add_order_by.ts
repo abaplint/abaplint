@@ -106,7 +106,8 @@ If the target is a sorted/hashed table, no issue is reported`,
       }
 
       if (type instanceof TableType
-          && (type?.getAccessType() === TableAccessType.sorted || type?.getAccessType() === TableAccessType.hashed)) {
+          && (type?.getAccessType() === TableAccessType.sorted
+          || type?.getAccessType() === TableAccessType.hashed)) {
         return true;
       }
     }
