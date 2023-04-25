@@ -43,7 +43,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-on
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
-    const regexEmptyTags = '^\\"! .*<[^>]*><';
+    const regexEmptyTags = '^\\"! .*<[^/>]*><\\/';
     const regexEmptyAbapdoc = '^\\"!.+$';
     const regexEmptyParameterName = '^\\"! @parameter .+\\|';
 

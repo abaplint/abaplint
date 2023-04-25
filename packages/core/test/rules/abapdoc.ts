@@ -174,6 +174,26 @@ INTERFACE if_test PUBLIC.
     calculate RAISING cx_test.
 ENDINTERFACE.`, cnt: 2,
   },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+"! <p class="shorttext synchronized" lang="en"></p>
+"!
+"! @parameter parameters | parameters structure:<ul><li></li></ul>
+    METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 2,
+  },
+  {
+    abap: `
+INTERFACE if_test PUBLIC.
+"! <p class="shorttext synchronized" lang="en">Test</p>
+"!
+"! @parameter parameters | parameters structure:<ul><li>test param 1</li></ul>
+    METHODS
+    calculate RAISING cx_test.
+ENDINTERFACE.`, cnt: 0,
+  },
 ];
 
 testRule(defaultConfigTests, Abapdoc);
