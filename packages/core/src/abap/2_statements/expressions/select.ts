@@ -24,12 +24,17 @@ export class Select extends Expression {
                      SQLOrderBy, SQLUpTo, offset, SQLClient, SQLHaving,
                      bypass, SQLGroupBy, fields, DatabaseConnection);
 
+    const permSingle = per(SQLFrom, into, where, SQLClient, bypass, fields, DatabaseConnection);
+
     const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
 
-    const ret = seq("SELECT",
-                    altPrio("DISTINCT", optPrio(seq("SINGLE", optPrio("FOR UPDATE")))),
-                    optPrio(altPrio(SQLFieldList, paren)),
-                    perm, optPrio(SQLHints));
+    const fieldList = optPrio(altPrio(SQLFieldList, paren));
+
+    const single = seq("SINGLE", optPrio("FOR UPDATE"), fieldList, permSingle, optPrio(SQLHints));
+
+    const other = seq(optPrio("DISTINCT"), fieldList, perm, optPrio(SQLHints));
+
+    const ret = seq("SELECT", altPrio(single, other));
 
     return ret;
   }
