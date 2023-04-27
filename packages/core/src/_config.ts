@@ -5,6 +5,7 @@ export interface IGlobalConfig {
   /** input files, glob format */
   files: string;
   skipGeneratedBOPFInterfaces?: boolean;
+  /** Skips generated table maintenances, determined via TOBJ object */
   skipGeneratedFunctionGroups?: boolean;
   skipGeneratedGatewayClasses?: boolean;
   skipGeneratedPersistentClasses?: boolean;

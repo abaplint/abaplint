@@ -375,6 +375,11 @@ const versionsFail = [
   {abap: `SELECT * INTO TABLE lt_but000
   FROM but000
   WHERE  but000~partner IN ( '1000' , '2000' , '3000' ).`, ver: Version.v702},
+  // order by not possible for SELECT SINGLE
+  {abap: `SELECT SINGLE *
+  FROM vbak
+  INTO @DATA(ls_vbak)
+  ORDER BY vbeln.`, ver: Version.v750},
   // missing comma,
   {abap: `SELECT foo bar, moo
   FROM ztab INTO TABLE @DATA(tab)
