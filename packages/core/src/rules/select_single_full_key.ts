@@ -67,10 +67,19 @@ export class SelectSingleFullKey implements IRule {
         }
 
         const tabl = this.findReference(databaseTable.getFirstToken().getStart(), syntax.spaghetti, file);
-        const keys = (this.reg.getObject("TABL", tabl) as Table).listKeys(this.reg);
+        const table = this.reg.getObject("TABL", tabl) as Table;
+        const keys = table.listKeys(this.reg);
+//        const type = table.parseType(this.reg);
 
         const cond = s.findFirstExpression(Expressions.SQLCond);
-        const set = new Set<string>(keys);
+        const set = new Set<string>();
+        for (const key of keys) {
+          if (key === "MANDT") {
+            // todo, it should check for the correct type instead
+            continue;
+          }
+          set.add(key);
+        }
 
         for (const compare of cond?.findAllExpressionsRecursive(Expressions.SQLCompare) || []) {
           if (compare.getChildren().length === 3) {

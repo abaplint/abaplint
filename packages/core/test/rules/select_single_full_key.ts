@@ -56,6 +56,51 @@ const ztab = `
  </asx:abap>
 </abapGit>`;
 
+const zmandttab = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZMANDTTAB</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <CLIDEP>X</CLIDEP>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZMANDTTAB</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>MANDT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>MANDT</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000008</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000004</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
 async function findIssues(files: IFile[]): Promise<readonly Issue[]> {
   const reg = new Registry().addFiles(files);
   await reg.parseAsync();
@@ -98,6 +143,15 @@ describe("Rule: select_single_full_key", () => {
     const abap = `SELECT SINGLE * FROM ztab INTO @DATA(sdfs). "#EC CI_NOORDER`;
     const file = new MemoryFile("zfoo.prog.abap", abap);
     const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+
+    const issues = await findIssues([file, tabl]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("fixed, ignore MANDT field", async () => {
+    const abap = `SELECT SINGLE * FROM zmandttab INTO @DATA(sdfs) WHERE field1 = 'A'.`;
+    const tabl = new MemoryFile("zmandttab.tabl.xml", zmandttab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
 
     const issues = await findIssues([file, tabl]);
     expect(issues.length).to.equal(0);
