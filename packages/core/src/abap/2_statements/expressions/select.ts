@@ -18,7 +18,7 @@ export class Select extends Expression {
 
     const bypass = str("BYPASSING BUFFER");
 
-    const fields = seq("FIELDS", SQLFieldList);
+    const fields = ver(Version.v750, seq("FIELDS", SQLFieldList));
 
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
                      SQLOrderBy, SQLUpTo, offset, SQLClient, SQLHaving,

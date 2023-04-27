@@ -365,8 +365,7 @@ const versions = [
       WHEN '1' THEN '2'
       ELSE '3'
     END
-  INTO TABLE @DATA(sdfsd).`, ver: Version.v740sp05},
-
+  INTO TABLE @DATA(sdfsd).`, ver: Version.v750},
 ];
 
 statementVersion(versions, "SELECT", Statements.Select);

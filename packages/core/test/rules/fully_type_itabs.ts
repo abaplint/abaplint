@@ -69,4 +69,11 @@ describe("Rule: fully_type_itabs", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("range", async () => {
+    const abap = `DATA lt_bar TYPE RANGE OF i.`;
+    const file = new MemoryFile("zrange.prog.abap", abap);
+    const issues = await run(file);
+    expect(issues.length).to.equal(0);
+  });
+
 });
