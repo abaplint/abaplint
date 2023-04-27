@@ -4761,7 +4761,7 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
-  it.only("SELECT FIELDS dynamic", async () => {
+  it.skip("SELECT FIELDS dynamic", async () => {
     const abap = `SELECT FROM (mv_name) FIELDS * INTO CORRESPONDING FIELDS OF TABLE <tab> UP TO 100 ROWS.`;
     const expected = `sdf`;
     testFix(abap, expected);
