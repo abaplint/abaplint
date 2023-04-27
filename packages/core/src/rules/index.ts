@@ -116,6 +116,7 @@ export * from "./remove_descriptions";
 export * from "./rfc_error_handling";
 export * from "./select_add_order_by";
 export * from "./select_performance";
+export * from "./select_single_full_key";
 export * from "./selection_screen_naming";
 export * from "./sequential_blank";
 export * from "./short_case";
