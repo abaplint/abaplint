@@ -67,7 +67,10 @@ export class SelectSingleFullKey implements IRule {
         }
 
         const tabl = this.findReference(databaseTable.getFirstToken().getStart(), syntax.spaghetti, file);
-        const table = this.reg.getObject("TABL", tabl) as Table;
+        const table = this.reg.getObject("TABL", tabl) as Table | undefined;
+        if (table === undefined) {
+          continue;
+        }
         const keys = table.listKeys(this.reg);
 //        const type = table.parseType(this.reg);
 
