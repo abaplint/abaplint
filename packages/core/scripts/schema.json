@@ -2754,6 +2754,17 @@
               ],
               "description": "Various checks regarding SELECT performance.\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/select_performance"
             },
+            "select_single_full_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectSingleFullKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detect SELECT SINGLE which are possibily not unique\nTags: Experimental\nhttps://rules.abaplint.org/select_single_full_key"
+            },
             "selection_screen_naming": {
               "anyOf": [
                 {
@@ -5081,6 +5092,23 @@
         "selectStar",
         "starOkayIfFewColumns"
       ],
+      "type": "object"
+    },
+    "SelectSingleFullKeyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "SelectionScreenNamingConf": {

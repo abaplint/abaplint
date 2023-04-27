@@ -118,6 +118,7 @@ import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
 import {SelectAddOrderByConf} from "../src/rules/select_add_order_by";
 import {SelectPerformanceConf} from "../src/rules/select_performance";
+import {SelectSingleFullKeyConf} from "../src/rules/select_single_full_key";
 import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
 import {ShortCaseConf} from "../src/rules/short_case";
@@ -286,6 +287,7 @@ export interface IConfig {
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
     "select_add_order_by"?: SelectAddOrderByConf | boolean,
     "select_performance"?: SelectPerformanceConf | boolean,
+    "select_single_full_key"?: SelectSingleFullKeyConf | boolean,
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
