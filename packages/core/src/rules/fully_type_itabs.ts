@@ -56,7 +56,7 @@ DATA lt_bar TYPE STANDARD TABLE OF ty.`,
             message,
             this.getMetadata().key,
             this.conf.severity));
-      } else if (concat.includes(" WITH ") === false) {
+      } else if (concat.includes(" WITH ") === false && concat.includes(" RANGE OF ") === false) {
         const message = "Specify table key";
         issues.push(
           Issue.atStatement(
