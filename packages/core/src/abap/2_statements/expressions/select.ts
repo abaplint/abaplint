@@ -1,5 +1,5 @@
 import {seq, per, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
-import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints} from ".";
+import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
@@ -18,7 +18,7 @@ export class Select extends Expression {
 
     const bypass = str("BYPASSING BUFFER");
 
-    const fields = ver(Version.v750, seq("FIELDS", SQLFieldList));
+    const fields = ver(Version.v750, SQLFields);
 
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
                      SQLOrderBy, SQLUpTo, offset, SQLClient, SQLHaving,

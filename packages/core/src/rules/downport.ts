@@ -495,6 +495,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
     }
 
+    found = this.downportSelectFields(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineSwitch(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -694,6 +699,30 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     }
 
     return undefined;
+  }
+
+  private downportSelectFields(low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.Select)) {
+      return undefined;
+    }
+
+    const fields = high.findFirstExpression(Expressions.SQLFields);
+    if (fields === undefined) {
+      return undefined;
+    }
+
+    const code = fields.getLastChild()?.concatTokens();
+    if (code === undefined) {
+      return undefined;
+    }
+
+    const fix1 = EditHelper.deleteRange(lowFile, fields.getFirstToken().getStart(), fields.getLastToken().getEnd());
+    const fix2 = EditHelper.insertAt(lowFile, high.getFirstToken().getEnd(), " " + code);
+    const fix = EditHelper.merge(fix1, fix2);
+    return Issue.atToken(lowFile, fields.getFirstToken(), "Replace FIELDS", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportSelectSingleInline(low: StatementNode, high: StatementNode,

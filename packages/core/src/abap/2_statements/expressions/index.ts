@@ -27,6 +27,7 @@ export * from "./component_compare";
 export * from "./component_cond_sub";
 export * from "./component_cond";
 export * from "./component_name";
+export * from "./sql_fields";
 export * from "./concatenated_constant";
 export * from "./cond_body";
 export * from "./cond_sub";
