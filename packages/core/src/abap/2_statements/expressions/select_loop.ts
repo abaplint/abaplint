@@ -1,13 +1,13 @@
-import {seq, per, alt, Expression, optPrio, altPrio} from "../combi";
-import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries} from ".";
+import {seq, per, alt, Expression, optPrio, altPrio, ver} from "../combi";
+import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLFields} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
 import {SQLHaving} from "./sql_having";
 import {SQLIntoStructure} from "./sql_into_structure";
-import {SQLFieldList} from "./sql_field_list";
 import {SQLHints} from "./sql_hints";
 import {SQLFieldListLoop} from "./sql_field_list_loop";
 import {SQLUpTo} from "./sql_up_to";
+import {Version} from "../../../version";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -32,7 +32,7 @@ export class SelectLoop extends Expression {
                      SQLForAllEntries,
                      alt(tab, SQLIntoStructure, packTab));
 
-    const strict = seq(SQLFrom, "FIELDS", SQLFieldList, where, SQLIntoStructure, SQLUpTo);
+    const strict = seq(SQLFrom, ver(Version.v750, SQLFields), where, SQLIntoStructure, SQLUpTo);
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict),

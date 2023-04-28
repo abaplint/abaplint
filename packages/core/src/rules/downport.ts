@@ -452,6 +452,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
+    found = this.downportSelectFields(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSQLExtras(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -692,6 +697,19 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     if (found) {
       return found;
     }
+
+    return undefined;
+  }
+
+  private downportSelectFields(low: StatementNode, high: StatementNode, _lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.Select)) {
+      return undefined;
+    }
+
+// todo
 
     return undefined;
   }
