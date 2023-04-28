@@ -452,11 +452,6 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return found;
     }
 
-    found = this.downportSelectFields(low, high, lowFile, highSyntax);
-    if (found) {
-      return found;
-    }
-
     found = this.downportSQLExtras(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -498,6 +493,11 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       if (found) {
         return found;
       }
+    }
+
+    found = this.downportSelectFields(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
     }
 
     found = this.outlineSwitch(low, high, lowFile, highSyntax);
@@ -701,7 +701,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     return undefined;
   }
 
-  private downportSelectFields(low: StatementNode, high: StatementNode, _lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private downportSelectFields(low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
 
     if (!(low.get() instanceof Unknown)) {
       return undefined;
@@ -709,9 +709,20 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       return undefined;
     }
 
-// todo
+    const fields = high.findFirstExpression(Expressions.SQLFields);
+    if (fields === undefined) {
+      return undefined;
+    }
 
-    return undefined;
+    const code = fields.getLastChild()?.concatTokens();
+    if (code === undefined) {
+      return undefined;
+    }
+
+    const fix1 = EditHelper.deleteRange(lowFile, fields.getFirstToken().getStart(), fields.getLastToken().getEnd());
+    const fix2 = EditHelper.insertAt(lowFile, high.getFirstToken().getEnd(), " " + code);
+    const fix = EditHelper.merge(fix1, fix2);
+    return Issue.atToken(lowFile, fields.getFirstToken(), "Replace FIELDS", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportSelectSingleInline(low: StatementNode, high: StatementNode,
