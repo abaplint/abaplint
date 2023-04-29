@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {MessageClass} from "../objects";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
@@ -12,7 +12,7 @@ export class MSAGConsistencyConf extends BasicRuleConfig {
 export class MSAGConsistency implements IRule {
   private conf = new MSAGConsistencyConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "msag_consistency",
       title: "MSAG consistency check",

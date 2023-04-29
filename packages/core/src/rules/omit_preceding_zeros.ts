@@ -34,6 +34,7 @@ export class OmitPrecedingZeros extends ABAPRule {
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+    const message = "Omit preceding zeros";
 
     for (const s of file.getStatements()) {
       for (const i of s.findAllExpressions(Expressions.Integer)) {
@@ -43,7 +44,16 @@ export class OmitPrecedingZeros extends ABAPRule {
           if (s.get() instanceof CallScreen || s.get() instanceof SetScreen) {
             continue;
           }
-          const message = "Omit preceding zeros";
+
+          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity);
+          issues.push(issue);
+        }
+      }
+
+      for (const i of s.findAllExpressions(Expressions.ParameterException)) {
+        const token = i.findDirectExpression(Expressions.SimpleName)?.getFirstToken();
+        const str = token?.getStr();
+        if (token && str && str.length > 1 && str.startsWith("0")) {
           const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity);
           issues.push(issue);
         }

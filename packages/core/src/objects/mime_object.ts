@@ -5,6 +5,7 @@ export class MIMEObject extends AbstractObject {
   private parsedXML: {
     URL?: string,
     CLASS?: string,
+    FOLDER?: string,
   } | undefined;
 
   public getType(): string {
@@ -19,6 +20,10 @@ export class MIMEObject extends AbstractObject {
   public getClass(): string | undefined {
     this.parse();
     return this.parsedXML?.CLASS;
+  }
+
+  public isFolder() {
+    return this.parsedXML?.FOLDER === "X";
   }
 
   public getAllowedNaming() {
@@ -65,6 +70,7 @@ export class MIMEObject extends AbstractObject {
 
     this.parsedXML.URL = parsed.abapGit["asx:abap"]["asx:values"].URL;
     this.parsedXML.CLASS = parsed.abapGit["asx:abap"]["asx:values"].CLASS;
+    this.parsedXML.FOLDER = parsed.abapGit["asx:abap"]["asx:values"].FOLDER;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
