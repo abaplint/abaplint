@@ -18,6 +18,12 @@ const tests = [
   {abap: "call screen 0501 starting at 1 1.", cnt: 0},
   {abap: "SET SCREEN 0100.", cnt: 0},
   {abap: "MESSAGE ID sy-msgid TYPE sy-msgty NUMBER 001.", cnt: 0},
+  {abap: `call function 'MOO'
+exceptions
+  others = 01.`, cnt: 1},
+  {abap: `call function 'MOO'
+exceptions
+  others = 1.`, cnt: 0},
 ];
 
 testRule(tests, OmitPrecedingZeros);
