@@ -2820,6 +2820,17 @@
               ],
               "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
+            "smim_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SMIMConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -5022,6 +5033,23 @@
           },
           "type": "array",
           "uniqueItems": true
+        }
+      },
+      "type": "object"
+    },
+    "SMIMConsistencyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
         }
       },
       "type": "object"
