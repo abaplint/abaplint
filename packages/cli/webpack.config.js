@@ -10,6 +10,7 @@ module.exports = {
   },
   mode: "development",
   target: "node",
+  devtool: false,
   output: {
     filename: "[name].js",
     path: path.resolve(__dirname, "build"),
