@@ -1,5 +1,5 @@
 import {OmitPrecedingZeros} from "../../src/rules";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -27,3 +27,16 @@ exceptions
 ];
 
 testRule(tests, OmitPrecedingZeros);
+
+const fixTests = [
+  {
+    input: `call function 'MOO'
+exceptions
+  others = 01.`,
+    output: `call function 'MOO'
+exceptions
+  others = 1.`,
+  },
+];
+
+testRuleFix(fixTests, OmitPrecedingZeros);

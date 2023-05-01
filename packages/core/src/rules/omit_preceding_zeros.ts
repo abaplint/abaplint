@@ -5,6 +5,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {CallScreen, SetScreen} from "../abap/2_statements/statements";
+import {EditHelper} from "../edit_helper";
 
 export class OmitPrecedingZerosConf extends BasicRuleConfig {
 }
@@ -18,7 +19,7 @@ export class OmitPrecedingZeros extends ABAPRule {
       key: "omit_preceding_zeros",
       title: "Omit preceding zeros",
       shortDescription: `Omit preceding zeros from integer constants`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `int = -001.`,
       goodExample: `int = -1.`,
     };
@@ -44,8 +45,9 @@ export class OmitPrecedingZeros extends ABAPRule {
           if (s.get() instanceof CallScreen || s.get() instanceof SetScreen) {
             continue;
           }
-
-          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity);
+          const replace = str.replace(/^0+/, "");
+          const fix = EditHelper.replaceRange(file, token.getStart(), token.getEnd(), replace);
+          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity, fix);
           issues.push(issue);
         }
       }
@@ -54,7 +56,9 @@ export class OmitPrecedingZeros extends ABAPRule {
         const token = i.findDirectExpression(Expressions.SimpleName)?.getFirstToken();
         const str = token?.getStr();
         if (token && str && str.length > 1 && str.startsWith("0")) {
-          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity);
+          const replace = str.replace(/^0+/, "");
+          const fix = EditHelper.replaceRange(file, token.getStart(), token.getEnd(), replace);
+          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.getConfig().severity, fix);
           issues.push(issue);
         }
       }
