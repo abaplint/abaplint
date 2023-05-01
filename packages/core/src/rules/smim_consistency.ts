@@ -44,7 +44,7 @@ export class SMIMConsistency implements IRule {
 
     const base = this.base(obj.getURL() || "");
     if (base !== "" && this.findFolder(base) === false) {
-      const message = "Parent folder not found";
+      const message = `Parent folder "${base}" not found`;
       const position = new Position(1, 1);
       const issue = Issue.atPosition(obj.getFiles()[0], position, message, this.getMetadata().key, this.conf.severity);
       issues.push(issue);
@@ -61,7 +61,8 @@ export class SMIMConsistency implements IRule {
 
   private findFolder(base: string): boolean {
     for (const smim of this.reg.getObjectsByType("SMIM")) {
-      if (base === (smim as MIMEObject).getURL()) {
+      const mime = smim as MIMEObject;
+      if (base === mime.getURL() && mime.isFolder() === true) {
         return true;
       }
     }
