@@ -8092,6 +8092,28 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("ok, types offset/length", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 2.
+    CLASS-METHODS foo IMPORTING field TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA bar TYPE c LENGTH 3.
+  lcl=>foo( bar(2) ).
+  lcl=>foo( bar+1(2) ).
+  lcl=>foo( bar+1 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
