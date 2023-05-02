@@ -11,13 +11,16 @@ export class CharacterType extends AbstractType {
     this.length = length;
   }
 
-  public cloneType(qualifiedName?: string, ddicName?: string) {
+  public cloneType(input: {qualifiedName?: string, ddicName?: string, derivedFromConstant?: boolean}) {
     const clone = {...this.getAbstractTypeData()} || {};
-    if (qualifiedName) {
-      clone.qualifiedName = qualifiedName;
+    if (input.qualifiedName) {
+      clone.qualifiedName = input.qualifiedName;
     }
-    if (ddicName) {
-      clone.ddicName = ddicName;
+    if (input.ddicName) {
+      clone.ddicName = input.ddicName;
+    }
+    if (input.derivedFromConstant) {
+      clone.derivedFromConstant = input.derivedFromConstant;
     }
     return new CharacterType(this.length, clone);
   }

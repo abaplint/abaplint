@@ -8092,7 +8092,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, types offset/length", () => {
+  it("ok, types offset/length", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
