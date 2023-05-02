@@ -298,6 +298,10 @@ export class CurrentScope {
     }
 
     const typePoolName = name.split("_")[0];
+    if (typePoolName.length !== 4) {
+      return undefined;
+    }
+
     const typePool = this.reg.getObject("TYPE", typePoolName) as TypePool | undefined;
     if (typePool === undefined) {
       return undefined;
