@@ -208,7 +208,7 @@ export class BasicTypes {
     if (type instanceof CharacterType
         && qualifiedName
         && qualifiedName.includes("-") === false) {
-      type = type.cloneType(qualifiedName);
+      type = type.cloneType({qualifiedName});
     }
     return type;
   }

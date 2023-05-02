@@ -233,6 +233,18 @@ export class TypeUtils {
         }
         return false;
       }
+    } else if (source instanceof HexType) {
+      if (target instanceof HexType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return source.getLength() <= target.getLength();
+        }
+        return source.getLength() === target.getLength();
+      } else if (target instanceof IntegerType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
+        return false;
+      }
     } else if (source instanceof StringType && target instanceof StructureType) {
       if (this.structureContainsString(target)) {
         return false;

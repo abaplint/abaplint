@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
 import {Dash, DashW, InstanceArrow} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType, GenericObjectReferenceType} from "../../types/basic";
+import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType, GenericObjectReferenceType, CharacterType, HexType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {ReferenceType} from "../_reference";
@@ -94,9 +94,23 @@ export class FieldChain {
       } else if (current.get() instanceof Expressions.AttributeName) {
         context = new AttributeName().runSyntax(context, current, scope, filename, refType);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
-        new FieldOffset().runSyntax(current, scope, filename);
+        const offset = new FieldOffset().runSyntax(current, scope, filename);
+        if (offset) {
+          if (context instanceof CharacterType) {
+            context = new CharacterType(context.getLength() - offset);
+          } else if (context instanceof HexType) {
+            context = new HexType(context.getLength() - offset);
+          }
+        }
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
-        new FieldLength().runSyntax(current, scope, filename);
+        const length = new FieldLength().runSyntax(current, scope, filename);
+        if (length) {
+          if (context instanceof CharacterType) {
+            context = new CharacterType(length);
+          } else if (context instanceof HexType) {
+            context = new HexType(length);
+          }
+        }
       }
 
     }

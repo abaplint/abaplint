@@ -45,7 +45,6 @@ export class AttributeChain {
     }
     scope.addReference(nameToken, context, type, filename);
 
-
 // todo, loop, handle ArrowOrDash, ComponentName, TableExpression
 
     return context.getType();
