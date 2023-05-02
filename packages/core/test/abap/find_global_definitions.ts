@@ -22,4 +22,28 @@ ENDINTERFACE.`;
     expect(found).to.equal(1);
   });
 
+  it("parse and count", async () => {
+    const abap = `
+CLASS cl_hello DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    DATA mv_initial_ts TYPE string VALUE \`""\`. "#EC NOTEXT
+    DATA mv_initial_date TYPE string VALUE \`""\`. "#EC NOTEXT
+    DATA mv_initial_time TYPE string VALUE \`""\`. "#EC NOTEXT
+
+    TYPES:
+      BEGIN OF name_mapping,
+        abap TYPE abap_compname,
+        json TYPE string,
+      END OF name_mapping.
+ENDCLASS.
+
+CLASS cl_hello IMPLEMENTATION.
+ENDCLASS.`;
+
+    const files = [new MemoryFile("cl_hello.clas.abap", abap)];
+
+    const reg = await new Registry().addFiles(files).parseAsync();
+    new FindGlobalDefinitions(reg).run();
+  });
+
 });
