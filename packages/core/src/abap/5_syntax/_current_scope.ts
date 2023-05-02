@@ -331,7 +331,6 @@ export class CurrentScope {
       return undefined;
     }
 
-    // todo, optimize this somehow by caching the types/scope
     const spag = new SyntaxLogic(this.reg, typePool).run().spaghetti.getFirstChild()?.getFirstChild();
 
     const found = spag?.findType(name);
