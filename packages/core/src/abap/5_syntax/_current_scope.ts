@@ -298,7 +298,7 @@ export class CurrentScope {
     }
 
     const typePoolName = name.split("_")[0];
-    if (typePoolName.length !== 4) {
+    if (typePoolName.length <= 2 || typePoolName.length > 5) {
       return undefined;
     }
 
@@ -320,7 +320,11 @@ export class CurrentScope {
 
     const typePoolName = name.split("_")[0];
 
-    if (typePoolName.length !== 4 || new DDIC(this.reg).lookupNoVoid(name) !== undefined) {
+    if (typePoolName.length <= 2 || typePoolName.length > 5) {
+      return undefined;
+    }
+
+    if (new DDIC(this.reg).lookupNoVoid(name) !== undefined) {
       // this is tricky, it should not do recursion when parsing the type pool itself,
       // think about DTEL ABAP_ENCOD vs TYPE ABAP
       return undefined;
