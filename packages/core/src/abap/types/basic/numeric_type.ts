@@ -6,7 +6,7 @@ export class NumericType extends AbstractType {
   public constructor(length: number, qualifiedName?: string) {
     super({qualifiedName: qualifiedName});
     if (length <= 0) {
-      throw new Error("Bad LENGTH");
+      throw new Error("Bad LENGTH, Numeric");
     }
     this.length = length;
   }
