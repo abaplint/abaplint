@@ -4750,8 +4750,7 @@
       "required": [
         "global",
         "syntax",
-        "rules",
-        "targetRules"
+        "rules"
       ],
       "type": "object"
     },
