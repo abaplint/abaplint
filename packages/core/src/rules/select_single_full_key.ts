@@ -5,6 +5,7 @@ import {ABAPFile, ABAPObject, Comment, Expressions, IObject, IRegistry, ISpaghet
 import {Table} from "../objects";
 
 export class SelectSingleFullKeyConf extends BasicRuleConfig {
+  public allowPseudo = true;
 }
 
 export class SelectSingleFullKey implements IRule {
@@ -28,6 +29,14 @@ export class SelectSingleFullKey implements IRule {
   }
 
   public getConfig() {
+    if (this.conf === undefined) {
+      this.conf = {
+        allowPseudo: true,
+      };
+    }
+    if (this.conf.allowPseudo === undefined) {
+      this.conf.allowPseudo = true;
+    }
     return this.conf;
   }
 
@@ -62,7 +71,11 @@ export class SelectSingleFullKey implements IRule {
           continue;
         }
         const next = statements[i + 1];
-        if (next?.get() instanceof Comment && next.concatTokens().includes(this.getMetadata().pseudoComment + "")) {
+        if (next?.get() instanceof Comment
+            && next.concatTokens().includes(this.getMetadata().pseudoComment + "")) {
+          if (this.getConfig().allowPseudo !== true) {
+            issues.push(Issue.atStatement(file, s, "Pseudo comment not allowed", this.getMetadata().key, this.getConfig().severity));
+          }
           continue;
         }
 
@@ -72,7 +85,6 @@ export class SelectSingleFullKey implements IRule {
           continue;
         }
         const keys = table.listKeys(this.reg);
-//        const type = table.parseType(this.reg);
 
         const cond = s.findFirstExpression(Expressions.SQLCond);
         const set = new Set<string>();

@@ -7,9 +7,9 @@ export class PackedType extends AbstractType {
   public constructor(length: number, decimals: number, extra?: AbstractTypeData) {
     super(extra);
     if (length <= 0) {
-      throw new Error("Bad LENGTH");
+      throw new Error("Bad LENGTH, Packed");
     } else if (decimals < 0) {
-      throw new Error("Bad DECIMALS");
+      throw new Error("Bad DECIMALS, Packed");
     }
     this.length = length;
     this.decimals = decimals;

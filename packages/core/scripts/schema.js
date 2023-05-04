@@ -58,6 +58,12 @@ output = output + `\nexport interface IConfig {
 for (const rule of rules) {
   output = output + "    \"" + rule.key + "\"?: " + rule.config + " | boolean" + ",\n";
 }
+output = output + `  };
+  /** see https://abaplint.app */
+  targetRules: {\n`;
+for (const rule of rules) {
+  output = output + "    \"" + rule.key + "\"?: " + rule.config + " | boolean" + ",\n";
+}
 output = output + "  };\n" +
 "}";
 

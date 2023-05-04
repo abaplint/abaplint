@@ -6,7 +6,7 @@ export class CharacterType extends AbstractType {
   public constructor(length: number, extra?: AbstractTypeData) {
     super(extra);
     if (length <= 0) {
-      throw new Error("Bad LENGTH");
+      throw new Error("Bad LENGTH, Character");
     }
     this.length = length;
   }
