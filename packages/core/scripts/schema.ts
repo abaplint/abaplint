@@ -328,7 +328,7 @@ export interface IConfig {
     "xml_consistency"?: XMLConsistencyConf | boolean,
   };
   /** see https://abaplint.app */
-  targetRules: {
+  targetRules?: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,

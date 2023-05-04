@@ -60,7 +60,7 @@ for (const rule of rules) {
 }
 output = output + `  };
   /** see https://abaplint.app */
-  targetRules: {\n`;
+  targetRules?: {\n`;
 for (const rule of rules) {
   output = output + "    \"" + rule.key + "\"?: " + rule.config + " | boolean" + ",\n";
 }
