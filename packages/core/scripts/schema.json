@@ -3178,12 +3178,1580 @@
         "syntax": {
           "$ref": "#/definitions/ISyntaxSettings",
           "description": "Syntax settings"
+        },
+        "targetRules": {
+          "additionalProperties": false,
+          "description": "see https://abaplint.app",
+          "properties": {
+            "7bit_ascii": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SevenBitAsciiConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "abapdoc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "align_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AlignParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "allowed_object_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AllowedObjectNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "allowed_object_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AllowedObjectTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "ambiguous_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AmbiguousStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "avoid_use": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AvoidUseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "begin_end_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BeginEndNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "begin_single_include": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BeginSingleIncludeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "call_transaction_authority_check": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CallTransactionAuthorityCheckConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "cds_comment_style": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSCommentStyleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "cds_legacy_view": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSLegacyViewConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "cds_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "chain_mainly_declarations": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChainMainlyDeclarationsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "change_if_to_case": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangeIfToCaseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_abstract": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckAbstractConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_comments": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckCommentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_ddic": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckDDICConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_include": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckIncludeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_subrc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckSubrcConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_text_elements": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckTextElementsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_transformation_exists": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckTransformationExistsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "class_attribute_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClassAttributeNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "classic_exceptions_overlap": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClassicExceptionsOverlapConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "cloud_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CloudTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "colon_missing_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ColonMissingSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "commented_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CommentedCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "constant_classes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstantClassesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "constructor_visibility_public": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstructorVisibilityPublicConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "contains_tab": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ContainsTabConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "cyclic_oo": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CyclicOOConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "cyclomatic_complexity": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CyclomaticComplexityConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "dangerous_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DangerousStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "db_operation_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DbOperationInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "definitions_top": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DefinitionsTopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "description_empty": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DescriptionEmptyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "double_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DoubleSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "downport": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DownportConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "empty_line_in_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyLineinStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "empty_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "empty_structure": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyStructureConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "exit_or_check": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ExitOrCheckConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "expand_macros": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ExpandMacrosConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "exporting": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ExportingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "forbidden_identifier": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenIdentifierConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "forbidden_pseudo_and_pragma": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenPseudoAndPragmaConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "forbidden_void_type": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenVoidTypeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "form_tables_obsolete": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FormTablesObsoleteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "fully_type_constants": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FullyTypeConsantsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "fully_type_itabs": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FullyTypeITabsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "function_module_recommendations": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionModuleRecommendationsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "functional_writing": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionalWritingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "global_class": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/GlobalClassConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "identical_conditions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalConditionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "identical_contents": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalContentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "identical_descriptions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalDescriptionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "identical_form_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalFormNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "if_in_if": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IfInIfConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "implement_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplementMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "in_statement_indentation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InStatementIndentationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "indentation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IndentationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "inline_data_old_versions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineDataOldVersionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "intf_referencing_clas": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IntfReferencingClasConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "keep_single_parameter_on_one_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/KeepSingleParameterCallsOnOneLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "keyword_case": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/KeywordCaseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "line_break_multiple_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineBreakMultipleParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "line_break_style": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineBreakStyleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "line_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "line_only_punc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineOnlyPuncConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "local_class_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LocalClassNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "local_testclass_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LocalTestclassConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "local_variable_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LocalVariableNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "main_file_contents": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MainFileContentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "many_parentheses": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ManyParenthesesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "max_one_method_parameter_per_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MaxOneMethodParameterPerLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "max_one_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MaxOneStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "message_exists": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MessageExistsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "method_implemented_twice": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodImplementedTwiceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "method_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "method_overwrites_builtin": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodOverwritesBuiltInConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "method_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "mix_returning": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MixReturningConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "modify_only_own_db_tables": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ModifyOnlyOwnDBTablesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "msag_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MSAGConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "names_no_dash": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NamesNoDashConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "nesting": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NestingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "newline_between_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NewlineBetweenMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "no_aliases": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoAliasesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "no_chained_assignment": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoChainedAssignmentConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "no_external_form_calls": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoExternalFormCallsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "no_inline_in_optional_branches": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoInlineInOptionalBranchesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "no_public_attributes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoPublicAttributesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "no_yoda_conditions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoYodaConditionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "nrob_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NROBConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "object_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ObjectNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "obsolete_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ObsoleteStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "omit_parameter_name": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/OmitParameterNameConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "omit_preceding_zeros": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/OmitPrecedingZerosConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "omit_receiving": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/OmitReceivingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "parser_702_chaining": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Parser702ChainingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "parser_missing_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserMissingSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "pragma_style": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PragmaStyleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "prefer_corresponding": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferCorrespondingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "prefer_inline": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "prefer_is_not": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferIsNotConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "prefer_raise_exception_new": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseExceptionNewConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "prefer_returning_to_exporting": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferReturningToExportingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "prefer_xsdbool": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferXsdboolConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "preferred_compare_operator": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferredCompareOperatorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "prefix_is_current_class": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PrefixIsCurrentClassConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "reduce_string_templates": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ReduceStringTemplatesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "release_idoc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ReleaseIdocConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "remove_descriptions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RemoveDescriptionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "rfc_error_handling": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RFCErrorHandlingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "select_add_order_by": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectAddOrderByConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "select_performance": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectPerformanceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "select_single_full_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectSingleFullKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "selection_screen_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectionScreenNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "sequential_blank": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SequentialBlankConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "short_case": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ShortCaseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "sicf_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SICFConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "slow_parameter_passing": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SlowParameterPassingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "smim_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SMIMConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "space_before_colon": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SpaceBeforeColonConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "space_before_dot": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SpaceBeforeDotConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "sql_escape_host_variables": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SQLEscapeHostVariablesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "start_at_tab": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StartAtTabConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "static_call_via_instance": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StaticCallViaInstanceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "strict_sql": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StrictSQLConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "superclass_final": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuperclassFinalConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "superfluous_value": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuperfluousValueConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "sy_modification": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SyModificationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "tabl_enhancement_category": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TABLEnhancementCategoryConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "try_without_catch": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TryWithoutCatchConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type_form_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TypeFormParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "types_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TypesNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "uncaught_exception": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UncaughtExceptionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unknown_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnknownTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unnecessary_chaining": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryChainingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unnecessary_pragma": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryPragmaConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unnecessary_return": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryReturnConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unreachable_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnreachableCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unsecure_fae": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnsecureFAEConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unused_ddic": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedDDICConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unused_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unused_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unused_variables": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedVariablesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "use_bool_expression": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseBoolExpressionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "use_class_based_exceptions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseClassBasedExceptionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "use_line_exists": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseLineExistsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "use_new": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseNewConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "when_others_last": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/WhenOthersLastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "whitespace_end": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/WhitespaceEndConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "xml_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/XMLConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "type": "object"
         }
       },
       "required": [
         "global",
         "syntax",
-        "rules"
+        "rules",
+        "targetRules"
       ],
       "type": "object"
     },
