@@ -72,8 +72,10 @@ export class SelectSingleFullKey implements IRule {
         }
         const next = statements[i + 1];
         if (next?.get() instanceof Comment
-            && this.getConfig().allowPseudo === true
             && next.concatTokens().includes(this.getMetadata().pseudoComment + "")) {
+          if (this.getConfig().allowPseudo !== true) {
+            issues.push(Issue.atStatement(file, s, "Pseudo comment not allowed", this.getMetadata().key, this.getConfig().severity));
+          }
           continue;
         }
 
