@@ -5125,6 +5125,9 @@
     "SelectSingleFullKeyConf": {
       "additionalProperties": false,
       "properties": {
+        "allowPseudo": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -5137,6 +5140,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "allowPseudo"
+      ],
       "type": "object"
     },
     "SelectionScreenNamingConf": {
