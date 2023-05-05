@@ -87,6 +87,8 @@ export interface IConfig {
   app?: IAbaplintAppSettings;
   /** Settings for each rule, see https://rules.abaplint.org */
   rules: any;
+  /** see https://abaplint.app */
+  targetRules?: any;
 }
 
 export interface IConfiguration {
