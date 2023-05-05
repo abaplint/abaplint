@@ -60,7 +60,7 @@ export class Config implements IConfiguration {
   public getEnabledRules(): IRule[] {
     const rules: IRule[] = [];
     for (const rule of ArtifactsRules.getRules()) {
-      const ruleConfig = this.config["rules"][rule.getMetadata().key];
+      const ruleConfig = this.config["rules"]?.[rule.getMetadata().key];
       const ruleExists = ruleConfig !== undefined;
 
       if (ruleExists) {

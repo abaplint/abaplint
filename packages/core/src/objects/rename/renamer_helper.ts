@@ -113,6 +113,24 @@ export class RenamerHelper {
     return changes;
   }
 
+  public renameDDICAUTHReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const used = this.reg.getDDICReferences().listWhereUsed(obj);
+
+    for (const u of used) {
+      if (u.type !== "AUTH") {
+        continue;
+      }
+      const tabl = this.reg.getObject(u.type, u.name) as DataElement | undefined;
+      if (tabl === undefined) {
+        continue;
+      }
+
+      changes.push(...this.buildXMLFileEdits(tabl, "ROLLNAME", oldName, newName));
+    }
+    return changes;
+  }
+
   public buildXMLFileEdits(object: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
     const xml = object.getXMLFile();

@@ -124,7 +124,8 @@ function renderSyntax(type, name) {
 
   html = html + found.svg + "<br>\n" +
     "<b>Using</b>: " + use.join(", ") + "<br>\n" +
-    "<b>Used by</b>: " + by.join(", ") + "<br>\n";
+    "<b>Used by</b>: " + by.join(", ") + "<br>\n" +
+    "<b>Filename</b>: <a href=\"https://github.com/abaplint/abaplint/tree/main/packages/core/src/abap/2_statements/" + type + "s/" + found.filename + "\">" + found.filename + "</a><br>\n";
 
   document.getElementById("body").innerHTML = html;
 }

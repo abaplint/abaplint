@@ -24,6 +24,7 @@ export class RenameDataElement implements ObjectRenamer {
     changes = changes.concat(helper.renameDDICCodeReferences(obj, oldName, newName));
     changes = changes.concat(helper.renameDDICTABLReferences(obj, oldName, newName));
     changes = changes.concat(helper.renameDDICTTYPReferences(obj, oldName, newName));
+    changes = changes.concat(helper.renameDDICAUTHReferences(obj, oldName, newName));
 
     return {
       documentChanges: changes,

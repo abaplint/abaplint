@@ -23,10 +23,12 @@ export class CheckComments extends ABAPRule {
       shortDescription: `
 Various checks for comment usage.`,
       extendedInformation: `
-* End of line comments. Comments starting with "#EC" or "##" are ignored
+Detects end of line comments. Comments starting with "#EC" or "##" are ignored
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#put-comments-before-the-statement-they-relate-to`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `WRITE 2. " descriptive comment`,
+      goodExample: `" descriptive comment\nWRITE 2.`,
     };
   }
 

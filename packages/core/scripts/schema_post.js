@@ -27,6 +27,7 @@ function run() {
   }
 
   const rules = schema.definitions.IConfig.properties.rules.properties;
+  const targetRules = schema.definitions.IConfig.properties.targetRules.properties;
   for (const rule in rules) {
     const name = rules[rule].anyOf[0]["$ref"].split("/")[2];
 
@@ -36,6 +37,7 @@ function run() {
       process.exit(1);
     }
     rules[rule].description = description + "\nhttps://rules.abaplint.org/" + rule;
+    targetRules[rule].description = description + "\nhttps://rules.abaplint.org/" + rule;
   }
 
   fs.writeFileSync(filename, JSON.stringify(schema, null, 2));

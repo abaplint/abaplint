@@ -82,7 +82,7 @@ function findUsedBy(object, file) {
 }
 
 function filename(name) {
-  return name.replace(/(.)([A-Z])/, "$1_$2").toLowerCase() + ".ts";
+  return name.replace(/(.)([A-Z])/g, "$1_$2").toLowerCase() + ".ts";
 }
 
 function run(data, language) {
