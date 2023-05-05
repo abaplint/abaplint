@@ -4,6 +4,7 @@
 .travis.yml
 .vscode/
 *.js.map
+adhoc/*
 api-extractor.json
 build/*.tsbuildinfo
 build/scripts/*
@@ -16,6 +17,7 @@ docs/*
 dump.json
 foo.prog.abap
 graph.svg
+lexer_performance.abap
 npm-debug.log
 packages/*
 scripts/*
@@ -29,4 +31,3 @@ web/*
 worklist.txt
 zcl_foo.clas.abap
 zcl_foo.clas.abap
-lexer_performance.abap
