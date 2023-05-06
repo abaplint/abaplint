@@ -1457,4 +1457,22 @@ DATA bar TYPE REF TO lcl_bar.`;
     expect(hover?.value).to.contain("RTTI Name");
   });
 
+  it("Hover constant concatenated value1", () => {
+    const abap = `CONSTANTS cval TYPE string VALUE 'a' & 'b'.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("'ab'");
+  });
+
+  it("Hover constant concatenated value2", () => {
+    const abap = "CONSTANTS cval TYPE string VALUE `a` & `b`.";
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("`ab`");
+  });
+
 });

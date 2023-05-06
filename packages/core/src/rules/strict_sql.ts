@@ -27,7 +27,7 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abenopensql_strict_mo
 Also see separate rule sql_escape_host_variables
 
 Activates from v750 and up`,
-      tags: [RuleTag.Upport, RuleTag.Syntax, RuleTag.Quickfix],
+      tags: [RuleTag.Upport, RuleTag.Quickfix],
     };
   }
 
