@@ -876,7 +876,21 @@ export class BasicTypes {
 
     const constant = val.findFirstExpression(Expressions.Constant);
     if (constant) {
-      return constant.concatTokens();
+      const conc = val.findFirstExpression(Expressions.ConcatenatedConstant);
+      if (conc) {
+        const first = conc.getFirstToken().getStr().substring(0, 1);
+        let result = "";
+        for (const token of conc.getAllTokens()) {
+          if (token.getStr() === "&") {
+            continue;
+          } else {
+            result += token.getStr().substring(1, token.getStr().length - 1);
+          }
+        }
+        return first + result + first;
+      } else {
+        return constant.concatTokens();
+      }
     }
 
     const chain = val.findFirstExpression(Expressions.SimpleFieldChain);
