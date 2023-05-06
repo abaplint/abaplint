@@ -2895,7 +2895,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Strict SQL\nTags: Upport, Syntax, Quickfix\nhttps://rules.abaplint.org/strict_sql"
+              "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
             },
             "superclass_final": {
               "anyOf": [
@@ -4622,7 +4622,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Strict SQL\nTags: Upport, Syntax, Quickfix\nhttps://rules.abaplint.org/strict_sql"
+              "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
             },
             "superclass_final": {
               "anyOf": [
