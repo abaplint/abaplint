@@ -77,7 +77,6 @@ Activates from v750 and up`,
         const message = "INTO/APPENDING must be last in strict SQL";
         const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
-        break;
       }
     }
 
