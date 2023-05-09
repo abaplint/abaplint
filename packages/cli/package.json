@@ -42,7 +42,7 @@
         "@types/glob": "^7.2.0",
         "@types/minimist": "^1.2.2",
         "@types/mocha": "^10.0.1",
-        "@types/node": "^20.1.0",
+        "@types/node": "^20.1.1",
         "@types/progress": "^2.0.5",
         "chai": "^4.3.7",
         "chalk": "^5.2.0",
@@ -55,7 +55,7 @@
         "progress": "^2.0.3",
         "typescript": "^5.0.4",
         "webpack": "^5.82.0",
-        "webpack-cli": "^5.1.0",
+        "webpack-cli": "^5.1.1",
         "xml-js": "^1.6.11"
     },
     "dependencies": {}
