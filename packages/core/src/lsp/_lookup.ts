@@ -89,23 +89,28 @@ export class LSPLookup {
       return {hover, definition: found, definitionId: method, scope: bottomScope};
     }
 
-    const variable = bottomScope.findVariable(cursor.token.getStr());
-    if (variable !== undefined && variable.getStart().equals(cursor.token.getStart())) {
-      const hover = "Variable Definition\n\n" + this.dumpType(variable);
-
-      let location: LServer.Location | undefined = undefined;
-      if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
-        location = LSPUtils.identiferToLocation(variable);
-      }
-      return {hover, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
-    }
-
     let hoverValue = "";
     const ddicRefs = reg.getDDICReferences().listByFilename(cursor.identifier.getFilename(), cursor.identifier.getStart().getRow());
     for (const d of ddicRefs) {
       if (d.object && d.token && d.token.getStart().equals(cursor.identifier.getStart())) {
         hoverValue += `DDIC: ${d.object.getType()} ${d.object.getName()}`;
       }
+    }
+
+    const variable = bottomScope.findVariable(cursor.token.getStr());
+    if (variable !== undefined && variable.getStart().equals(cursor.token.getStart())) {
+      const hover = "Variable Definition\n\n" + this.dumpType(variable);
+      if (hoverValue !== "") {
+        hoverValue = hover + "\n_________________\n" + hoverValue;
+      } else {
+        hoverValue = hover;
+      }
+
+      let location: LServer.Location | undefined = undefined;
+      if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
+        location = LSPUtils.identiferToLocation(variable);
+      }
+      return {hover: hoverValue, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
     const refs = this.searchReferences(bottomScope, cursor.token);

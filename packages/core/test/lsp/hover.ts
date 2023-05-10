@@ -1475,4 +1475,14 @@ DATA bar TYPE REF TO lcl_bar.`;
     expect(hover?.value).to.contain("`ab`");
   });
 
+  it("Hover ddic table, TABLES, variable definition and ddic reference", () => {
+    const abap = `TABLES ztab.`;
+    const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file, tabl]).parse();
+    const hoverVariable = new Hover(reg).find(buildPosition(file, 0, 8));
+    expect(hoverVariable).to.not.equal(undefined);
+    expect(hoverVariable?.value).to.contain("DDIC:");
+  });
+
 });

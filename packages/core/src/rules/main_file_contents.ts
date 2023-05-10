@@ -63,7 +63,9 @@ export class MainFileContents implements IRule {
       return [];
     }
 
-    if (obj instanceof Objects.Program && obj.isInclude() === false) {
+    if (obj instanceof Objects.Program
+        && obj.isInclude() === false
+        && obj.isModulePool() === false) {
       let count = 0;
       let first = main.getStatements()[count];
       while (first !== undefined && first.get() instanceof Comment) {
