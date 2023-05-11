@@ -27,6 +27,17 @@ DATA: BEGIN OF foo,
         itab2 TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
       END OF foo.
 SELECT text FROM t100 INTO TABLE @foo-itab2.`, cnt: 0},
+// see https://github.com/abaplint/abaplint/issues/2957
+  {abap: `SELECT bkpf~bukrs, bkpf~belnr, bkpf~gjahr, bseg~buzei
+  FROM bkpf
+  INNER JOIN bseg ON bseg~bukrs = bkpf~bukrs
+  AND bseg~belnr = bkpf~belnr
+  AND bseg~gjahr = bkpf~gjahr
+  FOR ALL ENTRIES IN @bkpf_itab
+  WHERE bkpf~bukrs = @bkpf_itab-bukrs
+    AND bkpf~belnr = @bkpf_itab-belnr
+    AND bkpf~gjahr = @bkpf_itab-gjahr
+  INTO TABLE @bkpf_itab2.`, cnt: 0},
 ];
 
 testRule(tests, SelectAddOrderBy);
