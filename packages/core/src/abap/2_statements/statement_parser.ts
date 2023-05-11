@@ -148,6 +148,7 @@ export class StatementParser {
         const concat = statement.concatTokens().toUpperCase();
         if (concat.startsWith("CALL METHOD ") === false
             && concat.startsWith("RAISE EXCEPTION TYPE ") === false
+            && concat.startsWith("READ TABLE ") === false
             && concat.startsWith("LOOP AT ") === false
             && concat.startsWith("CALL FUNCTION ") === false) {
           for (const {first, second} of this.buildSplits(statement.getTokens())) {

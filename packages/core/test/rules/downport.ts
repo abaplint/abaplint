@@ -4767,7 +4767,7 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
-  it.only("outline, READ TABLE ASSIGNING WITH KEY on next line", async () => {
+  it("outline, READ TABLE ASSIGNING WITH KEY on next line", async () => {
     const abap = `TYPES: BEGIN OF ty_line,
     foo TYPE i,
   END OF ty_line.
@@ -4780,7 +4780,18 @@ READ TABLE <ls_order>-lines ASSIGNING FIELD-SYMBOL(<ls_line>)
 WITH KEY
 foo = 2.`;
 
-    const expected = `sdf`;
+    const expected = `TYPES: BEGIN OF ty_line,
+    foo TYPE i,
+  END OF ty_line.
+TYPES ty_lines TYPE STANDARD TABLE OF ty_line WITH DEFAULT KEY.
+TYPES: BEGIN OF ty_order,
+    lines TYPE ty_lines,
+  END OF ty_order.
+FIELD-SYMBOLS <ls_order> TYPE ty_order.
+FIELD-SYMBOLS <ls_line> TYPE ty_line.
+READ TABLE <ls_order>-lines ASSIGNING <ls_line>
+WITH KEY
+foo = 2.`;
 
     testFix(abap, expected);
   });
