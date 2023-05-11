@@ -165,7 +165,7 @@ export class BuiltIn {
     {
       name: "BOOLC",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -254,7 +254,7 @@ export class BuiltIn {
         "table": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
       },
       optional: {
-        "sep": new StringType(),
+        "sep": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -687,7 +687,7 @@ export class BuiltIn {
         "with": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
+        "sub": new CLikeType(),
         "regex": new StringType(),
         "pcre": new StringType(),
         "case": new CharacterType(1),
