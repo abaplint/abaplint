@@ -268,6 +268,18 @@ describe("Registry, object types", () => {
     expect(registry.getObjectCount()).to.equal(2);
   });
 
+  it("double add, first dependency next real", async () => {
+    const filename = "background.w3mi.data.png";
+    const file = new MemoryFile(filename, "moo");
+    const registry = new Registry();
+    registry.addDependency(file);
+    registry.addFile(file);
+
+    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.isFileDependency(filename)).to.equal(false);
+    expect(registry.isDependency(registry.getFirstObject()!)).to.equal(false);
+  });
+
 });
 
 
