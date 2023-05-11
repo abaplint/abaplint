@@ -232,6 +232,11 @@ export class TypeUtils {
           return true;
         }
         return false;
+      } else if (target instanceof StringType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
+        return false;
       }
     } else if (source instanceof HexType) {
       if (target instanceof HexType) {
