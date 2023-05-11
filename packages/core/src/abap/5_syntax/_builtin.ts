@@ -277,7 +277,7 @@ export class BuiltIn {
     {
       name: "CONTAINS",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
         "sub": new StringType(),
@@ -683,8 +683,8 @@ export class BuiltIn {
     {
       name: "REPLACE",
       mandatory: {
-        "val": new StringType(),
-        "with": new StringType(),
+        "val": new CLikeType(),
+        "with": new CLikeType(),
       },
       optional: {
         "sub": new StringType(),
