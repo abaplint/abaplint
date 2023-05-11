@@ -8213,6 +8213,14 @@ lv_char = to_upper( lv_char ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("condense, chars", () => {
+    const abap = `
+DATA lv_char TYPE c LENGTH 2.
+lv_char = condense( lv_char ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

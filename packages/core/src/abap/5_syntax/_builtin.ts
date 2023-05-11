@@ -263,12 +263,12 @@ export class BuiltIn {
     {
       name: "CONDENSE",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "del": new StringType(),
-        "from": new StringType(),
-        "to": new StringType(),
+        "del": new CLikeType(),
+        "from": new CLikeType(),
+        "to": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
