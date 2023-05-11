@@ -919,7 +919,7 @@ export class BuiltIn {
     {
       name: "TO_LOWER",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -928,7 +928,7 @@ export class BuiltIn {
     {
       name: "TO_MIXED",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional:
       {
@@ -942,7 +942,7 @@ export class BuiltIn {
 
     {
       name: "TO_UPPER",
-      mandatory: {"val": new StringType()},
+      mandatory: {"val": new CLikeType()},
       return: new StringType(),
       version: Version.v702,
     },
@@ -1000,7 +1000,7 @@ export class BuiltIn {
     {
       name: "XSDBOOL",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new CharacterType(1),
       version: Version.v740sp08,
