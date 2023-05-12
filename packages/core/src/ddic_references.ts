@@ -51,10 +51,11 @@ export class DDICReferences implements IDDICReferences {
       }
     }
 
-    const newName = obj.getName().toUpperCase();
-    const newType = obj.getType();
-    if (this.nameTypeIndex[newName]?.[newType]) {
-      this.nameTypeIndex[newName][newType] = [];
+    // remove from name + type index
+    const name = obj.getName().toUpperCase();
+    const type = obj.getType();
+    if (this.nameTypeIndex[name]?.[type]) {
+      this.nameTypeIndex[name][type] = [];
     }
   }
 
