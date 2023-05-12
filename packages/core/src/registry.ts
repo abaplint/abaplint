@@ -76,12 +76,12 @@ export class Registry implements IRegistry {
   private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
   private readonly objectsByType: { [type: string]: { [name: string]: IObject } } = {};
   private readonly dependencies: { [type: string]: { [name: string]: boolean } } = {};
-  private readonly references: IDDICReferences;
+  private readonly ddicReferences: IDDICReferences;
   private conf: IConfiguration;
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
-    this.references = new DDICReferences();
+    this.ddicReferences = new DDICReferences();
   }
 
   public static abaplintVersion(): string {
@@ -90,7 +90,7 @@ export class Registry implements IRegistry {
   }
 
   public getDDICReferences() {
-    return this.references;
+    return this.ddicReferences;
   }
 
   public* getObjects(): Generator<IObject, void, undefined> {
@@ -193,7 +193,7 @@ export class Registry implements IRegistry {
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
     if (obj.getFiles().length === 0) {
-      this.references.clear(obj);
+      this.ddicReferences.clear(obj);
       this.removeObject(obj);
     }
     return this;
