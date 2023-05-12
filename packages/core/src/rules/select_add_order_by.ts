@@ -80,6 +80,9 @@ If the target is a sorted/hashed table, no issue is reported`,
 
         if (this.isTargetSortedOrHashed(s, spaghetti, file)) {
           continue;
+        } else if (s.findFirstExpression(Expressions.SQLJoin) && s.findFirstExpression(Expressions.SQLForAllEntries)) {
+// see https://github.com/abaplint/abaplint/issues/2957
+          continue;
         }
 
         issues.push(Issue.atStatement(file, s, "Add ORDER BY", this.getMetadata().key, this.conf.severity));
