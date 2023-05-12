@@ -174,7 +174,7 @@ export class BuiltIn {
     {
       name: "BOOLX",
       mandatory: {
-        "bool": new StringType(),
+        "bool": new CLikeType(),
       },
       optional: {
         "bit": new IntegerType(),
@@ -194,7 +194,7 @@ export class BuiltIn {
     {
       name: "CHAR_OFF",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
         "add": new IntegerType(),
       },
       optional: {
@@ -207,7 +207,7 @@ export class BuiltIn {
     {
       name: "CHARLEN",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new IntegerType(),
     },
@@ -215,16 +215,16 @@ export class BuiltIn {
     {
       name: "CMAX",
       mandatory: {
-        "val1": new StringType(),
-        "val2": new StringType(),
+        "val1": new CLikeType(),
+        "val2": new CLikeType(),
       },
       optional: {
-        "val3": new StringType(),
-        "val4": new StringType(),
-        "val5": new StringType(),
-        "val6": new StringType(),
-        "val7": new StringType(),
-        "val9": new StringType(),
+        "val3": new CLikeType(),
+        "val4": new CLikeType(),
+        "val5": new CLikeType(),
+        "val6": new CLikeType(),
+        "val7": new CLikeType(),
+        "val9": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -233,16 +233,16 @@ export class BuiltIn {
     {
       name: "CMIN",
       mandatory: {
-        "val1": new StringType(),
-        "val2": new StringType(),
+        "val1": new CLikeType(),
+        "val2": new CLikeType(),
       },
       optional: {
-        "val3": new StringType(),
-        "val4": new StringType(),
-        "val5": new StringType(),
-        "val6": new StringType(),
-        "val7": new StringType(),
-        "val9": new StringType(),
+        "val3": new CLikeType(),
+        "val4": new CLikeType(),
+        "val5": new CLikeType(),
+        "val6": new CLikeType(),
+        "val7": new CLikeType(),
+        "val9": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -280,11 +280,11 @@ export class BuiltIn {
         "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "start": new StringType(),
-        "end": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "start": new CLikeType(),
+        "end": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "off": new IntegerType(),
         "len": new IntegerType(),
@@ -298,12 +298,12 @@ export class BuiltIn {
     {
       name: "CONTAINS_ANY_NOT_OF",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "start": new StringType(),
-        "end": new StringType(),
+        "sub": new CLikeType(),
+        "start": new CLikeType(),
+        "end": new CLikeType(),
         "off": new IntegerType(),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -315,12 +315,12 @@ export class BuiltIn {
     {
       name: "CONTAINS_ANY_OF",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "start": new StringType(),
-        "end": new StringType(),
+        "sub": new CLikeType(),
+        "start": new CLikeType(),
+        "end": new CLikeType(),
         "off": new IntegerType(),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -349,12 +349,12 @@ export class BuiltIn {
     {
       name: "COUNT",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "off": new IntegerType(),
         "len": new IntegerType(),
@@ -366,12 +366,12 @@ export class BuiltIn {
     {
       name: "COUNT_ANY_NOT_OF",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "off": new IntegerType(),
         "len": new IntegerType(),
@@ -383,12 +383,12 @@ export class BuiltIn {
     {
       name: "COUNT_ANY_OF",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "off": new IntegerType(),
         "len": new IntegerType(),
@@ -400,7 +400,7 @@ export class BuiltIn {
     {
       name: "DBMAXLEN",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new IntegerType(),
     },
@@ -408,8 +408,8 @@ export class BuiltIn {
     {
       name: "DISTANCE",
       mandatory: {
-        "val1": new StringType(),
-        "val2": new StringType(),
+        "val1": new CLikeType(),
+        "val2": new CLikeType(),
       },
       return: new IntegerType(),
       version: Version.v702,
@@ -418,8 +418,8 @@ export class BuiltIn {
     {
       name: "ESCAPE",
       mandatory: {
-        "val": new StringType(),
-        "format": new StringType(),
+        "val": new CLikeType(),
+        "format": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -436,12 +436,12 @@ export class BuiltIn {
     {
       name: "FIND",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "off": new IntegerType(),
         "len": new IntegerType(),
@@ -454,10 +454,10 @@ export class BuiltIn {
     {
       name: "FIND_ANY_NOT_OF",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
+        "sub": new CLikeType(),
         "off": new IntegerType(),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -469,10 +469,10 @@ export class BuiltIn {
     {
       name: "FIND_ANY_OF",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
+        "sub": new CLikeType(),
         "off": new IntegerType(),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -484,12 +484,12 @@ export class BuiltIn {
     {
       name: "FIND_END",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "off": new IntegerType(),
         "len": new IntegerType(),
@@ -517,7 +517,8 @@ export class BuiltIn {
 
     {
       name: "FROM_MIXED",
-      mandatory: {"val": new StringType()},
+      mandatory: {
+        "val": new CLikeType()},
       optional: {
         "case": new CharacterType(1),
         "sep": new IntegerType(),
@@ -530,8 +531,8 @@ export class BuiltIn {
     {
       name: "INSERT",
       mandatory: {
-        "val": new StringType(),
-        "sub": new StringType(),
+        "val": new CLikeType(),
+        "sub": new CLikeType(),
       },
       optional: {
         "off": new IntegerType(),
@@ -563,7 +564,7 @@ export class BuiltIn {
     {
       name: "LINE_INDEX",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new IntegerType(),
       version: Version.v740sp02,
@@ -596,11 +597,11 @@ export class BuiltIn {
     {
       name: "MATCH",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       }, optional: {
         "case": new CharacterType(1),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "occ": new IntegerType(),
       },
       return: new StringType(),
@@ -610,12 +611,12 @@ export class BuiltIn {
     {
       name: "MATCHES",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
         "case": new CharacterType(1),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "off": new IntegerType(),
         "len": new IntegerType(),
       },
@@ -627,17 +628,17 @@ export class BuiltIn {
     {
       name: "NMAX",
       mandatory: {
-        "val1": new StringType(),
-        "val2": new StringType(),
+        "val1": new CLikeType(),
+        "val2": new CLikeType(),
       },
       optional: {
-        "val3": new StringType(),
-        "val4": new StringType(),
-        "val5": new StringType(),
-        "val6": new StringType(),
-        "val7": new StringType(),
-        "val8": new StringType(),
-        "val9": new StringType(),
+        "val3": new CLikeType(),
+        "val4": new CLikeType(),
+        "val5": new CLikeType(),
+        "val6": new CLikeType(),
+        "val7": new CLikeType(),
+        "val8": new CLikeType(),
+        "val9": new CLikeType(),
       },
       return: new IntegerType(),
       version: Version.v702,
@@ -646,17 +647,17 @@ export class BuiltIn {
     {
       name: "NMIN",
       mandatory: {
-        "val1": new StringType(),
-        "val2": new StringType(),
+        "val1": new CLikeType(),
+        "val2": new CLikeType(),
       },
       optional: {
-        "val3": new StringType(),
-        "val4": new StringType(),
-        "val5": new StringType(),
-        "val6": new StringType(),
-        "val7": new StringType(),
-        "val8": new StringType(),
-        "val9": new StringType(),
+        "val3": new CLikeType(),
+        "val4": new CLikeType(),
+        "val5": new CLikeType(),
+        "val6": new CLikeType(),
+        "val7": new CLikeType(),
+        "val8": new CLikeType(),
+        "val9": new CLikeType(),
       },
       return: new IntegerType(),
       version: Version.v702,
@@ -665,7 +666,7 @@ export class BuiltIn {
     {
       name: "NUMOFCHAR",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new IntegerType(),
     },
@@ -673,7 +674,7 @@ export class BuiltIn {
     {
       name: "REPEAT",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
         "occ": new IntegerType(),
       },
       return: new StringType(),
@@ -688,8 +689,8 @@ export class BuiltIn {
       },
       optional: {
         "sub": new CLikeType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "off": new IntegerType(),
         "len": new IntegerType(),
@@ -716,7 +717,7 @@ export class BuiltIn {
     {
       name: "REVERSE",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -739,12 +740,12 @@ export class BuiltIn {
     {
       name: "SEGMENT",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
         "index": new IntegerType(),
       },
       optional: {
-        "sep": new StringType(),
-        "space": new StringType(),
+        "sep": new CLikeType(),
+        "space": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
@@ -753,11 +754,11 @@ export class BuiltIn {
     {
       name: "SHIFT_LEFT",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional:
       {
-        "sub": new StringType(),
+        "sub": new CLikeType(),
         "places": new IntegerType(),
         "circular": new IntegerType(),
       },
@@ -768,10 +769,10 @@ export class BuiltIn {
     {
       name: "SHIFT_RIGHT",
       mandatory: {
-        "val": new StringType(),
+        "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
+        "sub": new CLikeType(),
         "places": new IntegerType(),
         "circular": new IntegerType(),
       },
@@ -838,9 +839,9 @@ export class BuiltIn {
         "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -855,9 +856,9 @@ export class BuiltIn {
         "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -872,9 +873,9 @@ export class BuiltIn {
         "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -889,9 +890,9 @@ export class BuiltIn {
         "val": new CLikeType(),
       },
       optional: {
-        "sub": new StringType(),
-        "regex": new StringType(),
-        "pcre": new StringType(),
+        "sub": new CLikeType(),
+        "regex": new CLikeType(),
+        "pcre": new CLikeType(),
         "case": new CharacterType(1),
         "len": new IntegerType(),
         "occ": new IntegerType(),
@@ -950,9 +951,9 @@ export class BuiltIn {
     {
       name: "TRANSLATE",
       mandatory: {
-        "val": new StringType(),
-        "from": new StringType(),
-        "to": new StringType(),
+        "val": new CLikeType(),
+        "from": new CLikeType(),
+        "to": new CLikeType(),
       },
       return: new StringType(),
       version: Version.v702,
