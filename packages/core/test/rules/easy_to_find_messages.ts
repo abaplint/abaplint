@@ -28,24 +28,39 @@ async function run(abap: string): Promise<readonly Issue[]> {
     "</abapGit>";
 
   const reg = new Registry();
-  reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
   reg.addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
+  reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
   await reg.parseAsync();
   return new EasyToFindMessages().initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule easy_to_find_messages", () => {
+
   it("parser error", async () => {
     const abap = "sfsdfd";
     const issues = await run(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
-  it("zero issues", async () => {
+  it("not in use", async () => {
     const abap = "WRITE hello.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("MESSAGE, number, ok", async () => {
+    const abap = "MESSAGE e000(zag_unit_test).";
     const issues = await run(abap);
     expect(issues.length).to.equals(0);
   });
 
+  it("MESSAGE, double use, error", async () => {
+    const abap = `
+    MESSAGE e000(zag_unit_test).
+    MESSAGE e000(zag_unit_test).
+    `;
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
 
 });
