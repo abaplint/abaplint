@@ -1,29 +1,28 @@
 export class Message {
-  private readonly num: string;
-  private readonly msg: string;
+  private readonly number: string;
+  // the actual text,
+  private readonly message: string;
 
-  public constructor(num: string, msg: string) {
-    this.num = num;
-    if (this.num === undefined) {
-      this.num = "";
+  public constructor(number: string, message: string) {
+    this.number = number;
+    if (this.number === undefined) {
+      this.number = "";
     }
-    this.msg = msg;
-    if (this.msg === undefined) {
-      this.msg = "";
+    this.message = message;
+    if (this.message === undefined) {
+      this.message = "";
     }
   }
 
   public getNumber(): string {
-    return this.num;
+    return this.number;
   }
 
   public getMessage(): string {
-    return this.msg;
+    return this.message;
   }
 
   public getPlaceholderCount(): number {
     return (this.getMessage().match(/&/g) || []).length;
   }
-
-// todo: languages + long text
 }
