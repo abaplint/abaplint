@@ -17,6 +17,7 @@ export class MSAGConsistency implements IRule {
       key: "msag_consistency",
       title: "MSAG consistency check",
       shortDescription: `Checks the validity of messages in message classes`,
+      extendedInformation: `Message numbers must be 3 digits, and message text must not be empty`,
     };
   }
 
