@@ -6,8 +6,26 @@ export class MSAGReferences implements IMSAGReferences {
   private readonly nameNumberIndex: { [messageClass: string]: { [number: number]: {filename: string, token: Token}[] } } = {};
   private readonly filenameIndex: { [filename: string]: {token: Token, messageClass: string, number: number}[] } = {};
 
-  public addUsing(_filename: string, _token: Token, _messageClass: string, _number: number): void {
-    throw new Error("Method not implemented.");
+  public addUsing(filename: string, token: Token, messageClass: string, number: number): void {
+    if (this.filenameIndex[filename] === undefined) {
+      this.filenameIndex[filename] = [];
+    }
+    this.filenameIndex[filename].push({
+      token: token,
+      messageClass: messageClass,
+      number: number,
+    });
+
+    if (this.nameNumberIndex[messageClass] === undefined) {
+      this.nameNumberIndex[messageClass] = {};
+    }
+    if (this.nameNumberIndex[messageClass][number] === undefined) {
+      this.nameNumberIndex[messageClass][number] = [];
+    }
+    this.nameNumberIndex[messageClass][number].push({
+      filename: filename,
+      token: token,
+    });
   }
 
   public clear(obj: IObject): void {
