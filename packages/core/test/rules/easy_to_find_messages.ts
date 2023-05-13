@@ -54,6 +54,12 @@ describe("Rule easy_to_find_messages", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("MESSAGE, number, ok", async () => {
+    const abap = "MESSAGE ID 'ZAG_UNIT_TEST' TYPE 'I' NUMBER 000.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("MESSAGE, double use, error", async () => {
     const abap = `
     MESSAGE e000(zag_unit_test).

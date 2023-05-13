@@ -11,11 +11,10 @@ export class MessageSource {
 
     if (node.getFirstToken().getStr().toUpperCase() === "ID") {
       const id = node.findExpressionAfterToken("ID")?.concatTokens();
-      const number = node.findExpressionAfterToken("NUMBER")?.concatTokens();
-      if (id?.startsWith("'") && number?.startsWith("'")) {
-        const messageNumber = number.substring(1, number.length - 2);
-        const messageClass = id.substring(1, id.length - 2).toUpperCase();
-        scope.getMSAGReferences().addUsing(filename, node.getFirstToken(), messageClass, messageNumber);
+      const number = node.findDirectExpression(Expressions.MessageNumber)?.concatTokens();
+      if (id?.startsWith("'") && number) {
+        const messageClass = id.substring(1, id.length - 1).toUpperCase();
+        scope.getMSAGReferences().addUsing(filename, node.getFirstToken(), messageClass, number);
       }
     } else {
       const typeAndNumber = node.findDirectExpression(Expressions.MessageTypeAndNumber)?.concatTokens();
