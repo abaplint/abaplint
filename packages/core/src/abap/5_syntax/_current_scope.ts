@@ -21,6 +21,7 @@ import {TypePool} from "../../objects/type_pool";
 import {SyntaxLogic} from "./syntax";
 import {IDDICReferences} from "../../_iddic_references";
 import {FunctionGroup} from "../../objects";
+import {IMSAGReferences} from "../../_imsag_references";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -397,6 +398,10 @@ export class CurrentScope {
 
   public getDDICReferences(): IDDICReferences {
     return this.reg.getDDICReferences();
+  }
+
+  public getMSAGReferences(): IMSAGReferences {
+    return this.reg.getMSAGReferences();
   }
 
   public getParentObj(): IObject {

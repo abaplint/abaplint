@@ -33,6 +33,7 @@ export class MessageClass extends AbstractObject {
   }
 
   public getByNumber(num: string): Message | undefined {
+    // todo, optimize performance,
     for (const message of this.getMessages()) {
       if (message.getNumber() === num) {
         return message;

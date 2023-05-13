@@ -10,6 +10,8 @@ import {ExcludeHelper} from "./utils/excludeHelper";
 import {DDICReferences} from "./ddic_references";
 import {IDDICReferences} from "./_iddic_references";
 import {RulesRunner} from "./rules_runner";
+import {IMSAGReferences} from "./_imsag_references";
+import {MSAGReferences} from "./msag_references";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -76,12 +78,14 @@ export class Registry implements IRegistry {
   private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
   private readonly objectsByType: { [type: string]: { [name: string]: IObject } } = {};
   private readonly dependencies: { [type: string]: { [name: string]: boolean } } = {};
-  private readonly references: IDDICReferences;
+  private readonly ddicReferences: IDDICReferences;
+  private readonly msagReferences: IMSAGReferences;
   private conf: IConfiguration;
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
-    this.references = new DDICReferences();
+    this.ddicReferences = new DDICReferences();
+    this.msagReferences = new MSAGReferences();
   }
 
   public static abaplintVersion(): string {
@@ -90,7 +94,11 @@ export class Registry implements IRegistry {
   }
 
   public getDDICReferences() {
-    return this.references;
+    return this.ddicReferences;
+  }
+
+  public getMSAGReferences() {
+    return this.msagReferences;
   }
 
   public* getObjects(): Generator<IObject, void, undefined> {
@@ -193,7 +201,8 @@ export class Registry implements IRegistry {
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
     if (obj.getFiles().length === 0) {
-      this.references.clear(obj);
+      this.ddicReferences.clear(obj);
+      this.msagReferences.clear(obj);
       this.removeObject(obj);
     }
     return this;

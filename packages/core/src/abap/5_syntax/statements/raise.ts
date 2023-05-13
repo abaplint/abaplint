@@ -60,8 +60,15 @@ export class Raise implements StatementSyntax {
     for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
       new Source().runSyntax(s, scope, filename);
     }
+
     for (const s of node.findDirectExpressions(Expressions.MessageSource)) {
       new MessageSource().runSyntax(s, scope, filename);
+    }
+    const id = node.findExpressionAfterToken("ID")?.concatTokens();
+    const number = node.findDirectExpression(Expressions.MessageNumber)?.concatTokens();
+    if (id?.startsWith("'") && number) {
+      const messageClass = id.substring(1, id.length - 1).toUpperCase();
+      scope.getMSAGReferences().addUsing(filename, node.getFirstToken(), messageClass, number);
     }
 
   }
