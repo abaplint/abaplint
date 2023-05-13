@@ -4,6 +4,7 @@
   "description": "ABAP language support for Monaco Editor",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
+  "funding": "https://github.com/sponsors/larshp",
   "scripts": {
     "test": "tsc",
     "publish:minor": "npm --no-git-tag-version version minor && rm -rf build && npm install && npm run test && npm publish --access public",
