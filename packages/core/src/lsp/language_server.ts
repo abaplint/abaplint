@@ -15,6 +15,7 @@ import {References} from "./references";
 import {Implementation} from "./implementation";
 import {SemanticHighlighting} from "./semantic";
 import {StatementFlow} from "../abap/flow/statement_flow";
+import {CodeLens} from "./code_lens";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/main/versions/protocol-2-x.md#range
@@ -117,6 +118,11 @@ export class LanguageServer {
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#semanticTokensRangeParams
   public semanticTokensRange(range: ITextDocumentRange): LServer.SemanticTokens {
     return new SemanticHighlighting(this.reg).semanticTokensRange(range);
+  }
+
+  // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_codeLens
+  public codeLens(textDocument: LServer.TextDocumentIdentifier) {
+    return new CodeLens(this.reg).list(textDocument);
   }
 
 
