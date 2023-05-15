@@ -64,6 +64,8 @@ jobs:
       id: get-comment-body
       run: |
         cd .. && cd ..
+        pwd
+        ls
         cat comment-body.txt
         body=$(cat comment-body.txt)
         body="${body//'%'/'%25'}"
@@ -79,4 +81,4 @@ jobs:
         issue-number: '${{steps.findPr.outputs.pr}}'
         edit-mode: replace
         comment-id: '${{steps.fc.outputs.comment-id}}'
-        body-path: comment-body.txt
+        body-path: ../../comment-body.txt
