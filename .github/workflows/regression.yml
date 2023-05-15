@@ -57,21 +57,8 @@ jobs:
         repository: 'abaplint/abaplint'
         issue-number: '${{steps.findPr.outputs.pr}}'
         body-includes: Regression test results
-    - run: echo ${{ steps.fc.outputs.comment-id }}
 
-    - name: Build body from file
-      if: steps.findPr.outputs.pr != ''
-      id: get-comment-body
-      run: |
-        cd .. && cd ..
-        pwd
-        ls
-        cat comment-body.txt
-        body=$(cat comment-body.txt)
-        body="${body//'%'/'%25'}"
-        body="${body//$'\n'/'%0A'}"
-        body="${body//$'\r'/'%0D'}"
-        echo "body=$body" >> $GITHUB_OUTPUT
+    - run: echo ${{ steps.fc.outputs.comment-id }}
 
     - name: Create comment
       if: steps.findPr.outputs.pr != ''
