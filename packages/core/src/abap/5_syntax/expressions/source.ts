@@ -100,6 +100,7 @@ export class Source {
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
+          this.addIfInferred(node, scope, filename, foundType);
           return foundType;
         }
         case "REF":

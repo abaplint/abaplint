@@ -22,8 +22,12 @@ export class EmptyLineinStatement extends ABAPRule {
       key: "empty_line_in_statement",
       title: "Find empty lines in statements",
       shortDescription: `Checks that statements do not contain empty lines.`,
-      extendedInformation: `https://docs.abapopenchecks.org/checks/41/`,
-      tags: [RuleTag.Quickfix, RuleTag.Whitespace, RuleTag.SingleFile],
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-obsess-with-separating-blank-lines
+
+https://docs.abapopenchecks.org/checks/41/`,
+      tags: [RuleTag.Quickfix, RuleTag.Whitespace, RuleTag.SingleFile, RuleTag.Styleguide],
+      badExample: `WRITE\n\nhello.`,
+      goodExample: `WRITE hello.`,
     };
   }
 

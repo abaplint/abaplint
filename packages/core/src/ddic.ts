@@ -408,7 +408,7 @@ export class DDIC {
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return new Types.StringType({qualifiedName: qualifiedName});
+        return new Types.StringType({qualifiedName: qualifiedName || "STRING"});
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":

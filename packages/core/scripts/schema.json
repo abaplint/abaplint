@@ -1922,7 +1922,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements do not contain empty lines.\nTags: Quickfix, Whitespace, SingleFile\nhttps://rules.abaplint.org/empty_line_in_statement"
+              "description": "Checks that statements do not contain empty lines.\nTags: Quickfix, Whitespace, SingleFile, Styleguide\nhttps://rules.abaplint.org/empty_line_in_statement"
             },
             "empty_statement": {
               "anyOf": [
@@ -3660,7 +3660,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements do not contain empty lines.\nTags: Quickfix, Whitespace, SingleFile\nhttps://rules.abaplint.org/empty_line_in_statement"
+              "description": "Checks that statements do not contain empty lines.\nTags: Quickfix, Whitespace, SingleFile, Styleguide\nhttps://rules.abaplint.org/empty_line_in_statement"
             },
             "empty_statement": {
               "anyOf": [

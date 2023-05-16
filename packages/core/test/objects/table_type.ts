@@ -167,7 +167,7 @@ describe("Table Type, parse XML", () => {
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
-    expect(row.getQualifiedName()).to.equal(undefined);
+    expect(row.getQualifiedName()).to.equal("STRING");
   });
 
   it("OBJECT ref type", async () => {
