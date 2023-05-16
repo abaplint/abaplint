@@ -4796,4 +4796,34 @@ foo = 2.`;
     testFix(abap, expected);
   });
 
+  it("string_table, inferred row", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>STRING_TABLE</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>STRG</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>String Table</DDTEXT>
+    <TYPELEN>000008</TYPELEN>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const abap = `DATA itab TYPE string_table.
+APPEND CONV #( 'ABC' ) TO itab.`;
+
+    const expected = `DATA itab TYPE string_table.
+DATA temp1 TYPE string.
+temp1 = 'ABC'.
+APPEND temp1 TO itab.`;
+
+    testFix(abap, expected, [new MemoryFile("string_table.ttyp.xml", xml)]);
+  });
+
 });

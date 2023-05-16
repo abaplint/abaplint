@@ -71,7 +71,7 @@ describe("Domain, parse main xml", () => {
     const dtel = reg.getFirstObject()! as Domain;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(BasicTypes.StringType);
-    expect(type.getQualifiedName()).to.equal(undefined);
+    expect(type.getQualifiedName()).to.equal("STRING");
   });
 
   it("DEC with zero decimals", async () => {
