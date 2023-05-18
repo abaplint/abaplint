@@ -762,10 +762,10 @@ CLEAR temp1.
 DATA temp2 LIKE LINE OF temp1.
 temp2-word = 0.
 temp2-shift = 3.
-APPEND temp2 TO temp1.
+INSERT temp2 INTO TABLE temp1.
 temp2-word = 4.
 temp2-shift = 5.
-APPEND temp2 TO temp1.
+INSERT temp2 INTO TABLE temp1.
 tab = temp1.`;
 
     testFix(abap, expected);
@@ -785,10 +785,10 @@ CLEAR temp1.
 DATA temp2 LIKE LINE OF temp1.
 temp2-word = 0.
 temp2-shift = 3.
-APPEND temp2 TO temp1.
+INSERT temp2 INTO TABLE temp1.
 temp2-word = 4.
 temp2-shift = 5.
-APPEND temp2 TO temp1.
+INSERT temp2 INTO TABLE temp1.
 tab = temp1.`;
 
     testFix(abap, expected);
@@ -805,7 +805,7 @@ DATA temp1 LIKE tab.
 CLEAR temp1.
 DATA temp2 LIKE LINE OF temp1.
 temp2-low = 0.
-APPEND temp2 TO temp1.
+INSERT temp2 INTO TABLE temp1.
 tab = temp1.`;
 
     testFix(abap, expected);
@@ -820,8 +820,8 @@ DATA(sdf) = VALUE ty( ( 1 ) ( 2 ) ).`;
 TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA temp1 TYPE ty.
 CLEAR temp1.
-APPEND 1 TO temp1.
-APPEND 2 TO temp1.
+INSERT 1 INTO TABLE temp1.
+INSERT 2 INTO TABLE temp1.
 DATA(sdf) = temp1.`;
 
     testFix(abap, expected);
@@ -1208,7 +1208,7 @@ DATA new_height TYPE tt_turtles.
 DATA temp1 TYPE tt_turtles.
 CLEAR temp1.
 LOOP AT turtles ASSIGNING FIELD-SYMBOL(<x>).
-  APPEND <x> TO temp1.
+  INSERT <x> INTO TABLE temp1.
 ENDLOOP.
 new_height = temp1.`;
 
@@ -1448,7 +1448,7 @@ DATA temp3 LIKE sy-index.
 temp3 = sy-index.
 WHILE NOT i = 2.
   sy-index = temp3.
-  APPEND |hello| TO temp1.
+  INSERT |hello| INTO TABLE temp1.
   i = i + 1.
 ENDWHILE.
 tab = temp1.`;
@@ -1472,8 +1472,8 @@ DATA(result) = VALUE ty_tab(
 TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA temp1 TYPE ty_tab.
 CLEAR temp1.
-APPEND COND string( LET current_count = 2 IN WHEN current_count = 1 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
-APPEND COND string( LET current_count = 2 IN WHEN current_count = 2 THEN |{ current_count }| ELSE |{ current_count }| ) TO temp1.
+INSERT COND string( LET current_count = 2 IN WHEN current_count = 1 THEN |{ current_count }| ELSE |{ current_count }| ) INTO TABLE temp1.
+INSERT COND string( LET current_count = 2 IN WHEN current_count = 2 THEN |{ current_count }| ELSE |{ current_count }| ) INTO TABLE temp1.
 DATA(result) = temp1.`;
     testFix(abap, expected);
   });
@@ -2070,7 +2070,7 @@ ENDFORM.`;
     DATA temp1 LIKE input.
     CLEAR temp1.
     DATA temp2 LIKE LINE OF temp1.
-    APPEND temp2 TO temp1.
+    INSERT temp2 INTO TABLE temp1.
     input  = temp1.`;
     testFix(abap, expected);
   });
@@ -2084,8 +2084,8 @@ ENDFORM.`;
     DATA temp1 LIKE input.
     CLEAR temp1.
     DATA temp2 LIKE LINE OF temp1.
-    APPEND temp2 TO temp1.
-    APPEND temp2 TO temp1.
+    INSERT temp2 INTO TABLE temp1.
+    INSERT temp2 INTO TABLE temp1.
     input  = temp1.`;
     testFix(abap, expected);
   });
@@ -2149,7 +2149,7 @@ ENDFORM.`;
   DATA temp1 LIKE results.
   CLEAR temp1.
   LOOP AT garden_rows INTO DATA(row).
-    APPEND row TO temp1.
+    INSERT row INTO TABLE temp1.
   ENDLOOP.
   results = temp1.`;
     testFix(abap, expected);
@@ -2175,7 +2175,7 @@ ENDFORM.`;
     temp3 = sy-index.
     WHILE seed <= 1.
       sy-index = temp3.
-      APPEND row && seed TO temp1.
+      INSERT row && seed INTO TABLE temp1.
       seed = seed + 1.
     ENDWHILE.
 ENDLOOP.
@@ -2227,7 +2227,7 @@ ENDLOOP.
       sy-index = temp3.
     DATA offset TYPE i.
     offset = 2.
-      APPEND row && offset TO temp1.
+      INSERT row && offset INTO TABLE temp1.
       seed = seed + 1.
     ENDWHILE.
 ENDLOOP.
@@ -2247,7 +2247,7 @@ ENDLOOP.
   DATA tab2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA temp1 LIKE tab2.
   CLEAR temp1.
-  APPEND LINES OF tab1 TO index TO temp1.
+  INSERT LINES OF tab1 TO index INTO TABLE temp1.
   tab2 = temp1.`;
     testFix(abap, expected);
   });
@@ -2525,8 +2525,8 @@ result = temp1.`;
   temp3 = sy-index.
   WHILE i GT 5.
     sy-index = temp3.
-    APPEND |dsf| TO temp1.
-    APPEND || TO temp1.
+    INSERT |dsf| INTO TABLE temp1.
+    INSERT || INTO TABLE temp1.
     i = i - 1.
   ENDWHILE.
   result = temp1.`;
@@ -2550,8 +2550,8 @@ result = temp1.`;
     temp3 = sy-index.
     WHILE i < 2.
       sy-index = temp3.
-      APPEND |{ sy-index }| TO temp1.
-      APPEND || TO temp1.
+      INSERT |{ sy-index }| INTO TABLE temp1.
+      INSERT || INTO TABLE temp1.
       i = i + 1.
     ENDWHILE.
     result = temp1.`;
@@ -2583,7 +2583,7 @@ INSERT temp1 INTO TABLE rt_letter.`;
   DATA temp1 LIKE result.
   CLEAR temp1.
   temp1 = result.
-  APPEND 5 TO temp1.
+  INSERT 5 INTO TABLE temp1.
   result = temp1.`;
     testFix(abap, expected);
   });
@@ -2975,7 +2975,7 @@ DATA temp3 LIKE sy-index.
 temp3 = sy-index.
 WHILE NOT i > lv_start * 2.
   sy-index = temp3.
-  APPEND lv_start TO temp1.
+  INSERT lv_start INTO TABLE temp1.
   i = i + 1.
 ENDWHILE.
 result = temp1.`;
@@ -3477,7 +3477,7 @@ CLASS lcl IMPLEMENTATION.
     temp2-low = 2.
     temp2-sign = 'I'.
     temp2-option = 'EQ'.
-    APPEND temp2 TO temp1.
+    INSERT temp2 INTO TABLE temp1.
     foo( temp1 ).
   ENDMETHOD.
 ENDCLASS.`;
@@ -3512,7 +3512,7 @@ DATA temp1 TYPE inttab.
 CLEAR temp1.
 LOOP AT alphas INTO DATA(a).
   DATA(i) = sy-tabix.
-  APPEND i TO temp1.
+  INSERT i INTO TABLE temp1.
 ENDLOOP.
 DATA(indexes) = temp1.
 
@@ -3550,7 +3550,7 @@ DATA temp1 TYPE inttab.
 CLEAR temp1.
 LOOP AT alphas ASSIGNING FIELD-SYMBOL(<a>).
   DATA(i) = sy-tabix.
-  APPEND <a> TO temp1.
+  INSERT <a> INTO TABLE temp1.
 ENDLOOP.
 DATA(indexes) = temp1.
 
@@ -3578,7 +3578,7 @@ ENDDO.
 DATA temp1 TYPE ty.
 CLEAR temp1.
 LOOP AT tab INTO DATA(row) FROM 2 TO 3.
-  APPEND row TO temp1.
+  INSERT row INTO TABLE temp1.
 ENDLOOP.
 DATA(sdf) = temp1.
 ASSERT lines( sdf ) = 2.`;
@@ -3642,7 +3642,7 @@ CLEAR temp1.
 LOOP AT initial_numbers INTO DATA(initial_line) GROUP BY ( group = initial_line-group ) INTO DATA(grouping_group).
   DATA temp2 LIKE LINE OF temp1.
   temp2-group = grouping_group-group.
-  APPEND temp2 TO temp1.
+  INSERT temp2 INTO TABLE temp1.
 ENDLOOP.
 DATA(sdf) = temp1.
 ASSERT lines( sdf ) = 1.`;
@@ -3748,7 +3748,7 @@ ENDLOOP.`;
     temp1 = aggregated_data.
     LOOP AT initial_numbers INTO DATA(ls_numgrp) GROUP BY ( group = ls_numgrp-group count = GROUP SIZE ) INTO DATA(ls_group).
       DATA temp2 LIKE LINE OF temp1.
-      APPEND temp2 TO temp1.
+      INSERT temp2 INTO TABLE temp1.
     ENDLOOP.
     aggregated_data = temp1.`;
     testFix(abap, expected);
@@ -4652,10 +4652,10 @@ DATA temp2 LIKE LINE OF temp1.
 temp2-descr = 'this is a description'.
 temp2-title = 'title_01'.
 temp2-value = 'value_01'.
-APPEND temp2 TO temp1.
+INSERT temp2 INTO TABLE temp1.
 temp2-title = 'title_04'.
 temp2-value = 'value_04'.
-APPEND temp2 TO temp1.
+INSERT temp2 INTO TABLE temp1.
 i_tab = temp1.`;
     testFix(abap, expected);
   });
