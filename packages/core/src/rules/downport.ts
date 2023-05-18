@@ -2315,10 +2315,11 @@ ${indentation}    output = ${topTarget}.`;
               }
               body += indentation + structureName + "-" + b.concatTokens() + ".\n";
             } else if (b.get() instanceof Expressions.Source) {
-              body += indentation + "APPEND " + b.concatTokens() + ` TO ${uniqueName}.\n`;
+// note: it wont work with APPEND for Hashed/Sorted Tables, so use INSERT,
+              body += indentation + "INSERT " + b.concatTokens() + ` INTO TABLE ${uniqueName}.\n`;
               skip = true;
             } else if (b.get() instanceof Expressions.ValueBodyLines) {
-              body += indentation + "APPEND " + b.concatTokens() + ` TO ${uniqueName}.\n`;
+              body += indentation + "INSERT " + b.concatTokens() + ` INTO TABLE ${uniqueName}.\n`;
               skip = true;
             } else if (b.concatTokens() === ")") {
               if (added === false && previous?.concatTokens() === "(") {
@@ -2326,7 +2327,7 @@ ${indentation}    output = ${topTarget}.`;
                 added = true;
               }
               if (skip === false) {
-                body += indentation + `APPEND ${structureName} TO ${uniqueName}.\n`;
+                body += indentation + `INSERT ${structureName} INTO TABLE ${uniqueName}.\n`;
               }
             }
             previous = b;
