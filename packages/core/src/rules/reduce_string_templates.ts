@@ -47,6 +47,10 @@ export class ReduceStringTemplates extends ABAPRule {
             issues.push(Issue.atToken(file, second.getFirstToken(), "Nested string templates, reduce", this.getMetadata().key, this.conf.severity));
           }
 
+          if (ts.findDirectExpression(Expressions.StringTemplateFormatting)) {
+            continue;
+          }
+
           for (const constant of source.findDirectExpressions(Expressions.Constant)) {
             for (const constantString of constant.findDirectExpressions(Expressions.ConstantString)) {
               issues.push(Issue.atToken(file, constantString.getFirstToken(), "Constant string in text template, reduce", this.getMetadata().key, this.conf.severity));
