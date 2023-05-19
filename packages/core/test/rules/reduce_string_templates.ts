@@ -54,4 +54,12 @@ describe("Rule: reduce_string_templates", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("with options", async () => {
+    const abap = `
+    PARAMETERS p_width TYPE i.
+    DATA(str) = |{ '' WIDTH = p_width PAD = '=' }|.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
