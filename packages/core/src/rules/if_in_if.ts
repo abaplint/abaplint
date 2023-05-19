@@ -48,7 +48,16 @@ IF condition1.
   ...
 ELSEIF condition2.
   ...
-ENDIF.`,
+ENDIF.
+
+CASE variable.
+  WHEN value1.
+  ...
+  WHEN value2.
+    IF condition2.
+      ...
+    ENDIF.
+ENDCASE.`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
