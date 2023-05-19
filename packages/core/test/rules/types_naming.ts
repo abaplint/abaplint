@@ -18,6 +18,11 @@ BEGIN OF ty_foo,
   END OF boo,
 END OF ty_foo.`, cnt: 0},
 
+  {abap: `types:
+    begin of enum ty_bracket_type structure bracket_type,
+      no_bracket,
+      opening,
+    end of enum ty_bracket_type structure bracket_type.`, cnt: 0},
 ];
 
 testRule(tests, TypesNaming);

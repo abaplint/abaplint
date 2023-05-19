@@ -50,12 +50,14 @@ export class TypesNaming extends ABAPRule {
 
       if (stat.get() instanceof Statements.Type && nesting === 0) {
         expr = stat.findFirstExpression(Expressions.NamespaceSimpleName);
-      } else if (stat.get() instanceof Statements.TypeBegin) {
+      } else if (stat.get() instanceof Statements.TypeBegin
+          || stat.get() instanceof Statements.TypeEnumBegin) {
         if (nesting === 0) {
           expr = stat.findFirstExpression(Expressions.NamespaceSimpleName);
         }
         nesting = nesting + 1;
-      } else if (stat.get() instanceof Statements.TypeEnd) {
+      } else if (stat.get() instanceof Statements.TypeEnd
+          || stat.get() instanceof Statements.TypeEnumEnd) {
         nesting = nesting - 1;
         continue;
       } else {
