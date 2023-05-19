@@ -8,6 +8,7 @@ import {SQLFrom} from "./sql_from";
 import {SQLForAllEntries} from "./sql_for_all_entries";
 import {ScopeType} from "../_scope_type";
 import {SQLSource} from "./sql_source";
+import {SQLCompare} from "./sql_compare";
 
 export class Select {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, skipImplicitInto = false): void {
@@ -47,8 +48,12 @@ export class Select {
       }
     }
 
-    for (const s of node.findAllExpressions(Expressions.SQLSource)) {
+    for (const s of node.findDirectExpressions(Expressions.SQLSource)) {
       new SQLSource().runSyntax(s, scope, filename);
+    }
+
+    for (const s of node.findAllExpressions(Expressions.SQLCompare)) {
+      new SQLCompare().runSyntax(s, scope, filename);
     }
 
     if (scope.getType() === ScopeType.OpenSQL) {
