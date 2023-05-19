@@ -5,9 +5,9 @@ import {VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
-import {Source} from "./source";
 import {SQLForAllEntries} from "./sql_for_all_entries";
 import {ScopeType} from "../_scope_type";
+import {SQLSource} from "./sql_source";
 
 export class Select {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, skipImplicitInto = false): void {
@@ -32,6 +32,7 @@ export class Select {
     for (const t of node.findAllExpressions(Expressions.Target)) {
       new Target().runSyntax(t, scope, filename);
     }
+
     // check implicit into, the target field is implict equal to the table name
     if (skipImplicitInto === false
         && node.findDirectExpression(Expressions.SQLIntoTable) === undefined
@@ -46,11 +47,8 @@ export class Select {
       }
     }
 
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
-    }
-    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, scope, filename);
+    for (const s of node.findAllExpressions(Expressions.SQLSource)) {
+      new SQLSource().runSyntax(s, scope, filename);
     }
 
     if (scope.getType() === ScopeType.OpenSQL) {

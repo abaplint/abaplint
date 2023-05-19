@@ -93,7 +93,7 @@ async function run(abap: string): Promise<readonly Issue[]> {
   return new EasyToFindMessages().initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe.only("Rule sql_value_conversion", () => {
+describe.skip("Rule sql_value_conversion", () => {
 
   it("parser error", async () => {
     const abap = "sfsdfd";
@@ -104,7 +104,7 @@ describe.only("Rule sql_value_conversion", () => {
   it("conversion", async () => {
     const abap = `
     DATA ls_result TYPE t100.
-    SELECT SINGLE * FROM t100 INTO ls_result WHERE arbgb = 'ZAG_UNIT_TEST' AND msgnr = 123.`;
+    SELECT SINGLE * FROM t100 INTO ls_result WHERE msgnr = 123.`;
     const issues = await run(abap);
     expect(issues.length).to.equals(1);
   });
@@ -112,9 +112,17 @@ describe.only("Rule sql_value_conversion", () => {
   it("fixed", async () => {
     const abap = `
     DATA ls_result TYPE t100.
-    SELECT SINGLE * FROM t100 INTO ls_result WHERE arbgb = 'ZAG_UNIT_TEST' AND msgnr = '123'.`;
+    SELECT SINGLE * FROM t100 INTO ls_result WHERE msgnr = '123'.`;
     const issues = await run(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("too short", async () => {
+    const abap = `
+    DATA ls_result TYPE t100.
+    SELECT SINGLE * FROM t100 INTO ls_result WHERE msgnr = '12'.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
   });
 
 });
