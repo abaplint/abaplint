@@ -48,8 +48,19 @@ export class Select {
       }
     }
 
+    // OFFSET
     for (const s of node.findDirectExpressions(Expressions.SQLSource)) {
       new SQLSource().runSyntax(s, scope, filename);
+    }
+    for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
+      for (const s of up.findDirectExpressions(Expressions.SQLSource)) {
+        new SQLSource().runSyntax(s, scope, filename);
+      }
+    }
+    for (const fae of node.findDirectExpressions(Expressions.SQLForAllEntries)) {
+      for (const s of fae.findDirectExpressions(Expressions.SQLSource)) {
+        new SQLSource().runSyntax(s, scope, filename);
+      }
     }
 
     for (const s of node.findAllExpressions(Expressions.SQLCompare)) {
