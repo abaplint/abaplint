@@ -1,6 +1,6 @@
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
-import {EasyToFindMessages} from "../../src/rules";
+import {SQLValueConversion} from "../../src/rules";
 import {expect} from "chai";
 import {Issue} from "../../src/issue";
 
@@ -87,18 +87,18 @@ export const tabl_t100xml = `<?xml version="1.0" encoding="utf-8"?>
 
 async function run(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry();
-  reg.addFile(new MemoryFile("t100.tabl.xml", tabl_t100xml));
   reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+  reg.addFile(new MemoryFile("t100.tabl.xml", tabl_t100xml));
   await reg.parseAsync();
-  return new EasyToFindMessages().initialize(reg).run(reg.getFirstObject()!);
+  return new SQLValueConversion().initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe.skip("Rule sql_value_conversion", () => {
+describe("Rule sql_value_conversion", () => {
 
   it("parser error", async () => {
     const abap = "sfsdfd";
     const issues = await run(abap);
-    expect(issues.length).to.equals(1);
+    expect(issues.length).to.equals(0);
   });
 
   it("conversion", async () => {
@@ -117,10 +117,18 @@ describe.skip("Rule sql_value_conversion", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("too short", async () => {
+  it("too short, ok for CHAR", async () => {
     const abap = `
     DATA ls_result TYPE t100.
     SELECT SINGLE * FROM t100 INTO ls_result WHERE msgnr = '12'.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("too long, CHAR", async () => {
+    const abap = `
+    DATA ls_result TYPE t100.
+    SELECT SINGLE * FROM t100 INTO ls_result WHERE msgnr = '12234234234'.`;
     const issues = await run(abap);
     expect(issues.length).to.equals(1);
   });

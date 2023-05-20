@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Interface} from "../objects";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 
 export class SQLValueConversionConf extends BasicRuleConfig {
 }
@@ -18,11 +19,14 @@ export class SQLValueConversion implements IRule {
     return {
       key: "sql_value_conversion",
       title: "Implicit SQL Value Conversion",
-      shortDescription: `todo`,
+      shortDescription: `Ensure types match when selecting from database`,
       extendedInformation: `
-NUMC: error for integer, must be exact length
-CHAR: error for integer, error for too long
-todo`,
+* Integer to CHAR conversion
+* Integer to NUMC conversion
+* NUMC to Integer conversion
+* CHAR to Integer conversion
+* Source field longer than database field, CHAR -> CHAR
+* Source field longer than database field, NUMC -> NUMC`,
       tags: [],
     };
   }
@@ -41,16 +45,34 @@ todo`,
   }
 
   public run(obj: IObject): Issue[] {
-    const issues: Issue[] = [];
 
     if (!(obj instanceof ABAPObject) || obj instanceof Interface) {
       return [];
     }
 
-    new SyntaxLogic(this.reg, obj).run();
-// todo
+    // messages defined in sql_compare.ts
+
+    const issues = this.traverse(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
 
     return issues;
+  }
+
+  private traverse(node: ISpaghettiScopeNode): Issue[] {
+    const ret: Issue[] = [];
+
+    for (const r of node.getData().sqlConversion) {
+      const file = this.reg.getFileByName(node.getIdentifier().filename);
+      if (file === undefined) {
+        continue;
+      }
+      ret.push(Issue.atToken(file, r.token, r.message, this.getMetadata().key, this.getConfig().severity));
+    }
+
+    for (const c of node.getChildren()) {
+      ret.push(...this.traverse(c));
+    }
+
+    return ret;
   }
 
 }
