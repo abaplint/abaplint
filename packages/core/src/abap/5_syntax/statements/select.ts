@@ -14,6 +14,5 @@ export class Select implements StatementSyntax {
       new SelectExpression().runSyntax(s, scope, filename, last === false);
     }
 
-
   }
 }

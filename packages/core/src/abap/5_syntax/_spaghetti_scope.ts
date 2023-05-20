@@ -35,6 +35,7 @@ export interface IScopeData {
   forms: IFormDefinition[];
 
   references: IReference[];
+  sqlConversion: {fieldName: string, message: string, token: Token}[];
 }
 
 export interface ISpaghettiScopeNode {

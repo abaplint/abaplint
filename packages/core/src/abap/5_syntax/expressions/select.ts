@@ -5,18 +5,17 @@ import {VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
-import {Source} from "./source";
 import {SQLForAllEntries} from "./sql_for_all_entries";
 import {ScopeType} from "../_scope_type";
+import {SQLSource} from "./sql_source";
+import {SQLCompare} from "./sql_compare";
 
 export class Select {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, skipImplicitInto = false): void {
     const token = node.getFirstToken();
 
     const from = node.findDirectExpression(Expressions.SQLFrom);
-    if (from) {
-      new SQLFrom().runSyntax(from, scope, filename);
-    }
+    const dbSources = from ? new SQLFrom().runSyntax(from, scope, filename) : [];
 
     for (const inline of node.findAllExpressions(Expressions.InlineData)) {
       // todo, for now these are voided
@@ -32,6 +31,7 @@ export class Select {
     for (const t of node.findAllExpressions(Expressions.Target)) {
       new Target().runSyntax(t, scope, filename);
     }
+
     // check implicit into, the target field is implict equal to the table name
     if (skipImplicitInto === false
         && node.findDirectExpression(Expressions.SQLIntoTable) === undefined
@@ -46,11 +46,23 @@ export class Select {
       }
     }
 
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+    // OFFSET
+    for (const s of node.findDirectExpressions(Expressions.SQLSource)) {
+      new SQLSource().runSyntax(s, scope, filename);
     }
-    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, scope, filename);
+    for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
+      for (const s of up.findDirectExpressions(Expressions.SQLSource)) {
+        new SQLSource().runSyntax(s, scope, filename);
+      }
+    }
+    for (const fae of node.findDirectExpressions(Expressions.SQLForAllEntries)) {
+      for (const s of fae.findDirectExpressions(Expressions.SQLSource)) {
+        new SQLSource().runSyntax(s, scope, filename);
+      }
+    }
+
+    for (const s of node.findAllExpressions(Expressions.SQLCompare)) {
+      new SQLCompare().runSyntax(s, scope, filename, dbSources);
     }
 
     if (scope.getType() === ScopeType.OpenSQL) {

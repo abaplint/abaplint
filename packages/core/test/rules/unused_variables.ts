@@ -1317,4 +1317,28 @@ DELETE tab WHERE table_line->data <> 'true'.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SELECT, UP TO", async () => {
+    const abap = `
+    DATA gt_e071 TYPE voided.
+    DATA p_count TYPE i.
+    SELECT DISTINCT pgmid object obj_name FROM tadir
+      INTO CORRESPONDING FIELDS OF TABLE gt_e071
+      UP TO p_count ROWS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SELECT, FOR ALL ENTRIES", async () => {
+    const abap = `
+    DATA lt_tab TYPE voided.
+    SELECT field1, field1 FROM asdf
+      INTO TABLE @DATA(lt_asdf)
+      FOR ALL ENTRIES IN @lt_tab
+      WHERE blah = @lt_tab-blah
+      ORDER BY PRIMARY KEY.
+    CLEAR lt_asdf.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

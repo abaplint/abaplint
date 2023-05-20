@@ -2892,6 +2892,17 @@
               ],
               "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
+            "sql_value_conversion": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SQLValueConversionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
+            },
             "start_at_tab": {
               "anyOf": [
                 {
@@ -4629,6 +4640,17 @@
                 }
               ],
               "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
+            },
+            "sql_value_conversion": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SQLValueConversionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
             },
             "start_at_tab": {
               "anyOf": [
@@ -6817,6 +6839,23 @@
       "type": "object"
     },
     "SQLEscapeHostVariablesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SQLValueConversionConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
