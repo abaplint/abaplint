@@ -2901,7 +2901,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "todo\nhttps://rules.abaplint.org/sql_value_conversion"
+              "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
             },
             "start_at_tab": {
               "anyOf": [
@@ -4650,7 +4650,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "todo\nhttps://rules.abaplint.org/sql_value_conversion"
+              "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
             },
             "start_at_tab": {
               "anyOf": [
