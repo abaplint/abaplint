@@ -15,9 +15,7 @@ export class Select {
     const token = node.getFirstToken();
 
     const from = node.findDirectExpression(Expressions.SQLFrom);
-    if (from) {
-      new SQLFrom().runSyntax(from, scope, filename);
-    }
+    const dbSources = from ? new SQLFrom().runSyntax(from, scope, filename) : [];
 
     for (const inline of node.findAllExpressions(Expressions.InlineData)) {
       // todo, for now these are voided
@@ -64,7 +62,7 @@ export class Select {
     }
 
     for (const s of node.findAllExpressions(Expressions.SQLCompare)) {
-      new SQLCompare().runSyntax(s, scope, filename);
+      new SQLCompare().runSyntax(s, scope, filename, dbSources);
     }
 
     if (scope.getType() === ScopeType.OpenSQL) {

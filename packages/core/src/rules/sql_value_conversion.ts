@@ -19,7 +19,10 @@ export class SQLValueConversion implements IRule {
       key: "sql_value_conversion",
       title: "Implicit SQL Value Conversion",
       shortDescription: `todo`,
-      extendedInformation: `todo`,
+      extendedInformation: `
+NUMC: error for integer, must be exact length
+CHAR: error for integer, error for too long
+todo`,
       tags: [],
     };
   }

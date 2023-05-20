@@ -1,14 +1,17 @@
+import {DataDefinition, Table, View} from "../../../objects";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 
+export type DatabaseTableSource = Table | DataDefinition | View | undefined;
+
 export class DatabaseTable {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): DatabaseTableSource {
     const token = node.getFirstToken();
     const name = token.getStr();
     if (name === "(") {
       // dynamic
-      return;
+      return undefined;
     }
 
     const found = scope.getDDIC().lookupTableOrView2(name);
@@ -20,5 +23,7 @@ export class DatabaseTable {
       scope.addReference(token, found.getIdentifier(), ReferenceType.TableReference, filename);
       scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found, token: token, filename: filename});
     }
+
+    return found;
   }
 }
