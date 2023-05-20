@@ -20,6 +20,7 @@ abstract class ScopeData {
       extraLikeTypes: {},
       deferred: [],
       references: [],
+      sqlConversion: [],
     };
   }
 

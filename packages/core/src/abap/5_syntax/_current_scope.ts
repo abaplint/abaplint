@@ -66,6 +66,10 @@ export class CurrentScope {
     return this.reg.getConfig().getVersion();
   }
 
+  public getRegistry(): IRegistry {
+    return this.reg;
+  }
+
   public addType(type: TypedIdentifier | undefined) {
     if (type === undefined) {
       return;
@@ -180,6 +184,10 @@ export class CurrentScope {
 
     const position = new Identifier(usage, filename);
     this.current?.getData().references.push({position, resolved: referencing, referenceType: type, extra});
+  }
+
+  public addSQLConversion(fieldName: string, message: string, token: Token) {
+    this.current?.getData().sqlConversion.push({fieldName, message, token});
   }
 
 ///////////////////////////
