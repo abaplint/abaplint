@@ -98,8 +98,8 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   isFinal: boolean;
   interfaces: readonly InfoImplementing[];
   isForTesting: boolean;
-  duration?: Duration,
-  riskLevel?: RiskLevel,
+  duration: Duration | undefined,
+  riskLevel: RiskLevel | undefined,
   isSharedMemory: boolean;
 }
 
