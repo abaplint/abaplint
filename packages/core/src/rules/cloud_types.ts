@@ -63,6 +63,9 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.InboundService
         || obj instanceof Objects.Interface
         || obj instanceof Objects.LockObject
+        || obj instanceof Objects.ATCCheckCategory
+        || obj instanceof Objects.ATCCheckObject
+        || obj instanceof Objects.ATCCheckVariant
         || obj instanceof Objects.MessageClass
         || obj instanceof Objects.Package
         || obj instanceof Objects.RestrictionType
