@@ -80,12 +80,26 @@ export interface InfoImplementing {
   finalMethods: string[],
 }
 
+export enum Duration {
+  short = "SHORT",
+  medium = "MEDIUM",
+  long = "LONG",
+}
+
+export enum RiskLevel {
+  harmless = "HARMLESS",
+  critical = "CRITICAL",
+  dangerous = "DANGEROUS",
+}
+
 export interface InfoClassDefinition extends InfoInterfaceDefinition {
   superClassName: string | undefined;
   isAbstract: boolean;
   isFinal: boolean;
   interfaces: readonly InfoImplementing[];
   isForTesting: boolean;
+  duration: Duration | undefined,
+  riskLevel: RiskLevel | undefined,
   isSharedMemory: boolean;
 }
 

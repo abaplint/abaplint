@@ -1,7 +1,7 @@
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition, InfoImplementing, InfoConstant} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition, InfoImplementing, InfoConstant, Duration, RiskLevel} from "./_abap_file_information";
 import {StructureNode, StatementNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
@@ -160,6 +160,9 @@ export class ABAPFileInformation implements IABAPFileInformation {
       const cdef = found.findFirstStatement(Statements.ClassDefinition);
       const concat = cdef?.concatTokens().toUpperCase() || "";
 
+      const duration = cdef?.findExpressionAfterToken("DURATION")?.concatTokens().toUpperCase() as Duration | undefined;
+      const riskLevel = cdef?.findExpressionAfterToken("LEVEL")?.concatTokens().toUpperCase() as RiskLevel | undefined;
+
       this.classes.push({
         name: className.getStr(),
         identifier: new Identifier(className, this.filename),
@@ -169,6 +172,8 @@ export class ABAPFileInformation implements IABAPFileInformation {
         superClassName,
         interfaces: this.getImplementing(found),
         isForTesting: concat.includes(" FOR TESTING"),
+        duration,
+        riskLevel,
         isAbstract: cdef?.findDirectTokenByText("ABSTRACT") !== undefined,
         isSharedMemory: concat.includes(" SHARED MEMORY ENABLED"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
