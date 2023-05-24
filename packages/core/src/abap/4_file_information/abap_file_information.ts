@@ -160,8 +160,23 @@ export class ABAPFileInformation implements IABAPFileInformation {
       const cdef = found.findFirstStatement(Statements.ClassDefinition);
       const concat = cdef?.concatTokens().toUpperCase() || "";
 
-      const duration = cdef?.findExpressionAfterToken("DURATION")?.concatTokens().toUpperCase() as Duration | undefined;
-      const riskLevel = cdef?.findExpressionAfterToken("LEVEL")?.concatTokens().toUpperCase() as RiskLevel | undefined;
+      let riskLevel: RiskLevel | undefined;
+      if (concat.includes("RISK LEVEL CRITICAL")) {
+        riskLevel = RiskLevel.critical;
+      } else if (concat.includes("RISK LEVEL DANGEROUS")) {
+        riskLevel = RiskLevel.dangerous;
+      } else if (concat.includes("RISK LEVEL HARMLESS")) {
+        riskLevel = RiskLevel.harmless;
+      }
+
+      let duration: Duration | undefined;
+      if (concat.includes("DURATION SHORT")) {
+        duration = Duration.short;
+      } else if (concat.includes("DURATION LONG")) {
+        duration = Duration.long;
+      } else if (concat.includes("DURATION MEDIUM")) {
+        duration = Duration.medium;
+      }
 
       this.classes.push({
         name: className.getStr(),
