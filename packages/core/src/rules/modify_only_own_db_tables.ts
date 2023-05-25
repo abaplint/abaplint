@@ -82,8 +82,10 @@ export class ModifyOnlyOwnDBTables implements IRule {
             if (spaghetti === undefined) {
               spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
             }
+
             const start = databaseTable.getFirstToken().getStart();
             const scope = spaghetti.lookupPosition(start, file.getFilename());
+
             const found1 = scope?.findTableVoidReference(start);
             if (found1) {
               output.push(Issue.atStatement(file, s, this.getMetadata().title, this.getMetadata().key, this.getConfig().severity));
