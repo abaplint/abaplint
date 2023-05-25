@@ -7,47 +7,53 @@ import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {MessageSource} from "../expressions/message_source";
 import {RaiseWith} from "../expressions/raise_with";
+import {ObjectOriented} from "../_object_oriented";
+import {IMethodDefinition} from "../../types/_method_definition";
+import {MethodParameters} from "../expressions/method_parameters";
 
 export class Raise implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
 // todo
 
+    const helper = new ObjectOriented(scope);
+    let method: IMethodDefinition | VoidType | undefined;
+
     const classTok = node.findDirectExpression(Expressions.ClassName)?.getFirstToken();
-    const classNam = classTok?.getStr();
-    if (classNam) {
-      const found = scope.existsObject(classNam);
+    const className = classTok?.getStr();
+    if (className) {
+      const found = scope.existsObject(className);
       if (found.found === true && found.id) {
         scope.addReference(classTok, found.id, found.type, filename);
-      } else if (scope.getDDIC().inErrorNamespace(classNam) === false) {
-        const extra: IReferenceExtras = {ooName: classNam, ooType: "Void"};
+
+        const def = scope.findObjectDefinition(className);
+        method = helper.searchMethodName(def, "CONSTRUCTOR")?.method;
+      } else if (scope.getDDIC().inErrorNamespace(className) === false) {
+        const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         scope.addReference(classTok, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+        method = new VoidType(className);
       } else {
-        throw new Error("RAISE, unknown class " + classNam);
+        throw new Error("RAISE, unknown class " + className);
       }
     }
 
-    let prev = "";
-    for (const c of node.getChildren()) {
-      if (c instanceof ExpressionNode
-          && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
-        const type = new Source().runSyntax(c, scope, filename);
-        if (prev === "EXCEPTION"
-            && type
-            && !(type instanceof VoidType)
-            && !(type instanceof ObjectReferenceType)) {
-          throw new Error("RAISE EXCEPTION, must be object reference, got " + type.constructor.name);
-        }
+    const c = node.findExpressionAfterToken("EXCEPTION");
+    if (c instanceof ExpressionNode && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
+      const type = new Source().runSyntax(c, scope, filename);
+      if (type instanceof VoidType) {
+        method = type;
+      } else if (type instanceof ObjectReferenceType) {
+        const def = scope.findObjectDefinition(type.getIdentifierName());
+        method = helper.searchMethodName(def, "CONSTRUCTOR")?.method;
+      } else if (type !== undefined) {
+        throw new Error("RAISE EXCEPTION, must be object reference, got " + type.constructor.name);
       }
-      prev = c.concatTokens().toUpperCase();
     }
 
-    // todo, check parameters vs constructor
+    // check parameters vs constructor
     const param = node.findDirectExpression(Expressions.ParameterListS);
     if (param) {
-      for (const s of param.findAllExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, scope, filename);
-      }
+      new MethodParameters().checkExporting(param, scope, method!, filename, true);
     }
 
     for (const s of node.findDirectExpressions(Expressions.RaiseWith)) {
