@@ -7,27 +7,37 @@ import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {MessageSource} from "../expressions/message_source";
 import {RaiseWith} from "../expressions/raise_with";
+import {ObjectOriented} from "../_object_oriented";
+import {IMethodDefinition} from "../../types/_method_definition";
+import { AbstractType } from "../../types/basic/_abstract_type";
 
 export class Raise implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
 // todo
 
+    const helper = new ObjectOriented(scope);
+    let method: IMethodDefinition | undefined = undefined;
+
     const classTok = node.findDirectExpression(Expressions.ClassName)?.getFirstToken();
-    const classNam = classTok?.getStr();
-    if (classNam) {
-      const found = scope.existsObject(classNam);
+    const className = classTok?.getStr();
+    if (className) {
+      const found = scope.existsObject(className);
       if (found.found === true && found.id) {
         scope.addReference(classTok, found.id, found.type, filename);
-      } else if (scope.getDDIC().inErrorNamespace(classNam) === false) {
-        const extra: IReferenceExtras = {ooName: classNam, ooType: "Void"};
+
+        const def = scope.findObjectDefinition(className);
+        method = helper.searchMethodName(def, "CONSTRUCTOR")?.method;
+      } else if (scope.getDDIC().inErrorNamespace(className) === false) {
+        const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         scope.addReference(classTok, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
       } else {
-        throw new Error("RAISE, unknown class " + classNam);
+        throw new Error("RAISE, unknown class " + className);
       }
     }
 
     let prev = "";
+    // todo, also set "method" if its not a direct class class referenced
     for (const c of node.getChildren()) {
       if (c instanceof ExpressionNode
           && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
@@ -42,11 +52,22 @@ export class Raise implements StatementSyntax {
       prev = c.concatTokens().toUpperCase();
     }
 
-    // todo, check parameters vs constructor
+    // check parameters vs constructor
     const param = node.findDirectExpression(Expressions.ParameterListS);
     if (param) {
-      for (const s of param.findAllExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, scope, filename);
+      const importing = method?.getParameters().getImporting();
+      for (const s of param.findAllExpressions(Expressions.ParameterS)) {
+        const pname = s.findDirectExpression(Expressions.ParameterName)?.concatTokens();
+        let targetType: AbstractType | undefined = undefined;
+        if (importing) {
+          const found = importing.find(t => t.getName() === pname);
+          if (found === undefined) {
+            throw new Error("Method parameter \"" + pname + "\" does not exist");
+          }
+          targetType = found.getType();
+        }
+        const source = s.findDirectExpression(Expressions.Source);
+        new Source().runSyntax(source, scope, filename, targetType);
       }
     }
 
