@@ -9,7 +9,7 @@ import {MessageSource} from "../expressions/message_source";
 import {RaiseWith} from "../expressions/raise_with";
 import {ObjectOriented} from "../_object_oriented";
 import {IMethodDefinition} from "../../types/_method_definition";
-import { AbstractType } from "../../types/basic/_abstract_type";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 export class Raise implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -56,8 +56,12 @@ export class Raise implements StatementSyntax {
     const param = node.findDirectExpression(Expressions.ParameterListS);
     if (param) {
       const importing = method?.getParameters().getImporting();
+      const required = new Set(method?.getParameters().getRequiredParameters().map(p => p.getName()));
       for (const s of param.findAllExpressions(Expressions.ParameterS)) {
         const pname = s.findDirectExpression(Expressions.ParameterName)?.concatTokens();
+        if (pname === undefined) {
+          throw new Error("internal error, pname undefined, Raise");
+        }
         let targetType: AbstractType | undefined = undefined;
         if (importing) {
           const found = importing.find(t => t.getName() === pname);
@@ -65,9 +69,15 @@ export class Raise implements StatementSyntax {
             throw new Error("Method parameter \"" + pname + "\" does not exist");
           }
           targetType = found.getType();
+          required?.delete(pname);
         }
         const source = s.findDirectExpression(Expressions.Source);
         new Source().runSyntax(source, scope, filename, targetType);
+      }
+      if (required.size > 0) {
+        for (const req of required) {
+          throw new Error("Method parameter \"" + req + "\" must be supplied");
+        }
       }
     }
 
