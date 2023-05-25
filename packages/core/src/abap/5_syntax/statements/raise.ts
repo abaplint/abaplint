@@ -35,6 +35,10 @@ export class Raise implements StatementSyntax {
       } else {
         throw new Error("RAISE, unknown class " + className);
       }
+
+      if (method === undefined) {
+        method = new VoidType(className);
+      }
     }
 
     const c = node.findExpressionAfterToken("EXCEPTION");
@@ -50,10 +54,14 @@ export class Raise implements StatementSyntax {
       }
     }
 
+    if (method === undefined) {
+      method = new VoidType("Exception");
+    }
+
     // check parameters vs constructor
     const param = node.findDirectExpression(Expressions.ParameterListS);
     if (param) {
-      new MethodParameters().checkExporting(param, scope, method!, filename, true);
+      new MethodParameters().checkExporting(param, scope, method, filename, true);
     }
 
     for (const s of node.findDirectExpressions(Expressions.RaiseWith)) {
