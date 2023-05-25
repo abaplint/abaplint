@@ -1,5 +1,5 @@
 import {ExpressionNode} from "../../nodes";
-import {StringType} from "../../types/basic";
+import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {CurrentScope} from "../_current_scope";
@@ -19,9 +19,22 @@ export class StringTemplate {
         throw new Error("Not character like, " + type.constructor.name);
       }
 
-      for (const formatSource of templateSource.findDirectExpression(Expressions.StringTemplateFormatting)
-        ?.findAllExpressions(Expressions.Source) || []) {
+      const format = templateSource.findDirectExpression(Expressions.StringTemplateFormatting);
+      const formatConcat = format?.concatTokens();
+      for (const formatSource of format?.findAllExpressions(Expressions.Source) || []) {
         new Source().runSyntax(formatSource, scope, filename);
+      }
+
+      if (formatConcat?.includes("ALPHA = ")
+          && !(type instanceof UnknownType)
+          && !(type instanceof VoidType)
+          && !(type instanceof StringType)
+          && !(type instanceof CLikeType)
+          && !(type instanceof CharacterType)
+          && !(type instanceof NumericGenericType)
+          && !(type instanceof NumericType)
+          && !(type instanceof AnyType)) {
+        throw new Error("Cannot apply ALPHA to this type");
       }
     }
 
