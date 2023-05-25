@@ -37,9 +37,7 @@ export class Raise implements StatementSyntax {
       }
     }
 
-    // let prev = "";
     const c = node.findExpressionAfterToken("EXCEPTION");
-//    for (const c of node.getChildren()) {
     if (c instanceof ExpressionNode && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
       const type = new Source().runSyntax(c, scope, filename);
       if (type instanceof VoidType) {
@@ -51,10 +49,6 @@ export class Raise implements StatementSyntax {
         throw new Error("RAISE EXCEPTION, must be object reference, got " + type.constructor.name);
       }
     }
-/*
-      prev = c.concatTokens().toUpperCase();
-    }
-    */
 
     // check parameters vs constructor
     const param = node.findDirectExpression(Expressions.ParameterListS);
