@@ -8221,6 +8221,22 @@ lv_char = condense( lv_char ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, string template alpha vs integer", () => {
+    const abap = `
+DATA bar TYPE c LENGTH 10.
+bar = |{ 626 ALPHA = IN }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("ALPHA");
+  });
+
+  it("ok, string template alpha vs integer", () => {
+    const abap = `
+DATA bar TYPE c LENGTH 10.
+bar = |{ '626' ALPHA = IN }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
