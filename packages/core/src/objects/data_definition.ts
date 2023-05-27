@@ -2,7 +2,7 @@ import {ExpressionNode} from "../abap/nodes";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CDSDetermineTypes} from "../cds/cds_determine_types";
 import {CDSParser} from "../cds/cds_parser";
-import {CDSAnnotation, CDSAs, CDSAssociation, CDSElement, CDSName, CDSRelation, CDSSelect, CDSSource} from "../cds/expressions";
+import {CDSAnnotate, CDSAnnotation, CDSAs, CDSAssociation, CDSDefineProjection, CDSElement, CDSName, CDSRelation, CDSSelect, CDSSource} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
@@ -129,8 +129,14 @@ export class DataDefinition extends AbstractObject {
   }
 
   private findFieldNames(tree: ExpressionNode) {
-    const select = tree.findFirstExpression(CDSSelect);
-    for (const e of select?.findDirectExpressions(CDSElement) || []) {
+    let expr = tree.findFirstExpression(CDSSelect);
+    if (expr === undefined) {
+      expr = tree.findFirstExpression(CDSAnnotate);
+    }
+    if (expr === undefined) {
+      expr = tree.findFirstExpression(CDSDefineProjection);
+    }
+    for (const e of expr?.findDirectExpressions(CDSElement) || []) {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
         const list = e.findDirectExpressions(CDSName);
