@@ -196,7 +196,7 @@ define view entity I_foo1 as projection on I_foo2
     ddls.parseType(reg);
   });
 
-  it.only("parse type, union", async () => {
+  it("parse type, union", async () => {
     const source = `
 @Metadata.ignorePropagatedAnnotations: true
 define view entity ZCDS_union as select from ztopfoo {
@@ -210,6 +210,7 @@ define view entity ZCDS_union as select from ztopfoo {
     await reg.parseAsync();
     const ddls = reg.getFirstObject()! as DataDefinition;
     expect(ddls).to.not.equal(undefined);
-    ddls.parseType(reg);
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(1);
   });
 });
