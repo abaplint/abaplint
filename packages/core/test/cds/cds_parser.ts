@@ -648,4 +648,17 @@ define view zsdfsd as select from Blah as foo {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("union", () => {
+    const cds = `
+@Metadata.ignorePropagatedAnnotations: true
+define view entity ZCDS_union as select from ztopfoo {
+    field1 as something
+} union select from ztopfoo {
+    field1 as something
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
