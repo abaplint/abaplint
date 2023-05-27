@@ -205,12 +205,31 @@ define view entity ZCDS_union as select from ztopfoo {
     field1 as something
 }`;
     const reg = new Registry().addFiles([
-      new MemoryFile("#foo#bar.ddls.asddls", source),
+      new MemoryFile("zcds_union.ddls.asddls", source),
     ]);
     await reg.parseAsync();
     const ddls = reg.getFirstObject()! as DataDefinition;
     expect(ddls).to.not.equal(undefined);
     const parsed = ddls.parseType(reg) as StructureType;
     expect(parsed.getComponents().length).to.equal(1);
+  });
+
+  it("projection, fields", async () => {
+    const source = `
+@EndUserText.label: 'View blah'
+@AccessControl.authorizationCheck: #CHECK
+define root view entity /foo/b_ar001 as projection on /foo/b_ar001 {
+    key blah,
+    field1,
+    field2
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("#foo#b_ar001.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(3);
   });
 });
