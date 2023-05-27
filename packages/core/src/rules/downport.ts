@@ -177,7 +177,9 @@ Current rules:
 * ENUMs, but does not nessesarily give the correct type and value
 * MESSAGE with non simple source
 
-Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
+Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.
+
+Make sure to test the downported code, it might not always be completely correct.`,
       tags: [RuleTag.Downport, RuleTag.Quickfix],
     };
   }
