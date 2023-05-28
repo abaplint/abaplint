@@ -1008,6 +1008,10 @@ ${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, startToken.getStart(), tableExpression.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
+      if (high.get() instanceof Statements.ElseIf) {
+        throw "downport, unable to downport table expression in ELSEIF";
+      }
+
       return Issue.atToken(lowFile, high.getFirstToken(), "Outline table expression", this.getMetadata().key, this.conf.severity, fix);
     }
 

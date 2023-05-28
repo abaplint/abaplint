@@ -4826,4 +4826,22 @@ APPEND temp1 TO itab.`;
     testFix(abap, expected, [new MemoryFile("string_table.ttyp.xml", xml)]);
   });
 
+  it("table expression in ELSEIF, index", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+IF 1 = 2.
+ELSEIF tab[ 1 ] = 2.
+ENDIF.`;
+
+    expect(() => { testFix(abap, ""); }).to.throw("downport, unable to downport table expression in ELSEIF");
+  });
+
+  it("table expression in ELSEIF, condition", async () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+IF 1 = 2.
+ELSEIF tab[ table_line = 3 ] = 2.
+ENDIF.`;
+
+    expect(() => { testFix(abap, ""); }).to.throw("downport, unable to downport table expression in ELSEIF");
+  });
+
 });

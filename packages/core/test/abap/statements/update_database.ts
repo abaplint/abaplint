@@ -16,6 +16,7 @@ const tests = [
   "UPDATE vekp SET tarag = @lv_tarag, ntvol = @lv_ntvol WHERE venum = @ls_update-venum.",
   "UPDATE table CONNECTION (lv_conn) SET field = value.",
   "update ztab using client '123' set field = @lv_value.",
+  "UPDATE ztab SET column = column + input-menge WHERE val = input-val.",
 ];
 
 statementType(tests, "UPDATE", Statements.UpdateDatabase);
