@@ -1,5 +1,5 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XSequenceType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XSequenceType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
@@ -267,6 +267,10 @@ export class TypeUtils {
         }
       }
       return true;
+    } else if (source instanceof Integer8Type) {
+      if (target instanceof IntegerType || target instanceof StringType) {
+        return false;
+      }
     }
     return this.isAssignable(source, target);
   }

@@ -8237,11 +8237,21 @@ bar = |{ '626' ALPHA = IN }|.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("error, in8 vs i", () => {
+  it("ok, moves int8 vs i", () => {
+    const abap = `
+DATA a TYPE i.
+DATA b TYPE int8.
+a = b.
+b = a.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, in8 vs i", () => {
     const abap = `
   CLASS lcl DEFINITION.
     PUBLIC SECTION.
-      CLASS-METHODS foo IMPORTING int TYPE i.
+      CLASS-METHODS foo IMPORTING val TYPE i.
   ENDCLASS.
 
   CLASS lcl IMPLEMENTATION.
@@ -8252,6 +8262,25 @@ bar = |{ '626' ALPHA = IN }|.`;
   START-OF-SELECTION.
     DATA lv TYPE int8.
     lcl=>foo( lv ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Method parameter type not compatible");
+  });
+
+  it("error, in8 vs string", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING val TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv TYPE int8.
+  lcl=>foo( lv ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("Method parameter type not compatible");
   });
