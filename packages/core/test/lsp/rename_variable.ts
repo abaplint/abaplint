@@ -5,7 +5,7 @@ import * as LServer from "vscode-languageserver-types";
 import {MemoryFile} from "../../src/files/memory_file";
 import {ApplyWorkSpaceEdit} from "./_apply_edit";
 
-describe("LSP, prepare rename, local variable", () => {
+describe("LSP, rename variable", () => {
 
   it("bad position", async () => {
     const file = new MemoryFile("foobar.prog.abap", "WRITE 'hello'.");
