@@ -1605,7 +1605,7 @@ DATA(sdf) = ref->*-int.`;
     const abap = "DATA foo TYPE int8.";
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
-    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+    expect(identifier!.getType()).to.be.instanceof(Basic.Integer8Type);
   });
 
   it("DATA TYPE utclong", () => {

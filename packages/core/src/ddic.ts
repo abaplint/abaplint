@@ -102,8 +102,9 @@ export class DDIC {
       case "CSEQUENCE":
         return new Types.CSequenceType({qualifiedName: qualifiedName});
       case "I":
-      case "INT8": // todo, take version into account
         return new Types.IntegerType({qualifiedName: qualifiedName || name});
+      case "INT8": // todo, take version into account
+        return new Types.Integer8Type({qualifiedName: qualifiedName || name});
       case "F":
         return new Types.FloatType({qualifiedName: qualifiedName || name});
       case "P":

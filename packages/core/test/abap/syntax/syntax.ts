@@ -8237,6 +8237,25 @@ bar = |{ '626' ALPHA = IN }|.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("error, in8 vs i", () => {
+    const abap = `
+  CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS foo IMPORTING int TYPE i.
+  ENDCLASS.
+
+  CLASS lcl IMPLEMENTATION.
+    METHOD foo.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    DATA lv TYPE int8.
+    lcl=>foo( lv ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Method parameter type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
