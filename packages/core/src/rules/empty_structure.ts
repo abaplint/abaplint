@@ -110,9 +110,9 @@ export class EmptyStructure extends ABAPRule {
     }
 
     if (this.getConfig().if === true) {
-      const tries = stru.findAllStructures(Structures.If)
-        .concat(stru.findAllStructures(Structures.Else))
-        .concat(stru.findAllStructures(Structures.ElseIf));
+      const tries = stru.findAllStructuresRecursive(Structures.If)
+        .concat(stru.findAllStructuresRecursive(Structures.Else))
+        .concat(stru.findAllStructuresRecursive(Structures.ElseIf));
       for (const t of tries) {
         const normal = t.findDirectStructure(Structures.Body);
         if (normal === undefined) {
@@ -129,7 +129,7 @@ export class EmptyStructure extends ABAPRule {
     }
 
     if (this.getConfig().when === true) {
-      const tries = stru.findAllStructures(Structures.When);
+      const tries = stru.findAllStructuresRecursive(Structures.When);
 
       for (const t of tries) {
         if (t.getChildren().length === 1) {
