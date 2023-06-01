@@ -8,6 +8,7 @@ const tests = [
   {abap: "LOOP AT foobar.\nWRITE boo.\nENDLOOP.", cnt: 0},
   {abap: "IF foo = bar.\nENDIF.", cnt: 1},
   {abap: "WHILE foo = bar.\nENDWHILE.", cnt: 1},
+  {abap: "WHILE foo = bar.\nWHILE foo = bar.\nENDWHILE.\nENDWHILE.", cnt: 1},
   {abap: "CASE foo.\nENDCASE.", cnt: 1},
 
   {abap: `
