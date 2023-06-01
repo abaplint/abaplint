@@ -49,15 +49,20 @@ export class Rename {
     }
 
     const range = LSPUtils.tokenToRange(cursor.token);
+    let placeholder = cursor.token.getStr();
+    if (placeholder.startsWith("!")) {
+      placeholder = placeholder.substring(1);
+      range.start.character += 1;
+    }
     const lookup = LSPLookup.lookup(cursor, this.reg, obj);
     if (lookup?.definitionId instanceof TypedIdentifier) {
-      return {range, placeholder: cursor.token.getStr(), type: RenameType.Variable, file};
+      return {range, placeholder, type: RenameType.Variable, file};
     } else if (lookup?.definitionId instanceof ClassDefinition) {
-      return {range, placeholder: cursor.token.getStr(), type: RenameType.GlobalClass, file};
+      return {range, placeholder, type: RenameType.GlobalClass, file};
     } else if (lookup?.definitionId instanceof InterfaceDefinition) {
-      return {range, placeholder: cursor.token.getStr(), type: RenameType.GlobalInterface, file};
+      return {range, placeholder, type: RenameType.GlobalInterface, file};
     } else if (lookup?.definitionId instanceof MethodDefinition) {
-      return {range, placeholder: cursor.token.getStr(), type: RenameType.Method, file};
+      return {range, placeholder, type: RenameType.Method, file};
     }
 
     return undefined;

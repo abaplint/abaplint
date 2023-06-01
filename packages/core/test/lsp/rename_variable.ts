@@ -91,4 +91,28 @@ ENDCLASS.`;
     expect(reg.getFirstObject()?.getFiles()[0]?.getRaw()).to.equal(expected);
   });
 
+  it("prepare rename of escaped parameter", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo
+      IMPORTING !val TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    WRITE val.
+  ENDMETHOD.
+ENDCLASS.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const rename = new Rename(reg);
+
+    const result = rename.prepareRename({
+      textDocument: {uri: file.getFilename()},
+      position: LServer.Position.create(3, 18)});
+
+    expect(result).to.not.equal(undefined);
+    expect(result?.placeholder).to.equal("val");
+  });
+
 });
