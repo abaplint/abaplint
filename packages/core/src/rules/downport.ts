@@ -2998,9 +2998,15 @@ ${indentation}    output = ${topTarget}.`;
       const data = `DATA ${name} TYPE REF TO ${type}.\n` +
         indentation + abap + "\n" +
         indentation;
-      const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), data);
-      const fix2 = EditHelper.replaceRange(lowFile, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
-      fix = EditHelper.merge(fix2, fix1);
+      if (found.getFirstToken().getStart().equals(high.getFirstToken().getStart())
+          && found.getLastToken().getEnd().equals(high.getLastToken().getStart())) {
+// full statement = standalone NEW expression
+        fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), abap);
+      } else {
+        const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), data);
+        const fix2 = EditHelper.replaceRange(lowFile, found.getFirstToken().getStart(), found.getLastToken().getEnd(), name);
+        fix = EditHelper.merge(fix2, fix1);
+      }
     }
 
     if (fix) {
