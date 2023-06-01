@@ -5,16 +5,18 @@ import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPLookup} from "./_lookup";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {ClassDefinition, InterfaceDefinition} from "../abap/types";
+import {ClassDefinition, InterfaceDefinition, MethodDefinition} from "../abap/types";
 import {References} from "./references";
 import {IFile} from "../files/_ifile";
 import {Renamer} from "../objects/rename/renamer";
+import {Definition} from "./definition";
 
 
 export enum RenameType {
   GlobalClass = 1,
   Variable = 2,
   GlobalInterface = 3,
+  Method = 4,
 }
 
 export interface IPrepareResult {
@@ -54,6 +56,8 @@ export class Rename {
       return {range, placeholder: cursor.token.getStr(), type: RenameType.GlobalClass, file};
     } else if (lookup?.definitionId instanceof InterfaceDefinition) {
       return {range, placeholder: cursor.token.getStr(), type: RenameType.GlobalInterface, file};
+    } else if (lookup?.definitionId instanceof MethodDefinition) {
+      return {range, placeholder: cursor.token.getStr(), type: RenameType.Method, file};
     }
 
     return undefined;
@@ -72,6 +76,8 @@ export class Rename {
         return new Renamer(this.reg).buildEdits("INTF", prepare.placeholder, params.newName);
       case RenameType.Variable:
         return this.renameVariable(params);
+      case RenameType.Method:
+        return this.renameMethod(params);
       default:
         return undefined;
     }
@@ -87,6 +93,25 @@ export class Rename {
       const edit = LServer.TextDocumentEdit.create(doc, [LServer.TextEdit.replace(r.range, params.newName)]);
       workspace.documentChanges?.push(edit);
     }
+    return workspace;
+  }
+
+  private renameMethod(params: IRenameParams): LServer.WorkspaceEdit | undefined {
+    const workspace: LServer.WorkspaceEdit = {documentChanges: []};
+    const refs = new References(this.reg).references(params);
+    for (const r of refs) {
+      const doc: LServer.VersionedTextDocumentIdentifier = {uri: r.uri, version: 1};
+      const edit = LServer.TextDocumentEdit.create(doc, [LServer.TextEdit.replace(r.range, params.newName)]);
+      workspace.documentChanges?.push(edit);
+    }
+
+    const def = new Definition(this.reg).find(params.textDocument, params.position);
+    if (def) {
+      const doc: LServer.VersionedTextDocumentIdentifier = {uri: params.textDocument.uri, version: 1};
+      const edit = LServer.TextDocumentEdit.create(doc, [LServer.TextEdit.replace(def?.range, params.newName)]);
+      workspace.documentChanges?.push(edit);
+    }
+
     return workspace;
   }
 

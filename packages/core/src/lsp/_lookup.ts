@@ -113,6 +113,23 @@ export class LSPLookup {
       return {hover: hoverValue, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
+    for (const c of bottomScope.listClassDefinitions()) {
+      for (const m of c.getMethodDefinitions()?.getAll() || []) {
+        for (const p of m.getParameters()?.getAll() || []) {
+          if (p.getStart().equals(cursor.token.getStart())) {
+            const found = LSPUtils.identiferToLocation(p);
+            return {
+              hover: "Method Parameter, " + cursor.token.getStr(),
+              definition: found,
+              definitionId: p,
+              implementation: undefined,
+              scope: bottomScope,
+            };
+          }
+        }
+      }
+    }
+
     const refs = this.searchReferences(bottomScope, cursor.token);
     if (refs.length > 0) {
       for (const ref of refs) {
