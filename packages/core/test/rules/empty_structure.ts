@@ -8,6 +8,7 @@ const tests = [
   {abap: "LOOP AT foobar.\nWRITE boo.\nENDLOOP.", cnt: 0},
   {abap: "IF foo = bar.\nENDIF.", cnt: 1},
   {abap: "WHILE foo = bar.\nENDWHILE.", cnt: 1},
+  {abap: "WHILE foo = bar.\nWHILE foo = bar.\nENDWHILE.\nENDWHILE.", cnt: 1},
   {abap: "CASE foo.\nENDCASE.", cnt: 1},
 
   {abap: `
@@ -39,6 +40,15 @@ IF sy-subrc <> 0.
 ELSEIF 1 = 2.
 ENDIF.`, cnt: 1},
 
+// nested,
+  {abap: `
+IF sy-subrc <> 0.
+  WRITE 'a'.
+ELSEIF 1 = 2.
+  IF 'a' = 'B'.
+  ENDIF.
+ENDIF.`, cnt: 1},
+
   {abap: `
 CASE foo.
   WHEN 'a'.
@@ -52,6 +62,21 @@ ENDCASE.`, cnt: 1},
 CASE foo.
   WHEN OTHERS.
 ENDCASE.`, cnt: 1},
+
+// nested,
+  {abap: `
+DATA bar TYPE i.
+CASE bar.
+  WHEN 1.
+    CASE bar.
+      WHEN '00' OR '10'.
+      WHEN '01'.
+      WHEN '11'.
+      WHEN OTHERS.
+    ENDCASE.
+  WHEN OTHERS.
+    ASSERT 1 = 'todo'.
+ENDCASE.`, cnt: 4},
 
 ];
 

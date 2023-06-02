@@ -64,24 +64,24 @@ export class EmptyStructure extends ABAPRule {
 
     const candidates: StructureNode[] = [];
     if (this.getConfig().loop === true) {
-      candidates.push(...stru.findAllStructures(Structures.Loop));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.Loop));
     }
     if (this.getConfig().while === true) {
-      candidates.push(...stru.findAllStructures(Structures.While));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.While));
     }
     if (this.getConfig().case === true) {
-      candidates.push(...stru.findAllStructures(Structures.Case));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.Case));
     }
     if (this.getConfig().select === true) {
-      candidates.push(...stru.findAllStructures(Structures.Select));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.Select));
     }
     if (this.getConfig().do === true) {
-      candidates.push(...stru.findAllStructures(Structures.Do));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.Do));
     }
     if (this.getConfig().at === true) {
-      candidates.push(...stru.findAllStructures(Structures.At));
-      candidates.push(...stru.findAllStructures(Structures.AtFirst));
-      candidates.push(...stru.findAllStructures(Structures.AtLast));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.At));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.AtFirst));
+      candidates.push(...stru.findAllStructuresRecursive(Structures.AtLast));
     }
 
     for (const l of candidates) {
@@ -93,7 +93,7 @@ export class EmptyStructure extends ABAPRule {
     }
 
     if (this.getConfig().try === true) {
-      const tries = stru.findAllStructures(Structures.Try);
+      const tries = stru.findAllStructuresRecursive(Structures.Try);
       for (const t of tries) {
         const normal = t.findDirectStructure(Structures.Body);
         if (normal === undefined) {
@@ -110,9 +110,9 @@ export class EmptyStructure extends ABAPRule {
     }
 
     if (this.getConfig().if === true) {
-      const tries = stru.findAllStructures(Structures.If)
-        .concat(stru.findAllStructures(Structures.Else))
-        .concat(stru.findAllStructures(Structures.ElseIf));
+      const tries = stru.findAllStructuresRecursive(Structures.If)
+        .concat(stru.findAllStructuresRecursive(Structures.Else))
+        .concat(stru.findAllStructuresRecursive(Structures.ElseIf));
       for (const t of tries) {
         const normal = t.findDirectStructure(Structures.Body);
         if (normal === undefined) {
@@ -129,7 +129,7 @@ export class EmptyStructure extends ABAPRule {
     }
 
     if (this.getConfig().when === true) {
-      const tries = stru.findAllStructures(Structures.When);
+      const tries = stru.findAllStructuresRecursive(Structures.When);
 
       for (const t of tries) {
         if (t.getChildren().length === 1) {

@@ -91,38 +91,28 @@ ENDCLASS.`;
     expect(reg.getFirstObject()?.getFiles()[0]?.getRaw()).to.equal(expected);
   });
 
-  it("rename method", async () => {
-    const abap = `CLASS lcl DEFINITION.
+  it("prepare rename of escaped parameter", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `CLASS lcl DEFINITION.
   PUBLIC SECTION.
-    CLASS-METHODS foo.
+    CLASS-METHODS foo
+      IMPORTING !val TYPE string.
 ENDCLASS.
 
 CLASS lcl IMPLEMENTATION.
   METHOD foo.
+    WRITE val.
   ENDMETHOD.
-ENDCLASS.`;
-    const file = new MemoryFile("foobar.prog.abap", abap);
+ENDCLASS.`);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
+    const rename = new Rename(reg);
 
-    const result = new Rename(reg).rename({
+    const result = rename.prepareRename({
       textDocument: {uri: file.getFilename()},
-      position: LServer.Position.create(2, 20),
-      newName: "renamed"});
+      position: LServer.Position.create(3, 18)});
+
     expect(result).to.not.equal(undefined);
-    new ApplyWorkSpaceEdit(reg).apply(result!);
-    await reg.parseAsync();
-
-    const expected = `CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    CLASS-METHODS renamed.
-ENDCLASS.
-
-CLASS lcl IMPLEMENTATION.
-  METHOD renamed.
-  ENDMETHOD.
-ENDCLASS.`;
-    expect(reg.getFirstObject()?.getFiles()[0]?.getRaw()).to.equal(expected);
+    expect(result?.placeholder).to.equal("val");
   });
 
 });

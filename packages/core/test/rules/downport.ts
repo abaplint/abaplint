@@ -4844,4 +4844,24 @@ ENDIF.`;
     expect(() => { testFix(abap, ""); }).to.throw("downport, unable to downport table expression in ELSEIF");
   });
 
+  it("standalone NEW", async () => {
+    const abap = `CLASS lcl DEFINITION.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  NEW lcl( ).`;
+
+    const expected = `CLASS lcl DEFINITION.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  CREATE OBJECT temp1 TYPE lcl.`;
+
+    testFix(abap, expected);
+  });
+
 });
