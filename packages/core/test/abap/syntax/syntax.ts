@@ -8294,6 +8294,22 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET BIT, error not byte like", () => {
+    const abap = `
+DATA lv_int TYPE i.
+GET BIT 1 OF lv_int INTO DATA(lv_bit).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("byte-like");
+  });
+
+  it("SET BIT, error not byte like", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SET BIT 1 OF lv_int.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("byte-like");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
