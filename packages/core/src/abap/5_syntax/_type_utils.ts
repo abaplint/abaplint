@@ -59,6 +59,7 @@ export class TypeUtils {
         || type instanceof UnknownType
         || type instanceof NumericType
         || type instanceof IntegerType
+        || type instanceof Integer8Type
         || type instanceof SimpleType
         || type instanceof FloatType
         || type instanceof FloatingPointType
