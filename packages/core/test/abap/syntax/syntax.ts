@@ -8328,6 +8328,21 @@ int = xstrlen( str ).`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("ok, string constant to xsequence", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( \`\` ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
