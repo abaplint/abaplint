@@ -8310,6 +8310,24 @@ SET BIT 1 OF lv_int.`;
     expect(issues[0]?.getMessage()).to.contain("byte-like");
   });
 
+  it("hex to clike not possible", () => {
+    const abap = `
+DATA hex TYPE xstring.
+DATA int TYPE i.
+int = strlen( hex ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("string to hexlike not possible", () => {
+    const abap = `
+DATA str TYPE string.
+DATA int TYPE i.
+int = xstrlen( str ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
