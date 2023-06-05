@@ -73,8 +73,10 @@ export class Source {
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename, foundType);
-          if (foundType === undefined || foundType.isGeneric() === true) {
+          if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, scope, filename, bodyType);
+          } else {
+            this.addIfInferred(node, scope, filename, foundType);
           }
           return foundType ? foundType : bodyType;
         }
@@ -82,8 +84,10 @@ export class Source {
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), scope, filename);
-          if (foundType === undefined || foundType.isGeneric() === true) {
+          if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, scope, filename, bodyType);
+          } else {
+            this.addIfInferred(node, scope, filename, foundType);
           }
           return foundType ? foundType : bodyType;
         }
@@ -91,8 +95,10 @@ export class Source {
         {
           const foundType = this.determineType(node, scope, filename, targetType);
           const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename);
-          if (foundType === undefined || foundType.isGeneric() === true) {
+          if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, scope, filename, bodyType);
+          } else {
+            this.addIfInferred(node, scope, filename, foundType);
           }
           return foundType ? foundType : bodyType;
         }
@@ -234,10 +240,12 @@ export class Source {
     if (typeExpression === undefined) {
       throw new Error("determineType, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
-      const found = basic.lookupQualifiedName(targetType.getQualifiedName());
+      // const found = basic.lookupQualifiedName(targetType.getQualifiedName());
+      /*
       if (found) {
         scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
       }
+      */
       return targetType;
     }
 

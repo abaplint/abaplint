@@ -5,7 +5,7 @@ import {InlayHints} from "../../src/lsp/inlay_hints";
 
 const filename: string = "inlayhints.prog.abap";
 
-describe.only("LSP, Inlay Hints", () => {
+describe("LSP, Inlay Hints", () => {
 
   it("parser error", () => {
     const file = new MemoryFile(filename, "sdfsdfds");
@@ -28,13 +28,12 @@ START-OF-SELECTION.
     expect(found.length).to.equal(1);
   });
 
-  it.only("CONV", () => {
+  it("CONV", () => {
     const file = new MemoryFile(filename, `
   DATA val TYPE i.
   val = CONV #( '1' ).`);
     const reg = new Registry().addFiles([file]).parse();
     const found = new InlayHints(reg).list({uri: filename});
-    console.dir(found);
     expect(found.length).to.equal(1);
   });
 
