@@ -597,6 +597,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.downportReadTable(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     return undefined;
   }
 
@@ -926,6 +931,25 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, high.getFirstToken(), "Outline APPEND source expression", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private downportReadTable(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.ReadTable)) {
+      return undefined;
+    }
+
+    const source = high.findExpressionAfterToken("TABLE");
+    if (source?.get() instanceof Expressions.Source) {
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+      const firstToken = high.getFirstToken();
+      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA(${uniqueName}) = ${source.concatTokens()}.\n` + indentation);
+      const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, high.getFirstToken(), "Outline table source", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;

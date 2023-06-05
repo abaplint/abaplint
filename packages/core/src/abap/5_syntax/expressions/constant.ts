@@ -13,6 +13,8 @@ export class Constant {
         len = 1;
       }
       return new CharacterType(len, {derivedFromConstant: true});
+    } else if (node.getFirstToken().getStr().startsWith("`")) {
+      return new StringType({qualifiedName: "STRING", derivedFromConstant: true});
     } else {
       return new StringType({qualifiedName: "STRING"});
     }
