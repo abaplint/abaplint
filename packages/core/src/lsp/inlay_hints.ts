@@ -39,7 +39,7 @@ export class InlayHints {
 
         let label: string | undefined = undefined;
         if (i.resolved instanceof TypedIdentifier) {
-          label = i.resolved.getType().toABAP();
+          label = "TYPE " + i.resolved.getType().toABAP();
         } else if (i.resolved instanceof ClassDefinition) {
           label = "TYPE REF TO " + i.resolved.getName();
         }
