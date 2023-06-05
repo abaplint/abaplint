@@ -15,7 +15,8 @@ import {References} from "./references";
 import {Implementation} from "./implementation";
 import {SemanticHighlighting} from "./semantic";
 import {StatementFlow} from "../abap/flow/statement_flow";
-import {CodeLens} from "./code_lens";
+import {CodeLens, CodeLensSettings} from "./code_lens";
+import {InlayHints, InlayHintsSettings} from "./inlay_hints";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/main/versions/protocol-2-x.md#range
@@ -121,10 +122,14 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_codeLens
-  public codeLens(textDocument: LServer.TextDocumentIdentifier) {
-    return new CodeLens(this.reg).list(textDocument);
+  public codeLens(textDocument: LServer.TextDocumentIdentifier, settings?: CodeLensSettings) {
+    return new CodeLens(this.reg).list(textDocument, settings);
   }
 
+  // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_inlayHint
+  public inlayHints(textDocument: LServer.TextDocumentIdentifier, settings?: InlayHintsSettings) {
+    return new InlayHints(this.reg).list(textDocument, settings);
+  }
 
 ////////////////////////////////////////
 //  ______      _
