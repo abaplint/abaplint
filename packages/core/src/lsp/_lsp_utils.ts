@@ -46,6 +46,10 @@ export class LSPUtils {
       token.getEnd().getCol() - 1);
   }
 
+  public static positionToLS(pos: Position): LServer.Position {
+    return LServer.Position.create(pos.getRow() - 1, pos.getCol() - 1);
+  }
+
   public static identiferToLocation(identifier: Identifier): LServer.Location {
     return {
       uri: identifier.getFilename(),
