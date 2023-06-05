@@ -4864,4 +4864,24 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
+  it.skip("non-simple READ TABLE table", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    CLASS-METHODS get RETURNING VALUE(rt_tab) TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  READ TABLE lcl=>get( ) INDEX 1 TRANSPORTING NO FIELDS.`;
+
+    const expected = `sdf`;
+
+    testFix(abap, expected);
+  });
+
 });
