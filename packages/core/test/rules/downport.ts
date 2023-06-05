@@ -4864,7 +4864,7 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
-  it.skip("non-simple READ TABLE table", async () => {
+  it("non-simple READ TABLE table", async () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -4879,7 +4879,20 @@ ENDCLASS.
 START-OF-SELECTION.
   READ TABLE lcl=>get( ) INDEX 1 TRANSPORTING NO FIELDS.`;
 
-    const expected = `sdf`;
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    CLASS-METHODS get RETURNING VALUE(rt_tab) TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(temp1) = lcl=>get( ).
+  READ TABLE temp1 INDEX 1 TRANSPORTING NO FIELDS.`;
 
     testFix(abap, expected);
   });
