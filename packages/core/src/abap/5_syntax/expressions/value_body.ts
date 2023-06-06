@@ -57,6 +57,7 @@ export class ValueBody {
 
       for (const l of foo.findDirectExpressions(Expressions.ValueBodyLines)) {
         for (const s of l.findDirectExpressions(Expressions.Source)) {
+          // todo, pass type to source, this is a structure field in rowType?
           new Source().runSyntax(s, scope, filename);
         }
       }
@@ -64,7 +65,7 @@ export class ValueBody {
         new FieldAssignment().runSyntax(s, scope, filename, rowType);
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, scope, filename);
+        new Source().runSyntax(s, scope, filename, rowType);
       }
     }
 

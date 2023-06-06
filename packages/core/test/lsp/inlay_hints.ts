@@ -49,4 +49,15 @@ INSERT VALUE #( ) INTO TABLE tab.`);
     expect(found.length).to.equal(1);
   });
 
+  it("VALUE and CONV", () => {
+    const file = new MemoryFile(filename, `
+TYPES ty_integers TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA lt_strings TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA lt_integers TYPE ty_integers.
+lt_integers = VALUE #( FOR row IN lt_strings ( CONV #( row ) ) ).`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(2);
+  });
+
 });
