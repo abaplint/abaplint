@@ -60,4 +60,17 @@ lt_integers = VALUE #( FOR row IN lt_strings ( CONV #( row ) ) ).`);
     expect(found.length).to.equal(2);
   });
 
+  it("CORRESPONDING", () => {
+    const file = new MemoryFile(filename, `
+TYPES: BEGIN OF ty,
+         blah TYPE i,
+       END OF ty.
+DATA val1 TYPE ty.
+DATA val2 TYPE ty.
+val1 = CORRESPONDING #( val2 ).`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(1);
+  });
+
 });
