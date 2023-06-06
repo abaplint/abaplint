@@ -8343,7 +8343,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("concatenated constant to xstring, &&", () => {
+  it("concatenated constant to xstring, &&", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
