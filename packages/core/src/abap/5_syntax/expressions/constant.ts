@@ -5,7 +5,8 @@ import {Integer} from "../../2_statements/expressions";
 
 export class Constant {
   public runSyntax(node: ExpressionNode): AbstractType {
-    if(node.findDirectExpression(Integer)) {
+    // todo: ConcatenatedConstant is not used?
+    if (node.findDirectExpression(Integer)) {
       return new IntegerType({qualifiedName: "I"});
     } else if (node.getFirstToken().getStr().startsWith("'")) {
       let len = node.getFirstToken().getStr().length - 2;
