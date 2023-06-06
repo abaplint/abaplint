@@ -138,7 +138,9 @@ export class Source {
         case "CORRESPONDING":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          return new CorrespondingBody().runSyntax(node.findDirectExpression(Expressions.CorrespondingBody), scope, filename, foundType);
+          new CorrespondingBody().runSyntax(node.findDirectExpression(Expressions.CorrespondingBody), scope, filename, foundType);
+          this.addIfInferred(node, scope, filename, foundType);
+          return foundType;
         }
         case "EXACT":
           return this.determineType(node, scope, filename, targetType);
