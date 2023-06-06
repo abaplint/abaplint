@@ -37,4 +37,16 @@ START-OF-SELECTION.
     expect(found.length).to.equal(1);
   });
 
+  it("INSERT VALUE", () => {
+    const file = new MemoryFile(filename, `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+INSERT VALUE #( ) INTO TABLE tab.`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(1);
+  });
+
 });

@@ -49,10 +49,9 @@ export class InsertInternal implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename, targetType);
-    }
-
-    for (const s of node.findDirectExpressions(Expressions.SimpleSource4)) {
+      if (s === source) {
+        continue;
+      }
       new Source().runSyntax(s, scope, filename, targetType);
     }
 
