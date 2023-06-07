@@ -28,7 +28,7 @@ export class BasicTypes {
   }
 
   public lookupQualifiedName(name: string | undefined): TypedIdentifier | undefined {
-// argh, todo, rewrite this entire method, more argh
+// argh, todo, rewrite this entire method, more argh, again argh
     if (name === undefined) {
       return undefined;
     }
@@ -71,7 +71,10 @@ export class BasicTypes {
       if (type) {
         const stru = type.getType();
         if (stru instanceof StructureType) {
-          const f = stru.getComponentByName(fieldName);
+          let f = stru.getComponentByName(fieldName);
+          if (split[2] && f instanceof StructureType) {
+            f = f.getComponentByName(split[2]);
+          }
           if (f) {
             return new TypedIdentifier(type.getToken(), type.getFilename(), f);
           }
