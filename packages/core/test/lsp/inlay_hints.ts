@@ -92,4 +92,28 @@ DATA(val) = VALUE ty_top-field( subfield = VALUE #( ( foo = 2 ) ) ).`);
     expect(found[0].label).to.include("TYPE STANDARD TABLE OF ty_sub");
   });
 
+  it("Subfield inferred, in class", () => {
+    const file = new MemoryFile(filename, `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_sub,
+             foo TYPE i,
+           END OF ty_sub.
+
+    TYPES: BEGIN OF ty_top,
+             BEGIN OF field,
+               subfield TYPE STANDARD TABLE OF ty_sub WITH DEFAULT KEY,
+             END OF field,
+           END OF ty_top.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+DATA(val) = VALUE lcl=>ty_top-field( subfield = VALUE #( ( foo = 2 ) ) ).`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(1);
+    expect(found[0].label).to.include("TYPE STANDARD TABLE OF lcl=>ty_sub");
+  });
+
 });

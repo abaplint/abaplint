@@ -51,7 +51,10 @@ export class BasicTypes {
           const stru = oo.getTypeDefinitions().getByName(subTypeName);
           const struType = stru?.getType();
           if (stru && struType instanceof StructureType) {
-            const f = struType.getComponentByName(fieldName);
+            let f = struType.getComponentByName(fieldName);
+            if (split[2] && f instanceof StructureType) {
+              f = f.getComponentByName(split[2]);
+            }
             if (f) {
               return new TypedIdentifier(stru.getToken(), stru.getFilename(), f);
             }
