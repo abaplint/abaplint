@@ -4900,7 +4900,8 @@ START-OF-SELECTION.
   it("SELECT, exists", async () => {
     const abap = `SELECT SINGLE @abap_true FROM voided INTO @DATA(lv_exists).`;
     const expected = `DATA lv_exists TYPE abap_bool.
-SELECT SINGLE @abap_true FROM voided INTO @lv_exists.`;
+    SELECT SINGLE @abap_true FROM voided INTO @lv_exists.`;
+    // hmm, this doesnt work in next step
     testFix(abap, expected);
   });
 
