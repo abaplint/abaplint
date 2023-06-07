@@ -8377,6 +8377,16 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("concate in byte mode, ok", () => {
+    const abap = `
+DATA hex1 TYPE x LENGTH 1.
+DATA hex2 TYPE x LENGTH 1.
+CONCATENATE hex1 hex2 INTO DATA(sdf) IN BYTE MODE.
+WRITE xstrlen( sdf ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
