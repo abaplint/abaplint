@@ -126,7 +126,7 @@ export class BuiltIn {
       mandatory: {
         "val": new FloatType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -156,7 +156,7 @@ export class BuiltIn {
     {
       name: "BIT-SET",
       mandatory: {
-        "val": new IntegerType(),
+        "val": IntegerType.get(),
       },
       return: new XStringType(),
       version: Version.v702,
@@ -177,7 +177,7 @@ export class BuiltIn {
         "bool": new CLikeType(),
       },
       optional: {
-        "bit": new IntegerType(),
+        "bit": IntegerType.get(),
       },
       return: new XStringType(),
       version: Version.v702,
@@ -188,19 +188,19 @@ export class BuiltIn {
       mandatory: {
         "val": new FloatType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
       name: "CHAR_OFF",
       mandatory: {
         "val": new CLikeType(),
-        "add": new IntegerType(),
+        "add": IntegerType.get(),
       },
       optional: {
-        "off": new IntegerType(),
+        "off": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -209,7 +209,7 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -286,9 +286,9 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       return: new CharacterType(1),
       predicate: true,
@@ -304,9 +304,9 @@ export class BuiltIn {
         "sub": new CLikeType(),
         "start": new CLikeType(),
         "end": new CLikeType(),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       predicate: true,
       return: new CharacterType(1), version: Version.v702,
@@ -321,9 +321,9 @@ export class BuiltIn {
         "sub": new CLikeType(),
         "start": new CLikeType(),
         "end": new CLikeType(),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       return: new CharacterType(1),
       predicate: true,
@@ -356,10 +356,10 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -373,10 +373,10 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -390,10 +390,10 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -402,7 +402,7 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -411,7 +411,7 @@ export class BuiltIn {
         "val1": new CLikeType(),
         "val2": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -443,11 +443,11 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -458,11 +458,11 @@ export class BuiltIn {
       },
       optional: {
         "sub": new CLikeType(),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -473,11 +473,11 @@ export class BuiltIn {
       },
       optional: {
         "sub": new CLikeType(),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -491,11 +491,11 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -504,7 +504,7 @@ export class BuiltIn {
       mandatory: {
         "val": new FloatType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -512,7 +512,7 @@ export class BuiltIn {
       mandatory: {
         "val": new FloatType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -521,8 +521,8 @@ export class BuiltIn {
         "val": new CLikeType()},
       optional: {
         "case": new CharacterType(1),
-        "sep": new IntegerType(),
-        "min": new IntegerType(),
+        "sep": IntegerType.get(),
+        "min": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -535,7 +535,7 @@ export class BuiltIn {
         "sub": new CLikeType(),
       },
       optional: {
-        "off": new IntegerType(),
+        "off": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -547,7 +547,7 @@ export class BuiltIn {
         "base": new FloatType(),
         "exp": new FloatType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v740sp02,
     },
 
@@ -566,7 +566,7 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v740sp02,
     },
 
@@ -575,7 +575,7 @@ export class BuiltIn {
       mandatory: {
         "val": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -602,7 +602,7 @@ export class BuiltIn {
         "case": new CharacterType(1),
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
-        "occ": new IntegerType(),
+        "occ": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -617,8 +617,8 @@ export class BuiltIn {
         "case": new CharacterType(1),
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
       },
       return: new CharacterType(1),
       predicate: true,
@@ -640,7 +640,7 @@ export class BuiltIn {
         "val8": new CLikeType(),
         "val9": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -659,7 +659,7 @@ export class BuiltIn {
         "val8": new CLikeType(),
         "val9": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -668,14 +668,14 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
       name: "REPEAT",
       mandatory: {
         "val": new CLikeType(),
-        "occ": new IntegerType(),
+        "occ": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -692,9 +692,9 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "off": new IntegerType(),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -706,9 +706,9 @@ export class BuiltIn {
         "val": new FloatType(),
       },
       optional: {
-        "dec": new IntegerType(),
-        "prec": new IntegerType(),
-        "mode": new IntegerType(),
+        "dec": IntegerType.get(),
+        "prec": IntegerType.get(),
+        "mode": IntegerType.get(),
       },
       return: new FloatType(),
       version: Version.v702,
@@ -729,11 +729,11 @@ export class BuiltIn {
         "val": new FloatType(),
       },
       optional: {
-        "dec": new IntegerType(),
-        "prec": new IntegerType(),
-        "mode": new IntegerType(),
+        "dec": IntegerType.get(),
+        "prec": IntegerType.get(),
+        "mode": IntegerType.get(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
       version: Version.v702,
     },
 
@@ -741,7 +741,7 @@ export class BuiltIn {
       name: "SEGMENT",
       mandatory: {
         "val": new CLikeType(),
-        "index": new IntegerType(),
+        "index": IntegerType.get(),
       },
       optional: {
         "sep": new CLikeType(),
@@ -759,8 +759,8 @@ export class BuiltIn {
       optional:
       {
         "sub": new CLikeType(),
-        "places": new IntegerType(),
-        "circular": new IntegerType(),
+        "places": IntegerType.get(),
+        "circular": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -773,8 +773,8 @@ export class BuiltIn {
       },
       optional: {
         "sub": new CLikeType(),
-        "places": new IntegerType(),
-        "circular": new IntegerType(),
+        "places": IntegerType.get(),
+        "circular": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -785,7 +785,7 @@ export class BuiltIn {
       mandatory: {
         "val": new FloatType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -817,7 +817,7 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -826,8 +826,8 @@ export class BuiltIn {
         "val": new CLikeType(),
       },
       optional: {
-        "off": new IntegerType(),
-        "len": new IntegerType(),
+        "off": IntegerType.get(),
+        "len": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -843,8 +843,8 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -860,8 +860,8 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -877,8 +877,8 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -894,8 +894,8 @@ export class BuiltIn {
         "regex": new CLikeType(),
         "pcre": new CLikeType(),
         "case": new CharacterType(1),
-        "len": new IntegerType(),
-        "occ": new IntegerType(),
+        "len": IntegerType.get(),
+        "occ": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -934,8 +934,8 @@ export class BuiltIn {
       optional:
       {
         "case": new CharacterType(1),
-        "sep": new IntegerType(),
-        "min": new IntegerType(),
+        "sep": IntegerType.get(),
+        "min": IntegerType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -964,7 +964,7 @@ export class BuiltIn {
       mandatory: {
         "val": new FloatType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
 
     {
@@ -973,9 +973,9 @@ export class BuiltIn {
         "val": new UTCLongType(),
       },
       optional: {
-        "days": new IntegerType(),
-        "hour": new IntegerType(),
-        "minutes": new IntegerType(),
+        "days": IntegerType.get(),
+        "hour": IntegerType.get(),
+        "minutes": IntegerType.get(),
         "seconds": new FloatType(),
       },
       return: new UTCLongType(),
@@ -1012,7 +1012,7 @@ export class BuiltIn {
       mandatory: {
         "val": new XSequenceType(),
       },
-      return: new IntegerType(),
+      return: IntegerType.get(),
     },
   ];
   private row = 1;
@@ -1081,14 +1081,14 @@ export class BuiltIn {
     ret.push(this.buildConstant("abap_off", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
     ret.push(this.buildConstant("abap_on", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
 
-    ret.push(this.buildConstant("col_background", new IntegerType(), "0"));
-    ret.push(this.buildConstant("col_heading", new IntegerType(), "1"));
-    ret.push(this.buildConstant("col_key", new IntegerType(), "4"));
-    ret.push(this.buildConstant("col_negative", new IntegerType(), "6"));
-    ret.push(this.buildConstant("col_group", new IntegerType(), "7"));
-    ret.push(this.buildConstant("col_normal", new IntegerType(), "2"));
-    ret.push(this.buildConstant("col_positive", new IntegerType(), "5"));
-    ret.push(this.buildConstant("col_total", new IntegerType(), "3"));
+    ret.push(this.buildConstant("col_background", IntegerType.get(), "0"));
+    ret.push(this.buildConstant("col_heading", IntegerType.get(), "1"));
+    ret.push(this.buildConstant("col_key", IntegerType.get(), "4"));
+    ret.push(this.buildConstant("col_negative", IntegerType.get(), "6"));
+    ret.push(this.buildConstant("col_group", IntegerType.get(), "7"));
+    ret.push(this.buildConstant("col_normal", IntegerType.get(), "2"));
+    ret.push(this.buildConstant("col_positive", IntegerType.get(), "5"));
+    ret.push(this.buildConstant("col_total", IntegerType.get(), "3"));
 
     ret.push(this.buildConstant("space", new CharacterType(1, {derivedFromConstant: true}), "' '"));
 
@@ -1105,50 +1105,50 @@ export class BuiltIn {
   private buildSY(): TypedIdentifier[] {
     const components: IStructureComponent[] = [];
     // NOTE: fields must be in correct sequence for the syntax check
-    components.push({name: "index", type: new IntegerType()});
-    components.push({name: "pagno", type: new IntegerType()});
-    components.push({name: "tabix", type: new IntegerType()});
-    components.push({name: "tfill", type: new IntegerType()});
-    components.push({name: "tlopc", type: new IntegerType()});
-    components.push({name: "tmaxl", type: new IntegerType()});
-    components.push({name: "toccu", type: new IntegerType()});
-    components.push({name: "ttabc", type: new IntegerType()});
-    components.push({name: "tstis", type: new IntegerType()});
-    components.push({name: "ttabi", type: new IntegerType()});
-    components.push({name: "dbcnt", type: new IntegerType()});
-    components.push({name: "fdpos", type: new IntegerType()});
-    components.push({name: "colno", type: new IntegerType()});
-    components.push({name: "linct", type: new IntegerType()});
-    components.push({name: "linno", type: new IntegerType()});
-    components.push({name: "linsz", type: new IntegerType()});
-    components.push({name: "pagct", type: new IntegerType()});
-    components.push({name: "macol", type: new IntegerType()});
-    components.push({name: "marow", type: new IntegerType()});
-    components.push({name: "tleng", type: new IntegerType()});
-    components.push({name: "sfoff", type: new IntegerType()});
-    components.push({name: "willi", type: new IntegerType()});
-    components.push({name: "lilli", type: new IntegerType()});
-    components.push({name: "subrc", type: new IntegerType()});
-    components.push({name: "fleng", type: new IntegerType()});
-    components.push({name: "cucol", type: new IntegerType()});
-    components.push({name: "curow", type: new IntegerType()});
-    components.push({name: "lsind", type: new IntegerType()});
-    components.push({name: "listi", type: new IntegerType()});
-    components.push({name: "stepl", type: new IntegerType()});
-    components.push({name: "tpagi", type: new IntegerType()});
-    components.push({name: "winx1", type: new IntegerType()});
-    components.push({name: "winy1", type: new IntegerType()});
-    components.push({name: "winx2", type: new IntegerType()});
-    components.push({name: "winy2", type: new IntegerType()});
-    components.push({name: "winco", type: new IntegerType()});
-    components.push({name: "winro", type: new IntegerType()});
-    components.push({name: "windi", type: new IntegerType()});
-    components.push({name: "srows", type: new IntegerType()});
-    components.push({name: "scols", type: new IntegerType()});
-    components.push({name: "loopc", type: new IntegerType()});
-    components.push({name: "folen", type: new IntegerType()});
-    components.push({name: "fodec", type: new IntegerType()});
-    components.push({name: "tzone", type: new IntegerType()});
+    components.push({name: "index", type: IntegerType.get()});
+    components.push({name: "pagno", type: IntegerType.get()});
+    components.push({name: "tabix", type: IntegerType.get()});
+    components.push({name: "tfill", type: IntegerType.get()});
+    components.push({name: "tlopc", type: IntegerType.get()});
+    components.push({name: "tmaxl", type: IntegerType.get()});
+    components.push({name: "toccu", type: IntegerType.get()});
+    components.push({name: "ttabc", type: IntegerType.get()});
+    components.push({name: "tstis", type: IntegerType.get()});
+    components.push({name: "ttabi", type: IntegerType.get()});
+    components.push({name: "dbcnt", type: IntegerType.get()});
+    components.push({name: "fdpos", type: IntegerType.get()});
+    components.push({name: "colno", type: IntegerType.get()});
+    components.push({name: "linct", type: IntegerType.get()});
+    components.push({name: "linno", type: IntegerType.get()});
+    components.push({name: "linsz", type: IntegerType.get()});
+    components.push({name: "pagct", type: IntegerType.get()});
+    components.push({name: "macol", type: IntegerType.get()});
+    components.push({name: "marow", type: IntegerType.get()});
+    components.push({name: "tleng", type: IntegerType.get()});
+    components.push({name: "sfoff", type: IntegerType.get()});
+    components.push({name: "willi", type: IntegerType.get()});
+    components.push({name: "lilli", type: IntegerType.get()});
+    components.push({name: "subrc", type: IntegerType.get()});
+    components.push({name: "fleng", type: IntegerType.get()});
+    components.push({name: "cucol", type: IntegerType.get()});
+    components.push({name: "curow", type: IntegerType.get()});
+    components.push({name: "lsind", type: IntegerType.get()});
+    components.push({name: "listi", type: IntegerType.get()});
+    components.push({name: "stepl", type: IntegerType.get()});
+    components.push({name: "tpagi", type: IntegerType.get()});
+    components.push({name: "winx1", type: IntegerType.get()});
+    components.push({name: "winy1", type: IntegerType.get()});
+    components.push({name: "winx2", type: IntegerType.get()});
+    components.push({name: "winy2", type: IntegerType.get()});
+    components.push({name: "winco", type: IntegerType.get()});
+    components.push({name: "winro", type: IntegerType.get()});
+    components.push({name: "windi", type: IntegerType.get()});
+    components.push({name: "srows", type: IntegerType.get()});
+    components.push({name: "scols", type: IntegerType.get()});
+    components.push({name: "loopc", type: IntegerType.get()});
+    components.push({name: "folen", type: IntegerType.get()});
+    components.push({name: "fodec", type: IntegerType.get()});
+    components.push({name: "tzone", type: IntegerType.get()});
     components.push({name: "dayst", type: new CharacterType(1)});
     components.push({name: "ftype", type: new CharacterType(1)});
     components.push({name: "appli", type: new HexType(2)});
@@ -1159,7 +1159,7 @@ export class BuiltIn {
     components.push({name: "ctype", type: new CharacterType(1)});
     components.push({name: "input", type: new CharacterType(1, {qualifiedName: "sy-input"})});
     components.push({name: "langu", type: new CharacterType(1, {qualifiedName: "sy-langu", conversionExit: "ISOLA"})});
-    components.push({name: "modno", type: new IntegerType()});
+    components.push({name: "modno", type: IntegerType.get()});
     components.push({name: "batch", type: new CharacterType(1, {qualifiedName: "sy-batch"})});
     components.push({name: "binpt", type: new CharacterType(1, {qualifiedName: "sy-binpt"})});
     components.push({name: "calld", type: new CharacterType(1, {qualifiedName: "sy-calld"})});
@@ -1169,7 +1169,7 @@ export class BuiltIn {
     components.push({name: "pri40", type: new CharacterType(1)});
     components.push({name: "rstrt", type: new CharacterType(1)});
     components.push({name: "wtitl", type: new CharacterType(1, {qualifiedName: "sy-wtitl"})});
-    components.push({name: "cpage", type: new IntegerType()});
+    components.push({name: "cpage", type: IntegerType.get()});
     components.push({name: "dbnam", type: new CharacterType(20, {qualifiedName: "sy-dbnam"})});
     components.push({name: "mandt", type: new CharacterType(3, {qualifiedName: "sy-mandt"})});
     components.push({name: "prefx", type: new CharacterType(3)});
@@ -1267,8 +1267,8 @@ export class BuiltIn {
     components.push({name: "oncom", type: new CharacterType(1)});
     components.push({name: "vline", type: new CharacterType(1, {qualifiedName: "sy-vline"})});
     components.push({name: "winsl", type: new CharacterType(79)});
-    components.push({name: "staco", type: new IntegerType()});
-    components.push({name: "staro", type: new IntegerType()});
+    components.push({name: "staco", type: IntegerType.get()});
+    components.push({name: "staro", type: IntegerType.get()});
     components.push({name: "datar", type: new CharacterType(1, {qualifiedName: "sy-datar"})});
     components.push({name: "host", type: new CharacterType(32, {qualifiedName: "sy-host"})});
     components.push({name: "locdb", type: new CharacterType(1)});

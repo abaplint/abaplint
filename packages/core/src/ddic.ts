@@ -102,7 +102,7 @@ export class DDIC {
       case "CSEQUENCE":
         return new Types.CSequenceType({qualifiedName: qualifiedName});
       case "I":
-        return new Types.IntegerType({qualifiedName: qualifiedName || name});
+        return Types.IntegerType.get({qualifiedName: qualifiedName || name});
       case "INT8": // todo, take version into account
         return new Types.Integer8Type({qualifiedName: qualifiedName || name});
       case "F":
@@ -403,8 +403,9 @@ export class DDIC {
       case "INT1":
       case "INT2":
       case "INT4":
+        return Types.IntegerType.get({qualifiedName: qualifiedName});
       case "INT8":
-        return new Types.IntegerType({qualifiedName: qualifiedName});
+        return new Types.Integer8Type({qualifiedName: qualifiedName});
       case "SSTR":    // 1 <= len <= 1333
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len

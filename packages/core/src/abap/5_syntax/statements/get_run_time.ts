@@ -13,7 +13,7 @@ export class GetRunTime implements StatementSyntax {
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, new IntegerType());
+      new InlineData().runSyntax(inline, scope, filename, IntegerType.get());
     } else if (target) {
       new Target().runSyntax(target, scope, filename);
     }

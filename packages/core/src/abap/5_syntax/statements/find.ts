@@ -18,12 +18,12 @@ export class Find implements StatementSyntax {
     const rfound = node.findExpressionAfterToken("RESULTS");
     if (rfound && rfound.get() instanceof Expressions.Target) {
       const sub = new StructureType([
-        {name: "OFFSET", type: new IntegerType()},
-        {name: "LENGTH", type: new IntegerType()}], "SUBMATCH_RESULT", "SUBMATCH_RESULT");
+        {name: "OFFSET", type: IntegerType.get()},
+        {name: "LENGTH", type: IntegerType.get()}], "SUBMATCH_RESULT", "SUBMATCH_RESULT");
       const type = new StructureType([
-        {name: "LINE", type: new IntegerType()},
-        {name: "OFFSET", type: new IntegerType()},
-        {name: "LENGTH", type: new IntegerType()},
+        {name: "LINE", type: IntegerType.get()},
+        {name: "OFFSET", type: IntegerType.get()},
+        {name: "LENGTH", type: IntegerType.get()},
         {name: "SUBMATCHES", type: new TableType(sub, {withHeader: false, keyType: TableKeyType.default})},
       ], "MATCH_RESULT", "MATCH_RESULT");
       if (node.concatTokens().toUpperCase().startsWith("FIND FIRST")) {
@@ -36,23 +36,23 @@ export class Find implements StatementSyntax {
     const ofound = node.findExpressionsAfterToken("OFFSET");
     for (const o of ofound) {
       if (o.get() instanceof Expressions.Target) {
-        this.inline(o, scope, filename, new IntegerType());
+        this.inline(o, scope, filename, IntegerType.get());
       }
     }
 
     const lfound = node.findExpressionAfterToken("LINE");
     if (lfound && lfound.get() instanceof Expressions.Target) {
-      this.inline(lfound, scope, filename, new IntegerType());
+      this.inline(lfound, scope, filename, IntegerType.get());
     }
 
     const cfound = node.findExpressionAfterToken("COUNT");
     if (cfound && cfound.get() instanceof Expressions.Target) {
-      this.inline(cfound, scope, filename, new IntegerType());
+      this.inline(cfound, scope, filename, IntegerType.get());
     }
 
     const lnfound = node.findExpressionAfterToken("LENGTH");
     if (lnfound && lnfound.get() instanceof Expressions.Target) {
-      this.inline(lnfound, scope, filename, new IntegerType());
+      this.inline(lnfound, scope, filename, IntegerType.get());
     }
 
     if (node.findDirectTokenByText("SUBMATCHES")) {

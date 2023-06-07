@@ -24,7 +24,7 @@ export class GetBit implements StatementSyntax {
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       const inline = t?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(t, scope, filename, new IntegerType());
+        new InlineData().runSyntax(t, scope, filename, IntegerType.get());
       } else {
         new Target().runSyntax(t, scope, filename);
       }

@@ -44,7 +44,7 @@ export class InlineLoopDefinition {
 
     const index = node.findExpressionAfterToken("INTO");
     if (index && index.get() instanceof Expressions.TargetField) {
-      const identifier = new TypedIdentifier(index.getFirstToken(), filename, new IntegerType(), [IdentifierMeta.InlineDefinition]);
+      const identifier = new TypedIdentifier(index.getFirstToken(), filename, IntegerType.get(), [IdentifierMeta.InlineDefinition]);
       scope.addReference(index.getFirstToken(), identifier, ReferenceType.DataWriteReference, filename);
       scope.addIdentifier(identifier);
     }

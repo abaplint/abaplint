@@ -20,17 +20,17 @@ export class Controls implements StatementSyntax {
     if (node.findDirectTokenByText("TABLEVIEW") && token) {
       const cols = new StructureType([
         {name: "SCREEN", type: new CharacterType(1)}, // todo
-        {name: "INDEX", type: new IntegerType()},
+        {name: "INDEX", type: IntegerType.get()},
         {name: "SELECTED", type: new CharacterType(1)},
-        {name: "VISLENGTH", type: new IntegerType()},
+        {name: "VISLENGTH", type: IntegerType.get()},
         {name: "INVISIBLE", type: new CharacterType(1)},
       ]);
       const type = new StructureType([
         {name: "FIXED_COLS", type: new CharacterType(132)},
-        {name: "LINES", type: new IntegerType()},
-        {name: "TOP_LINE", type: new IntegerType()},
-        {name: "CURRENT_LINE", type: new IntegerType()},
-        {name: "LEFT_COL", type: new IntegerType()},
+        {name: "LINES", type: IntegerType.get()},
+        {name: "TOP_LINE", type: IntegerType.get()},
+        {name: "CURRENT_LINE", type: IntegerType.get()},
+        {name: "LEFT_COL", type: IntegerType.get()},
         {name: "LINE_SEL_MODE", type: new CharacterType(1)},
         {name: "COL_SEL_MODE", type: new CharacterType(1)},
         {name: "LINE_SELECTOR", type: new CharacterType(1)},
