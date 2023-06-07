@@ -209,6 +209,7 @@ export async function run(arg: Arguments) {
       await reg.parseAsync({progress, outputPerformance: arg.performanceInformation});
       if (arg.runFix !== true) {
         issues = issues.concat(reg.findIssues({progress, outputPerformance: arg.performanceInformation}));
+        // require('v8').writeHeapSnapshot();
       }
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");

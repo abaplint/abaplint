@@ -775,6 +775,9 @@ Make sure to test the downported code, it might not always be completely correct
       fieldDefinition = `DATA ${name} TYPE ${tableName}.`;
     } else if (fieldList.concatTokens().toUpperCase() === "COUNT( * )") {
       fieldDefinition = `DATA ${name} TYPE i.`;
+    } else if (fieldList.concatTokens().toUpperCase() === "@ABAP_TRUE"
+        || fieldList.concatTokens().toUpperCase() === "@ABAP_FALSE") {
+      fieldDefinition = `DATA ${name} TYPE abap_bool.`;
     } else if (fieldList.getChildren().length === 1 && fieldList.getChildren()[0].get() instanceof Expressions.SQLAggregation) {
       const c = fieldList.getChildren()[0];
       if (c instanceof ExpressionNode) {

@@ -68,7 +68,7 @@ export class DDIC {
   public lookupBuiltinType(name: string, length?: number, decimals?: number, qualifiedName?: string): AbstractType | undefined {
     switch (name) {
       case "STRING":
-        return new Types.StringType({qualifiedName: qualifiedName || name});
+        return Types.StringType.get({qualifiedName: qualifiedName || name});
       case "XSTRING":
         return new Types.XStringType({qualifiedName: qualifiedName || name});
       case "D":
@@ -102,7 +102,7 @@ export class DDIC {
       case "CSEQUENCE":
         return new Types.CSequenceType({qualifiedName: qualifiedName});
       case "I":
-        return new Types.IntegerType({qualifiedName: qualifiedName || name});
+        return Types.IntegerType.get({qualifiedName: qualifiedName || name});
       case "INT8": // todo, take version into account
         return new Types.Integer8Type({qualifiedName: qualifiedName || name});
       case "F":
@@ -403,13 +403,14 @@ export class DDIC {
       case "INT1":
       case "INT2":
       case "INT4":
+        return Types.IntegerType.get({qualifiedName: qualifiedName});
       case "INT8":
-        return new Types.IntegerType({qualifiedName: qualifiedName});
+        return new Types.Integer8Type({qualifiedName: qualifiedName});
       case "SSTR":    // 1 <= len <= 1333
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return new Types.StringType({qualifiedName: qualifiedName || "STRING"});
+        return Types.StringType.get({qualifiedName: qualifiedName});
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":

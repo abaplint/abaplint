@@ -60,7 +60,7 @@ export class Source {
           const method = new BuiltIn().searchBuiltin(tok);
           scope.addReference(token, method, ReferenceType.BuiltinMethodReference, filename);
           new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
-          return new StringType();
+          return StringType.get();
         }
         case "XSDBOOL":
         {
@@ -190,7 +190,7 @@ export class Source {
       }
     }
     if (node.findDirectTokenByText("&&")) {
-      return new StringType();
+      return StringType.get();
     }
 
     return context;

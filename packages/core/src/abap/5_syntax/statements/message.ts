@@ -14,7 +14,7 @@ export class Message implements StatementSyntax {
     const inline = found?.findDirectExpression(Expressions.InlineData);
 
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, new StringType());
+      new InlineData().runSyntax(inline, scope, filename, StringType.get());
     } else if (found) {
       new Target().runSyntax(found, scope, filename);
     }

@@ -4897,4 +4897,11 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
+  it("SELECT, exists", async () => {
+    const abap = `SELECT SINGLE @abap_true FROM voided INTO @DATA(lv_exists).`;
+    const expected = `DATA lv_exists TYPE abap_bool.
+SELECT SINGLE @abap_true FROM voided INTO @lv_exists.`;
+    testFix(abap, expected);
+  });
+
 });

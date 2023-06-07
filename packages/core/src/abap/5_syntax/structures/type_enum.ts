@@ -30,7 +30,7 @@ export class TypeEnum {
       }
       const token = expr.getFirstToken();
       // integer is default if BASE TYPE is not specified
-      values.push(new TypedIdentifier(token, filename, new IntegerType()));
+      values.push(new TypedIdentifier(token, filename, IntegerType.get()));
     }
     for (const type of node.findDirectStatements(Statements.TypeEnum)) {
       const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
@@ -39,7 +39,7 @@ export class TypeEnum {
       }
       const token = expr.getFirstToken();
       // integer is default if BASE TYPE is not specified
-      values.push(new TypedIdentifier(token, filename, new IntegerType()));
+      values.push(new TypedIdentifier(token, filename, IntegerType.get()));
     }
 
     const baseType = begin.findExpressionAfterToken("TYPE")?.getFirstToken();

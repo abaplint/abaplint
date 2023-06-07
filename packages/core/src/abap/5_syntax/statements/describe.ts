@@ -23,7 +23,7 @@ export class Describe implements StatementSyntax {
     if (linesTarget?.get() instanceof Expressions.Target) {
       const inline = linesTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, new IntegerType());
+        new InlineData().runSyntax(inline, scope, filename, IntegerType.get());
       } else {
         new Target().runSyntax(linesTarget, scope, filename);
       }
@@ -43,7 +43,7 @@ export class Describe implements StatementSyntax {
     if (lengthTarget?.get() instanceof Expressions.Target) {
       const inline = lengthTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, new IntegerType());
+        new InlineData().runSyntax(inline, scope, filename, IntegerType.get());
       } else {
         new Target().runSyntax(lengthTarget, scope, filename);
       }
@@ -53,7 +53,7 @@ export class Describe implements StatementSyntax {
     if (componentsTarget?.get() instanceof Expressions.Target) {
       const inline = componentsTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, new IntegerType());
+        new InlineData().runSyntax(inline, scope, filename, IntegerType.get());
       } else {
         new Target().runSyntax(componentsTarget, scope, filename);
       }
