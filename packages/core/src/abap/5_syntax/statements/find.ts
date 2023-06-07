@@ -64,7 +64,7 @@ export class Find implements StatementSyntax {
         }
         const inline = t?.findDirectExpression(Expressions.InlineData);
         if (inline) {
-          new InlineData().runSyntax(inline, scope, filename, new StringType());
+          new InlineData().runSyntax(inline, scope, filename, StringType.get());
         } else {
           new Target().runSyntax(t, scope, filename);
         }

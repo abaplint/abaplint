@@ -15,9 +15,9 @@ export class Constant {
       }
       return new CharacterType(len, {derivedFromConstant: true});
     } else if (node.getFirstToken().getStr().startsWith("`")) {
-      return new StringType({qualifiedName: "STRING", derivedFromConstant: true});
+      return StringType.get({derivedFromConstant: true});
     } else {
-      return new StringType({qualifiedName: "STRING"});
+      return StringType.get();
     }
   }
 }

@@ -50,7 +50,7 @@ export class MethodCallParam {
       } else {
         targetType = method;
       }
-      let sourceType: AbstractType | undefined = new StringType();
+      let sourceType: AbstractType | undefined = StringType.get();
       if (child.get() instanceof Expressions.Source) {
         sourceType = new Source().runSyntax(child, scope, filename, targetType);
       }

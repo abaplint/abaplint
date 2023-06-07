@@ -167,7 +167,7 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -226,7 +226,7 @@ export class BuiltIn {
         "val7": new CLikeType(),
         "val9": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -244,7 +244,7 @@ export class BuiltIn {
         "val7": new CLikeType(),
         "val9": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -256,7 +256,7 @@ export class BuiltIn {
       optional: {
         "sep": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -270,7 +270,7 @@ export class BuiltIn {
         "from": new CLikeType(),
         "to": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -421,7 +421,7 @@ export class BuiltIn {
         "val": new CLikeType(),
         "format": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -524,7 +524,7 @@ export class BuiltIn {
         "sep": new IntegerType(),
         "min": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -537,7 +537,7 @@ export class BuiltIn {
       optional: {
         "off": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -604,7 +604,7 @@ export class BuiltIn {
         "pcre": new CLikeType(),
         "occ": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -677,7 +677,7 @@ export class BuiltIn {
         "val": new CLikeType(),
         "occ": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -696,7 +696,7 @@ export class BuiltIn {
         "len": new IntegerType(),
         "occ": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -719,7 +719,7 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -747,7 +747,7 @@ export class BuiltIn {
         "sep": new CLikeType(),
         "space": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -762,7 +762,7 @@ export class BuiltIn {
         "places": new IntegerType(),
         "circular": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -776,7 +776,7 @@ export class BuiltIn {
         "places": new IntegerType(),
         "circular": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -829,7 +829,7 @@ export class BuiltIn {
         "off": new IntegerType(),
         "len": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -846,7 +846,7 @@ export class BuiltIn {
         "len": new IntegerType(),
         "occ": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -863,7 +863,7 @@ export class BuiltIn {
         "len": new IntegerType(),
         "occ": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -880,7 +880,7 @@ export class BuiltIn {
         "len": new IntegerType(),
         "occ": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -897,7 +897,7 @@ export class BuiltIn {
         "len": new IntegerType(),
         "occ": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -922,7 +922,7 @@ export class BuiltIn {
       mandatory: {
         "val": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -937,14 +937,14 @@ export class BuiltIn {
         "sep": new IntegerType(),
         "min": new IntegerType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
     {
       name: "TO_UPPER",
       mandatory: {"val": new CLikeType()},
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 
@@ -955,7 +955,7 @@ export class BuiltIn {
         "from": new CLikeType(),
         "to": new CLikeType(),
       },
-      return: new StringType(),
+      return: StringType.get(),
       version: Version.v702,
     },
 

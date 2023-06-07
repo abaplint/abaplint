@@ -68,7 +68,7 @@ export class DDIC {
   public lookupBuiltinType(name: string, length?: number, decimals?: number, qualifiedName?: string): AbstractType | undefined {
     switch (name) {
       case "STRING":
-        return new Types.StringType({qualifiedName: qualifiedName || name});
+        return Types.StringType.get({qualifiedName: qualifiedName || name});
       case "XSTRING":
         return new Types.XStringType({qualifiedName: qualifiedName || name});
       case "D":
@@ -409,7 +409,7 @@ export class DDIC {
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return new Types.StringType({qualifiedName: qualifiedName || "STRING"});
+        return Types.StringType.get({qualifiedName: qualifiedName});
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":

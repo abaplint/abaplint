@@ -12,7 +12,7 @@ export class StringTemplate {
 
     for (const templateSource of node.findAllExpressions(Expressions.StringTemplateSource)) {
       const s = templateSource.findDirectExpression(Expressions.Source);
-      const type = new Source().runSyntax(s, scope, filename, new StringType({qualifiedName: "STRING"}));
+      const type = new Source().runSyntax(s, scope, filename, StringType.get());
       if (type === undefined) {
         throw new Error("No target type determined");
       } else if (typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false) {
@@ -38,6 +38,6 @@ export class StringTemplate {
       }
     }
 
-    return new StringType({qualifiedName: "STRING"});
+    return StringType.get();
   }
 }

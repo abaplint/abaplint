@@ -19,7 +19,7 @@ export class Concatenate implements StatementSyntax {
       if (byteMode) {
         new InlineData().runSyntax(inline, scope, filename, new XStringType());
       } else {
-        new InlineData().runSyntax(inline, scope, filename, new StringType());
+        new InlineData().runSyntax(inline, scope, filename, StringType.get());
       }
     } else if (target) {
       const type = new Target().runSyntax(target, scope, filename);
