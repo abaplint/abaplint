@@ -26,5 +26,6 @@ export * from "./time_type";
 export * from "./unknown_type";
 export * from "./utc_long_type";
 export * from "./void_type";
+export * from "./xgeneric_type";
 export * from "./xsequence_type";
 export * from "./xstring_type";

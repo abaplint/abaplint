@@ -1,7 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {UnknownType} from "../../types/basic";
+import {UnknownType, XGenericType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
 import {Default} from "./default";
@@ -31,6 +31,8 @@ export class MethodParam {
     const concat = type.concatTokens().toUpperCase();
     if (concat === "TYPE C" || concat.startsWith("TYPE C ")) {
       return new TypedIdentifier(name.getFirstToken(), filename, new CGenericType(), meta);
+    } else if (concat === "TYPE X" || concat.startsWith("TYPE X ")) {
+      return new TypedIdentifier(name.getFirstToken(), filename, new XGenericType(), meta);
     }
 
     const found = new BasicTypes(filename, scope).parseType(type);

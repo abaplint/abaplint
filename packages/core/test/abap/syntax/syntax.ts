@@ -8387,6 +8387,21 @@ WRITE xstrlen( sdf ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, generic x parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS generic CHANGING f TYPE x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD generic.
+    f+0(1) = f+1(1).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
