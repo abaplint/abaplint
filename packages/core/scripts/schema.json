@@ -2791,7 +2791,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detect SELECT SINGLE which are possibily not unique\nTags: Experimental\nhttps://rules.abaplint.org/select_single_full_key"
+              "description": "Detect SELECT SINGLE which are possibily not unique\nhttps://rules.abaplint.org/select_single_full_key"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -4540,7 +4540,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detect SELECT SINGLE which are possibily not unique\nTags: Experimental\nhttps://rules.abaplint.org/select_single_full_key"
+              "description": "Detect SELECT SINGLE which are possibily not unique\nhttps://rules.abaplint.org/select_single_full_key"
             },
             "selection_screen_naming": {
               "anyOf": [

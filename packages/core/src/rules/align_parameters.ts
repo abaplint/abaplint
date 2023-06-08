@@ -45,7 +45,8 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-par
 
 Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
 
-Also https://rules.abaplint.org/max_one_method_parameter_per_line/ can help aligning parameter syntax`,
+If parameters are on the same row, no issues are reported, see
+https://rules.abaplint.org/max_one_method_parameter_per_line/ for splitting parameters to lines`,
       tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
@@ -117,8 +118,13 @@ DATA(sdf) = VALUE type(
     }
 
     let expectedEqualsColumn = 0;
+    let row = 0;
     for (const p of candidate.parameters) {
       const currentCol = p.left.getLastToken().getCol() + p.left.getLastToken().getStr().length + 1;
+      if (p.eq.getRow() === row) {
+        return undefined;
+      }
+      row = p.eq.getRow();
       if (currentCol > expectedEqualsColumn) {
         expectedEqualsColumn = currentCol;
       }

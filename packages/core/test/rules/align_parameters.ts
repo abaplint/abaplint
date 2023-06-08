@@ -64,7 +64,7 @@ CALL FUNCTION 'FOOBAR'
   it("call function, multi parameters on single line, issue", async () => {
     const abap = `CALL FUNCTION 'FOOBAR' EXPORTING foo = 2 parameter = 3.`;
     const issues = await findIssues(abap);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(0);
   });
 
   it("call function, fixed", async () => {
@@ -149,6 +149,12 @@ CALL FUNCTION 'FOOBAR'
     const abap = `foobar(
       IMPORTING moo = var1
                 bar = var2 ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("same line, no issue expected", async () => {
+    const abap = `method( var1 = value1 var2 = value2 ).`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(0);
   });
