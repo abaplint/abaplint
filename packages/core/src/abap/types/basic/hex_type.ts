@@ -6,7 +6,7 @@ export class HexType extends AbstractType {
   public constructor(length: number, qualifiedName?: string) {
     super({qualifiedName: qualifiedName});
     if (length <= 0) {
-      throw new Error("Bad LENGTHm, Hex");
+      throw new Error("Bad LENGTH, Hex");
     }
     this.length = length;
   }
