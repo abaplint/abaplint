@@ -8,6 +8,7 @@ import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
 import {Statements} from "..";
+import {EditHelper, IEdit} from "../edit_helper";
 
 
 export class AlignParametersConf extends BasicRuleConfig {
@@ -125,8 +126,14 @@ DATA(sdf) = VALUE type(
 
     for (const p of candidate.parameters) {
       if (p.eq.getCol() !== expectedEqualsColumn) {
+        let fix: IEdit | undefined;
+        if (p.eq.getCol() < expectedEqualsColumn) {
+          fix = EditHelper.insertAt(file, p.eq, " ".repeat(expectedEqualsColumn - p.eq.getCol()));
+        } else {
+          fix = EditHelper.deleteRange(file, new Position(p.eq.getRow(), expectedEqualsColumn), p.eq);
+        }
         const message = "Align parameters to column " + expectedEqualsColumn;
-        return Issue.atPosition(file, p.eq, message, this.getMetadata().key, this.getConfig().severity);
+        return Issue.atPosition(file, p.eq, message, this.getMetadata().key, this.getConfig().severity, fix);
       }
     }
 

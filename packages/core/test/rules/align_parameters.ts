@@ -3,6 +3,12 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {AlignParameters} from "../../src/rules";
 import {Issue} from "../../src/issue";
+import {testRuleFixSingle} from "./_utils";
+
+function testFix(input: string, expected: string, noIssuesAfter = true) {
+  testRuleFixSingle(input, expected, new AlignParameters(), undefined, undefined, noIssuesAfter);
+}
+
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
@@ -25,6 +31,34 @@ describe("Rule: align_parameters", () => {
     parameter = 3.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
+  });
+
+  it("quick fix 1", async () => {
+    const abap = `
+CALL FUNCTION 'FOOBAR'
+  EXPORTING
+    foo = 2
+    parameter = 3.`;
+    const expected = `
+CALL FUNCTION 'FOOBAR'
+  EXPORTING
+    foo       = 2
+    parameter = 3.`;
+    testFix(abap, expected, false);
+  });
+
+  it("quick fix 2", async () => {
+    const abap = `
+CALL FUNCTION 'FOOBAR'
+  EXPORTING
+    foo             = 2
+    parameter = 3.`;
+    const expected = `
+CALL FUNCTION 'FOOBAR'
+  EXPORTING
+    foo       = 2
+    parameter = 3.`;
+    testFix(abap, expected, false);
   });
 
   it("call function, multi parameters on single line, issue", async () => {
