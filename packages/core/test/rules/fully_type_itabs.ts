@@ -76,4 +76,14 @@ describe("Rule: fully_type_itabs", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("chained, show correct line", async () => {
+    const abap = `
+DATA: lt_stream_line TYPE i,
+      lt_tline       TYPE TABLE OF i,`;
+    const file = new MemoryFile("zrange.prog.abap", abap);
+    const issues = await run(file);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getStart().getRow()).to.equal(3);
+  });
+
 });

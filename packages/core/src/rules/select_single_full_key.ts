@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {ABAPFile, ABAPObject, Comment, Expressions, IObject, IRegistry, ISpaghettiScope, Position, Statements, SyntaxLogic} from "..";
 import {Table} from "../objects";
 
@@ -19,7 +19,7 @@ export class SelectSingleFullKey implements IRule {
       shortDescription: `Detect SELECT SINGLE which are possibily not unique`,
       extendedInformation: `Table definitions must be known, ie. inside the errorNamespace`,
       pseudoComment: "EC CI_NOORDER",
-      tags: [RuleTag.Experimental],
+      tags: [],
     };
   }
 

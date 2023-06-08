@@ -8,6 +8,7 @@ import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
 import {Statements} from "..";
+import {EditHelper, IEdit} from "../edit_helper";
 
 
 export class AlignParametersConf extends BasicRuleConfig {
@@ -44,7 +45,8 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-par
 
 Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
 
-Also https://rules.abaplint.org/max_one_method_parameter_per_line/ can help aligning parameter syntax`,
+If parameters are on the same row, no issues are reported, see
+https://rules.abaplint.org/max_one_method_parameter_per_line/ for splitting parameters to lines`,
       tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Styleguide],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
@@ -116,8 +118,13 @@ DATA(sdf) = VALUE type(
     }
 
     let expectedEqualsColumn = 0;
+    let row = 0;
     for (const p of candidate.parameters) {
       const currentCol = p.left.getLastToken().getCol() + p.left.getLastToken().getStr().length + 1;
+      if (p.eq.getRow() === row) {
+        return undefined;
+      }
+      row = p.eq.getRow();
       if (currentCol > expectedEqualsColumn) {
         expectedEqualsColumn = currentCol;
       }
@@ -125,8 +132,14 @@ DATA(sdf) = VALUE type(
 
     for (const p of candidate.parameters) {
       if (p.eq.getCol() !== expectedEqualsColumn) {
+        let fix: IEdit | undefined;
+        if (p.eq.getCol() < expectedEqualsColumn) {
+          fix = EditHelper.insertAt(file, p.eq, " ".repeat(expectedEqualsColumn - p.eq.getCol()));
+        } else {
+          fix = EditHelper.deleteRange(file, new Position(p.eq.getRow(), expectedEqualsColumn), p.eq);
+        }
         const message = "Align parameters to column " + expectedEqualsColumn;
-        return Issue.atPosition(file, p.eq, message, this.getMetadata().key, this.getConfig().severity);
+        return Issue.atPosition(file, p.eq, message, this.getMetadata().key, this.getConfig().severity, fix);
       }
     }
 
