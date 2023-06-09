@@ -8402,7 +8402,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, method structured returning", () => {
+  it("ok, method structured returning", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
