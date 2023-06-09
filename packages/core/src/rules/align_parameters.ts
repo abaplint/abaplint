@@ -47,7 +47,7 @@ Does not take effect on non functional method calls, use https://rules.abaplint.
 
 If parameters are on the same row, no issues are reported, see
 https://rules.abaplint.org/max_one_method_parameter_per_line/ for splitting parameters to lines`,
-      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Styleguide],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.Quickfix],
       badExample: `CALL FUNCTION 'FOOBAR'
   EXPORTING
     foo = 2

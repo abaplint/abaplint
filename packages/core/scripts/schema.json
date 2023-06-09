@@ -1504,7 +1504,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide\nhttps://rules.abaplint.org/align_parameters"
+              "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/align_parameters"
             },
             "allowed_object_naming": {
               "anyOf": [
@@ -3253,7 +3253,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide\nhttps://rules.abaplint.org/align_parameters"
+              "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/align_parameters"
             },
             "allowed_object_naming": {
               "anyOf": [
