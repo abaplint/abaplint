@@ -78,4 +78,22 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("changed in loop, no issue expected", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    METHODS foo IMPORTING VALUE(tab) TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    LOOP AT tab ASSIGNING FIELD-SYMBOL(<sdf>).
+      <sdf> = 2.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap, "zslowpass.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });

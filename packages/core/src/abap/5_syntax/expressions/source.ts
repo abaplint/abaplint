@@ -39,7 +39,8 @@ export class Source {
     node: ExpressionNode | undefined,
     scope: CurrentScope,
     filename: string,
-    targetType?: AbstractType): AbstractType | undefined {
+    targetType?: AbstractType,
+    writeReference = false): AbstractType | undefined {
 
     if (node === undefined) {
       return undefined;
@@ -164,11 +165,16 @@ export class Source {
 
     let context: AbstractType | undefined = new UnknownType("todo, Source type");
 
+    const type = [ReferenceType.DataReadReference];
+    if (writeReference) {
+      type.push(ReferenceType.DataWriteReference);
+    }
+
     while (children.length >= 0) {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
         context = new MethodCallChain().runSyntax(first, scope, filename, targetType);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-        context = new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
+        context = new FieldChain().runSyntax(first, scope, filename, type);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
         context = new StringTemplate().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Source) {
@@ -177,12 +183,12 @@ export class Source {
         context = new Constant().runSyntax(first);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dereference) {
         context = new Dereference().runSyntax(context);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
+//      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
 //        console.dir("dash");
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
         context = new ComponentChain().runSyntax(context, first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeChain) {
-        context = new AttributeChain().runSyntax(context, first, scope, filename, ReferenceType.DataReadReference);
+        context = new AttributeChain().runSyntax(context, first, scope, filename, type);
       }
       first = children.shift();
       if (first === undefined) {

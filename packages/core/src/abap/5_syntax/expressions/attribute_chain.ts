@@ -14,7 +14,7 @@ export class AttributeChain {
     node: INode,
     scope: CurrentScope,
     filename: string,
-    type?: ReferenceType | undefined): AbstractType | undefined {
+    type: ReferenceType[]): AbstractType | undefined {
 
     if (inputContext instanceof VoidType) {
       return inputContext;
@@ -43,7 +43,9 @@ export class AttributeChain {
     if (context === undefined) {
       throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
     }
-    scope.addReference(nameToken, context, type, filename);
+    for (const t of type) {
+      scope.addReference(nameToken, context, t, filename);
+    }
 
 // todo, loop, handle ArrowOrDash, ComponentName, TableExpression
 

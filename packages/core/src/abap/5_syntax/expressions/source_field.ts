@@ -3,7 +3,7 @@ import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 
 export class SourceField {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, type?: ReferenceType) {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, type?: ReferenceType | ReferenceType[]) {
     const token = node.getFirstToken();
     const name = token.getStr();
     const found = scope.findVariable(name);

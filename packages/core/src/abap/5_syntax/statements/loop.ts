@@ -23,12 +23,14 @@ export class Loop implements StatementSyntax {
       target = node.findDirectExpression(Expressions.FSTarget);
     }
 
+    const write = loopTarget?.findDirectTokenByText("ASSIGNING") !== undefined;
+
     const sources = node.findDirectExpressions(Expressions.Source);
     let firstSource = node.findDirectExpression(Expressions.SimpleSource2);
     if (firstSource === undefined) {
       firstSource = sources[0];
     }
-    let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename, targetType) : undefined;
+    let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename, targetType, write) : undefined;
     let rowType: AbstractType | undefined = undefined;
 
     const concat = node.concatTokens().toUpperCase();
