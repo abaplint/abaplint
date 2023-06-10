@@ -9,6 +9,9 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class UnnecessaryPragmaConf extends BasicRuleConfig {
+  /** Allow NO_TEXT in global CLAS and INTF definitions,
+      its added automatically by SE24 in some cases where it should not */
+  public allowNoTextGlobal?: boolean = false;
 }
 
 export class UnnecessaryPragma extends ABAPRule {
@@ -59,6 +62,7 @@ ENDIF.`,
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
     let noHandler: boolean = false;
+    let globalDefinition: boolean = false;
 
     const statements = file.getStatements();
     for (let i = 0; i < statements.length; i++) {
@@ -67,6 +71,14 @@ ENDIF.`,
 
       if (statement.get() instanceof Statements.EndTry) {
         noHandler = false;
+      } else if (statement.get() instanceof Statements.ClassDefinition
+          || statement.get() instanceof Statements.Interface) {
+        if (statement.findDirectExpression(Expressions.ClassGlobal)) {
+          globalDefinition = true;
+        }
+      } else if (statement.get() instanceof Statements.EndClass
+          || statement.get() instanceof Statements.EndInterface) {
+        globalDefinition = false;
       } else if (statement.get() instanceof Comment) {
         continue;
       } else if (noHandler === true && !(statement.get() instanceof Statements.Catch)) {
@@ -78,9 +90,17 @@ ENDIF.`,
         noHandler = this.containsNoHandler(statement, statements[i + 1]);
       }
 
-      issues.push(...this.checkText(statement, file));
+      if (this.getConfig().allowNoTextGlobal === true && globalDefinition === true) {
+        // skip
+      } else {
+        issues.push(...this.checkText(statement, file));
+      }
+
       issues.push(...this.checkNeeded(statement, file));
-      issues.push(...this.checkSubrc(statement, nextStatement, file));
+
+      if (globalDefinition === false) {
+        issues.push(...this.checkSubrc(statement, nextStatement, file));
+      }
     }
 
     return issues;

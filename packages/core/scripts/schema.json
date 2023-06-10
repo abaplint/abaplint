@@ -7376,6 +7376,10 @@
     "UnnecessaryPragmaConf": {
       "additionalProperties": false,
       "properties": {
+        "allowNoTextGlobal": {
+          "description": "Allow NO_TEXT in global CLAS and INTF definitions, its added automatically by SE24 in some cases where it should not",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
