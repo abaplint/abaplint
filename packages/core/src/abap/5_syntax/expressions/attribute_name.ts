@@ -16,7 +16,7 @@ export class AttributeName {
     node: INode,
     scope: CurrentScope,
     filename: string,
-    type?: ReferenceType | undefined): AbstractType | undefined {
+    type?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
     if (context instanceof VoidType) {
       return context;

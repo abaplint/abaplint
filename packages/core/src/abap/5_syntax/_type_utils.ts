@@ -218,11 +218,17 @@ export class TypeUtils {
     return false;
   }
 
-  public isAssignableStrict(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+  public isAssignableStrict(source: AbstractType | undefined,
+                            target: AbstractType | undefined,
+                            containsMethodCall: boolean = false): boolean {
 /*
     console.dir(source);
     console.dir(target);
 */
+    if (containsMethodCall) {
+      return this.isAssignable(source, target);
+    }
+
     if (source instanceof CharacterType) {
       if (target instanceof CharacterType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {

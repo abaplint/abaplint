@@ -22,7 +22,7 @@ export class FieldChain {
     node: ExpressionNode,
     scope: CurrentScope,
     filename: string,
-    refType?: ReferenceType | undefined): AbstractType | undefined {
+    refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
     const concat = node.concatTokens();
     if (concat.includes("-")) {
@@ -124,7 +124,7 @@ export class FieldChain {
     node: INode | undefined,
     scope: CurrentScope,
     filename: string,
-    type: ReferenceType | undefined): AbstractType | undefined {
+    type: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
     if (node === undefined) {
       return undefined;

@@ -1,5 +1,15 @@
 import {testRule} from "./_utils";
-import {UnnecessaryPragma} from "../../src/rules/unnecessary_pragma";
+import {UnnecessaryPragma, UnnecessaryPragmaConf} from "../../src/rules/unnecessary_pragma";
+import {MemoryFile, Registry} from "../../src";
+import {expect} from "chai";
+
+async function findIssues(abap: string, filename?: string, conf?: UnnecessaryPragmaConf) {
+  const reg = new Registry().addFile(new MemoryFile(filename || "zunn.prog.abap", abap));
+  await reg.parseAsync();
+  const rule = new UnnecessaryPragma();
+  rule.setConfig(conf || {});
+  return rule.initialize(reg).run(reg.getFirstObject()!);
+}
 
 const tests = [
   {abap: `parser error`, cnt: 0},
@@ -54,3 +64,31 @@ ENDFORM.`, cnt: 0},
 ];
 
 testRule(tests, UnnecessaryPragma);
+
+describe("Rule: unnecessary_pragma", () => {
+
+  it("NO_TEXT added by SE24, one issue in default config", async () => {
+    const abap = `
+CLASS zcl_unn DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    CONSTANTS gc_type TYPE i VALUE 3 ##NO_TEXT.
+ENDCLASS.
+CLASS zcl_unn IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await findIssues(abap, "zcl_unn.clas.abap");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("NO_TEXT added by SE24, one issue in default config", async () => {
+    const abap = `
+CLASS zcl_unn DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    CONSTANTS gc_type TYPE i VALUE 3 ##NO_TEXT.
+ENDCLASS.
+CLASS zcl_unn IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await findIssues(abap, "zcl_unn.clas.abap", {allowNoTextGlobal: true});
+    expect(issues.length).to.equal(0);
+  });
+
+});

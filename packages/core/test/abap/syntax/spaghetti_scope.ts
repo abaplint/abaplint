@@ -100,7 +100,7 @@ ENDCLASS.`;
     const reads = spaghetti.listReadPositions(filename);
     expect(reads.length).to.equal(1, "reads");
     const writes = spaghetti.listWritePositions(filename);
-    expect(writes.length).to.equal(1, "writes");
+    expect(writes.length).to.equal(2, "writes");
   });
 
   it("FORM should not add references to _global", () => {

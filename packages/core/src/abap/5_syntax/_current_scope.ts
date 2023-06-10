@@ -174,7 +174,7 @@ export class CurrentScope {
   public addReference(
     usage: Token | undefined,
     referencing: Identifier | undefined,
-    type: ReferenceType | undefined,
+    type: ReferenceType | ReferenceType[] | undefined,
     filename: string,
     extra?: IReferenceExtras) {
 
@@ -183,7 +183,13 @@ export class CurrentScope {
     }
 
     const position = new Identifier(usage, filename);
-    this.current?.getData().references.push({position, resolved: referencing, referenceType: type, extra});
+    if (Array.isArray(type)) {
+      for (const t of type) {
+        this.current?.getData().references.push({position, resolved: referencing, referenceType: t, extra});
+      }
+    } else {
+      this.current?.getData().references.push({position, resolved: referencing, referenceType: type, extra});
+    }
   }
 
   public addSQLConversion(fieldName: string, message: string, token: Token) {

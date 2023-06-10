@@ -57,7 +57,9 @@ export class MethodCallParam {
 
       if (sourceType === undefined) {
         throw new Error("No source type determined, method source");
-      } else if (new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
+      } else if (new TypeUtils(scope).isAssignableStrict(sourceType,
+                                                         targetType,
+                                                         child.findFirstExpression(Expressions.MethodCallChain) !== undefined) === false) {
         throw new Error("Method parameter type not compatible");
       }
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {

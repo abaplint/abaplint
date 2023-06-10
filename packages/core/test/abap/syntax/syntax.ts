@@ -8402,6 +8402,31 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, method structured returning", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_char10 TYPE c LENGTH 10.
+    CLASS-METHODS method1 IMPORTING char10 TYPE ty_char10.
+    TYPES: BEGIN OF ty,
+             field TYPE c LENGTH 5,
+           END OF ty.
+    CLASS-METHODS method2 RETURNING VALUE(struc) TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>method1( lcl=>method2( )-field ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
