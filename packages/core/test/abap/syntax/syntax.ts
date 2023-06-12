@@ -8436,6 +8436,15 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.contain("no header");
   });
 
+  it("TRANSPORTING NO FIELDS, only with WHERE", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+LOOP AT tab FROM 1 TO 2 TRANSPORTING NO FIELDS.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("TRANSPORTING NO FIELDS only with WHERE");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
