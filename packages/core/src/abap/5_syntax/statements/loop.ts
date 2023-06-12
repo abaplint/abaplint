@@ -48,6 +48,10 @@ export class Loop implements StatementSyntax {
         && !(sourceType instanceof VoidType)
         && concat.startsWith("LOOP AT GROUP ") === false) {
       throw new Error("Loop, not a table type");
+    } else if (loopTarget === undefined
+        && sourceType instanceof TableType
+        && sourceType.isWithHeader() === false) {
+      throw new Error("Loop, no header");
     }
 
     if (sourceType instanceof TableType) {
