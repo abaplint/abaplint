@@ -934,7 +934,7 @@ export class BuiltIn {
       optional:
       {
         "case": new CharacterType(1),
-        "sep": IntegerType.get(),
+        "sep": new CLikeType(),
         "min": IntegerType.get(),
       },
       return: StringType.get(),
