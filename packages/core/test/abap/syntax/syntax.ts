@@ -8507,6 +8507,14 @@ int = val + 1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("to_mixed", () => {
+    const abap = `
+DATA m TYPE string.
+m = to_mixed( val = |Hello World| sep  = | | ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("string to int, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
