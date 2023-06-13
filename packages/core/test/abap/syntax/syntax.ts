@@ -8481,6 +8481,32 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.contain("TRANSPORTING NO FIELDS only with WHERE");
   });
 
+  it.only("calculated float to integer, method, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING int TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA val TYPE f.
+    foo( val + 1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("calculated float to integer, move, ok", () => {
+    const abap = `
+DATA val TYPE f.
+DATA int TYPE i.
+int = val + 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
