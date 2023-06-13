@@ -220,12 +220,12 @@ export class TypeUtils {
 
   public isAssignableStrict(source: AbstractType | undefined,
                             target: AbstractType | undefined,
-                            containsMethodCall: boolean = false): boolean {
+                            calculated: boolean = false): boolean {
 /*
     console.dir(source);
     console.dir(target);
 */
-    if (containsMethodCall) {
+    if (calculated) {
       return this.isAssignable(source, target);
     }
 
@@ -262,6 +262,9 @@ export class TypeUtils {
       if (target instanceof StructureType && this.structureContainsString(target)) {
         return false;
       } else if (target instanceof IntegerType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
         return false;
       } else if (target instanceof XSequenceType || target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
