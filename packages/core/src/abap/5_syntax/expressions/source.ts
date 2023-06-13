@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -178,23 +178,29 @@ export class Source {
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
         context = new StringTemplate().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Source) {
-        context = new Source().runSyntax(first, scope, filename);
+        const found = new Source().runSyntax(first, scope, filename);
+        context = this.infer(context, found);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
-        context = new Constant().runSyntax(first);
+        const found = new Constant().runSyntax(first);
+        context = this.infer(context, found);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dereference) {
         context = new Dereference().runSyntax(context);
-//      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
-//        console.dir("dash");
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
         context = new ComponentChain().runSyntax(context, first, scope, filename);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArithOperator) {
+        if (first.concatTokens() === "**") {
+          context = new FloatType();
+        }
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeChain) {
         context = new AttributeChain().runSyntax(context, first, scope, filename, type);
       }
+
       first = children.shift();
       if (first === undefined) {
         break;
       }
     }
+
     if (node.findDirectTokenByText("&&")) {
       return StringType.get();
     }
@@ -203,6 +209,14 @@ export class Source {
   }
 
 ////////////////////////////////
+
+  private infer(context: AbstractType | undefined, found: AbstractType | undefined) {
+    if (context instanceof FloatType && found instanceof IntegerType) {
+      return context;
+    } else {
+      return found;
+    }
+  }
 
   public addIfInferred(
     node: ExpressionNode,

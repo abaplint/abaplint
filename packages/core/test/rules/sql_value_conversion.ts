@@ -133,4 +133,15 @@ describe("Rule sql_value_conversion", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("escaped, check position", async () => {
+    const abap = `
+    DATA ls_result TYPE t100.
+    DATA lv_msgnr TYPE c LENGTH 100.
+    SELECT SINGLE * FROM t100 INTO @ls_result WHERE msgnr = @lv_msgnr.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+    const issue = issues[0];
+    expect(issue.getEnd().getCol() - issue.getStart().getCol()).to.equals(8);
+  });
+
 });

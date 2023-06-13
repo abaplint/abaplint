@@ -1874,4 +1874,47 @@ DATA tab TYPE SORTED TABLE OF ty_node
     expect(tt.getOptions().keyType).to.equal(Basic.TableKeyType.empty);
   });
 
+  it("float!", () => {
+    const abap = `DATA(lower_mask) = 2 ** 2.`;
+    const identifier = resolveVariable(abap, "lower_mask");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("another float", () => {
+    const abap = `DATA val1 TYPE i.
+DATA val2 TYPE i.
+DATA(lower_mask) = val1 ** val2.`;
+    const identifier = resolveVariable(abap, "lower_mask");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("more float1", () => {
+    const abap = `DATA val1 TYPE i.
+DATA val2 TYPE f.
+DATA(lower_mask) = val1 + val2.`;
+    const identifier = resolveVariable(abap, "lower_mask");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("more float2", () => {
+    const abap = `DATA val1 TYPE f.
+DATA val2 TYPE i.
+DATA(lower_mask) = val1 + val2.`;
+    const identifier = resolveVariable(abap, "lower_mask");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("more float3", () => {
+    const abap = `DATA val1 TYPE f.
+DATA val2 TYPE f.
+DATA(lower_mask) = val1 + val2.`;
+    const identifier = resolveVariable(abap, "lower_mask");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
 });

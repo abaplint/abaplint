@@ -14,7 +14,13 @@ export class SQLCompare {
     let sourceType: AbstractType | undefined;
     let token: Token | undefined;
     for (const s of node.findAllExpressions(Expressions.SQLSource)) {
-      token = s.getFirstToken();
+      for (const child of s.getChildren()) {
+        if (child instanceof ExpressionNode) {
+          token = child.getFirstToken();
+          break;
+        }
+      }
+
       sourceType = new SQLSource().runSyntax(s, scope, filename);
     }
 

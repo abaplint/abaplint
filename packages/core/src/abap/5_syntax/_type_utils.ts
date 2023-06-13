@@ -261,6 +261,8 @@ export class TypeUtils {
     } else if (source instanceof StringType) {
       if (target instanceof StructureType && this.structureContainsString(target)) {
         return false;
+      } else if (target instanceof IntegerType) {
+        return false;
       } else if (target instanceof XSequenceType || target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
@@ -282,6 +284,10 @@ export class TypeUtils {
       return true;
     } else if (source instanceof Integer8Type) {
       if (target instanceof IntegerType || target instanceof StringType) {
+        return false;
+      }
+    } else if (source instanceof FloatType) {
+      if (target instanceof IntegerType) {
         return false;
       }
     } else if (source instanceof XStringType) {

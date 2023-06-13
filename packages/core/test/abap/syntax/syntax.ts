@@ -8377,6 +8377,42 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("float passed to int", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING i TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA f TYPE f.
+  lcl=>foo( f ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("string passed to int", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING i TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA in TYPE string.
+  lcl=>foo( in ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
   it("concate in byte mode, ok", () => {
     const abap = `
 DATA hex1 TYPE x LENGTH 1.
@@ -8425,6 +8461,24 @@ START-OF-SELECTION.
   lcl=>method1( lcl=>method2( )-field ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("no loop target, requires header line", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+LOOP AT tab FROM 1 TO 2.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("no header");
+  });
+
+  it("TRANSPORTING NO FIELDS, only with WHERE", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+LOOP AT tab FROM 1 TO 2 TRANSPORTING NO FIELDS.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("TRANSPORTING NO FIELDS only with WHERE");
   });
 
 // todo, static method cannot access instance attributes

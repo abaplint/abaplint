@@ -48,15 +48,25 @@ export class Loop implements StatementSyntax {
         && !(sourceType instanceof VoidType)
         && concat.startsWith("LOOP AT GROUP ") === false) {
       throw new Error("Loop, not a table type");
+    } else if (loopTarget === undefined
+        && sourceType instanceof TableType
+        && sourceType.isWithHeader() === false) {
+      throw new Error("Loop, no header");
     }
 
+    const targetConcat = loopTarget?.concatTokens().toUpperCase();
     if (sourceType instanceof TableType) {
-      const targetConcat = node.findDirectExpression(Expressions.LoopTarget)?.concatTokens().toUpperCase();
       rowType = sourceType.getRowType();
       sourceType = rowType;
       if (targetConcat?.startsWith("REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
       }
+    }
+
+    if (targetConcat
+        && targetConcat.startsWith("TRANSPORTING ")
+        && node.findDirectTokenByText("WHERE") === undefined) {
+      throw new Error("Loop, TRANSPORTING NO FIELDS only with WHERE");
     }
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
