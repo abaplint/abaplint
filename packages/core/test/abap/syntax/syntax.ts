@@ -8481,7 +8481,7 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.contain("TRANSPORTING NO FIELDS only with WHERE");
   });
 
-  it.only("calculated float to integer, method, ok", () => {
+  it("calculated float to integer, method, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

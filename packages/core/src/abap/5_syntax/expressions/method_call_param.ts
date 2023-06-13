@@ -55,11 +55,11 @@ export class MethodCallParam {
         sourceType = new Source().runSyntax(child, scope, filename, targetType);
       }
 
+      const calculated = child.findFirstExpression(Expressions.MethodCallChain) !== undefined
+        || child.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (sourceType === undefined) {
         throw new Error("No source type determined, method source");
-      } else if (new TypeUtils(scope).isAssignableStrict(sourceType,
-                                                         targetType,
-                                                         child.findFirstExpression(Expressions.MethodCallChain) !== undefined) === false) {
+      } else if (new TypeUtils(scope).isAssignableStrict(sourceType, targetType, calculated) === false) {
         throw new Error("Method parameter type not compatible");
       }
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {

@@ -220,12 +220,12 @@ export class TypeUtils {
 
   public isAssignableStrict(source: AbstractType | undefined,
                             target: AbstractType | undefined,
-                            containsMethodCall: boolean = false): boolean {
+                            calculated: boolean = false): boolean {
 /*
     console.dir(source);
     console.dir(target);
 */
-    if (containsMethodCall) {
+    if (calculated) {
       return this.isAssignable(source, target);
     }
 
