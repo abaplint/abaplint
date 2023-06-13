@@ -262,6 +262,9 @@ export class TypeUtils {
       if (target instanceof StructureType && this.structureContainsString(target)) {
         return false;
       } else if (target instanceof IntegerType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
         return false;
       } else if (target instanceof XSequenceType || target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
