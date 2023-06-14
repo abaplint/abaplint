@@ -1088,13 +1088,15 @@ lv_topbit = mv_hex+1.`;
   });
 
   it("downport, ALPHA = IN", async () => {
-    const abap = `temp2-ebelp = |{ ls_line-no ALPHA = IN }|.`;
+    const abap = `asdf = |{ ls_line-no ALPHA = IN }|.`;
 
-    const expected = `CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+    const expected = `DATA temp1 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
   EXPORTING
     input  = ls_line-no
   IMPORTING
-    output = temp2-ebelp.`;
+    output = temp1.
+asdf = temp1.`;
 
     testFix(abap, expected);
   });
@@ -4901,6 +4903,23 @@ START-OF-SELECTION.
     const abap = `SELECT SINGLE @abap_true FROM voided INTO @DATA(lv_exists).`;
     const expected = `DATA lv_exists TYPE abap_bool.
 SELECT SINGLE @abap_true FROM voided INTO @lv_exists.`;
+    // hmm, this doesnt work in next step
+    testFix(abap, expected);
+  });
+
+  it("more ALPHA = OUT", async () => {
+    const abap = `DATA str TYPE string.
+DATA foo TYPE c LENGTH 10.
+str = condense( |{ foo ALPHA = OUT }| ) && condense( |{ foo ALPHA = OUT }| ).`;
+    const expected = `DATA str TYPE string.
+DATA foo TYPE c LENGTH 10.
+DATA temp1 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
+  EXPORTING
+    input  = foo
+  IMPORTING
+    output = temp1.
+str = condense( temp1 ) && condense( |{ foo ALPHA = OUT }| ).`;
     // hmm, this doesnt work in next step
     testFix(abap, expected);
   });
