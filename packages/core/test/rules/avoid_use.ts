@@ -32,6 +32,9 @@ const tests = [
   {abap: "bar = lines( foo ).", cnt: 0, fix: false},
 
   {abap: `TEST-SEAM authorization_seam. END-TEST-SEAM.`, cnt: 1},
+
+  {abap: `EXPORT asdf TO MEMORY ID 'ZSDF'.`, cnt: 1},
+  {abap: `EXPORT tab = tab TO DATABASE foo(tx) ID bar FROM moo.`, cnt: 1},
 ];
 
 testRule(tests, AvoidUse);
