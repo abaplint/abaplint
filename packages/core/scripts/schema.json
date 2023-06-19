@@ -139,6 +139,14 @@
           },
           "type": "array"
         },
+        "exportToDatabase": {
+          "description": "Detects EXPORT TO DATABASE",
+          "type": "boolean"
+        },
+        "exportToMemory": {
+          "description": "Detects EXPORT TO MEMORY",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
@@ -162,7 +170,9 @@
         "defaultKey",
         "break",
         "testSeams",
-        "describeLines"
+        "describeLines",
+        "exportToMemory",
+        "exportToDatabase"
       ],
       "type": "object"
     },

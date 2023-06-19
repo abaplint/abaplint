@@ -24,6 +24,10 @@ export class AvoidUseConf extends BasicRuleConfig {
   public testSeams: boolean = true;
   /** Detects DESCRIBE TABLE LINES, use lines() instead */
   public describeLines: boolean = true;
+  /** Detects EXPORT TO MEMORY */
+  public exportToMemory: boolean = true;
+  /** Detects EXPORT TO DATABASE */
+  public exportToDatabase: boolean = true;
 }
 
 export class AvoidUse extends ABAPRule {
@@ -81,6 +85,10 @@ TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md
         message = "STATICS";
       } else if (this.conf.statics && statement instanceof Statements.StaticEnd) {
         isStaticsBlock = false;
+      } else if (this.conf.exportToMemory && statement instanceof Statements.Export && statementNode.concatTokens().includes("TO MEMORY ")) {
+        message = "EXPORT TO MEMORY";
+      } else if (this.conf.exportToDatabase && statement instanceof Statements.Export && statementNode.concatTokens().includes("TO DATABASE ")) {
+        message = "EXPORT TO DATABASE";
       } else if (this.conf.testSeams && statement instanceof Statements.TestSeam) {
         message = "TEST-SEAM";
       } else if (this.conf.statics && statement instanceof Statements.Static && isStaticsBlock === false) {
