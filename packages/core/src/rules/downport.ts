@@ -1238,10 +1238,23 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       if (s === undefined) {
         return undefined;
       }
-      id = "'" + s.findDirectExpression(Expressions.MessageClass)?.concatTokens() + "'";
-      number = "'" + s.findDirectExpression(Expressions.MessageTypeAndNumber)?.concatTokens().substring(1) + "'";
+
+      if (s.findDirectExpression(Expressions.MessageClass)) {
+        id = "'" + s.findDirectExpression(Expressions.MessageClass)?.concatTokens()?.toUpperCase() + "'";
+      } else {
+        id = s.findExpressionAfterToken("ID")?.concatTokens();
+      }
+
+      if (s.findDirectExpression(Expressions.MessageTypeAndNumber)) {
+        number = "'" + s.findDirectExpression(Expressions.MessageTypeAndNumber)?.concatTokens().substring(1) + "'";
+      } else {
+        number = s.findExpressionAfterToken("NUMBER")?.concatTokens();
+      }
+
       startToken = node.getFirstToken();
     }
+
+    const withs = node.findDirectExpression(Expressions.RaiseWith)?.findDirectExpressions(Expressions.Source) || [];
 
     const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
 
@@ -1249,12 +1262,27 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     const uniqueName2 = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-    const abap = `DATA ${uniqueName1} LIKE if_t100_message=>t100key.
-${indentation}${uniqueName1}-msgid = ${id?.toUpperCase()}.
-${indentation}${uniqueName1}-msgno = ${number}.
-${indentation}DATA ${uniqueName2} TYPE REF TO ${className}.
-${indentation}CREATE OBJECT ${uniqueName2} EXPORTING textid = ${uniqueName1}.
-${indentation}RAISE EXCEPTION ${uniqueName2}.`;
+    let abap = `DATA ${uniqueName1} LIKE if_t100_message=>t100key.
+${indentation}${uniqueName1}-msgid = ${id}.
+${indentation}${uniqueName1}-msgno = ${number}.\n`;
+    if (withs.length > 0) {
+      abap += `${indentation}${uniqueName1}-attr1 = 'IF_T100_DYN_MSG~MSGV1'.
+${indentation}${uniqueName1}-attr2 = 'IF_T100_DYN_MSG~MSGV2'.
+${indentation}${uniqueName1}-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
+${indentation}${uniqueName1}-attr4 = 'IF_T100_DYN_MSG~MSGV4'.\n`;
+    }
+    abap += `${indentation}DATA ${uniqueName2} TYPE REF TO ${className}.
+${indentation}CREATE OBJECT ${uniqueName2} EXPORTING textid = ${uniqueName1}.\n`;
+    if (withs.length > 0) {
+      abap += `${indentation}${uniqueName2}->if_t100_dyn_msg~msgty = 'E'.\n`;
+    }
+    let count = 1;
+    for (const w of withs) {
+      abap += `${indentation}${uniqueName2}->if_t100_dyn_msg~msgv${count} = ${w.concatTokens()}.\n`;
+      count++;
+    }
+
+    abap += `${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), abap);
     return Issue.atToken(lowFile, startToken, "Downport RAISE MESSAGE", this.getMetadata().key, this.conf.severity, fix);

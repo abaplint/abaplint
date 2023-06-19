@@ -1328,17 +1328,29 @@ RAISE EXCEPTION temp2.`;
     testFix(abap, expected);
   });
 
-  it.skip("downport RAISE ... MESSAGE, WITH", async () => {
+  it("downport RAISE ... MESSAGE, WITH", async () => {
     const abap = `
 RAISE EXCEPTION TYPE zcx_tools MESSAGE e100(zfoo) WITH 2 3.`;
 
     const expected = `
-todo`;
+DATA temp1 LIKE if_t100_message=>t100key.
+temp1-msgid = 'ZFOO'.
+temp1-msgno = '100'.
+temp1-attr1 = 'IF_T100_DYN_MSG~MSGV1'.
+temp1-attr2 = 'IF_T100_DYN_MSG~MSGV2'.
+temp1-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
+temp1-attr4 = 'IF_T100_DYN_MSG~MSGV4'.
+DATA temp2 TYPE REF TO zcx_tools.
+CREATE OBJECT temp2 EXPORTING textid = temp1.
+temp2->if_t100_dyn_msg~msgty = 'E'.
+temp2->if_t100_dyn_msg~msgv1 = 2.
+temp2->if_t100_dyn_msg~msgv2 = 3.
+RAISE EXCEPTION temp2.`;
 
     testFix(abap, expected);
   });
 
-  it.skip("downport RAISE ... MESSAGE, WITH", async () => {
+  it("downport RAISE ... MESSAGE, WITH", async () => {
     const abap = `
 DATA ls_return TYPE bapiret2.
 RAISE EXCEPTION TYPE zcx_foobar
@@ -1348,7 +1360,22 @@ RAISE EXCEPTION TYPE zcx_foobar
   ls_return-message_v3 ls_return-message_v4.`;
 
     const expected = `
-todo`;
+DATA ls_return TYPE bapiret2.
+DATA temp1 LIKE if_t100_message=>t100key.
+temp1-msgid = ls_return-id.
+temp1-msgno = ls_return-number.
+temp1-attr1 = 'IF_T100_DYN_MSG~MSGV1'.
+temp1-attr2 = 'IF_T100_DYN_MSG~MSGV2'.
+temp1-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
+temp1-attr4 = 'IF_T100_DYN_MSG~MSGV4'.
+DATA temp2 TYPE REF TO zcx_foobar.
+CREATE OBJECT temp2 EXPORTING textid = temp1.
+temp2->if_t100_dyn_msg~msgty = 'E'.
+temp2->if_t100_dyn_msg~msgv1 = ls_return-message_v1.
+temp2->if_t100_dyn_msg~msgv2 = ls_return-message_v2.
+temp2->if_t100_dyn_msg~msgv3 = ls_return-message_v3.
+temp2->if_t100_dyn_msg~msgv4 = ls_return-message_v4.
+RAISE EXCEPTION temp2.`;
 
     testFix(abap, expected);
   });
