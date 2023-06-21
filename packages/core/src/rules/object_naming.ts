@@ -3,7 +3,6 @@ import {NamingRuleConfig} from "./_naming_rule_config";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import * as Objects from "../objects";
 import {NameValidator} from "../utils/name_validator";
 
 export class ObjectNamingConf extends NamingRuleConfig {
@@ -43,6 +42,36 @@ export class ObjectNamingConf extends NamingRuleConfig {
   public ssst?: string = "^Z";
   /** The regex pattern for search helps */
   public shlp?: string = "^Z";
+
+  /** The regex pattern for BADI Implementation */
+  public sxci?: string = "^Z";
+  /** The regex pattern for Enhancement Spot */
+  public enhs?: string = "^Z";
+  /** The regex pattern for Enhancement Implementation */
+  public enho?: string = "^Z";
+  /** The regex pattern for Customer enhancement projects */
+  public cmod?: string = "^Z";
+  /** The regex pattern for SAPscript form */
+  public form?: string = "^Z";
+  /** The regex pattern for Adobe Form Definition */
+  public sfpf?: string = "^Z";
+  /** The regex pattern for Adobe Interface Definition */
+  public sfpi?: string = "^Z";
+  /** The regex pattern for ABAP Query: Query */
+  public aqqu?: string = "^Z";
+  /** The regex pattern for ABAP Query: Functional area */
+  public aqsg?: string = "^Z";
+  /** The regex pattern for ABAP Query: User group */
+  public aqbg?: string = "^Z";
+  /** The regex pattern for Authorization Object */
+  public suso?: string = "^Z";
+  /** The regex pattern for Authorization Group */
+  public sucu?: string = "^Z";
+  /** The regex pattern for Web Dynpro Application */
+  public wdya?: string = "^Z";
+  /** The regex pattern for Web Dynpro Component */
+  public wdyn?: string = "^Z";
+
 }
 
 export class ObjectNaming implements IRule {
@@ -77,7 +106,7 @@ export class ObjectNaming implements IRule {
 
   public run(obj: IObject): Issue[] {
     let message: string | undefined = undefined;
-    let pattern: string = "";
+    let pattern: string | undefined = undefined;
 
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
@@ -85,45 +114,11 @@ export class ObjectNaming implements IRule {
 
     const defaults = new ObjectNamingConf();
 
-    if (obj instanceof Objects.Class) {
-      pattern = this.getConfig().clas || defaults.clas!;
-    } else if (obj instanceof Objects.Interface) {
-      pattern = this.getConfig().intf || defaults.intf!;
-    } else if (obj instanceof Objects.Program) {
-      pattern = this.getConfig().prog || defaults.prog!;
-    } else if (obj instanceof Objects.FunctionGroup) {
-      pattern = this.getConfig().fugr || defaults.fugr!;
-    } else if (obj instanceof Objects.Table) {
-      pattern = this.getConfig().tabl || defaults.tabl!;
-    } else if (obj instanceof Objects.TableType) {
-      pattern = this.getConfig().ttyp || defaults.ttyp!;
-    } else if (obj instanceof Objects.DataElement) {
-      pattern = this.getConfig().dtel || defaults.dtel!;
-    } else if (obj instanceof Objects.Domain) {
-      pattern = this.getConfig().doma || defaults.doma!;
-    } else if (obj instanceof Objects.Transaction) {
-      pattern = this.getConfig().tran || defaults.tran!;
-    } else if (obj instanceof Objects.LockObject) {
-      pattern = this.getConfig().enqu || defaults.enqu!;
-    } else if (obj instanceof Objects.AuthorizationObject) {
-      pattern = this.getConfig().auth || defaults.auth!;
-    } else if (obj instanceof Objects.PackageInterface) {
-      pattern = this.getConfig().pinf || defaults.pinf!;
-    } else if (obj instanceof Objects.MessageClass) {
-      pattern = this.getConfig().msag || defaults.msag!;
-    } else if (obj instanceof Objects.Idoc) {
-      pattern = this.getConfig().idoc || defaults.idoc!;
-    } else if (obj instanceof Objects.Transformation) {
-      pattern = this.getConfig().xslt || defaults.xslt!;
-    } else if (obj instanceof Objects.SmartForm) {
-      pattern = this.getConfig().ssfo || defaults.ssfo!;
-    } else if (obj instanceof Objects.SmartStyle) {
-      pattern = this.getConfig().ssst || defaults.ssst!;
-    } else if (obj instanceof Objects.SearchHelp) {
-      pattern = this.getConfig().shlp || defaults.shlp!;
-    }
+    const abapType = obj.getType().toLowerCase();
+    // @ts-ignore
+    pattern = this.getConfig()[abapType] || defaults[abapType]!;
 
-    if (pattern === "") {
+    if (pattern === undefined) {
       return [];
     }
 
