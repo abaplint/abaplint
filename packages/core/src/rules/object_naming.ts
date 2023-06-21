@@ -91,6 +91,10 @@ export class ObjectNaming implements IRule {
   }
 
   public getConfig(): ObjectNamingConf {
+    if (typeof this.conf === "boolean" && this.conf === true) {
+      return new ObjectNamingConf();
+    }
+
     return this.conf;
   }
 
@@ -110,14 +114,10 @@ export class ObjectNaming implements IRule {
     }
 
     const abapType = obj.getType().toLowerCase();
-    // @ts-ignore
-    let pattern = this.getConfig()[abapType];
+    const config = this.getConfig();
 
-    if (pattern === undefined) {
-      const defaults = new ObjectNamingConf();
-      // @ts-ignore
-      pattern = defaults[abapType];
-    }
+    // @ts-ignore
+    const pattern = config[abapType];
 
     if (pattern === undefined) {
       return [];
