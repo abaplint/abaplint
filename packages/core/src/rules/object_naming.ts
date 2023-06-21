@@ -109,11 +109,15 @@ export class ObjectNaming implements IRule {
       this.conf.patternKind = "required";
     }
 
-    const defaults = new ObjectNamingConf();
-
     const abapType = obj.getType().toLowerCase();
     // @ts-ignore
-    const pattern = this.getConfig()[abapType] || defaults[abapType];
+    let pattern = this.getConfig()[abapType];
+
+    if (pattern === undefined) {
+      const defaults = new ObjectNamingConf();
+      // @ts-ignore
+      pattern = defaults[abapType];
+    }
 
     if (pattern === undefined) {
       return [];
