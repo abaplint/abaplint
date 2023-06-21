@@ -6159,6 +6159,18 @@
     "ObjectNamingConf": {
       "additionalProperties": false,
       "properties": {
+        "aqbg": {
+          "description": "The regex pattern for ABAP Query: User group",
+          "type": "string"
+        },
+        "aqqu": {
+          "description": "The regex pattern for ABAP Query: Query",
+          "type": "string"
+        },
+        "aqsg": {
+          "description": "The regex pattern for ABAP Query: Functional area",
+          "type": "string"
+        },
         "auth": {
           "description": "The regex pattern for authorization object names",
           "type": "string"
@@ -6167,12 +6179,24 @@
           "description": "The regex pattern for global class names",
           "type": "string"
         },
+        "cmod": {
+          "description": "The regex pattern for Customer enhancement projects",
+          "type": "string"
+        },
         "doma": {
           "description": "The regex pattern for domain names",
           "type": "string"
         },
         "dtel": {
           "description": "The regex pattern for data element names",
+          "type": "string"
+        },
+        "enho": {
+          "description": "The regex pattern for Enhancement Implementation",
+          "type": "string"
+        },
+        "enhs": {
+          "description": "The regex pattern for Enhancement Spot",
           "type": "string"
         },
         "enqu": {
@@ -6185,6 +6209,10 @@
             "type": "string"
           },
           "type": "array"
+        },
+        "form": {
+          "description": "The regex pattern for SAPscript form",
+          "type": "string"
         },
         "fugr": {
           "description": "The regex pattern for function group names",
@@ -6232,6 +6260,14 @@
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         },
+        "sfpf": {
+          "description": "The regex pattern for Adobe Form Definition",
+          "type": "string"
+        },
+        "sfpi": {
+          "description": "The regex pattern for Adobe Interface Definition",
+          "type": "string"
+        },
         "shlp": {
           "description": "The regex pattern for search helps",
           "type": "string"
@@ -6244,6 +6280,18 @@
           "description": "The regex pattern for smartstyle names",
           "type": "string"
         },
+        "sucu": {
+          "description": "The regex pattern for Authorization Group",
+          "type": "string"
+        },
+        "suso": {
+          "description": "The regex pattern for Authorization Object",
+          "type": "string"
+        },
+        "sxci": {
+          "description": "The regex pattern for BADI Implementation",
+          "type": "string"
+        },
         "tabl": {
           "description": "The regex pattern for DDIC table names",
           "type": "string"
@@ -6254,6 +6302,14 @@
         },
         "ttyp": {
           "description": "The regex pattern for DDIC table type names",
+          "type": "string"
+        },
+        "wdya": {
+          "description": "The regex pattern for Web Dynpro Application",
+          "type": "string"
+        },
+        "wdyn": {
+          "description": "The regex pattern for Web Dynpro Component",
           "type": "string"
         },
         "xslt": {

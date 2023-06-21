@@ -246,13 +246,13 @@ describe("Rule: Object naming (required pattern)", () => {
     await findIssues("cl_class.clas.abap", 1, config);
   });
 
-  it("tran, use default if not defined", async () => {
+  it("tran, dont apply if undefined", async () => {
     const config = new ObjectNamingConf();
     config.tran = undefined;
 
     config.patternKind = "required";
     await findIssues("ztest.tran.xml", 0, config);
-    await findIssues("test.tran.xml", 1, config);
+    await findIssues("test.tran.xml", 0, config);
   });
 
 });
