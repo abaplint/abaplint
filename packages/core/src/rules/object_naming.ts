@@ -42,7 +42,6 @@ export class ObjectNamingConf extends NamingRuleConfig {
   public ssst?: string = "^Z";
   /** The regex pattern for search helps */
   public shlp?: string = "^Z";
-
   /** The regex pattern for BADI Implementation */
   public sxci?: string = "^Z";
   /** The regex pattern for Enhancement Spot */
@@ -71,7 +70,6 @@ export class ObjectNamingConf extends NamingRuleConfig {
   public wdya?: string = "^Z";
   /** The regex pattern for Web Dynpro Component */
   public wdyn?: string = "^Z";
-
 }
 
 export class ObjectNaming implements IRule {
@@ -106,7 +104,6 @@ export class ObjectNaming implements IRule {
 
   public run(obj: IObject): Issue[] {
     let message: string | undefined = undefined;
-    let pattern: string | undefined = undefined;
 
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
@@ -116,7 +113,7 @@ export class ObjectNaming implements IRule {
 
     const abapType = obj.getType().toLowerCase();
     // @ts-ignore
-    pattern = this.getConfig()[abapType] || defaults[abapType]!;
+    const pattern = this.getConfig()[abapType] || defaults[abapType];
 
     if (pattern === undefined) {
       return [];
