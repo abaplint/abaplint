@@ -2404,6 +2404,10 @@ ${indentation}    output = ${uniqueName}.\n`;
           indentation + `IF sy-subrc = 0.\n` +
           indentation + `  ${uniqueName} = ${rowName}${after}.\n` +
           indentation + `ENDIF.\n`;
+
+        if (type.includes("LIKE DATA(")) {
+          type = `LIKE LINE OF ${tabName}`;
+        }
       }
 
       if (end !== "") {
