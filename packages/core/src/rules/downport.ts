@@ -497,6 +497,11 @@ Make sure to test the downported code, it might not always be completely correct
       }
     }
 
+    found = this.outlineCorresponding(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSelectFields(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -2274,6 +2279,48 @@ ${indentation}    output = ${uniqueName}.\n`;
       const fix = EditHelper.merge(fix2, fix1);
 
       return Issue.atToken(lowFile, firstToken, "Downport REDUCE", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private outlineCorresponding(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+
+    const allSources = high.findAllExpressionsRecursive(Expressions.Source);
+    for (const s of allSources) {
+      const firstToken = s.getFirstToken();
+      if (firstToken.getStr().toUpperCase() !== "CORRESPONDING") {
+        continue;
+      }
+
+      const correspondingBody = s.findDirectExpression(Expressions.CorrespondingBody);
+      const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+
+      let type = this.findType(s, lowFile, highSyntax);
+      if (type === undefined) {
+        if (high.get() instanceof Statements.Move && high.findDirectExpression(Expressions.Source) === s) {
+          type = "LIKE " + high.findDirectExpression(Expressions.Target)?.concatTokens();
+        }
+        if (type === undefined) {
+          continue;
+        }
+      } else {
+        type = "TYPE " + type;
+      }
+
+      const abap = `DATA ${uniqueName} ${type}.\n` +
+        indentation + `CLEAR ${uniqueName}.\n` + // might be called inside a loop
+        indentation + `MOVE-CORRESPONDING ${correspondingBody?.concatTokens()} TO ${uniqueName}.\n` +
+        indentation;
+      const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), abap);
+      const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), s.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+
+      return Issue.atToken(lowFile, firstToken, "Downport CORRESPONDING", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;
