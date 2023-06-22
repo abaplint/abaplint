@@ -4965,4 +4965,25 @@ DATA(row) = temp1.`;
     testFix(abap, expected);
   });
 
+  it.only("CORRESPONDING non simple inferred", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             bar TYPE i,
+           END OF ty.
+    CLASS-METHODS run IMPORTING blah TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>ty.
+  lcl=>run( CORRESPONDING #( foo ) ).`;
+    const expected = `sdfs`;
+    testFix(abap, expected);
+  });
+
 });
