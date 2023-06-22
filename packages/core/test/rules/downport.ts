@@ -4965,7 +4965,7 @@ DATA(row) = temp1.`;
     testFix(abap, expected);
   });
 
-  it.only("CORRESPONDING non simple inferred", async () => {
+  it("CORRESPONDING non simple inferred", async () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty,
@@ -4982,7 +4982,25 @@ ENDCLASS.
 START-OF-SELECTION.
   DATA foo TYPE lcl=>ty.
   lcl=>run( CORRESPONDING #( foo ) ).`;
-    const expected = `sdfs`;
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             bar TYPE i,
+           END OF ty.
+    CLASS-METHODS run IMPORTING blah TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>ty.
+  DATA temp1 TYPE lcl=>ty.
+  CLEAR temp1.
+  MOVE-CORRESPONDING foo TO temp1.
+  lcl=>run( temp1 ).`;
     testFix(abap, expected);
   });
 
