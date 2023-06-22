@@ -4951,4 +4951,11 @@ str = condense( temp1 ) && condense( |{ foo ALPHA = OUT }| ).`;
     testFix(abap, expected);
   });
 
+  it.only("voided table expression with inline", async () => {
+    const abap = `DATA tab TYPE voided.
+DATA(row) = VALUE #( tab[ field = 2 ] OPTIONAL ).`;
+    const expected = `sdfs`;
+    testFix(abap, expected);
+  });
+
 });
