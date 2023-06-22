@@ -4951,10 +4951,17 @@ str = condense( temp1 ) && condense( |{ foo ALPHA = OUT }| ).`;
     testFix(abap, expected);
   });
 
-  it.only("voided table expression with inline", async () => {
+  it("voided table expression with inline", async () => {
     const abap = `DATA tab TYPE voided.
 DATA(row) = VALUE #( tab[ field = 2 ] OPTIONAL ).`;
-    const expected = `sdfs`;
+    const expected = `DATA tab TYPE voided.
+DATA temp1 LIKE LINE OF tab.
+CLEAR temp1.
+READ TABLE tab INTO DATA(temp2) WITH KEY field = 2.
+IF sy-subrc = 0.
+  temp1 = temp2.
+ENDIF.
+DATA(row) = temp1.`;
     testFix(abap, expected);
   });
 
