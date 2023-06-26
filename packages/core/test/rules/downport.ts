@@ -4951,6 +4951,23 @@ str = condense( temp1 ) && condense( |{ foo ALPHA = OUT }| ).`;
     testFix(abap, expected);
   });
 
+  it("more ALPHA = OUT, second template", async () => {
+    const abap = `DATA str TYPE string.
+DATA foo TYPE c LENGTH 10.
+str = |sdfsd| && condense( |{ foo ALPHA = OUT }| ).`;
+    const expected = `DATA str TYPE string.
+DATA foo TYPE c LENGTH 10.
+DATA temp1 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
+  EXPORTING
+    input  = foo
+  IMPORTING
+    output = temp1.
+str = |sdfsd| && condense( temp1 ).`;
+    // hmm, this doesnt work in next step
+    testFix(abap, expected);
+  });
+
   it("voided table expression with inline", async () => {
     const abap = `DATA tab TYPE voided.
 DATA(row) = VALUE #( tab[ field = 2 ] OPTIONAL ).`;

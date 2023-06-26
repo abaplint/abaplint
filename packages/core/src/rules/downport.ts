@@ -1814,16 +1814,14 @@ ${indentation}${uniqueName}`;
   private stringTemplateAlpha(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
-    } else if (!(high.get() instanceof Statements.Move)) {
-      return undefined;
     }
 
     for (const child of high.findAllExpressionsRecursive(Expressions.StringTemplate)) {
       const templateTokens = child.getChildren();
       if (templateTokens.length !== 3
-        || templateTokens[0].getFirstToken().getStr() !== "|{"
-        || templateTokens[2].getFirstToken().getStr() !== "}|") {
-        return undefined;
+          || templateTokens[0].getFirstToken().getStr() !== "|{"
+          || templateTokens[2].getFirstToken().getStr() !== "}|") {
+        continue;
       }
 
       const templateSource = child.findDirectExpression(Expressions.StringTemplateSource);
