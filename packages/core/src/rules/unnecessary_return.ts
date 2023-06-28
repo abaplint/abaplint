@@ -19,13 +19,13 @@ export class UnnecessaryReturn extends ABAPRule {
       shortDescription: `Finds unnecessary RETURN statements`,
       extendedInformation: `Finds unnecessary RETURN statements`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
-      badExample: `METHOD hello.
-  ...
+      badExample: `FORM hello1.
+  WRITE 'world'.
   RETURN.
-ENDMETHOD.`,
-      goodExample: `METHOD hello.
-  ...
-ENDMETHOD.`,
+ENDFORM.`,
+      goodExample: `FORM hello2.
+  WRITE 'world'.
+ENDFORM.`,
     };
   }
 

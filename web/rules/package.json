@@ -4,17 +4,20 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "ts-node src/build.ts && cp public/* build && cp -r node_modules/monaco-editor/min/ build/_monaco",
+    "test": "ts-node src/build.ts && webpack && cp public/* build && cp -r node_modules/monaco-editor/min/ build/_monaco",
     "simpleserver": "yaserver --root ./build/ --port 8888"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/monaco": "^2.101.15",
-    "@types/node": "^20.2.5",
+    "@abaplint/core": "^2.101.28",
+    "@abaplint/monaco": "^2.101.28",
+    "@types/node": "^20.3.2",
     "monaco-editor": "^0.39.0",
+    "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
-    "@abaplint/core": "^2.101.15",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4",
     "yaserver": "^0.4.0"
   }
 }

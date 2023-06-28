@@ -22,8 +22,7 @@ export class SyModification extends ABAPRule {
 
 Changes to SY-TVAR* fields are not reported`,
       tags: [RuleTag.SingleFile],
-      badExample: `
-sy-uname = 2.
+      badExample: `sy-uname = 2.
 sy = sy.`,
     };
   }

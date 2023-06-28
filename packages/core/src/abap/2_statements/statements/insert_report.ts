@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, per} from "../combi";
+import {verNot, seq, opt, per, ver} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -12,7 +12,7 @@ export class InsertReport implements IStatement {
                         seq("DIRECTORY ENTRY", Source),
                         seq("UNICODE ENABLING", Source),
                         seq("PROGRAM TYPE", Source),
-                        seq("VERSION", Source),
+                        ver(Version.v750, seq("VERSION", Source)),
                         seq("FIXED-POINT ARITHMETIC", Source),
                         "KEEPING DIRECTORY ENTRY");
 

@@ -10,6 +10,7 @@ import {ABAPCodeActionProvider} from "./abap_code_action_provider";
 import {ABAPImplementationProvider} from "./abap_implementation_provider";
 import {ABAPReferencesProvider} from "./abap_references_provider";
 import {ABAPSemanticTokensDeltaProvider} from "./abap_semantic_tokens_delta_provider";
+import {DiagnosticSeverity} from "vscode-languageserver-types";
 
 export function registerABAP(reg: IRegistry) {
   monaco.languages.registerCompletionItemProvider("abap", new ABAPSnippetProvider());
@@ -38,8 +39,16 @@ export function updateMarkers(reg: IRegistry, model: monaco.editor.ITextModel) {
       codeValue = "";
     }
     const codeTarget = monaco.Uri.parse(diagnostic.codeDescription?.href || "");
+
+    let severity = monaco.MarkerSeverity.Error;
+    if (diagnostic.severity === DiagnosticSeverity.Warning) {
+      severity = monaco.MarkerSeverity.Warning;
+    } else if (diagnostic.severity === DiagnosticSeverity.Information) {
+      severity = monaco.MarkerSeverity.Info;
+    }
+
     markers.push({
-      severity: monaco.MarkerSeverity.Error,
+      severity: severity,
       message: diagnostic.message,
       code: {
         value: codeValue,
