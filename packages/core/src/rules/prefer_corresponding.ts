@@ -20,6 +20,8 @@ export class PreferCorresponding extends ABAPRule {
       extendedInformation:
         `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs`,
       tags: [RuleTag.SingleFile, RuleTag.Upport, RuleTag.Styleguide],
+      badExample: `MOVE-CORRESPONDING foo TO bar.`,
+      goodExample: `bar = CORRESPONDING #( foo ).`,
     };
   }
 
