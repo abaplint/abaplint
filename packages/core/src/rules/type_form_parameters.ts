@@ -20,8 +20,10 @@ export class TypeFormParameters extends ABAPRule {
       title: "Type FORM parameters",
       shortDescription: `Checks for untyped FORM parameters`,
       tags: [RuleTag.SingleFile],
-      badExample: `FORM foo USING bar.`,
-      goodExample: `FORM foo USING bar TYPE string.`,
+      badExample: `FORM foo USING bar.
+ENDFORM.`,
+      goodExample: `FORM foo USING bar TYPE string.
+ENDFORM.`,
     };
   }
 
