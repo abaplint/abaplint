@@ -3,13 +3,9 @@
 const path = require("path");
 
 module.exports = {
-  mode: "development",
+  mode: "none",
   entry: {
     pack: "./src/pack.ts",
-  },
-  devServer: {
-    open: true,
-    hot: true,
   },
   resolve: {
     fallback: {

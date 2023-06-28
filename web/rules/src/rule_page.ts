@@ -27,6 +27,7 @@ function schemaEditor(json: string, schema: string) {
   return `<div id="defaultConfigEditor" style="width:700px;height:${height}px;border:1px solid grey"></div>
   <script src="/_monaco/vs/loader.js"></script>
   <script src="/schema.js"></script>
+  <script src="/pack.bundle.js"></script>
   <script>
     require.config({ paths: { 'vs': '/_monaco/vs' }});
     require(['vs/editor/editor.main'], function() {
@@ -51,6 +52,8 @@ function schemaEditor(json: string, schema: string) {
         minimap: {enabled: false},
         theme: "vs-dark"
       });
+
+      editor.onDidChangeModelContent(() => configChanged(editor));
     });
   </script>`;
 }
@@ -62,15 +65,7 @@ function examplesEditor(abap: string) {
   <script>
     require.config({ paths: { 'vs': '/_monaco/vs' }});
     require(['vs/editor/editor.main'], function() {
-      var modelUri = monaco.Uri.parse("a://b/foobar.abap");
-      var model = monaco.editor.createModel(\`${abap}\`, "abap", modelUri);
-
-      var editor = monaco.editor.create(document.getElementById('examplesEditor'), {
-        model: model,
-        autoClosingBrackets: false,
-        minimap: {enabled: false},
-        theme: "vs-dark"
-      });
+      initABAP(\`${abap}\`);
     });
   </script>`;
 }
