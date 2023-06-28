@@ -21,7 +21,7 @@ function findSchema(ruleKey: string): string {
   return conf;
 }
 
-function schemaEditor(json: string, schema: string) {
+function schemaEditor(json: string, schema: string, ruleName: string) {
   const height = (json.split("\n").length + 2) * 19;
 
   return `<div id="defaultConfigEditor" style="width:700px;height:${height}px;border:1px solid grey"></div>
@@ -53,19 +53,19 @@ function schemaEditor(json: string, schema: string) {
         theme: "vs-dark"
       });
 
-      editor.onDidChangeModelContent(() => configChanged(editor));
+      editor.onDidChangeModelContent(() => configChanged(editor, "${ruleName}"));
     });
   </script>`;
 }
 
-function examplesEditor(abap: string) {
+function examplesEditor(abap: string, ruleName: string) {
   const height = (abap.split("\n").length + 2) * 19;
 
   return `<div id="examplesEditor" style="width:700px;height:${height}px;border:1px solid grey"></div>
   <script>
     require.config({ paths: { 'vs': '/_monaco/vs' }});
     require(['vs/editor/editor.main'], function() {
-      initABAP(\`${abap}\`);
+      initABAP(\`${abap}\`, "${ruleName}");
     });
   </script>`;
 }
@@ -108,7 +108,7 @@ export function buildRule(meta: IRuleMetadata) {
   }
 
   html = html + "<h2>Default Configuration</h2>\n";
-  html = html + schemaEditor(findDefault(meta.key), findSchema(meta.key));
+  html = html + schemaEditor(findDefault(meta.key), findSchema(meta.key), meta.key);
   html = html + "<i>Hover to see descriptions, Ctrl+Space for suggestions</i>";
 
   if (meta.goodExample || meta.badExample) {
@@ -123,7 +123,7 @@ export function buildRule(meta: IRuleMetadata) {
       }
       abap += "* Good example\n" + meta.goodExample;
     }
-    html += examplesEditor(abap) + "<br><br>";
+    html += examplesEditor(abap, meta.key) + "<br><br>";
   }
 
   fs.mkdirSync("build/" + meta.key + "/", {recursive: true});

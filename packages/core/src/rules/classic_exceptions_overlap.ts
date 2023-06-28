@@ -18,12 +18,14 @@ export class ClassicExceptionsOverlap extends ABAPRule {
       shortDescription: `Find overlapping classic exceptions`,
       extendedInformation: `When debugging its typically good to know exactly which exception is caught`,
       tags: [RuleTag.SingleFile],
-      badExample: `  EXCEPTIONS
+      badExample: `CALL FUNCTION 'SOMETHING'
+  EXCEPTIONS
     system_failure        = 1 MESSAGE lv_message
     communication_failure = 1 MESSAGE lv_message
     resource_failure      = 1
     OTHERS                = 1.`,
-      goodExample: `  EXCEPTIONS
+      goodExample: `CALL FUNCTION 'SOMETHING'
+  EXCEPTIONS
     system_failure        = 1 MESSAGE lv_message
     communication_failure = 2 MESSAGE lv_message
     resource_failure      = 3

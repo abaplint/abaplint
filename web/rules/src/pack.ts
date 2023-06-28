@@ -16,24 +16,27 @@ async function abapChanged() {
   abapMonaco.updateMarkers(reg, model);
 }
 
-function updateConfig(value?: any) {
+function updateConfig(ruleName: string, value?: any) {
   const config = abaplint.Config.getDefault().get();
   config.rules = {};
-  config.rules.align_parameters = value || true;
-  console.dir(config);
+  config.rules[ruleName] = value || true;
   reg.setConfig(new abaplint.Config(JSON.stringify(config)));
 }
 
-async function configChanged(configEditor: any) {
+async function configChanged(configEditor: any, ruleName: string) {
   const contents = configEditor.getValue();
-  console.dir(contents);
-  updateConfig(JSON.parse(contents));
+  try {
+    const parsed = JSON.parse(contents);
+    updateConfig(ruleName, parsed);
+  } catch {
+    return;
+  }
   abapChanged();
 }
 
-function initABAP(abap: string) {
+function initABAP(abap: string, ruleName: string) {
   reg.addFile(new abaplint.MemoryFile(filename, abap));
-  updateConfig();
+  updateConfig(ruleName);
   abapMonaco.registerABAP(reg);
 
   const modelUri = monaco.Uri.parse(filename);
