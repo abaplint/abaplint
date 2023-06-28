@@ -26,7 +26,10 @@ export class ShortCase extends ABAPRule {
       key: "short_case",
       title: "Short CASE",
       shortDescription: `Checks for CASE statements which have fewer than the specified number of branches`,
+      extendedInformation: `Short CASE constructs can be changed to IF`,
       tags: [RuleTag.SingleFile],
+      badExample: "CASE moo.\nWHEN 'X'.\nENDCASE.",
+      goodExample: "IF moo = 'X'.\nENDIF.",
     };
   }
 
