@@ -20,7 +20,7 @@ export class SevenBitAscii implements IRule {
 
 https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abencharacter_set_guidl.htm
 
-Checkes files with extension ".abap" and ".asddls"`,
+Checkes files with extensions ".abap" and ".asddls"`,
       tags: [RuleTag.SingleFile],
     };
   }
