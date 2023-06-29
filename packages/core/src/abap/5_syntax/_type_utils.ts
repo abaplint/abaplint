@@ -252,6 +252,8 @@ export class TypeUtils {
           return source.getLength() <= target.getLength();
         }
         return source.getLength() === target.getLength();
+      } else if (target instanceof XStringType) {
+        return false;
       } else if (target instanceof IntegerType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
