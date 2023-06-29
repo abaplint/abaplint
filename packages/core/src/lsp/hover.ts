@@ -32,7 +32,11 @@ export class Hover {
       || found.token instanceof Tokens.StringTemplateMiddle) {
       return {kind: LServer.MarkupKind.Markdown, value: "String Template"};
     } else if (found.token instanceof Tokens.Comment) {
-      return {kind: LServer.MarkupKind.Markdown, value: "Comment"};
+      let type = "Comment";
+      if (found.token.getStr().startsWith(`"!`)) {
+        type = "ABAP Doc Comment";
+      }
+      return {kind: LServer.MarkupKind.Markdown, value: type};
     }
 
     const lookup = LSPLookup.lookup(found, this.reg, obj);
