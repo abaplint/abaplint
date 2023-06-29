@@ -64,4 +64,37 @@ describe("Message rule", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("no duplicate numbers", async () => {
+    const xml =
+`<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZAGTEST_EMPTY</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>empty message class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAG_UNIT_TEST</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>hello world</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAG_UNIT_TEST</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>hello world</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const issues = await run(new MemoryFile("zagtest_empty.msag.xml", xml));
+    expect(issues.length).to.equal(1);
+  });
+
 });

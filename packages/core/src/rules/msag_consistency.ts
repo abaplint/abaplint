@@ -17,7 +17,7 @@ export class MSAGConsistency implements IRule {
       key: "msag_consistency",
       title: "MSAG consistency check",
       shortDescription: `Checks the validity of messages in message classes`,
-      extendedInformation: `Message numbers must be 3 digits, and message text must not be empty`,
+      extendedInformation: `Message numbers must be 3 digits, message text must not be empty, no message number duplicates`,
     };
   }
 
@@ -44,6 +44,8 @@ export class MSAGConsistency implements IRule {
       return [];
     }
 
+    const numbers = new Set<string>();
+
     for (const message of obj.getMessages()) {
 // todo, get the right positions in xml file
       if (!message.getNumber().match(/\d\d\d/)) {
@@ -57,6 +59,16 @@ export class MSAGConsistency implements IRule {
         const position = new Position(1, 1);
         const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
+      }
+
+      const num = message.getNumber();
+      if (numbers.has(num)) {
+        const text = "Duplicate message number " + num;
+        const position = new Position(1, 1);
+        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      } else {
+        numbers.add(num);
       }
     }
 
