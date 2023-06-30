@@ -55,6 +55,8 @@ export class Source {
       switch (tok) {
         case "(":
         case "-":
+        case "+":
+        case "BIT":
           break;
         case "BOOLC":
         {

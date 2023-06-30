@@ -8531,6 +8531,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("bit-not, variable not found", () => {
+    const abap = `
+DATA hex TYPE x LENGTH 1.
+hex = BIT-NOT sdf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("plus, variable not found", () => {
+    const abap = `
+DATA hex TYPE x LENGTH 1.
+hex = + sdf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("constant hex to xstring, not compatible", () => {
     const abap = `
 CONSTANTS gc_magic TYPE x LENGTH 4 VALUE '11223344'.
