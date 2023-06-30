@@ -125,6 +125,16 @@ POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.ht
 OCCURENCES: check for OCCURENCES vs OCCURRENCES
 
 CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abapselect_client_obsolete.htm`,
+      badExample: `REFRESH itab.
+
+COMPUTE foo = 2 + 2.
+
+MULTIPLY lv_foo BY 2.
+
+INTERFACE intf LOAD.
+
+IF foo IS SUPPLIED.
+ENDIF.`,
     };
   }
 

@@ -8531,6 +8531,41 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("bit-not, variable not found", () => {
+    const abap = `
+DATA hex TYPE x LENGTH 1.
+hex = BIT-NOT sdf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("plus, variable not found", () => {
+    const abap = `
+DATA hex TYPE x LENGTH 1.
+hex = + sdf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("constant hex to xstring, not compatible", () => {
+    const abap = `
+CONSTANTS gc_magic TYPE x LENGTH 4 VALUE '11223344'.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo IMPORTING iv TYPE xstring.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    moo( gc_magic ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
