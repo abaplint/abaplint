@@ -296,7 +296,10 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof XStringType) {
-      if (target instanceof CLikeType || target instanceof HexType) {
+      if (target instanceof CLikeType
+          || target instanceof IntegerType
+          || target instanceof ObjectReferenceType
+          || target instanceof HexType) {
         return false;
       }
     }
