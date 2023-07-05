@@ -1394,7 +1394,8 @@
           "items": {
             "$ref": "#/definitions/Recommendations"
           },
-          "type": "array"
+          "type": "array",
+          "uniqueItems": true
         },
         "severity": {
           "$ref": "#/definitions/Severity",
@@ -6787,6 +6788,7 @@
           "$ref": "#/definitions/Version"
         },
         "name": {
+          "pattern": "^\\w+$",
           "type": "string"
         },
         "replace": {
