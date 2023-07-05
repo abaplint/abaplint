@@ -5,12 +5,19 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 
 
-export type Recommendations = {name: string, replace: string, from?: Version;};
+export type Recommendations = {
+  /** @pattern ^\w+$ */
+  name: string,
+  replace: string,
+  from?: Version,
+};
 
 export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
 
   /** Tuple of Function Module Name to be replaced, the recommended alternative and
-   * the version from which the recommendation is valid.*/
+   * the version from which the recommendation is valid.
+   * @uniqueItems true
+   */
   public recommendations: Recommendations[] = [
     {name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC or CL_ABAP_MESSAGE_DIGEST"},
     {name: "ECATT_CONV_XSTRING_TO_STRING", replace: "use CL_BINARY_CONVERT"},
@@ -21,7 +28,7 @@ export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
     {name: "GUID_CREATE", replace: "use CL_SYSTEM_UUID"},
     {name: "IGN_TIMESTAMP_DIFFERENCE", replace: "use CL_ABAP_TSTMP"},
     {name: "IGN_TIMESTAMP_PLUSMINUS", replace: "use CL_ABAP_TSTMP"},
-    {name: "ISM_SD_GET PRICING CONDITIONS", replace: "use CL_PRC_RESULT_FACTORY as per note 2220005"},
+    {name: "ISM_SD_GET_PRICING_CONDITIONS", replace: "use CL_PRC_RESULT_FACTORY as per note 2220005"},
     {name: "JOB_CREATE", replace: "use CL_BP_ABAP_JOB"},
     {name: "JOB_SUBMIT", replace: "use CL_BP_ABAP_JOB"},
     {name: "POPUP_TO_CONFIRM_STEP", replace: "use POPUP_TO_CONFIRM"},
