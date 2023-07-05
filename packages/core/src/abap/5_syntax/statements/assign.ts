@@ -9,9 +9,9 @@ import {StatementSyntax} from "../_statement_syntax";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    const sources = node.findAllExpressions(Expressions.Source);
-    const firstSource = sources[0];
-    let sourceType = new Source().runSyntax(firstSource, scope, filename);
+    const sources = node.findDirectExpression(Expressions.AssignSource)?.findDirectExpressions(Expressions.Source) || [];
+    const theSource = sources[sources.length - 1];
+    let sourceType = new Source().runSyntax(theSource, scope, filename);
 
     if (sourceType === undefined || node.findDirectExpression(Expressions.AssignSource)?.findDirectExpression(Expressions.Dynamic)) {
       sourceType = new VoidType("DynamicAssign");
@@ -25,8 +25,8 @@ export class Assign implements StatementSyntax {
       new FSTarget().runSyntax(target, scope, filename, sourceType);
     }
 
-    for (const s of sources) {
-      if (s === firstSource) {
+    for (const s of node.findAllExpressions(Expressions.Source)) {
+      if (s === theSource) {
         continue;
       }
       new Source().runSyntax(s, scope, filename);
