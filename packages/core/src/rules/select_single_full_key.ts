@@ -17,7 +17,9 @@ export class SelectSingleFullKey implements IRule {
       key: "select_single_full_key",
       title: "Detect SELECT SINGLE which are possibily not unique",
       shortDescription: `Detect SELECT SINGLE which are possibily not unique`,
-      extendedInformation: `Table definitions must be known, ie. inside the errorNamespace`,
+      extendedInformation: `Table definitions must be known, ie. inside the errorNamespace
+
+If the statement contains a JOIN it is not checked`,
       pseudoComment: "EC CI_NOORDER",
       tags: [],
     };
@@ -62,6 +64,8 @@ export class SelectSingleFullKey implements IRule {
       for (let i = 0; i < statements.length; i++) {
         const s = statements[i];
         if (!(s.get() instanceof Statements.Select)) {
+          continue;
+        } else if (s.findFirstExpression(Expressions.SQLJoin)) {
           continue;
         } else if (s.findTokenSequencePosition("SELECT", "SINGLE") === undefined) {
           continue;
