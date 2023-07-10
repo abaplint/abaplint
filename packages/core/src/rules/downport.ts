@@ -454,6 +454,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.downportSelectExistence(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSQLExtras(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -612,6 +617,7 @@ Make sure to test the downported code, it might not always be completely correct
 
 //////////////////////////////////////////
 
+  /** removes @'s */
   private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
@@ -689,6 +695,37 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     return undefined;
+  }
+
+  private downportSelectExistence(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.Select)) {
+      return undefined;
+    }
+
+    const fieldList = high.findFirstExpression(Expressions.SQLFieldList);
+    if (fieldList?.concatTokens().toUpperCase() !== "@ABAP_TRUE") {
+      return undefined;
+    }
+    const fieldName = high.findFirstExpression(Expressions.SQLCond)?.findFirstExpression(Expressions.SQLFieldName)?.concatTokens();
+    if (fieldName === undefined) {
+      return undefined;
+    }
+    const into = high.findFirstExpression(Expressions.SQLIntoStructure);
+    if (into === undefined) {
+      return undefined;
+    }
+    const intoName = into.findFirstExpression(Expressions.SQLTarget)?.findFirstExpression(Expressions.Target)?.concatTokens();
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const fix1 = EditHelper.replaceRange(lowFile, fieldList.getFirstToken().getStart(), fieldList.getLastToken().getEnd(), fieldName);
+    const fix2 = EditHelper.replaceRange(lowFile, into?.getFirstToken().getStart(), into?.getLastToken().getEnd(), `INTO @DATA(${uniqueName})`);
+    let fix = EditHelper.merge(fix2, fix1);
+    const fix3 = EditHelper.insertAt(lowFile, high.getLastToken().getEnd(), `\nCLEAR ${intoName}.\nIF sy-subrc = 0.\n  ${intoName} = abap_true\nENDIF.`);
+    fix = EditHelper.merge(fix, fix3);
+
+    return Issue.atToken(lowFile, low.getFirstToken(), "SQL, refactor existence check", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportSelectInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
