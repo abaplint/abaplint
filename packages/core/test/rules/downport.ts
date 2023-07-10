@@ -5021,4 +5021,12 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
+  it.only("SELECT, existence check, abap value in field list", async () => {
+    const abap = `SELECT SINGLE @abap_true
+    FROM tabl INTO @DATA(lv_exists)
+    WHERE field = 2.`;
+    const expected = `todo`;
+    testFix(abap, expected);
+  });
+
 });
