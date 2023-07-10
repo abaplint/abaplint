@@ -5034,7 +5034,7 @@ SELECT SINGLE field
   WHERE field = 2.
 CLEAR lv_exists.
 IF sy-subrc = 0.
-  lv_exists = abap_true
+  lv_exists = abap_true.
 ENDIF.`;
     testFix(abap, expected);
   });
