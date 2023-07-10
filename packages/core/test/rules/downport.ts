@@ -5021,11 +5021,21 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
-  it.only("SELECT, existence check, abap value in field list", async () => {
-    const abap = `SELECT SINGLE @abap_true
-    FROM tabl INTO @DATA(lv_exists)
-    WHERE field = 2.`;
-    const expected = `todo`;
+  it("SELECT, existence check, abap value in field list", async () => {
+    const abap = `
+DATA lv_exists TYPE abap_bool.
+SELECT SINGLE @abap_true
+  FROM tabl INTO @lv_exists
+  WHERE field = 2.`;
+    const expected = `
+DATA lv_exists TYPE abap_bool.
+SELECT SINGLE field
+  FROM tabl INTO @DATA(temp1)
+  WHERE field = 2.
+CLEAR lv_exists.
+IF sy-subrc = 0.
+  lv_exists = abap_true
+ENDIF.`;
     testFix(abap, expected);
   });
 
