@@ -722,7 +722,7 @@ Make sure to test the downported code, it might not always be completely correct
     const fix1 = EditHelper.replaceRange(lowFile, fieldList.getFirstToken().getStart(), fieldList.getLastToken().getEnd(), fieldName);
     const fix2 = EditHelper.replaceRange(lowFile, into?.getFirstToken().getStart(), into?.getLastToken().getEnd(), `INTO @DATA(${uniqueName})`);
     let fix = EditHelper.merge(fix2, fix1);
-    const fix3 = EditHelper.insertAt(lowFile, high.getLastToken().getEnd(), `\nCLEAR ${intoName}.\nIF sy-subrc = 0.\n  ${intoName} = abap_true\nENDIF.`);
+    const fix3 = EditHelper.insertAt(lowFile, high.getLastToken().getEnd(), `\nCLEAR ${intoName}.\nIF sy-subrc = 0.\n  ${intoName} = abap_true.\nENDIF.`);
     fix = EditHelper.merge(fix, fix3);
 
     return Issue.atToken(lowFile, low.getFirstToken(), "SQL, refactor existence check", this.getMetadata().key, this.conf.severity, fix);
