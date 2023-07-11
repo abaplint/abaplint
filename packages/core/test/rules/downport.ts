@@ -5041,13 +5041,16 @@ ENDIF.`;
 
   it.only("APPEND CORRESPONDING BASE", async () => {
     const abap = `
-TYPES: BEGIN OF ty,
+TYPES: BEGIN OF ty1,
          field TYPE i,
          bar   TYPE i,
-       END OF ty.
-DATA lt_res TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
-DATA ls_split LIKE LINE OF lt_res.
+       END OF ty1.
+DATA lt_res TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+DATA: BEGIN OF ls_split,
+        bar TYPE i,
+      END OF ls_split.
 
+ls_split-bar = 2.
 APPEND CORRESPONDING #( BASE ( VALUE #( field = 1 ) ) ls_split ) TO lt_res.`;
     const expected = `
 todo`;
