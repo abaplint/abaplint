@@ -2332,6 +2332,11 @@ ${indentation}    output = ${uniqueName}.\n`;
       }
 
       const correspondingBody = s.findDirectExpression(Expressions.CorrespondingBody);
+
+      if (correspondingBody?.getFirstToken().getStr().toUpperCase() === "BASE") {
+        continue;
+      }
+
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
 

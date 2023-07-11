@@ -9,6 +9,8 @@ import {EditHelper} from "../edit_helper";
 export class UnnecessaryReturnConf extends BasicRuleConfig {
 }
 
+// todo: make this rule more intelligent, eg RETURN. ENDTRY. ENDMETHOD.
+
 export class UnnecessaryReturn extends ABAPRule {
   private conf = new UnnecessaryReturnConf();
 
