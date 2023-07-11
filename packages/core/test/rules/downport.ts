@@ -5039,7 +5039,7 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
-  it.only("APPEND CORRESPONDING BASE", async () => {
+  it("APPEND CORRESPONDING BASE", async () => {
     const abap = `
 TYPES: BEGIN OF ty1,
          field TYPE i,
@@ -5053,7 +5053,52 @@ DATA: BEGIN OF ls_split,
 ls_split-bar = 2.
 APPEND CORRESPONDING #( BASE ( VALUE #( field = 1 ) ) ls_split ) TO lt_res.`;
     const expected = `
-todo`;
+TYPES: BEGIN OF ty1,
+         field TYPE i,
+         bar   TYPE i,
+       END OF ty1.
+DATA lt_res TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+DATA: BEGIN OF ls_split,
+        bar TYPE i,
+      END OF ls_split.
+
+ls_split-bar = 2.
+DATA temp1 LIKE LINE OF lt_res.
+temp1 = CORRESPONDING #( BASE ( VALUE #( field = 1 ) ) ls_split ).
+APPEND temp1 TO lt_res.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND CORRESPONDING BASE, second step", async () => {
+    const abap = `
+TYPES: BEGIN OF ty1,
+         field TYPE i,
+         bar   TYPE i,
+       END OF ty1.
+DATA lt_res TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+DATA: BEGIN OF ls_split,
+        bar TYPE i,
+      END OF ls_split.
+
+ls_split-bar = 2.
+DATA temp1 LIKE LINE OF lt_res.
+temp1 = CORRESPONDING #( BASE ( VALUE #( field = 1 ) ) ls_split ).
+APPEND temp1 TO lt_res.`;
+    const expected = `
+TYPES: BEGIN OF ty1,
+         field TYPE i,
+         bar   TYPE i,
+       END OF ty1.
+DATA lt_res TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+DATA: BEGIN OF ls_split,
+        bar TYPE i,
+      END OF ls_split.
+
+ls_split-bar = 2.
+DATA temp1 LIKE LINE OF lt_res.
+temp1 = VALUE #( field = 1 ).
+MOVE-CORRESPONDING ls_split TO temp1.
+APPEND temp1 TO lt_res.`;
     testFix(abap, expected);
   });
 
