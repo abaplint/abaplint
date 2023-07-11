@@ -5039,4 +5039,19 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
+  it.only("APPEND CORRESPONDING BASE", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE i,
+         bar   TYPE i,
+       END OF ty.
+DATA lt_res TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ls_split LIKE LINE OF lt_res.
+
+APPEND CORRESPONDING #( BASE ( VALUE #( field = 1 ) ) ls_split ) TO lt_res.`;
+    const expected = `
+todo`;
+    testFix(abap, expected);
+  });
+
 });
