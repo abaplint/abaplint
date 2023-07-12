@@ -74,6 +74,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "sql_escape_host_variables": true,
     "check_include": true,
     "check_syntax": true,
+    "cloud_types": true,
     "global_class": true,
     "implement_methods": true,
     "method_implemented_twice": true,
