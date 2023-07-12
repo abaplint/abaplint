@@ -84,4 +84,10 @@ describe("Rule: main_file_contents", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("PROG report ok, namespaced", async () => {
+    const abap = "report /foo/bar.";
+    const issues = await findIssues(abap, "#foo#bar.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });

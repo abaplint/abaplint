@@ -19,7 +19,7 @@ export class CloudTypes implements IRule {
       key: "cloud_types",
       title: "Check cloud types",
       shortDescription: `Checks that the package does not contain any object types unsupported in cloud ABAP.`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Syntax],
     };
   }
 

@@ -91,4 +91,17 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Skip macros", async () => {
+    const abap = `
+REPORT zfoobar.
+
+define unnecessary_pragma.
+  try.
+    catch cx_root.                                    "#EC NO_HANDLER
+  endtry.
+end-of-definition.`;
+    const issues = await findIssues(abap, "zfoobar.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });

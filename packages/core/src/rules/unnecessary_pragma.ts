@@ -4,7 +4,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
-import {Comment} from "../abap/2_statements/statements/_statement";
+import {Comment, MacroContent} from "../abap/2_statements/statements/_statement";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -28,7 +28,9 @@ export class UnnecessaryPragma extends ABAPRule {
 
 * NO_TEXT without texts
 
-* SUBRC_OK where sy-subrc is checked`,
+* SUBRC_OK where sy-subrc is checked
+
+NO_HANDLER inside macros are not checked`,
       tags: [RuleTag.SingleFile],
       badExample: `TRY.
     ...
@@ -170,8 +172,10 @@ ENDIF.`,
         return true;
       }
     }
+
     if (next
         && next.get() instanceof Comment
+        && !(statement.get() instanceof MacroContent)
         && next.concatTokens().toUpperCase().includes("#EC NO_HANDLER")) {
       return true;
     }
