@@ -22,6 +22,12 @@ export class UnnecessaryReturn extends ABAPRule {
       badExample: `FORM hello1.
   WRITE 'world'.
   RETURN.
+ENDFORM.
+
+FORM foo.
+  IF 1 = 2.
+    RETURN.
+  ENDIF.
 ENDFORM.`,
       goodExample: `FORM hello2.
   WRITE 'world'.
@@ -62,11 +68,11 @@ ENDFORM.`,
         issues.push(Issue.atStatement(file, prev, message, this.getMetadata().key, this.getConfig().severity, fix));
       }
 
+      // note: ENDTRY is not checked, it will usually just make it an empty catch handler, which is also bad
       const prevprev = statements[i - 2];
       if (prev && prevprev
           && prevprev.get() instanceof Statements.Return
-          && (prev.get() instanceof Statements.EndIf
-          || prev.get() instanceof Statements.EndTry)) {
+          && prev.get() instanceof Statements.EndIf) {
         const fix = EditHelper.deleteStatement(file, prevprev);
         issues.push(Issue.atStatement(file, prevprev, message, this.getMetadata().key, this.getConfig().severity, fix));
       }

@@ -70,18 +70,6 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("test RETURN ENDTRY ENDFORM", async () => {
-    const abap = `
-FORM foo.
-  TRY.
-    CATCH cx_root.
-      RETURN.
-  ENDTRY.
-ENDFORM.`;
-    const issues = await findIssues(abap);
-    expect(issues.length).to.equal(1);
-  });
-
   it("test IF, no issue", async () => {
     const abap = `
 FORM foo.
