@@ -106,6 +106,7 @@ export * from "./pragma_style";
 export * from "./prefer_corresponding";
 export * from "./prefer_inline";
 export * from "./prefer_is_not";
+export * from "./prefer_pragmas";
 export * from "./prefer_raise_exception_new";
 export * from "./prefer_returning_to_exporting";
 export * from "./prefer_xsdbool";
