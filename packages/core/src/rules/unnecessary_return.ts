@@ -9,8 +9,6 @@ import {EditHelper} from "../edit_helper";
 export class UnnecessaryReturnConf extends BasicRuleConfig {
 }
 
-// todo: make this rule more intelligent, eg RETURN. ENDTRY. ENDMETHOD.
-
 export class UnnecessaryReturn extends ABAPRule {
   private conf = new UnnecessaryReturnConf();
 
@@ -47,18 +45,30 @@ ENDFORM.`,
       return [];
     }
 
-    const statements = file.getStatements();
-    for (let i = 0; i < statements.length - 1; i++) {
-      const node = statements[i];
-      const next = statements[i + 1];
-      if (node.get() instanceof Statements.Return
-          && (next.get() instanceof Statements.EndMethod
-          || next.get() instanceof Statements.EndForm
-          || next.get() instanceof Statements.EndFunction)) {
+    const message = "Unnecessary RETURN";
 
-        const message = "Unnecessary RETURN";
-        const fix = EditHelper.deleteStatement(file, node);
-        issues.push(Issue.atStatement(file, node, message, this.getMetadata().key, this.getConfig().severity, fix));
+    const statements = file.getStatements();
+    for (let i = 0; i < statements.length; i++) {
+      const node = statements[i];
+      if (!(node.get() instanceof Statements.EndMethod
+          || node.get() instanceof Statements.EndForm
+          || node.get() instanceof Statements.EndFunction)) {
+        continue;
+      }
+
+      const prev = statements[i - 1];
+      if (prev && prev.get() instanceof Statements.Return) {
+        const fix = EditHelper.deleteStatement(file, prev);
+        issues.push(Issue.atStatement(file, prev, message, this.getMetadata().key, this.getConfig().severity, fix));
+      }
+
+      const prevprev = statements[i - 2];
+      if (prev && prevprev
+          && prevprev.get() instanceof Statements.Return
+          && (prev.get() instanceof Statements.EndIf
+          || prev.get() instanceof Statements.EndTry)) {
+        const fix = EditHelper.deleteStatement(file, prevprev);
+        issues.push(Issue.atStatement(file, prevprev, message, this.getMetadata().key, this.getConfig().severity, fix));
       }
     }
 
