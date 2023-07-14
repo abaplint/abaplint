@@ -59,12 +59,24 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("test IF", async () => {
+  it("test IF", async () => {
     const abap = `
 FORM foo.
   IF 1 = 2.
     RETURN.
   ENDIF.
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("test RETURN ENDTRY ENDFORM", async () => {
+    const abap = `
+FORM foo.
+  TRY.
+    CATCH cx_root.
+      RETURN.
+  ENDTRY.
 ENDFORM.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);

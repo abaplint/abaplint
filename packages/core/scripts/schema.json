@@ -2672,6 +2672,17 @@
               ],
               "description": "Prefer IS NOT to NOT IS\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_is_not"
             },
+            "prefer_pragmas": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferPragmasConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
+            },
             "prefer_raise_exception_new": {
               "anyOf": [
                 {
@@ -4420,6 +4431,17 @@
                 }
               ],
               "description": "Prefer IS NOT to NOT IS\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_is_not"
+            },
+            "prefer_pragmas": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferPragmasConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
             },
             "prefer_raise_exception_new": {
               "anyOf": [
@@ -6660,6 +6682,45 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "PreferPragmasConf": {
+      "additionalProperties": false,
+      "properties": {
+        "check": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "pragma": {
+                "type": "string"
+              },
+              "pseudo": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "pseudo",
+              "pragma"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "check"
+      ],
       "type": "object"
     },
     "PreferRaiseExceptionNewConf": {

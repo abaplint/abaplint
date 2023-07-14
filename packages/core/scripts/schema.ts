@@ -108,6 +108,7 @@ import {PragmaStyleConf} from "../src/rules/pragma_style";
 import {PreferCorrespondingConf} from "../src/rules/prefer_corresponding";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
+import {PreferPragmasConf} from "../src/rules/prefer_pragmas";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
@@ -280,6 +281,7 @@ export interface IConfig {
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
+    "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
@@ -441,6 +443,7 @@ export interface IConfig {
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
+    "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,

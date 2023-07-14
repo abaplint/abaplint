@@ -20,6 +20,7 @@ export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
    */
   public recommendations: Recommendations[] = [
     {name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC or CL_ABAP_MESSAGE_DIGEST"},
+    {name: "CCU_TIMESTAMP_DIFFERENCE", replace: "use CL_ABAP_TSTMP"},
     {name: "ECATT_CONV_XSTRING_TO_STRING", replace: "use CL_BINARY_CONVERT"},
     {name: "F4_FILENAME", replace: "use CL_GUI_FRONTEND_SERVICES"},
     {name: "FUNCTION_EXISTS", replace: "surround with try-catch CX_SY_DYN_CALL_ILLEGAL_METHOD instead"},

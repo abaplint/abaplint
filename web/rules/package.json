@@ -10,9 +10,9 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/core": "^2.101.33",
-    "@abaplint/monaco": "^2.101.33",
-    "@types/node": "^20.4.1",
+    "@abaplint/core": "^2.102.0",
+    "@abaplint/monaco": "^2.102.0",
+    "@types/node": "^20.4.2",
     "monaco-editor": "^0.40.0",
     "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
