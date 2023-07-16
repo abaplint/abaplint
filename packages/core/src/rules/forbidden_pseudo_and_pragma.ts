@@ -33,6 +33,10 @@ export class ForbiddenPseudoAndPragma extends ABAPRule {
   }
 
   public getConfig() {
+    // @ts-ignore
+    if (this.conf === true) {
+      this.conf = new ForbiddenPseudoAndPragmaConf();
+    }
     if (this.conf.pseudo === undefined) {
       this.conf.pseudo = [];
     }
