@@ -675,7 +675,7 @@ export class BuiltIn {
       name: "REPEAT",
       mandatory: {
         "val": new CLikeType(),
-        "occ": IntegerType.get(),
+        "occ": new CLikeType(),
       },
       return: StringType.get(),
       version: Version.v702,

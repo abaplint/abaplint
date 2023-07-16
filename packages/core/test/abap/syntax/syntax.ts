@@ -8612,6 +8612,15 @@ ASSIGN <lv_field>->* TO FIELD-SYMBOL(<lv_value>).`;
     expect(issues.length).to.equal(0);
   });
 
+  it("repeat(), occ, type ok", () => {
+    const abap = `
+DATA: character TYPE string,
+      reps      TYPE string.
+WRITE |{ repeat( val = character occ = reps ) }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
