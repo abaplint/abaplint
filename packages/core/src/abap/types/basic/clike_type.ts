@@ -1,7 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
 export class CLikeType extends AbstractType {
-  /*
   private static readonly singleton = new CLikeType();
 
   public static get(): CLikeType {
@@ -11,7 +10,6 @@ export class CLikeType extends AbstractType {
   private constructor() {
     super();
   }
-  */
 
   public toText() {
     return "```clike```";

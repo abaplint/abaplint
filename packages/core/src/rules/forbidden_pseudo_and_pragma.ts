@@ -10,7 +10,7 @@ import {ABAPFile} from "../abap/abap_file";
 
 export class ForbiddenPseudoAndPragmaConf extends BasicRuleConfig {
   /** @uniqueItems true */
-  public pseudo: string[] = [];
+  public pseudo: string[] = ["*"];
   /** @uniqueItems true */
   public pragmas: string[] = [];
   public ignoreGlobalClassDefinition: boolean = false;
@@ -27,6 +27,8 @@ export class ForbiddenPseudoAndPragma extends ABAPRule {
       title: "Forbidden pseudo comments and pragma",
       shortDescription: `Checks for unwanted pseudo comments and pragma`,
       tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      badExample: `DATA i TYPE i. "#EC *`,
+      goodExample: `DATA i TYPE i.`,
     };
   }
 
