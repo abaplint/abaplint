@@ -10,8 +10,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/core": "^2.102.0",
-    "@abaplint/monaco": "^2.102.0",
+    "@abaplint/core": "^2.102.2",
+    "@abaplint/monaco": "^2.102.2",
     "@types/node": "^20.4.2",
     "monaco-editor": "^0.40.0",
     "ts-loader": "^9.4.4",
