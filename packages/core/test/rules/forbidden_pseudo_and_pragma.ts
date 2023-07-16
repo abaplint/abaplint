@@ -13,6 +13,7 @@ const tests2 = [
   {abap: "TYPES forbidden_foo TYPE datum.", cnt: 0},
   {abap: "ri_html->add( '</td>' ). \"#EC NOTEXT", cnt: 1},
   {abap: "ri_html->add( '</td>' ).", cnt: 0},
+  {abap: `*"* definitions, interfaces or type declarations) you need for`, cnt: 0},
 ];
 
 const config = new ForbiddenPseudoAndPragmaConf();

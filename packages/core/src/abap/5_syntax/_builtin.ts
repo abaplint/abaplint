@@ -165,7 +165,7 @@ export class BuiltIn {
     {
       name: "BOOLC",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -174,7 +174,7 @@ export class BuiltIn {
     {
       name: "BOOLX",
       mandatory: {
-        "bool": new CLikeType(),
+        "bool": CLikeType.get(),
       },
       optional: {
         "bit": IntegerType.get(),
@@ -194,7 +194,7 @@ export class BuiltIn {
     {
       name: "CHAR_OFF",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
         "add": IntegerType.get(),
       },
       optional: {
@@ -207,7 +207,7 @@ export class BuiltIn {
     {
       name: "CHARLEN",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
@@ -215,16 +215,16 @@ export class BuiltIn {
     {
       name: "CMAX",
       mandatory: {
-        "val1": new CLikeType(),
-        "val2": new CLikeType(),
+        "val1": CLikeType.get(),
+        "val2": CLikeType.get(),
       },
       optional: {
-        "val3": new CLikeType(),
-        "val4": new CLikeType(),
-        "val5": new CLikeType(),
-        "val6": new CLikeType(),
-        "val7": new CLikeType(),
-        "val9": new CLikeType(),
+        "val3": CLikeType.get(),
+        "val4": CLikeType.get(),
+        "val5": CLikeType.get(),
+        "val6": CLikeType.get(),
+        "val7": CLikeType.get(),
+        "val9": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -233,16 +233,16 @@ export class BuiltIn {
     {
       name: "CMIN",
       mandatory: {
-        "val1": new CLikeType(),
-        "val2": new CLikeType(),
+        "val1": CLikeType.get(),
+        "val2": CLikeType.get(),
       },
       optional: {
-        "val3": new CLikeType(),
-        "val4": new CLikeType(),
-        "val5": new CLikeType(),
-        "val6": new CLikeType(),
-        "val7": new CLikeType(),
-        "val9": new CLikeType(),
+        "val3": CLikeType.get(),
+        "val4": CLikeType.get(),
+        "val5": CLikeType.get(),
+        "val6": CLikeType.get(),
+        "val7": CLikeType.get(),
+        "val9": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -254,7 +254,7 @@ export class BuiltIn {
         "table": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
       },
       optional: {
-        "sep": new CLikeType(),
+        "sep": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -263,12 +263,12 @@ export class BuiltIn {
     {
       name: "CONDENSE",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "del": new CLikeType(),
-        "from": new CLikeType(),
-        "to": new CLikeType(),
+        "del": CLikeType.get(),
+        "from": CLikeType.get(),
+        "to": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -277,14 +277,14 @@ export class BuiltIn {
     {
       name: "CONTAINS",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "start": new CLikeType(),
-        "end": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "start": CLikeType.get(),
+        "end": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
@@ -298,12 +298,12 @@ export class BuiltIn {
     {
       name: "CONTAINS_ANY_NOT_OF",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "start": new CLikeType(),
-        "end": new CLikeType(),
+        "sub": CLikeType.get(),
+        "start": CLikeType.get(),
+        "end": CLikeType.get(),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -315,12 +315,12 @@ export class BuiltIn {
     {
       name: "CONTAINS_ANY_OF",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "start": new CLikeType(),
-        "end": new CLikeType(),
+        "sub": CLikeType.get(),
+        "start": CLikeType.get(),
+        "end": CLikeType.get(),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -349,12 +349,12 @@ export class BuiltIn {
     {
       name: "COUNT",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
@@ -366,12 +366,12 @@ export class BuiltIn {
     {
       name: "COUNT_ANY_NOT_OF",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
@@ -383,12 +383,12 @@ export class BuiltIn {
     {
       name: "COUNT_ANY_OF",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
@@ -400,7 +400,7 @@ export class BuiltIn {
     {
       name: "DBMAXLEN",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
@@ -408,8 +408,8 @@ export class BuiltIn {
     {
       name: "DISTANCE",
       mandatory: {
-        "val1": new CLikeType(),
-        "val2": new CLikeType(),
+        "val1": CLikeType.get(),
+        "val2": CLikeType.get(),
       },
       return: IntegerType.get(),
       version: Version.v702,
@@ -418,8 +418,8 @@ export class BuiltIn {
     {
       name: "ESCAPE",
       mandatory: {
-        "val": new CLikeType(),
-        "format": new CLikeType(),
+        "val": CLikeType.get(),
+        "format": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -436,12 +436,12 @@ export class BuiltIn {
     {
       name: "FIND",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
@@ -454,10 +454,10 @@ export class BuiltIn {
     {
       name: "FIND_ANY_NOT_OF",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
+        "sub": CLikeType.get(),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -469,10 +469,10 @@ export class BuiltIn {
     {
       name: "FIND_ANY_OF",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
+        "sub": CLikeType.get(),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -484,12 +484,12 @@ export class BuiltIn {
     {
       name: "FIND_END",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
@@ -518,7 +518,7 @@ export class BuiltIn {
     {
       name: "FROM_MIXED",
       mandatory: {
-        "val": new CLikeType()},
+        "val": CLikeType.get()},
       optional: {
         "case": new CharacterType(1),
         "sep": IntegerType.get(),
@@ -531,8 +531,8 @@ export class BuiltIn {
     {
       name: "INSERT",
       mandatory: {
-        "val": new CLikeType(),
-        "sub": new CLikeType(),
+        "val": CLikeType.get(),
+        "sub": CLikeType.get(),
       },
       optional: {
         "off": IntegerType.get(),
@@ -564,7 +564,7 @@ export class BuiltIn {
     {
       name: "LINE_INDEX",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: IntegerType.get(),
       version: Version.v740sp02,
@@ -597,11 +597,11 @@ export class BuiltIn {
     {
       name: "MATCH",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       }, optional: {
         "case": new CharacterType(1),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "occ": IntegerType.get(),
       },
       return: StringType.get(),
@@ -611,12 +611,12 @@ export class BuiltIn {
     {
       name: "MATCHES",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
         "case": new CharacterType(1),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
       },
@@ -628,17 +628,17 @@ export class BuiltIn {
     {
       name: "NMAX",
       mandatory: {
-        "val1": new CLikeType(),
-        "val2": new CLikeType(),
+        "val1": CLikeType.get(),
+        "val2": CLikeType.get(),
       },
       optional: {
-        "val3": new CLikeType(),
-        "val4": new CLikeType(),
-        "val5": new CLikeType(),
-        "val6": new CLikeType(),
-        "val7": new CLikeType(),
-        "val8": new CLikeType(),
-        "val9": new CLikeType(),
+        "val3": CLikeType.get(),
+        "val4": CLikeType.get(),
+        "val5": CLikeType.get(),
+        "val6": CLikeType.get(),
+        "val7": CLikeType.get(),
+        "val8": CLikeType.get(),
+        "val9": CLikeType.get(),
       },
       return: IntegerType.get(),
       version: Version.v702,
@@ -647,17 +647,17 @@ export class BuiltIn {
     {
       name: "NMIN",
       mandatory: {
-        "val1": new CLikeType(),
-        "val2": new CLikeType(),
+        "val1": CLikeType.get(),
+        "val2": CLikeType.get(),
       },
       optional: {
-        "val3": new CLikeType(),
-        "val4": new CLikeType(),
-        "val5": new CLikeType(),
-        "val6": new CLikeType(),
-        "val7": new CLikeType(),
-        "val8": new CLikeType(),
-        "val9": new CLikeType(),
+        "val3": CLikeType.get(),
+        "val4": CLikeType.get(),
+        "val5": CLikeType.get(),
+        "val6": CLikeType.get(),
+        "val7": CLikeType.get(),
+        "val8": CLikeType.get(),
+        "val9": CLikeType.get(),
       },
       return: IntegerType.get(),
       version: Version.v702,
@@ -666,7 +666,7 @@ export class BuiltIn {
     {
       name: "NUMOFCHAR",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
@@ -674,8 +674,8 @@ export class BuiltIn {
     {
       name: "REPEAT",
       mandatory: {
-        "val": new CLikeType(),
-        "occ": IntegerType.get(),
+        "val": CLikeType.get(),
+        "occ": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -684,13 +684,13 @@ export class BuiltIn {
     {
       name: "REPLACE",
       mandatory: {
-        "val": new CLikeType(),
-        "with": new CLikeType(),
+        "val": CLikeType.get(),
+        "with": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "off": IntegerType.get(),
         "len": IntegerType.get(),
@@ -717,7 +717,7 @@ export class BuiltIn {
     {
       name: "REVERSE",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -740,12 +740,12 @@ export class BuiltIn {
     {
       name: "SEGMENT",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
         "index": IntegerType.get(),
       },
       optional: {
-        "sep": new CLikeType(),
-        "space": new CLikeType(),
+        "sep": CLikeType.get(),
+        "space": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -754,11 +754,11 @@ export class BuiltIn {
     {
       name: "SHIFT_LEFT",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional:
       {
-        "sub": new CLikeType(),
+        "sub": CLikeType.get(),
         "places": IntegerType.get(),
         "circular": IntegerType.get(),
       },
@@ -769,10 +769,10 @@ export class BuiltIn {
     {
       name: "SHIFT_RIGHT",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
+        "sub": CLikeType.get(),
         "places": IntegerType.get(),
         "circular": IntegerType.get(),
       },
@@ -815,7 +815,7 @@ export class BuiltIn {
     {
       name: "STRLEN",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
@@ -823,7 +823,7 @@ export class BuiltIn {
     {
       name: "SUBSTRING",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
         "off": IntegerType.get(),
@@ -836,12 +836,12 @@ export class BuiltIn {
     {
       name: "SUBSTRING_AFTER",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -853,12 +853,12 @@ export class BuiltIn {
     {
       name: "SUBSTRING_BEFORE",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -870,12 +870,12 @@ export class BuiltIn {
     {
       name: "SUBSTRING_FROM",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -887,12 +887,12 @@ export class BuiltIn {
     {
       name: "SUBSTRING_TO",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional: {
-        "sub": new CLikeType(),
-        "regex": new CLikeType(),
-        "pcre": new CLikeType(),
+        "sub": CLikeType.get(),
+        "regex": CLikeType.get(),
+        "pcre": CLikeType.get(),
         "case": new CharacterType(1),
         "len": IntegerType.get(),
         "occ": IntegerType.get(),
@@ -920,7 +920,7 @@ export class BuiltIn {
     {
       name: "TO_LOWER",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -929,12 +929,12 @@ export class BuiltIn {
     {
       name: "TO_MIXED",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       optional:
       {
         "case": new CharacterType(1),
-        "sep": new CLikeType(),
+        "sep": CLikeType.get(),
         "min": IntegerType.get(),
       },
       return: StringType.get(),
@@ -943,7 +943,7 @@ export class BuiltIn {
 
     {
       name: "TO_UPPER",
-      mandatory: {"val": new CLikeType()},
+      mandatory: {"val": CLikeType.get()},
       return: StringType.get(),
       version: Version.v702,
     },
@@ -951,9 +951,9 @@ export class BuiltIn {
     {
       name: "TRANSLATE",
       mandatory: {
-        "val": new CLikeType(),
-        "from": new CLikeType(),
-        "to": new CLikeType(),
+        "val": CLikeType.get(),
+        "from": CLikeType.get(),
+        "to": CLikeType.get(),
       },
       return: StringType.get(),
       version: Version.v702,
@@ -1001,7 +1001,7 @@ export class BuiltIn {
     {
       name: "XSDBOOL",
       mandatory: {
-        "val": new CLikeType(),
+        "val": CLikeType.get(),
       },
       return: new CharacterType(1),
       version: Version.v740sp08,
