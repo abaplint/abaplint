@@ -85,3 +85,41 @@ Suggest starting by running only the syntax check relevant rules, having this wo
   }
 }
 ```
+
+## HANA database compatibility
+
+Note: `select_single_full_key` to give all findings, abaplint must know the database definitions.
+
+```json
+{
+  "global": {
+    "files": "/src/**/*.*"
+  },
+  "dependencies": [
+    {
+      "url": "https://github.com/abaplint/deps",
+      "folder": "/deps",
+      "files": "/src/**/*.*"
+    }
+  ],
+  "syntax": {
+    "version": "v755",
+    "errorNamespace": "^(Z|Y|LCL_|TY_|LIF_)"
+  },
+  "rules": {
+    "select_single_full_key": true,
+    "select_add_order_by": true,
+    "forbidden_void_type": {
+      "check": [
+        "CL_SQL_STATEMENT",
+        "CL_SQL_PREPARED_STATEMENT",
+        "CL_SQL_CONNECTION",
+        "CX_SQL_EXCEPTION"
+      ]
+    },
+    "dangerous_statement": {
+      "execSQL": true
+    }
+  }
+}
+```
