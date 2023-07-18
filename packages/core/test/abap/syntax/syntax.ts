@@ -8621,6 +8621,27 @@ WRITE |{ repeat( val = character occ = reps ) }|.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 2.
+
+    METHODS foo IMPORTING bar TYPE string.
+    METHODS bar RETURNING VALUE(asdf) TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( bar = bar( ) ).
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

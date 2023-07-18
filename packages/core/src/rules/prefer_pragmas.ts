@@ -36,6 +36,8 @@ export class PreferPragmas extends ABAPRule {
       shortDescription: `prefer pragmas over pseudo comments `,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-pragmas-to-pseudo-comments`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
+      badExample: `DATA foo1 TYPE i. "#EC NEEDED`,
+      goodExample: `DATA foo2 TYPE i ##NEEDED.`,
     };
   }
 

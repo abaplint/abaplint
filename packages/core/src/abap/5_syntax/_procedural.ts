@@ -14,6 +14,7 @@ import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
 import {ObjectOriented} from "./_object_oriented";
+import {ReferenceType} from "./_reference";
 
 export class Procedural {
   private readonly scope: CurrentScope;
@@ -102,8 +103,20 @@ export class Procedural {
       let found: AbstractType | undefined = undefined;
       if (param.type === undefined || param.type === "") {
         found = new AnyType();
-      } else {
-        found = ddic.lookup(param.type).type;
+      } else if (param.type.includes("=>")) {
+        // then its a type from global INTF or CLAS
+        const [clas, name] = param.type.split("=>");
+        const def = this.scope.findObjectDefinition(clas);
+        if (def) {
+          const type = def.getTypeDefinitions().getByName(name);
+          if (type) {
+            this.scope.addReference(nameToken, type, ReferenceType.TypeReference, filename);
+            found = type.getType();
+          }
+        }
+      }
+      if (found === undefined) {
+        found = ddic.lookup(param.type!).type;
       }
 
       if (param.direction === FunctionModuleParameterDirection.tables) {
