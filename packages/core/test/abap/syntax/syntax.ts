@@ -8621,7 +8621,7 @@ WRITE |{ repeat( val = character occ = reps ) }|.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("ok, compatible", () => {
+  it("ok, compatible", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

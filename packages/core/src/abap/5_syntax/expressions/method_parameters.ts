@@ -147,9 +147,11 @@ export class MethodParameters {
 
     for (const item of items) {
       const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
+      const calculated = item.source.findFirstExpression(Expressions.MethodCallChain) !== undefined
+        || item.source.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (parameter === undefined) {
         throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
-      } else if (new TypeUtils(scope).isAssignableStrict(item.sourceType, parameter.getType()) === false) {
+      } else if (new TypeUtils(scope).isAssignableStrict(item.sourceType, parameter.getType(), calculated) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
       this.requiredParameters.delete(item.name);
