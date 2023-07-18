@@ -294,11 +294,12 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
-  it.only("class type used in function module parameters", async () => {
+  it("class type used in function module parameters", async () => {
     const zcl_fugr1 = `
 class ZCL_FUGR1 definition public final create public.
   public section.
     types TYPE type I .
+    types TYPE2 type I .
 ENDCLASS.
 
 CLASS ZCL_FUGR1 IMPLEMENTATION.
@@ -334,6 +335,7 @@ ENDCLASS.`;
   </asx:values>
  </asx:abap>
 </abapGit>`;
+
     const zfoobar = `FUNCTION ZFOOBAR.
     *"----------------------------------------------------------------------
     *"*"Local Interface:
@@ -341,11 +343,22 @@ ENDCLASS.`;
     *"     REFERENCE(SDFS) TYPE  ZCL_FUGR1=>TYPE
     *"----------------------------------------------------------------------
 
+DATA foo TYPE ZCL_FUGR1=>TYPE2.
+
     ENDFUNCTION.`;
+
+    const main = `
+    *******************************************************************
+    *   System-defined Include-files.                                 *
+    *******************************************************************
+      INCLUDE LZFUGR1TOP.                        " Global Declarations
+      INCLUDE LZFUGR1UXX.                        " Function Modules`;
+
     const files = [
       new MemoryFile("zcl_fugr1.clas.abap", zcl_fugr1),
       new MemoryFile("zfugr1.fugr.xml", zfugr1xml),
       new MemoryFile("zfugr1.fugr.zfoobar.abap", zfoobar),
+      new MemoryFile("zfugr1.fugr.saplzfugr1.abap", main),
     ];
     // note that only the issues for the first file is returned
     const issues = await runMulti(files);
