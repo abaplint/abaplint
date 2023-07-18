@@ -294,4 +294,62 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it.only("class type used in function module parameters", async () => {
+    const zcl_fugr1 = `
+class ZCL_FUGR1 definition public final create public.
+  public section.
+    types TYPE type I .
+ENDCLASS.
+
+CLASS ZCL_FUGR1 IMPLEMENTATION.
+ENDCLASS.`;
+    const zfugr1xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>test</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZFUGR1TOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZFUGR1</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZFOOBAR</FUNCNAME>
+     <SHORT_TEXT>foobar</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>SDFS</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>ZCL_FUGR1=&gt;TYPE</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>SDFS</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const zfoobar = `FUNCTION ZFOOBAR.
+    *"----------------------------------------------------------------------
+    *"*"Local Interface:
+    *"  IMPORTING
+    *"     REFERENCE(SDFS) TYPE  ZCL_FUGR1=>TYPE
+    *"----------------------------------------------------------------------
+
+    ENDFUNCTION.`;
+    const files = [
+      new MemoryFile("zcl_fugr1.clas.abap", zcl_fugr1),
+      new MemoryFile("zfugr1.fugr.xml", zfugr1xml),
+      new MemoryFile("zfugr1.fugr.zfoobar.abap", zfoobar),
+    ];
+    // note that only the issues for the first file is returned
+    const issues = await runMulti(files);
+    expect(issues.length).to.equal(0);
+  });
+
 });
