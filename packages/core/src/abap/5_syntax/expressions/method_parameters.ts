@@ -148,7 +148,7 @@ export class MethodParameters {
     for (const item of items) {
       const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
       const calculated = item.source.findFirstExpression(Expressions.MethodCallChain) !== undefined
-//        || item.source.findFirstExpression(Expressions.StringTemplate) !== undefined
+        || item.source.findFirstExpression(Expressions.StringTemplate) !== undefined
         || item.source.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (parameter === undefined) {
         throw new Error("Method importing parameter \"" + item.name + "\" does not exist");

@@ -226,6 +226,10 @@ export class TypeUtils {
     console.dir(target);
     console.dir(calculated);
 */
+    if (calculated && source instanceof StringType && target instanceof XStringType) {
+      return false;
+    }
+
     if (calculated) {
       return this.isAssignable(source, target);
     }

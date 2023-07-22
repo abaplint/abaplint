@@ -56,7 +56,7 @@ export class MethodCallParam {
       }
 
       const calculated = child.findFirstExpression(Expressions.MethodCallChain) !== undefined
-//        || child.findFirstExpression(Expressions.StringTemplate) !== undefined
+        || child.findFirstExpression(Expressions.StringTemplate) !== undefined
         || child.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (sourceType === undefined) {
         throw new Error("No source type determined, method source");
