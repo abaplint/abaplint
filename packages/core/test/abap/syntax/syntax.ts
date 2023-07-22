@@ -8666,6 +8666,23 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, calculated string vs generic C", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE c.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lv_str TYPE string.
+    foo( lv_str && |s| ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it.skip("error expected, string is not compatible with generic C", () => {
     const abap = `
 CLASS lcl DEFINITION.
