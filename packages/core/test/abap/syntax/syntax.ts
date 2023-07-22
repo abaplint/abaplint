@@ -8701,7 +8701,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("error expected, string is not compatible with generic C", () => {
+  it("error expected, string is not compatible with generic C", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -8715,7 +8715,7 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
 // todo, static method cannot access instance attributes
