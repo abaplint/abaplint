@@ -8377,6 +8377,14 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("template into xstring, ok", () => {
+    const abap = `
+DATA foo TYPE xstring.
+foo = |AA|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("float passed to int", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -8642,7 +8650,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("ok, constant string vs generic C", () => {
+  it("ok, constant string vs generic C", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
