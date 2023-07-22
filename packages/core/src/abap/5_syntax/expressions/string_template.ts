@@ -9,10 +9,11 @@ import {TypeUtils} from "../_type_utils";
 export class StringTemplate {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType {
     const typeUtils = new TypeUtils(scope);
+    const ret = StringType.get();
 
     for (const templateSource of node.findAllExpressions(Expressions.StringTemplateSource)) {
       const s = templateSource.findDirectExpression(Expressions.Source);
-      const type = new Source().runSyntax(s, scope, filename, StringType.get());
+      const type = new Source().runSyntax(s, scope, filename, ret);
       if (type === undefined) {
         throw new Error("No target type determined");
       } else if (typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false) {
@@ -38,6 +39,6 @@ export class StringTemplate {
       }
     }
 
-    return StringType.get();
+    return ret;
   }
 }
