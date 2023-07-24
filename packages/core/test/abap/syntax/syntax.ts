@@ -8377,6 +8377,32 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("concatenated constant to xstring, string template, calculated", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING val TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA str TYPE string.
+  lcl=>foo( str && |A| ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("template into xstring, ok", () => {
+    const abap = `
+DATA foo TYPE xstring.
+foo = |AA|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("float passed to int", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -8640,6 +8666,56 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(0);
+  });
+
+  it("ok, constant string vs generic C", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE c.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( |sdf| ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ok, calculated string vs generic C", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE c.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lv_str TYPE string.
+    foo( lv_str && |s| ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("error expected, string is not compatible with generic C", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE c.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lv_str TYPE string.
+    foo( lv_str ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
 // todo, static method cannot access instance attributes

@@ -14,6 +14,9 @@ export class TableType extends AbstractObject {
     datatype?: string,
     leng?: string,
     decimals?: string,
+    accessmode?: string,
+    keykind?: string,
+    ddtext?: string,
     dd42v: {keyname: string, keyfield: string}[];
     dd43v: {keyname: string, accessmode: string, kind: string, unique: boolean}[];
   } | undefined = undefined;
@@ -30,8 +33,8 @@ export class TableType extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    this.parseXML();
+    return this.parsedXML?.ddtext;
   }
 
   public setDirty(): void {
@@ -40,9 +43,37 @@ export class TableType extends AbstractObject {
   }
 
   private buildTableOptions(): ITableOptions {
+    let primaryKey: Types.ITableKey | undefined = undefined;
+    if (this.parsedXML?.accessmode === "S") {
+      primaryKey = {
+        isUnique: this.parsedXML?.keykind === "U",
+        type: TableAccessType.sorted,
+        keyFields: [],
+        name: "primary_key",
+      };
+      for (const f of this.parsedXML?.dd42v || []) {
+        if (f.keyname === "") {
+          primaryKey.keyFields.push(f.keyfield);
+        }
+      }
+    } else if (this.parsedXML?.accessmode === "H") {
+      primaryKey = {
+        isUnique: this.parsedXML?.keykind === "U",
+        type: TableAccessType.hashed,
+        keyFields: [],
+        name: "primary_key",
+      };
+      for (const f of this.parsedXML?.dd42v || []) {
+        if (f.keyname === "") {
+          primaryKey.keyFields.push(f.keyfield);
+        }
+      }
+    }
+
     const tableOptions: ITableOptions = {
       withHeader: false,
       keyType: Types.TableKeyType.user,
+      primaryKey: primaryKey,
       secondary: [],
     };
 
@@ -154,6 +185,9 @@ export class TableType extends AbstractObject {
     this.parsedXML.datatype = dd40v.DATATYPE;
     this.parsedXML.leng = dd40v.LENG;
     this.parsedXML.decimals = dd40v.DECIMALS;
+    this.parsedXML.accessmode = dd40v.ACCESSMODE;
+    this.parsedXML.keykind = dd40v.KEYKIND;
+    this.parsedXML.ddtext = dd40v.DDTEXT;
 
     for (const x of xmlToArray(values.DD42V?.DD42V)) {
       this.parsedXML.dd42v.push({

@@ -224,7 +224,12 @@ export class TypeUtils {
 /*
     console.dir(source);
     console.dir(target);
+    console.dir(calculated);
 */
+    if (calculated && source instanceof StringType && target instanceof XStringType) {
+      return false;
+    }
+
     if (calculated) {
       return this.isAssignable(source, target);
     }
@@ -267,6 +272,8 @@ export class TypeUtils {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
         }
+        return false;
+      } else if (target instanceof CGenericType) {
         return false;
       } else if (target instanceof XSequenceType || target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
