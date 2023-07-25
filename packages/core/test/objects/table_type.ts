@@ -460,4 +460,34 @@ describe("Table Type, parse XML", () => {
     expect(secondary!.length).to.equal(0);
   });
 
+  it("hashed, line type key, not generic", async () => {
+    const xml1 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZRETTAB</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>INT4</DATATYPE>
+    <LENG>000010</LENG>
+    <ACCESSMODE>H</ACCESSMODE>
+    <KEYDEF>T</KEYDEF>
+    <KEYKIND>U</KEYKIND>
+    <DDTEXT>Returning, hashed</DDTEXT>
+    <TYPELEN>000004</TYPELEN>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zrettab.ttyp.xml", xml1),
+    ]);
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Objects.TableType;
+
+    const type = tabl.parseType(reg);
+    expect(type.isGeneric()).to.equal(false);
+  });
+
 });
