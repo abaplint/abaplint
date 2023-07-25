@@ -484,9 +484,66 @@ describe("Table Type, parse XML", () => {
       new MemoryFile("zrettab.ttyp.xml", xml1),
     ]);
     await reg.parseAsync();
-    const tabl = reg.getFirstObject()! as Objects.TableType;
+    const ttyp = reg.getFirstObject()! as Objects.TableType;
 
-    const type = tabl.parseType(reg);
+    const type = ttyp.parseType(reg);
+    expect(type.isGeneric()).to.equal(false);
+  });
+
+  it("standard table, standard key, not generic", async () => {
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTTYP_STD</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZLINE</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <DATATYPE>STRU</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>test</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const tabl = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZLINE</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>line</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>X</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>INT4</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  INT4</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zttyp_std.ttyp.xml", ttyp),
+      new MemoryFile("zline.tabl.xml", tabl),
+    ]);
+    await reg.parseAsync();
+    const obj = reg.getFirstObject()! as Objects.TableType;
+
+    const type = obj.parseType(reg);
     expect(type.isGeneric()).to.equal(false);
   });
 
