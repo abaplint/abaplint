@@ -547,7 +547,7 @@ describe("Table Type, parse XML", () => {
     expect(type.isGeneric()).to.equal(false);
   });
 
-  it.only("sorted table, standard key, not generic", async () => {
+  it("sorted table, standard key, not generic", async () => {
     const ttyp = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">

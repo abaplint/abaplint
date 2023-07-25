@@ -52,6 +52,7 @@ export class TableType extends AbstractObject {
         keyFields: [],
         name: "primary_key",
       };
+
     } else if (this.parsedXML?.accessmode === "H") {
       primaryKey = {
         isUnique: this.parsedXML?.keykind === "U",
@@ -69,9 +70,14 @@ export class TableType extends AbstractObject {
       primaryKey?.keyFields.push("table_line");
     }
 
+    let keyType = Types.TableKeyType.user;
+    if (this.parsedXML?.keydef === "D") {
+      keyType = Types.TableKeyType.default;
+    }
+
     const tableOptions: ITableOptions = {
       withHeader: false,
-      keyType: Types.TableKeyType.user,
+      keyType: keyType,
       primaryKey: primaryKey,
       secondary: [],
     };
