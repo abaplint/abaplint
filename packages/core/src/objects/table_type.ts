@@ -17,6 +17,7 @@ export class TableType extends AbstractObject {
     accessmode?: string,
     keykind?: string,
     ddtext?: string,
+    keydef?: string,
     dd42v: {keyname: string, keyfield: string}[];
     dd43v: {keyname: string, accessmode: string, kind: string, unique: boolean}[];
   } | undefined = undefined;
@@ -51,11 +52,6 @@ export class TableType extends AbstractObject {
         keyFields: [],
         name: "primary_key",
       };
-      for (const f of this.parsedXML?.dd42v || []) {
-        if (f.keyname === "") {
-          primaryKey.keyFields.push(f.keyfield);
-        }
-      }
     } else if (this.parsedXML?.accessmode === "H") {
       primaryKey = {
         isUnique: this.parsedXML?.keykind === "U",
@@ -63,11 +59,14 @@ export class TableType extends AbstractObject {
         keyFields: [],
         name: "primary_key",
       };
-      for (const f of this.parsedXML?.dd42v || []) {
-        if (f.keyname === "") {
-          primaryKey.keyFields.push(f.keyfield);
-        }
+    }
+    for (const f of this.parsedXML?.dd42v || []) {
+      if (f.keyname === "") {
+        primaryKey?.keyFields.push(f.keyfield);
       }
+    }
+    if (this.parsedXML?.keydef === "T" && primaryKey?.keyFields.length === 0) {
+      primaryKey?.keyFields.push("table_line");
     }
 
     const tableOptions: ITableOptions = {
@@ -188,6 +187,7 @@ export class TableType extends AbstractObject {
     this.parsedXML.accessmode = dd40v.ACCESSMODE;
     this.parsedXML.keykind = dd40v.KEYKIND;
     this.parsedXML.ddtext = dd40v.DDTEXT;
+    this.parsedXML.keydef = dd40v.KEYDEF;
 
     for (const x of xmlToArray(values.DD42V?.DD42V)) {
       this.parsedXML.dd42v.push({

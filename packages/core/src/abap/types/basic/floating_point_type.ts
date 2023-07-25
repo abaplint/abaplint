@@ -18,11 +18,11 @@ export class FloatingPointType extends AbstractType {
   }
 
   public toText() {
-    return "```n LENGTH " + this.getLength() + "```";
+    return "```f LENGTH " + this.getLength() + "```";
   }
 
   public toABAP(): string {
-    return "n LENGTH " + this.getLength();
+    return "f LENGTH " + this.getLength();
   }
 
   public isGeneric() {
