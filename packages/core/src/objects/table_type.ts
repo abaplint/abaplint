@@ -43,33 +43,31 @@ export class TableType extends AbstractObject {
     super.setDirty();
   }
 
-  private buildTableOptions(): ITableOptions {
-    let primaryKey: Types.ITableKey | undefined = undefined;
+  private buildPrimaryKey() {
+    const primaryKey: Types.ITableKey = {
+      isUnique: this.parsedXML?.keykind === "U",
+      type: TableAccessType.standard,
+      keyFields: [],
+      name: "primary_key",
+    };
     if (this.parsedXML?.accessmode === "S") {
-      primaryKey = {
-        isUnique: this.parsedXML?.keykind === "U",
-        type: TableAccessType.sorted,
-        keyFields: [],
-        name: "primary_key",
-      };
-
+      primaryKey.type = TableAccessType.sorted;
     } else if (this.parsedXML?.accessmode === "H") {
-      primaryKey = {
-        isUnique: this.parsedXML?.keykind === "U",
-        type: TableAccessType.hashed,
-        keyFields: [],
-        name: "primary_key",
-      };
+      primaryKey.type = TableAccessType.hashed;
     }
+
     for (const f of this.parsedXML?.dd42v || []) {
       if (f.keyname === "") {
-        primaryKey?.keyFields.push(f.keyfield);
+        primaryKey.keyFields.push(f.keyfield);
       }
     }
-    if (this.parsedXML?.keydef === "T" && primaryKey?.keyFields.length === 0) {
-      primaryKey?.keyFields.push("table_line");
+    if (this.parsedXML?.keydef === "T" && primaryKey.keyFields.length === 0) {
+      primaryKey.keyFields.push("table_line");
     }
+    return primaryKey;
+  }
 
+  private buildTableOptions(): ITableOptions {
     let keyType = Types.TableKeyType.user;
     if (this.parsedXML?.keydef === "D") {
       keyType = Types.TableKeyType.default;
@@ -78,7 +76,7 @@ export class TableType extends AbstractObject {
     const tableOptions: ITableOptions = {
       withHeader: false,
       keyType: keyType,
-      primaryKey: primaryKey,
+      primaryKey: this.buildPrimaryKey(),
       secondary: [],
     };
 
