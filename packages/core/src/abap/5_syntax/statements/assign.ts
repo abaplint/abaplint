@@ -4,7 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
 import {Dynamic} from "../expressions/dynamic";
-import {VoidType} from "../../types/basic";
+import {AnyType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 
 export class Assign implements StatementSyntax {
@@ -14,7 +14,7 @@ export class Assign implements StatementSyntax {
     let sourceType = new Source().runSyntax(theSource, scope, filename);
 
     if (sourceType === undefined || node.findDirectExpression(Expressions.AssignSource)?.findDirectExpression(Expressions.Dynamic)) {
-      sourceType = new VoidType("DynamicAssign");
+      sourceType = new AnyType();
     }
     for (const d of node.findDirectExpression(Expressions.AssignSource)?.findAllExpressions(Expressions.Dynamic) || []) {
       new Dynamic().runSyntax(d, scope, filename);
