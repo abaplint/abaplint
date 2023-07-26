@@ -5102,4 +5102,13 @@ APPEND temp1 TO lt_res.`;
     testFix(abap, expected);
   });
 
+  it("dynamic FS", async () => {
+    const abap = `
+ASSIGN ('DYNAMIC') TO FIELD-SYMBOL(<val>).`;
+    const expected = `
+FIELD-SYMBOLS <val> TYPE any.
+ASSIGN ('DYNAMIC') TO <val>.`;
+    testFix(abap, expected);
+  });
+
 });
