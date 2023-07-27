@@ -28,6 +28,9 @@ export class CyclomaticComplexity implements IRule {
 
   public setConfig(conf: CyclomaticComplexityConf): void {
     this.conf = conf;
+    if (this.conf.max === undefined) {
+      this.conf.max = new CyclomaticComplexityConf().max;
+    }
   }
 
   public initialize(_reg: IRegistry) {
