@@ -8737,6 +8737,13 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it.only("must supply argument to lines()", () => {
+    const abap = `WRITE lines( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]).to.not.equal(undefined);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
