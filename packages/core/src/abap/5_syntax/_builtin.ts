@@ -31,7 +31,12 @@ export class BuiltInMethod extends Identifier implements IMethodDefinition, IMet
   }
 
   public getRequiredParameters(): readonly TypedIdentifier[] {
-    return [];
+    const ret: TypedIdentifier[] = [];
+    for (const i in this.method.mandatory) {
+      const id = new TokenIdentifier(new Position(this.row, 1), i);
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, this.method.mandatory[i]));
+    }
+    return ret;
   }
 
   public getOptional(): readonly string[] {
