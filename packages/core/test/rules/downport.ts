@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {expect} from "chai";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
@@ -778,6 +779,20 @@ START-OF-SELECTION.
   DATA foo TYPE abap_bool.
   DATA moo TYPE i.
   foo = CONV xsdboolean( boolc( moo = 2 ) ).`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, long condition", async () => {
+    const abap = `
+DATA result TYPE abap_bool.
+result = xsdbool( 'a' = cl_abap_typedescr=>typekind_int OR
+  'a' = cl_abap_typedescr=>typekind_int1 OR 'a' = cl_abap_typedescr=>typekind_int2 OR
+  'a' = cl_abap_typedescr=>typekind_int8 ).`;
+
+    const expected = `
+DATA result TYPE abap_bool.
+result = CONV xsdboolean( boolc( 'a' = cl_abap_typedescr=>typekind_int OR 'a' = cl_abap_typedescr=>typekind_int1 OR 'a' = cl_abap_typedescr=>typekind_int2 OR 'a' = cl_abap_typedescr=>typekind_int8 ) ).`;
 
     testFix(abap, expected);
   });
