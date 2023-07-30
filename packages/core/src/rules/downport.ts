@@ -917,7 +917,7 @@ ${indentation}`);
       return undefined;
     }
 
-    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, "ty_");
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const code = `TYPES ${uniqueName} ${tt.concatTokens()}.\n`;
 
     const fix1 = EditHelper.insertAt(lowFile, high.getStart(), code);
@@ -2845,16 +2845,16 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
-  private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult, prefix = ""): string {
+  private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult): string {
     const spag = highSyntax.spaghetti.lookupPosition(position, filename);
     if (spag === undefined) {
-      const name = prefix + "temprr" + this.counter;
+      const name = "temprr" + this.counter;
       this.counter++;
       return name;
     }
 
     while (true) {
-      const name = prefix + "temp" + this.counter;
+      const name = "temp" + this.counter;
       const exists = this.existsRecursive(spag, name);
       this.counter++;
       if (exists === false) {
@@ -2863,14 +2863,15 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
   }
 
+  // todo, optimize, the findVariable() and findType() does a lot of redundant checks
   private existsRecursive(spag: ISpaghettiScopeNode, name: string): boolean {
-    const existsDirect = spag.findVariable(name);
+    const existsDirect = spag.findVariable(name) || spag.findType(name);
     if (existsDirect) {
       return true;
     }
 
     for (const child of spag.getChildren()) {
-      if (child.findVariable(name) || this.existsRecursive(child, name)) {
+      if (child.findVariable(name) || child.findType(name) || this.existsRecursive(child, name)) {
         return true;
       }
     }

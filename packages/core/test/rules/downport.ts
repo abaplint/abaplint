@@ -4705,8 +4705,8 @@ t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
 TYPES: BEGIN OF ty_row,
          title TYPE string,
        END OF ty_row.
-TYPES ty_temp1 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
-DATA t_tab TYPE ty_temp1.
+TYPES temp1 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp1.
 t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
      ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
     testFix(abap, expected);
@@ -5165,6 +5165,19 @@ ASSIGN ('DYNAMIC') TO FIELD-SYMBOL(<val>).`;
     const expected = `
 FIELD-SYMBOLS <val> TYPE any.
 ASSIGN ('DYNAMIC') TO <val>.`;
+    testFix(abap, expected);
+  });
+
+  it("unique name should also check types", async () => {
+    const abap = `
+TYPES temp1 TYPE c LENGTH 2.
+DATA(sdf) = CONV string( 'asdf' ).`;
+    const expected = `
+TYPES temp1 TYPE c LENGTH 2.
+DATA temp2 TYPE string.
+temp2 = 'asdf'.
+DATA(sdf) = temp2.`;
+    // hmm, this doesnt work in next step
     testFix(abap, expected);
   });
 
