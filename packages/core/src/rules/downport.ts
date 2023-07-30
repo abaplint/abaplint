@@ -29,6 +29,7 @@ import {Program} from "../objects";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {ElseIf} from "../abap/2_statements/statements";
+import * as crypto from "node:crypto";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
@@ -2853,8 +2854,15 @@ ${indentation}    output = ${uniqueName}.\n`;
       return name;
     }
 
+    let postfix = "";
+    if(spag.getIdentifier().stype === ScopeType.ClassDefinition) {
+// try making sure this name is not used in subclasses
+      const hash = crypto.createHash("sha1").update(spag.getIdentifier().sname).digest("hex");
+      postfix = "_" + hash.substring(0, 10);
+    }
+
     while (true) {
-      const name = "temp" + this.counter;
+      const name = "temp" + this.counter + postfix;
       const exists = this.existsRecursive(spag, name);
       this.counter++;
       if (exists === false) {

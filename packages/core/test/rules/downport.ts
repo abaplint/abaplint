@@ -5216,8 +5216,57 @@ CLASS sub DEFINITION INHERITING FROM top.
     TYPES: BEGIN OF ty_row,
              title TYPE string,
            END OF ty_row.
-    TYPES temp2 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
-DATA t_tab TYPE temp2.
+    TYPES temp1_5d85613a56 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp1_5d85613a56.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("unique name should also check types, temp1 defined in subclass", async () => {
+    const abap = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    DATA t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    TYPES temp1_af2c7b4ca0 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp1_af2c7b4ca0.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
     METHODS moo.
 ENDCLASS.
 CLASS sub IMPLEMENTATION.
