@@ -2887,7 +2887,7 @@ ${indentation}    output = ${uniqueName}.\n`;
         const token = r.position.getToken();
 
         let source: ExpressionNode | undefined = undefined;
-        for (const s of node.findAllExpressions(Expressions.Source)) {
+        for (const s of node.findAllExpressionsRecursive(Expressions.Source)) {
           if (s.getFirstToken().getStart().equals(token.getStart())) {
             source = s;
             break;

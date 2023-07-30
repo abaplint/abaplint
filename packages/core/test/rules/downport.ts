@@ -728,6 +728,46 @@ inline_struct_table = struct_table.`;
     testFix(abap, expected);
   });
 
+  it("xsdbool, nested in source", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS
+      check_input
+        IMPORTING val        TYPE any
+        RETURNING VALUE(sdf) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD check_input.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_xsdbool TYPE abap_bool.
+  lv_xsdbool = lcl=>check_input( xsdbool( 1 = 1 ) ).`;
+
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS
+      check_input
+        IMPORTING val        TYPE any
+        RETURNING VALUE(sdf) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD check_input.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_xsdbool TYPE abap_bool.
+  lv_xsdbool = lcl=>check_input( CONV xsdboolean( boolc( 1 = 1 ) ) ).`;
+
+    testFix(abap, expected);
+  });
+
   it("xsdbool, alone", async () => {
     const abap = `
   DATA foo TYPE abap_bool.
