@@ -4705,8 +4705,8 @@ t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
 TYPES: BEGIN OF ty_row,
          title TYPE string,
        END OF ty_row.
-TYPES temp1 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
-DATA t_tab TYPE temp1.
+TYPES ty_temp1 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE ty_temp1.
 t_tab = REDUCE #( INIT ret = VALUE #( ) FOR n = 1 WHILE n < 10 NEXT
      ret = VALUE #( BASE ret ( title = 'Hans' ) ) ).`;
     testFix(abap, expected);

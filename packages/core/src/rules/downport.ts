@@ -917,7 +917,7 @@ ${indentation}`);
       return undefined;
     }
 
-    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const uniqueName = "ty_" + this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const code = `TYPES ${uniqueName} ${tt.concatTokens()}.\n`;
 
     const fix1 = EditHelper.insertAt(lowFile, high.getStart(), code);
