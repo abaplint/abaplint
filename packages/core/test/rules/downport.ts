@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {expect} from "chai";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
@@ -778,6 +779,20 @@ START-OF-SELECTION.
   DATA foo TYPE abap_bool.
   DATA moo TYPE i.
   foo = CONV xsdboolean( boolc( moo = 2 ) ).`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, long condition", async () => {
+    const abap = `
+DATA result TYPE abap_bool.
+result = xsdbool( 'a' = cl_abap_typedescr=>typekind_int OR
+  'a' = cl_abap_typedescr=>typekind_int1 OR 'a' = cl_abap_typedescr=>typekind_int2 OR
+  'a' = cl_abap_typedescr=>typekind_int8 ).`;
+
+    const expected = `
+DATA result TYPE abap_bool.
+result = CONV xsdboolean( boolc( 'a' = cl_abap_typedescr=>typekind_int OR 'a' = cl_abap_typedescr=>typekind_int1 OR 'a' = cl_abap_typedescr=>typekind_int2 OR 'a' = cl_abap_typedescr=>typekind_int8 ) ).`;
 
     testFix(abap, expected);
   });
@@ -5150,6 +5165,116 @@ ASSIGN ('DYNAMIC') TO FIELD-SYMBOL(<val>).`;
     const expected = `
 FIELD-SYMBOLS <val> TYPE any.
 ASSIGN ('DYNAMIC') TO <val>.`;
+    testFix(abap, expected);
+  });
+
+  it("unique name should also check types", async () => {
+    const abap = `
+TYPES temp1 TYPE c LENGTH 2.
+DATA(sdf) = CONV string( 'asdf' ).`;
+    const expected = `
+TYPES temp1 TYPE c LENGTH 2.
+DATA temp2 TYPE string.
+temp2 = 'asdf'.
+DATA(sdf) = temp2.`;
+    testFix(abap, expected);
+  });
+
+  it("unique name should also check types, defined in super", async () => {
+    const abap = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    DATA t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    TYPES temp1_5d85613a56 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp1_5d85613a56.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("unique name should also check types, temp1 defined in subclass", async () => {
+    const abap = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    DATA t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    TYPES temp1_af2c7b4ca0 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp1_af2c7b4ca0.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
     testFix(abap, expected);
   });
 
