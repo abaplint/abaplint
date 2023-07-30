@@ -917,7 +917,7 @@ ${indentation}`);
       return undefined;
     }
 
-    const uniqueName = "ty_" + this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, "ty_");
     const code = `TYPES ${uniqueName} ${tt.concatTokens()}.\n`;
 
     const fix1 = EditHelper.insertAt(lowFile, high.getStart(), code);
@@ -2845,16 +2845,16 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
-  private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult): string {
+  private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult, prefix = ""): string {
     const spag = highSyntax.spaghetti.lookupPosition(position, filename);
     if (spag === undefined) {
-      const name = "temprr" + this.counter;
+      const name = prefix + "temprr" + this.counter;
       this.counter++;
       return name;
     }
 
     while (true) {
-      const name = "temp" + this.counter;
+      const name = prefix + "temp" + this.counter;
       const exists = this.existsRecursive(spag, name);
       this.counter++;
       if (exists === false) {
