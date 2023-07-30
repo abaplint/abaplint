@@ -29,7 +29,7 @@ import {Program} from "../objects";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {ElseIf} from "../abap/2_statements/statements";
-import * as crypto from "node:crypto";
+import * as crypto from "crypto";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
