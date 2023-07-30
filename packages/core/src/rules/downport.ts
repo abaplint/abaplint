@@ -325,13 +325,14 @@ Make sure to test the downported code, it might not always be completely correct
             }
           }
         }
-      } else if (ret.length === 0 && / xsdbool\(/i.test(lowFile.getRaw())) {
+      }
+
+      if (ret.length === 0 && lowFile.getRaw().includes(" xsdbool( ")) {
         for (let i = 0; i < lowStatements.length; i++) {
           const high = highStatements[i];
           const issue = this.replaceXsdBool(high, lowFile, highSyntax);
           if (issue) {
             ret.push(issue);
-            break;
           }
         }
       }
@@ -374,12 +375,14 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     // downport XSDBOOL() early, as it is valid 702 syntax
+    /*
     let found = this.replaceXsdBool(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
+    */
 
-    found = this.downportEnum(low, high, lowFile, highSyntax, highFile);
+    let found = this.downportEnum(low, high, lowFile, highSyntax, highFile);
     if (found) {
       return found;
     }
@@ -2882,7 +2885,22 @@ ${indentation}    output = ${uniqueName}.\n`;
       if (r.referenceType === ReferenceType.BuiltinMethodReference
           && r.position.getName().toUpperCase() === "XSDBOOL") {
         const token = r.position.getToken();
-        const fix = EditHelper.replaceRange(lowFile, token.getStart(), token.getEnd(), "boolc");
+
+        let source: ExpressionNode | undefined = undefined;
+        for (const s of node.findAllExpressionsRecursive(Expressions.Source)) {
+          if (s.getFirstToken().getStart().equals(token.getStart())) {
+            source = s;
+            break;
+          }
+        }
+        const children = source?.getChildren();
+        if (source === undefined || children?.length !== 4) {
+          continue;
+        }
+
+        // make sure to convert to the correct type, RTTI might be used on the result of XSDBOOL
+        const code = "CONV xsdboolean( boolc( " + children[2].concatTokens() + " ) )";
+        const fix = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), code);
         return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
       }
     }
