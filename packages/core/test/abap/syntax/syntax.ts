@@ -8744,6 +8744,15 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("must be supplied");
   });
 
+  it("tab into char, not compatible", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA char TYPE c LENGTH 1.
+char = tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

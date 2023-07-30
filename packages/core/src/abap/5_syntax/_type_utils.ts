@@ -401,6 +401,7 @@ export class TypeUtils {
       }
       return false;
     } else if (target instanceof IntegerType
+        || target instanceof CharacterType
         || target instanceof StringType) {
       if (source instanceof TableType && source.isWithHeader() === false) {
         return false;
