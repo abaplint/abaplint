@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.102.10",
+    "version": "2.102.11",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -63,7 +63,7 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
-        "fast-xml-parser": "^4.2.6",
+        "fast-xml-parser": "^4.2.7",
         "json5": "^2.2.3",
         "vscode-languageserver-types": "^3.17.3"
     }
