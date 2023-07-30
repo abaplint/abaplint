@@ -5177,7 +5177,55 @@ TYPES temp1 TYPE c LENGTH 2.
 DATA temp2 TYPE string.
 temp2 = 'asdf'.
 DATA(sdf) = temp2.`;
-    // hmm, this doesnt work in next step
+    testFix(abap, expected);
+  });
+
+  it("unique name should also check types, defined in super", async () => {
+    const abap = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    DATA t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    TYPES temp1 TYPE c LENGTH 1.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+           END OF ty_row.
+    TYPES temp2 TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA t_tab TYPE temp2.
+    METHODS moo.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD moo.
+    DATA flag TYPE abap_bool.
+    flag = xsdbool( 1 = 2 OR 3 = 2 ).
+  ENDMETHOD.
+ENDCLASS.`;
     testFix(abap, expected);
   });
 
