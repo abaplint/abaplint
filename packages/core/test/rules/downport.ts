@@ -705,7 +705,7 @@ inline_struct_table = struct_table.`;
 
     const expected = `
   DATA foo TYPE abap_bool.
-  foo = boolc( 1 = 2 ).`;
+  foo = CONV xsdboolean( boolc( 1 = 2 ) ).`;
 
     testFix(abap, expected);
   });
@@ -715,13 +715,15 @@ inline_struct_table = struct_table.`;
   DATA foo TYPE abap_bool.
   DATA moo TYPE i.
   foo = xsdbool( moo = 2 ).
-  DATA(sdf) = 2.`;
+  DATA sdf TYPE i.
+  sdf = 2.`;
 
     const expected = `
   DATA foo TYPE abap_bool.
   DATA moo TYPE i.
-  foo = boolc( moo = 2 ).
-  DATA(sdf) = 2.`;
+  foo = CONV xsdboolean( boolc( moo = 2 ) ).
+  DATA sdf TYPE i.
+  sdf = 2.`;
 
     testFix(abap, expected);
   });
@@ -735,7 +737,7 @@ inline_struct_table = struct_table.`;
     const expected = `
   DATA foo TYPE abap_bool.
   DATA moo TYPE i.
-  foo = boolc( moo = 2 ).`;
+  foo = CONV xsdboolean( boolc( moo = 2 ) ).`;
 
     testFix(abap, expected);
   });
