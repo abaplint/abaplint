@@ -35,6 +35,7 @@ export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
     {name: "POPUP_TO_CONFIRM_STEP", replace: "use POPUP_TO_CONFIRM"},
     {name: "POPUP_TO_DECIDE", replace: "use POPUP_TO_CONFIRM"},
     {name: "POPUP_TO_GET_VALUE", replace: "use POPUP_GET_VALUES"},
+    {name: "QF05_RANDOM_INTEGER", replace: "use CL_ABAP_RANDOM_INT"},
     {name: "REUSE_ALV_GRID_DISPLAY", replace: "use CL_SALV_TABLE=>FACTORY or CL_GUI_ALV_GRID"},
     {name: "ROUND", replace: "use built in function: round()"},
     {name: "SAPGUI_PROGRESS_INDICATOR", replace: "use CL_PROGRESS_INDICATOR"},
