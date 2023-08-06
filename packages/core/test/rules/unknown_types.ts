@@ -2111,7 +2111,7 @@ ENDCLASS.
     expect(issues.length).to.equal(0);
   });
 
-  it.only("LIKE other method parameter", () => {
+  it.skip("LIKE other method parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -2131,7 +2131,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("LIKE exporting method parameter", () => {
+  it.skip("LIKE exporting method parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

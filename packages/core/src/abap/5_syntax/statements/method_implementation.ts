@@ -24,12 +24,13 @@ export class MethodImplementation implements StatementSyntax {
       throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
+    const start = node.getFirstToken().getStart();
     if (methodDefinition.isStatic() === false) {
-      scope.push(ScopeType.MethodInstance, methodName, node.getFirstToken().getStart(), filename);
+      scope.push(ScopeType.MethodInstance, methodName, start, filename);
       scope.addList(classDefinition.getAttributes().getInstance());
     }
 
-    scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
+    scope.push(ScopeType.Method, methodName, start, filename);
 
     scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, filename);
     scope.addList(methodDefinition.getParameters().getAll());
