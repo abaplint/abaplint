@@ -11,6 +11,7 @@ import {IMethodParameters} from "./_method_parameters";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {ReferenceType} from "../5_syntax/_reference";
 import {Identifier as IdentifierToken} from "../1_lexer/tokens/identifier";
+import {ScopeType} from "../5_syntax/_scope_type";
 
 // todo:
 // this.exceptions = [];
@@ -42,7 +43,11 @@ export class MethodParameters implements IMethodParameters {
     this.exceptions = [];
     this.filename = filename;
 
-    this.parse(node, scope, filename);
+    // need the scope for LIKE typing inside method parameters
+    const parentName = scope.getName();
+    scope.push(ScopeType.MethodDefinition, "method definition", node.getStart(), filename);
+    this.parse(node, scope, filename, parentName);
+    scope.pop(node.getEnd());
   }
 
   public getFilename(): string {
@@ -130,7 +135,7 @@ export class MethodParameters implements IMethodParameters {
 
 ///////////////////
 
-  private parse(node: StatementNode, scope: CurrentScope, filename: string): void {
+  private parse(node: StatementNode, scope: CurrentScope, filename: string, parentName: string): void {
 
     const handler = node.findFirstExpression(Expressions.EventHandler);
     if (handler) {
@@ -194,10 +199,10 @@ export class MethodParameters implements IMethodParameters {
       this.returning = new MethodDefReturning().runSyntax(returning, scope, this.filename, [IdentifierMeta.MethodReturning]);
     }
 
-    this.workaroundRAP(node, scope, filename);
+    this.workaroundRAP(node, scope, filename, parentName);
   }
 
-  private workaroundRAP(node: StatementNode, scope: CurrentScope, filename: string): void {
+  private workaroundRAP(node: StatementNode, _scope: CurrentScope, filename: string, parentName: string): void {
     const resultName = node.findExpressionAfterToken("RESULT");
     const isRap = node.findExpressionAfterToken("IMPORTING");
     if (isRap) {
@@ -225,7 +230,7 @@ export class MethodParameters implements IMethodParameters {
     }
 
     // its some kind of magic
-    if (scope.getName().toUpperCase() === "CL_ABAP_BEHAVIOR_SAVER") {
+    if (parentName.toUpperCase() === "CL_ABAP_BEHAVIOR_SAVER") {
       const tempChanging = this.changing.map(c => new TypedIdentifier(c.getToken(), filename, new VoidType("RapMethodParameter"), c.getMeta()));
       while (this.changing.length > 0) {
         this.changing.shift();
@@ -252,7 +257,9 @@ export class MethodParameters implements IMethodParameters {
       } else if (meta.includes(IdentifierMeta.MethodImporting)) {
         extraMeta.push(IdentifierMeta.ReadOnly);
       }
-      target.push(new MethodParam().runSyntax(p, scope, this.filename, [...meta, ...extraMeta]));
+      const id = new MethodParam().runSyntax(p, scope, this.filename, [...meta, ...extraMeta]);
+      scope.addIdentifier(id);
+      target.push(id);
       if (opt.getLastToken().getStr().toUpperCase() === "OPTIONAL") {
         const name = target[target.length - 1].getName().toUpperCase();
         this.optional.push(name);

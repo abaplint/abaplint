@@ -26,7 +26,7 @@ export class IncludeType {
       const components: IStructureComponent[] = [];
       for (const c of ityp.getComponents()) {
         if (c.name === as) {
-          components.push(c);
+          components.push({...c, renamingSuffix: suffix});
           continue;
         }
         components.push({

@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.102.14",
+    "version": "2.102.15",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -53,7 +53,7 @@
         "@microsoft/api-extractor": "^7.36.3",
         "@types/chai": "^4.3.5",
         "@types/mocha": "^10.0.1",
-        "@types/node": "^20.4.5",
+        "@types/node": "^20.4.8",
         "chai": "^4.3.7",
         "eslint": "^8.46.0",
         "mocha": "^10.2.0",

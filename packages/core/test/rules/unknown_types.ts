@@ -2111,4 +2111,43 @@ ENDCLASS.
     expect(issues.length).to.equal(0);
   });
 
+  it("LIKE other method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      IMPORTING
+        val1 TYPE i
+        val2 LIKE val1.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("LIKE exporting method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      IMPORTING
+        val1 TYPE i
+      EXPORTING
+        val2 LIKE val1.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

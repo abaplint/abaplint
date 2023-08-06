@@ -82,7 +82,7 @@ export class LSPLookup {
       return {hover, definition: found, definitionId: type, scope: bottomScope};
     }
 
-    const method = this.findMethodDefinition(cursor, bottomScope);
+    const method = this.findMethodDefinition(cursor, bottomScope.getParent());
     if (method !== undefined && method.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(method);
       const hover = "Method Definition \"" + method.getName() + "\"";
@@ -328,7 +328,11 @@ export class LSPLookup {
     };
   }
 
-  private static findMethodDefinition(found: ICursorData, scope: ISpaghettiScopeNode): Identifier | undefined {
+  private static findMethodDefinition(found: ICursorData, scope: ISpaghettiScopeNode | undefined): Identifier | undefined {
+    if (scope === undefined) {
+      return undefined;
+    }
+
     if (scope.getIdentifier().stype !== ScopeType.ClassDefinition
       || !(found.snode.get() instanceof Statements.MethodDef)) {
       return undefined;
