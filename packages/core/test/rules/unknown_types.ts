@@ -2111,7 +2111,7 @@ ENDCLASS.
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("LIKE other method parameter", () => {
+  it("LIKE other method parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -2127,11 +2127,10 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("LIKE exporting method parameter", () => {
+  it("LIKE exporting method parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -2148,7 +2147,6 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 
