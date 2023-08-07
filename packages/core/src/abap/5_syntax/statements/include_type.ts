@@ -18,7 +18,11 @@ export class IncludeType {
     let ityp = new BasicTypes(filename, scope).parseType(iname);
     const as = node.findExpressionAfterToken("AS")?.concatTokens();
     if (as && ityp instanceof StructureType) {
-      ityp = new StructureType(ityp.getComponents().concat([{name: as, type: ityp}]));
+      ityp = new StructureType(ityp.getComponents().concat([{
+        name: as,
+        type: ityp,
+        asInclude: true,
+      }]));
     }
 
     const suffix = node.findExpressionAfterToken("SUFFIX")?.concatTokens();
@@ -26,7 +30,7 @@ export class IncludeType {
       const components: IStructureComponent[] = [];
       for (const c of ityp.getComponents()) {
         if (c.name === as) {
-          components.push({...c, renamingSuffix: suffix});
+          components.push({...c, suffix: suffix, asInclude: c.asInclude});
           continue;
         }
         components.push({
