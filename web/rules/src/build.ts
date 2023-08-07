@@ -141,6 +141,7 @@ function buildRulesJson() {
       key: meta.key,
       title: meta.title,
       shortDescription: meta.shortDescription,
+      extendedInformation: meta.extendedInformation || "",
       tags: meta.tags ? meta.tags : []});
   }
   fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
