@@ -54,14 +54,18 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   private missingSpace(statement: StatementNode): Position | undefined {
 
-    const found = statement.findAllExpressionsMulti([Expressions.CondSub, Expressions.SQLCond,
-      Expressions.ValueBodyLine, Expressions.NewObject, Expressions.Cond,
-      Expressions.ComponentCond, Expressions.ComponentCondSub, Expressions.MethodCallParam], true);
+    const found = statement.findAllExpressionsMulti([
+      Expressions.CondSub, Expressions.SQLCond, Expressions.ValueBodyLine,
+      Expressions.NewObject, Expressions.Cond, Expressions.ComponentCond,
+      Expressions.Source,
+      Expressions.ComponentCondSub, Expressions.MethodCallParam], true);
     let pos: Position | undefined = undefined;
     for (const f of found) {
       const type = f.get();
       if (type instanceof Expressions.Cond) {
         pos = this.checkCond(f);
+      } else if (type instanceof Expressions.Source) {
+        pos = this.checkSource(f);
       } else if (type instanceof Expressions.CondSub) {
         pos = this.checkCondSub(f);
       } else if (type instanceof Expressions.ComponentCond) {
@@ -230,6 +234,24 @@ This rule makes sure the spaces are consistently required across the language.`,
           && next.getCol() === current.getEnd().getCol()) {
         return current.getEnd();
       }
+    }
+
+    return undefined;
+  }
+
+  private checkSource(cond: ExpressionNode): Position | undefined {
+    const children = cond.getAllTokens();
+    if (children.length < 2) {
+      return undefined;
+    }
+
+    const nextLast = children[children.length - 2];
+    const last = children[children.length - 1];
+
+    if (nextLast.getStr().startsWith("'")
+        && nextLast.getRow() === last.getRow()
+        && nextLast.getEnd().getCol() === last.getStart().getCol()) {
+      return last.getEnd();
     }
 
     return undefined;
