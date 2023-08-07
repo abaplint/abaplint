@@ -8753,7 +8753,7 @@ char = tab.`;
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
-  it.skip("TRANSPORTING field not found in source", () => {
+  it("TRANSPORTING field not found in source", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          field1 TYPE i,

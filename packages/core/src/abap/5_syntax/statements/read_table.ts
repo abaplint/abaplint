@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType, IntegerType, DataReference} from "../../types/basic";
+import {VoidType, TableType, IntegerType, DataReference, AnyType, UnknownType, StructureType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
@@ -68,33 +68,17 @@ export class ReadTable implements StatementSyntax {
       }
 
       const inline = target.findFirstExpression(Expressions.InlineData);
+      const fst = target.findDirectExpression(Expressions.FSTarget);
+      const t = target.findFirstExpression(Expressions.Target);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, rowType);
-        return;
-      }
-
-      const fst = target.findDirectExpression(Expressions.FSTarget);
-      if (fst) {
+      } else if (fst) {
         new FSTarget().runSyntax(fst, scope, filename, rowType);
-        return;
-      }
-/*
-      const inlinefs = target.findFirstExpression(Expressions.InlineFS);
-      if (inlinefs) {
-        new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
-        return;
-      }
-*/
-
-      const t = target.findFirstExpression(Expressions.Target);
-      if (t) {
+      } else if (t) {
         const targetType = new Target().runSyntax(t, scope, filename);
-
         if (new TypeUtils(scope).isAssignable(rowType, targetType) === false) {
           throw new Error("Incompatible types");
         }
-
-        return;
       }
     }
 
@@ -102,6 +86,26 @@ export class ReadTable implements StatementSyntax {
       // if sourceType is void, assume its with header
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {
         throw new Error("READ TABLE, define INTO or TRANSPORTING NO FIELDS");
+      }
+    }
+
+    const transporting = node.findDirectExpression(Expressions.TransportingFields);
+    if (transporting
+        && !(rowType instanceof VoidType)
+        && !(rowType instanceof UnknownType)
+        && !(rowType instanceof AnyType)) {
+      if (!(rowType instanceof StructureType)) {
+        throw new Error("READ TABLE, source not structured");
+      }
+      for (const t of transporting?.findDirectExpressions(Expressions.FieldSub) || []) {
+        const field = t.concatTokens();
+        if (field.includes("-")) {
+          // todo
+          continue;
+        }
+        if (rowType.getComponentByName(field) === undefined) {
+          throw new Error("READ TABLE, field " + field + " not found in source");
+        }
       }
     }
 
