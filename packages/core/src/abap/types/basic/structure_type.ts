@@ -3,7 +3,8 @@ import {AbstractType} from "./_abstract_type";
 export interface IStructureComponent {
   name: string;
   type: AbstractType;
-  renamingSuffix?: string;
+  asInclude?: boolean;
+  suffix?: string;
 }
 
 export class StructureType extends AbstractType {

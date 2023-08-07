@@ -4,19 +4,20 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "ts-node src/build.ts && webpack && cp public/* build && cp -r node_modules/monaco-editor/min/ build/_monaco",
+    "test": "ts-node src/build.ts && webpack && cp public/* build && cp -r node_modules/monaco-editor/min/ build/_monaco && cp node_modules/fuse.js/dist/fuse.basic.js build/fuse.basic.js",
     "simpleserver": "yaserver --root ./build/ --port 8888"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/core": "^2.102.2",
-    "@abaplint/monaco": "^2.102.2",
-    "@types/node": "^20.4.2",
-    "monaco-editor": "^0.40.0",
+    "@abaplint/core": "^2.102.15",
+    "@abaplint/monaco": "^2.102.15",
+    "@types/node": "^20.4.8",
+    "fuse.js": "^6.6.2",
+    "monaco-editor": "^0.41.0",
     "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
-    "webpack": "^5.88.1",
+    "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
     "yaserver": "^0.4.0"
   }

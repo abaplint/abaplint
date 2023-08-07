@@ -8,7 +8,7 @@
       "noUnusedParameters": true,
       "noUnusedLocals": true,
       "noImplicitAny": true,
-      "declaration": true,
+      "declaration": false,
       "strictNullChecks": true,
       "strictFunctionTypes": true,
       "alwaysStrict": true,
