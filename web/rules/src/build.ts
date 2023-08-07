@@ -7,7 +7,7 @@ import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 // quick'n dirty, optimizes for search engine indexing
 
 function buildChips(json: any) {
-  let html = "";
+  let html = `<div id="chipsDiv">`;
   let issued = 0;
   for (const tag in RuleTag) {
     let icon = "";
@@ -72,7 +72,7 @@ function buildChips(json: any) {
       html += "<br><br>\n";
     }
   }
-  html += "<br><br>\n";
+  html += "</div><br>\n";
 
   return html;
 }
@@ -107,18 +107,14 @@ ${buildChips(json)}
     html += renderIcons(r.tags);
     html += `<br>${r.shortDescription}<br><br></div>\n`;
   }
-  html += `</div>\n<script src="/index.js"></script>`;
+  html += `</div>
+<script type="text/javascript">
+  const list = ${JSON.stringify(json)};
+</script>
+<script src="/fuse.basic.js"></script>
+<script src="/index.js"></script>`;
 
-  const search = `<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
-<script type="text/javascript"> docsearch({
-apiKey: 'ceddaf16317926533c691e2ccb17bbe1',
-indexName: 'abaplint',
-inputSelector: '#input',
-debug: false
-});
-</script>`;
-
-  fs.writeFileSync("build/index.html", preamble() + html + search + postamble);
+  fs.writeFileSync("build/index.html", preamble() + html + postamble);
 
   fs.writeFileSync("build/count.txt", "" + json.length);
 }
