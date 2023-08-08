@@ -93,13 +93,16 @@ export class MessageExistsRule extends ABAPRule {
     if (typeNumber === undefined) {
       return undefined;
     }
+
     const numberToken = typeNumber.getFirstToken();
     const num = numberToken.getStr().substring(1);
-    if (msag.getByNumber(num) === undefined) {
+    const text = msag.getByNumber(num);
+    if (text === undefined) {
       const message = "Message number \"" + num + "\" not found in class \"" + name + "\"";
       return Issue.atToken(file, numberToken, message, this.getMetadata().key, this.conf.severity);
     }
 
     return undefined;
   }
+
 }
