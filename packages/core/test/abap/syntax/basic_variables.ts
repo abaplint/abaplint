@@ -1917,4 +1917,11 @@ DATA(lower_mask) = val1 + val2.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
   });
 
+  it("%_NEWLINE", () => {
+    const identifier = resolveVariable("", "%_NEWLINE");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.CharacterType);
+    expect(identifier?.getValue()).to.equal("\n");
+  });
+
 });
