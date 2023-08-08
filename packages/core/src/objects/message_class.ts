@@ -10,6 +10,7 @@ export class MessageClass extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
+    this.parseXML();
     // todo
     return undefined;
   }
@@ -33,6 +34,7 @@ export class MessageClass extends AbstractObject {
   }
 
   public getByNumber(num: string): Message | undefined {
+    this.parseXML();
     // todo, optimize performance,
     for (const message of this.getMessages()) {
       if (message.getNumber() === num) {
