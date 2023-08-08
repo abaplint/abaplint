@@ -7,6 +7,10 @@ export class MSAGReferences implements IMSAGReferences {
   private readonly filenameIndex: { [filename: string]: {token: Token, messageClass: string, number: string}[] } = {};
 
   public addUsing(filename: string, token: Token, messageClass: string, number: string): void {
+    if (number.length !== 3) {
+      return;
+    }
+
     if (this.filenameIndex[filename] === undefined) {
       this.filenameIndex[filename] = [];
     }

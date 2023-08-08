@@ -132,6 +132,12 @@ describe("Rule message_exists", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("RAISE, variant 3, not found", async () => {
+    const abap = "RAISE EXCEPTION TYPE cx_foobar MESSAGE ID 'ZSDF' NUMBER 000.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("RAISE, variant 2, found", async () => {
     const abap = "RAISE EXCEPTION TYPE cx_foobar MESSAGE ID 'ZAG_UNIT_TEST' NUMBER '000'.";
     const issues = await run(abap);
