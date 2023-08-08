@@ -1069,16 +1069,17 @@ export class BuiltIn {
 
     ret.push(this.buildVariable("screen")); // todo, add structure, or alternatively make native Statements
 
-    ret.push(this.buildConstant("%_BACKSPACE"));
-    ret.push(this.buildConstant("%_CHARSIZE"));
-    ret.push(this.buildConstant("%_CR_LF"));
     ret.push(this.buildConstant("%_ENDIAN"));
-    ret.push(this.buildConstant("%_FORMFEED"));
-    ret.push(this.buildConstant("%_HORIZONTAL_TAB"));
-    ret.push(this.buildConstant("%_MAXCHAR"));
-    ret.push(this.buildConstant("%_MINCHAR"));
-    ret.push(this.buildConstant("%_NEWLINE"));
-    ret.push(this.buildConstant("%_VERTICAL_TAB"));
+    ret.push(this.buildConstant("%_CHARSIZE"));
+
+    ret.push(this.buildConstant("%_BACKSPACE", new CharacterType(1), "\b"));
+    ret.push(this.buildConstant("%_CR_LF", new CharacterType(2), "\r\n"));
+    ret.push(this.buildConstant("%_FORMFEED", new CharacterType(1), "\f"));
+    ret.push(this.buildConstant("%_HORIZONTAL_TAB", new CharacterType(1), "\t"));
+    ret.push(this.buildConstant("%_MAXCHAR", new CharacterType(1), Buffer.from("FDFF", "hex").toString()));
+    ret.push(this.buildConstant("%_MINCHAR", new CharacterType(1), Buffer.from("0000", "hex").toString()));
+    ret.push(this.buildConstant("%_NEWLINE", new CharacterType(1), "\n"));
+    ret.push(this.buildConstant("%_VERTICAL_TAB", new CharacterType(1), "\v"));
 
     ret.push(this.buildConstant("abap_false", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
     ret.push(this.buildConstant("abap_true", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
