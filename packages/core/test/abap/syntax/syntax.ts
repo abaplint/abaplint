@@ -8765,6 +8765,19 @@ READ TABLE tab INDEX 1 INTO row TRANSPORTING noooo.`;
     expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
+  it("Generic class data, error expected", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA gt_backup TYPE SORTED TABLE OF any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
