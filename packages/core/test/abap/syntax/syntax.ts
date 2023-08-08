@@ -8778,6 +8778,16 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("generic");
   });
 
+  it("TYPES, check for generics", () => {
+    const abap = `
+TYPES: BEGIN OF ty_backup,
+         name   TYPE string,
+         backup TYPE any,
+       END OF ty_backup.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
