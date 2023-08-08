@@ -5,7 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {DDIC} from "../ddic";
 import {ABAPFile} from "../abap/abap_file";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {ExpressionNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {IRegistry} from "../_iregistry";
 import {IMSAGReferences} from "../_imsag_references";
 import {ABAPObject} from "../objects/_abap_object";
@@ -14,6 +14,7 @@ import {IObject} from "../objects/_iobject";
 import {MessageClass} from "../objects";
 
 export class MessageExistsConf extends BasicRuleConfig {
+  public checkPlaceholders = true;
 }
 
 export class MessageExistsRule implements IRule {
@@ -87,8 +88,6 @@ export class MessageExistsRule implements IRule {
       }
     }
 
-// todo, check number of placeholders in message vs code matches
-
     return issues;
   }
 
@@ -125,6 +124,16 @@ export class MessageExistsRule implements IRule {
             if (text === undefined) {
               const message = "Message number \"" + ref.number + "\" not found in class \"" + ref.messageClass + "\"";
               issues.push(Issue.atToken(file, ref.token, message, this.getMetadata().key, this.conf.severity));
+              continue;
+            }
+
+            if (this.getConfig().checkPlaceholders === true) {
+              const count = this.countWith(statement);
+              const textCount = text.getPlaceholderCount();
+              if (count !== textCount) {
+                const message = `Message ${ref.number}, expected ${textCount} WITH parameters`;
+                issues.push(Issue.atToken(file, ref.token, message, this.getMetadata().key, this.conf.severity));
+              }
             }
           }
         }
@@ -132,6 +141,31 @@ export class MessageExistsRule implements IRule {
     }
 
     return issues;
+  }
+
+  private countWith(statement: StatementNode): number {
+    const raiseWith = statement.findDirectExpression(Expressions.RaiseWith);
+    if (raiseWith) {
+      return raiseWith.getChildren().length - 1;
+    }
+
+    let count = 0;
+    let afterWith = false;
+    for (const expression of statement.getChildren()) {
+      if (expression instanceof TokenNode && expression.concatTokens().toUpperCase() === "WITH") {
+        afterWith = true;
+        continue;
+      }
+      if (afterWith === true) {
+        if (expression instanceof ExpressionNode) {
+          count++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return count;
   }
 
 }
