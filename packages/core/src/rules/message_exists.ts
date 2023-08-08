@@ -56,9 +56,14 @@ export class MessageExistsRule implements IRule {
   public run(obj: IObject): readonly Issue[] {
     const issues: Issue[] = [];
     if (obj instanceof ABAPObject) {
-      for (const f of obj.getABAPFiles()) {
-        issues.push(...this.runFile(f));
-        issues.push(...this.checkSource2(f));
+      for (const file of obj.getABAPFiles()) {
+        const struc = file.getStructure();
+        if (struc === undefined) {
+          return [];
+        }
+
+        issues.push(...this.checkReportStatement(file));
+        issues.push(...this.checkSource(file));
       }
     }
     return issues;
@@ -66,22 +71,16 @@ export class MessageExistsRule implements IRule {
 
 ////////////////////////////////
 
-  private runFile(file: ABAPFile) {
+  private checkReportStatement(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    const struc = file.getStructure();
-    if (struc === undefined) {
-      return [];
-    }
-
     for (const statement of file.getStatements()) {
-      const expressions = statement.findAllExpressionsMulti([Expressions.MessageClass, Expressions.MessageSource]);
-      for (const node of expressions) {
-        let issue: Issue | undefined = undefined;
-        if (node.get() instanceof Expressions.MessageClass) {
-          issue = this.checkClass(node, file);
-        }
-
+      if (!(statement.get() instanceof Statements.Report)) {
+        continue;
+      }
+      const expression = statement.findFirstExpression(Expressions.MessageClass);
+      if (expression) {
+        const issue = this.checkClass(expression, file);
         if (issue) {
           issues.push(issue);
         }
@@ -104,7 +103,7 @@ export class MessageExistsRule implements IRule {
     return undefined;
   }
 
-  private checkSource2(file: ABAPFile): Issue[] {
+  private checkSource(file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
     const references = this.msagReferences.listByFilename(file.getFilename());
 
