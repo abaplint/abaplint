@@ -9,6 +9,10 @@ let model: any;
 let editor: any;
 
 async function abapChanged() {
+  if (editor === undefined) {
+    // no ABAP example for this rule
+    return;
+  }
   const contents = editor.getValue();
   const file = new abaplint.MemoryFile(filename, contents);
   reg.updateFile(file);
