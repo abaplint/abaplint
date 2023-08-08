@@ -11,7 +11,13 @@ export class MessageSource {
 
     if (node.getFirstToken().getStr().toUpperCase() === "ID") {
       const id = node.findExpressionAfterToken("ID")?.concatTokens();
-      const number = node.findDirectExpression(Expressions.MessageNumber)?.concatTokens();
+      let number = node.findDirectExpression(Expressions.MessageNumber)?.concatTokens();
+      if (number === undefined) {
+        const num = node.findExpressionAfterToken("NUMBER")?.concatTokens();
+        if (num?.startsWith("'")) {
+          number = num.substring(1, num.length - 1).toUpperCase();
+        }
+      }
       if (id?.startsWith("'") && number) {
         const messageClass = id.substring(1, id.length - 1).toUpperCase();
         scope.getMSAGReferences().addUsing(filename, node.getFirstToken(), messageClass, number);

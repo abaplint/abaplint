@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, altPrio, optPrio, plus, per, ver, failStar} from "../combi";
+import {seq, alt, opt, altPrio, optPrio, plus, per, ver} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentCompareSimple, ReadTableTarget, SimpleSource2} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
+import {TransportingFields} from "../expressions/transporting_fields";
 
 export class ReadTable implements IStatement {
 
@@ -22,15 +23,13 @@ export class ReadTable implements IStatement {
 
     const from = seq("FROM", Source);
 
-    const fields = plus(alt(seq("INTO", failStar()), FieldSub));
-
     const perm = per(alt(index, key, from),
                      ReadTableTarget,
                      using,
                      comparing,
                      "CASTING",
                      "TRANSPORTING ALL FIELDS",
-                     seq("TRANSPORTING", altPrio(Dynamic, fields)),
+                     seq("TRANSPORTING", TransportingFields),
                      "BINARY SEARCH");
 
     return seq("READ TABLE",

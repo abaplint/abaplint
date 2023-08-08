@@ -8753,6 +8753,18 @@ char = tab.`;
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
+  it("TRANSPORTING field not found in source", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+       END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA row TYPE ty.
+READ TABLE tab INDEX 1 INTO row TRANSPORTING noooo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not found");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

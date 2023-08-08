@@ -20,7 +20,13 @@ async function run(abap: string): Promise<readonly Issue[]> {
     "     <SPRSL>E</SPRSL>\n" +
     "     <ARBGB>ZAG_UNIT_TEST</ARBGB>\n" +
     "     <MSGNR>000</MSGNR>\n" +
-    "     <TEXT>hello world &amp;</TEXT>\n" +
+    "     <TEXT>hello world</TEXT>\n" +
+    "    </T100>\n" +
+    "    <T100>\n" +
+    "     <SPRSL>E</SPRSL>\n" +
+    "     <ARBGB>ZAG_UNIT_TEST</ARBGB>\n" +
+    "     <MSGNR>001</MSGNR>\n" +
+    "     <TEXT>param &amp;</TEXT>\n" +
     "    </T100>\n" +
     "   </T100>\n" +
     "  </asx:values>\n" +
@@ -112,6 +118,60 @@ describe("Rule message_exists", () => {
     await reg.parseAsync();
     const issues = new MessageExistsRule().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equal(0);
+  });
+
+  it("RAISE, variant 1, not found", async () => {
+    const abap = "RAISE EXCEPTION TYPE cx_foobar MESSAGE e000(zsdf).";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("RAISE, variant 1, found", async () => {
+    const abap = "RAISE EXCEPTION TYPE cx_foobar MESSAGE e000(zag_unit_test).";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("RAISE, variant 2, not found", async () => {
+    const abap = "RAISE EXCEPTION TYPE cx_foobar MESSAGE ID 'ZSDF' NUMBER '000'.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("RAISE, variant 3, not found", async () => {
+    const abap = "RAISE EXCEPTION TYPE cx_foobar MESSAGE ID 'ZSDF' NUMBER 000.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("RAISE, variant 2, found", async () => {
+    const abap = "RAISE EXCEPTION TYPE cx_foobar MESSAGE ID 'ZAG_UNIT_TEST' NUMBER '000'.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("MESSAGE variant, not found", async () => {
+    const abap = "MESSAGE ID 'ZSDF' TYPE 'E' NUMBER '000'.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("MESSAGE variant, found", async () => {
+    const abap = "MESSAGE ID 'ZAG_UNIT_TEST' TYPE 'E' NUMBER '000'.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("wrong number of placeholders", async () => {
+    const abap = "MESSAGE ID 'ZAG_UNIT_TEST' TYPE 'E' NUMBER '001'.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("ok placeholders", async () => {
+    const abap = "MESSAGE ID 'ZAG_UNIT_TEST' TYPE 'E' NUMBER '001' WITH 1.";
+    const issues = await run(abap);
+    expect(issues.length).to.equals(0);
   });
 
 });
