@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = ({mode} = {mode: "development"}) => ({
@@ -62,6 +63,9 @@ module.exports = ({mode} = {mode: "development"}) => ({
   plugins: [
     new HtmlWebpackPlugin({
       template: "public/index.html",
+    }),
+    new webpack.ProvidePlugin({
+      Buffer: ["buffer", "Buffer"],
     }),
   ],
 });
