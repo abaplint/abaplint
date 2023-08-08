@@ -5770,6 +5770,9 @@
     "MessageExistsConf": {
       "additionalProperties": false,
       "properties": {
+        "checkPlaceholders": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -5782,6 +5785,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "checkPlaceholders"
+      ],
       "type": "object"
     },
     "MethodImplementedTwiceConf": {
