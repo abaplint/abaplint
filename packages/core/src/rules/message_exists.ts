@@ -39,17 +39,19 @@ export class MessageExistsRule extends ABAPRule {
       return [];
     }
 
-    const expressions = struc.findAllExpressionsMulti([Expressions.MessageClass, Expressions.MessageSource]);
-    for (const node of expressions) {
-      let issue: Issue | undefined = undefined;
-      if (node.get() instanceof Expressions.MessageClass) {
-        issue = this.checkClass(node, file);
-      } else if (node.get() instanceof Expressions.MessageSource) {
-        issue = this.checkSource(node, file);
-      }
+    for (const statement of file.getStatements()) {
+      const expressions = statement.findAllExpressionsMulti([Expressions.MessageClass, Expressions.MessageSource]);
+      for (const node of expressions) {
+        let issue: Issue | undefined = undefined;
+        if (node.get() instanceof Expressions.MessageClass) {
+          issue = this.checkClass(node, file);
+        } else if (node.get() instanceof Expressions.MessageSource) {
+          issue = this.checkSource(node, file);
+        }
 
-      if (issue) {
-        issues.push(issue);
+        if (issue) {
+          issues.push(issue);
+        }
       }
     }
 
