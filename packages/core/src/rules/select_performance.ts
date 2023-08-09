@@ -21,7 +21,9 @@ export class SelectPerformanceConf extends BasicRuleConfig {
   public endSelect: boolean = true;
   /** Detects SELECT * */
   public selectStar: boolean = true;
-  /** "SELECT" * is considered okay if the table is less than X columns, the table must be known to the linter */
+  /** "SELECT" * is considered okay if the table is less than X columns, the table must be known to the linter
+   * @default 10
+   */
   public starOkayIfFewColumns: number = DEFAULT_COLUMNS;
 }
 
