@@ -411,6 +411,11 @@ export class TypeUtils {
         return false;
       }
       return true;
+    } else if (target instanceof SimpleType) {
+      if (source instanceof ObjectReferenceType
+          || source instanceof TableType) {
+        return false;
+      }
     }
 
     return true;
