@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
   mode: "none",
@@ -10,8 +11,8 @@ module.exports = {
   resolve: {
     fallback: {
       "crypto": false,
-      /*
       "buffer": require.resolve("buffer/"),
+      /*
       "stream": require.resolve("stream-browserify"),
       "path": require.resolve("path-browserify"),
       "fs": false,
@@ -42,5 +43,8 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ["buffer", "Buffer"],
+    }),
   ],
 };
