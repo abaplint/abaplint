@@ -21,6 +21,7 @@ export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
   public recommendations: Recommendations[] = [
     {name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC or CL_ABAP_MESSAGE_DIGEST"},
     {name: "CCU_TIMESTAMP_DIFFERENCE", replace: "use CL_ABAP_TSTMP"},
+    {name: "CONVERT_DATE_TO_EXTERNAL", replace: "use CL_ABAP_DATFM"},
     {name: "CONVERT_TIME_INPUT", replace: "use CL_ABAP_TIMEFM"},
     {name: "ECATT_CONV_XSTRING_TO_STRING", replace: "use CL_BINARY_CONVERT"},
     {name: "F4_FILENAME", replace: "use CL_GUI_FRONTEND_SERVICES"},
