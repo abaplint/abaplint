@@ -7,6 +7,7 @@ import {MessageClass} from "../objects";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types";
+import {ABAPFile} from "../abap/abap_file";
 
 export type CodeLensSettings = {
   messageText: boolean,
@@ -52,12 +53,12 @@ export class CodeLens {
       }
     }
     if (settings.dynamicExceptions === true) {
-      for (const ref of this.findMethodReferences(top)) {
+      for (const ref of this.findMethodReferences(top, file)) {
         if (!(ref.resolved instanceof MethodDefinition)) {
           continue;
         }
         let text = "";
-        for (const e of ref.resolved.getExceptions()) {
+        for (const e of ref.resolved.getRaising()) {
           if (this.isDynamicException(e, top)) {
             if (text === "") {
               text = "Dynamic Exceptions: ";
@@ -69,7 +70,7 @@ export class CodeLens {
         }
         if (text !== "") {
           ret.push({
-            range: LSPUtils.tokenToRange(ref.resolved.getToken()),
+            range: LSPUtils.tokenToRange(ref.position.getToken()),
             command: LServer.Command.create(text, "")});
         }
       }
@@ -90,17 +91,19 @@ export class CodeLens {
     return false;
   }
 
-  private findMethodReferences(node: ISpaghettiScopeNode): IReference[] {
+  private findMethodReferences(node: ISpaghettiScopeNode, file: ABAPFile): IReference[] {
     const ret: IReference[] = [];
 
-    for (const r of node.getData().references) {
-      if (r.referenceType === ReferenceType.MethodReference) {
-        ret.push(r);
+    if (node.getIdentifier().filename === file.getFilename()) {
+      for (const r of node.getData().references) {
+        if (r.referenceType === ReferenceType.MethodReference) {
+          ret.push(r);
+        }
       }
     }
 
     for (const c of node.getChildren()) {
-      ret.push(...this.findMethodReferences(c));
+      ret.push(...this.findMethodReferences(c, file));
     }
 
     return ret;

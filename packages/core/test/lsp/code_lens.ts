@@ -48,7 +48,7 @@ describe("LSP, Code Lens", () => {
     const file = new MemoryFile(filename, `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
-    CLASS-METHODS foo EXCEPTIONS cx_dynamic_check.
+    CLASS-METHODS foo RAISING cx_dynamic_check.
 ENDCLASS.
 CLASS lcl IMPLEMENTATION.
 ENDCLASS.
