@@ -17,6 +17,8 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types";
 
 export class UncaughtExceptionConf extends BasicRuleConfig {
+  public reportDynamic = false;
+  public reportNoCheck = false;
 }
 
 export class UncaughtException extends ABAPRule {
@@ -203,12 +205,18 @@ export class UncaughtException extends ABAPRule {
     }
 
     const sup = this.globalExceptions[name.toUpperCase()];
-    if (sup === "CX_DYNAMIC_CHECK" || sup === "CX_NO_CHECK") {
+    if (sup === "CX_DYNAMIC_CHECK" && this.getConfig().reportDynamic !== true) {
+      return true;
+    }
+    if (sup === "CX_NO_CHECK" && this.getConfig().reportNoCheck !== true) {
       return true;
     }
 
     const lsup = this.localExceptions[name.toUpperCase()];
-    if (lsup === "CX_DYNAMIC_CHECK" || lsup === "CX_NO_CHECK") {
+    if (lsup === "CX_DYNAMIC_CHECK" && this.getConfig().reportDynamic !== true) {
+      return true;
+    }
+    if (lsup === "CX_NO_CHECK" && this.getConfig().reportNoCheck !== true) {
       return true;
     }
 

@@ -7468,11 +7468,21 @@
           },
           "type": "array"
         },
+        "reportDynamic": {
+          "type": "boolean"
+        },
+        "reportNoCheck": {
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "reportDynamic",
+        "reportNoCheck"
+      ],
       "type": "object"
     },
     "UnknownTypesConf": {
