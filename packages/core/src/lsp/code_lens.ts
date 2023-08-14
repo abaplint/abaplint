@@ -57,7 +57,7 @@ export class CodeLens {
           continue;
         }
         let text = "";
-        for (const e of ref.resolved.getExceptions()) {
+        for (const e of ref.resolved.getRaising()) {
           if (this.isDynamicException(e, top)) {
             if (text === "") {
               text = "Dynamic Exceptions: ";
