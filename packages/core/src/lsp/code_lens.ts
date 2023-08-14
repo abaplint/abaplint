@@ -69,7 +69,7 @@ export class CodeLens {
         }
         if (text !== "") {
           ret.push({
-            range: LSPUtils.tokenToRange(ref.resolved.getToken()),
+            range: LSPUtils.tokenToRange(ref.position.getToken()),
             command: LServer.Command.create(text, "")});
         }
       }
