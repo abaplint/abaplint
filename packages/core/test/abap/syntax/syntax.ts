@@ -8765,6 +8765,62 @@ READ TABLE tab INDEX 1 INTO row TRANSPORTING noooo.`;
     expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
+  it("Generic class data, error expected", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA gt_backup TYPE SORTED TABLE OF any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
+  it("TYPES, check for generics", () => {
+    const abap = `
+TYPES: BEGIN OF ty_backup,
+         name   TYPE string,
+         backup TYPE any,
+       END OF ty_backup.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
+  it("object ref to simple, not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING val TYPE simple.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( me ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+
+  it("itab to simple, not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING val TYPE simple.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    foo( tab ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

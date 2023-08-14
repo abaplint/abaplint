@@ -44,4 +44,21 @@ describe("LSP, Code Lens", () => {
     expect(found.length).to.equal(1);
   });
 
+  it("Dynamic exception", () => {
+    const file = new MemoryFile(filename, `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo EXCEPTIONS cx_dynamic_check.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>foo( ).`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new CodeLens(reg).list({uri: filename});
+    expect(found.length).to.equal(1);
+    expect(found[0]?.command?.title).to.include("CX_DYNAMIC_CHECK");
+  });
+
 });

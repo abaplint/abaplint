@@ -13,6 +13,10 @@ export class ClassData {
       if (found === undefined) {
         return undefined;
       }
+      if (found?.getType().isGeneric() === true
+          && found?.getType().containsVoid() === false) {
+        throw new Error("DATA definition cannot be generic, " + found.getName());
+      }
       const meta = [...found.getMeta(), IdentifierMeta.Static];
       return new TypedIdentifier(found.getToken(), filename, found.getType(), meta, found.getValue());
     }

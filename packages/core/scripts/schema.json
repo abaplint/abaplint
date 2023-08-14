@@ -7047,6 +7047,7 @@
           "description": "Problem severity"
         },
         "starOkayIfFewColumns": {
+          "default": 10,
           "description": "\"SELECT\" * is considered okay if the table is less than X columns, the table must be known to the linter",
           "type": "number"
         }
@@ -7467,11 +7468,21 @@
           },
           "type": "array"
         },
+        "reportDynamic": {
+          "type": "boolean"
+        },
+        "reportNoCheck": {
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "reportDynamic",
+        "reportNoCheck"
+      ],
       "type": "object"
     },
     "UnknownTypesConf": {

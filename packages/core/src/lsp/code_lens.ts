@@ -4,9 +4,13 @@ import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {MessageClass} from "../objects";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
+import {MethodDefinition} from "../abap/types";
 
 export type CodeLensSettings = {
   messageText: boolean,
+  dynamicExceptions: boolean,
 };
 
 export class CodeLens {
@@ -16,7 +20,8 @@ export class CodeLens {
     this.reg = reg;
   }
 
-  public list(textDocument: LServer.TextDocumentIdentifier, settings: CodeLensSettings = {messageText: true}): LServer.CodeLens[] {
+  public list(textDocument: LServer.TextDocumentIdentifier,
+              settings: CodeLensSettings = {messageText: true, dynamicExceptions: true}): LServer.CodeLens[] {
     const file = LSPUtils.getABAPFile(this.reg, textDocument.uri);
     if (file === undefined) {
       return [];
@@ -26,7 +31,7 @@ export class CodeLens {
     if (obj === undefined || !(obj instanceof ABAPObject)) {
       return [];
     }
-    new SyntaxLogic(this.reg, obj).run();
+    const top = new SyntaxLogic(this.reg, obj).run().spaghetti.getTop();
 
     const ret: LServer.CodeLens[] = [];
 
@@ -43,9 +48,59 @@ export class CodeLens {
         }
         ret.push({
           range: LSPUtils.tokenToRange(l.token),
-          command: LServer.Command.create(text, ""),
-        });
+          command: LServer.Command.create(text, "")});
       }
+    }
+    if (settings.dynamicExceptions === true) {
+      for (const ref of this.findMethodReferences(top)) {
+        if (!(ref.resolved instanceof MethodDefinition)) {
+          continue;
+        }
+        let text = "";
+        for (const e of ref.resolved.getExceptions()) {
+          if (this.isDynamicException(e, top)) {
+            if (text === "") {
+              text = "Dynamic Exceptions: ";
+            } else {
+              text += " & ";
+            }
+            text += e.toUpperCase();
+          }
+        }
+        if (text !== "") {
+          ret.push({
+            range: LSPUtils.tokenToRange(ref.resolved.getToken()),
+            command: LServer.Command.create(text, "")});
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  private isDynamicException(name: string, top: ISpaghettiScopeNode) {
+    // todo: this method only works with global exceptions?
+    let current: string | undefined = name;
+    while (current !== undefined) {
+      if (current.toUpperCase() === "CX_DYNAMIC_CHECK") {
+        return true;
+      }
+      current = top.findClassDefinition(current)?.getSuperClass();
+    }
+    return false;
+  }
+
+  private findMethodReferences(node: ISpaghettiScopeNode): IReference[] {
+    const ret: IReference[] = [];
+
+    for (const r of node.getData().references) {
+      if (r.referenceType === ReferenceType.MethodReference) {
+        ret.push(r);
+      }
+    }
+
+    for (const c of node.getChildren()) {
+      ret.push(...this.findMethodReferences(c));
     }
 
     return ret;

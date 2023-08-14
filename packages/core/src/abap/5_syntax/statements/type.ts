@@ -15,6 +15,10 @@ export class Type {
 
     const found = new BasicTypes(filename, scope).simpleType(node, qualifiedNamePrefix);
     if (found) {
+      if (found?.getType().isGeneric() === true
+          && found?.getType().containsVoid() === false) {
+        throw new Error("TYPES definition cannot be generic, " + found.getName());
+      }
       return found;
     }
 
