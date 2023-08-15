@@ -1341,4 +1341,14 @@ DELETE tab WHERE table_line->data <> 'true'.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("BEGIN with pragma", async () => {
+    const abap = `
+DATA: BEGIN OF blah ##NEEDED,
+        test  TYPE string,
+        test2 TYPE string,
+      END OF blah.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

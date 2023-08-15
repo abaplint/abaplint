@@ -104,4 +104,24 @@ end-of-definition.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("BEGIN DATA", async () => {
+    const abap = `
+DATA: BEGIN OF blah ##NEEDED,
+          test  TYPE string,
+          test2 TYPE string,
+        END OF blah.`;
+    const issues = await findIssues(abap, "zfoobar.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("BEGIN CONSTANTS", async () => {
+    const abap = `
+CONSTANTS: BEGIN OF c_pragma_test ##NEEDED,
+             test TYPE string VALUE 'test',
+             test2 TYPE string VALUE 'test2',
+           END OF c_pragma_test.`;
+    const issues = await findIssues(abap, "zfoobar.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });

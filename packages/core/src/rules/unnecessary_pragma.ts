@@ -49,7 +49,12 @@ ENDTRY.
 MESSAGE w125(zbar) WITH c_foo INTO message.
 SELECT SINGLE * FROM tadir INTO @DATA(sdfs).
 IF sy-subrc <> 0.
-ENDIF.`,
+ENDIF.
+
+DATA: BEGIN OF blah ##NEEDED,
+        test1 TYPE string,
+        test2 TYPE string,
+      END OF blah.`,
     };
   }
 
@@ -147,15 +152,15 @@ ENDIF.`,
     if (statement.findFirstExpression(Expressions.InlineData) === undefined
         && !(statement.get() instanceof Statements.Parameter)
         && !(statement.get() instanceof Statements.Data)
-        && !(statement.get() instanceof Statements.DataEnd)
+        && !(statement.get() instanceof Statements.DataBegin)
         && !(statement.get() instanceof Statements.Type)
         && !(statement.get() instanceof Statements.Form)
         && !(statement.get() instanceof Statements.Tables)
-        && !(statement.get() instanceof Statements.TypeEnd)
+        && !(statement.get() instanceof Statements.TypeBegin)
         && !(statement.get() instanceof Statements.Constant)
-        && !(statement.get() instanceof Statements.ConstantEnd)
+        && !(statement.get() instanceof Statements.ConstantBegin)
         && !(statement.get() instanceof Statements.TypeEnum)
-        && !(statement.get() instanceof Statements.TypeEnumEnd)
+        && !(statement.get() instanceof Statements.TypeEnumBegin)
         && !(statement.get() instanceof Statements.MethodImplementation)
         && !(statement.get() instanceof Statements.MethodDef)
         && statement.findFirstExpression(Expressions.InlineFS) === undefined) {
