@@ -3,10 +3,10 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
-import {Dynamic} from "../expressions/dynamic";
 import {AnyType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {Dynamic} from "../expressions/dynamic";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -17,9 +17,11 @@ export class Assign implements StatementSyntax {
     let sourceType: AbstractType | undefined = undefined;
     const firstAssign = assignSource?.getChildren()[0];
     const secondAssign = assignSource?.getChildren()[1];
-    if (secondAssign?.concatTokens() === "=>" && firstAssign) {
+    const thirdAssign = assignSource?.getChildren()[2];
+    if (secondAssign?.concatTokens() === "=>" && firstAssign && thirdAssign?.get() instanceof Expressions.Dynamic) {
       const name = firstAssign.concatTokens();
-      if (scope.findObjectDefinition(name) === undefined && scope.getDDIC().inErrorNamespace(name)) {
+      const found = scope.findObjectDefinition(name) === undefined || scope.findVariable(name);
+      if (found === undefined && scope.getDDIC().inErrorNamespace(name)) {
         throw new Error(secondAssign.concatTokens() + " not found");
       }
       sourceType = new VoidType("Dynamic");
