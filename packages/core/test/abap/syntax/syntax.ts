@@ -8821,6 +8821,36 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
   });
 
+  it("dynamic assign, interface", () => {
+    const abap = `
+INTERFACE foo.
+  CONSTANTS foo TYPE string VALUE 'moo'.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <bar> TYPE any.
+  ASSIGN foo=>('FOO') TO <bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("dynamic assign, class", () => {
+    const abap = `
+CLASS clas DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS foo TYPE string VALUE 'moo'.
+ENDCLASS.
+
+CLASS clas IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <bar> TYPE any.
+  ASSIGN clas=>('FOO') TO <bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

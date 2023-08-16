@@ -4,14 +4,29 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
 import {Dynamic} from "../expressions/dynamic";
-import {AnyType} from "../../types/basic";
+import {AnyType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    const sources = node.findDirectExpression(Expressions.AssignSource)?.findDirectExpressions(Expressions.Source) || [];
+    const assignSource = node.findDirectExpression(Expressions.AssignSource);
+    const sources = assignSource?.findDirectExpressions(Expressions.Source) || [];
     const theSource = sources[sources.length - 1];
-    let sourceType = new Source().runSyntax(theSource, scope, filename);
+
+    let sourceType: AbstractType | undefined = undefined;
+    const firstAssign = assignSource?.getChildren()[0];
+    const secondAssign = assignSource?.getChildren()[1];
+    if (secondAssign?.concatTokens() === "=>" && firstAssign) {
+      const name = firstAssign.concatTokens();
+      if (scope.findObjectDefinition(name) === undefined && scope.getDDIC().inErrorNamespace(name)) {
+        throw new Error(secondAssign.concatTokens() + " not found");
+      }
+      sourceType = new VoidType("Dynamic");
+    } else {
+      sourceType = new Source().runSyntax(theSource, scope, filename);
+    }
+
 
     if (sourceType === undefined || node.findDirectExpression(Expressions.AssignSource)?.findDirectExpression(Expressions.Dynamic)) {
       sourceType = new AnyType();
