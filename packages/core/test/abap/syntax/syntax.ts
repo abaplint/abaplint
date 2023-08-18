@@ -1869,6 +1869,26 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(1); // global class not found
   });
 
+  it("WHEN TYPE, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_artefact TYPE REF TO object.
+  CASE TYPE OF lo_artefact.
+    WHEN TYPE lcl INTO DATA(lo_lcl).
+      WRITE lo_lcl->foo.
+  ENDCASE.
+  `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("attribute with interface prefix", () => {
     const abap = `
 INTERFACE lif_def.
@@ -8819,6 +8839,36 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+
+  it("dynamic assign, interface", () => {
+    const abap = `
+INTERFACE foo.
+  CONSTANTS foo TYPE string VALUE 'moo'.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <bar> TYPE any.
+  ASSIGN foo=>('FOO') TO <bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("dynamic assign, class", () => {
+    const abap = `
+CLASS clas DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS foo TYPE string VALUE 'moo'.
+ENDCLASS.
+
+CLASS clas IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <bar> TYPE any.
+  ASSIGN clas=>('FOO') TO <bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
   });
 
 // todo, static method cannot access instance attributes

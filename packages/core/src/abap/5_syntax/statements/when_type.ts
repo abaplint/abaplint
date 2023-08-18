@@ -5,6 +5,7 @@ import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
+import {Target} from "../expressions/target";
 
 export class WhenType implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -24,9 +25,12 @@ export class WhenType implements StatementSyntax {
       type = new ObjectReferenceType(found);
     }
 
-    const inline = node?.findDirectExpression(Expressions.InlineData);
+    const target = node?.findDirectExpression(Expressions.Target);
+    const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
       new InlineData().runSyntax(inline, scope, filename, type);
+    } else if (target) {
+      new Target().runSyntax(target, scope, filename);
     }
   }
 }

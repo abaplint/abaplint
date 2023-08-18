@@ -264,12 +264,6 @@ export class Source {
     if (typeExpression === undefined) {
       throw new Error("determineType, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
-      // const found = basic.lookupQualifiedName(targetType.getQualifiedName());
-      /*
-      if (found) {
-        scope.addReference(typeToken, found, ReferenceType.InferredType, filename);
-      }
-      */
       return targetType;
     }
 

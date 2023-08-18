@@ -61,6 +61,7 @@ import {SelectionScreen} from "./statements/selection_screen";
 import {Ranges} from "./statements/ranges";
 import {Write} from "./statements/write";
 import {Case} from "./statements/case";
+import {CaseType} from "./statements/case_type";
 import {CreateObject} from "./statements/create_object";
 import {Do} from "./statements/do";
 import {Concatenate} from "./statements/concatenate";
@@ -221,6 +222,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new InsertFieldGroup());
   addToMap(new GetTime());
   addToMap(new Unassign());
+  addToMap(new CaseType());
   addToMap(new GetParameter());
   addToMap(new Format());
   addToMap(new WhenType());
