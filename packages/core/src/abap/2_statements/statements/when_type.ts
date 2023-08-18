@@ -11,7 +11,7 @@ export class WhenType implements IStatement {
 
     const type = seq(ClassName, optPrio(into));
 
-    return ver(Version.v750, seq("WHEN TYPE", type));
+    return ver(Version.v750, seq("WHEN TYPE", type), Version.OpenABAP);
   }
 
 }

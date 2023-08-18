@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class CaseType implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return ver(Version.v750, seq("CASE TYPE OF", Source));
+    return ver(Version.v750, seq("CASE TYPE OF", Source), Version.OpenABAP);
   }
 
 }

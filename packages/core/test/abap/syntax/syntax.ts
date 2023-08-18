@@ -1869,6 +1869,26 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(1); // global class not found
   });
 
+  it("WHEN TYPE, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_artefact TYPE REF TO object.
+  CASE TYPE OF lo_artefact.
+    WHEN TYPE lcl INTO DATA(lo_lcl).
+      WRITE lo_lcl->foo.
+  ENDCASE.
+  `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("attribute with interface prefix", () => {
     const abap = `
 INTERFACE lif_def.
