@@ -3,6 +3,7 @@ import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
   "WHEN TYPE cl_bar INTO DATA(bar).",
+  "WHEN TYPE lcl INTO lo_lcl.",
   "WHEN TYPE zcl_type.",
 ];
 
