@@ -1351,4 +1351,13 @@ DATA: BEGIN OF blah ##NEEDED,
     expect(issues.length).to.equal(0);
   });
 
+  it("CASE TYPE", async () => {
+    const abap = `
+DATA lo_artefact TYPE REF TO object.
+CASE TYPE OF lo_artefact.
+ENDCASE.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
