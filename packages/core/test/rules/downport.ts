@@ -10,19 +10,19 @@ import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
 import {IFile} from "../../src/files/_ifile";
 
-function buildConfig(): IConfiguration {
+function buildConfig(version: Version): IConfiguration {
   const conf = Config.getDefault().get();
-  conf.syntax.version = Version.v702;
+  conf.syntax.version = version;
   const conf702 = new Config(JSON.stringify(conf));
   return conf702;
 }
 
-function testFix(input: string, expected: string, extraFiles?: IFile[], count = 1) {
-  testRuleFixCount(input, expected, new Downport(), buildConfig(), extraFiles, false, count);
+function testFix(input: string, expected: string, extraFiles?: IFile[], count = 1, version = Version.v702) {
+  testRuleFixCount(input, expected, new Downport(), buildConfig(version), extraFiles, false, count);
 }
 
-async function findIssues(abap: string): Promise<readonly Issue[]> {
-  const reg = new Registry(buildConfig()).addFile(new MemoryFile("zdownport.prog.abap", abap));
+async function findIssues(abap: string, version = Version.v702): Promise<readonly Issue[]> {
+  const reg = new Registry(buildConfig(version)).addFile(new MemoryFile("zdownport.prog.abap", abap));
   await reg.parseAsync();
   const rule = new Downport();
   return rule.initialize(reg).run(reg.getFirstObject()!);
@@ -2060,7 +2060,7 @@ ENDFORM.`;
     const zinclxml = new MemoryFile("zincl.prog.xml", `<SUBC>I</SUBC>`);
     const zmain = new MemoryFile("zmain.prog.abap", `INCLUDE zincl.`);
 
-    const reg = new Registry(buildConfig());
+    const reg = new Registry(buildConfig(Version.v702));
     reg.addFile(zincl);
     reg.addFile(zmain);
     reg.addFile(zinclxml);
@@ -5276,6 +5276,59 @@ CLASS sub IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     testFix(abap, expected);
+  });
+
+  it("CASE TYPE to open-abap version, data is outlined", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_artefact TYPE REF TO object.
+  CASE TYPE OF lo_artefact.
+    WHEN TYPE lcl INTO DATA(lo_lcl).
+      WRITE lo_lcl->foo.
+  ENDCASE.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_artefact TYPE REF TO object.
+  CASE TYPE OF lo_artefact.
+    DATA lo_lcl TYPE REF TO lcl.
+    WHEN TYPE lcl INTO lo_lcl.
+      WRITE lo_lcl->foo.
+  ENDCASE.`;
+    testFix(abap, expected, [], 1, Version.OpenABAP);
+  });
+
+  it("CASE TYPE to open-abap version, already outlined", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_artefact TYPE REF TO object.
+  CASE TYPE OF lo_artefact.
+    DATA lo_lcl TYPE REF TO lcl.
+    WHEN TYPE lcl INTO lo_lcl.
+      WRITE lo_lcl->foo.
+  ENDCASE.`;
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
   });
 
 });
