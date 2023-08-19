@@ -313,7 +313,7 @@ export class CurrentScope {
     }
 
     const typePoolName = name.split("_")[0];
-    if (typePoolName.length <= 2 || typePoolName.length > 5) {
+    if (typePoolName.length <= 1 || typePoolName.length > 5) {
       return undefined;
     }
 
