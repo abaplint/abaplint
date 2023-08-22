@@ -4,7 +4,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SQLCompareOperator extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const operator = altPrio("=", "<>", "<", ">", "<=", ">=", "EQ", "NE", "GE", "GT", "LT", "LE", "><", "=>");
+    const operator = altPrio("=", "<>", "<", ">", "<=", ">=", "EQ", "NE", "GE", "GT", "LT", "LE", "><", "=>", "=<");
 
     return operator;
   }

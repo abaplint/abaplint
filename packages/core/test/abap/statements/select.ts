@@ -356,7 +356,6 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
 
   `SELECT * FROM edidc INTO TABLE tab
     WHERE ( ( credat = lv_date AND cretim >= lv_time )
-    OR ( credat > lv_date AND credat < lv_date )
     OR ( credat = lv_date AND cretim =< lv_time ) )
     AND mestyp = 'ASDF'.`,
 ];
