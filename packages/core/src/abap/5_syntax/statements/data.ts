@@ -14,7 +14,7 @@ export class Data {
       const id = new DataDefinition().runSyntax(dd, scope, filename);
       if (id?.getType().isGeneric() === true
           && id?.getType().containsVoid() === false) {
-        throw new Error("DATA definition cannot be generic, " + name);
+        throw new Error("DATA definition cannot be generic, " + name?.concatTokens());
       }
       return id;
     }

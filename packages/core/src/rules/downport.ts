@@ -551,7 +551,7 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
-    found = this.outlineDataSimple(high, lowFile);
+    found = this.outlineDataSimple(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1171,9 +1171,7 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     return Issue.atToken(lowFile, node.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private outlineDataSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
-    // outlines "DATA(ls_msg) = temp1.", note that this does not need to look at types
-
+  private outlineDataSimple(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(node.get() instanceof Statements.Move)) {
       return undefined;
     }
@@ -1206,6 +1204,14 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
         return undefined;
       }
     } else {
+      const spag = highSyntax.spaghetti.lookupPosition(source.getFirstToken().getStart(), lowFile.getFilename());
+      if (spag) {
+        const found = spag.findVariable(source.concatTokens());
+        if (found && found.getType().isGeneric() === true) {
+          return undefined;
+        }
+      }
+
       type = source.concatTokens();
     }
 
