@@ -8871,6 +8871,18 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it("syntax error, inline not possible in this position,", () => {
+    const abap = `
+DATA: BEGIN OF ls_foo,
+        bar TYPE i,
+      END OF ls_foo.
+MOVE-CORRESPONDING ls_foo TO data(ls_attri).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`"data" not found`);
+  });
+
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
