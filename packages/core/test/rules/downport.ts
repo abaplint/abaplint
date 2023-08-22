@@ -5358,4 +5358,24 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it.only("xsdbool, another case", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS is_builtin
+      IMPORTING iv_type        TYPE string
+      RETURNING VALUE(rv_bool) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD is_builtin.
+    rv_bool = xsdbool(
+      iv_type = 'int32' OR
+      iv_type = 'uint32' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `todo`;
+    testFix(abap, expected);
+  });
+
 });
