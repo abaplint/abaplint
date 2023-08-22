@@ -328,7 +328,7 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
-      if (ret.length === 0 && lowFile.getRaw().includes(" xsdbool( ")) {
+      if (ret.length === 0 && lowFile.getRaw().includes(" xsdbool(")) {
         for (let i = 0; i < lowStatements.length; i++) {
           const high = highStatements[i];
           const issue = this.replaceXsdBool(high, lowFile, highSyntax);
