@@ -5331,4 +5331,63 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it("generic, csequence", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE csequence.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(sdf) = var.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING var TYPE csequence.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdf TYPE string.
+    sdf = var.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, another case", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS is_builtin
+      IMPORTING iv_type        TYPE string
+      RETURNING VALUE(rv_bool) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD is_builtin.
+    rv_bool = xsdbool(
+      iv_type = 'int32' OR
+      iv_type = 'uint32' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS is_builtin
+      IMPORTING iv_type        TYPE string
+      RETURNING VALUE(rv_bool) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD is_builtin.
+    rv_bool = CONV xsdboolean( boolc( iv_type = 'int32' OR iv_type = 'uint32' ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });
