@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {ver, seq, optPrio} from "../combi";
-import {Target, Source} from "../expressions";
+import {Source, SimpleTarget} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -14,7 +14,8 @@ export class MoveCorresponding implements IStatement {
                      optPrio("EXACT"),
                      Source,
                      "TO",
-                     Target,
+// inline defintions not possible in this position,
+                     SimpleTarget,
                      optPrio(expanding),
                      optPrio(keeping));
 

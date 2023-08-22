@@ -11,7 +11,6 @@ export class SQLCompare extends Expression {
 
     const like = seq("LIKE", SQLSource, optPrio(seq("ESCAPE", SQLSource)));
 
-
     const nul = seq("IS", optPrio("NOT"), altPrio("NULL", ver(Version.v753, "INITIAL")));
 
     const source = new SQLSource();

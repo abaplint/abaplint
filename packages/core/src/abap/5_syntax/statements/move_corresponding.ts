@@ -11,7 +11,7 @@ export class MoveCorresponding implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
     const s = node.findDirectExpression(Expressions.Source);
-    const t = node.findDirectExpression(Expressions.Target);
+    const t = node.findDirectExpression(Expressions.SimpleTarget);
     if (s === undefined || t === undefined) {
       throw new Error("MoveCorresponding, source or target not found");
     }
