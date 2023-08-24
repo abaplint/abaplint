@@ -1,5 +1,5 @@
 import {seq, optPrio, tok, starPrio, altPrio, Expression} from "../combi";
-import {TargetField, TargetFieldSymbol, NewObject, Arrow, TableExpression, FieldAll, FieldOffset, FieldLength, ClassName, Cast, ComponentName} from ".";
+import {TargetField, TargetFieldSymbol, NewObject, Arrow, TableExpression, FieldAll, FieldOffset, FieldLength, ClassName, Cast, ComponentName, TableBody} from ".";
 import {InstanceArrow, StaticArrow, Dash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {AttributeName} from "./attribute_name";
@@ -19,6 +19,8 @@ export class SimpleTarget extends Expression {
 
     const fields = seq(optPrio(FieldOffset), optPrio(FieldLength));
 
-    return seq(start, something, fields);
+    const optional = altPrio(TableBody, fields);
+
+    return seq(start, something, optional);
   }
 }

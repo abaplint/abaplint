@@ -6,6 +6,7 @@ const tests = [
   "MOVE-CORRESPONDING EXACT <res> TO ls_line.",
   "move-corresponding ls_usbapilink to lr_usbapilink_cd->*.",
   "MOVE-CORRESPONDING bar TO bar KEEPING TARGET LINES.",
+  "MOVE-CORRESPONDING lt_foo[] TO lt_bar[].",
 ];
 
 statementType(tests, "MOVE-CORRESPONDING", Statements.MoveCorresponding);
