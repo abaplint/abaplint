@@ -5390,4 +5390,19 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("CORRESPONDING, inline and typed", async () => {
+    const abap = `
+TYPES ty_t TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lt_attri2 TYPE ty_t.
+DATA(lt_attri) = CORRESPONDING ty_t( lt_attri2 ).`;
+    const expected = `
+TYPES ty_t TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lt_attri2 TYPE ty_t.
+DATA temp1 TYPE ty_t.
+CLEAR temp1.
+MOVE-CORRESPONDING lt_attri2 TO temp1.
+DATA(lt_attri) = temp1.`;
+    testFix(abap, expected);
+  });
+
 });

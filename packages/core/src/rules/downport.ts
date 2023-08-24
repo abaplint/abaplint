@@ -1412,7 +1412,7 @@ ${indentation}CREATE OBJECT ${uniqueName2} EXPORTING textid = ${uniqueName1}.\n`
     }
 
     const sourceRef = high.findFirstExpression(Expressions.Source)?.findFirstExpression(Expressions.CorrespondingBody);
-    if (sourceRef?.getChildren().length === 1) {
+    if (sourceRef?.getChildren().length === 1 && target.concatTokens().toUpperCase().startsWith("DATA(") === false) {
       const code = `MOVE-CORRESPONDING ${sourceRef.concatTokens()} TO ${target.concatTokens()}`;
 
       const start = high.getFirstToken().getStart();
