@@ -4,7 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
-import {AnyType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, StructureType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 
 export class Sort implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -17,6 +17,9 @@ export class Sort implements StatementSyntax {
     if (tnode) {
       const ttype = new Target().runSyntax(tnode, scope, filename);
       if (ttype instanceof TableType) {
+        if (ttype.getOptions()?.primaryKey?.type === TableAccessType.sorted) {
+          throw new Error(`Sorted table, already sorted`);
+        }
         const rowType = ttype.getRowType();
         if (!(rowType instanceof VoidType)
             && !(rowType instanceof UnknownType)
