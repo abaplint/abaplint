@@ -458,7 +458,7 @@ export class CurrentScope {
     while (curr !== undefined) {
       const stype = curr.getIdentifier().stype;
       if (stype === ScopeType.ClassDefinition
-          || stype === ScopeType.ClassImplementation
+//          || stype === ScopeType.ClassImplementation
           || stype === ScopeType.Interface) {
         return true;
       }
