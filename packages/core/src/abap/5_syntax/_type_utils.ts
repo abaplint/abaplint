@@ -300,7 +300,12 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof IntegerType) {
-      if (target instanceof StringType || target instanceof Integer8Type) {
+      if (target instanceof StringType) {
+        return false;
+      } else if (target instanceof Integer8Type) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
         return false;
       }
     } else if (source instanceof FloatType) {

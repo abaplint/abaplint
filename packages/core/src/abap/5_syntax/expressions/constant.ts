@@ -7,7 +7,7 @@ export class Constant {
   public runSyntax(node: ExpressionNode): AbstractType {
     // todo: ConcatenatedConstant is not used?
     if (node.findDirectExpression(Integer)) {
-      return IntegerType.get();
+      return IntegerType.get({derivedFromConstant: true});
     } else if (node.getFirstToken().getStr().startsWith("'")) {
       let len = node.getFirstToken().getStr().length - 2;
       if (len <= 0) {
