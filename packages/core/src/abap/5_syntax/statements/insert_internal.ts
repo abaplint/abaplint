@@ -9,6 +9,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {DataReference, TableType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
+import {TypeUtils} from "../_type_utils";
 
 export class InsertInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -36,6 +37,10 @@ export class InsertInternal implements StatementSyntax {
       } else {
         new FSTarget().runSyntax(afterAssigning, scope, filename, sourceType);
       }
+    }
+
+    if (new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
+      throw new Error("Types not compatible");
     }
 
     const afterInto = node.findExpressionAfterToken("INTO");

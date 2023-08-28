@@ -4,6 +4,7 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
 
+// todo: refactor to static? for performance
 export class TypeUtils {
   // scope is needed to determine class hieraracy for typing
   private readonly scope: CurrentScope;
@@ -299,7 +300,7 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof IntegerType) {
-      if (target instanceof StringType) {
+      if (target instanceof StringType || target instanceof Integer8Type) {
         return false;
       }
     } else if (source instanceof FloatType) {
