@@ -8895,6 +8895,49 @@ SORT lt_t100 BY text.`;
     expect(issues[0].getMessage()).to.contain(`sorted`);
   });
 
+  it.only("types already defined, constants vs types 1", () => {
+    const abap = `
+INTERFACE lcl1.
+  TYPES foo TYPE i.
+  DATA foo TYPE i.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`already`);
+  });
+
+  it.only("types already defined, constants vs types 1", () => {
+    const abap = `
+INTERFACE lcl2.
+  TYPES foo TYPE i.
+  CONSTANTS foo TYPE i VALUE 2.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`already`);
+  });
+
+  it.only("types already defined, constants vs types 1", () => {
+    const abap = `
+INTERFACE lcl3.
+  DATA foo TYPE i.
+  TYPES foo TYPE i.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`already`);
+  });
+
+  it.only("types already defined, constants vs types 1", () => {
+    const abap = `
+INTERFACE lcl4.
+  CONSTANTS foo TYPE i VALUE 2.
+  TYPES foo TYPE i.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`already`);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
