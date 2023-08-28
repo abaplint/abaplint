@@ -8882,6 +8882,19 @@ MOVE-CORRESPONDING ls_foo TO data(ls_attri).`;
     expect(issues[0].getMessage()).to.contain(`"data" not found`);
   });
 
+  it("sorted table cannot be sorted", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         text  TYPE t100-text,
+         msgnr TYPE t100-msgnr,
+       END OF ty.
+DATA lt_t100 TYPE SORTED TABLE OF ty WITH UNIQUE KEY text.
+SORT lt_t100 BY text.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`sorted`);
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

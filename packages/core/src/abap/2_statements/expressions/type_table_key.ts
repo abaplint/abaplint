@@ -12,6 +12,8 @@ export class TypeTableKey extends Expression {
 
     const components = plus(alt(seq("WITH", failStar()), FieldSub));
 
+    const further = seq(alt("WITHOUT", "WITH"), "FURTHER SECONDARY KEYS");
+
     const key = seq("WITH",
                     opt(uniqueness),
                     altPrio(defaultKey, emptyKey,
@@ -19,6 +21,7 @@ export class TypeTableKey extends Expression {
                                 "KEY",
                                 alt(seq(Field, "COMPONENTS", components),
                                     components))),
+                    optPrio(further),
                     optPrio("READ-ONLY"));
 
     return key;
