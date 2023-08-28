@@ -280,6 +280,11 @@ const tests = [
        input  = cl_ujt_utility=>string2xstring( lv_json )
      IMPORTING
        output = lv_string.`,
+
+  `CALL FUNCTION mv_funcname
+STARTING NEW TASK lr_task->mv_id
+DESTINATION IN GROUP DEFAULT
+CALLING mr_th_manager->receive_result ON END OF TASK.`,
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);
