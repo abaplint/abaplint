@@ -8968,6 +8968,57 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("incompatible type, const int into string", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS method1 IMPORTING str TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+    method1( 123 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
+  it("incompatible type, int into int8 table", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF int8 WITH DEFAULT KEY.
+DATA int TYPE i.
+INSERT int INTO TABLE tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
+  it("incompatible type, int into int8 table, method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING foo TYPE int8.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA int TYPE i.
+    bar( int ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
+  it("insert lines, compatible", () => {
+    const abap = `
+DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+INSERT LINES OF tab1 INTO TABLE tab2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
