@@ -298,6 +298,10 @@ export class TypeUtils {
       if (target instanceof IntegerType || target instanceof StringType) {
         return false;
       }
+    } else if (source instanceof IntegerType) {
+      if (target instanceof StringType) {
+        return false;
+      }
     } else if (source instanceof FloatType) {
       if (target instanceof IntegerType) {
         return false;
