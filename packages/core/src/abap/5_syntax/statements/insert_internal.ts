@@ -19,7 +19,7 @@ export class InsertInternal implements StatementSyntax {
     if (t) {
       targetType = new Target().runSyntax(t, scope, filename);
     }
-    if (targetType instanceof TableType) {
+    if (targetType instanceof TableType && node.findDirectTokenByText("LINES") === undefined) {
       targetType = targetType.getRowType();
     }
 

@@ -9009,6 +9009,16 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("insert lines, compatible", () => {
+    const abap = `
+DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+INSERT LINES OF tab1 INTO TABLE tab2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
