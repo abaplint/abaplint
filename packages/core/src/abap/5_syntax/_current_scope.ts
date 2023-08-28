@@ -87,6 +87,8 @@ export class CurrentScope {
     const upper = name.toUpperCase();
     if (this.current.getData().types[upper] !== undefined) {
       throw new Error(`Type name "${name}" already defined`);
+    } else if (this.isOO() && this.current.getData().vars[upper] !== undefined) {
+      throw new Error(`"${name}" already defined`);
     }
     this.current.getData().types[upper] = type;
   }
@@ -141,6 +143,8 @@ export class CurrentScope {
     const upper = name.toUpperCase();
     if (this.current.getData().vars[upper] !== undefined) {
       throw new Error(`Variable name "${name}" already defined`);
+    } else if (this.isOO() && this.current.getData().types[upper] !== undefined) {
+      throw new Error(`"${name}" already defined`);
     }
     this.current.getData().vars[upper] = identifier;
   }
@@ -454,7 +458,7 @@ export class CurrentScope {
     while (curr !== undefined) {
       const stype = curr.getIdentifier().stype;
       if (stype === ScopeType.ClassDefinition
-          || stype === ScopeType.ClassImplementation
+//          || stype === ScopeType.ClassImplementation
           || stype === ScopeType.Interface) {
         return true;
       }
