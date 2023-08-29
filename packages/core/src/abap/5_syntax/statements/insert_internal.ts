@@ -19,7 +19,8 @@ export class InsertInternal implements StatementSyntax {
     if (t) {
       targetType = new Target().runSyntax(t, scope, filename);
     }
-    if (targetType instanceof TableType && node.findDirectTokenByText("LINES") === undefined) {
+    if (targetType instanceof TableType
+        && node.findDirectTokenByText("LINES") === undefined) {
       targetType = targetType.getRowType();
     }
 
@@ -39,7 +40,8 @@ export class InsertInternal implements StatementSyntax {
       }
     }
 
-    if (new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
+    if (afterAssigning === undefined
+        && new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
       throw new Error("Types not compatible");
     }
 

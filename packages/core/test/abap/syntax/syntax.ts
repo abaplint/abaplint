@@ -9036,6 +9036,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("INSERT INITIAL LINE", () => {
+    const abap = `
+TYPES: BEGIN OF abap_componentdescr,
+         name       TYPE string,
+         type       TYPE i,
+         as_include TYPE abap_bool,
+         suffix     TYPE string,
+       END OF abap_componentdescr.
+TYPES abap_component_tab TYPE STANDARD TABLE OF abap_componentdescr WITH DEFAULT KEY.
+DATA lt_components TYPE abap_component_tab.
+FIELD-SYMBOLS <ls_component> TYPE abap_componentdescr.
+INSERT INITIAL LINE INTO lt_components ASSIGNING <ls_component> INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
