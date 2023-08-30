@@ -467,6 +467,10 @@ export class CurrentScope {
     return false;
   }
 
+  public isGlobalOO(): boolean {
+    return this.parentObj.getType() === "INTF" || this.parentObj.getType() === "CLAS";
+  }
+
   public isTypePool(): boolean {
     return this.current?.getIdentifier().filename.endsWith(".type.abap") === true || false;
   }

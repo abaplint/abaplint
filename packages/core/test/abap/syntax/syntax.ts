@@ -9052,6 +9052,30 @@ INSERT INITIAL LINE INTO lt_components ASSIGNING <ls_component> INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("packed1, DECIMALS must be specified in OO context", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES foo TYPE p LENGTH 10.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
+  it("packed2, DECIMALS must be specified in OO context", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES foo TYPE p.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -2,7 +2,7 @@ import {CurrentScope} from "../_current_scope";
 import {StatementNode} from "../../nodes";
 import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {UnknownType} from "../../types/basic";
+import {PackedType, UnknownType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {TypeTable} from "../expressions/type_table";
 
@@ -19,6 +19,15 @@ export class Type {
           && found?.getType().containsVoid() === false) {
         throw new Error("TYPES definition cannot be generic, " + found.getName());
       }
+
+      if (scope.isGlobalOO() && found.getType() instanceof PackedType) {
+        const concat = node.concatTokens().toUpperCase();
+        if ((concat.includes(" TYPE P ") || concat.includes(" TYPE P."))
+            && concat.includes(" DECIMALS ") === false) {
+          throw new Error("Specify DECIMALS in OO context for packed");
+        }
+      }
+
       return found;
     }
 
