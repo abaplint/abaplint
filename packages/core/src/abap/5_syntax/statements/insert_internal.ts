@@ -40,8 +40,7 @@ export class InsertInternal implements StatementSyntax {
       }
     }
 
-    if (afterAssigning === undefined
-        && node.findDirectTokenByText("INITIAL") === undefined
+    if (node.findDirectTokenByText("INITIAL") === undefined
         && new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
       throw new Error("Types not compatible");
     }
