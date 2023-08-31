@@ -9076,6 +9076,17 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
+  it("INSERT INITIAL LINE, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty_language,
+         spras TYPE i,
+       END OF ty_language.
+DATA it_language TYPE STANDARD TABLE OF ty_language WITH DEFAULT KEY.
+INSERT INITIAL LINE INTO it_language INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
