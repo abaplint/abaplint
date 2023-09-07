@@ -14,7 +14,7 @@ const repos = [
   "abapGit/CI",
   "abapGit/performance-test",
   "abapinho/abapTimeMachine",
-  "abaplint/abaplint-sci-client",
+//  "abaplint/abaplint-sci-client",
   "abaplint/deps",
   "dominikpanzer/cacamber-BDD-for-ABAP",
   "exercism/abap",
