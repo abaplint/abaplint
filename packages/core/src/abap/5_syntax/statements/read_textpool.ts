@@ -12,7 +12,7 @@ export class ReadTextpool implements StatementSyntax {
       new Source().runSyntax(s, scope, filename);
     }
 
-    for (const t of node.findDirectExpressions(Expressions.Target)) {
+    for (const t of node.findDirectExpressions(Expressions.SimpleTarget)) {
       new Target().runSyntax(t, scope, filename);
     }
 

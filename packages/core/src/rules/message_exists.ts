@@ -114,7 +114,7 @@ export class MessageExistsRule implements IRule {
             const msag = this.reg.getObject("MSAG", ref.messageClass) as MessageClass | undefined;
             if (msag === undefined) {
               if (new DDIC(this.reg).inErrorNamespace(ref.messageClass) === true) {
-                const message = "Message class \"" + ref.token.getStr() + "\" not found";
+                const message = "Message class \"" + ref.messageClass + "\" not found";
                 issues.push(Issue.atToken(file, ref.token, message, this.getMetadata().key, this.conf.severity));
               }
               continue;
