@@ -13,13 +13,15 @@ export class Loop implements IStatement {
 
     const group = ver(Version.v740sp08, seq("GROUP BY", LoopGroupBy));
 
+    const step = ver(Version.v757, seq("STEP", Source));
+
     const from = seq("FROM", Source);
 
     const to = seq("TO", Source);
 
     const usingKey = seq("USING KEY", altPrio(SimpleName, Dynamic));
 
-    const options = per(LoopTarget, from, to, where, usingKey, group);
+    const options = per(LoopTarget, from, to, where, usingKey, group, step);
 
     const at = seq("AT",
                    opt(seq("SCREEN", failCombinator())),

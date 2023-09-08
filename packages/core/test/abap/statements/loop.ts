@@ -37,6 +37,7 @@ const tests = [
                index = GROUP INDEX )
     ASCENDING
     ASSIGNING FIELD-SYMBOL(<group>).`,
+  "LOOP AT findings ASSIGNING FIELD-SYMBOL(<finding>) STEP -1.",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);
