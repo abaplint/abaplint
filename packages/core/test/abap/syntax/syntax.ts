@@ -9112,7 +9112,7 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Incompatible types");
   });
 
-  it.skip("incompatible type, structure into char", () => {
+  it("incompatible type, structure into char", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     TYPES ty_char20 TYPE c LENGTH 20.
@@ -9133,7 +9133,7 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("Incompatible types");
+    expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
 // todo, static method cannot access instance attributes
