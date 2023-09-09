@@ -9112,6 +9112,30 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Incompatible types");
   });
 
+  it("incompatible type, structure into char", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_char20 TYPE c LENGTH 20.
+    METHODS method1 IMPORTING char TYPE ty_char20.
+    METHODS method2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+
+  METHOD method2.
+    DATA: BEGIN OF struc,
+            short TYPE c LENGTH 10,
+          END OF struc.
+    method1( struc ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -283,18 +283,22 @@ export class TypeUtils {
         return false;
       }
       return true;
-    } else if (source instanceof StructureType && target instanceof StructureType) {
-      const sourceComponents = source.getComponents();
-      const targetComponents = target.getComponents();
-      if (sourceComponents.length !== targetComponents.length) {
-        return false;
-      }
-      for (let i = 0; i < sourceComponents.length; i++) {
-        if (this.isAssignableStrict(sourceComponents[i].type, targetComponents[i].type) === false) {
+    } else if (source instanceof StructureType) {
+      if (target instanceof StructureType) {
+        const sourceComponents = source.getComponents();
+        const targetComponents = target.getComponents();
+        if (sourceComponents.length !== targetComponents.length) {
           return false;
         }
+        for (let i = 0; i < sourceComponents.length; i++) {
+          if (this.isAssignableStrict(sourceComponents[i].type, targetComponents[i].type) === false) {
+            return false;
+          }
+        }
+        return true;
+      } else if (target instanceof CharacterType) {
+        return false;
       }
-      return true;
     } else if (source instanceof Integer8Type) {
       if (target instanceof IntegerType || target instanceof StringType) {
         return false;
