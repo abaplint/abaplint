@@ -96,7 +96,7 @@ export class Rename {
 
         const newStr = o.getName().replace(regex, p.newName);
         if (quiet !== true) {
-          console.log("Renaming " + o.getName().padEnd(30, " ") + " -> " + newStr);
+          console.log("Renaming " + o.getType() + " " + o.getName().padEnd(30, " ") + " -> " + newStr);
         }
 
         const result = renamer.rename(o.getType(), o.getName(), newStr);

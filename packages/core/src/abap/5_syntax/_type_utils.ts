@@ -404,6 +404,8 @@ export class TypeUtils {
         return true;
       } else if (target.containsVoid() === true) {
         return true;
+      } else if (source instanceof StringType && this.structureContainsString(target)) {
+        return false;
       } else if (source instanceof IntegerType) {
         return false;
       } else if (this.isCharLike(target) && this.isCharLike(source)) {

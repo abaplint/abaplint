@@ -9087,6 +9087,31 @@ INSERT INITIAL LINE INTO it_language INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("incompatible type, string into structure", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_data,
+             content_type TYPE string,
+             data         TYPE string,
+           END OF ty_data.
+    METHODS foo.
+    METHODS data RETURNING VALUE(str) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA ls_data TYPE ty_data.
+    ls_data = data( ).
+  ENDMETHOD.
+
+  METHOD data.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

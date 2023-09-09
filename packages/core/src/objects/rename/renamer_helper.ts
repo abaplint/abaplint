@@ -159,10 +159,11 @@ export class RenamerHelper {
     const list: RenameFile[] = [];
 
     const newName = name.toLowerCase().replace(/\//g, "#");
+    oldName = oldName.toLowerCase().replace(/\//g, "#");
 
     for (const f of obj.getFiles()) {
 // todo, this is not completely correct, ie. if the URI contains the same directory name as the object name
-      const newFilename = f.getFilename().replace(oldName.toLowerCase(), newName.toLowerCase());
+      const newFilename = f.getFilename().replace(oldName, newName);
       list.push(RenameFile.create(f.getFilename(), newFilename));
     }
 
