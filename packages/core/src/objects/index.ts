@@ -93,6 +93,7 @@ export * from "./sapscript_style";
 export * from "./sapscript";
 export * from "./screen_variant";
 export * from "./search_help";
+export * from "./outbound_service";
 export * from "./service_binding";
 export * from "./service_definition";
 export * from "./shared_memory";

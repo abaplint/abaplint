@@ -52,6 +52,7 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.CDSMetadataExtension
         || obj instanceof Objects.RestrictionField
         || obj instanceof Objects.Class
+        || obj instanceof Objects.OutboundService
         || obj instanceof Objects.CommunicationScenario
         || obj instanceof Objects.DataControl
         || obj instanceof Objects.DataDefinition
