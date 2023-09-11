@@ -1,5 +1,7 @@
 export * from "./activation_variant";
 export * from "./api_release_state";
+export * from "./application_job_catalog_entry";
+export * from "./application_job_template";
 export * from "./assignment_service_to_authorization_group";
 export * from "./atc_check_category";
 export * from "./atc_check_object";
@@ -79,6 +81,7 @@ export * from "./mime_object";
 export * from "./namespace";
 export * from "./number_range";
 export * from "./object_characteristic";
+export * from "./outbound_service";
 export * from "./package_interface";
 export * from "./package";
 export * from "./parameter";
