@@ -1924,4 +1924,11 @@ DATA(lower_mask) = val1 + val2.`;
     expect(identifier?.getValue()).to.equal("\n");
   });
 
+  it("cursor", () => {
+    const abap = `DATA c TYPE cursor.`;
+    const identifier = resolveVariable(abap, "c");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
