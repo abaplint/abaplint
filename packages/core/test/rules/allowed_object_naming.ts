@@ -118,7 +118,7 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.only("OK, AFF based namespace", async () => {
+  it("OK, AFF based namespace", async () => {
     const issues = await findIssues("(foo)bar.sajc.json");
     expect(issues.length).to.equal(0);
   });
