@@ -30,8 +30,12 @@ export abstract class AbstractFile implements IFile {
 // handle additional escaping
     split[0] = split[0].replace(/%3e/g, ">");
     split[0] = split[0].replace(/%3c/g, "<");
-// handle namespace
-    return split[0].toUpperCase().replace(/#/g, "/");
+// handle abapGit namespace
+    split[0] = split[0].toUpperCase().replace(/#/g, "/");
+// handle AFF namespace
+    split[0] = split[0].replace("(", "/");
+    split[0] = split[0].replace(")", "/");
+    return split[0];
   }
 
   public abstract getRaw(): string;

@@ -1058,8 +1058,15 @@ export class BuiltIn {
   public getTypes(): TypedIdentifier[] {
     const ret: TypedIdentifier[] = this.buildSY();
 
-    const id = new TokenIdentifier(new Position(1, 1), "abap_bool");
-    ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"})));
+    {
+      const id = new TokenIdentifier(new Position(1, 1), "abap_bool");
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"})));
+    }
+
+    {
+      const id = new TokenIdentifier(new Position(1, 1), "cursor");
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, IntegerType.get({qualifiedName: "CURSOR", ddicName: "CURSOR"})));
+    }
 
     return ret;
   }
