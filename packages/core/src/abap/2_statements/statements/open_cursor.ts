@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, seq, optPrio} from "../combi";
-import {Select, SQLTarget, SQLHints, DatabaseConnection} from "../expressions";
+import {Select, SQLTarget} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,9 +11,7 @@ export class OpenCursor implements IStatement {
                     optPrio("WITH HOLD"),
                     SQLTarget,
                     "FOR",
-                    Select,
-                    optPrio(DatabaseConnection),
-                    optPrio(SQLHints));
+                    Select);
 
     return verNot(Version.Cloud, ret);
   }
