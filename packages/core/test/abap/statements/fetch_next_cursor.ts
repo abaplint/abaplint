@@ -8,7 +8,8 @@ const tests = [
   "FETCH NEXT CURSOR c APPENDING CORRESPONDING FIELDS OF TABLE lt_tab PACKAGE SIZE iv_size.",
   "FETCH NEXT CURSOR c INTO CORRESPONDING FIELDS OF TABLE lt_result.",
   "FETCH NEXT CURSOR c INTO CORRESPONDING FIELDS OF <wa>.",
-  "FETCH NEXT CURSOR l_cursor INTO lt_data PACKAGE SIZE 1000.",
+  "FETCH NEXT CURSOR l_cursor INTO lt_data PACKAGE SIZE 1000.", // yea, looks like this is accepted
+  "FETCH NEXT CURSOR l_cursor INTO TABLE lt_data PACKAGE SIZE 1000.",
 ];
 
 statementType(tests, "FETCH NEXT", Statements.FetchNextCursor);
