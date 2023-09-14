@@ -4,6 +4,6 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class FindType extends Expression {
   public getRunnable(): IStatementRunnable {
-    return opt(alt("REGEX", "SUBSTRING", ver(Version.v755, "PCRE")));
+    return opt(alt("REGEX", "SUBSTRING", ver(Version.v755, "PCRE", Version.OpenABAP)));
   }
 }
