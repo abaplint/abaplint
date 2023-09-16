@@ -16,7 +16,7 @@
     "@phosphor/widgets": "^1.9.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
-    "monaco-editor": "=0.40.0",
+    "monaco-editor": "^0.43.0",
     "stream-browserify": "^3.0.0",
     "vscode-languageserver-types": "^3.17.3"
   },
