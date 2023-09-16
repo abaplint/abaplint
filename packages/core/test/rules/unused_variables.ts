@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {UnusedVariables} from "../../src/rules";
+import {UnusedVariables, UnusedVariablesConf} from "../../src/rules";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
@@ -21,10 +21,14 @@ async function runMulti(files: MemoryFile[]): Promise<Issue[]> {
   return issues;
 }
 
-async function runSingle(abap: string): Promise<Issue[]> {
+async function runSingle(abap: string, config?: UnusedVariablesConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
-  return new UnusedVariables().initialize(reg).run(reg.getFirstObject()!);
+  const rule = new UnusedVariables();
+  if (config) {
+    rule.setConfig(config);
+  }
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: unused_variables, single file", () => {
@@ -1357,6 +1361,21 @@ DATA lo_artefact TYPE REF TO object.
 CASE TYPE OF lo_artefact.
 ENDCASE.`;
     const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Abstract", async () => {
+    const abap = `
+CLASS lcl_test DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+  PROTECTED SECTION.
+    METHODS get_foo ABSTRACT
+      IMPORTING foo TYPE string.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runSingle(abap, {skipAbstract: true});
     expect(issues.length).to.equal(0);
   });
 

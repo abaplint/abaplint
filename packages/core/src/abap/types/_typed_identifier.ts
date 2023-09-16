@@ -10,6 +10,7 @@ export const enum IdentifierMeta {
   EventParameter = "event_parameter",
   FormParameter = "form_parameter",
   ReadOnly = "read_only",
+  Abstract = "abstract",
   PassByValue = "pass_by_value",
   InlineDefinition = "inline",
   BuiltIn = "built-in",

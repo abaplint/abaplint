@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {StatementNode} from "../nodes/statement_node";
 import {MethodDef} from "../2_statements/statements/method_def";
 import * as Expressions from "../2_statements/expressions";
@@ -28,7 +29,7 @@ export class MethodParameters implements IMethodParameters {
   private readonly defaults: {[index: string]: ExpressionNode};
   private readonly filename: string;
 
-  public constructor(node: StatementNode, filename: string, scope: CurrentScope) {
+  public constructor(node: StatementNode, filename: string, scope: CurrentScope, abstractMethod: boolean) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
@@ -46,7 +47,7 @@ export class MethodParameters implements IMethodParameters {
     // need the scope for LIKE typing inside method parameters
     const parentName = scope.getName();
     scope.push(ScopeType.MethodDefinition, "method definition", node.getStart(), filename);
-    this.parse(node, scope, filename, parentName);
+    this.parse(node, scope, filename, parentName, abstractMethod);
     scope.pop(node.getEnd());
   }
 
@@ -135,7 +136,7 @@ export class MethodParameters implements IMethodParameters {
 
 ///////////////////
 
-  private parse(node: StatementNode, scope: CurrentScope, filename: string, parentName: string): void {
+  private parse(node: StatementNode, scope: CurrentScope, filename: string, parentName: string, abstractMethod: boolean): void {
 
     const handler = node.findFirstExpression(Expressions.EventHandler);
     if (handler) {
@@ -175,7 +176,7 @@ export class MethodParameters implements IMethodParameters {
 
     const importing = node.findFirstExpression(Expressions.MethodDefImporting);
     if (importing) {
-      this.add(this.importing, importing, scope, [IdentifierMeta.MethodImporting]);
+      this.add(this.importing, importing, scope, [IdentifierMeta.MethodImporting], abstractMethod);
       if (importing.concatTokens().toUpperCase().includes(" PREFERRED PARAMETER")) {
         this.preferred = importing.getLastToken().getStr().toUpperCase();
         if (this.preferred.startsWith("!")) {
@@ -186,12 +187,12 @@ export class MethodParameters implements IMethodParameters {
 
     const exporting = node.findFirstExpression(Expressions.MethodDefExporting);
     if (exporting) {
-      this.add(this.exporting, exporting, scope, [IdentifierMeta.MethodExporting]);
+      this.add(this.exporting, exporting, scope, [IdentifierMeta.MethodExporting], abstractMethod);
     }
 
     const changing = node.findFirstExpression(Expressions.MethodDefChanging);
     if (changing) {
-      this.add(this.changing, changing, scope, [IdentifierMeta.MethodChanging]);
+      this.add(this.changing, changing, scope, [IdentifierMeta.MethodChanging], abstractMethod);
     }
 
     const returning = node.findFirstExpression(Expressions.MethodDefReturning);
@@ -245,7 +246,7 @@ export class MethodParameters implements IMethodParameters {
     }
   }
 
-  private add(target: TypedIdentifier[], source: ExpressionNode, scope: CurrentScope, meta: IdentifierMeta[]): void {
+  private add(target: TypedIdentifier[], source: ExpressionNode, scope: CurrentScope, meta: IdentifierMeta[], abstractMethod: boolean): void {
     for (const opt of source.findAllExpressions(Expressions.MethodParamOptional)) {
       const p = opt.findDirectExpression(Expressions.MethodParam);
       if (p === undefined) {
@@ -256,6 +257,9 @@ export class MethodParameters implements IMethodParameters {
         extraMeta.push(IdentifierMeta.PassByValue);
       } else if (meta.includes(IdentifierMeta.MethodImporting)) {
         extraMeta.push(IdentifierMeta.ReadOnly);
+      }
+      if (abstractMethod === true) {
+        extraMeta.push(IdentifierMeta.Abstract);
       }
       const id = new MethodParam().runSyntax(p, scope, this.filename, [...meta, ...extraMeta]);
       scope.addIdentifier(id);
