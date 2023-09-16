@@ -29,7 +29,7 @@ export class FormLengthStats {
           count = 0;
         } else if (type instanceof Statements.EndForm) {
           if (pos) {
-            res.push({name, count, file, pos});
+            res.push({name: name, className: "", count, file, pos});
           } else {
             continue;
           }
