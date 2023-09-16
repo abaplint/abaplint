@@ -31,7 +31,9 @@ export class MethodLength implements IRule {
       key: "method_length",
       title: "Method/Form Length",
       shortDescription: `Checks relating to method/form length.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-methods-small`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-methods-small
+
+Abstract methods without statements are considered okay.`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }
@@ -86,6 +88,9 @@ export class MethodLength implements IRule {
         continue;
       }
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
+        if (this.isAbstract(s)) {
+          continue;
+        }
         const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0", type), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
         continue;
@@ -98,6 +103,11 @@ export class MethodLength implements IRule {
     }
 
     return issues;
+  }
+
+  private isAbstract(result: IMethodLengthResult): boolean {
+    const cdef = result.file.getInfo().getClassDefinitionByName(result.className);
+    return cdef?.isAbstract === true;
   }
 
 }

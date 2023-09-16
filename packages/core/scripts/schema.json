@@ -7664,6 +7664,10 @@
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         },
+        "skipAbstract": {
+          "description": "skip parameters from abstract methods",
+          "type": "boolean"
+        },
         "skipNames": {
           "description": "skip specific names, case insensitive",
           "items": {
@@ -7673,6 +7677,9 @@
           "uniqueItems": true
         }
       },
+      "required": [
+        "skipAbstract"
+      ],
       "type": "object"
     },
     "UseBoolExpressionConf": {

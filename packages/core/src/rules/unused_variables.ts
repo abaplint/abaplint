@@ -22,6 +22,8 @@ export class UnusedVariablesConf extends BasicRuleConfig {
    * @uniqueItems true
   */
   public skipNames?: string[] = [];
+  /** skip parameters from abstract methods */
+  public skipAbstract: boolean = false;
 }
 
 class WorkArea {
@@ -180,6 +182,8 @@ Errors found in INCLUDES are reported for the main program.`,
         if (this.conf.skipNames
             && this.conf.skipNames.length > 0
             && this.conf.skipNames.some((a) => a.toUpperCase() === name)) {
+          continue;
+        } else if (this.conf.skipAbstract === true && meta.includes(IdentifierMeta.Abstract)) {
           continue;
         } else if (name === "ME"
             || name === "SUPER"

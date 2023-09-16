@@ -16,13 +16,13 @@
     "@phosphor/widgets": "^1.9.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
-    "monaco-editor": "=0.40.0",
+    "monaco-editor": "^0.43.0",
     "stream-browserify": "^3.0.0",
     "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
-    "@abaplint/monaco": "^2.102.41",
-    "@abaplint/core": "^2.102.41",
+    "@abaplint/monaco": "^2.102.42",
+    "@abaplint/core": "^2.102.42",
     "css-loader": "^6.8.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.3",

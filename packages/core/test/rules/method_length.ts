@@ -329,6 +329,16 @@ const lengthTests = [
   WRITE foo.
   WRITE foo.
   ENDMETHOD.`, cnt: 1},
+
+  {abap: `CLASS lcl DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
 ];
 
 testRule(lengthTests, MethodLength);
