@@ -138,7 +138,8 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
       const concat = statement.concatTokens().toUpperCase();
       if (statement.get() instanceof Comment) {
         continue;
-      } else if (statement.get() instanceof Statements.EndIf) {
+      } else if (statement.get() instanceof Statements.EndIf
+          || statement.get() instanceof Statements.EndTestSeam) {
         continue;
       } else {
         return concat.includes("SY-DBCNT");
@@ -166,7 +167,8 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
         if (concat.includes("" + this.getMetadata().pseudoComment)) {
           return true;
         }
-      } else if (statement.get() instanceof Statements.EndIf) {
+      } else if (statement.get() instanceof Statements.EndIf
+          || statement.get() instanceof Statements.EndTestSeam) {
         continue;
       } else {
         if (assigned && concat.includes(assigned)) {
