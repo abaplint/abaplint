@@ -101,6 +101,15 @@ SELECT *
   ASSIGN lcl_ref->* TO <restab_standatd>.
   IF <restab_standatd> IS NOT ASSIGNED.
   ENDIF.`, cnt: 0},
+
+  {abap: `
+TEST-SEAM tst_seam.
+  READ TABLE local_table INTO DATA(table_data).
+END-TEST-SEAM.
+
+IF sy-subrc <> 0.
+  WRITE 'ERROR'.
+ENDIF.`, cnt: 0},
 ];
 
 testRule(tests, CheckSubrc);
