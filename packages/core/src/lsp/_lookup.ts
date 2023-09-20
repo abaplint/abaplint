@@ -114,7 +114,8 @@ export class LSPLookup {
       return {hover: hoverValue, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
-    for (const c of bottomScope.listClassDefinitions()) {
+    // TODO: this can be optimized, no need to loop through all the defintions, the scope knows the name of the object?
+    for (const c of [...bottomScope.listClassDefinitions(), ...bottomScope.listInterfaceDefinitions()]) {
       for (const m of c.getMethodDefinitions()?.getAll() || []) {
         for (const p of m.getParameters()?.getAll() || []) {
           if (p.getStart().equals(cursor.token.getStart())) {

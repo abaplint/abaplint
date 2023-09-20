@@ -1506,7 +1506,7 @@ DATA foo TYPE c.`;
     expect(hover?.value).to.contain("sdf");
   });
 
-  it.skip("hover global interface method parameter", () => {
+  it("hover global interface method parameter", () => {
     const abap = `INTERFACE zif_interface PUBLIC.
     METHODS sdf
       IMPORTING
