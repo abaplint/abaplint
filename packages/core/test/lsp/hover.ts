@@ -1495,4 +1495,28 @@ DATA foo TYPE c.`;
     expect(hoverVariable?.value).to.contain("ABAP Doc");
   });
 
+  it("hover global interface method name", () => {
+    const abap = `INTERFACE zif_interface PUBLIC.
+    METHODS sdf.
+  ENDINTERFACE.`;
+    const file = new MemoryFile("zif_interface.intf.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 14));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("sdf");
+  });
+
+  it("hover global interface method parameter", () => {
+    const abap = `INTERFACE zif_interface PUBLIC.
+    METHODS sdf
+      IMPORTING
+        helloooooo TYPE string.
+  ENDINTERFACE.`;
+    const file = new MemoryFile("zif_interface.intf.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 15));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("helloooooo");
+  });
+
 });

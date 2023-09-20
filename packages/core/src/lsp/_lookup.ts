@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as LServer from "vscode-languageserver-types";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
@@ -113,13 +114,14 @@ export class LSPLookup {
       return {hover: hoverValue, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
-    for (const c of bottomScope.listClassDefinitions()) {
+    // TODO: this can be optimized, no need to loop through all the defintions, the scope knows the name of the object?
+    for (const c of [...bottomScope.listClassDefinitions(), ...bottomScope.listInterfaceDefinitions()]) {
       for (const m of c.getMethodDefinitions()?.getAll() || []) {
         for (const p of m.getParameters()?.getAll() || []) {
           if (p.getStart().equals(cursor.token.getStart())) {
             const found = LSPUtils.identiferToLocation(p);
             return {
-              hover: "Method Parameter, " + cursor.token.getStr(),
+              hover: "Method Parameter: " + cursor.token.getStr().replace("!", ""),
               definition: found,
               definitionId: p,
               implementation: undefined,
@@ -333,7 +335,8 @@ export class LSPLookup {
       return undefined;
     }
 
-    if (scope.getIdentifier().stype !== ScopeType.ClassDefinition
+    if ((scope.getIdentifier().stype !== ScopeType.ClassDefinition
+      && scope.getIdentifier().stype !== ScopeType.Interface)
       || !(found.snode.get() instanceof Statements.MethodDef)) {
       return undefined;
     }
@@ -353,8 +356,13 @@ export class LSPLookup {
       return undefined;
     }
 
-    const def = scope.getParent()?.findClassDefinition(scope.getIdentifier().sname)?.getMethodDefinitions()?.getByName(nameToken.getStr());
-    return def;
+    if (scope.getIdentifier().stype === ScopeType.ClassDefinition) {
+      const def = scope.getParent()?.findClassDefinition(scope.getIdentifier().sname)?.getMethodDefinitions()?.getByName(nameToken.getStr());
+      return def;
+    } else {
+      const def = scope.getParent()?.findInterfaceDefinition(scope.getIdentifier().sname)?.getMethodDefinitions()?.getByName(nameToken.getStr());
+      return def;
+    }
   }
 
   private static findFunctionModule(found: ICursorData): string | undefined {

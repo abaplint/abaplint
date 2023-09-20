@@ -48,6 +48,7 @@ export interface ISpaghettiScopeNode {
   calcCoverage(): {start: Position, end: Position};
   findClassDefinition(name: string): IClassDefinition | undefined;
   listClassDefinitions(): IClassDefinition[];
+  listInterfaceDefinitions(): IInterfaceDefinition[];
   findFormDefinition(name: string): IFormDefinition | undefined;
   listFormDefinitions(): IFormDefinition[];
   findInterfaceDefinition(name: string): IInterfaceDefinition | undefined;

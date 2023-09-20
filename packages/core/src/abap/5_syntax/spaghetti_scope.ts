@@ -114,6 +114,18 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return ret;
   }
 
+  public listInterfaceDefinitions(): IInterfaceDefinition[] {
+    let search: SpaghettiScopeNode | undefined = this;
+    const ret: IInterfaceDefinition[] = [];
+
+    while (search !== undefined) {
+      ret.push(...Object.values(search.getData().idefs));
+      search = search.getParent();
+    }
+
+    return ret;
+  }
+
   public findFormDefinition(name: string): IFormDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 

@@ -304,7 +304,8 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof IntegerType) {
-      if (target instanceof StringType) {
+      if (target instanceof StringType
+          || target instanceof PackedType) {
         return false;
       } else if (target instanceof Integer8Type) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
