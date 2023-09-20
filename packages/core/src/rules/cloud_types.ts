@@ -42,7 +42,12 @@ export class CloudTypes implements IRule {
 
   public run(obj: IObject): Issue[] {
     if (this.reg.getConfig().getVersion() !== Version.Cloud
+        || obj instanceof Objects.ApplicationJobCatalogEntry
+        || obj instanceof Objects.ApplicationJobTemplate
         || obj instanceof Objects.AssignmentServiceToAuthorizationGroup
+        || obj instanceof Objects.ATCCheckCategory
+        || obj instanceof Objects.ATCCheckObject
+        || obj instanceof Objects.ATCCheckVariant
         || obj instanceof Objects.AuthorizationCheckField
         || obj instanceof Objects.AuthorizationObject
         || obj instanceof Objects.AuthorizationObjectExtension
@@ -50,11 +55,7 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.BusinessCatalog
         || obj instanceof Objects.BusinessCatalogAppAssignment
         || obj instanceof Objects.CDSMetadataExtension
-        || obj instanceof Objects.RestrictionField
         || obj instanceof Objects.Class
-        || obj instanceof Objects.OutboundService
-        || obj instanceof Objects.ApplicationJobCatalogEntry
-        || obj instanceof Objects.ApplicationJobTemplate
         || obj instanceof Objects.CommunicationScenario
         || obj instanceof Objects.DataControl
         || obj instanceof Objects.DataDefinition
@@ -66,11 +67,11 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.InboundService
         || obj instanceof Objects.Interface
         || obj instanceof Objects.LockObject
-        || obj instanceof Objects.ATCCheckCategory
-        || obj instanceof Objects.ATCCheckObject
-        || obj instanceof Objects.ATCCheckVariant
         || obj instanceof Objects.MessageClass
+        || obj instanceof Objects.NumberRange
+        || obj instanceof Objects.OutboundService
         || obj instanceof Objects.Package
+        || obj instanceof Objects.RestrictionField
         || obj instanceof Objects.RestrictionType
         || obj instanceof Objects.ServiceBinding
         || obj instanceof Objects.ServiceDefinition
