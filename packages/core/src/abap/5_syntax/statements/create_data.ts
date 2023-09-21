@@ -29,8 +29,18 @@ export class CreateData implements StatementSyntax {
     if (type) {
       const found = new BasicTypes(filename, scope).resolveTypeName(type);
       if (found instanceof UnknownType) {
-        const identifier = new TypedIdentifier(type.getFirstToken(), filename, found);
-        scope.addReference(type.getFirstToken(), identifier, ReferenceType.TypeReference, filename);
+        if (node.concatTokens().toUpperCase().includes(" REF TO ")) {
+          const def = scope.findObjectDefinition(type.concatTokens());
+          if (def) {
+            scope.addReference(type.getFirstToken(), def, ReferenceType.TypeReference, filename);
+          } else {
+            const identifier = new TypedIdentifier(type.getFirstToken(), filename, found);
+            scope.addReference(type.getFirstToken(), identifier, ReferenceType.TypeReference, filename);
+          }
+        } else {
+          const identifier = new TypedIdentifier(type.getFirstToken(), filename, found);
+          scope.addReference(type.getFirstToken(), identifier, ReferenceType.TypeReference, filename);
+        }
       }
     }
 

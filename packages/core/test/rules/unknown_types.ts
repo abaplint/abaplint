@@ -2169,4 +2169,25 @@ CREATE DATA foo TYPE zlif.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CREATE DATA, ok, intf", () => {
+    const abap = `
+INTERFACE zlif.
+ENDINTERFACE.
+
+DATA foo TYPE REF TO data.
+CREATE DATA foo TYPE REF TO zlif.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CREATE DATA, err, intf", () => {
+    const abap = `
+DATA foo TYPE REF TO data.
+CREATE DATA foo TYPE REF TO zlif.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+  });
+
 });
