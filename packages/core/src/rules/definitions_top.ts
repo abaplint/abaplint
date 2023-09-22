@@ -32,9 +32,7 @@ export class DefinitionsTop extends ABAPRule {
       key: "definitions_top",
       title: "Place definitions in top of routine",
       shortDescription: `Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.`,
-      extendedInformation: `If the routine has inline definitions then no issues are reported
-
-https://docs.abapopenchecks.org/checks/17/`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `FROM foo.
   WRITE 'hello'.
@@ -145,12 +143,14 @@ ENDFORM.`,
           || get instanceof Statements.FieldSymbol)) {
         if (this.mode === AFTER) {
           // only one fix per routine, as it reorders a lot
-          let fix = undefined;
-          if (this.fixed === false && this.moveTo) {
-            fix = this.buildFix(file, c, this.moveTo);
-            this.fixed = true;
+          if (!(get instanceof Statements.Move && c.concatTokens().toUpperCase().startsWith("DATA("))) {
+            let fix = undefined;
+            if (this.fixed === false && this.moveTo) {
+              fix = this.buildFix(file, c, this.moveTo);
+              this.fixed = true;
+            }
+            return Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
           }
-          return Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         } else {
           this.moveTo = c.getLastToken().getEnd();
         }

@@ -190,6 +190,16 @@ ENDFORM.`,
     cnt: 1,
   },
 
+  {
+    abap: `
+FORM bar.
+  WRITE 'sdf'.
+
+  DATA(sdf) = 2.
+ENDFORM.`,
+    cnt: 0,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);
