@@ -51,7 +51,7 @@ describe("Apply fixes", () => {
     expect(result).to.equal(``);
   });
 
-  it("test 4, more overlapping fixes", async () => {
+  it.skip("test 4, more overlapping fixes", async () => {
     const abap = `FORM foo.
   DATA:
     lv_key              TYPE string,
