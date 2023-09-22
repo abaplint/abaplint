@@ -176,6 +176,30 @@ ENDFORM.`,
     cnt: 0,
   },
 
+  {
+    abap: `
+FORM bar.
+  WRITE 'sdf'.
+
+  DATA lr_request TYPE REF TO object.
+
+  IF lr_request IS NOT INITIAL.
+    DATA(auth) = 2.
+  ENDIF.
+ENDFORM.`,
+    cnt: 1,
+  },
+
+  {
+    abap: `
+FORM bar.
+  WRITE 'sdf'.
+
+  DATA(sdf) = 2.
+ENDFORM.`,
+    cnt: 0,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);

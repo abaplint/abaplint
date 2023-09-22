@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import * as Statements from "../abap/2_statements/statements";
-import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -10,7 +9,6 @@ import {ABAPFile} from "../abap/abap_file";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StructureNode, StatementNode} from "../abap/nodes";
 import {Position} from "../position";
-import {Version} from "../version";
 
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
@@ -34,10 +32,16 @@ export class DefinitionsTop extends ABAPRule {
       key: "definitions_top",
       title: "Place definitions in top of routine",
       shortDescription: `Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.`,
-      extendedInformation: `If the routine has inline definitions then no issues are reported
-
-https://docs.abapopenchecks.org/checks/17/`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
+      badExample: `FROM foo.
+  WRITE 'hello'.
+  DATA int TYPE i.
+ENDFORM.`,
+      goodExample: `FROM foo.
+  DATA int TYPE i.
+  WRITE 'hello'.
+ENDFORM.`,
     };
   }
 
@@ -73,11 +77,6 @@ https://docs.abapopenchecks.org/checks/17/`,
 
       this.mode = DEFINITION;
       this.moveTo = r.getFirstStatement()?.getLastToken().getEnd();
-
-      if (this.reg.getConfig().getVersion() !== Version.v702
-          && r.findFirstExpression(Expressions.InlineData)) {
-        continue;
-      }
 
       const found = this.walk(r, file);
       if (found) {
@@ -139,16 +138,19 @@ https://docs.abapopenchecks.org/checks/17/`,
           && (get instanceof Statements.Data
           || get instanceof Statements.Type
           || get instanceof Statements.Constant
+          || (get instanceof Statements.Move && c.concatTokens().toUpperCase().startsWith("DATA("))
           || get instanceof Statements.Static
           || get instanceof Statements.FieldSymbol)) {
         if (this.mode === AFTER) {
           // only one fix per routine, as it reorders a lot
-          let fix = undefined;
-          if (this.fixed === false && this.moveTo) {
-            fix = this.buildFix(file, c, this.moveTo);
-            this.fixed = true;
+          if (!(get instanceof Statements.Move && c.concatTokens().toUpperCase().startsWith("DATA("))) {
+            let fix = undefined;
+            if (this.fixed === false && this.moveTo) {
+              fix = this.buildFix(file, c, this.moveTo);
+              this.fixed = true;
+            }
+            return Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
           }
-          return Issue.atStatement(file, c, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         } else {
           this.moveTo = c.getLastToken().getEnd();
         }
