@@ -9154,6 +9154,22 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("ok, int from code into packed", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 6 DECIMALS 1.
+    METHODS foo IMPORTING bar TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 22 ) .
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
