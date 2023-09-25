@@ -19,6 +19,7 @@ export class Select {
 
     if (node.findDirectExpression(Expressions.SQLFieldList) === undefined
         && node.findDirectExpression(Expressions.SQLFields) === undefined
+        && node.findDirectExpression(Expressions.SQLFieldListLoop) === undefined
         && node.findDirectExpression(Expressions.SQLFieldName) === undefined) {
       throw new Error(`fields missing`);
     }
