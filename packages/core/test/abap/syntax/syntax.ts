@@ -9170,6 +9170,14 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("error for no field list", () => {
+    const abap = `DATA target TYPE tab.
+SELECT SINGLE FROM tab INTO target.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("fields missing");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

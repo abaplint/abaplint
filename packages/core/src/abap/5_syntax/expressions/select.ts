@@ -17,6 +17,12 @@ export class Select {
     const from = node.findDirectExpression(Expressions.SQLFrom);
     const dbSources = from ? new SQLFrom().runSyntax(from, scope, filename) : [];
 
+    if (node.findDirectExpression(Expressions.SQLFieldList) === undefined
+        && node.findDirectExpression(Expressions.SQLFields) === undefined
+        && node.findDirectExpression(Expressions.SQLFieldName) === undefined) {
+      throw new Error(`fields missing`);
+    }
+
     for (const inline of node.findAllExpressions(Expressions.InlineData)) {
       // todo, for now these are voided
       new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
