@@ -100,14 +100,16 @@ export class Select {
       throw new Error("checkFields, expected structure, " + type.constructor.name);
     }
 
+    const isSimple = /^\w+$/;
     for (const field of fields) {
       if (field.code === "*") {
         continue;
       }
 
-// todo
+      if (isSimple.test(field.code) && type.getComponentByName(field.code) === undefined) {
+        throw new Error(`checkFields, field ${field.code} not found`);
+      }
     }
-
   }
 
   private buildType(_fields: FieldList) {
