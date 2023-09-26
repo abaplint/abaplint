@@ -1,9 +1,12 @@
+/* eslint-disable max-len */
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {LSPUtils} from "./_lsp_utils";
-import {InfoAttribute, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
+import {InfoAttribute} from "../abap/4_file_information/_abap_file_information";
 import {ABAPFile} from "../abap/abap_file";
+import {EndMethod} from "../abap/2_statements/statements";
+import {Position} from "../position";
 
 export class Symbols {
   private readonly reg: IRegistry;
@@ -36,6 +39,18 @@ export class Symbols {
     return LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
   }
 
+  private newSymbolRanged(identifier: Identifier, kind: LServer.SymbolKind, children: LServer.DocumentSymbol[], range: LServer.Range): LServer.DocumentSymbol {
+    const symbol: LServer.DocumentSymbol = {
+      name: identifier.getName(),
+      kind: kind,
+      range: range,
+      selectionRange: this.selectionRange(identifier),
+      children,
+    };
+
+    return symbol;
+  }
+
   private newSymbol(identifier: Identifier, kind: LServer.SymbolKind, children: LServer.DocumentSymbol[]): LServer.DocumentSymbol {
     const symbol: LServer.DocumentSymbol = {
       name: identifier.getName(),
@@ -63,14 +78,13 @@ export class Symbols {
     for (const cla of file.getInfo().listClassDefinitions()) {
       const children: LServer.DocumentSymbol[] = [];
       children.push(...this.outputClassAttributes(cla.attributes));
-      children.push(...this.outputMethodDefinitions(cla.methods));
       const symbol = this.newSymbol(cla.identifier, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }
 
     for (const cla of file.getInfo().listClassImplementations()) {
       const children: LServer.DocumentSymbol[] = [];
-      children.push(...this.outputMethodImplementations(cla.methods));
+      children.push(...this.outputMethodImplementations(cla.methods, file));
       const symbol = this.newSymbol(cla.identifier, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }
@@ -78,12 +92,32 @@ export class Symbols {
     return ret;
   }
 
-  private outputMethodImplementations(methods: readonly Identifier[]): LServer.DocumentSymbol[] {
+  private outputMethodImplementations(methods: readonly Identifier[], file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
+
     for (const method of methods) {
-      const symbol = this.newSymbol(method, LServer.SymbolKind.Method, []);
+      const start = method.getStart();
+      let end: Position | undefined = undefined;
+      for (const s of file.getStatements()) {
+        if (s.getFirstToken().getStart().isBefore(start)) {
+          continue;
+        }
+        if (s.get() instanceof EndMethod) {
+          end = s.getLastToken().getEnd();
+          break;
+        }
+      }
+
+      if (end === undefined) {
+        continue;
+      }
+
+      const range = LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
+
+      const symbol = this.newSymbolRanged(method, LServer.SymbolKind.Method, [], range);
       ret.push(symbol);
     }
+
     return ret;
   }
 
@@ -99,14 +133,6 @@ export class Symbols {
     // todo, also add constants
 
     return ret;
-  }
-
-  private outputMethodDefinitions(methods: readonly InfoMethodDefinition[]): LServer.DocumentSymbol[] {
-    if (methods === undefined) {
-      return [];
-    }
-// todo
-    return [];
   }
 
 }
