@@ -95,10 +95,16 @@ export class UncaughtException extends ABAPRule {
         // note that TRY-CATCH might be arbitrarily nested
         const previous = this.sinked ? this.sinked.slice() : undefined;
         this.addFromTryStructure(n);
-        for (const c of n.getChildren()) {
+        for (const c of n.findDirectStructure(Structures.Body)?.getChildren() || []) {
           this.traverse(c, file);
         }
         this.sinked = previous;
+        for (const c of n.findDirectStructure(Structures.Catch)?.getChildren() || []) {
+          this.traverse(c, file);
+        }
+        for (const c of n.findDirectStructure(Structures.Cleanup)?.getChildren() || []) {
+          this.traverse(c, file);
+        }
         return;
       } else {
         for (const c of n.getChildren()) {

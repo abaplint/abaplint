@@ -9186,6 +9186,24 @@ SELECT SINGLE FROM tab INTO target.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("not compatible, object vs cls", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING obj TYPE REF TO lcl.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA o TYPE REF TO object.
+    o = obj. " this is okay
+    foo( o ). " this should give an error
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

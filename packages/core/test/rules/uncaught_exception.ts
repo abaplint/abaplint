@@ -381,4 +381,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ignore cx_no_check, hierachy", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TRY.
+      CATCH cx_root.
+        RAISE EXCEPTION TYPE cx_salv_error.
+    ENDTRY.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "ytop.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
+  });
+
 });

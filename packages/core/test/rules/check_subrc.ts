@@ -110,6 +110,12 @@ END-TEST-SEAM.
 IF sy-subrc <> 0.
   WRITE 'ERROR'.
 ENDIF.`, cnt: 0},
+
+// this doesnt set subrc, so no issue should be reported
+  {abap: `
+DATA foo TYPE i.
+FIELD-SYMBOLS <bar> TYPE any.
+ASSIGN foo TO <bar>.`, cnt: 0},
 ];
 
 testRule(tests, CheckSubrc);
