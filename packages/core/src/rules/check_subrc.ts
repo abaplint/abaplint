@@ -112,6 +112,7 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.assign === true
           && statement.get() instanceof Statements.Assign
+          && this.isSimpleAssign(statement) === false
           && this.isChecked(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.find === true
@@ -126,6 +127,17 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
   }
 
 ////////////////
+
+  private isSimpleAssign(statement: StatementNode): boolean {
+    if (statement.getChildren().length === 5) {
+      const source = statement.findDirectExpression(Expressions.AssignSource);
+      if (source?.getChildren().length === 1
+          && source.findDirectExpression(Expressions.Source) !== undefined) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   private isExemptedFind(s: StatementNode): boolean {
 // see https://github.com/abaplint/abaplint/issues/2130
