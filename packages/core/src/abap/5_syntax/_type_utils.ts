@@ -316,6 +316,10 @@ export class TypeUtils {
       if (target instanceof IntegerType) {
         return false;
       }
+    } else if (source instanceof GenericObjectReferenceType) {
+      if (target instanceof ObjectReferenceType) {
+        return false;
+      }
     } else if (source instanceof ObjectReferenceType) {
       if (target instanceof XSequenceType
           || target instanceof IntegerType
