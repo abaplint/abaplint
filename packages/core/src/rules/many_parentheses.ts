@@ -89,7 +89,7 @@ ENDIF.
 ////////////////////
 
   private analyzeInto(file: ABAPFile, m: StatementNode): Issue[] {
-    const into = m.findFirstExpression(Expressions.SQLIntoStructure);
+    const into = m.findFirstExpression(Expressions.SQLIntoList);
     if (into === undefined) {
       return [];
     }

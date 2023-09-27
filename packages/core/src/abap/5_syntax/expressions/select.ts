@@ -39,7 +39,15 @@ export class Select {
 
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
     if (intoStructure) {
-      for (const inline of node.findAllExpressions(Expressions.InlineData)) {
+      for (const inline of intoStructure.findAllExpressions(Expressions.InlineData)) {
+        // todo, for now these are voided
+        new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+      }
+    }
+
+    const intoList = node.findDirectExpression(Expressions.SQLIntoList);
+    if (intoList) {
+      for (const inline of intoList.findAllExpressions(Expressions.InlineData)) {
         // todo, for now these are voided
         new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
       }
@@ -58,6 +66,7 @@ export class Select {
     // check implicit into, the target field is implict equal to the table name
     if (skipImplicitInto === false
         && node.findDirectExpression(Expressions.SQLIntoTable) === undefined
+        && node.findDirectExpression(Expressions.SQLIntoList) === undefined
         && node.findDirectExpression(Expressions.SQLIntoStructure) === undefined) {
       const fields = node.findFirstExpression(Expressions.SQLAggregation)?.concatTokens();
       const c = new RegExp(/^count\(\s*\*\s*\)$/, "i");

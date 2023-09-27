@@ -1,5 +1,5 @@
 import {seq, per, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
-import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields} from ".";
+import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields, SQLIntoList} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
@@ -10,7 +10,7 @@ import {SQLUpTo} from "./sql_up_to";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
-    const into = altPrio(SQLIntoTable, SQLIntoStructure);
+    const into = altPrio(SQLIntoTable, SQLIntoStructure, SQLIntoList);
 
     const where = seq("WHERE", SQLCond);
 
@@ -24,7 +24,7 @@ export class Select extends Expression {
                      SQLOrderBy, SQLUpTo, offset, SQLClient, SQLHaving,
                      bypass, SQLGroupBy, fields, DatabaseConnection);
 
-    const permSingle = per(SQLFrom, SQLIntoStructure, where, SQLClient, bypass, fields, DatabaseConnection);
+    const permSingle = per(SQLFrom, altPrio(SQLIntoStructure, SQLIntoList), where, SQLClient, bypass, fields, DatabaseConnection);
 
     const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
 
