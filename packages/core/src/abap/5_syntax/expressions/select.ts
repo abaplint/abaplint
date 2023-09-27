@@ -47,9 +47,16 @@ export class Select {
 
     const intoList = node.findDirectExpression(Expressions.SQLIntoList);
     if (intoList) {
-      for (const inline of intoList.findAllExpressions(Expressions.InlineData)) {
-        // todo, for now these are voided
-        new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+      const targets = intoList.findDirectExpressions(Expressions.SQLTarget);
+      if (targets.length !== fields.length) {
+        throw new Error(`number of fields selected vs list does not match`);
+      }
+      for (const target of targets) {
+        const inline = target.findFirstExpression(Expressions.InlineData);
+        if (inline) {
+          // todo, for now these are voided
+          new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+        }
       }
     }
 
