@@ -29,36 +29,7 @@ export class Select {
 
     this.checkFields(fields, dbSources, scope);
 
-    const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
-    if (intoTable) {
-      const inline = intoTable.findFirstExpression(Expressions.InlineData);
-      if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, this.buildTableType(fields, dbSources, scope));
-      }
-    }
-
-    const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
-    if (intoStructure) {
-      for (const inline of intoStructure.findAllExpressions(Expressions.InlineData)) {
-        // todo, for now these are voided
-        new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
-      }
-    }
-
-    const intoList = node.findDirectExpression(Expressions.SQLIntoList);
-    if (intoList) {
-      const targets = intoList.findDirectExpressions(Expressions.SQLTarget);
-      if (targets.length !== fields.length) {
-        throw new Error(`number of fields selected vs list does not match`);
-      }
-      for (const target of targets) {
-        const inline = target.findFirstExpression(Expressions.InlineData);
-        if (inline) {
-          // todo, for now these are voided
-          new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
-        }
-      }
-    }
+    this.handleInto(node, scope, filename, fields, dbSources);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
@@ -106,6 +77,39 @@ export class Select {
 
     if (scope.getType() === ScopeType.OpenSQL) {
       scope.pop(node.getLastToken().getEnd());
+    }
+  }
+
+  private handleInto(node: ExpressionNode, scope: CurrentScope, filename: string, fields: FieldList, dbSources: DatabaseTableSource[]) {
+    const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
+    if (intoTable) {
+      const inline = intoTable.findFirstExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(inline, scope, filename, this.buildTableType(fields, dbSources, scope));
+      }
+    }
+
+    const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
+    if (intoStructure) {
+      for (const inline of intoStructure.findAllExpressions(Expressions.InlineData)) {
+        // todo, for now these are voided
+        new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+      }
+    }
+
+    const intoList = node.findDirectExpression(Expressions.SQLIntoList);
+    if (intoList) {
+      const targets = intoList.findDirectExpressions(Expressions.SQLTarget);
+      if (targets.length !== fields.length) {
+        throw new Error(`number of fields selected vs list does not match`);
+      }
+      for (const target of targets) {
+        const inline = target.findFirstExpression(Expressions.InlineData);
+        if (inline) {
+          // todo, for now these are voided
+          new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+        }
+      }
     }
   }
 
