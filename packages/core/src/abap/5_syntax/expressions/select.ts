@@ -28,9 +28,20 @@ export class Select {
 
     this.checkFields(fields, dbSources, scope);
 
-    for (const inline of node.findAllExpressions(Expressions.InlineData)) {
-      // todo, for now these are voided
-      new InlineData().runSyntax(inline, scope, filename, this.buildType(fields));
+    const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
+    if (intoTable) {
+      const inline = intoTable.findFirstExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(inline, scope, filename, this.buildType(fields));
+      }
+    }
+
+    const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
+    if (intoStructure) {
+      for (const inline of node.findAllExpressions(Expressions.InlineData)) {
+        // todo, for now these are voided
+        new InlineData().runSyntax(inline, scope, filename, this.buildType(fields));
+      }
     }
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
