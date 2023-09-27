@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {IStructureComponent, StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
@@ -124,13 +124,34 @@ export class Select {
   }
 
   private buildTableType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
-    if (fields.length === 1 && dbSources.length === 1 && fields[0].code === "*") {
-      if (dbSources[0] === undefined) {
-        // then its a voided table
-        return new VoidType("SELECT_todo");
-      }
-      const dbType = dbSources[0].parseType(scope.getRegistry());
+    if (dbSources.length !== 1) {
+      return new VoidType("SELECT_todo");
+    }
+
+    if (dbSources[0] === undefined) {
+      // then its a voided table
+      return new VoidType("SELECT_todo");
+    }
+    const dbType = dbSources[0].parseType(scope.getRegistry());
+    if (!(dbType instanceof StructureType)) {
+      return new VoidType("SELECT_todo");
+    }
+
+    if (fields.length === 1 && fields[0].code === "*") {
       return new TableType(dbType, {withHeader: false, keyType: TableKeyType.default}, undefined);
+    }
+
+    const allFieldsSimple = fields.every(f => isSimple.test(f.code));
+    if (allFieldsSimple === true) {
+      const components: IStructureComponent[] = [];
+      for (const field of fields) {
+        const type = dbType.getComponentByName(field.code);
+        if (type === undefined) {
+          return new VoidType("SELECT_todo");
+        }
+        components.push({name: field.code, type});
+      }
+      return new TableType(new StructureType(components), {withHeader: false, keyType: TableKeyType.default}, undefined);
     }
 
     return new VoidType("SELECT_todo");
