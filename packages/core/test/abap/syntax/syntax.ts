@@ -9204,6 +9204,16 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("ok, SELECT into field list, low syntax dynamic", () => {
+    const abap = `
+    DATA lv_created TYPE sy-uname.
+    DATA lv_changed TYPE sy-uname.
+    SELECT created_by changed_by INTO (lv_created, lv_changed) FROM ('/IWBEP/I_V4_MSRV').
+    ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

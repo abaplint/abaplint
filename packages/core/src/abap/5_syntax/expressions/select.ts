@@ -181,15 +181,12 @@ export class Select {
     let expr: ExpressionNode | undefined = undefined;
     const ret = [];
 
-    expr = node.findDirectExpression(Expressions.SQLFieldList);
+    expr = node.findFirstExpression(Expressions.SQLFieldList);
     if (expr === undefined) {
-      expr = node.findDirectExpression(Expressions.SQLFields);
-    }
-    if (expr === undefined) {
-      node.findDirectExpression(Expressions.SQLFieldName);
+      expr = node.findDirectExpression(Expressions.SQLFieldListLoop);
     }
 
-    for (const field of expr?.findAllExpressions(Expressions.SQLField) || []) {
+    for (const field of expr?.findDirectExpressionsMulti([Expressions.SQLField, Expressions.SQLFieldName]) || []) {
       let code = field.concatTokens().toUpperCase();
       const as = field.findDirectExpression(Expressions.SQLAsName)?.concatTokens() || "";
       if (as !== "") {
