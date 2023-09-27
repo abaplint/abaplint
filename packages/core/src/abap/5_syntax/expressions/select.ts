@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {StructureType, UnknownType, VoidType} from "../../types/basic";
+import {StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
@@ -12,6 +12,7 @@ import {SQLCompare} from "./sql_compare";
 import {DatabaseTableSource} from "./database_table";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
+const isSimple = /^\w+$/;
 
 export class Select {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, skipImplicitInto = false): void {
@@ -32,7 +33,7 @@ export class Select {
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, this.buildType(fields));
+        new InlineData().runSyntax(inline, scope, filename, this.buildTableType(fields, dbSources, scope));
       }
     }
 
@@ -40,7 +41,7 @@ export class Select {
     if (intoStructure) {
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
         // todo, for now these are voided
-        new InlineData().runSyntax(inline, scope, filename, this.buildType(fields));
+        new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
       }
     }
 
@@ -111,7 +112,6 @@ export class Select {
       throw new Error("checkFields, expected structure, " + type.constructor.name);
     }
 
-    const isSimple = /^\w+$/;
     for (const field of fields) {
       if (field.code === "*") {
         continue;
@@ -123,7 +123,16 @@ export class Select {
     }
   }
 
-  private buildType(_fields: FieldList) {
+  private buildTableType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
+    if (fields.length === 1 && dbSources.length === 1 && fields[0].code === "*") {
+      if (dbSources[0] === undefined) {
+        // then its a voided table
+        return new VoidType("SELECT_todo");
+      }
+      const dbType = dbSources[0].parseType(scope.getRegistry());
+      return new TableType(dbType, {withHeader: false, keyType: TableKeyType.default}, undefined);
+    }
+
     return new VoidType("SELECT_todo");
   }
 
