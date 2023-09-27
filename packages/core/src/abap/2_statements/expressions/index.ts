@@ -8,6 +8,7 @@ export * from "./assign_source";
 export * from "./association_name";
 export * from "./attribute_chain";
 export * from "./attribute_name";
+export * from "./behavior_definition_name";
 export * from "./block_name";
 export * from "./call_transformation_options";
 export * from "./call_transformation_parameters";

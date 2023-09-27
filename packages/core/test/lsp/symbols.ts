@@ -60,4 +60,22 @@ describe("LSP, symbols", () => {
     expect(symbols[0].name).to.equal("foobar");
   });
 
+  it("Class Implementation, with method, find end", async () => {
+    const file = new MemoryFile("zfoobar.prog.abap", `
+CLASS lcl_foobar IMPLEMENTATION.
+  METHOD foo.
+    WRITE 'sdf'.
+  ENDMETHOD.
+ENDCLASS.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const symbols = new Symbols(reg).find(file.getFilename());
+    expect(symbols.length).to.equal(1);
+    expect(symbols[0].name).to.equal("lcl_foobar");
+    expect(symbols[0].children).to.not.equal(undefined);
+    expect(symbols[0].children!.length).to.equal(1);
+    expect(symbols[0].children![0].name).to.equal("foo");
+    expect(symbols[0].children![0].range.end.line).to.equal(4);
+  });
+
 });
