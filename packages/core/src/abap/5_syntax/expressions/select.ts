@@ -99,13 +99,17 @@ export class Select {
 
     const intoList = node.findDirectExpression(Expressions.SQLIntoList);
     if (intoList) {
+      const isDynamic = fields.length === 1 && fields[0].expression.findDirectExpression(Expressions.Dynamic) !== undefined;
       const targets = intoList.findDirectExpressions(Expressions.SQLTarget);
-      if (targets.length !== fields.length) {
+      if (targets.length !== fields.length && isDynamic !== true) {
         throw new Error(`number of fields selected vs list does not match`);
       }
       for (const target of targets) {
         const inline = target.findFirstExpression(Expressions.InlineData);
         if (inline) {
+          if (isDynamic) {
+            throw new Error(`dynamic field list, inlining not possible`);
+          }
           // todo, for now these are voided
           new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
         }
