@@ -20,7 +20,7 @@ import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_sc
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {ObjectReferenceType, TableType, VoidType} from "../abap/types/basic";
+import {ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {At, ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
@@ -2671,6 +2671,8 @@ ${indentation}    output = ${uniqueName}.\n`;
       if (found === undefined) {
         continue;
       } else if (found.getType() instanceof VoidType && found.getType().getQualifiedName() === undefined) {
+        continue;
+      } else if (found.getType() instanceof StructureType && found.getType().getQualifiedName() === undefined) {
         continue;
       }
 
