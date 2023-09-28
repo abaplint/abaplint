@@ -5405,4 +5405,145 @@ DATA(lt_attri) = temp1.`;
     testFix(abap, expected);
   });
 
+  it("inlined SELECT typing", async () => {
+    const abap = `
+SELECT field1 INTO TABLE @DATA(lt_tab) FROM ztab.
+READ TABLE lt_tab INTO DATA(ls_tab) WITH KEY field1 = 'ABC'.`;
+
+    const expected = `
+TYPES: BEGIN OF temp1,
+        field1 TYPE ztab-field1,
+      END OF temp1.
+DATA lt_tab TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+SELECT field1 INTO TABLE @lt_tab FROM ztab.
+READ TABLE lt_tab INTO DATA(ls_tab) WITH KEY field1 = 'ABC'.`;
+
+    const ztab = new MemoryFile("ztab.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTAB</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZTAB</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0001</POSITION>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0002</POSITION>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    testFix(abap, expected, [ztab]);
+
+  });
+
+  it("inlined SELECT typing, 2nd step", async () => {
+    const abap = `
+TYPES: BEGIN OF temp1,
+        field1 TYPE ztab-field1,
+      END OF temp1.
+DATA lt_tab TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+SELECT field1 INTO TABLE @lt_tab FROM ztab.
+READ TABLE lt_tab INTO DATA(ls_tab) WITH KEY field1 = 'ABC'.`;
+
+    const expected = `
+TYPES: BEGIN OF temp1,
+        field1 TYPE ztab-field1,
+      END OF temp1.
+DATA lt_tab TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+SELECT field1 INTO TABLE lt_tab FROM ztab.
+DATA ls_tab TYPE temp1.
+READ TABLE lt_tab INTO ls_tab WITH KEY field1 = 'ABC'.`;
+
+    const ztab = new MemoryFile("ztab.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTAB</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZTAB</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0001</POSITION>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0002</POSITION>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    testFix(abap, expected, [ztab], 2);
+
+  });
+
 });
