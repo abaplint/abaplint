@@ -10,6 +10,7 @@ import {ScopeType} from "../_scope_type";
 import {SQLSource} from "./sql_source";
 import {SQLCompare} from "./sql_compare";
 import {DatabaseTableSource} from "./database_table";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -104,14 +105,31 @@ export class Select {
       if (targets.length !== fields.length && isDynamic !== true) {
         throw new Error(`number of fields selected vs list does not match`);
       }
-      for (const target of targets) {
+
+      for (let i = 0; i < targets.length; i++) {
+        const target = targets[i];
+        const field = fields[i];
+
         const inline = target.findFirstExpression(Expressions.InlineData);
         if (inline) {
           if (isDynamic) {
             throw new Error(`dynamic field list, inlining not possible`);
           }
-          // todo, for now these are voided
-          new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+
+          if (isSimple.test(field.code) && dbSources.length === 1 && dbSources[0] !== undefined) {
+            const dbType = dbSources[0].parseType(scope.getRegistry());
+            let type: AbstractType | undefined = new VoidType("SELECT_todo");
+            if (dbType instanceof StructureType) {
+              type = dbType.getComponentByName(field.code);
+              if (type) {
+                throw new Error(`handleInto, internal error, should be checked earlier`);
+              }
+            }
+
+            new InlineData().runSyntax(inline, scope, filename, type);
+          } else {
+            new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+          }
         }
       }
     }
