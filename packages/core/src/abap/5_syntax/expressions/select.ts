@@ -121,7 +121,7 @@ export class Select {
             let type: AbstractType | undefined = new VoidType("SELECT_todo");
             if (dbType instanceof StructureType) {
               type = dbType.getComponentByName(field.code);
-              if (type) {
+              if (type === undefined) {
                 throw new Error(`handleInto, internal error, should be checked earlier`);
               }
             }
