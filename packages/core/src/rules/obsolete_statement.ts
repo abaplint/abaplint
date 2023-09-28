@@ -218,6 +218,7 @@ ENDIF.`,
       if (this.conf.selectWithoutInto
           && (sta instanceof Statements.Select || sta instanceof Statements.SelectLoop)
           && staNode.findFirstExpression(Expressions.SQLIntoStructure) === undefined
+          && staNode.findFirstExpression(Expressions.SQLIntoList) === undefined
           && staNode.findFirstExpression(Expressions.SQLIntoTable) === undefined) {
         const concat = staNode.findFirstExpression(Expressions.SQLFieldList)?.concatTokens().toUpperCase();
         if (concat !== "COUNT(*)" && concat !== "COUNT( * )") {

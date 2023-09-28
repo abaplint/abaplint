@@ -60,6 +60,7 @@ Activates from v750 and up`,
         const where = expr?.findDirectExpression(Expressions.SQLCond);
         const order = expr?.findDirectExpression(Expressions.SQLOrderBy);
         const into = expr?.findDirectExpression(Expressions.SQLIntoStructure)
+          || expr?.findDirectExpression(Expressions.SQLIntoList)
           || expr?.findDirectExpression(Expressions.SQLIntoTable);
         if (into === undefined || where === undefined) {
           continue;

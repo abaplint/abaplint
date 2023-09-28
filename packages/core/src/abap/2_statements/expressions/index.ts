@@ -175,6 +175,7 @@ export * from "./sql_group_by";
 export * from "./sql_having";
 export * from "./sql_hints";
 export * from "./sql_in";
+export * from "./sql_into_list";
 export * from "./sql_into_structure";
 export * from "./sql_into_table";
 export * from "./sql_join";

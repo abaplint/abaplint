@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, seq, alt, optPrio} from "../combi";
-import {SQLSourceSimple, SQLIntoTable} from "../expressions";
+import {SQLSourceSimple, SQLIntoTable, SQLIntoList} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLIntoStructure} from "../expressions/sql_into_structure";
@@ -12,7 +12,7 @@ export class FetchNextCursor implements IStatement {
 
     const ret = seq("FETCH NEXT CURSOR",
                     SQLSourceSimple,
-                    alt(SQLIntoStructure, SQLIntoTable),
+                    alt(SQLIntoStructure, SQLIntoTable, SQLIntoList),
                     optPrio(size));
 
     return verNot(Version.Cloud, ret);

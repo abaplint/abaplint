@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {StructureType, UnknownType, VoidType} from "../../types/basic";
+import {IStructureComponent, StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
@@ -10,8 +10,10 @@ import {ScopeType} from "../_scope_type";
 import {SQLSource} from "./sql_source";
 import {SQLCompare} from "./sql_compare";
 import {DatabaseTableSource} from "./database_table";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
+const isSimple = /^\w+$/;
 
 export class Select {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, skipImplicitInto = false): void {
@@ -28,10 +30,7 @@ export class Select {
 
     this.checkFields(fields, dbSources, scope);
 
-    for (const inline of node.findAllExpressions(Expressions.InlineData)) {
-      // todo, for now these are voided
-      new InlineData().runSyntax(inline, scope, filename, this.buildType(fields));
-    }
+    this.handleInto(node, scope, filename, fields, dbSources);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
@@ -46,6 +45,7 @@ export class Select {
     // check implicit into, the target field is implict equal to the table name
     if (skipImplicitInto === false
         && node.findDirectExpression(Expressions.SQLIntoTable) === undefined
+        && node.findDirectExpression(Expressions.SQLIntoList) === undefined
         && node.findDirectExpression(Expressions.SQLIntoStructure) === undefined) {
       const fields = node.findFirstExpression(Expressions.SQLAggregation)?.concatTokens();
       const c = new RegExp(/^count\(\s*\*\s*\)$/, "i");
@@ -81,6 +81,60 @@ export class Select {
     }
   }
 
+  private handleInto(node: ExpressionNode, scope: CurrentScope, filename: string, fields: FieldList, dbSources: DatabaseTableSource[]) {
+    const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
+    if (intoTable) {
+      const inline = intoTable.findFirstExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(inline, scope, filename, this.buildTableType(fields, dbSources, scope));
+      }
+    }
+
+    const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
+    if (intoStructure) {
+      for (const inline of intoStructure.findAllExpressions(Expressions.InlineData)) {
+        // todo, for now these are voided
+        new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+      }
+    }
+
+    const intoList = node.findDirectExpression(Expressions.SQLIntoList);
+    if (intoList) {
+      const isDynamic = fields.length === 1 && fields[0].expression.findDirectExpression(Expressions.Dynamic) !== undefined;
+      const targets = intoList.findDirectExpressions(Expressions.SQLTarget);
+      if (targets.length !== fields.length && isDynamic !== true) {
+        throw new Error(`number of fields selected vs list does not match`);
+      }
+
+      for (let i = 0; i < targets.length; i++) {
+        const target = targets[i];
+        const field = fields[i];
+
+        const inline = target.findFirstExpression(Expressions.InlineData);
+        if (inline) {
+          if (isDynamic) {
+            throw new Error(`dynamic field list, inlining not possible`);
+          }
+
+          if (isSimple.test(field.code) && dbSources.length === 1 && dbSources[0] !== undefined) {
+            const dbType = dbSources[0].parseType(scope.getRegistry());
+            let type: AbstractType | undefined = new VoidType("SELECT_todo");
+            if (dbType instanceof StructureType) {
+              type = dbType.getComponentByName(field.code);
+              if (type === undefined) {
+                throw new Error(`handleInto, internal error, should be checked earlier`);
+              }
+            }
+
+            new InlineData().runSyntax(inline, scope, filename, type);
+          } else {
+            new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+          }
+        }
+      }
+    }
+  }
+
   private checkFields(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
     if (dbSources.length > 1) {
       return;
@@ -100,7 +154,6 @@ export class Select {
       throw new Error("checkFields, expected structure, " + type.constructor.name);
     }
 
-    const isSimple = /^\w+$/;
     for (const field of fields) {
       if (field.code === "*") {
         continue;
@@ -112,7 +165,37 @@ export class Select {
     }
   }
 
-  private buildType(_fields: FieldList) {
+  private buildTableType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
+    if (dbSources.length !== 1) {
+      return new VoidType("SELECT_todo");
+    }
+
+    if (dbSources[0] === undefined) {
+      // then its a voided table
+      return new VoidType("SELECT_todo");
+    }
+    const dbType = dbSources[0].parseType(scope.getRegistry());
+    if (!(dbType instanceof StructureType)) {
+      return new VoidType("SELECT_todo");
+    }
+
+    if (fields.length === 1 && fields[0].code === "*") {
+      return new TableType(dbType, {withHeader: false, keyType: TableKeyType.default}, undefined);
+    }
+
+    const allFieldsSimple = fields.every(f => isSimple.test(f.code));
+    if (allFieldsSimple === true) {
+      const components: IStructureComponent[] = [];
+      for (const field of fields) {
+        const type = dbType.getComponentByName(field.code);
+        if (type === undefined) {
+          return new VoidType("SELECT_todo");
+        }
+        components.push({name: field.code, type});
+      }
+      return new TableType(new StructureType(components), {withHeader: false, keyType: TableKeyType.default}, undefined);
+    }
+
     return new VoidType("SELECT_todo");
   }
 
@@ -120,15 +203,12 @@ export class Select {
     let expr: ExpressionNode | undefined = undefined;
     const ret = [];
 
-    expr = node.findDirectExpression(Expressions.SQLFieldList);
+    expr = node.findFirstExpression(Expressions.SQLFieldList);
     if (expr === undefined) {
-      expr = node.findDirectExpression(Expressions.SQLFields);
-    }
-    if (expr === undefined) {
-      node.findDirectExpression(Expressions.SQLFieldName);
+      expr = node.findDirectExpression(Expressions.SQLFieldListLoop);
     }
 
-    for (const field of expr?.findAllExpressions(Expressions.SQLField) || []) {
+    for (const field of expr?.findDirectExpressionsMulti([Expressions.SQLField, Expressions.SQLFieldName]) || []) {
       let code = field.concatTokens().toUpperCase();
       const as = field.findDirectExpression(Expressions.SQLAsName)?.concatTokens() || "";
       if (as !== "") {
