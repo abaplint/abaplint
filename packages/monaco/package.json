@@ -1,6 +1,6 @@
 {
   "name": "@abaplint/monaco",
-  "version": "2.102.48",
+  "version": "2.102.49",
   "description": "ABAP language support for Monaco Editor",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
@@ -23,9 +23,9 @@
   "devDependencies": {
     "typescript": "^5.2.2",
     "monaco-editor-core": "^0.43.0",
-    "vscode-languageserver-types": "^3.17.4"
+    "vscode-languageserver-types": "^3.17.5"
   },
   "dependencies": {
-    "@abaplint/core": "^2.102.48"
+    "@abaplint/core": "^2.102.49"
   }
 }
