@@ -7,8 +7,8 @@ import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
 export class MSAGConsistencyConf extends BasicRuleConfig {
-  /** paramters must be numbered, and be sequential */
-  public parameterNumbering = true;
+  /** paramters must be numbered */
+  public numericParamters = true;
 }
 
 export class MSAGConsistency implements IRule {
@@ -74,7 +74,7 @@ export class MSAGConsistency implements IRule {
         numbers.add(num);
       }
 
-      if (this.getConfig().parameterNumbering === true) {
+      if (this.getConfig().numericParamters === true) {
         const placeholderCount = message.getPlaceholderCount();
         if (placeholderCount > 4) {
           const text = `More than 4 placeholders in mesasge ${message.getNumber()}` ;
@@ -90,6 +90,7 @@ export class MSAGConsistency implements IRule {
             const position = new Position(1, 1);
             const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
             issues.push(issue);
+            break;
           }
         }
       }
