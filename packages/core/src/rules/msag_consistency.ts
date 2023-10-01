@@ -7,6 +7,8 @@ import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
 export class MSAGConsistencyConf extends BasicRuleConfig {
+  /** paramters must be numbered, and be sequential */
+  public parameterNumbering = true;
 }
 
 export class MSAGConsistency implements IRule {
@@ -47,13 +49,14 @@ export class MSAGConsistency implements IRule {
     const numbers = new Set<string>();
 
     for (const message of obj.getMessages()) {
-// todo, get the right positions in xml file
+// todo, get the right positions in xml file, and report the issue there
       if (!message.getNumber().match(/\d\d\d/)) {
         const text = this.getDescription("Message number must be 3 digits: message " + message.getNumber());
         const position = new Position(1, 1);
         const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
+
       if (message.getMessage() === "") {
         const text = "Message text empty: message " + message.getNumber();
         const position = new Position(1, 1);
@@ -69,6 +72,19 @@ export class MSAGConsistency implements IRule {
         issues.push(issue);
       } else {
         numbers.add(num);
+      }
+
+      if (this.getConfig().parameterNumbering === true) {
+        const placeholderCount = message.getPlaceholderCount();
+        for (let i = 1; i <= placeholderCount; i++) {
+          const placeholder = "&" + i;
+          if (message.getMessage().includes(placeholder) === false) {
+            const text = `Expected placeholder ${placeholder} in ${message.getNumber()}` ;
+            const position = new Position(1, 1);
+            const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
+            issues.push(issue);
+          }
+        }
       }
     }
 
