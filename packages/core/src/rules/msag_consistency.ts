@@ -76,10 +76,17 @@ export class MSAGConsistency implements IRule {
 
       if (this.getConfig().parameterNumbering === true) {
         const placeholderCount = message.getPlaceholderCount();
+        if (placeholderCount > 4) {
+          const text = `More than 4 placeholders in mesasge ${message.getNumber()}` ;
+          const position = new Position(1, 1);
+          const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+
         for (let i = 1; i <= placeholderCount; i++) {
           const placeholder = "&" + i;
           if (message.getMessage().includes(placeholder) === false) {
-            const text = `Expected placeholder ${placeholder} in ${message.getNumber()}` ;
+            const text = `Expected placeholder ${placeholder} in message ${message.getNumber()}` ;
             const position = new Position(1, 1);
             const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
             issues.push(issue);
