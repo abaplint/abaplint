@@ -5543,7 +5543,6 @@ READ TABLE lt_tab INTO ls_tab WITH KEY field1 = 'ABC'.`;
 </abapGit>`);
 
     testFix(abap, expected, [ztab], 2);
-
   });
 
 });
