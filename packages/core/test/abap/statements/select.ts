@@ -358,6 +358,10 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     WHERE ( ( credat = lv_date AND cretim >= lv_time )
     OR ( credat = lv_date AND cretim =< lv_time ) )
     AND mestyp = 'ASDF'.`,
+
+  `SELECT FROM some_table
+    FIELDS DISTINCT fieldname AS name
+    INTO CORRESPONDING FIELDS OF TABLE @result.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
