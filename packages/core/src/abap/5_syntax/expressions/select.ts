@@ -116,20 +116,25 @@ export class Select {
             throw new Error(`dynamic field list, inlining not possible`);
           }
 
-          if (isSimple.test(field.code) && dbSources.length === 1 && dbSources[0] !== undefined) {
-            const dbType = dbSources[0].parseType(scope.getRegistry());
-            let type: AbstractType | undefined = new VoidType("SELECT_todo");
-            if (dbType instanceof StructureType) {
-              type = dbType.getComponentByName(field.code);
-              if (type === undefined) {
-                throw new Error(`handleInto, internal error, should be checked earlier`);
+          let type: AbstractType = new VoidType("SELECT_todo");
+
+          if (isSimple.test(field.code)) {
+            for (const dbSource of dbSources) {
+              if (dbSource === undefined) {
+                continue;
+              }
+              const dbType = dbSource.parseType(scope.getRegistry());
+              if (dbType instanceof StructureType) {
+                const found = dbType.getComponentByName(field.code);
+                if (found) {
+                  type = found;
+                  break;
+                }
               }
             }
-
-            new InlineData().runSyntax(inline, scope, filename, type);
-          } else {
-            new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
           }
+
+          new InlineData().runSyntax(inline, scope, filename, type);
         }
       }
     }
