@@ -23,6 +23,7 @@ export class Message {
   }
 
   public getPlaceholderCount(): number {
-    return (this.getMessage().match(/&/g) || []).length;
+    const escaped = (this.getMessage().match(/&&/g) || []).length;
+    return (this.getMessage().match(/&/g) || []).length - escaped * 2;
   }
 }
