@@ -5692,11 +5692,17 @@
           },
           "type": "array"
         },
+        "numericParamters": {
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "numericParamters"
+      ],
       "type": "object"
     },
     "MainFileContentsConf": {

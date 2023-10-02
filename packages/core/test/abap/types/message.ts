@@ -18,4 +18,9 @@ describe("Types, Message", () => {
     expect(msg.getPlaceholderCount()).to.equal(0);
   });
 
+  it("Count placeholders, 0 expected, escaped", () => {
+    const msg = new Message("000", "hello && world");
+    expect(msg.getPlaceholderCount()).to.equal(0);
+  });
+
 });
