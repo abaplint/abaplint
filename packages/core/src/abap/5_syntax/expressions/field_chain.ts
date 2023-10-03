@@ -26,8 +26,11 @@ export class FieldChain {
 
     const concat = node.concatTokens();
     if (concat.includes("-")) {
-      // workaround for names with dashes
-      const found = scope.findVariable(concat);
+      // workaround for names with dashes, eg. "sy-repid"
+      // todo: do some fixes here for optimizing performance, in OO, "sy-repid" is the only scenario to be covered?
+      const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
+      const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
+      const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
       if (found) {
         if (refType) {
           scope.addReference(node.getFirstToken(), found, refType, filename);
