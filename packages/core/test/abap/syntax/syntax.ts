@@ -2610,7 +2610,7 @@ DELETE TABLE lt_results FROM 10.`;
     WRITE dummy-name.
     `;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("dashed name, target", () => {
@@ -9235,6 +9235,14 @@ SELECT (lv_columns) FROM (lv_tables)
   WHERE (lv_where) ORDER BY (lv_order).
 
 ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok, sy-repid with offset", () => {
+    const abap = `
+    IF sy-repid+0(1) = 'A'.
+    ENDIF.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
