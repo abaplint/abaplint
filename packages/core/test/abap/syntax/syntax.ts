@@ -2610,7 +2610,7 @@ DELETE TABLE lt_results FROM 10.`;
     WRITE dummy-name.
     `;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("dashed name, target", () => {
