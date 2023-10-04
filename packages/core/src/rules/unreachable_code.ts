@@ -91,6 +91,7 @@ export class UnreachableCode extends ABAPRule {
         || s instanceof Statements.EndMethod
         || s instanceof Statements.EndModule
         || s instanceof Statements.EndForm
+        || s instanceof Statements.EndTestSeam
         || s instanceof Statements.EndAt
         || s instanceof Statements.EndSelect
         || s instanceof Statements.AtSelectionScreen
