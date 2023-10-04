@@ -46,6 +46,12 @@ WHEN OTHERS.
   zcx_abapgit_exception=>raise( 'Error from COMPLEX_SELECTIONS_DIALOG' ).
 ENDCASE.`, cnt: 0},
 
+  {abap: `IF foo( ).
+  TEST-SEAM bar.
+    RETURN.
+  END-TEST-SEAM.
+ENDIF.`, cnt: 0},
+
 ];
 
 testRule(tests, UnreachableCode);

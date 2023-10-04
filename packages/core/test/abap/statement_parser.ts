@@ -112,4 +112,20 @@ describe("statement parser", () => {
     expect(statements[1].getPragmas().length).to.equal(1);
   });
 
+  it("bad string template", () => {
+    const abap = "WRITE |}|.";
+
+    const statements = getStatements(abap);
+    expect(statements.length).to.equal(1);
+    expect(statements[0].get()).to.be.instanceof(Unknown);
+  });
+
+  it("ok string template", () => {
+    const abap = "WRITE |sd\\{f\\}|.";
+
+    const statements = getStatements(abap);
+    expect(statements.length).to.equal(1);
+    expect(statements[0].get()).to.be.instanceof(Write);
+  });
+
 });

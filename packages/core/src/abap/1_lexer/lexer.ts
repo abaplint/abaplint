@@ -142,7 +142,6 @@ export class Lexer {
 
   private add() {
     const s = this.buffer.get().trim();
-
     if (s.length > 0) {
       const col = this.stream.getCol();
       const row = this.stream.getRow();
@@ -391,6 +390,10 @@ export class Lexer {
 // end of template
         this.add();
         this.m = this.ModeNormal;
+      } else if (this.m === this.ModeTemplate
+          && ahead === "}"
+          && current !== "\\") {
+        this.add();
       } else if (this.m === this.ModeStr
           && current === "'"
           && buf.length > 1
