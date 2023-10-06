@@ -9247,6 +9247,78 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("not compatible, xstring into string", () => {
+    const abap = `CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS foo
+        IMPORTING
+          bar TYPE string.
+  ENDCLASS.
+  CLASS lcl IMPLEMENTATION.
+    METHOD foo.
+      DATA xstr TYPE xstring.
+      foo( xstr ).
+    ENDMETHOD.
+  ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
+  it("error, static call of instance method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>foo( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(" not static");
+  });
+
+  it("error, component name is a ref to object", () => {
+    const abap = `FIELD-SYMBOLS <lg_any> TYPE any.
+DATA compo TYPE REF TO object.
+ASSIGN COMPONENT compo OF STRUCTURE <lg_any> TO <lg_any>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("component name must be charlike");
+  });
+
+  it("ok, assign component", () => {
+    const abap = `FIELD-SYMBOLS <lg_any> TYPE any.
+ASSIGN COMPONENT 2 OF STRUCTURE <lg_any> TO <lg_any>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("error, not charlike1", () => {
+    const abap = `DATA: BEGIN OF foo,
+    int TYPE i,
+  END OF foo.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Not character like");
+  });
+
+  it("error, not charlike2", () => {
+    const abap = `DATA: BEGIN OF foo,
+    int TYPE c LENGTH 10,
+  END OF foo.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Not character like");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -1,5 +1,5 @@
 import {ExpressionNode} from "../../nodes";
-import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, StructureType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {CurrentScope} from "../_current_scope";
@@ -16,7 +16,8 @@ export class StringTemplate {
       const type = new Source().runSyntax(s, scope, filename, ret);
       if (type === undefined) {
         throw new Error("No target type determined");
-      } else if (typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false) {
+      } else if ((typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false)
+          || type instanceof StructureType) {
         throw new Error("Not character like, " + type.constructor.name);
       }
 

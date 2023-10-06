@@ -329,6 +329,7 @@ export class TypeUtils {
     } else if (source instanceof XStringType) {
       if (target instanceof CLikeType
           || target instanceof IntegerType
+          || target instanceof StringType
           || target instanceof ObjectReferenceType
           || target instanceof HexType) {
         return false;
