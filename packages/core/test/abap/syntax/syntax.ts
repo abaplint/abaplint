@@ -9282,13 +9282,21 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain(" not static");
   });
 
-  it.skip("error, component name is a ref to object", () => {
+  it("error, component name is a ref to object", () => {
     const abap = `FIELD-SYMBOLS <lg_any> TYPE any.
 DATA compo TYPE REF TO object.
 ASSIGN COMPONENT compo OF STRUCTURE <lg_any> TO <lg_any>.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain(" not compatible");
+    expect(issues[0].getMessage()).to.contain("component name must be charlike");
+  });
+
+  it("ok, assign component", () => {
+    const abap = `FIELD-SYMBOLS <lg_any> TYPE any.
+ASSIGN COMPONENT 2 OF STRUCTURE <lg_any> TO <lg_any>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
 // todo, static method cannot access instance attributes
