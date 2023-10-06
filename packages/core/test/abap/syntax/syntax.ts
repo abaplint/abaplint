@@ -9282,6 +9282,15 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain(" not static");
   });
 
+  it.skip("error, component name is a ref to object", () => {
+    const abap = `FIELD-SYMBOLS <lg_any> TYPE any.
+DATA compo TYPE REF TO object.
+ASSIGN COMPONENT compo OF STRUCTURE <lg_any> TO <lg_any>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(" not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

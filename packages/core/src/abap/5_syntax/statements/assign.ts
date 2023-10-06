@@ -30,10 +30,10 @@ export class Assign implements StatementSyntax {
     }
 
 
-    if (sourceType === undefined || node.findDirectExpression(Expressions.AssignSource)?.findDirectExpression(Expressions.Dynamic)) {
+    if (sourceType === undefined || assignSource?.findDirectExpression(Expressions.Dynamic)) {
       sourceType = new AnyType();
     }
-    for (const d of node.findDirectExpression(Expressions.AssignSource)?.findAllExpressions(Expressions.Dynamic) || []) {
+    for (const d of assignSource?.findAllExpressions(Expressions.Dynamic) || []) {
       new Dynamic().runSyntax(d, scope, filename);
     }
 
