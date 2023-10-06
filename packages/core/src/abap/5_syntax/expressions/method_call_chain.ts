@@ -35,6 +35,7 @@ export class MethodCallChain {
       children.unshift(first);
     }
 
+    let previous = "";
     while (children.length > 0) {
       const current = children.shift();
       if (current === undefined) {
@@ -55,6 +56,9 @@ export class MethodCallChain {
             scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename);
           }
         } else {
+          if (previous === "=>" && method?.isStatic() === false) {
+            throw new Error("Method \"" + methodName + "\" not static");
+          }
           const extra: IReferenceExtras = {
             ooName: foundDef?.getName(),
             ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
@@ -88,6 +92,8 @@ export class MethodCallChain {
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
         context = new AttributeName().runSyntax(context, current, scope, filename);
       }
+
+      previous = current.concatTokens();
     }
 
     return context;
