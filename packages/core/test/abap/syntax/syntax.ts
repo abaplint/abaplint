@@ -9299,6 +9299,26 @@ ASSIGN COMPONENT 2 OF STRUCTURE <lg_any> TO <lg_any>.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("error, not charlike1", () => {
+    const abap = `DATA: BEGIN OF foo,
+    int TYPE i,
+  END OF foo.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Not character like");
+  });
+
+  it("error, not charlike2", () => {
+    const abap = `DATA: BEGIN OF foo,
+    int TYPE c LENGTH 10,
+  END OF foo.
+WRITE |{ foo }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Not character like");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
