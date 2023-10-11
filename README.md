@@ -11,6 +11,14 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 [Online playground](https://playground.abaplint.org)
 
+## Support
+
+Support the project by finding bugs, fixing code, or [sponsoring](https://github.com/sponsors/larshp).
+
+[abaplint.app](https://github.com/marketplace/abaplint) is available via GitHub marketplace for single click installation and setup.
+
+For commercial support agreements please contact@heliconialabs.com
+
 ## Documentation
 
 [Getting started (local installation)](docs/getting_started.md)
@@ -18,8 +26,6 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 [Configuration and rule documentation](https://rules.abaplint.org)
 
 [Continuous Integration setup](docs/ci/README.md)
-
-[SAP Code Inspector/ATC setup](https://github.com/abaplint/abaplint-sci-server)
 
 [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint)
 
