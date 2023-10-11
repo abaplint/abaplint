@@ -4,3 +4,5 @@ export * from "./standard";
 export * from "./total";
 export * from "./codeframe";
 export * from "./checkstyle";
+export * from "./sonarqube";
+export * from "./codeclimate";
