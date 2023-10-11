@@ -15,6 +15,10 @@ export class Formatter {
         return new Formatters.CodeFrame().output(issues, fileCount);
       case "checkstyle":
         return new Formatters.Checkstyle().output(issues, fileCount);
+      case "sonarqube":
+        return new Formatters.Sonarqube().output(issues, fileCount);
+      case "codeclimate":
+        return new Formatters.CodeClimate().output(issues, fileCount);
       default:
         return new Formatters.Standard().output(issues, fileCount);
     }
