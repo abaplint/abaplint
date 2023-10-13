@@ -18,13 +18,16 @@ jobs:
       run: npm run web.rules
     - name: prepare schema.abaplint.org
       run: |
+        ./packages/cli/abaplint -d > default.json
         cd ..
         cd ..
         git clone https://github.com/abaplint/schema.abaplint.org.git
         ls
         cp abaplint/abaplint/packages/core/scripts/schema.json schema.abaplint.org/schema.json
+        cp abaplint/abaplint/default.json schema.abaplint.org/default.json
         PACKAGE_VERSION=$(node -p -e "require('./abaplint/abaplint/packages/core/package.json').version")
-        cp -n abaplint/abaplint/packages/core/scripts/schema.json schema.abaplint.org/schema-${PACKAGE_VERSION}.json
+        cp -n schema.abaplint.org/schema.json schema.abaplint.org/schema-${PACKAGE_VERSION}.json
+        cp -n schema.abaplint.org/default.json schema.abaplint.org/default-${PACKAGE_VERSION}.json
     - name: deploy schema.abaplint.org
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'
