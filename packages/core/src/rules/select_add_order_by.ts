@@ -14,6 +14,7 @@ import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 
 
 export class SelectAddOrderByConf extends BasicRuleConfig {
+  public skipForAllEntries: boolean = false;
 }
 
 export class SelectAddOrderBy implements IRule {
@@ -65,8 +66,10 @@ If the target is a sorted/hashed table, no issue is reported`,
       const selects = stru.findAllStatements(Statements.Select);
       selects.push(...stru.findAllStatements(Statements.SelectLoop));
       for (const s of selects) {
-        const c = s.concatTokens().toUpperCase();
-        if (c.startsWith("SELECT SINGLE ")) {
+        const concat = s.concatTokens().toUpperCase();
+        if (concat.startsWith("SELECT SINGLE ")) {
+          continue;
+        } else if (this.getConfig()?.skipForAllEntries === true && concat.includes(" FOR ALL ENTRIES ")) {
           continue;
         }
 

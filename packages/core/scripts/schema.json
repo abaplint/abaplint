@@ -7026,8 +7026,14 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "skipForAllEntries": {
+          "type": "boolean"
         }
       },
+      "required": [
+        "skipForAllEntries"
+      ],
       "type": "object"
     },
     "SelectPerformanceConf": {
