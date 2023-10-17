@@ -11,6 +11,7 @@ import {SQLSource} from "./sql_source";
 import {SQLCompare} from "./sql_compare";
 import {DatabaseTableSource} from "./database_table";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {SQLOrderBy} from "./sql_order_by";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -74,6 +75,10 @@ export class Select {
 
     for (const s of node.findAllExpressions(Expressions.SQLCompare)) {
       new SQLCompare().runSyntax(s, scope, filename, dbSources);
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.SQLOrderBy)) {
+      new SQLOrderBy().runSyntax(s, scope, filename);
     }
 
     if (scope.getType() === ScopeType.OpenSQL) {

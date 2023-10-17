@@ -9319,6 +9319,15 @@ WRITE |{ foo }|.`;
     expect(issues[0].getMessage()).to.contain("Not character like");
   });
 
+  it("error, constructor method in interface", () => {
+    const abap = `INTERFACE lif.
+  METHODS constructor.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Interfaces cannot have constructor methods");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

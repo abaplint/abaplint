@@ -1379,4 +1379,13 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("select, order by dynamic", async () => {
+    const abap = `
+DATA(lv_order) = ''.
+SELECT * FROM t100 INTO TABLE @DATA(lt_tab) ORDER BY (lv_order).
+CLEAR lt_tab.`;
+    const issues = await runSingle(abap, {skipAbstract: true});
+    expect(issues.length).to.equal(0);
+  });
+
 });

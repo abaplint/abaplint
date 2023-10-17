@@ -102,6 +102,9 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     }
 
     this.methodDefinitions = new MethodDefinitions(this.node, this.filename, scope);
+    if (this.methodDefinitions.getByName("CONSTRUCTOR") !== undefined) {
+      throw new Error("Interfaces cannot have constructor methods");
+    }
 
     const events = this.node.findAllStatements(Statements.Events);
     for (const e of events) {
