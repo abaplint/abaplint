@@ -8,6 +8,7 @@ import {RenameGlobalInterface} from "./rename_global_interface";
 import {RenameTable} from "./rename_table";
 import {RenameTableType} from "./rename_table_type";
 import {ObjectRenamer} from "./_object_renamer";
+import {RenameMessageClass} from "./rename_message_class";
 
 export interface IRenameResult {
   deletedFiles: Set<string>;
@@ -71,6 +72,8 @@ export class Renamer {
         return new RenameTableType(this.reg);
       case "INTF":
         return new RenameGlobalInterface(this.reg);
+      case "MSAG":
+        return new RenameMessageClass(this.reg);
       default:
         throw new Error("Renaming of " + type + " not yet supported");
     }
