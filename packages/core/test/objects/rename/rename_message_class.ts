@@ -38,4 +38,20 @@ describe("Rename MSAG", () => {
     }
   });
 
+  it("MSAG, with some abap", () => {
+    const abap = `MESSAGE e000(zag_unit_test).`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zag_unit_test.msag.xml", xml),
+      new MemoryFile("zreport.prog.abap", abap),
+    ]).parse();
+
+    reg.findIssues(); // hmm, this builds the references
+
+    new Renamer(reg).rename("MSAG", "zag_unit_test", "foo");
+
+    const prog = reg.getObject("PROG", "ZREPORT");
+    const file = prog?.getFiles()[0];
+    expect(file?.getRaw()).to.equal(`MESSAGE e000(foo).`);
+  });
+
 });
