@@ -3,7 +3,9 @@ import {Position} from "../../../position";
 export abstract class Token {
   private readonly start: Position;
   private readonly str: string;
-
+  public [Symbol.for("debug.description")](){
+    return `${this.constructor.name} ${this.str}`;
+  }
   public constructor(start: Position, str: string) {
     this.start = start;
     this.str = str;
