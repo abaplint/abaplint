@@ -59,6 +59,7 @@ export class ImplementMethods extends ABAPRule {
 
       ret = ret.concat(this.checkClass(classDefinition, classImplementation));
       ret = ret.concat(this.checkInterfaces(classDefinition, classImplementation));
+      ret = ret.concat(this.checkMissingAliases(classDefinition, classImplementation));
     }
 
     return ret;
@@ -199,6 +200,35 @@ export class ImplementMethods extends ABAPRule {
     }
 
     return undefined;
+  }
+  private checkMissingAliases(def: InfoClassDefinition, impl: InfoClassImplementation | undefined): Issue[] {
+    const ret: Issue[] = [];
+    const imethods = def.interfaces.flatMap(i=>{
+      const idef = this.findInterface(def.identifier, i.name);
+      if(!idef || idef instanceof Issue){ return [];}
+      return this.findInterfaceMethods(idef);
+    });
+    for (const alias of def.aliases) {
+      const inInterface = imethods.find( m =>
+        alias.component.toUpperCase() === m.method.name.toUpperCase()
+          || alias.component.toUpperCase() === m.method.name.toUpperCase() );
+      if(inInterface){continue;}// already processed elsewhere
+      const implemented = impl?.methods.find(m=>m.getName().toUpperCase() === alias.component.toUpperCase()
+        || m.getName().toUpperCase() === alias.name.toUpperCase());
+      if(!implemented){
+        const message = "Implement method \"" + alias.name + "\" from interface \"" + alias.component.replace(/~.*/, "") + "\"";
+        if (impl) {
+          const fix = this.buildFix(impl, alias.component);
+          const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity, fix);
+          ret.push(issue);
+        } else {
+          const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
+          ret.push(issue);
+        }
+
+      }
+    }
+    return ret;
   }
 
   private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation | undefined): Issue[] {

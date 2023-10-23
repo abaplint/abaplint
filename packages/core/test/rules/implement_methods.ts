@@ -523,4 +523,19 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("works with missing aliases", async () => {
+    const issues = await runMulti([
+      {
+        filename: "cl_foo.clas.abap",
+        contents: `CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      ALIASES blah FOR zlif~blah.
+  ENDCLASS.
+  
+  CLASS lcl IMPLEMENTATION.
+  ENDCLASS.`,
+      },
+    ]);
+    expect(issues.length).to.equals(1);
+  });
 });
