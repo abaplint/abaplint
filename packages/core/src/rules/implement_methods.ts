@@ -5,7 +5,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {Class, Interface, Program} from "../objects";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
-import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
+import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoMethodDefinition, InfoImplementing} from "../abap/4_file_information/_abap_file_information";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
@@ -201,21 +201,32 @@ export class ImplementMethods extends ABAPRule {
 
     return undefined;
   }
+
+  private findInterfaceSymbolNames(def: InfoClassDefinition): string[]{
+    const findInterface = (i: InfoImplementing)=> {
+      const idef = this.findInterfaceByName(i.name);
+      return idef ? [idef] : [];
+    };
+    const interfaceNames = (idef: InfoInterfaceDefinition): string[] => {
+      const methods = idef.methods.map(m=>m.name);
+      const datas = idef.attributes.map(a=>a.name);
+      const constants = idef.constants.map(c=>c.name);
+      const aliases = idef.aliases.map(a => a.name);
+      const children = idef.interfaces.flatMap(findInterface).flatMap(interfaceNames);
+      return [...methods, ...datas, ...constants, ...aliases, ...children];
+    };
+    return def.interfaces.flatMap(findInterface).flatMap(interfaceNames);
+  }
+
   private checkMissingAliases(def: InfoClassDefinition, impl: InfoClassImplementation | undefined): Issue[] {
     const ret: Issue[] = [];
-    const imethods = def.interfaces.flatMap(i=>{
-      const idef = this.findInterface(def.identifier, i.name);
-      if(!idef || idef instanceof Issue){ return [];}
-      return this.findInterfaceMethods(idef);
-    });
-    for (const alias of def.aliases) {
-      const inInterface = imethods.find( m =>
-        alias.component.toUpperCase() === m.method.name.toUpperCase()
-          || alias.component.toUpperCase() === m.method.name.toUpperCase() );
-      if(inInterface){continue;}// already processed elsewhere
-      const implemented = impl?.methods.find(m=>m.getName().toUpperCase() === alias.component.toUpperCase()
-        || m.getName().toUpperCase() === alias.name.toUpperCase());
-      if(!implemented){
+    if(!def.aliases.length){ return ret;}
+    const known = new Set( this.findInterfaceSymbolNames(def).map(n=>n.toUpperCase()));
+    const notknown = def.aliases.filter(a => !known.has(a.component.replace(/.*~/, "").toUpperCase()));// already processed elsewhere
+    if(!notknown.length){ return ret;}
+    const methodnames = new Set(impl?.methods.map(m=>m.getName().toUpperCase()));
+    for (const alias of notknown) {
+      if(!methodnames.has(alias.component.toUpperCase()) && !methodnames.has(alias.name.toUpperCase())){
         const message = "Implement method \"" + alias.name + "\" from interface \"" + alias.component.replace(/~.*/, "") + "\"";
         if (impl) {
           const fix = this.buildFix(impl, alias.component);
