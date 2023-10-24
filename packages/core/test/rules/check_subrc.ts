@@ -24,6 +24,16 @@ SELECT SINGLE parentcl FROM tdevc INTO rv_parentcl
 WHERE devclass = mv_package.        "#EC CI_GENBUFF
 IF sy-subrc <> 0.
 ENDIF.`, cnt: 0},
+  {abap: `
+  SELECT COUNT( * ) FROM foobar
+  WHERE direction = @iv_direction
+  AND created_on = @iv_created_on
+  INTO @rv_count.`, cnt: 0},
+  {abap: `
+  SELECT COUNT(*) FROM foobar
+  WHERE direction = @iv_direction
+  AND created_on = @iv_created_on
+  INTO @rv_count.`, cnt: 0},
 
   {abap: `
 IF foo = bar.

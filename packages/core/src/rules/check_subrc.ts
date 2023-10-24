@@ -33,7 +33,7 @@ export class CheckSubrc extends ABAPRule {
 
 If sy-dbcnt is checked after database statements, it is considered okay.
 
-"SELECT SINGLE @abap_true FROM " is considered as an existence check
+"SELECT SINGLE @abap_true FROM " is considered as an existence check, also "SELECT COUNT( * )" is considered okay
 
 If IS ASSIGNED is checked after assigning, it is considered okay.
 
@@ -88,6 +88,8 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
       } else if (config.selectTable === true
           && statement.get() instanceof Statements.Select
           && statement.concatTokens().toUpperCase().startsWith("SELECT SINGLE ") === false
+          && statement.concatTokens().toUpperCase().startsWith("SELECT COUNT( * ) ") === false
+          && statement.concatTokens().toUpperCase().startsWith("SELECT COUNT(*) ") === false
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
