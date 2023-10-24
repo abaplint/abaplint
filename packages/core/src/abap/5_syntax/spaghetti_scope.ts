@@ -33,7 +33,9 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
   private readonly identifier: IScopeIdentifier;
   private readonly children: SpaghettiScopeNode[];
   private readonly parent: SpaghettiScopeNode | undefined;
-
+  public [Symbol.for("debug.description")](){
+    return `SpaghettiSN ${this.identifier.sname} ${this.identifier.stype}`;
+  }
   public constructor(identifier: IScopeIdentifier, parent: SpaghettiScopeNode | undefined) {
     super();
     this.identifier = identifier;
