@@ -13,7 +13,9 @@ export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
   protected texts: ITextElements | undefined;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
-
+  public [Symbol.for("debug.description")](){
+    return `${this.constructor.name} ${this.getName()}`;
+  }
   public abstract getSequencedFiles(): readonly ABAPFile[];
   public abstract getDescription(): string | undefined;
 
