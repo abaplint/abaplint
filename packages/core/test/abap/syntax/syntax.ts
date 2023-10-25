@@ -9265,6 +9265,27 @@ ENDSELECT.`;
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("structure into basic, not compatible", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS moo IMPORTING int TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA: BEGIN OF dat,
+          foo TYPE i,
+        END OF dat.
+  lcl=>moo( dat ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
   it("error, static call of instance method", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
