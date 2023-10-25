@@ -648,6 +648,7 @@ Make sure to test the downported code, it might not always be completely correct
 
     const candidates = [high.findAllExpressionsRecursive(Expressions.SQLTarget),
       high.findAllExpressionsRecursive(Expressions.SQLSource),
+      high.findAllExpressionsRecursive(Expressions.SQLSourceNoSpace),
       high.findAllExpressionsRecursive(Expressions.SQLSourceSimple)].flat();
     for (const c of candidates.reverse()) {
       if (c.getFirstToken() instanceof WAt

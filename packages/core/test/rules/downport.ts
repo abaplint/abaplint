@@ -5545,4 +5545,16 @@ READ TABLE lt_tab INTO ls_tab WITH KEY field1 = 'ABC'.`;
     testFix(abap, expected, [ztab], 2);
   });
 
+  it("SELECT with IN", async () => {
+    const abap = `
+CONSTANTS lc TYPE c LENGTH 1 VALUE '1'.
+DATA sdf TYPE voided.
+SELECT * FROM void INTO TABLE @sdf WHERE field IN (@lc).`;
+    const expected = `
+CONSTANTS lc TYPE c LENGTH 1 VALUE '1'.
+DATA sdf TYPE voided.
+SELECT * FROM void INTO TABLE sdf WHERE field IN (lc).`;
+    testFix(abap, expected);
+  });
+
 });
