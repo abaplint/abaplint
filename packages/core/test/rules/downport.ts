@@ -5545,7 +5545,7 @@ READ TABLE lt_tab INTO ls_tab WITH KEY field1 = 'ABC'.`;
     testFix(abap, expected, [ztab], 2);
   });
 
-  it.skip("SELECT with IN", async () => {
+  it("SELECT with IN", async () => {
     const abap = `
 CONSTANTS lc TYPE c LENGTH 1 VALUE '1'.
 DATA sdf TYPE voided.
