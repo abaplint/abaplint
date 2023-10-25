@@ -569,7 +569,7 @@ export class BuiltIn {
     {
       name: "LINE_INDEX",
       mandatory: {
-        "val": CLikeType.get(),
+        "val": new AnyType(),
       },
       return: IntegerType.get(),
       version: Version.v740sp02,
