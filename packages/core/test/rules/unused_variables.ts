@@ -1388,4 +1388,13 @@ CLEAR lt_tab.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("select, in", async () => {
+    const abap = `
+CONSTANTS lc TYPE c LENGTH 1 VALUE '1'.
+SELECT * FROM void INTO TABLE @DATA(sdf) WHERE field IN (@lc).
+CLEAR sdf.`;
+    const issues = await runSingle(abap, {skipAbstract: true});
+    expect(issues.length).to.equal(0);
+  });
+
 });
