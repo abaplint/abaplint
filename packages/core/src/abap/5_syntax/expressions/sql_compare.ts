@@ -5,6 +5,7 @@ import {CharacterType, IntegerType, NumericType, StructureType} from "../../type
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
 import {DatabaseTableSource} from "./database_table";
+import {Source} from "./source";
 import {SQLSource} from "./sql_source";
 
 export class SQLCompare {
@@ -13,6 +14,11 @@ export class SQLCompare {
 
     let sourceType: AbstractType | undefined;
     let token: Token | undefined;
+
+    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
     for (const s of node.findAllExpressions(Expressions.SQLSource)) {
       for (const child of s.getChildren()) {
         if (child instanceof ExpressionNode) {
