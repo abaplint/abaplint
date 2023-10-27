@@ -96,4 +96,34 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("intf, two implementations", async () => {
+    const abap = `
+INTERFACE lif.
+  METHODS moo IMPORTING VALUE(val) TYPE i.
+ENDINTERFACE.
+
+CLASS lcl1 DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+
+CLASS lcl1 IMPLEMENTATION.
+  METHOD lif~moo.
+    CLEAR val.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl2 DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+
+CLASS lcl2 IMPLEMENTATION.
+  METHOD lif~moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap, "zslowpass.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });
