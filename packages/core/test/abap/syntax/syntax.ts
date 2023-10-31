@@ -8078,7 +8078,7 @@ START-OF-SELECTION.
   CREATE OBJECT lo_heap.
   WRITE |<sdf{ lo_heap->add( ) }>|.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("Not character like");
+    expect(issues[0]?.getMessage()).to.contain("not character like");
   });
 
   it("write hex via string template", () => {
@@ -9327,7 +9327,7 @@ ASSIGN COMPONENT 2 OF STRUCTURE <lg_any> TO <lg_any>.`;
 WRITE |{ foo }|.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("Not character like");
+    expect(issues[0].getMessage()).to.contain("not character like");
   });
 
   it("error, not charlike2", () => {
@@ -9337,7 +9337,7 @@ WRITE |{ foo }|.`;
 WRITE |{ foo }|.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("Not character like");
+    expect(issues[0].getMessage()).to.contain("not character like");
   });
 
   it("error, constructor method in interface", () => {
@@ -9406,7 +9406,7 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
-  it.only("ok, REDUCE, INIT 2nd", () => {
+  it("ok, REDUCE, INIT 2nd", () => {
     const abap = `
 TYPES string_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA(split) = REDUCE string_table( LET split_input = |sdf|
