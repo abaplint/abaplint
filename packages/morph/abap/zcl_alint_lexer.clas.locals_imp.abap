@@ -649,10 +649,16 @@ CLASS AbstractFile IMPLEMENTATION.
 
   METHOD basename.
     DATA(name) = me->getfilename( ).
-    name = name->substring( name->lastIndexOf( |\\| ) + 1 OR
-0 ).
-    return = name->substring( name->lastIndexOf( |/| ) + 1 OR
-0 ).
+    DATA(index) = find( val = name sub = |\\| occ = -1 ).
+    IF index IS NOT INITIAL.
+      index = index + 1.
+    ENDIF.
+    name = substring( val = name off = index ).
+    index = find( val = name sub = |/| occ = -1 ).
+    IF index IS NOT INITIAL.
+      index = index + 1.
+    ENDIF.
+    return = substring( val = name off = index ).
     
   ENDMETHOD.
 

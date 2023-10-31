@@ -541,12 +541,13 @@ DATA(index) = find( val = foobar sub = |a| occ = -1 ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
-  it.only("substring", async () => {
+  it("substring", async () => {
     const ts = `
 const foobar = "sdsdff";
 const res = foobar.substring(1);`;
     const abap = `
-sdf`;
+DATA(foobar) = |sdsdff|.
+DATA(res) = substring( val = foobar off = 1 ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

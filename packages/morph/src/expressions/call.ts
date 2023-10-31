@@ -58,6 +58,11 @@ export class MorphCall {
       parameterNames.push("off");
       parameterNames.push("len");
       post = " )";
+    } else if (name === "substring" && signature === "(start: number, end?: number) => string") {
+      ret = "substring( val = " + ret.replace("->substring", "");
+      parameterNames.push("off");
+      parameterNames.push("len");
+      post = " )";
     } else if (expr.constructor.name === "SuperExpression" && expr.getText() === "super") {
       parameterNames = expr.getType().getConstructSignatures()[0].getParameters().map(p => p.getEscapedName());
       ret += "->constructor(";
