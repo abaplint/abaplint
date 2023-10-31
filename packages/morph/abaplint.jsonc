@@ -26,6 +26,8 @@
     "keyword_case": true,
     "in_statement_indentation": true,
     "check_ddic": true,
+    "definitions_top": true,
+    "whitespace_end": true,
     "indentation": true,
     "check_include": true,
     "check_syntax": true,

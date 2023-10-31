@@ -21,34 +21,34 @@ CLASS Position IMPLEMENTATION.
 
   METHOD getcol.
     return = me->col.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
     return = me->row.
-    
+
   ENDMETHOD.
 
   METHOD isafter.
     return = xsdbool( me->row > p->row OR
       ( me->row EQ p->row AND me->col >= p->col ) ).
-    
+
   ENDMETHOD.
 
   METHOD equals.
     return = xsdbool( me->row EQ p->getrow( ) AND me->col EQ p->getcol( ) ).
-    
+
   ENDMETHOD.
 
   METHOD isbefore.
     return = xsdbool( me->row < p->row OR
       ( me->row EQ p->row AND me->col < p->col ) ).
-    
+
   ENDMETHOD.
 
   METHOD isbetween.
     return = xsdbool( me->isafter( p1 ) AND me->isbefore( p2 ) ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -74,7 +74,7 @@ CLASS VirtualPosition IMPLEMENTATION.
     ENDIF.
     DATA(casted) = CAST virtualposition( p ).
     return = xsdbool( super->equals( me ) AND me->vrow EQ casted->vrow AND me->vcol EQ casted->vcol ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -99,27 +99,27 @@ CLASS Token IMPLEMENTATION.
 
   METHOD getstr.
     return = me->str.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
     return = me->start->getrow( ).
-    
+
   ENDMETHOD.
 
   METHOD getcol.
     return = me->start->getcol( ).
-    
+
   ENDMETHOD.
 
   METHOD getstart.
     return = me->start.
-    
+
   ENDMETHOD.
 
   METHOD getend.
     return = NEW position( row = me->start->getrow( ) col = me->start->getcol( ) + strlen( me->str ) ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -131,7 +131,7 @@ ENDCLASS.
 CLASS At IMPLEMENTATION.
   METHOD railroad.
     return = |@|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -143,7 +143,7 @@ ENDCLASS.
 CLASS WAt IMPLEMENTATION.
   METHOD railroad.
     return = | @|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -155,7 +155,7 @@ ENDCLASS.
 CLASS AtW IMPLEMENTATION.
   METHOD railroad.
     return = |@ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -167,7 +167,7 @@ ENDCLASS.
 CLASS WAtW IMPLEMENTATION.
   METHOD railroad.
     return = | @ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -179,7 +179,7 @@ ENDCLASS.
 CLASS BracketLeft IMPLEMENTATION.
   METHOD railroad.
     return = |[|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -191,7 +191,7 @@ ENDCLASS.
 CLASS WBracketLeft IMPLEMENTATION.
   METHOD railroad.
     return = | [|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -203,7 +203,7 @@ ENDCLASS.
 CLASS BracketLeftW IMPLEMENTATION.
   METHOD railroad.
     return = |[ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -215,7 +215,7 @@ ENDCLASS.
 CLASS WBracketLeftW IMPLEMENTATION.
   METHOD railroad.
     return = | [ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -227,7 +227,7 @@ ENDCLASS.
 CLASS BracketRight IMPLEMENTATION.
   METHOD railroad.
     return = |]|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -239,7 +239,7 @@ ENDCLASS.
 CLASS WBracketRight IMPLEMENTATION.
   METHOD railroad.
     return = | ]|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -251,7 +251,7 @@ ENDCLASS.
 CLASS BracketRightW IMPLEMENTATION.
   METHOD railroad.
     return = |] |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -263,7 +263,7 @@ ENDCLASS.
 CLASS WBracketRightW IMPLEMENTATION.
   METHOD railroad.
     return = | ] |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -287,7 +287,7 @@ ENDCLASS.
 CLASS Dash IMPLEMENTATION.
   METHOD railroad.
     return = |-|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -299,7 +299,7 @@ ENDCLASS.
 CLASS WDash IMPLEMENTATION.
   METHOD railroad.
     return = | -|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -311,7 +311,7 @@ ENDCLASS.
 CLASS DashW IMPLEMENTATION.
   METHOD railroad.
     return = |- |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -323,7 +323,7 @@ ENDCLASS.
 CLASS WDashW IMPLEMENTATION.
   METHOD railroad.
     return = | - |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -341,7 +341,7 @@ ENDCLASS.
 CLASS InstanceArrow IMPLEMENTATION.
   METHOD railroad.
     return = |->|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -353,7 +353,7 @@ ENDCLASS.
 CLASS WInstanceArrow IMPLEMENTATION.
   METHOD railroad.
     return = | ->|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -365,7 +365,7 @@ ENDCLASS.
 CLASS InstanceArrowW IMPLEMENTATION.
   METHOD railroad.
     return = |-> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -377,7 +377,7 @@ ENDCLASS.
 CLASS WInstanceArrowW IMPLEMENTATION.
   METHOD railroad.
     return = | -> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -389,7 +389,7 @@ ENDCLASS.
 CLASS ParenLeft IMPLEMENTATION.
   METHOD railroad.
     return = |(|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -401,7 +401,7 @@ ENDCLASS.
 CLASS WParenLeft IMPLEMENTATION.
   METHOD railroad.
     return = | (|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -413,7 +413,7 @@ ENDCLASS.
 CLASS ParenLeftW IMPLEMENTATION.
   METHOD railroad.
     return = |( |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -425,7 +425,7 @@ ENDCLASS.
 CLASS WParenLeftW IMPLEMENTATION.
   METHOD railroad.
     return = | ( |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -437,7 +437,7 @@ ENDCLASS.
 CLASS ParenRight IMPLEMENTATION.
   METHOD railroad.
     return = |)|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -449,7 +449,7 @@ ENDCLASS.
 CLASS WParenRight IMPLEMENTATION.
   METHOD railroad.
     return = | )|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -461,7 +461,7 @@ ENDCLASS.
 CLASS ParenRightW IMPLEMENTATION.
   METHOD railroad.
     return = |) |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -473,7 +473,7 @@ ENDCLASS.
 CLASS WParenRightW IMPLEMENTATION.
   METHOD railroad.
     return = | ) |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -485,7 +485,7 @@ ENDCLASS.
 CLASS Plus IMPLEMENTATION.
   METHOD railroad.
     return = |+|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -497,7 +497,7 @@ ENDCLASS.
 CLASS WPlus IMPLEMENTATION.
   METHOD railroad.
     return = | +|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -509,7 +509,7 @@ ENDCLASS.
 CLASS PlusW IMPLEMENTATION.
   METHOD railroad.
     return = |+ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -521,7 +521,7 @@ ENDCLASS.
 CLASS WPlusW IMPLEMENTATION.
   METHOD railroad.
     return = | + |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -545,7 +545,7 @@ ENDCLASS.
 CLASS StaticArrow IMPLEMENTATION.
   METHOD railroad.
     return = |=>|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -557,7 +557,7 @@ ENDCLASS.
 CLASS WStaticArrow IMPLEMENTATION.
   METHOD railroad.
     return = | =>|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -569,7 +569,7 @@ ENDCLASS.
 CLASS StaticArrowW IMPLEMENTATION.
   METHOD railroad.
     return = |=> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -581,7 +581,7 @@ ENDCLASS.
 CLASS WStaticArrowW IMPLEMENTATION.
   METHOD railroad.
     return = | => |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -644,7 +644,7 @@ CLASS AbstractFile IMPLEMENTATION.
 
   METHOD ifile~getfilename.
     return = me->filename.
-    
+
   ENDMETHOD.
 
   METHOD basename.
@@ -659,7 +659,7 @@ CLASS AbstractFile IMPLEMENTATION.
       index = index + 1.
     ENDIF.
     return = substring( val = name off = index ).
-    
+
   ENDMETHOD.
 
   METHOD ifile~getobjecttype.
@@ -680,7 +680,7 @@ CLASS AbstractFile IMPLEMENTATION.
       THEN ||
       ELSE |{ add }{ split_input+index1(1) }| ) ).
     return = to_upper( split[ 1 + 1 ] ).
-    
+
   ENDMETHOD.
 
   METHOD ifile~getobjectname.
@@ -707,7 +707,7 @@ CLASS AbstractFile IMPLEMENTATION.
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |(| with = |/| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |)| with = |/| ).
     return = split[ 0 + 1 ].
-    
+
   ENDMETHOD.
 
   METHOD ifile~getraw.
@@ -734,7 +734,7 @@ CLASS MemoryFile IMPLEMENTATION.
 
   METHOD getraw.
     return = me->raw.
-    
+
   ENDMETHOD.
 
   METHOD getrawrows.
@@ -754,7 +754,7 @@ CLASS MemoryFile IMPLEMENTATION.
       WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
       ELSE |{ add }{ split_input+index3(1) }| ) ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -781,12 +781,12 @@ CLASS Buffer IMPLEMENTATION.
   METHOD add.
     me->buf = me->buf && s.
     return = me->buf.
-    
+
   ENDMETHOD.
 
   METHOD get.
     return = me->buf.
-    
+
   ENDMETHOD.
 
   METHOD clear.
@@ -803,7 +803,7 @@ CLASS Buffer IMPLEMENTATION.
       i += 1.
     ENDWHILE.
     return = xsdbool( count MOD 2 EQ 0 ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -846,17 +846,17 @@ CLASS Stream IMPLEMENTATION.
     me->col = me->col + 1.
     me->offset = me->offset + 1.
     return = abap_true.
-    
+
   ENDMETHOD.
 
   METHOD getcol.
     return = me->col.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
     return = me->row.
-    
+
   ENDMETHOD.
 
   METHOD prevchar.
@@ -865,7 +865,7 @@ CLASS Stream IMPLEMENTATION.
       RETURN.
     ENDIF.
     return = substring( val = me->raw off = me->offset - 1 len = 1 ).
-    
+
   ENDMETHOD.
 
   METHOD prevprevchar.
@@ -874,7 +874,7 @@ CLASS Stream IMPLEMENTATION.
       RETURN.
     ENDIF.
     return = substring( val = me->raw off = me->offset - 2 len = 2 ).
-    
+
   ENDMETHOD.
 
   METHOD currentchar.
@@ -887,7 +887,7 @@ CLASS Stream IMPLEMENTATION.
 
     ENDIF.
     return = substring( val = me->raw off = me->offset len = 1 ).
-    
+
   ENDMETHOD.
 
   METHOD nextchar.
@@ -896,7 +896,7 @@ CLASS Stream IMPLEMENTATION.
       RETURN.
     ENDIF.
     return = substring( val = me->raw off = me->offset + 1 len = 1 ).
-    
+
   ENDMETHOD.
 
   METHOD nextnextchar.
@@ -905,17 +905,17 @@ CLASS Stream IMPLEMENTATION.
       RETURN.
     ENDIF.
     return = substring( val = me->raw off = me->offset + 1 len = 2 ).
-    
+
   ENDMETHOD.
 
   METHOD getraw.
     return = me->raw.
-    
+
   ENDMETHOD.
 
   METHOD getoffset.
     return = me->offset.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -945,11 +945,12 @@ CLASS Lexer IMPLEMENTATION.
     me->m = me->modenormal.
     me->process( file->getraw( ) ).
     return = VALUE #( file = file tokens = me->tokens ).
-    
+
   ENDMETHOD.
 
   METHOD add.
     DATA(s) = condense( me->buffer->get( ) ).
+    DATA tok TYPE REF TO token.
     IF strlen( s ) > 0.
       DATA(col) = me->stream->getcol( ).
       DATA(row) = me->stream->getrow( ).
@@ -979,7 +980,7 @@ CLASS Lexer IMPLEMENTATION.
       IF me->virtual IS NOT INITIAL.
         pos = NEW virtualposition( virtual = me->virtual row = pos->getrow( ) col = pos->getcol( ) ).
       ENDIF.
-      DATA tok TYPE REF TO token.
+
       CLEAR tok.
       IF me->m EQ me->modecomment.
         tok = NEW comment( start = pos str = s ).
@@ -1134,9 +1135,11 @@ CLASS Lexer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD process.
+    DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
     me->stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
     me->buffer = NEW buffer( ).
-    DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+
     CLEAR splits.
     APPEND | | TO splits.
     APPEND |:| TO splits.
@@ -1150,7 +1153,7 @@ CLASS Lexer IMPLEMENTATION.
     APPEND |]| TO splits.
     APPEND |\t| TO splits.
     APPEND |\n| TO splits.
-    DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+
     CLEAR bufs.
     APPEND |.| TO bufs.
     APPEND |,| TO bufs.
