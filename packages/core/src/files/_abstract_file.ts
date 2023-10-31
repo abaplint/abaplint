@@ -13,8 +13,18 @@ export abstract class AbstractFile implements IFile {
 
   private baseName(): string {
     let name = this.getFilename();
-    name = name.substring(name.lastIndexOf("\\") + 1 || 0);
-    return name.substring(name.lastIndexOf("/") + 1 || 0);
+
+    let index = name.lastIndexOf("\\");
+    if (index) {
+      index = index + 1;
+    }
+    name = name.substring(index);
+
+    index = name.lastIndexOf("/");
+    if (index) {
+      index = index + 1;
+    }
+    return name.substring(index);
   }
 
   public getObjectType(): string | undefined {
