@@ -8078,7 +8078,7 @@ START-OF-SELECTION.
   CREATE OBJECT lo_heap.
   WRITE |<sdf{ lo_heap->add( ) }>|.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("Not character like");
+    expect(issues[0]?.getMessage()).to.contain("not character like");
   });
 
   it("write hex via string template", () => {
@@ -9327,7 +9327,7 @@ ASSIGN COMPONENT 2 OF STRUCTURE <lg_any> TO <lg_any>.`;
 WRITE |{ foo }|.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("Not character like");
+    expect(issues[0].getMessage()).to.contain("not character like");
   });
 
   it("error, not charlike2", () => {
@@ -9337,7 +9337,7 @@ WRITE |{ foo }|.`;
 WRITE |{ foo }|.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("Not character like");
+    expect(issues[0].getMessage()).to.contain("not character like");
   });
 
   it("error, constructor method in interface", () => {
@@ -9404,6 +9404,29 @@ START-OF-SELECTION.
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
+  it("ok, REDUCE, INIT 2nd", () => {
+    const abap = `
+TYPES string_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA(split) = REDUCE string_table( LET split_input = |sdf|
+  split_by    = |.|
+  offset      = 0
+  IN
+  INIT string_result = VALUE string_table( )
+   add = ||
+  FOR index1 = 0 WHILE index1 <= strlen( split_input )
+  NEXT
+  string_result = COND #(
+  WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
+  THEN VALUE #( BASE string_result ( add ) )
+  ELSE string_result )
+  add    = COND #(
+  WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
+  THEN ||
+  ELSE |{ add }{ split_input+index1(1) }| ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
 // todo, static method cannot access instance attributes

@@ -47,10 +47,19 @@ export class MorphCall {
       THEN ||
       ELSE |{ add }{ split_input+index${counter}(1) }| ) )`;
       counter++;
+    } else if (name === "lastIndexOf" && signature === "(searchString: string, position?: number) => number") {
+      ret = "find( val = " + ret.replace("->lastIndexOf", "");
+      parameterNames.push("sub");
+      post = " occ = -1 )";
     } else if (name === "charAt" && signature === "(pos: number) => string") {
       parameterNames.push("off");
       post = " )";
     } else if (name === "substr" && signature === "(from: number, length?: number) => string") {
+      parameterNames.push("off");
+      parameterNames.push("len");
+      post = " )";
+    } else if (name === "substring" && signature === "(start: number, end?: number) => string") {
+      ret = "substring( val = " + ret.replace("->substring", "");
       parameterNames.push("off");
       parameterNames.push("len");
       post = " )";

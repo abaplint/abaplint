@@ -66,6 +66,8 @@ export class MorphClassDeclaration {
         if (itype?.getProperty(m.getName())) {
           definition += `    ALIASES ${m.getName()} FOR ${itype.getSymbol()?.getName()}~${m.getName()}.\n`;
           pre = itype.getSymbol()?.getName() + "~";
+        } else if (m.getName().startsWith("[")) {
+          // nothing
         } else {
           const st = m.isStatic() ? "CLASS-" : "";
           let code = "";
@@ -82,9 +84,11 @@ export class MorphClassDeclaration {
           }
         }
 
-        implementation += `  METHOD ${pre}${m.getName()}.\n`;
-        implementation += handleStatements(m.getStatements());
-        implementation += `  ENDMETHOD.\n\n`;
+        if (m.getName().startsWith("[") === false) {
+          implementation += `  METHOD ${pre}${m.getName()}.\n`;
+          implementation += handleStatements(m.getStatements());
+          implementation += `  ENDMETHOD.\n\n`;
+        }
       } else {
         console.dir(m.constructor.name + " - todo class_declaration");
       }

@@ -648,8 +648,23 @@ CLASS AbstractFile IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD basename.
-    DATA(first) = REDUCE string_table( LET split_input = me->getfilename( )
-      split_by    = |\\|
+    DATA(name) = me->getfilename( ).
+    DATA(index) = find( val = name sub = |\\| occ = -1 ).
+    IF index IS NOT INITIAL.
+      index = index + 1.
+    ENDIF.
+    name = substring( val = name off = index ).
+    index = find( val = name sub = |/| occ = -1 ).
+    IF index IS NOT INITIAL.
+      index = index + 1.
+    ENDIF.
+    return = substring( val = name off = index ).
+    
+  ENDMETHOD.
+
+  METHOD ifile~getobjecttype.
+    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+      split_by    = |.|
       offset      = 0
       IN
       INIT string_result = VALUE string_table( )
@@ -664,9 +679,13 @@ CLASS AbstractFile IMPLEMENTATION.
       WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
       THEN ||
       ELSE |{ add }{ split_input+index1(1) }| ) ).
-    DATA(base1) = first[ lines( first ) - 1 + 1 ].
-    DATA(base2) = REDUCE string_table( LET split_input = base1
-      split_by    = |/|
+    return = to_upper( split[ 1 + 1 ] ).
+    
+  ENDMETHOD.
+
+  METHOD ifile~getobjectname.
+    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+      split_by    = |.|
       offset      = 0
       IN
       INIT string_result = VALUE string_table( )
@@ -681,52 +700,13 @@ CLASS AbstractFile IMPLEMENTATION.
       WHEN index2 = strlen( split_input ) OR split_input+index2(1) = split_by
       THEN ||
       ELSE |{ add }{ split_input+index2(1) }| ) ).
-    return = base2[ lines( base2 ) - 1 + 1 ].
-    
-  ENDMETHOD.
-
-  METHOD ifile~getobjecttype.
-    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
-      split_by    = |.|
-      offset      = 0
-      IN
-      INIT string_result = VALUE string_table( )
-       add = ||
-      FOR index3 = 0 WHILE index3 <= strlen( split_input )
-      NEXT
-      string_result = COND #(
-      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
-      THEN VALUE #( BASE string_result ( add ) )
-      ELSE string_result )
-      add    = COND #(
-      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
-      THEN ||
-      ELSE |{ add }{ split_input+index3(1) }| ) ).
-    return = to_upper( split[ 1 + 1 ] ).
-    
-  ENDMETHOD.
-
-  METHOD ifile~getobjectname.
-    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
-      split_by    = |.|
-      offset      = 0
-      IN
-      INIT string_result = VALUE string_table( )
-       add = ||
-      FOR index4 = 0 WHILE index4 <= strlen( split_input )
-      NEXT
-      string_result = COND #(
-      WHEN index4 = strlen( split_input ) OR split_input+index4(1) = split_by
-      THEN VALUE #( BASE string_result ( add ) )
-      ELSE string_result )
-      add    = COND #(
-      WHEN index4 = strlen( split_input ) OR split_input+index4(1) = split_by
-      THEN ||
-      ELSE |{ add }{ split_input+index4(1) }| ) ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%23| with = |#| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3e| with = |>| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3c| with = |<| ).
-    return = replace( val = to_upper( val = split[ 0 + 1 ] ) regex = |#| with = |/| ).
+    split[ 0 + 1 ] = replace( val = to_upper( val = split[ 0 + 1 ] ) regex = |#| with = |/| ).
+    split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |(| with = |/| ).
+    split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |)| with = |/| ).
+    return = split[ 0 + 1 ].
     
   ENDMETHOD.
 
@@ -764,16 +744,16 @@ CLASS MemoryFile IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index5 = 0 WHILE index5 <= strlen( split_input )
+      FOR index3 = 0 WHILE index3 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index5(1) }| ) ).
+      ELSE |{ add }{ split_input+index3(1) }| ) ).
     
   ENDMETHOD.
 
@@ -1239,6 +1219,8 @@ CLASS Lexer IMPLEMENTATION.
           me->stream->prevprevchar( ) EQ |\\\\| ).
         me->add( ).
         me->m = me->modenormal.
+      ELSEIF me->m EQ me->modetemplate AND ahead EQ |\}| AND current NE |\\|.
+        me->add( ).
       ELSEIF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
         me->add( ).
         IF ahead EQ |"|.

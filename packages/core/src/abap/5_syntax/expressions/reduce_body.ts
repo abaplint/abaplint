@@ -33,7 +33,14 @@ export class ReduceBody {
         scope.push(ScopeType.Let, "LET", node.getFirstToken().getStart(), filename);
         scoped = true;
       }
-      const found = new InlineFieldDefinition().runSyntax(i, scope, filename, targetType);
+
+      let foundType = targetType;
+      const source = i.findDirectExpression(Expressions.Source);
+      if (source) {
+        foundType = new Source().runSyntax(source, scope, filename, targetType);
+      }
+
+      const found = new InlineFieldDefinition().runSyntax(i, scope, filename, foundType);
       if (found && first === undefined) {
         first = found;
       }
