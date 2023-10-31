@@ -531,5 +531,24 @@ ENDCLASS.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("lastIndexOf", async () => {
+    const ts = `
+const foobar = "sdf";
+const index = foobar.lastIndexOf("a");`;
+    const abap = `
+DATA(foobar) = |sdf|.
+DATA(index) = find( val = foobar sub = |a| occ = -1 ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it.only("substring", async () => {
+    const ts = `
+const foobar = "sdsdff";
+const res = foobar.substring(1);`;
+    const abap = `
+sdf`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
 
