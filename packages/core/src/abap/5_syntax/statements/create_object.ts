@@ -104,7 +104,7 @@ export class CreateObject implements StatementSyntax {
       if (found === undefined) {
         throw new Error(`constructor parameter "${name}" does not exist`);
       } else if (new TypeUtils(scope).isAssignableStrict(sourceType, found.getType()) === false) {
-        throw new Error(`Method parameter "${name}" type not compatible`);
+        throw new Error(`constructor parameter "${name}" type not compatible`);
       }
 
       requiredImporting.delete(name);
