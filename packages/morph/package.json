@@ -28,8 +28,8 @@
   "homepage": "https://abaplint.org",
   "dependencies": {
     "@abaplint/cli": "^2.102.67",
-    "@abaplint/runtime": "^2.7.128",
-    "@abaplint/transpiler-cli": "^2.7.128",
+    "@abaplint/runtime": "^2.7.129",
+    "@abaplint/transpiler-cli": "^2.7.129",
     "@types/chai": "^4.3.9",
     "@types/mocha": "^10.0.3",
     "@types/node": "^20.8.10",
