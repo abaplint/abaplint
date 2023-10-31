@@ -17,6 +17,31 @@ CLASS ltcl_test IMPLEMENTATION.
       act = 2
       exp = lines( result-tokens ) ).
 
+    LOOP AT result-tokens INTO DATA(token).
+      CASE sy-tabix.
+        WHEN 1.
+          cl_abap_unit_assert=>assert_equals(
+            act = token->getstr( )
+            exp = 'hello' ).
+          cl_abap_unit_assert=>assert_equals(
+            act = token->getrow( )
+            exp = 1 ).
+          cl_abap_unit_assert=>assert_equals(
+            act = token->getcol( )
+            exp = 1 ).
+        WHEN 2.
+          cl_abap_unit_assert=>assert_equals(
+            act = token->getstr( )
+            exp = 'world' ).
+          cl_abap_unit_assert=>assert_equals(
+            act = token->getrow( )
+            exp = 1 ).
+          cl_abap_unit_assert=>assert_equals(
+            act = token->getcol( )
+            exp = 8 ).
+      ENDCASE.
+    ENDLOOP.
+
   ENDMETHOD.
 
 ENDCLASS.

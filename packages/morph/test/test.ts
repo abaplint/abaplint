@@ -62,7 +62,7 @@ foo = bar.trim();`;
     const abap = `
 DATA(foo) = |foo|.
 DATA(bar) = |foo|.
-foo = condense( bar ).`;
+foo = condense( val = bar del = |\\n | ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

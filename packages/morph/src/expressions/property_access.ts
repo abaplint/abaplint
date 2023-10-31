@@ -25,7 +25,7 @@ export class MorphPropertyAccess {
     } else if (leftText === "string" && name.getText() === "toUpperCase") {
       return "to_upper( val = " + handleExpression(left);
     } else if (leftText === "string" && name.getText() === "trim") {
-      return "condense( " + handleExpression(left);
+      return "condense( val = " + handleExpression(left) + " del = |\\n |";
     } else if (leftText === "string" && name.getText() === "substr") {
       return "substring( val = " + handleExpression(left);
     } else if (left.getType().isEnum() === true) {

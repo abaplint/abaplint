@@ -949,7 +949,7 @@ CLASS Lexer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD add.
-    DATA(s) = condense( me->buffer->get( ) ).
+    DATA(s) = condense( val = me->buffer->get( ) del = |\n | ).
     DATA tok TYPE REF TO token.
     IF strlen( s ) > 0.
       DATA(col) = me->stream->getcol( ).
@@ -1189,7 +1189,7 @@ CLASS Lexer IMPLEMENTATION.
             ( ahead EQ |*| AND current EQ |\n| ).
           me->add( ).
           me->m = me->modecomment.
-        ELSEIF ahead EQ |@| AND strlen( condense( buf ) ) EQ 0.
+        ELSEIF ahead EQ |@| AND strlen( condense( val = buf del = |\n | ) ) EQ 0.
           me->add( ).
         ELSEIF aahead EQ |->| OR
             aahead EQ |=>|.
