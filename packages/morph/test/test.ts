@@ -514,5 +514,22 @@ ENDIF.`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
+  it("special method", async () => {
+    const ts = `
+export abstract class Token {
+  public [Symbol.for("debug.description")](){
+    return '2';
+  }
+}`;
+    const abap = `
+CLASS Token DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS Token IMPLEMENTATION.
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
 });
 
