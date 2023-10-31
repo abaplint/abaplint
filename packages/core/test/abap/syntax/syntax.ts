@@ -9368,6 +9368,25 @@ SELECT trkorr INTO TABLE rt_trkorr
     expect(issues[0].getMessage()).to.contain("Missing FROM");
   });
 
+  it.skip("not compatible", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING foo TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CONSTANTS lc_hex TYPE x LENGTH 3 VALUE '290000'.
+  CREATE OBJECT lo EXPORTING foo = lc_hex.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -50,10 +50,10 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@microsoft/api-extractor": "^7.38.0",
+        "@microsoft/api-extractor": "^7.38.1",
         "@types/chai": "^4.3.9",
         "@types/mocha": "^10.0.3",
-        "@types/node": "^20.8.9",
+        "@types/node": "^20.8.10",
         "chai": "^4.3.10",
         "eslint": "^8.52.0",
         "mocha": "^10.2.0",
