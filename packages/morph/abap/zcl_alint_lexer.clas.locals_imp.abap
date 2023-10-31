@@ -13,7 +13,7 @@ CLASS position DEFINITION.
     DATA col TYPE i.
 ENDCLASS.
 
-CLASS Position IMPLEMENTATION.
+CLASS position IMPLEMENTATION.
   METHOD constructor.
     me->row = row.
     me->col = col.
@@ -21,34 +21,34 @@ CLASS Position IMPLEMENTATION.
 
   METHOD getcol.
     return = me->col.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
     return = me->row.
-    
+
   ENDMETHOD.
 
   METHOD isafter.
     return = xsdbool( me->row > p->row OR
       ( me->row EQ p->row AND me->col >= p->col ) ).
-    
+
   ENDMETHOD.
 
   METHOD equals.
     return = xsdbool( me->row EQ p->getrow( ) AND me->col EQ p->getcol( ) ).
-    
+
   ENDMETHOD.
 
   METHOD isbefore.
     return = xsdbool( me->row < p->row OR
       ( me->row EQ p->row AND me->col < p->col ) ).
-    
+
   ENDMETHOD.
 
   METHOD isbetween.
     return = xsdbool( me->isafter( p1 ) AND me->isbefore( p2 ) ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -60,7 +60,7 @@ CLASS virtualposition DEFINITION INHERITING FROM position.
     METHODS equals REDEFINITION.
 ENDCLASS.
 
-CLASS VirtualPosition IMPLEMENTATION.
+CLASS virtualposition IMPLEMENTATION.
   METHOD constructor.
     super->constructor( row = virtual->getrow( ) col = virtual->getcol( ) ).
     me->vrow = row.
@@ -74,7 +74,7 @@ CLASS VirtualPosition IMPLEMENTATION.
     ENDIF.
     DATA(casted) = CAST virtualposition( p ).
     return = xsdbool( super->equals( me ) AND me->vrow EQ casted->vrow AND me->vcol EQ casted->vcol ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -91,7 +91,7 @@ CLASS token DEFINITION ABSTRACT.
     DATA str TYPE string.
 ENDCLASS.
 
-CLASS Token IMPLEMENTATION.
+CLASS token IMPLEMENTATION.
   METHOD constructor.
     me->start = start.
     me->str = str.
@@ -99,27 +99,27 @@ CLASS Token IMPLEMENTATION.
 
   METHOD getstr.
     return = me->str.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
     return = me->start->getrow( ).
-    
+
   ENDMETHOD.
 
   METHOD getcol.
     return = me->start->getcol( ).
-    
+
   ENDMETHOD.
 
   METHOD getstart.
     return = me->start.
-    
+
   ENDMETHOD.
 
   METHOD getend.
     return = NEW position( row = me->start->getrow( ) col = me->start->getcol( ) + strlen( me->str ) ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -128,10 +128,10 @@ CLASS at DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS At IMPLEMENTATION.
+CLASS at IMPLEMENTATION.
   METHOD railroad.
     return = |@|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -140,10 +140,10 @@ CLASS wat DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WAt IMPLEMENTATION.
+CLASS wat IMPLEMENTATION.
   METHOD railroad.
     return = | @|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -152,10 +152,10 @@ CLASS atw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS AtW IMPLEMENTATION.
+CLASS atw IMPLEMENTATION.
   METHOD railroad.
     return = |@ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -164,10 +164,10 @@ CLASS watw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WAtW IMPLEMENTATION.
+CLASS watw IMPLEMENTATION.
   METHOD railroad.
     return = | @ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -176,10 +176,10 @@ CLASS bracketleft DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS BracketLeft IMPLEMENTATION.
+CLASS bracketleft IMPLEMENTATION.
   METHOD railroad.
     return = |[|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -188,10 +188,10 @@ CLASS wbracketleft DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WBracketLeft IMPLEMENTATION.
+CLASS wbracketleft IMPLEMENTATION.
   METHOD railroad.
     return = | [|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -200,10 +200,10 @@ CLASS bracketleftw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS BracketLeftW IMPLEMENTATION.
+CLASS bracketleftw IMPLEMENTATION.
   METHOD railroad.
     return = |[ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -212,10 +212,10 @@ CLASS wbracketleftw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WBracketLeftW IMPLEMENTATION.
+CLASS wbracketleftw IMPLEMENTATION.
   METHOD railroad.
     return = | [ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -224,10 +224,10 @@ CLASS bracketright DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS BracketRight IMPLEMENTATION.
+CLASS bracketright IMPLEMENTATION.
   METHOD railroad.
     return = |]|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -236,10 +236,10 @@ CLASS wbracketright DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WBracketRight IMPLEMENTATION.
+CLASS wbracketright IMPLEMENTATION.
   METHOD railroad.
     return = | ]|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -248,10 +248,10 @@ CLASS bracketrightw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS BracketRightW IMPLEMENTATION.
+CLASS bracketrightw IMPLEMENTATION.
   METHOD railroad.
     return = |] |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -260,10 +260,10 @@ CLASS wbracketrightw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WBracketRightW IMPLEMENTATION.
+CLASS wbracketrightw IMPLEMENTATION.
   METHOD railroad.
     return = | ] |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -271,23 +271,23 @@ CLASS colon DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS Colon IMPLEMENTATION.
+CLASS colon IMPLEMENTATION.
 ENDCLASS.
 CLASS comment DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS Comment IMPLEMENTATION.
+CLASS comment IMPLEMENTATION.
 ENDCLASS.
 CLASS dash DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS Dash IMPLEMENTATION.
+CLASS dash IMPLEMENTATION.
   METHOD railroad.
     return = |-|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -296,10 +296,10 @@ CLASS wdash DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WDash IMPLEMENTATION.
+CLASS wdash IMPLEMENTATION.
   METHOD railroad.
     return = | -|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -308,10 +308,10 @@ CLASS dashw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS DashW IMPLEMENTATION.
+CLASS dashw IMPLEMENTATION.
   METHOD railroad.
     return = |- |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -320,10 +320,10 @@ CLASS wdashw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WDashW IMPLEMENTATION.
+CLASS wdashw IMPLEMENTATION.
   METHOD railroad.
     return = | - |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -331,17 +331,17 @@ CLASS identifier DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS Identifier IMPLEMENTATION.
+CLASS identifier IMPLEMENTATION.
 ENDCLASS.
 CLASS instancearrow DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS InstanceArrow IMPLEMENTATION.
+CLASS instancearrow IMPLEMENTATION.
   METHOD railroad.
     return = |->|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -350,10 +350,10 @@ CLASS winstancearrow DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WInstanceArrow IMPLEMENTATION.
+CLASS winstancearrow IMPLEMENTATION.
   METHOD railroad.
     return = | ->|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -362,10 +362,10 @@ CLASS instancearroww DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS InstanceArrowW IMPLEMENTATION.
+CLASS instancearroww IMPLEMENTATION.
   METHOD railroad.
     return = |-> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -374,10 +374,10 @@ CLASS winstancearroww DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WInstanceArrowW IMPLEMENTATION.
+CLASS winstancearroww IMPLEMENTATION.
   METHOD railroad.
     return = | -> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -386,10 +386,10 @@ CLASS parenleft DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS ParenLeft IMPLEMENTATION.
+CLASS parenleft IMPLEMENTATION.
   METHOD railroad.
     return = |(|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -398,10 +398,10 @@ CLASS wparenleft DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WParenLeft IMPLEMENTATION.
+CLASS wparenleft IMPLEMENTATION.
   METHOD railroad.
     return = | (|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -410,10 +410,10 @@ CLASS parenleftw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS ParenLeftW IMPLEMENTATION.
+CLASS parenleftw IMPLEMENTATION.
   METHOD railroad.
     return = |( |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -422,10 +422,10 @@ CLASS wparenleftw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WParenLeftW IMPLEMENTATION.
+CLASS wparenleftw IMPLEMENTATION.
   METHOD railroad.
     return = | ( |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -434,10 +434,10 @@ CLASS parenright DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS ParenRight IMPLEMENTATION.
+CLASS parenright IMPLEMENTATION.
   METHOD railroad.
     return = |)|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -446,10 +446,10 @@ CLASS wparenright DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WParenRight IMPLEMENTATION.
+CLASS wparenright IMPLEMENTATION.
   METHOD railroad.
     return = | )|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -458,10 +458,10 @@ CLASS parenrightw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS ParenRightW IMPLEMENTATION.
+CLASS parenrightw IMPLEMENTATION.
   METHOD railroad.
     return = |) |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -470,10 +470,10 @@ CLASS wparenrightw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WParenRightW IMPLEMENTATION.
+CLASS wparenrightw IMPLEMENTATION.
   METHOD railroad.
     return = | ) |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -482,10 +482,10 @@ CLASS plus DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS Plus IMPLEMENTATION.
+CLASS plus IMPLEMENTATION.
   METHOD railroad.
     return = |+|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -494,10 +494,10 @@ CLASS wplus DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WPlus IMPLEMENTATION.
+CLASS wplus IMPLEMENTATION.
   METHOD railroad.
     return = | +|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -506,10 +506,10 @@ CLASS plusw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS PlusW IMPLEMENTATION.
+CLASS plusw IMPLEMENTATION.
   METHOD railroad.
     return = |+ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -518,10 +518,10 @@ CLASS wplusw DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WPlusW IMPLEMENTATION.
+CLASS wplusw IMPLEMENTATION.
   METHOD railroad.
     return = | + |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -529,23 +529,23 @@ CLASS pragma DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS Pragma IMPLEMENTATION.
+CLASS pragma IMPLEMENTATION.
 ENDCLASS.
 CLASS punctuation DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS Punctuation IMPLEMENTATION.
+CLASS punctuation IMPLEMENTATION.
 ENDCLASS.
 CLASS staticarrow DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS StaticArrow IMPLEMENTATION.
+CLASS staticarrow IMPLEMENTATION.
   METHOD railroad.
     return = |=>|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -554,10 +554,10 @@ CLASS wstaticarrow DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WStaticArrow IMPLEMENTATION.
+CLASS wstaticarrow IMPLEMENTATION.
   METHOD railroad.
     return = | =>|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -566,10 +566,10 @@ CLASS staticarroww DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS StaticArrowW IMPLEMENTATION.
+CLASS staticarroww IMPLEMENTATION.
   METHOD railroad.
     return = |=> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -578,10 +578,10 @@ CLASS wstaticarroww DEFINITION INHERITING FROM token.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS WStaticArrowW IMPLEMENTATION.
+CLASS wstaticarroww IMPLEMENTATION.
   METHOD railroad.
     return = | => |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -589,31 +589,31 @@ CLASS stringtoken DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS StringToken IMPLEMENTATION.
+CLASS stringtoken IMPLEMENTATION.
 ENDCLASS.
 CLASS stringtemplate DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS StringTemplate IMPLEMENTATION.
+CLASS stringtemplate IMPLEMENTATION.
 ENDCLASS.
 CLASS stringtemplatebegin DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS StringTemplateBegin IMPLEMENTATION.
+CLASS stringtemplatebegin IMPLEMENTATION.
 ENDCLASS.
 CLASS stringtemplateend DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS StringTemplateEnd IMPLEMENTATION.
+CLASS stringtemplateend IMPLEMENTATION.
 ENDCLASS.
 CLASS stringtemplatemiddle DEFINITION INHERITING FROM token.
   PUBLIC SECTION.
 ENDCLASS.
 
-CLASS StringTemplateMiddle IMPLEMENTATION.
+CLASS stringtemplatemiddle IMPLEMENTATION.
 ENDCLASS.
 INTERFACE ifile.
   METHODS getfilename RETURNING VALUE(return) TYPE string.
@@ -637,14 +637,14 @@ CLASS abstractfile DEFINITION ABSTRACT.
     METHODS basename RETURNING VALUE(return) TYPE string.
 ENDCLASS.
 
-CLASS AbstractFile IMPLEMENTATION.
+CLASS abstractfile IMPLEMENTATION.
   METHOD constructor.
     me->filename = filename.
   ENDMETHOD.
 
   METHOD ifile~getfilename.
     return = me->filename.
-    
+
   ENDMETHOD.
 
   METHOD basename.
@@ -682,7 +682,7 @@ CLASS AbstractFile IMPLEMENTATION.
       THEN ||
       ELSE |{ add }{ split_input+index2(1) }| ) ).
     return = base2[ lines( base2 ) - 1 + 1 ].
-    
+
   ENDMETHOD.
 
   METHOD ifile~getobjecttype.
@@ -702,8 +702,8 @@ CLASS AbstractFile IMPLEMENTATION.
       WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
       ELSE |{ add }{ split_input+index3(1) }| ) ).
-    return = to_upper( split[ 1 + 1 ] ).
-    
+    return = to_upper( val = split[ 1 + 1 ] ).
+
   ENDMETHOD.
 
   METHOD ifile~getobjectname.
@@ -726,539 +726,17 @@ CLASS AbstractFile IMPLEMENTATION.
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%23| with = |#| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3e| with = |>| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |%3c| with = |<| ).
-    return = replace( val = to_upper( val = split[ 0 + 1 ] ) regex = |#| with = |/| ).
-    
+    split[ 0 + 1 ] = replace( val = to_upper( val = split[ 0 + 1 ] ) regex = |#| with = |/| ).
+    split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |(| with = |/| ).
+    split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |)| with = |/| ).
+    return = split[ 0 + 1 ].
+
   ENDMETHOD.
 
   METHOD ifile~getraw.
   ENDMETHOD.
 
   METHOD ifile~getrawrows.
-  ENDMETHOD.
-
-ENDCLASS.
-CLASS memoryfile DEFINITION INHERITING FROM abstractfile.
-  PUBLIC SECTION.
-    METHODS constructor IMPORTING filename TYPE string raw TYPE string.
-    METHODS getraw REDEFINITION.
-    METHODS getrawrows REDEFINITION.
-  PRIVATE SECTION.
-    DATA raw TYPE string.
-ENDCLASS.
-
-CLASS MemoryFile IMPLEMENTATION.
-  METHOD constructor.
-    super->constructor( filename ).
-    me->raw = raw.
-  ENDMETHOD.
-
-  METHOD getraw.
-    return = me->raw.
-    
-  ENDMETHOD.
-
-  METHOD getrawrows.
-    return = REDUCE string_table( LET split_input = me->raw
-      split_by    = |\n|
-      offset      = 0
-      IN
-      INIT string_result = VALUE string_table( )
-       add = ||
-      FOR index5 = 0 WHILE index5 <= strlen( split_input )
-      NEXT
-      string_result = COND #(
-      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
-      THEN VALUE #( BASE string_result ( add ) )
-      ELSE string_result )
-      add    = COND #(
-      WHEN index5 = strlen( split_input ) OR split_input+index5(1) = split_by
-      THEN ||
-      ELSE |{ add }{ split_input+index5(1) }| ) ).
-    
-  ENDMETHOD.
-
-ENDCLASS.
-TYPES BEGIN OF iabaplexerresult.
-TYPES file TYPE REF TO ifile.
-TYPES tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
-TYPES END OF iabaplexerresult.
-CLASS buffer DEFINITION.
-  PUBLIC SECTION.
-    METHODS constructor.
-    METHODS add IMPORTING s TYPE string RETURNING VALUE(return) TYPE string.
-    METHODS get RETURNING VALUE(return) TYPE string.
-    METHODS clear.
-    METHODS countiseven IMPORTING char TYPE string RETURNING VALUE(return) TYPE abap_bool.
-  PRIVATE SECTION.
-    DATA buf TYPE string.
-ENDCLASS.
-
-CLASS Buffer IMPLEMENTATION.
-  METHOD constructor.
-    me->buf = ||.
-  ENDMETHOD.
-
-  METHOD add.
-    me->buf = me->buf && s.
-    return = me->buf.
-    
-  ENDMETHOD.
-
-  METHOD get.
-    return = me->buf.
-    
-  ENDMETHOD.
-
-  METHOD clear.
-    me->buf = ||.
-  ENDMETHOD.
-
-  METHOD countiseven.
-    DATA(count) = 0.
-    DATA(i) = 0.
-    WHILE i < strlen( me->buf ).
-      IF substring( val = me->buf len = 1 off = i ) EQ char.
-        count += 1.
-      ENDIF.
-      i += 1.
-    ENDWHILE.
-    return = xsdbool( count MOD 2 EQ 0 ).
-    
-  ENDMETHOD.
-
-ENDCLASS.
-CLASS stream DEFINITION.
-  PUBLIC SECTION.
-    METHODS constructor IMPORTING raw TYPE string.
-    METHODS advance RETURNING VALUE(return) TYPE abap_bool.
-    METHODS getcol RETURNING VALUE(return) TYPE i.
-    METHODS getrow RETURNING VALUE(return) TYPE i.
-    METHODS prevchar RETURNING VALUE(return) TYPE string.
-    METHODS prevprevchar RETURNING VALUE(return) TYPE string.
-    METHODS currentchar RETURNING VALUE(return) TYPE string.
-    METHODS nextchar RETURNING VALUE(return) TYPE string.
-    METHODS nextnextchar RETURNING VALUE(return) TYPE string.
-    METHODS getraw RETURNING VALUE(return) TYPE string.
-    METHODS getoffset RETURNING VALUE(return) TYPE i.
-  PRIVATE SECTION.
-    DATA raw TYPE string.
-    DATA offset TYPE i VALUE -1.
-    DATA row TYPE i.
-    DATA col TYPE i.
-ENDCLASS.
-
-CLASS Stream IMPLEMENTATION.
-  METHOD constructor.
-    me->raw = raw.
-    me->row = 0.
-    me->col = 0.
-  ENDMETHOD.
-
-  METHOD advance.
-    IF me->currentchar( ) EQ |\n|.
-      me->col = 1.
-      me->row = me->row + 1.
-    ENDIF.
-    IF me->offset EQ strlen( me->raw ).
-      return = abap_false.
-      RETURN.
-    ENDIF.
-    me->col = me->col + 1.
-    me->offset = me->offset + 1.
-    return = abap_true.
-    
-  ENDMETHOD.
-
-  METHOD getcol.
-    return = me->col.
-    
-  ENDMETHOD.
-
-  METHOD getrow.
-    return = me->row.
-    
-  ENDMETHOD.
-
-  METHOD prevchar.
-    IF me->offset - 1 < 0.
-      return = ||.
-      RETURN.
-    ENDIF.
-    return = substring( val = me->raw off = me->offset - 1 len = 1 ).
-    
-  ENDMETHOD.
-
-  METHOD prevprevchar.
-    IF me->offset - 2 < 0.
-      return = ||.
-      RETURN.
-    ENDIF.
-    return = substring( val = me->raw off = me->offset - 2 len = 2 ).
-    
-  ENDMETHOD.
-
-  METHOD currentchar.
-    IF me->offset < 0.
-      return = |\n|.
-      RETURN.
-    ELSEIF me->offset >= strlen( me->raw ).
-      return = ||.
-      RETURN.
-
-    ENDIF.
-    return = substring( val = me->raw off = me->offset len = 1 ).
-    
-  ENDMETHOD.
-
-  METHOD nextchar.
-    IF me->offset + 2 > strlen( me->raw ).
-      return = ||.
-      RETURN.
-    ENDIF.
-    return = substring( val = me->raw off = me->offset + 1 len = 1 ).
-    
-  ENDMETHOD.
-
-  METHOD nextnextchar.
-    IF me->offset + 3 > strlen( me->raw ).
-      return = me->nextchar( ).
-      RETURN.
-    ENDIF.
-    return = substring( val = me->raw off = me->offset + 1 len = 2 ).
-    
-  ENDMETHOD.
-
-  METHOD getraw.
-    return = me->raw.
-    
-  ENDMETHOD.
-
-  METHOD getoffset.
-    return = me->offset.
-    
-  ENDMETHOD.
-
-ENDCLASS.
-CLASS lexer DEFINITION.
-  PUBLIC SECTION.
-    METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position OPTIONAL RETURNING VALUE(return) TYPE iabaplexerresult.
-  PRIVATE SECTION.
-    DATA modenormal TYPE i VALUE 1.
-    DATA modeping TYPE i VALUE 2.
-    DATA modestr TYPE i VALUE 3.
-    DATA modetemplate TYPE i VALUE 4.
-    DATA modecomment TYPE i VALUE 5.
-    DATA modepragma TYPE i VALUE 6.
-    DATA virtual TYPE REF TO position.
-    DATA tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
-    DATA m TYPE i.
-    DATA stream TYPE REF TO stream.
-    DATA buffer TYPE REF TO buffer.
-    METHODS add.
-    METHODS process IMPORTING raw TYPE string.
-ENDCLASS.
-
-CLASS Lexer IMPLEMENTATION.
-  METHOD run.
-    me->virtual = virtual.
-    me->tokens = VALUE #( ).
-    me->m = me->modenormal.
-    me->process( file->getraw( ) ).
-    return = VALUE #( file = file tokens = me->tokens ).
-    
-  ENDMETHOD.
-
-  METHOD add.
-    DATA(s) = condense( me->buffer->get( ) ).
-    IF strlen( s ) > 0.
-      DATA(col) = me->stream->getcol( ).
-      DATA(row) = me->stream->getrow( ).
-      DATA(whitebefore) = abap_false.
-      IF me->stream->getoffset( ) - strlen( s ) >= 0.
-        DATA(prev) = substring( val = me->stream->getraw( ) off = me->stream->getoffset( ) - strlen( s ) len = 1 ).
-        IF prev EQ | | OR
-            prev EQ |\n| OR
-            prev EQ |\t| OR
-            prev EQ |:|.
-          whitebefore = abap_true.
-        ENDIF.
-      ENDIF.
-      DATA(whiteafter) = abap_false.
-      DATA(next) = me->stream->nextchar( ).
-      IF next EQ | | OR
-          next EQ |\n| OR
-          next EQ |\t| OR
-          next EQ |:| OR
-          next EQ |,| OR
-          next EQ |.| OR
-          next EQ || OR
-          next EQ |"|.
-        whiteafter = abap_true.
-      ENDIF.
-      DATA(pos) = NEW position( row = row col = col - strlen( s ) ).
-      IF me->virtual IS NOT INITIAL.
-        pos = NEW virtualposition( virtual = me->virtual row = pos->getrow( ) col = pos->getcol( ) ).
-      ENDIF.
-      DATA tok TYPE REF TO token.
-      CLEAR tok.
-      IF me->m EQ me->modecomment.
-        tok = NEW comment( start = pos str = s ).
-      ELSEIF me->m EQ me->modeping OR
-          me->m EQ me->modestr.
-        tok = NEW stringtoken( start = pos str = s ).
-      ELSEIF me->m EQ me->modetemplate.
-        DATA(first) = substring( val = s len = 1 off = 0 ).
-        DATA(last) = substring( val = s len = 1 off = strlen( s ) - 1 ).
-        IF first EQ |\|| AND last EQ |\||.
-          tok = NEW stringtemplate( start = pos str = s ).
-        ELSEIF first EQ |\|| AND last EQ |\{| AND whiteafter EQ abap_true.
-          tok = NEW stringtemplatebegin( start = pos str = s ).
-        ELSEIF first EQ |\}| AND last EQ |\|| AND whitebefore EQ abap_true.
-          tok = NEW stringtemplateend( start = pos str = s ).
-        ELSEIF first EQ |\}| AND last EQ |\{| AND whiteafter EQ abap_true AND whitebefore EQ abap_true.
-          tok = NEW stringtemplatemiddle( start = pos str = s ).
-        ELSE.
-          tok = NEW identifier( start = pos str = s ).
-
-
-        ENDIF.
-      ELSEIF strlen( s ) > 2 AND substring( val = s off = 0 len = 2 ) EQ |##|.
-        tok = NEW pragma( start = pos str = s ).
-      ELSEIF strlen( s ) EQ 1.
-        IF s EQ |.| OR
-            s EQ |,|.
-          tok = NEW punctuation( start = pos str = s ).
-        ELSEIF s EQ |[|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW wbracketleftw( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wbracketleft( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW bracketleftw( start = pos str = s ).
-          ELSE.
-            tok = NEW bracketleft( start = pos str = s ).
-
-
-          ENDIF.
-        ELSEIF s EQ |(|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW wparenleftw( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wparenleft( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW parenleftw( start = pos str = s ).
-          ELSE.
-            tok = NEW parenleft( start = pos str = s ).
-
-
-          ENDIF.
-        ELSEIF s EQ |]|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW wbracketrightw( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wbracketright( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW bracketrightw( start = pos str = s ).
-          ELSE.
-            tok = NEW bracketright( start = pos str = s ).
-
-
-          ENDIF.
-        ELSEIF s EQ |)|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW wparenrightw( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wparenright( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW parenrightw( start = pos str = s ).
-          ELSE.
-            tok = NEW parenright( start = pos str = s ).
-
-
-          ENDIF.
-        ELSEIF s EQ |-|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW wdashw( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wdash( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW dashw( start = pos str = s ).
-          ELSE.
-            tok = NEW dash( start = pos str = s ).
-
-
-          ENDIF.
-        ELSEIF s EQ |+|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW wplusw( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wplus( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW plusw( start = pos str = s ).
-          ELSE.
-            tok = NEW plus( start = pos str = s ).
-
-
-          ENDIF.
-        ELSEIF s EQ |@|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW watw( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wat( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW atw( start = pos str = s ).
-          ELSE.
-            tok = NEW at( start = pos str = s ).
-
-
-          ENDIF.
-
-
-        ENDIF.
-      ELSEIF strlen( s ) EQ 2.
-        IF s EQ |->|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW winstancearroww( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW winstancearrow( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW instancearroww( start = pos str = s ).
-          ELSE.
-            tok = NEW instancearrow( start = pos str = s ).
-
-
-          ENDIF.
-        ELSEIF s EQ |=>|.
-          IF whitebefore EQ abap_true AND whiteafter EQ abap_true.
-            tok = NEW wstaticarroww( start = pos str = s ).
-          ELSEIF whitebefore EQ abap_true.
-            tok = NEW wstaticarrow( start = pos str = s ).
-          ELSEIF whiteafter EQ abap_true.
-            tok = NEW staticarroww( start = pos str = s ).
-          ELSE.
-            tok = NEW staticarrow( start = pos str = s ).
-
-
-          ENDIF.
-
-        ENDIF.
-
-
-      ENDIF.
-      IF tok IS INITIAL.
-        tok = NEW identifier( start = pos str = s ).
-      ENDIF.
-      me->tokens = VALUE #( BASE me->tokens ( tok ) ).
-    ENDIF.
-    me->buffer->clear( ).
-  ENDMETHOD.
-
-  METHOD process.
-    me->stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
-    me->buffer = NEW buffer( ).
-    DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
-    CLEAR splits.
-    APPEND | | TO splits.
-    APPEND |:| TO splits.
-    APPEND |.| TO splits.
-    APPEND |,| TO splits.
-    APPEND |-| TO splits.
-    APPEND |+| TO splits.
-    APPEND |(| TO splits.
-    APPEND |)| TO splits.
-    APPEND |[| TO splits.
-    APPEND |]| TO splits.
-    APPEND |\t| TO splits.
-    APPEND |\n| TO splits.
-    DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
-    CLEAR bufs.
-    APPEND |.| TO bufs.
-    APPEND |,| TO bufs.
-    APPEND |:| TO bufs.
-    APPEND |(| TO bufs.
-    APPEND |)| TO bufs.
-    APPEND |[| TO bufs.
-    APPEND |]| TO bufs.
-    APPEND |+| TO bufs.
-    APPEND |@| TO bufs.
-    DO.
-      DATA(current) = me->stream->currentchar( ).
-      DATA(buf) = me->buffer->add( current ).
-      DATA(ahead) = me->stream->nextchar( ).
-      DATA(aahead) = me->stream->nextnextchar( ).
-      IF me->m EQ me->modenormal.
-        IF line_exists( splits[ table_line = ahead ] ).
-          me->add( ).
-        ELSEIF ahead EQ |'|.
-          me->add( ).
-          me->m = me->modestr.
-        ELSEIF ahead EQ |\|| OR
-            ahead EQ |\}|.
-          me->add( ).
-          me->m = me->modetemplate.
-        ELSEIF ahead EQ |`|.
-          me->add( ).
-          me->m = me->modeping.
-        ELSEIF aahead EQ |##|.
-          me->add( ).
-          me->m = me->modepragma.
-        ELSEIF ahead EQ |"| OR
-            ( ahead EQ |*| AND current EQ |\n| ).
-          me->add( ).
-          me->m = me->modecomment.
-        ELSEIF ahead EQ |@| AND strlen( condense( buf ) ) EQ 0.
-          me->add( ).
-        ELSEIF aahead EQ |->| OR
-            aahead EQ |=>|.
-          me->add( ).
-        ELSEIF current EQ |>| AND ahead NE | | AND ( me->stream->prevchar( ) EQ |-| OR
-            me->stream->prevchar( ) EQ |=| ).
-          me->add( ).
-        ELSEIF strlen( buf ) EQ 1 AND ( line_exists( bufs[ table_line = buf ] ) OR
-            ( buf EQ |-| AND ahead NE |>| ) ).
-          me->add( ).
-
-
-        ENDIF.
-      ELSEIF me->m EQ me->modepragma AND ( ahead EQ |,| OR
-          ahead EQ |:| OR
-          ahead EQ |.| OR
-          ahead EQ | | OR
-          ahead EQ |\n| ).
-        me->add( ).
-        me->m = me->modenormal.
-      ELSEIF me->m EQ me->modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
-        me->add( ).
-        IF ahead EQ |"|.
-          me->m = me->modecomment.
-        ELSE.
-          me->m = me->modenormal.
-        ENDIF.
-      ELSEIF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
-          current EQ |\{| ) AND ( me->stream->prevchar( ) NE |\\| OR
-          me->stream->prevprevchar( ) EQ |\\\\| ).
-        me->add( ).
-        me->m = me->modenormal.
-      ELSEIF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
-        me->add( ).
-        IF ahead EQ |"|.
-          me->m = me->modecomment.
-        ELSE.
-          me->m = me->modenormal.
-        ENDIF.
-      ELSEIF ahead EQ |\n| AND me->m NE me->modetemplate.
-        me->add( ).
-        me->m = me->modenormal.
-      ELSEIF me->m EQ me->modetemplate AND current EQ |\n|.
-        me->add( ).
-
-
-      ENDIF.
-      IF NOT me->stream->advance( ).
-        EXIT.
-      ENDIF.
-    ENDDO.
-    me->add( ).
   ENDMETHOD.
 
 ENDCLASS.
