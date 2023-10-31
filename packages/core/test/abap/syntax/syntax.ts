@@ -9387,7 +9387,7 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
-  it.skip("not compatible, NEW", () => {
+  it("not compatible, NEW", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     METHODS constructor IMPORTING foo TYPE xstring.
