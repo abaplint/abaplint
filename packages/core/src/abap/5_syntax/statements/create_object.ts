@@ -82,6 +82,10 @@ export class CreateObject implements StatementSyntax {
 
   private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, scope: CurrentScope, filename: string) {
     if (cdef === undefined) {
+      const sources = node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.Source);
+      for (const s of sources || []) {
+        new Source().runSyntax(s, scope, filename);
+      }
       return;
     }
 

@@ -1393,7 +1393,16 @@ CLEAR lt_tab.`;
 CONSTANTS lc TYPE c LENGTH 1 VALUE '1'.
 SELECT * FROM void INTO TABLE @DATA(sdf) WHERE field IN (@lc).
 CLEAR sdf.`;
-    const issues = await runSingle(abap, {skipAbstract: true});
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CREATE OBJECT, voided", async () => {
+    const abap = `
+  DATA lo TYPE REF TO voided.
+  CONSTANTS lc_hex TYPE x LENGTH 3 VALUE '290000'.
+  CREATE OBJECT lo EXPORTING foo = lc_hex.`;
+    const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });
 
