@@ -4,7 +4,7 @@ CLASS zcl_alint_virtual_position DEFINITION INHERITING FROM zcl_alint_position P
     DATA vrow TYPE i.
     DATA vcol TYPE i.
     METHODS constructor IMPORTING virtual TYPE REF TO zcl_alint_position row TYPE i col TYPE i.
-    METHODS equals IMPORTING p TYPE REF TO zcl_alint_position RETURNING VALUE(return) TYPE abap_bool.
+    METHODS equals REDEFINITION.
 ENDCLASS.
 
 CLASS zcl_alint_virtual_position IMPLEMENTATION.

@@ -65,7 +65,7 @@ project = new Project();
 
 const classes = [
   {inputFile: "position.ts", inputClassName: "Position", outputClassName: "zcl_alint_position"},
-  {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_virtual_position"},
+  {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_virtual_position", search: "METHODS equals IMPORTING p TYPE REF TO zcl_alint_position RETURNING VALUE(return) TYPE abap_bool.", replace: "METHODS equals REDEFINITION."},
   {inputFile: "abap/1_lexer/tokens/abstract_token.ts", inputClassName: "AbstractToken", outputClassName: "zcl_alint_abstract_token"},
   {inputFile: "abap/1_lexer/tokens/at.ts", inputClassName: "At", outputClassName: "zcl_alint_at"},
   {inputFile: "abap/1_lexer/tokens/wat.ts", inputClassName: "WAt", outputClassName: "zcl_alint_wat"},
@@ -114,6 +114,9 @@ if (diagnostics.length > 0) {
       });
     }
     result = "* auto generated, do not touch\n" + result;
+    if (h.search && h.replace) {
+      result = result.replace(h.search, h.replace);
+    }
     fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.abap", result);
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
