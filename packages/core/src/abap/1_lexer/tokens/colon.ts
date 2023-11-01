@@ -1,5 +1,5 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class Colon extends Token {
+export class Colon extends AbstractToken {
 
 }

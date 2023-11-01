@@ -1,9 +1,9 @@
 import {IObject} from "./objects/_iobject";
-import {Token} from "./abap/1_lexer/tokens/_token";
+import {AbstractToken} from "./abap/1_lexer/tokens/abstract_token";
 
 export interface IObjectAndToken {
   object?: IObject;
-  token?: Token;
+  token?: AbstractToken;
   filename?: string;
 }
 
@@ -13,6 +13,6 @@ export interface IDDICReferences {
   clear(obj: IObject): void;
   listUsing(obj: IObject): readonly IObjectAndToken[];
   listByFilename(filename: string, line: number): readonly IObjectAndToken[];
-  listWhereUsed(obj: IObject): {type: string, name: string, token?: Token;
+  listWhereUsed(obj: IObject): {type: string, name: string, token?: AbstractToken;
     filename?: string;}[];
 }

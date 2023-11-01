@@ -1,10 +1,10 @@
 import {Identifier} from "../abap/1_lexer/tokens";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {IFile} from "../files/_ifile";
 import {Position} from "../position";
 
 export class DDLLexer {
-  public static run(file: IFile): Token[] {
+  public static run(file: IFile): AbstractToken[] {
     const step1: string[] = [];
 
     const lines = file.getRaw().replace(/\r/g, "").split("\n");

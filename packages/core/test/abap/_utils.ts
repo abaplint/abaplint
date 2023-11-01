@@ -7,14 +7,14 @@ import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import {Registry} from "../../src/registry";
 import {StructureNode, StatementNode} from "../../src/abap/nodes";
 import {IFile} from "../../src/files/_ifile";
-import {Token} from "../../src/abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../../src/abap/1_lexer/tokens/abstract_token";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {getABAPObjects} from "../get_abap";
 import {MemoryFile} from "../../src/files/memory_file";
 
 // utils for testing
 
-export function getTokens(abap: string): readonly Token[] {
+export function getTokens(abap: string): readonly AbstractToken[] {
   return new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap)).tokens;
 }
 

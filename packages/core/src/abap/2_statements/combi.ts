@@ -1,5 +1,5 @@
 import * as Tokens from "../1_lexer/tokens";
-import {Token as Tokens_Token} from "../1_lexer/tokens/_token";
+import {AbstractToken as Tokens_Token} from "../1_lexer/tokens/abstract_token";
 import {Position} from "../../position";
 import {TokenNode, ExpressionNode, TokenNodeRegex} from "../nodes";
 import {Version} from "../../version";

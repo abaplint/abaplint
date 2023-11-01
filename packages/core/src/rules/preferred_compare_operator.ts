@@ -3,7 +3,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -79,7 +79,7 @@ export class PreferredCompareOperator extends ABAPRule {
     }
   }
 
-  private createIssue(token: Token, file: ABAPFile): Issue {
+  private createIssue(token: AbstractToken, file: ABAPFile): Issue {
     const message = this.getDescription(token.getStr());
     const replacementToken = this.operatorMapping?.get(token.getStr());
     // values in badOperators can be entered by the user and may not necessarily be actual operators

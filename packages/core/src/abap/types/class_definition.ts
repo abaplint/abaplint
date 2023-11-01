@@ -19,7 +19,7 @@ import {IAliases} from "./_aliases";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
 import {ReferenceType} from "../5_syntax/_reference";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
@@ -157,7 +157,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return result;
   }
 
-  private addReference(token: Token | undefined, filename: string, scope: CurrentScope) {
+  private addReference(token: AbstractToken | undefined, filename: string, scope: CurrentScope) {
     const name = token?.getStr();
     if (name) {
       const s = scope.findClassDefinition(name);

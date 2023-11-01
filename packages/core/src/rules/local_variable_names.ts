@@ -4,7 +4,7 @@ import * as Structures from "../abap/3_structures/structures";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {StructureNode} from "../abap/nodes";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {NamingRuleConfig} from "./_naming_rule_config";
 import {NameValidator} from "../utils/name_validator";
 import {RuleTag} from "./_irule";
@@ -143,7 +143,7 @@ Regexes are case-insensitive.`,
     return ret;
   }
 
-  private checkName(token: Token, file: ABAPFile, expected: string): Issue[] {
+  private checkName(token: AbstractToken, file: ABAPFile, expected: string): Issue[] {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = token.getStr();

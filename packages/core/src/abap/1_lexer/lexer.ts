@@ -1,7 +1,7 @@
 import {IFile} from "../../files/_ifile";
 import {Position} from "../../position";
 import {VirtualPosition} from "../../virtual_position";
-import {Token} from "./tokens/_token";
+import {AbstractToken} from "./tokens/abstract_token";
 import {IABAPLexerResult} from "./lexer_result";
 import {At, AtW, BracketLeft, BracketLeftW, BracketRight, BracketRightW, Comment, Dash, DashW, Identifier, InstanceArrow, InstanceArrowW, ParenLeft, ParenLeftW, ParenRight, ParenRightW, Plus, PlusW, Pragma, Punctuation, StaticArrow, StaticArrowW, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle, StringToken, WAt, WAtW, WBracketLeft, WBracketLeftW, WBracketRight, WBracketRightW, WDash, WDashW, WInstanceArrow, WInstanceArrowW, WParenLeft, WParenLeftW, WParenRight, WParenRightW, WPlus, WPlusW, WStaticArrow, WStaticArrowW} from "./tokens";
 
@@ -127,7 +127,7 @@ export class Lexer {
   private readonly ModePragma: number = 6;
 
   private virtual: Position | undefined;
-  private tokens: Token[];
+  private tokens: AbstractToken[];
   private m: number;
   private stream: Stream;
   private buffer: Buffer;
@@ -166,7 +166,7 @@ export class Lexer {
         pos = new VirtualPosition(this.virtual, pos.getRow(), pos.getCol());
       }
 
-      let tok: Token | undefined = undefined;
+      let tok: AbstractToken | undefined = undefined;
       if (this.m === this.ModeComment) {
         tok = new Comment(pos, s);
       } else if (this.m === this.ModePing || this.m === this.ModeStr) {

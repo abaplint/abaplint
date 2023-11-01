@@ -6,7 +6,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types/method_definition";
@@ -110,7 +110,7 @@ EXPORTING must already be omitted for this rule to take effect, https://rules.ab
 
 ///////////////////
 
-  private findMethodReference(token: Token, spaghetti: ISpaghettiScope, filename: string): undefined | IMethodParameters {
+  private findMethodReference(token: AbstractToken, spaghetti: ISpaghettiScope, filename: string): undefined | IMethodParameters {
     const scope = spaghetti.lookupPosition(token.getStart(), filename);
     if (scope === undefined) {
       return undefined;

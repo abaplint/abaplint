@@ -10,7 +10,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {EditHelper, IEdit} from "../edit_helper";
@@ -164,7 +164,7 @@ DATA(percentage) = CONV decfloat34( comment_number / abs_statement_number ) * 10
 
 ////////////////////////
 
-  private findNextToken(ref: IVariableReference, obj: ABAPObject): Token | undefined {
+  private findNextToken(ref: IVariableReference, obj: ABAPObject): AbstractToken | undefined {
 
     const file = obj.getABAPFileByName(ref.resolved.getFilename());
     if (file === undefined) {

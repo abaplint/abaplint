@@ -5,7 +5,7 @@ import * as Statements from "../abap/2_statements/statements";
 import {Class, Interface} from "../objects";
 import {IObject} from "../objects/_iobject";
 import {Punctuation} from "../abap/1_lexer/tokens";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
@@ -49,7 +49,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#condense-yo
 
   public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
-    let prev: Token | undefined = undefined;
+    let prev: AbstractToken | undefined = undefined;
     let startRow = 0;
 
     if (file.getStructure() === undefined) {

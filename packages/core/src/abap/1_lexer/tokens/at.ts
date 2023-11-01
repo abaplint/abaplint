@@ -1,24 +1,24 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class At extends Token {
+export class At extends AbstractToken {
   public static railroad(): string {
     return "@";
   }
 }
 
-export class WAt extends Token {
+export class WAt extends AbstractToken {
   public static railroad(): string {
     return " @";
   }
 }
 
-export class AtW extends Token {
+export class AtW extends AbstractToken {
   public static railroad(): string {
     return "@ ";
   }
 }
 
-export class WAtW extends Token {
+export class WAtW extends AbstractToken {
   public static railroad(): string {
     return " @ ";
   }

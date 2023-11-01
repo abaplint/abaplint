@@ -4,7 +4,7 @@ import * as Combi from "../../src/abap/2_statements/combi";
 import * as Tokens from "../../src/abap/1_lexer/tokens";
 import * as Expressions from "../../src/abap/2_statements/expressions";
 import {Position} from "../../src/position";
-import {Token} from "../../src/abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../../src/abap/1_lexer/tokens/abstract_token";
 import {Result} from "../../src/abap/2_statements/result";
 
 const str  = Combi.str;
@@ -12,10 +12,10 @@ const seq  = Combi.seq;
 const opt  = Combi.opt;
 const star = Combi.star;
 
-function tok(s: string): Token[] {
+function tok(s: string): AbstractToken[] {
   const split = s.split(" ");
 
-  const tokens: Token[] = [];
+  const tokens: AbstractToken[] = [];
   for (const st of split) {
     tokens.push(new Tokens.Identifier(new Position(10, 10), st));
   }

@@ -1,5 +1,5 @@
 import {AbstractNode} from "./_abstract_node";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IStatement} from "../2_statements/statements/_statement";
 import {IStructure} from "../3_structures/structures/_structure";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
@@ -108,7 +108,7 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return undefined;
   }
 
-  public getFirstToken(): Token {
+  public getFirstToken(): AbstractToken {
     const child = this.getFirstChild();
 
     if (child !== undefined) {
@@ -118,7 +118,7 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     throw new Error("StructureNode, getFirstToken, unexpected type");
   }
 
-  public getLastToken(): Token {
+  public getLastToken(): AbstractToken {
     const child = this.getLastChild();
 
     if (child !== undefined) {

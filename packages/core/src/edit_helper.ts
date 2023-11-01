@@ -1,4 +1,4 @@
-import {Token} from "./abap/1_lexer/tokens/_token";
+import {AbstractToken} from "./abap/1_lexer/tokens/abstract_token";
 import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
@@ -106,7 +106,7 @@ export class EditHelper {
     return ret;
   }
 
-  public static findStatement(token: Token, file: ABAPFile | undefined): StatementNode | undefined {
+  public static findStatement(token: AbstractToken, file: ABAPFile | undefined): StatementNode | undefined {
     if (file === undefined) {
       return undefined;
     }
@@ -188,7 +188,7 @@ export class EditHelper {
     throw new Error("firstAfterColon, emtpy statement?");
   }
 
-  public static deleteToken(file: IFile, token: Token): IEdit {
+  public static deleteToken(file: IFile, token: AbstractToken): IEdit {
     const filename = file.getFilename();
     const range: IRange = {start: token.getStart(), end: token.getEnd()};
     return {[filename]: [{range, newText: ""}]};
@@ -206,7 +206,7 @@ export class EditHelper {
     return {[filename]: [{range, newText: text}]};
   }
 
-  public static replaceToken(file: IFile, token: Token, text: string): IEdit {
+  public static replaceToken(file: IFile, token: AbstractToken, text: string): IEdit {
     return this.replaceRange(file, token.getStart(), token.getEnd(), text);
   }
 

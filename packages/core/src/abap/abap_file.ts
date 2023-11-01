@@ -1,19 +1,19 @@
 import {Pragma} from "./1_lexer/tokens";
-import {Token} from "./1_lexer/tokens/_token";
+import {AbstractToken} from "./1_lexer/tokens/abstract_token";
 import {AbstractFile} from "../files/_abstract_file";
 import {IFile} from "../files/_ifile";
 import {StructureNode, StatementNode} from "./nodes";
 import {IABAPFileInformation} from "./4_file_information/_abap_file_information";
 
 export class ABAPFile extends AbstractFile {
-  private readonly tokens: readonly Token[];
+  private readonly tokens: readonly AbstractToken[];
   private readonly statements: readonly StatementNode[];
   private readonly structure: StructureNode | undefined;
   private readonly file: IFile;
   private readonly info: IABAPFileInformation;
 
   public constructor(file: IFile,
-                     tokens: readonly Token[],
+                     tokens: readonly AbstractToken[],
                      statements: readonly StatementNode[],
                      structure: StructureNode | undefined,
                      info: IABAPFileInformation) {
@@ -42,11 +42,11 @@ export class ABAPFile extends AbstractFile {
     return this.structure;
   }
 
-  public getTokens(withPragmas = true): readonly Token[] {
+  public getTokens(withPragmas = true): readonly AbstractToken[] {
     if (withPragmas === true) {
       return this.tokens;
     } else {
-      const tokens: Token[] = [];
+      const tokens: AbstractToken[] = [];
       this.tokens.forEach((t) => {
         if (!(t instanceof Pragma)) {
           tokens.push(t);

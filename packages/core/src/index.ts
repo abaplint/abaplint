@@ -18,7 +18,7 @@ import {ScopeType} from "./abap/5_syntax/_scope_type";
 import {INode} from "./abap/nodes/_inode";
 import {CurrentScope} from "./abap/5_syntax/_current_scope";
 import * as Objects from "./objects";
-import {Token} from "./abap/1_lexer/tokens/_token";
+import {AbstractToken} from "./abap/1_lexer/tokens/abstract_token";
 import * as Statements from "./abap/2_statements/statements";
 import * as Expressions from "./abap/2_statements/expressions";
 import * as ExpressionsCDS from "./cds/expressions";
@@ -66,7 +66,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityS
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
-  AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
+  AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
