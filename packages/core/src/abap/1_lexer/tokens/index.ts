@@ -39,6 +39,10 @@ export * from "./plusw";
 export * from "./wplusw";
 
 export * from "./static_arrow";
+export * from "./wstatic_arrow";
+export * from "./static_arroww";
+export * from "./wstatic_arroww";
+
 export * from "./string";
 
 // ok

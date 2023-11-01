@@ -1,4 +1,4 @@
-import { AbstractToken } from "./abstract_token";
+import {AbstractToken} from "./abstract_token";
 
 
 export class ParenRightW extends AbstractToken {

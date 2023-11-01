@@ -1,8 +1,8 @@
 import {AbstractToken} from "./abstract_token";
 
 
-export class WParenLeft extends AbstractToken {
+export class StaticArrowW extends AbstractToken {
   public static railroad(): string {
-    return " (";
+    return "=> ";
   }
 }
