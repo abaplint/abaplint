@@ -1,7 +1,7 @@
 import {AbstractToken} from "./abstract_token";
 
-export class At extends AbstractToken {
+export class WAtW extends AbstractToken {
   public static railroad(): string {
-    return "@";
+    return " @ ";
   }
 }

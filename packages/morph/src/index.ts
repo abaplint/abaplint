@@ -13,6 +13,9 @@ input += fs.readFileSync("../core/src/position.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/virtual_position.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/abstract_token.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/at.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/wat.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/atw.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/watw.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_left.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_right.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/colon.ts", "utf-8") + "\n";
@@ -63,6 +66,23 @@ const handle = [
   {inputFile: "position.ts", inputClassName: "Position", outputClassName: "zcl_alint_position"},
   {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_virtual_position"},
   {inputFile: "abap/1_lexer/tokens/abstract_token.ts", inputClassName: "AbstractToken", outputClassName: "zcl_alint_abstract_token"},
+  {inputFile: "abap/1_lexer/tokens/at.ts", inputClassName: "At", outputClassName: "zcl_alint_at"},
+/*
+  "abap/1_lexer/tokens/bracket_left.ts"
+  "abap/1_lexer/tokens/bracket_right.ts"
+  "abap/1_lexer/tokens/colon.ts"
+  "abap/1_lexer/tokens/comment.ts"
+  "abap/1_lexer/tokens/dash.ts"
+  "abap/1_lexer/tokens/identifier.ts"
+  "abap/1_lexer/tokens/instance_arrow.ts"
+  "abap/1_lexer/tokens/paren_left.ts"
+  "abap/1_lexer/tokens/paren_right.ts"
+  "abap/1_lexer/tokens/plus.ts"
+  "abap/1_lexer/tokens/pragma.ts"
+  "abap/1_lexer/tokens/punctuation.ts"
+  "abap/1_lexer/tokens/static_arrow.ts"
+  "abap/1_lexer/tokens/string.ts"
+*/
 ];
 
 const nameMap: {[name: string]: string} = {};
