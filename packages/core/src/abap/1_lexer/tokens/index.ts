@@ -19,12 +19,26 @@ export * from "./instance_arroww";
 export * from "./winstance_arroww";
 
 export * from "./paren_left";
+export * from "./wparen_left";
+export * from "./paren_leftw";
+export * from "./wparen_leftw";
+
 export * from "./paren_right";
+export * from "./wparen_right";
+export * from "./paren_rightw";
+export * from "./wparen_rightw";
+
 export * from "./dash";
+export * from "./wdash";
+export * from "./dashw";
+export * from "./wdashw";
+
+// todo
 export * from "./plus";
 export * from "./static_arrow";
 export * from "./string";
 
+// ok
 export * from "./colon";
 export * from "./comment";
 export * from "./identifier";

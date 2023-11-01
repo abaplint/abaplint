@@ -6,20 +6,3 @@ export class ParenLeft extends AbstractToken {
   }
 }
 
-export class WParenLeft extends AbstractToken {
-  public static railroad(): string {
-    return " (";
-  }
-}
-
-export class ParenLeftW extends AbstractToken {
-  public static railroad(): string {
-    return "( ";
-  }
-}
-
-export class WParenLeftW extends AbstractToken {
-  public static railroad(): string {
-    return " ( ";
-  }
-}

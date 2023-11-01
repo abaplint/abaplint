@@ -1,7 +1,8 @@
 import {seq, Expression, tok, starPrio, altPrio} from "../combi";
 import {SQLTarget} from ".";
 import {IStatementRunnable} from "../statement_runnable";
-import {WParenLeft, WParenLeftW} from "../../1_lexer/tokens/paren_left";
+import {WParenLeftW} from "../../1_lexer/tokens/wparen_leftw";
+import {WParenLeft} from "../../1_lexer/tokens/wparen_left";
 
 export class SQLIntoList extends Expression {
   public getRunnable(): IStatementRunnable {
