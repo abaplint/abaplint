@@ -11,7 +11,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
-import {VirtualPosition} from "../position";
+import { VirtualPosition } from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
 import {EditDraft} from "../edit_helper";
 import {IFile} from "../files/_ifile";

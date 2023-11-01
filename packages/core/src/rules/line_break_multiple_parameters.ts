@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
-import {VirtualPosition} from "../position";
+import { VirtualPosition } from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 

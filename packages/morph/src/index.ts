@@ -46,3 +46,15 @@ if (diagnostics.length > 0) {
   result = "* auto generated, do not touch\n" + result;
   fs.writeFileSync("abap/zcl_alint_lexer.clas.locals_imp.abap", result);
 }
+
+////////////////////////////////////////////
+/*
+const handle = [{
+  inputFile: "../core/src/position.ts",
+  outputName: "zcl_alint_position",
+}];
+
+for (const h of handle) {
+
+}
+*/

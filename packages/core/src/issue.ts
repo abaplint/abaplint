@@ -1,5 +1,6 @@
 import {IFile} from "./files/_ifile";
-import {Position, VirtualPosition} from "./position";
+import {Position} from "./position";
+import { VirtualPosition } from "./virtual_position";
 import {Token} from "./abap/1_lexer/tokens/_token";
 import {Identifier} from "./abap/4_file_information/_identifier";
 import {StatementNode} from "./abap/nodes";
