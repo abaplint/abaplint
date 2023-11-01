@@ -18,6 +18,9 @@ input += fs.readFileSync("../core/src/abap/1_lexer/tokens/wat.ts", "utf-8") + "\
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/atw.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/watw.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_left.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/wbracket_left.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_leftw.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/wbracket_leftw.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_right.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/colon.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/comment.ts", "utf-8") + "\n";
@@ -71,6 +74,10 @@ const classes = [
   {inputFile: "abap/1_lexer/tokens/wat.ts", inputClassName: "WAt", outputClassName: "zcl_alint_wat"},
   {inputFile: "abap/1_lexer/tokens/atw.ts", inputClassName: "AtW", outputClassName: "zcl_alint_atw"},
   {inputFile: "abap/1_lexer/tokens/watw.ts", inputClassName: "WAtW", outputClassName: "zcl_alint_watw"},
+  {inputFile: "abap/1_lexer/tokens/bracket_left.ts", inputClassName: "BracketLeft", outputClassName: "zcl_alint_bracket_left"},
+  {inputFile: "abap/1_lexer/tokens/wbracket_left.ts", inputClassName: "WBracketLeft", outputClassName: "zcl_alint_wbracket_left"},
+  {inputFile: "abap/1_lexer/tokens/bracket_leftw.ts", inputClassName: "BracketLeftW", outputClassName: "zcl_alint_bracket_leftw"},
+  {inputFile: "abap/1_lexer/tokens/wbracket_leftw.ts", inputClassName: "WBracketLeftW", outputClassName: "zcl_alint_wbracket_leftw"},
 /*
   "abap/1_lexer/tokens/bracket_left.ts"
   "abap/1_lexer/tokens/bracket_right.ts"

@@ -2,7 +2,12 @@ export * from "./at";
 export * from "./atw";
 export * from "./wat";
 export * from "./watw";
+
 export * from "./bracket_left";
+export * from "./wbracket_left";
+export * from "./bracket_leftw";
+export * from "./wbracket_leftw";
+
 export * from "./bracket_right";
 export * from "./colon";
 export * from "./comment";
