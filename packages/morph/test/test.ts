@@ -13,7 +13,7 @@ function test(ts: string) {
   } else {
     let result = "";
     for (const s of file.getStatements()) {
-      result += handleStatement(s);
+      result += handleStatement(s, {globalObjects: false, nameMap: {}});
     }
     return result.trim();
   }

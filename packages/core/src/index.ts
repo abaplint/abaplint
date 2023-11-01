@@ -31,7 +31,7 @@ import {IConfig, IDependency, IRenameSettings, IConfiguration} from "./_config";
 import {IRegistry} from "./_iregistry";
 import {IFile} from "./files/_ifile";
 import {Position} from "./position";
-import { VirtualPosition } from "./virtual_position";
+import {VirtualPosition} from "./virtual_position";
 import {AbstractFile} from "./files/_abstract_file";
 import {PrettyPrinter} from "./pretty_printer/pretty_printer";
 import {ISpaghettiScope, ISpaghettiScopeNode} from "./abap/5_syntax/_spaghetti_scope";

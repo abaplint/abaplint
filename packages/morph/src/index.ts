@@ -1,11 +1,15 @@
 import * as fs from "fs";
+import * as path from "node:path";
 import {Project} from "ts-morph";
 import {handleStatement} from "./statements";
 
-const project = new Project();
+const OUTPUT_FOLDER = "abap/";
+
+let project = new Project();
 
 let input = "";
 input += fs.readFileSync("../core/src/position.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/virtual_position.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/_token.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/at.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_left.ts", "utf-8") + "\n";
@@ -35,26 +39,50 @@ fs.writeFileSync("blah.ts", input, {encoding: "utf8", flag: "w"});
 
 const file = project.createSourceFile("input.ts", input);
 
-const diagnostics = project.getPreEmitDiagnostics();
+let diagnostics = project.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
 } else {
   let result = "";
   for (const s of file.getStatements()) {
-    result += handleStatement(s);
+    result += handleStatement(s, {
+      globalObjects: false,
+      nameMap: {},
+    });
   }
   result = "* auto generated, do not touch\n" + result;
   fs.writeFileSync("abap/zcl_alint_lexer.clas.locals_imp.abap", result);
 }
 
 ////////////////////////////////////////////
-/*
+
+project = new Project();
+
 const handle = [{
   inputFile: "../core/src/position.ts",
-  outputName: "zcl_alint_position",
+  inputClassName: "Position",
+  outputClassName: "zcl_alint_position",
 }];
 
+const nameMap: {[name: string]: string} = {};
 for (const h of handle) {
-
+  nameMap[h.inputClassName] = h.outputClassName;
+  project.createSourceFile(path.basename(h.inputFile), fs.readFileSync(h.inputFile, "utf-8"));
 }
-*/
+diagnostics = project.getPreEmitDiagnostics();
+if (diagnostics.length > 0) {
+  console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
+} else {
+  for (const h of handle) {
+    const file = project.getSourceFile(path.basename(h.inputFile));
+    let result = "";
+    for (const s of file?.getStatements() || []) {
+      result += handleStatement(s, {
+        globalObjects: true,
+        nameMap: nameMap,
+      });
+    }
+    result = "* auto generated, do not touch\n" + result;
+    fs.writeFileSync(OUTPUT_FOLDER + h.outputClassName + ".clas.abap", result);
+  }
+}

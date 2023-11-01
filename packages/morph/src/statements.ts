@@ -9,39 +9,44 @@ import {MorphReturn} from "./statements/return";
 import {MorphTypeAliasDeclaration} from "./statements/type_alias_declaration";
 import {MorphVariable} from "./statements/variable";
 
-export function handleStatement(s: Statement): string {
+export type MorphSettings = {
+  globalObjects: boolean,
+  nameMap: {[name: string]: string},
+};
+
+export function handleStatement(s: Statement, settings: MorphSettings): string {
   if (s instanceof ClassDeclaration) {
-    return new MorphClassDeclaration().run(s);
+    return new MorphClassDeclaration().run(s, settings);
   }else if (s instanceof InterfaceDeclaration) {
-    return new MorphInterfaceDeclaration().run(s);
+    return new MorphInterfaceDeclaration().run(s, settings);
   } else if (s instanceof BreakStatement) {
     return "EXIT.\n";
   } else if (s instanceof ExpressionStatement) {
-    return new MorphExpression().run(s);
+    return new MorphExpression().run(s, settings);
   } else if (s instanceof TypeAliasDeclaration) {
-    return new MorphTypeAliasDeclaration().run(s);
+    return new MorphTypeAliasDeclaration().run(s, settings);
   } else if (s instanceof EnumDeclaration) {
     return new MorphEnumDeclaration().run(s);
   } else if (s instanceof VariableStatement) {
-    return new MorphVariable().run(s);
+    return new MorphVariable().run(s, settings);
   } else if (s instanceof Block) {
-    return handleStatements(s.getStatements());
+    return handleStatements(s.getStatements(), settings);
   } else if (s instanceof IfStatement) {
-    return new MorphIf().run(s);
+    return new MorphIf().run(s, settings);
   } else if (s instanceof ForStatement) {
-    return new MorphFor().run(s);
+    return new MorphFor().run(s, settings);
   } else if (s instanceof ReturnStatement) {
-    return new MorphReturn().run(s);
+    return new MorphReturn().run(s, settings);
   } else {
     console.dir(s.constructor.name + " - handleStatement");
   }
   return "";
 }
 
-export function handleStatements(statements: Statement[]): string {
+export function handleStatements(statements: Statement[], settings: MorphSettings): string {
   let ret = "";
   for (const s of statements) {
-    ret += handleStatement(s);
+    ret += handleStatement(s, settings);
   }
   return ret;
 }

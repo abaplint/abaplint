@@ -1,8 +1,9 @@
 import {ClassDeclaration, NewExpression} from "ts-morph";
 import {handleExpression} from "../expressions";
+import {MorphSettings} from "../statements";
 
 export class MorphNew {
-  public run(s: NewExpression) {
+  public run(s: NewExpression, settings: MorphSettings) {
     const name = s.getType().getSymbol()?.getName();
 
 /*
@@ -23,7 +24,7 @@ export class MorphNew {
     let ret = `NEW ${name}(`;
     const args = s.getArguments().reverse();
     while (args.length > 0) {
-      ret += " " + parameterNames.pop() + " = " + handleExpression(args.pop());
+      ret += " " + parameterNames.pop() + " = " + handleExpression(args.pop(), settings);
     }
 
     return ret + ` )`;

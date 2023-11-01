@@ -1,13 +1,14 @@
 import {CallExpression} from "ts-morph";
 import {handleExpression} from "../expressions";
+import {MorphSettings} from "../statements";
 
 let counter = 1;
 
 export class MorphCall {
-  public run(s: CallExpression) {
+  public run(s: CallExpression, settings: MorphSettings) {
 
     const expr = s.getExpression();
-    let ret = handleExpression(expr);
+    let ret = handleExpression(expr, settings);
     let post = "";
 
     const name = expr.getType().getSymbol()?.getName();
@@ -76,9 +77,9 @@ export class MorphCall {
     for (const a of s.getArguments()) {
       const name = parameterNames.pop();
       if (name !== undefined && name !== "") {
-        ret += " " + name + " = " + handleExpression(a);
+        ret += " " + name + " = " + handleExpression(a, settings);
       } else {
-        ret += " " + handleExpression(a);
+        ret += " " + handleExpression(a, settings);
       }
     }
 
