@@ -15,11 +15,11 @@ CLASS zcl_alint_vposition IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD equals.
-    IF NOT ( p IS INSTANCE OF virtualposition ).
+    IF NOT ( p IS INSTANCE OF zcl_alint_vposition ).
       return = abap_false.
       RETURN.
     ENDIF.
-    DATA(casted) = CAST virtualposition( p ).
+    DATA(casted) = CAST zcl_alint_vposition( p ).
     return = xsdbool( super->equals( me ) AND vrow EQ casted->vrow AND vcol EQ casted->vcol ).
 
   ENDMETHOD.

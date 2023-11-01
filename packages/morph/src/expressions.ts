@@ -7,6 +7,7 @@ import {MorphObjectLiteral} from "./expressions/object_literal";
 import {MorphPropertyAccess} from "./expressions/property_access";
 import {MorphVariableDeclaration} from "./expressions/variable_declaration";
 import {MorphSettings} from "./statements";
+import {mapName} from "./map_name";
 
 export function handleExpression(n: Node | undefined, settings: MorphSettings): string {
   if (n === undefined) {
@@ -40,7 +41,7 @@ export function handleExpression(n: Node | undefined, settings: MorphSettings): 
   } else if (n instanceof SuperExpression) {
     ret += "super";
   } else if (n instanceof AsExpression) {
-    ret += `CAST ${n.getType().getSymbol()?.getName()}( ${handleExpression(n.getExpression(), settings)} )`;
+    ret += `CAST ${mapName(n.getType().getSymbol()?.getName(), settings)}( ${handleExpression(n.getExpression(), settings)} )`;
   } else if (n instanceof ArrayLiteralExpression) {
     ret += "VALUE #( )";
   } else if (n instanceof RegularExpressionLiteral) {
@@ -78,7 +79,7 @@ export function handleExpression(n: Node | undefined, settings: MorphSettings): 
   } else if (n instanceof TrueLiteral) {
     ret += "abap_true";
   } else if (n instanceof Identifier) {
-    ret += text;
+    ret += mapName(text, settings);
   } else if (text === "&&") {
     ret += " AND ";
   } else if (text === "||") {
