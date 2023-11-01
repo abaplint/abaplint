@@ -61,16 +61,19 @@ project = new Project();
 
 const handle = [
   {inputFile: "position.ts", inputClassName: "Position", outputClassName: "zcl_alint_position"},
-  {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_vposition"},
+  {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_virtual_position"},
+  {inputFile: "abap/1_lexer/tokens/abstract_token.ts", inputClassName: "AbstractToken", outputClassName: "zcl_alint_abstract_token"},
 ];
 
 const nameMap: {[name: string]: string} = {};
 for (const h of handle) {
   if (h.outputClassName.length > 30) {
     throw h.outputClassName + " longer than 30 characters";
+  } else if (nameMap[h.inputClassName] !== undefined) {
+    throw "duplicate name " + h.inputClassName ;
   }
   nameMap[h.inputClassName] = h.outputClassName;
-  project.createSourceFile(path.basename(h.inputFile), fs.readFileSync(INPUT_FOLDER + h.inputFile, "utf-8"));
+  project.createSourceFile(h.inputFile, fs.readFileSync(INPUT_FOLDER + h.inputFile, "utf-8"));
 }
 
 diagnostics = project.getPreEmitDiagnostics();

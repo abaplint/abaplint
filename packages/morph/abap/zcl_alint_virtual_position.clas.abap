@@ -1,5 +1,5 @@
 * auto generated, do not touch
-CLASS zcl_alint_vposition DEFINITION INHERITING FROM zcl_alint_position PUBLIC.
+CLASS zcl_alint_virtual_position DEFINITION INHERITING FROM zcl_alint_position PUBLIC.
   PUBLIC SECTION.
     DATA vrow TYPE i.
     DATA vcol TYPE i.
@@ -7,7 +7,7 @@ CLASS zcl_alint_vposition DEFINITION INHERITING FROM zcl_alint_position PUBLIC.
     METHODS equals IMPORTING p TYPE REF TO zcl_alint_position RETURNING VALUE(return) TYPE abap_bool.
 ENDCLASS.
 
-CLASS zcl_alint_vposition IMPLEMENTATION.
+CLASS zcl_alint_virtual_position IMPLEMENTATION.
   METHOD constructor.
     super->constructor( row = virtual->getrow( ) col = virtual->getcol( ) ).
     me->vrow = row.
@@ -15,11 +15,11 @@ CLASS zcl_alint_vposition IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD equals.
-    IF NOT ( p IS INSTANCE OF zcl_alint_vposition ).
+    IF NOT ( p IS INSTANCE OF zcl_alint_virtual_position ).
       return = abap_false.
       RETURN.
     ENDIF.
-    DATA(casted) = CAST zcl_alint_vposition( p ).
+    DATA(casted) = CAST zcl_alint_virtual_position( p ).
     return = xsdbool( super->equals( me ) AND vrow EQ casted->vrow AND vcol EQ casted->vcol ).
 
   ENDMETHOD.

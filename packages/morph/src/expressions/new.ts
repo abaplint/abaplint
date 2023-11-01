@@ -1,6 +1,7 @@
 import {ClassDeclaration, NewExpression} from "ts-morph";
 import {handleExpression} from "../expressions";
 import {MorphSettings} from "../statements";
+import {mapName} from "../map_name";
 
 export class MorphNew {
   public run(s: NewExpression, settings: MorphSettings) {
@@ -21,7 +22,7 @@ export class MorphNew {
       parameterNames = s.getType().compilerType.getProperties().map(p => p.escapedName.toString()).reverse();
     }
 
-    let ret = `NEW ${name}(`;
+    let ret = `NEW ${mapName(name, settings)}(`;
     const args = s.getArguments().reverse();
     while (args.length > 0) {
       ret += " " + parameterNames.pop() + " = " + handleExpression(args.pop(), settings);
