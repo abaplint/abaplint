@@ -9406,7 +9406,7 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
-  it.skip("Method already declared in super", () => {
+  it("Method already declared in super", () => {
     const abap = `CLASS sup DEFINITION.
   PUBLIC SECTION.
     METHODS methodname.
@@ -9455,7 +9455,7 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("Method already declared in super, but error, its private the other way around", () => {
+  it("Method already declared in super, but error, its private the other way around", () => {
     const abap = `CLASS sup DEFINITION.
   PUBLIC SECTION.
     METHODS methodname.
