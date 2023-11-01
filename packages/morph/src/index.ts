@@ -4,6 +4,7 @@ import {Project} from "ts-morph";
 import {handleStatement} from "./statements";
 
 const OUTPUT_FOLDER = "abap/";
+const INPUT_FOLDER = "../core/src/";
 
 let project = new Project();
 
@@ -58,17 +59,20 @@ if (diagnostics.length > 0) {
 
 project = new Project();
 
-const handle = [{
-  inputFile: "../core/src/position.ts",
-  inputClassName: "Position",
-  outputClassName: "zcl_alint_position",
-}];
+const handle = [
+  {inputFile: "position.ts", inputClassName: "Position", outputClassName: "zcl_alint_position"},
+  {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_vposition"},
+];
 
 const nameMap: {[name: string]: string} = {};
 for (const h of handle) {
+  if (h.outputClassName.length > 30) {
+    throw h.outputClassName + " longer than 30 characters";
+  }
   nameMap[h.inputClassName] = h.outputClassName;
-  project.createSourceFile(path.basename(h.inputFile), fs.readFileSync(h.inputFile, "utf-8"));
+  project.createSourceFile(path.basename(h.inputFile), fs.readFileSync(INPUT_FOLDER + h.inputFile, "utf-8"));
 }
+
 diagnostics = project.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));

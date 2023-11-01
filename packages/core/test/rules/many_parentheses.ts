@@ -1,5 +1,9 @@
 import {ManyParentheses} from "../../src/rules";
-import {testRule, testRuleFix} from "./_utils";
+import {testRule, testRuleFix, testRuleFixSingle} from "./_utils";
+
+function testFix(input: string, expected: string, noIssuesAfter = true) {
+  testRuleFixSingle(input, expected, new ManyParentheses(), undefined, undefined, noIssuesAfter);
+}
 
 const tests = [
   {abap: `parser error`, cnt: 0, fix: false},
@@ -48,10 +52,22 @@ ENDLOOP.`, cnt: 0, fix: false},
 testRule(tests, ManyParentheses);
 
 const fixes = [
-  {input: `IF ( destination IS INITIAL ). ENDIF.`, output: `IF destination IS INITIAL. ENDIF.`},
+  {input: `IF ( destination IS INITIAL ). ENDIF.`,
+    output: `IF destination IS INITIAL. ENDIF.`},
   {input: `IF ( ldate > ldate ) OR ( ldate = ldate AND ltime > ltime ). ENDIF.`,
     output: `IF ldate > ldate OR ( ldate = ldate AND ltime > ltime ). ENDIF.`},
-  {input: `IF <field> IS INITIAL OR ( 1 = 2 ). ENDIF.`, output: `IF <field> IS INITIAL OR 1 = 2. ENDIF.`},
+  {input: `IF <field> IS INITIAL OR ( 1 = 2 ). ENDIF.`,
+    output: `IF <field> IS INITIAL OR 1 = 2. ENDIF.`},
 ];
 
 testRuleFix(fixes, ManyParentheses);
+
+describe("Rule: many_parentheses, quick fixes", () => {
+
+  it("quick fix 1", async () => {
+    const abap = `IF NOT ( p IS INSTANCE OF virtualposition ). ENDIF.`;
+    const expected = `IF NOT p IS INSTANCE OF virtualposition. ENDIF.`;
+    testFix(abap, expected);
+  });
+
+});

@@ -1,4 +1,4 @@
-import {Block, BreakStatement, ClassDeclaration, EnumDeclaration, ExpressionStatement, ForStatement, IfStatement, InterfaceDeclaration, ReturnStatement, Statement, TypeAliasDeclaration, VariableStatement} from "ts-morph";
+import {Block, BreakStatement, ClassDeclaration, EnumDeclaration, ExpressionStatement, ForStatement, IfStatement, ImportDeclaration, InterfaceDeclaration, ReturnStatement, Statement, TypeAliasDeclaration, VariableStatement} from "ts-morph";
 import {MorphClassDeclaration} from "./statements/class_declaration";
 import {MorphEnumDeclaration} from "./statements/enum_declaration";
 import {MorphExpression} from "./statements/expression";
@@ -37,6 +37,8 @@ export function handleStatement(s: Statement, settings: MorphSettings): string {
     return new MorphFor().run(s, settings);
   } else if (s instanceof ReturnStatement) {
     return new MorphReturn().run(s, settings);
+  } else if (s instanceof ImportDeclaration) {
+    return "";
   } else {
     console.dir(s.constructor.name + " - handleStatement");
   }

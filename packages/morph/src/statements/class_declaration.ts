@@ -16,7 +16,7 @@ export class MorphClassDeclaration {
     for (const i of s.getHeritageClauses()) {
       if (i.getToken() === SyntaxKind.ExtendsKeyword) {
         const typ = i.getTypeNodes()[0];
-        inherit = " INHERITING FROM " + typ.getText();
+        inherit = " INHERITING FROM " + mapName(typ.getText(), settings);
 
         const desc = i.getDescendants();
         const id = desc[desc.length - 1];
