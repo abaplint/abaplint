@@ -82,6 +82,14 @@ Errors found in INCLUDES are reported for the main program.`,
       tags: [RuleTag.Quickfix],
       pragma: "##NEEDED",
       pseudoComment: "EC NEEDED",
+      badExample: `DATA: BEGIN OF blah1,
+      test  TYPE string,
+      test2 TYPE string,
+    END OF blah1.`,
+      goodExample: `DATA: BEGIN OF blah2 ##NEEDED,
+      test  TYPE string,
+      test2 TYPE string,
+    END OF blah2.`,
     };
   }
 
