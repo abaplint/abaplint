@@ -3,6 +3,7 @@ const fs = require("fs");
 const childProcess = require("child_process");
 
 const repos = [
+  /*
   "ABAP-Logger/ABAP-Logger",
   "abap-observability-tools/abap-metrics-provider",
   "abap-openapi/abap-openapi",
@@ -35,7 +36,9 @@ const repos = [
   "Marc-Bernard-Tools/MBT-Listcube",
   "Marc-Bernard-Tools/MBT-Logical-Object-Lister",
   "Marc-Bernard-Tools/MBT-Transport-Request",
+  */
   "open-abap/open-abap-bal",
+  /*
   "open-abap/open-abap-core",
   "open-abap/open-table-maintenance",
   "SAP/abap-file-formats-tools",
@@ -45,6 +48,7 @@ const repos = [
   "sbcgua/mockup_loader",
   "sbcgua/text2tab",
   "Sumu-Ning/AES",
+  */
 ];
 
 console.dir(repos);
