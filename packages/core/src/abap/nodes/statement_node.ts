@@ -7,7 +7,11 @@ import {ExpressionNode} from "./expression_node";
 import {Comment} from "../1_lexer/tokens/comment";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {Pragma} from "../1_lexer/tokens/pragma";
-import {StringToken, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd} from "../1_lexer/tokens/string";
+import {StringToken} from "../1_lexer/tokens/string";
+import {StringTemplateMiddle} from "../1_lexer/tokens/string_template_middle";
+import {StringTemplateEnd} from "../1_lexer/tokens/string_template_end";
+import {StringTemplateBegin} from "../1_lexer/tokens/string_template_begin";
+import {StringTemplate} from "../1_lexer/tokens/string_template";
 import {IStatement} from "../2_statements/statements/_statement";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
 

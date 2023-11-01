@@ -44,8 +44,11 @@ export * from "./static_arroww";
 export * from "./wstatic_arroww";
 
 export * from "./string";
+export * from "./string_template";
+export * from "./string_template_begin";
+export * from "./string_template_end";
+export * from "./string_template_middle";
 
-// ok
 export * from "./colon";
 export * from "./comment";
 export * from "./identifier";
