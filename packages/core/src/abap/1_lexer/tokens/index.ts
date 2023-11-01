@@ -33,8 +33,11 @@ export * from "./wdash";
 export * from "./dashw";
 export * from "./wdashw";
 
-// todo
 export * from "./plus";
+export * from "./wplus";
+export * from "./plusw";
+export * from "./wplusw";
+
 export * from "./static_arrow";
 export * from "./string";
 
