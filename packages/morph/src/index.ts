@@ -67,6 +67,9 @@ const handle = [
   {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_virtual_position"},
   {inputFile: "abap/1_lexer/tokens/abstract_token.ts", inputClassName: "AbstractToken", outputClassName: "zcl_alint_abstract_token"},
   {inputFile: "abap/1_lexer/tokens/at.ts", inputClassName: "At", outputClassName: "zcl_alint_at"},
+  {inputFile: "abap/1_lexer/tokens/wat.ts", inputClassName: "WAt", outputClassName: "zcl_alint_wat"},
+  {inputFile: "abap/1_lexer/tokens/atw.ts", inputClassName: "AtW", outputClassName: "zcl_alint_atw"},
+  {inputFile: "abap/1_lexer/tokens/watw.ts", inputClassName: "WAtW", outputClassName: "zcl_alint_watw"},
 /*
   "abap/1_lexer/tokens/bracket_left.ts"
   "abap/1_lexer/tokens/bracket_right.ts"
