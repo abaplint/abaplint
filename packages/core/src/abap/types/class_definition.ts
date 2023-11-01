@@ -69,6 +69,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
 
     this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
+    this.checkMethodsFromSuperClasses(scope);
 
     scope.pop(node.getLastToken().getEnd());
 
@@ -144,6 +145,32 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.addReference(token, filename, scope);
     const name = token?.getStr();
     return name;
+  }
+
+  private checkMethodsFromSuperClasses(scope: CurrentScope) {
+    let sup = this.getSuperClass();
+    const names: Set<string> = new Set();
+
+    while (sup !== undefined) {
+      const cdef = scope.findClassDefinition(sup);
+      for (const m of cdef?.getMethodDefinitions().getAll() || []) {
+        if (m.getVisibility() === Visibility.Private) {
+          continue;
+        } else if (m.getName().toUpperCase() === "CONSTRUCTOR") {
+          continue;
+        }
+        names.add(m.getName().toUpperCase());
+      }
+      sup = cdef?.getSuperClass();
+    }
+
+    for (const m of this.getMethodDefinitions().getAll()) {
+      if (names.has(m.getName().toUpperCase()) && m.isRedefinition() === false) {
+        throw new Error(`Method ${m.getName().toUpperCase()} already declared in superclass`);
+      }
+    }
+
+    return names;
   }
 
   private findFriends(def: StatementNode | undefined, filename: string, scope: CurrentScope): string[] {

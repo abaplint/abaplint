@@ -63,7 +63,7 @@ if (diagnostics.length > 0) {
 
 project = new Project();
 
-const handle = [
+const classes = [
   {inputFile: "position.ts", inputClassName: "Position", outputClassName: "zcl_alint_position"},
   {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_virtual_position"},
   {inputFile: "abap/1_lexer/tokens/abstract_token.ts", inputClassName: "AbstractToken", outputClassName: "zcl_alint_abstract_token"},
@@ -90,7 +90,7 @@ const handle = [
 ];
 
 const nameMap: {[name: string]: string} = {};
-for (const h of handle) {
+for (const h of classes) {
   if (h.outputClassName.length > 30) {
     throw h.outputClassName + " longer than 30 characters";
   } else if (nameMap[h.inputClassName] !== undefined) {
@@ -104,7 +104,7 @@ diagnostics = project.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
 } else {
-  for (const h of handle) {
+  for (const h of classes) {
     const file = project.getSourceFile(path.basename(h.inputFile));
     let result = "";
     for (const s of file?.getStatements() || []) {
@@ -115,5 +115,22 @@ if (diagnostics.length > 0) {
     }
     result = "* auto generated, do not touch\n" + result;
     fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.abap", result);
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>${h.outputClassName.toUpperCase()}</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>abaplint</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.xml", xml);
   }
 }
