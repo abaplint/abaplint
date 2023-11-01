@@ -36,10 +36,10 @@ const repos = [
   "Marc-Bernard-Tools/MBT-Listcube",
   "Marc-Bernard-Tools/MBT-Logical-Object-Lister",
   "Marc-Bernard-Tools/MBT-Transport-Request",
-  */
   "open-abap/open-abap-bal",
-  /*
+  */
   "open-abap/open-abap-core",
+  /*
   "open-abap/open-table-maintenance",
   "SAP/abap-file-formats-tools",
   "SAP/abap-file-formats",
@@ -111,7 +111,7 @@ for (let name in map) {
   comment += map[name].version.trim() + " |\n";
 
   for (const i of map[name].after) {
-    if (issues.length > 4000) { // keep the comment at a reasonable size
+    if (issues.length > 5000) { // keep the comment at a reasonable size
       continue;
     }
     let urlFile = i.file.split("/").splice(1).join("/");
