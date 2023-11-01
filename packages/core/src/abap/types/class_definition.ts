@@ -153,7 +153,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     while (sup !== undefined) {
       const cdef = scope.findClassDefinition(sup);
-      for (const m of cdef?.getMethodDefinitions().getAll() || []) {
+      for (const m of cdef?.getMethodDefinitions()?.getAll() || []) {
         if (m.getVisibility() === Visibility.Private) {
           continue;
         } else if (m.getName().toUpperCase() === "CONSTRUCTOR") {
