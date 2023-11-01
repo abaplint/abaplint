@@ -69,7 +69,6 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
 
     this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
-    this.checkMethodsFromSuperClasses(scope);
 
     scope.pop(node.getLastToken().getEnd());
 
@@ -79,6 +78,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.testing = concat.includes(" FOR TESTING");
     this.sharedMemory = concat.includes(" SHARED MEMORY ENABLED");
     this.abstract = cdef?.findDirectTokenByText("ABSTRACT") !== undefined;
+
+    // perform checks after everything has been initialized
+    this.checkMethodsFromSuperClasses(scope);
   }
 
   public getFriends() {
@@ -169,8 +171,6 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 //        throw new Error(`Method ${m.getName().toUpperCase()} already declared in superclass`);
       }
     }
-
-    return names;
   }
 
   private findFriends(def: StatementNode | undefined, filename: string, scope: CurrentScope): string[] {

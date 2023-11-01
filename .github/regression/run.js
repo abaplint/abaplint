@@ -3,6 +3,7 @@ const fs = require("fs");
 const childProcess = require("child_process");
 
 const repos = [
+  /*
   "ABAP-Logger/ABAP-Logger",
   "abap-observability-tools/abap-metrics-provider",
   "abap-openapi/abap-openapi",
@@ -15,7 +16,9 @@ const repos = [
   "abapGit/performance-test",
   "abapinho/abapTimeMachine",
   "abaplint/abaplint-sci-client",
+  */
   "abaplint/deps",
+  /*
   "dominikpanzer/cacamber-BDD-for-ABAP",
   "exercism/abap",
   "FreHu/abap-turtle-graphics",
@@ -45,6 +48,7 @@ const repos = [
   "sbcgua/mockup_loader",
   "sbcgua/text2tab",
   "Sumu-Ning/AES",
+  */
 ];
 
 console.dir(repos);
