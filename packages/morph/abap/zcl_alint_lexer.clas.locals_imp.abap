@@ -36,7 +36,7 @@ CLASS Position IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD equals.
-    return = xsdbool( me->row EQ p->getrow( ) AND me->col EQ p->getcol( ) ).
+    return = xsdbool( row EQ p->getrow( ) AND col EQ p->getcol( ) ).
 
   ENDMETHOD.
 
@@ -47,7 +47,7 @@ CLASS Position IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD isbetween.
-    return = xsdbool( me->isafter( p1 ) AND me->isbefore( p2 ) ).
+    return = xsdbool( isafter( p1 ) AND isbefore( p2 ) ).
 
   ENDMETHOD.
 
@@ -73,7 +73,7 @@ CLASS VirtualPosition IMPLEMENTATION.
       RETURN.
     ENDIF.
     DATA(casted) = CAST virtualposition( p ).
-    return = xsdbool( super->equals( me ) AND me->vrow EQ casted->vrow AND me->vcol EQ casted->vcol ).
+    return = xsdbool( super->equals( me ) AND vrow EQ casted->vrow AND vcol EQ casted->vcol ).
 
   ENDMETHOD.
 
@@ -103,12 +103,12 @@ CLASS Token IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD getrow.
-    return = me->start->getrow( ).
+    return = start->getrow( ).
 
   ENDMETHOD.
 
   METHOD getcol.
-    return = me->start->getcol( ).
+    return = start->getcol( ).
 
   ENDMETHOD.
 
@@ -118,7 +118,7 @@ CLASS Token IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD getend.
-    return = NEW position( row = me->start->getrow( ) col = me->start->getcol( ) + strlen( me->str ) ).
+    return = NEW position( row = start->getrow( ) col = start->getcol( ) + strlen( str ) ).
 
   ENDMETHOD.
 
@@ -648,7 +648,7 @@ CLASS AbstractFile IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD basename.
-    DATA(name) = me->getfilename( ).
+    DATA(name) = getfilename( ).
     DATA(index) = find( val = name sub = |\\| occ = -1 ).
     IF index IS NOT INITIAL.
       index = index + 1.
@@ -663,7 +663,7 @@ CLASS AbstractFile IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD ifile~getobjecttype.
-    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+    DATA(split) = REDUCE string_table( LET split_input = basename( )
       split_by    = |.|
       offset      = 0
       IN
@@ -684,7 +684,7 @@ CLASS AbstractFile IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD ifile~getobjectname.
-    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+    DATA(split) = REDUCE string_table( LET split_input = basename( )
       split_by    = |.|
       offset      = 0
       IN
@@ -738,7 +738,7 @@ CLASS MemoryFile IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD getrawrows.
-    return = REDUCE string_table( LET split_input = me->raw
+    return = REDUCE string_table( LET split_input = raw
       split_by    = |\n|
       offset      = 0
       IN
@@ -796,8 +796,8 @@ CLASS Buffer IMPLEMENTATION.
   METHOD countiseven.
     DATA(count) = 0.
     DATA(i) = 0.
-    WHILE i < strlen( me->buf ).
-      IF substring( val = me->buf len = 1 off = i ) EQ char.
+    WHILE i < strlen( buf ).
+      IF substring( val = buf len = 1 off = i ) EQ char.
         count += 1.
       ENDIF.
       i += 1.
@@ -835,11 +835,11 @@ CLASS Stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD advance.
-    IF me->currentchar( ) EQ |\n|.
+    IF currentchar( ) EQ |\n|.
       me->col = 1.
       me->row = me->row + 1.
     ENDIF.
-    IF me->offset EQ strlen( me->raw ).
+    IF offset EQ strlen( raw ).
       return = abap_false.
       RETURN.
     ENDIF.
@@ -864,7 +864,7 @@ CLASS Stream IMPLEMENTATION.
       return = ||.
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset - 1 len = 1 ).
+    return = substring( val = raw off = offset - 1 len = 1 ).
 
   ENDMETHOD.
 
@@ -873,7 +873,7 @@ CLASS Stream IMPLEMENTATION.
       return = ||.
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset - 2 len = 2 ).
+    return = substring( val = raw off = offset - 2 len = 2 ).
 
   ENDMETHOD.
 
@@ -881,30 +881,30 @@ CLASS Stream IMPLEMENTATION.
     IF me->offset < 0.
       return = |\n|.
       RETURN.
-    ELSEIF me->offset >= strlen( me->raw ).
+    ELSEIF offset >= strlen( raw ).
       return = ||.
       RETURN.
 
     ENDIF.
-    return = substring( val = me->raw off = me->offset len = 1 ).
+    return = substring( val = raw off = offset len = 1 ).
 
   ENDMETHOD.
 
   METHOD nextchar.
-    IF me->offset + 2 > strlen( me->raw ).
+    IF offset + 2 > strlen( raw ).
       return = ||.
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset + 1 len = 1 ).
+    return = substring( val = raw off = offset + 1 len = 1 ).
 
   ENDMETHOD.
 
   METHOD nextnextchar.
-    IF me->offset + 3 > strlen( me->raw ).
-      return = me->nextchar( ).
+    IF offset + 3 > strlen( raw ).
+      return = nextchar( ).
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset + 1 len = 2 ).
+    return = substring( val = raw off = offset + 1 len = 2 ).
 
   ENDMETHOD.
 
@@ -943,20 +943,20 @@ CLASS Lexer IMPLEMENTATION.
     me->virtual = virtual.
     me->tokens = VALUE #( ).
     me->m = me->modenormal.
-    me->process( file->getraw( ) ).
+    process( file->getraw( ) ).
     return = VALUE #( file = file tokens = me->tokens ).
 
   ENDMETHOD.
 
   METHOD add.
-    DATA(s) = condense( val = me->buffer->get( ) del = |\n | ).
+    DATA(s) = condense( val = buffer->get( ) del = |\n | ).
     DATA tok TYPE REF TO token.
     IF strlen( s ) > 0.
-      DATA(col) = me->stream->getcol( ).
-      DATA(row) = me->stream->getrow( ).
+      DATA(col) = stream->getcol( ).
+      DATA(row) = stream->getrow( ).
       DATA(whitebefore) = abap_false.
-      IF me->stream->getoffset( ) - strlen( s ) >= 0.
-        DATA(prev) = substring( val = me->stream->getraw( ) off = me->stream->getoffset( ) - strlen( s ) len = 1 ).
+      IF stream->getoffset( ) - strlen( s ) >= 0.
+        DATA(prev) = substring( val = stream->getraw( ) off = stream->getoffset( ) - strlen( s ) len = 1 ).
         IF prev EQ | | OR
             prev EQ |\n| OR
             prev EQ |\t| OR
@@ -965,7 +965,7 @@ CLASS Lexer IMPLEMENTATION.
         ENDIF.
       ENDIF.
       DATA(whiteafter) = abap_false.
-      DATA(next) = me->stream->nextchar( ).
+      DATA(next) = stream->nextchar( ).
       IF next EQ | | OR
           next EQ |\n| OR
           next EQ |\t| OR
@@ -978,7 +978,7 @@ CLASS Lexer IMPLEMENTATION.
       ENDIF.
       DATA(pos) = NEW position( row = row col = col - strlen( s ) ).
       IF me->virtual IS NOT INITIAL.
-        pos = NEW virtualposition( virtual = me->virtual row = pos->getrow( ) col = pos->getcol( ) ).
+        pos = NEW virtualposition( virtual = virtual row = pos->getrow( ) col = pos->getcol( ) ).
       ENDIF.
 
       CLEAR tok.
@@ -1131,13 +1131,13 @@ CLASS Lexer IMPLEMENTATION.
       ENDIF.
       me->tokens = VALUE #( BASE me->tokens ( tok ) ).
     ENDIF.
-    me->buffer->clear( ).
+    buffer->clear( ).
   ENDMETHOD.
 
   METHOD process.
     DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
     DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
-    me->stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
+    stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
     me->buffer = NEW buffer( ).
 
     CLEAR splits.
@@ -1165,41 +1165,41 @@ CLASS Lexer IMPLEMENTATION.
     APPEND |+| TO bufs.
     APPEND |@| TO bufs.
     DO.
-      DATA(current) = me->stream->currentchar( ).
-      DATA(buf) = me->buffer->add( current ).
-      DATA(ahead) = me->stream->nextchar( ).
-      DATA(aahead) = me->stream->nextnextchar( ).
+      DATA(current) = stream->currentchar( ).
+      DATA(buf) = buffer->add( current ).
+      DATA(ahead) = stream->nextchar( ).
+      DATA(aahead) = stream->nextnextchar( ).
       IF me->m EQ me->modenormal.
         IF line_exists( splits[ table_line = ahead ] ).
-          me->add( ).
+          add( ).
         ELSEIF ahead EQ |'|.
-          me->add( ).
+          add( ).
           me->m = me->modestr.
         ELSEIF ahead EQ |\|| OR
             ahead EQ |\}|.
-          me->add( ).
+          add( ).
           me->m = me->modetemplate.
         ELSEIF ahead EQ |`|.
-          me->add( ).
+          add( ).
           me->m = me->modeping.
         ELSEIF aahead EQ |##|.
-          me->add( ).
+          add( ).
           me->m = me->modepragma.
         ELSEIF ahead EQ |"| OR
             ( ahead EQ |*| AND current EQ |\n| ).
-          me->add( ).
+          add( ).
           me->m = me->modecomment.
         ELSEIF ahead EQ |@| AND strlen( condense( val = buf del = |\n | ) ) EQ 0.
-          me->add( ).
+          add( ).
         ELSEIF aahead EQ |->| OR
             aahead EQ |=>|.
-          me->add( ).
-        ELSEIF current EQ |>| AND ahead NE | | AND ( me->stream->prevchar( ) EQ |-| OR
-            me->stream->prevchar( ) EQ |=| ).
-          me->add( ).
+          add( ).
+        ELSEIF current EQ |>| AND ahead NE | | AND ( stream->prevchar( ) EQ |-| OR
+            stream->prevchar( ) EQ |=| ).
+          add( ).
         ELSEIF strlen( buf ) EQ 1 AND ( line_exists( bufs[ table_line = buf ] ) OR
             ( buf EQ |-| AND ahead NE |>| ) ).
-          me->add( ).
+          add( ).
 
 
         ENDIF.
@@ -1208,42 +1208,42 @@ CLASS Lexer IMPLEMENTATION.
           ahead EQ |.| OR
           ahead EQ | | OR
           ahead EQ |\n| ).
-        me->add( ).
+        add( ).
         me->m = me->modenormal.
-      ELSEIF me->m EQ me->modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
-        me->add( ).
+      ELSEIF m EQ modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND buffer->countiseven( |`| ).
+        add( ).
         IF ahead EQ |"|.
           me->m = me->modecomment.
         ELSE.
           me->m = me->modenormal.
         ENDIF.
-      ELSEIF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
-          current EQ |\{| ) AND ( me->stream->prevchar( ) NE |\\| OR
-          me->stream->prevprevchar( ) EQ |\\\\| ).
-        me->add( ).
+      ELSEIF m EQ modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
+          current EQ |\{| ) AND ( stream->prevchar( ) NE |\\| OR
+          stream->prevprevchar( ) EQ |\\\\| ).
+        add( ).
         me->m = me->modenormal.
       ELSEIF me->m EQ me->modetemplate AND ahead EQ |\}| AND current NE |\\|.
-        me->add( ).
-      ELSEIF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
-        me->add( ).
+        add( ).
+      ELSEIF m EQ modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND buffer->countiseven( |'| ).
+        add( ).
         IF ahead EQ |"|.
           me->m = me->modecomment.
         ELSE.
           me->m = me->modenormal.
         ENDIF.
       ELSEIF ahead EQ |\n| AND me->m NE me->modetemplate.
-        me->add( ).
+        add( ).
         me->m = me->modenormal.
       ELSEIF me->m EQ me->modetemplate AND current EQ |\n|.
-        me->add( ).
+        add( ).
 
 
       ENDIF.
-      IF NOT me->stream->advance( ).
+      IF NOT stream->advance( ).
         EXIT.
       ENDIF.
     ENDDO.
-    me->add( ).
+    add( ).
   ENDMETHOD.
 
 ENDCLASS.

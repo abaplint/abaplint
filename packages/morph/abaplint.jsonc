@@ -27,6 +27,7 @@
     "in_statement_indentation": true,
     "check_ddic": true,
     "definitions_top": true,
+    "prefix_is_current_class": true,
     "whitespace_end": true,
     "indentation": true,
     "check_include": true,
