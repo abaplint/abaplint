@@ -3,7 +3,7 @@ import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {FlowGraph} from "./flow_graph";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
@@ -59,7 +59,7 @@ export class StatementFlow {
   }
 
   private buildName(statement: StatementNode): string {
-    let token: Token | undefined = undefined;
+    let token: AbstractToken | undefined = undefined;
     const colon = statement.getColon();
     if (colon === undefined) {
       token = statement.getFirstToken();

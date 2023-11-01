@@ -19,7 +19,7 @@ import {IAliases} from "./_aliases";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
 import {ReferenceType} from "../5_syntax/_reference";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
@@ -78,6 +78,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.testing = concat.includes(" FOR TESTING");
     this.sharedMemory = concat.includes(" SHARED MEMORY ENABLED");
     this.abstract = cdef?.findDirectTokenByText("ABSTRACT") !== undefined;
+
+    // perform checks after everything has been initialized
+    this.checkMethodsFromSuperClasses(scope);
   }
 
   public getFriends() {
@@ -146,6 +149,30 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return name;
   }
 
+  private checkMethodsFromSuperClasses(scope: CurrentScope) {
+    let sup = this.getSuperClass();
+    const names: Set<string> = new Set();
+
+    while (sup !== undefined) {
+      const cdef = scope.findClassDefinition(sup);
+      for (const m of cdef?.getMethodDefinitions()?.getAll() || []) {
+        if (m.getVisibility() === Visibility.Private) {
+          continue;
+        } else if (m.getName().toUpperCase() === "CONSTRUCTOR") {
+          continue;
+        }
+        names.add(m.getName().toUpperCase());
+      }
+      sup = cdef?.getSuperClass();
+    }
+
+    for (const m of this.getMethodDefinitions().getAll()) {
+      if (names.has(m.getName().toUpperCase()) && m.isRedefinition() === false) {
+        throw new Error(`Method ${m.getName().toUpperCase()} already declared in superclass`);
+      }
+    }
+  }
+
   private findFriends(def: StatementNode | undefined, filename: string, scope: CurrentScope): string[] {
     const result: string[] = [];
     for (const n of def?.findDirectExpression(Expressions.ClassFriends)?.findDirectExpressions(Expressions.ClassName) || []) {
@@ -157,7 +184,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return result;
   }
 
-  private addReference(token: Token | undefined, filename: string, scope: CurrentScope) {
+  private addReference(token: AbstractToken | undefined, filename: string, scope: CurrentScope) {
     const name = token?.getStr();
     if (name) {
       const s = scope.findClassDefinition(name);

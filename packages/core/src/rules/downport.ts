@@ -8,7 +8,8 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Unknown} from "../abap/2_statements/statements/_statement";
 import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {IEdit, EditHelper} from "../edit_helper";
-import {Position, VirtualPosition} from "../position";
+import {Position} from "../position";
+import {VirtualPosition} from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
@@ -22,7 +23,7 @@ import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {At, ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
 import {IncludeGraph} from "../utils/include_graph";
 import {Program} from "../objects";
@@ -637,7 +638,7 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     let fix: IEdit | undefined = undefined;
-    const addFix = (token: Token) => {
+    const addFix = (token: AbstractToken) => {
       const add = EditHelper.deleteToken(lowFile, token);
       if (fix === undefined) {
         fix = add;
@@ -1050,7 +1051,7 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       }
 
       let pre = "";
-      let startToken: Token | undefined = undefined;
+      let startToken: AbstractToken | undefined = undefined;
       for (const child of fieldChain.getChildren()) {
         if (startToken === undefined) {
           startToken = child.getFirstToken();
@@ -2926,7 +2927,7 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
-  private findMethodCallExpression(node: StatementNode, token: Token) {
+  private findMethodCallExpression(node: StatementNode, token: AbstractToken) {
     for (const m of node.findAllExpressions(Expressions.MethodCall)) {
       if (m.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStart().equals(token.getStart())) {
         return m;

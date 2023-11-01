@@ -21,34 +21,34 @@ CLASS Position IMPLEMENTATION.
 
   METHOD getcol.
     return = me->col.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
     return = me->row.
-    
+
   ENDMETHOD.
 
   METHOD isafter.
     return = xsdbool( me->row > p->row OR
       ( me->row EQ p->row AND me->col >= p->col ) ).
-    
+
   ENDMETHOD.
 
   METHOD equals.
-    return = xsdbool( me->row EQ p->getrow( ) AND me->col EQ p->getcol( ) ).
-    
+    return = xsdbool( row EQ p->getrow( ) AND col EQ p->getcol( ) ).
+
   ENDMETHOD.
 
   METHOD isbefore.
     return = xsdbool( me->row < p->row OR
       ( me->row EQ p->row AND me->col < p->col ) ).
-    
+
   ENDMETHOD.
 
   METHOD isbetween.
-    return = xsdbool( me->isafter( p1 ) AND me->isbefore( p2 ) ).
-    
+    return = xsdbool( isafter( p1 ) AND isbefore( p2 ) ).
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -73,12 +73,12 @@ CLASS VirtualPosition IMPLEMENTATION.
       RETURN.
     ENDIF.
     DATA(casted) = CAST virtualposition( p ).
-    return = xsdbool( super->equals( me ) AND me->vrow EQ casted->vrow AND me->vcol EQ casted->vcol ).
-    
+    return = xsdbool( super->equals( me ) AND vrow EQ casted->vrow AND vcol EQ casted->vcol ).
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS token DEFINITION ABSTRACT.
+CLASS abstracttoken DEFINITION ABSTRACT.
   PUBLIC SECTION.
     METHODS constructor IMPORTING start TYPE REF TO position str TYPE string.
     METHODS getstr RETURNING VALUE(return) TYPE string.
@@ -91,7 +91,7 @@ CLASS token DEFINITION ABSTRACT.
     DATA str TYPE string.
 ENDCLASS.
 
-CLASS Token IMPLEMENTATION.
+CLASS AbstractToken IMPLEMENTATION.
   METHOD constructor.
     me->start = start.
     me->str = str.
@@ -99,31 +99,31 @@ CLASS Token IMPLEMENTATION.
 
   METHOD getstr.
     return = me->str.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
-    return = me->start->getrow( ).
-    
+    return = start->getrow( ).
+
   ENDMETHOD.
 
   METHOD getcol.
-    return = me->start->getcol( ).
-    
+    return = start->getcol( ).
+
   ENDMETHOD.
 
   METHOD getstart.
     return = me->start.
-    
+
   ENDMETHOD.
 
   METHOD getend.
-    return = NEW position( row = me->start->getrow( ) col = me->start->getcol( ) + strlen( me->str ) ).
-    
+    return = NEW position( row = start->getrow( ) col = start->getcol( ) + strlen( str ) ).
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS at DEFINITION INHERITING FROM token.
+CLASS at DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -131,11 +131,11 @@ ENDCLASS.
 CLASS At IMPLEMENTATION.
   METHOD railroad.
     return = |@|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wat DEFINITION INHERITING FROM token.
+CLASS wat DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -143,11 +143,11 @@ ENDCLASS.
 CLASS WAt IMPLEMENTATION.
   METHOD railroad.
     return = | @|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS atw DEFINITION INHERITING FROM token.
+CLASS atw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -155,11 +155,11 @@ ENDCLASS.
 CLASS AtW IMPLEMENTATION.
   METHOD railroad.
     return = |@ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS watw DEFINITION INHERITING FROM token.
+CLASS watw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -167,11 +167,11 @@ ENDCLASS.
 CLASS WAtW IMPLEMENTATION.
   METHOD railroad.
     return = | @ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS bracketleft DEFINITION INHERITING FROM token.
+CLASS bracketleft DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -179,11 +179,11 @@ ENDCLASS.
 CLASS BracketLeft IMPLEMENTATION.
   METHOD railroad.
     return = |[|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wbracketleft DEFINITION INHERITING FROM token.
+CLASS wbracketleft DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -191,11 +191,11 @@ ENDCLASS.
 CLASS WBracketLeft IMPLEMENTATION.
   METHOD railroad.
     return = | [|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS bracketleftw DEFINITION INHERITING FROM token.
+CLASS bracketleftw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -203,11 +203,11 @@ ENDCLASS.
 CLASS BracketLeftW IMPLEMENTATION.
   METHOD railroad.
     return = |[ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wbracketleftw DEFINITION INHERITING FROM token.
+CLASS wbracketleftw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -215,11 +215,11 @@ ENDCLASS.
 CLASS WBracketLeftW IMPLEMENTATION.
   METHOD railroad.
     return = | [ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS bracketright DEFINITION INHERITING FROM token.
+CLASS bracketright DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -227,11 +227,11 @@ ENDCLASS.
 CLASS BracketRight IMPLEMENTATION.
   METHOD railroad.
     return = |]|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wbracketright DEFINITION INHERITING FROM token.
+CLASS wbracketright DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -239,11 +239,11 @@ ENDCLASS.
 CLASS WBracketRight IMPLEMENTATION.
   METHOD railroad.
     return = | ]|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS bracketrightw DEFINITION INHERITING FROM token.
+CLASS bracketrightw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -251,11 +251,11 @@ ENDCLASS.
 CLASS BracketRightW IMPLEMENTATION.
   METHOD railroad.
     return = |] |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wbracketrightw DEFINITION INHERITING FROM token.
+CLASS wbracketrightw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -263,23 +263,23 @@ ENDCLASS.
 CLASS WBracketRightW IMPLEMENTATION.
   METHOD railroad.
     return = | ] |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS colon DEFINITION INHERITING FROM token.
+CLASS colon DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS Colon IMPLEMENTATION.
 ENDCLASS.
-CLASS comment DEFINITION INHERITING FROM token.
+CLASS comment DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS Comment IMPLEMENTATION.
 ENDCLASS.
-CLASS dash DEFINITION INHERITING FROM token.
+CLASS dash DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -287,11 +287,11 @@ ENDCLASS.
 CLASS Dash IMPLEMENTATION.
   METHOD railroad.
     return = |-|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wdash DEFINITION INHERITING FROM token.
+CLASS wdash DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -299,11 +299,11 @@ ENDCLASS.
 CLASS WDash IMPLEMENTATION.
   METHOD railroad.
     return = | -|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS dashw DEFINITION INHERITING FROM token.
+CLASS dashw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -311,11 +311,11 @@ ENDCLASS.
 CLASS DashW IMPLEMENTATION.
   METHOD railroad.
     return = |- |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wdashw DEFINITION INHERITING FROM token.
+CLASS wdashw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -323,17 +323,17 @@ ENDCLASS.
 CLASS WDashW IMPLEMENTATION.
   METHOD railroad.
     return = | - |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS identifier DEFINITION INHERITING FROM token.
+CLASS identifier DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS Identifier IMPLEMENTATION.
 ENDCLASS.
-CLASS instancearrow DEFINITION INHERITING FROM token.
+CLASS instancearrow DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -341,11 +341,11 @@ ENDCLASS.
 CLASS InstanceArrow IMPLEMENTATION.
   METHOD railroad.
     return = |->|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS winstancearrow DEFINITION INHERITING FROM token.
+CLASS winstancearrow DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -353,11 +353,11 @@ ENDCLASS.
 CLASS WInstanceArrow IMPLEMENTATION.
   METHOD railroad.
     return = | ->|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS instancearroww DEFINITION INHERITING FROM token.
+CLASS instancearroww DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -365,11 +365,11 @@ ENDCLASS.
 CLASS InstanceArrowW IMPLEMENTATION.
   METHOD railroad.
     return = |-> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS winstancearroww DEFINITION INHERITING FROM token.
+CLASS winstancearroww DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -377,11 +377,11 @@ ENDCLASS.
 CLASS WInstanceArrowW IMPLEMENTATION.
   METHOD railroad.
     return = | -> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS parenleft DEFINITION INHERITING FROM token.
+CLASS parenleft DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -389,11 +389,11 @@ ENDCLASS.
 CLASS ParenLeft IMPLEMENTATION.
   METHOD railroad.
     return = |(|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wparenleft DEFINITION INHERITING FROM token.
+CLASS wparenleft DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -401,11 +401,11 @@ ENDCLASS.
 CLASS WParenLeft IMPLEMENTATION.
   METHOD railroad.
     return = | (|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS parenleftw DEFINITION INHERITING FROM token.
+CLASS parenleftw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -413,11 +413,11 @@ ENDCLASS.
 CLASS ParenLeftW IMPLEMENTATION.
   METHOD railroad.
     return = |( |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wparenleftw DEFINITION INHERITING FROM token.
+CLASS wparenleftw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -425,11 +425,11 @@ ENDCLASS.
 CLASS WParenLeftW IMPLEMENTATION.
   METHOD railroad.
     return = | ( |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS parenright DEFINITION INHERITING FROM token.
+CLASS parenright DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -437,11 +437,11 @@ ENDCLASS.
 CLASS ParenRight IMPLEMENTATION.
   METHOD railroad.
     return = |)|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wparenright DEFINITION INHERITING FROM token.
+CLASS wparenright DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -449,11 +449,11 @@ ENDCLASS.
 CLASS WParenRight IMPLEMENTATION.
   METHOD railroad.
     return = | )|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS parenrightw DEFINITION INHERITING FROM token.
+CLASS parenrightw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -461,11 +461,11 @@ ENDCLASS.
 CLASS ParenRightW IMPLEMENTATION.
   METHOD railroad.
     return = |) |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wparenrightw DEFINITION INHERITING FROM token.
+CLASS wparenrightw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -473,11 +473,11 @@ ENDCLASS.
 CLASS WParenRightW IMPLEMENTATION.
   METHOD railroad.
     return = | ) |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS plus DEFINITION INHERITING FROM token.
+CLASS plus DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -485,11 +485,11 @@ ENDCLASS.
 CLASS Plus IMPLEMENTATION.
   METHOD railroad.
     return = |+|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wplus DEFINITION INHERITING FROM token.
+CLASS wplus DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -497,11 +497,11 @@ ENDCLASS.
 CLASS WPlus IMPLEMENTATION.
   METHOD railroad.
     return = | +|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS plusw DEFINITION INHERITING FROM token.
+CLASS plusw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -509,11 +509,11 @@ ENDCLASS.
 CLASS PlusW IMPLEMENTATION.
   METHOD railroad.
     return = |+ |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wplusw DEFINITION INHERITING FROM token.
+CLASS wplusw DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -521,23 +521,23 @@ ENDCLASS.
 CLASS WPlusW IMPLEMENTATION.
   METHOD railroad.
     return = | + |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS pragma DEFINITION INHERITING FROM token.
+CLASS pragma DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS Pragma IMPLEMENTATION.
 ENDCLASS.
-CLASS punctuation DEFINITION INHERITING FROM token.
+CLASS punctuation DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS Punctuation IMPLEMENTATION.
 ENDCLASS.
-CLASS staticarrow DEFINITION INHERITING FROM token.
+CLASS staticarrow DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -545,11 +545,11 @@ ENDCLASS.
 CLASS StaticArrow IMPLEMENTATION.
   METHOD railroad.
     return = |=>|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wstaticarrow DEFINITION INHERITING FROM token.
+CLASS wstaticarrow DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -557,11 +557,11 @@ ENDCLASS.
 CLASS WStaticArrow IMPLEMENTATION.
   METHOD railroad.
     return = | =>|.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS staticarroww DEFINITION INHERITING FROM token.
+CLASS staticarroww DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -569,11 +569,11 @@ ENDCLASS.
 CLASS StaticArrowW IMPLEMENTATION.
   METHOD railroad.
     return = |=> |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS wstaticarroww DEFINITION INHERITING FROM token.
+CLASS wstaticarroww DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
     CLASS-METHODS railroad RETURNING VALUE(return) TYPE string.
 ENDCLASS.
@@ -581,35 +581,35 @@ ENDCLASS.
 CLASS WStaticArrowW IMPLEMENTATION.
   METHOD railroad.
     return = | => |.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
-CLASS stringtoken DEFINITION INHERITING FROM token.
+CLASS stringtoken DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS StringToken IMPLEMENTATION.
 ENDCLASS.
-CLASS stringtemplate DEFINITION INHERITING FROM token.
+CLASS stringtemplate DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS StringTemplate IMPLEMENTATION.
 ENDCLASS.
-CLASS stringtemplatebegin DEFINITION INHERITING FROM token.
+CLASS stringtemplatebegin DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS StringTemplateBegin IMPLEMENTATION.
 ENDCLASS.
-CLASS stringtemplateend DEFINITION INHERITING FROM token.
+CLASS stringtemplateend DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
 CLASS StringTemplateEnd IMPLEMENTATION.
 ENDCLASS.
-CLASS stringtemplatemiddle DEFINITION INHERITING FROM token.
+CLASS stringtemplatemiddle DEFINITION INHERITING FROM abstracttoken.
   PUBLIC SECTION.
 ENDCLASS.
 
@@ -644,11 +644,11 @@ CLASS AbstractFile IMPLEMENTATION.
 
   METHOD ifile~getfilename.
     return = me->filename.
-    
+
   ENDMETHOD.
 
   METHOD basename.
-    DATA(name) = me->getfilename( ).
+    DATA(name) = getfilename( ).
     DATA(index) = find( val = name sub = |\\| occ = -1 ).
     IF index IS NOT INITIAL.
       index = index + 1.
@@ -659,11 +659,11 @@ CLASS AbstractFile IMPLEMENTATION.
       index = index + 1.
     ENDIF.
     return = substring( val = name off = index ).
-    
+
   ENDMETHOD.
 
   METHOD ifile~getobjecttype.
-    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+    DATA(split) = REDUCE string_table( LET split_input = basename( )
       split_by    = |.|
       offset      = 0
       IN
@@ -680,11 +680,11 @@ CLASS AbstractFile IMPLEMENTATION.
       THEN ||
       ELSE |{ add }{ split_input+index1(1) }| ) ).
     return = to_upper( split[ 1 + 1 ] ).
-    
+
   ENDMETHOD.
 
   METHOD ifile~getobjectname.
-    DATA(split) = REDUCE string_table( LET split_input = me->basename( )
+    DATA(split) = REDUCE string_table( LET split_input = basename( )
       split_by    = |.|
       offset      = 0
       IN
@@ -707,7 +707,7 @@ CLASS AbstractFile IMPLEMENTATION.
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |(| with = |/| ).
     split[ 0 + 1 ] = replace( val = split[ 0 + 1 ] regex = |)| with = |/| ).
     return = split[ 0 + 1 ].
-    
+
   ENDMETHOD.
 
   METHOD ifile~getraw.
@@ -734,11 +734,11 @@ CLASS MemoryFile IMPLEMENTATION.
 
   METHOD getraw.
     return = me->raw.
-    
+
   ENDMETHOD.
 
   METHOD getrawrows.
-    return = REDUCE string_table( LET split_input = me->raw
+    return = REDUCE string_table( LET split_input = raw
       split_by    = |\n|
       offset      = 0
       IN
@@ -754,13 +754,13 @@ CLASS MemoryFile IMPLEMENTATION.
       WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
       ELSE |{ add }{ split_input+index3(1) }| ) ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
 TYPES BEGIN OF iabaplexerresult.
 TYPES file TYPE REF TO ifile.
-TYPES tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
+TYPES tokens TYPE STANDARD TABLE OF REF TO abstracttoken WITH EMPTY KEY.
 TYPES END OF iabaplexerresult.
 CLASS buffer DEFINITION.
   PUBLIC SECTION.
@@ -781,12 +781,12 @@ CLASS Buffer IMPLEMENTATION.
   METHOD add.
     me->buf = me->buf && s.
     return = me->buf.
-    
+
   ENDMETHOD.
 
   METHOD get.
     return = me->buf.
-    
+
   ENDMETHOD.
 
   METHOD clear.
@@ -796,14 +796,14 @@ CLASS Buffer IMPLEMENTATION.
   METHOD countiseven.
     DATA(count) = 0.
     DATA(i) = 0.
-    WHILE i < strlen( me->buf ).
-      IF substring( val = me->buf len = 1 off = i ) EQ char.
+    WHILE i < strlen( buf ).
+      IF substring( val = buf len = 1 off = i ) EQ char.
         count += 1.
       ENDIF.
       i += 1.
     ENDWHILE.
     return = xsdbool( count MOD 2 EQ 0 ).
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -835,28 +835,28 @@ CLASS Stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD advance.
-    IF me->currentchar( ) EQ |\n|.
+    IF currentchar( ) EQ |\n|.
       me->col = 1.
       me->row = me->row + 1.
     ENDIF.
-    IF me->offset EQ strlen( me->raw ).
+    IF offset EQ strlen( raw ).
       return = abap_false.
       RETURN.
     ENDIF.
     me->col = me->col + 1.
     me->offset = me->offset + 1.
     return = abap_true.
-    
+
   ENDMETHOD.
 
   METHOD getcol.
     return = me->col.
-    
+
   ENDMETHOD.
 
   METHOD getrow.
     return = me->row.
-    
+
   ENDMETHOD.
 
   METHOD prevchar.
@@ -864,8 +864,8 @@ CLASS Stream IMPLEMENTATION.
       return = ||.
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset - 1 len = 1 ).
-    
+    return = substring( val = raw off = offset - 1 len = 1 ).
+
   ENDMETHOD.
 
   METHOD prevprevchar.
@@ -873,49 +873,49 @@ CLASS Stream IMPLEMENTATION.
       return = ||.
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset - 2 len = 2 ).
-    
+    return = substring( val = raw off = offset - 2 len = 2 ).
+
   ENDMETHOD.
 
   METHOD currentchar.
     IF me->offset < 0.
       return = |\n|.
       RETURN.
-    ELSEIF me->offset >= strlen( me->raw ).
+    ELSEIF offset >= strlen( raw ).
       return = ||.
       RETURN.
 
     ENDIF.
-    return = substring( val = me->raw off = me->offset len = 1 ).
-    
+    return = substring( val = raw off = offset len = 1 ).
+
   ENDMETHOD.
 
   METHOD nextchar.
-    IF me->offset + 2 > strlen( me->raw ).
+    IF offset + 2 > strlen( raw ).
       return = ||.
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset + 1 len = 1 ).
-    
+    return = substring( val = raw off = offset + 1 len = 1 ).
+
   ENDMETHOD.
 
   METHOD nextnextchar.
-    IF me->offset + 3 > strlen( me->raw ).
-      return = me->nextchar( ).
+    IF offset + 3 > strlen( raw ).
+      return = nextchar( ).
       RETURN.
     ENDIF.
-    return = substring( val = me->raw off = me->offset + 1 len = 2 ).
-    
+    return = substring( val = raw off = offset + 1 len = 2 ).
+
   ENDMETHOD.
 
   METHOD getraw.
     return = me->raw.
-    
+
   ENDMETHOD.
 
   METHOD getoffset.
     return = me->offset.
-    
+
   ENDMETHOD.
 
 ENDCLASS.
@@ -930,7 +930,7 @@ CLASS lexer DEFINITION.
     DATA modecomment TYPE i VALUE 5.
     DATA modepragma TYPE i VALUE 6.
     DATA virtual TYPE REF TO position.
-    DATA tokens TYPE STANDARD TABLE OF REF TO token WITH EMPTY KEY.
+    DATA tokens TYPE STANDARD TABLE OF REF TO abstracttoken WITH EMPTY KEY.
     DATA m TYPE i.
     DATA stream TYPE REF TO stream.
     DATA buffer TYPE REF TO buffer.
@@ -943,19 +943,20 @@ CLASS Lexer IMPLEMENTATION.
     me->virtual = virtual.
     me->tokens = VALUE #( ).
     me->m = me->modenormal.
-    me->process( file->getraw( ) ).
+    process( file->getraw( ) ).
     return = VALUE #( file = file tokens = me->tokens ).
-    
+
   ENDMETHOD.
 
   METHOD add.
-    DATA(s) = condense( me->buffer->get( ) ).
+    DATA(s) = condense( val = buffer->get( ) del = |\n | ).
+    DATA tok TYPE REF TO abstracttoken.
     IF strlen( s ) > 0.
-      DATA(col) = me->stream->getcol( ).
-      DATA(row) = me->stream->getrow( ).
+      DATA(col) = stream->getcol( ).
+      DATA(row) = stream->getrow( ).
       DATA(whitebefore) = abap_false.
-      IF me->stream->getoffset( ) - strlen( s ) >= 0.
-        DATA(prev) = substring( val = me->stream->getraw( ) off = me->stream->getoffset( ) - strlen( s ) len = 1 ).
+      IF stream->getoffset( ) - strlen( s ) >= 0.
+        DATA(prev) = substring( val = stream->getraw( ) off = stream->getoffset( ) - strlen( s ) len = 1 ).
         IF prev EQ | | OR
             prev EQ |\n| OR
             prev EQ |\t| OR
@@ -964,7 +965,7 @@ CLASS Lexer IMPLEMENTATION.
         ENDIF.
       ENDIF.
       DATA(whiteafter) = abap_false.
-      DATA(next) = me->stream->nextchar( ).
+      DATA(next) = stream->nextchar( ).
       IF next EQ | | OR
           next EQ |\n| OR
           next EQ |\t| OR
@@ -977,9 +978,9 @@ CLASS Lexer IMPLEMENTATION.
       ENDIF.
       DATA(pos) = NEW position( row = row col = col - strlen( s ) ).
       IF me->virtual IS NOT INITIAL.
-        pos = NEW virtualposition( virtual = me->virtual row = pos->getrow( ) col = pos->getcol( ) ).
+        pos = NEW virtualposition( virtual = virtual row = pos->getrow( ) col = pos->getcol( ) ).
       ENDIF.
-      DATA tok TYPE REF TO token.
+
       CLEAR tok.
       IF me->m EQ me->modecomment.
         tok = NEW comment( start = pos str = s ).
@@ -1130,13 +1131,15 @@ CLASS Lexer IMPLEMENTATION.
       ENDIF.
       me->tokens = VALUE #( BASE me->tokens ( tok ) ).
     ENDIF.
-    me->buffer->clear( ).
+    buffer->clear( ).
   ENDMETHOD.
 
   METHOD process.
-    me->stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
-    me->buffer = NEW buffer( ).
     DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
+    me->buffer = NEW buffer( ).
+
     CLEAR splits.
     APPEND | | TO splits.
     APPEND |:| TO splits.
@@ -1150,7 +1153,7 @@ CLASS Lexer IMPLEMENTATION.
     APPEND |]| TO splits.
     APPEND |\t| TO splits.
     APPEND |\n| TO splits.
-    DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+
     CLEAR bufs.
     APPEND |.| TO bufs.
     APPEND |,| TO bufs.
@@ -1162,41 +1165,41 @@ CLASS Lexer IMPLEMENTATION.
     APPEND |+| TO bufs.
     APPEND |@| TO bufs.
     DO.
-      DATA(current) = me->stream->currentchar( ).
-      DATA(buf) = me->buffer->add( current ).
-      DATA(ahead) = me->stream->nextchar( ).
-      DATA(aahead) = me->stream->nextnextchar( ).
+      DATA(current) = stream->currentchar( ).
+      DATA(buf) = buffer->add( current ).
+      DATA(ahead) = stream->nextchar( ).
+      DATA(aahead) = stream->nextnextchar( ).
       IF me->m EQ me->modenormal.
         IF line_exists( splits[ table_line = ahead ] ).
-          me->add( ).
+          add( ).
         ELSEIF ahead EQ |'|.
-          me->add( ).
+          add( ).
           me->m = me->modestr.
         ELSEIF ahead EQ |\|| OR
             ahead EQ |\}|.
-          me->add( ).
+          add( ).
           me->m = me->modetemplate.
         ELSEIF ahead EQ |`|.
-          me->add( ).
+          add( ).
           me->m = me->modeping.
         ELSEIF aahead EQ |##|.
-          me->add( ).
+          add( ).
           me->m = me->modepragma.
         ELSEIF ahead EQ |"| OR
             ( ahead EQ |*| AND current EQ |\n| ).
-          me->add( ).
+          add( ).
           me->m = me->modecomment.
-        ELSEIF ahead EQ |@| AND strlen( condense( buf ) ) EQ 0.
-          me->add( ).
+        ELSEIF ahead EQ |@| AND strlen( condense( val = buf del = |\n | ) ) EQ 0.
+          add( ).
         ELSEIF aahead EQ |->| OR
             aahead EQ |=>|.
-          me->add( ).
-        ELSEIF current EQ |>| AND ahead NE | | AND ( me->stream->prevchar( ) EQ |-| OR
-            me->stream->prevchar( ) EQ |=| ).
-          me->add( ).
+          add( ).
+        ELSEIF current EQ |>| AND ahead NE | | AND ( stream->prevchar( ) EQ |-| OR
+            stream->prevchar( ) EQ |=| ).
+          add( ).
         ELSEIF strlen( buf ) EQ 1 AND ( line_exists( bufs[ table_line = buf ] ) OR
             ( buf EQ |-| AND ahead NE |>| ) ).
-          me->add( ).
+          add( ).
 
 
         ENDIF.
@@ -1205,42 +1208,42 @@ CLASS Lexer IMPLEMENTATION.
           ahead EQ |.| OR
           ahead EQ | | OR
           ahead EQ |\n| ).
-        me->add( ).
+        add( ).
         me->m = me->modenormal.
-      ELSEIF me->m EQ me->modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND me->buffer->countiseven( |`| ).
-        me->add( ).
+      ELSEIF m EQ modeping AND strlen( buf ) > 1 AND current EQ |`| AND aahead NE |``| AND ahead NE |`| AND buffer->countiseven( |`| ).
+        add( ).
         IF ahead EQ |"|.
           me->m = me->modecomment.
         ELSE.
           me->m = me->modenormal.
         ENDIF.
-      ELSEIF me->m EQ me->modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
-          current EQ |\{| ) AND ( me->stream->prevchar( ) NE |\\| OR
-          me->stream->prevprevchar( ) EQ |\\\\| ).
-        me->add( ).
+      ELSEIF m EQ modetemplate AND strlen( buf ) > 1 AND ( current EQ |\|| OR
+          current EQ |\{| ) AND ( stream->prevchar( ) NE |\\| OR
+          stream->prevprevchar( ) EQ |\\\\| ).
+        add( ).
         me->m = me->modenormal.
       ELSEIF me->m EQ me->modetemplate AND ahead EQ |\}| AND current NE |\\|.
-        me->add( ).
-      ELSEIF me->m EQ me->modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND me->buffer->countiseven( |'| ).
-        me->add( ).
+        add( ).
+      ELSEIF m EQ modestr AND current EQ |'| AND strlen( buf ) > 1 AND aahead NE |''| AND ahead NE |'| AND buffer->countiseven( |'| ).
+        add( ).
         IF ahead EQ |"|.
           me->m = me->modecomment.
         ELSE.
           me->m = me->modenormal.
         ENDIF.
       ELSEIF ahead EQ |\n| AND me->m NE me->modetemplate.
-        me->add( ).
+        add( ).
         me->m = me->modenormal.
       ELSEIF me->m EQ me->modetemplate AND current EQ |\n|.
-        me->add( ).
+        add( ).
 
 
       ENDIF.
-      IF NOT me->stream->advance( ).
+      IF NOT stream->advance( ).
         EXIT.
       ENDIF.
     ENDDO.
-    me->add( ).
+    add( ).
   ENDMETHOD.
 
 ENDCLASS.

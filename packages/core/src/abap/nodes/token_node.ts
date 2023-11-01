@@ -1,10 +1,10 @@
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {INode} from "./_inode";
 
 export class TokenNode implements INode {
-  private readonly token: Token;
+  private readonly token: AbstractToken;
 
-  public constructor(token: Token) {
+  public constructor(token: AbstractToken) {
     this.token = token;
   }
 
@@ -24,7 +24,7 @@ export class TokenNode implements INode {
     return this.token.getStr();
   }
 
-  public get(): Token {
+  public get(): AbstractToken {
     return this.token;
   }
 
@@ -32,11 +32,11 @@ export class TokenNode implements INode {
     return 1;
   }
 
-  public getFirstToken(): Token {
+  public getFirstToken(): AbstractToken {
     return this.token;
   }
 
-  public getLastToken(): Token {
+  public getLastToken(): AbstractToken {
     return this.token;
   }
 }

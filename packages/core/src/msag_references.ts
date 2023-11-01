@@ -1,12 +1,12 @@
 import {IMSAGReferences} from "./_imsag_references";
-import {Token} from "./abap/1_lexer/tokens/_token";
+import {AbstractToken} from "./abap/1_lexer/tokens/abstract_token";
 import {IObject} from "./objects/_iobject";
 
 export class MSAGReferences implements IMSAGReferences {
-  private readonly nameNumberIndex: { [messageClass: string]: { [number: string]: {filename: string, token: Token}[] } } = {};
-  private readonly filenameIndex: { [filename: string]: {token: Token, messageClass: string, number: string}[] } = {};
+  private readonly nameNumberIndex: { [messageClass: string]: { [number: string]: {filename: string, token: AbstractToken}[] } } = {};
+  private readonly filenameIndex: { [filename: string]: {token: AbstractToken, messageClass: string, number: string}[] } = {};
 
-  public addUsing(filename: string, token: Token, messageClass: string, number: string): void {
+  public addUsing(filename: string, token: AbstractToken, messageClass: string, number: string): void {
     if (number.length !== 3) {
       return;
     }
@@ -44,11 +44,11 @@ export class MSAGReferences implements IMSAGReferences {
     }
   }
 
-  public listByFilename(filename: string): { token: Token; messageClass: string; number: string; }[] {
+  public listByFilename(filename: string): { token: AbstractToken; messageClass: string; number: string; }[] {
     return this.filenameIndex[filename] || [];
   }
 
-  public listByMessage(messageClass: string, number: string): { filename: string; token: Token; }[] {
+  public listByMessage(messageClass: string, number: string): { filename: string; token: AbstractToken; }[] {
     return this.nameNumberIndex[messageClass]?.[number] || [];
   }
 }

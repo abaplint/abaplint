@@ -7,7 +7,7 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {IMethodDefinition} from "../types/_method_definition";
 import {Visibility} from "../4_file_information/visibility";
 import {Identifier} from "../4_file_information/_identifier";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IMethodParameters} from "../types/_method_parameters";
 import {Version} from "../../version";
 
@@ -24,7 +24,7 @@ export class BuiltInMethod extends Identifier implements IMethodDefinition, IMet
   private readonly method: IBuiltinMethod;
   private readonly row: number;
 
-  public constructor(token: Token, filename: string, method: IBuiltinMethod, row: number) {
+  public constructor(token: AbstractToken, filename: string, method: IBuiltinMethod, row: number) {
     super(token, filename);
     this.method = method;
     this.row = row;

@@ -1,13 +1,22 @@
 import * as fs from "fs";
+import * as path from "node:path";
 import {Project} from "ts-morph";
 import {handleStatement} from "./statements";
 
-const project = new Project();
+const OUTPUT_FOLDER1 = "abap1/";
+const OUTPUT_FOLDER2 = "abap2/";
+const INPUT_FOLDER = "../core/src/";
+
+let project = new Project();
 
 let input = "";
 input += fs.readFileSync("../core/src/position.ts", "utf-8") + "\n";
-input += fs.readFileSync("../core/src/abap/1_lexer/tokens/_token.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/virtual_position.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/abstract_token.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/at.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/wat.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/atw.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/tokens/watw.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_left.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/bracket_right.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/tokens/colon.ts", "utf-8") + "\n";
@@ -35,14 +44,93 @@ fs.writeFileSync("blah.ts", input, {encoding: "utf8", flag: "w"});
 
 const file = project.createSourceFile("input.ts", input);
 
-const diagnostics = project.getPreEmitDiagnostics();
+let diagnostics = project.getPreEmitDiagnostics();
 if (diagnostics.length > 0) {
   console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
 } else {
   let result = "";
   for (const s of file.getStatements()) {
-    result += handleStatement(s);
+    result += handleStatement(s, {
+      globalObjects: false,
+      nameMap: {},
+    });
   }
   result = "* auto generated, do not touch\n" + result;
-  fs.writeFileSync("abap/zcl_alint_lexer.clas.locals_imp.abap", result);
+  fs.writeFileSync(OUTPUT_FOLDER1 + "zcl_alint_lexer.clas.locals_imp.abap", result);
+}
+
+////////////////////////////////////////////
+
+project = new Project();
+
+const classes = [
+  {inputFile: "position.ts", inputClassName: "Position", outputClassName: "zcl_alint_position"},
+  {inputFile: "virtual_position.ts", inputClassName: "VirtualPosition", outputClassName: "zcl_alint_virtual_position"},
+  {inputFile: "abap/1_lexer/tokens/abstract_token.ts", inputClassName: "AbstractToken", outputClassName: "zcl_alint_abstract_token"},
+  {inputFile: "abap/1_lexer/tokens/at.ts", inputClassName: "At", outputClassName: "zcl_alint_at"},
+  {inputFile: "abap/1_lexer/tokens/wat.ts", inputClassName: "WAt", outputClassName: "zcl_alint_wat"},
+  {inputFile: "abap/1_lexer/tokens/atw.ts", inputClassName: "AtW", outputClassName: "zcl_alint_atw"},
+  {inputFile: "abap/1_lexer/tokens/watw.ts", inputClassName: "WAtW", outputClassName: "zcl_alint_watw"},
+/*
+  "abap/1_lexer/tokens/bracket_left.ts"
+  "abap/1_lexer/tokens/bracket_right.ts"
+  "abap/1_lexer/tokens/colon.ts"
+  "abap/1_lexer/tokens/comment.ts"
+  "abap/1_lexer/tokens/dash.ts"
+  "abap/1_lexer/tokens/identifier.ts"
+  "abap/1_lexer/tokens/instance_arrow.ts"
+  "abap/1_lexer/tokens/paren_left.ts"
+  "abap/1_lexer/tokens/paren_right.ts"
+  "abap/1_lexer/tokens/plus.ts"
+  "abap/1_lexer/tokens/pragma.ts"
+  "abap/1_lexer/tokens/punctuation.ts"
+  "abap/1_lexer/tokens/static_arrow.ts"
+  "abap/1_lexer/tokens/string.ts"
+*/
+];
+
+const nameMap: {[name: string]: string} = {};
+for (const h of classes) {
+  if (h.outputClassName.length > 30) {
+    throw h.outputClassName + " longer than 30 characters";
+  } else if (nameMap[h.inputClassName] !== undefined) {
+    throw "duplicate name " + h.inputClassName ;
+  }
+  nameMap[h.inputClassName] = h.outputClassName;
+  project.createSourceFile(h.inputFile, fs.readFileSync(INPUT_FOLDER + h.inputFile, "utf-8"));
+}
+
+diagnostics = project.getPreEmitDiagnostics();
+if (diagnostics.length > 0) {
+  console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
+} else {
+  for (const h of classes) {
+    const file = project.getSourceFile(path.basename(h.inputFile));
+    let result = "";
+    for (const s of file?.getStatements() || []) {
+      result += handleStatement(s, {
+        globalObjects: true,
+        nameMap: nameMap,
+      });
+    }
+    result = "* auto generated, do not touch\n" + result;
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.abap", result);
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>${h.outputClassName.toUpperCase()}</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>abaplint</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.xml", xml);
+  }
 }

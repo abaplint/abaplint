@@ -1,24 +1,24 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class BracketRight extends Token {
+export class BracketRight extends AbstractToken {
   public static railroad(): string {
     return "]";
   }
 }
 
-export class WBracketRight extends Token {
+export class WBracketRight extends AbstractToken {
   public static railroad(): string {
     return " ]";
   }
 }
 
-export class BracketRightW extends Token {
+export class BracketRightW extends AbstractToken {
   public static railroad(): string {
     return "] ";
   }
 }
 
-export class WBracketRightW extends Token {
+export class WBracketRightW extends AbstractToken {
   public static railroad(): string {
     return " ] ";
   }

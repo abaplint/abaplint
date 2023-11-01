@@ -8,7 +8,7 @@ import {ArtifactsABAP} from "../artifacts";
 import {Combi} from "./combi";
 import {Unknown, Empty, Comment, NativeSQL, IStatement} from "./statements/_statement";
 import {IStatementResult} from "./statement_result";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IABAPLexerResult} from "../1_lexer/lexer_result";
 import {ExpandMacros} from "./expand_macros";
 import {Pragma} from "../1_lexer/tokens";
@@ -55,16 +55,16 @@ class StatementMap {
 
 class WorkArea {
   private readonly file: IFile;
-  public readonly tokens: readonly Token[];
+  public readonly tokens: readonly AbstractToken[];
   public statements: StatementNode[];
 
-  public constructor(file: IFile, tokens: readonly Token[]) {
+  public constructor(file: IFile, tokens: readonly AbstractToken[]) {
     this.file = file;
     this.tokens = tokens;
     this.statements = [];
   }
 
-  public addUnknown(pre: Token[], post: Token[], colon: Token | undefined) {
+  public addUnknown(pre: AbstractToken[], post: AbstractToken[], colon: AbstractToken | undefined) {
     const st = new StatementNode(new Unknown(), colon);
     st.setChildren(this.tokensToNodes(pre, post));
     this.statements.push(st);
@@ -74,7 +74,7 @@ class WorkArea {
     return {file: this.file, tokens: this.tokens, statements: this.statements};
   }
 
-  private tokensToNodes(tokens1: Token[], tokens2: Token[]): TokenNode[] {
+  private tokensToNodes(tokens1: AbstractToken[], tokens2: AbstractToken[]): TokenNode[] {
     const ret: TokenNode[] = [];
 
     for (const t of tokens1) {
@@ -126,7 +126,7 @@ export class StatementParser {
   }
 
   // todo, refactor, remove method here and only have in WorkArea class
-  private tokensToNodes(tokens: readonly Token[]): TokenNode[] {
+  private tokensToNodes(tokens: readonly AbstractToken[]): TokenNode[] {
     const ret: TokenNode[] = [];
 
     for (const t of tokens) {
@@ -170,9 +170,9 @@ export class StatementParser {
     wa.statements = result;
   }
 
-  private buildSplits(tokens: readonly Token[]): {first: Token[], second: Token[]}[] {
-    const res: {first: Token[], second: Token[]}[] = [];
-    const before: Token[] = [];
+  private buildSplits(tokens: readonly AbstractToken[]): {first: AbstractToken[], second: AbstractToken[]}[] {
+    const res: {first: AbstractToken[], second: AbstractToken[]}[] = [];
+    const before: AbstractToken[] = [];
     let prevRow = tokens[0].getRow();
 
     for (let i = 0; i < tokens.length; i++) {
@@ -241,9 +241,9 @@ export class StatementParser {
     return statement;
   }
 
-  private removePragma(tokens: readonly Token[]): {tokens: Token[], pragmas: Token[]} {
-    const result: Token[] = [];
-    const pragmas: Token[] = [];
+  private removePragma(tokens: readonly AbstractToken[]): {tokens: AbstractToken[], pragmas: AbstractToken[]} {
+    const result: AbstractToken[] = [];
+    const pragmas: AbstractToken[] = [];
 
     // skip the last token as it is the punctuation
     for (let i = 0; i < tokens.length - 1; i++) {
@@ -290,9 +290,9 @@ export class StatementParser {
 // statements are split by "," or "."
 // additional colons/chaining after the first colon are ignored
   private process(wa: WorkArea) {
-    let add: Token[] = [];
-    let pre: Token[] = [];
-    let colon: Token | undefined = undefined;
+    let add: AbstractToken[] = [];
+    let pre: AbstractToken[] = [];
+    let colon: AbstractToken | undefined = undefined;
 
     for (const token of wa.tokens) {
       if (token instanceof Tokens.Comment) {

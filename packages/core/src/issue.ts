@@ -1,6 +1,7 @@
 import {IFile} from "./files/_ifile";
-import {Position, VirtualPosition} from "./position";
-import {Token} from "./abap/1_lexer/tokens/_token";
+import {Position} from "./position";
+import {VirtualPosition} from "./virtual_position";
+import {AbstractToken} from "./abap/1_lexer/tokens/abstract_token";
 import {Identifier} from "./abap/4_file_information/_identifier";
 import {StatementNode} from "./abap/nodes";
 import {IEdit} from "./edit_helper";
@@ -83,7 +84,7 @@ export class Issue {
     });
   }
 
-  public static atToken(file: IFile, token: Token, message: string, key: string, severity?: Severity, fix?: IEdit) {
+  public static atToken(file: IFile, token: AbstractToken, message: string, key: string, severity?: Severity, fix?: IEdit) {
     severity = severity ?? Severity.Error;
     return new Issue({
       filename: file.getFilename(),

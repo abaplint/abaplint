@@ -1,13 +1,13 @@
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {ExpressionNode} from "../nodes/expression_node";
 import {TokenNode} from "../nodes/token_node";
 
 export class Result {
-  private readonly tokens: readonly Token[];
+  private readonly tokens: readonly AbstractToken[];
   private readonly tokenIndex: number;
   private nodes: (ExpressionNode | TokenNode)[] | undefined;
 
-  public constructor(tokens: readonly Token[], tokenIndex: number, nodes?: (ExpressionNode | TokenNode)[]) {
+  public constructor(tokens: readonly AbstractToken[], tokenIndex: number, nodes?: (ExpressionNode | TokenNode)[]) {
 // tokens: all tokens, from the tokenIndex = not yet matched
 // nodes: matched tokens
     this.tokens = tokens;
@@ -18,7 +18,7 @@ export class Result {
     }
   }
 
-  public peek(): Token {
+  public peek(): AbstractToken {
     return this.tokens[this.tokenIndex];
   }
 

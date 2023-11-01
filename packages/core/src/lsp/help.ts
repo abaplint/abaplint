@@ -2,7 +2,7 @@ import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {INode} from "../abap/nodes/_inode";
 import {StructureNode, StatementNode, TokenNodeRegex, ExpressionNode, TokenNode} from "../abap/nodes";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
@@ -101,7 +101,7 @@ export class Help {
     return ret;
   }
 
-  private static fullPath(file: ABAPFile, token: Token): {value: string, keyword: boolean} {
+  private static fullPath(file: ABAPFile, token: AbstractToken): {value: string, keyword: boolean} {
     const structure = file.getStructure();
 
     if (structure === undefined) {
@@ -116,7 +116,7 @@ export class Help {
     return {value: "\n\n" + found.value, keyword: found.keyword};
   }
 
-  private static traverse(node: INode, parents: string, search: Token): {value: string, keyword: boolean} | undefined {
+  private static traverse(node: INode, parents: string, search: AbstractToken): {value: string, keyword: boolean} | undefined {
     let local = parents;
     if (local !== "") {
       local = local + " -> ";

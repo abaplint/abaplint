@@ -9406,6 +9406,80 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("Method already declared in super", () => {
+    const abap = `CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS sup IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
+  it("Method already declared in super, but ok, its private", () => {
+    const abap = `CLASS sup DEFINITION.
+  PRIVATE SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS sup IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Method already declared in super, but error, its private the other way around", () => {
+    const abap = `CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS sup IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PRIVATE SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
   it("ok, REDUCE, INIT 2nd", () => {
     const abap = `
 TYPES string_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.

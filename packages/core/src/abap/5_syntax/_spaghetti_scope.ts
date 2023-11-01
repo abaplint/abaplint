@@ -7,7 +7,7 @@ import {IFormDefinition} from "../types/_form_definition";
 import {Position} from "../../position";
 import {Issue} from "../../issue";
 import {IReference} from "./_reference";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 export interface IScopeIdentifier {
   stype: ScopeType;
@@ -28,14 +28,14 @@ export interface IScopeData {
   // static methods can type LIKE instance variables that are not visible
   extraLikeTypes: {[name: string]: TypedIdentifier};
 
-  deferred: Token[];
+  deferred: AbstractToken[];
 
   cdefs: {[name: string]: IClassDefinition};
   idefs: IInterfaceDefinition[];
   forms: IFormDefinition[];
 
   references: IReference[];
-  sqlConversion: {fieldName: string, message: string, token: Token}[];
+  sqlConversion: {fieldName: string, message: string, token: AbstractToken}[];
 }
 
 export interface ISpaghettiScopeNode {

@@ -1,5 +1,5 @@
 import {IRegistry} from "../_iregistry";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPObject} from "../objects/_abap_object";
@@ -10,7 +10,7 @@ import * as LServer from "vscode-languageserver-types";
 import {ABAPFile} from "../abap/abap_file";
 
 export interface ICursorData {
-  token: Token;
+  token: AbstractToken;
   identifier: Identifier;
   stack: INode[];
   snode: StatementNode;
@@ -38,7 +38,7 @@ export class LSPUtils {
     return undefined;
   }
 
-  public static tokenToRange(token: Token): LServer.Range {
+  public static tokenToRange(token: AbstractToken): LServer.Range {
     return LServer.Range.create(
       token.getStart().getRow() - 1,
       token.getStart().getCol() - 1,
@@ -79,7 +79,7 @@ export class LSPUtils {
     return undefined;
   }
 
-  private static buildStack(node: INode, search: Position, parents: INode[]): {token: Token, stack: INode[]} | undefined {
+  private static buildStack(node: INode, search: Position, parents: INode[]): {token: AbstractToken, stack: INode[]} | undefined {
     const stack: INode[] = parents;
 
     for (const c of node.getChildren()) {

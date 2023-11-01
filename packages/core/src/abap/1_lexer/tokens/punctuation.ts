@@ -1,5 +1,5 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class Punctuation extends Token {
+export class Punctuation extends AbstractToken {
 
 }

@@ -1,5 +1,5 @@
 import {INode} from "./_inode";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 export abstract class AbstractNode<T extends INode> implements INode {
   protected children: T[];
@@ -9,8 +9,8 @@ export abstract class AbstractNode<T extends INode> implements INode {
   }
 
   public abstract get(): any;
-  public abstract getFirstToken(): Token;
-  public abstract getLastToken(): Token;
+  public abstract getFirstToken(): AbstractToken;
+  public abstract getLastToken(): AbstractToken;
 
   public addChild(n: T) {
     this.children.push(n);

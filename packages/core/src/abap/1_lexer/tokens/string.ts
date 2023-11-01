@@ -1,21 +1,21 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class StringToken extends Token {
-
-}
-
-export class StringTemplate extends Token {
+export class StringToken extends AbstractToken {
 
 }
 
-export class StringTemplateBegin extends Token {
+export class StringTemplate extends AbstractToken {
 
 }
 
-export class StringTemplateEnd extends Token {
+export class StringTemplateBegin extends AbstractToken {
 
 }
 
-export class StringTemplateMiddle extends Token {
+export class StringTemplateEnd extends AbstractToken {
+
+}
+
+export class StringTemplateMiddle extends AbstractToken {
 
 }

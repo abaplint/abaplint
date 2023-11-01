@@ -68,10 +68,18 @@ ENDIF.
       }
       if (cond[0].getChildren().length === 1) {
         const message = "Too many parentheses, simple";
-        const fixText = sub.getChildren()[1].concatTokens();
-        const fix = EditHelper.replaceRange(file, sub.getFirstToken().getStart(), sub.getLastToken().getEnd(), fixText);
+        const children = sub.getChildren();
 
-        const issue = Issue.atToken(file, sub.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix);
+        let startToken = sub.getFirstToken();
+        let fixText = sub.getChildren()[1].concatTokens();
+        if (startToken.getStr().toUpperCase() === "NOT") {
+          startToken = children[1].getFirstToken();
+          fixText = sub.getChildren()[2].concatTokens();
+        }
+
+        const fix = EditHelper.replaceRange(file, startToken.getStart(), sub.getLastToken().getEnd(), fixText);
+
+        const issue = Issue.atToken(file, startToken, message, this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }

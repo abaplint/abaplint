@@ -13,7 +13,7 @@ function test(ts: string) {
   } else {
     let result = "";
     for (const s of file.getStatements()) {
-      result += handleStatement(s);
+      result += handleStatement(s, {globalObjects: false, nameMap: {}});
     }
     return result.trim();
   }
@@ -62,7 +62,7 @@ foo = bar.trim();`;
     const abap = `
 DATA(foo) = |foo|.
 DATA(bar) = |foo|.
-foo = condense( bar ).`;
+foo = condense( val = bar del = |\\n | ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

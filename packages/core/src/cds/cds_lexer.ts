@@ -1,5 +1,5 @@
 import {Comment, Identifier} from "../abap/1_lexer/tokens";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {IFile} from "../files/_ifile";
 import {Position} from "../position";
 
@@ -37,7 +37,7 @@ enum Mode {
 }
 
 class Result {
-  private readonly result: Token[] = [];
+  private readonly result: AbstractToken[] = [];
 
   public add(text: string, row: number, col: number, mode: Mode): string {
     if (text.length > 0) {
@@ -56,7 +56,7 @@ class Result {
 }
 
 export class CDSLexer {
-  public static run(file: IFile): Token[] {
+  public static run(file: IFile): AbstractToken[] {
     const result = new Result();
     let mode = Mode.Default;
     let row = 1;

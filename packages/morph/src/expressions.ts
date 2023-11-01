@@ -6,8 +6,10 @@ import {MorphNew} from "./expressions/new";
 import {MorphObjectLiteral} from "./expressions/object_literal";
 import {MorphPropertyAccess} from "./expressions/property_access";
 import {MorphVariableDeclaration} from "./expressions/variable_declaration";
+import {MorphSettings} from "./statements";
+import {mapName} from "./map_name";
 
-export function handleExpression(n?: Node): string {
+export function handleExpression(n: Node | undefined, settings: MorphSettings): string {
   if (n === undefined) {
     return "";
   }
@@ -19,7 +21,7 @@ export function handleExpression(n?: Node): string {
   console.dir(text);
 */
   if (n instanceof BinaryExpression) {
-    ret += new MorphBinary().run(n);
+    ret += new MorphBinary().run(n, settings);
   } else if (n instanceof NoSubstitutionTemplateLiteral) {
     ret += "|" + n.getLiteralText() + "|";
   } else if (n instanceof StringLiteral) {
@@ -31,28 +33,28 @@ export function handleExpression(n?: Node): string {
       .replace(/}/g, "\\}")
       .replace(/\|/g, "\\|") + "|";
   } else if (n instanceof ObjectLiteralExpression) {
-    ret += new MorphObjectLiteral().run(n);
+    ret += new MorphObjectLiteral().run(n, settings);
   } else if (n instanceof ElementAccessExpression) {
-    ret += new MorphElementAccess().run(n);
+    ret += new MorphElementAccess().run(n, settings);
   } else if (n instanceof NewExpression) {
-    ret += new MorphNew().run(n);
+    ret += new MorphNew().run(n, settings);
   } else if (n instanceof SuperExpression) {
     ret += "super";
   } else if (n instanceof AsExpression) {
-    ret += `CAST ${n.getType().getSymbol()?.getName()}( ${handleExpression(n.getExpression())} )`;
+    ret += `CAST ${mapName(n.getType().getSymbol()?.getName(), settings)}( ${handleExpression(n.getExpression(), settings)} )`;
   } else if (n instanceof ArrayLiteralExpression) {
     ret += "VALUE #( )";
   } else if (n instanceof RegularExpressionLiteral) {
     // todo, take care of case insensitive and occurrences, ie. flags from regex
     ret += "|" + n.getLiteralText().replace(/^\//, "").replace(/\/\w+$/, "") + "|";
   } else if (n instanceof CallExpression) {
-    ret += new MorphCall().run(n);
+    ret += new MorphCall().run(n, settings);
   } else if (n instanceof VariableDeclarationList) {
-    ret += n.getDeclarations().map(new MorphVariableDeclaration().run).join("");
+    ret += n.getDeclarations().map((e) => new MorphVariableDeclaration().run(e, settings)).join("");
   } else if (n instanceof VariableDeclaration) {
-    ret += new MorphVariableDeclaration().run(n);
+    ret += new MorphVariableDeclaration().run(n, settings);
   } else if (n instanceof PropertyAccessExpression) {
-    ret += new MorphPropertyAccess().run(n);
+    ret += new MorphPropertyAccess().run(n, settings);
   } else if (n instanceof NumericLiteral) {
     ret += text;
   } else if (n instanceof PrefixUnaryExpression) {
@@ -67,17 +69,17 @@ export function handleExpression(n?: Node): string {
         console.dir("PrefixUnaryExpression todo");
         break;
     }
-    ret += handleExpression(n.getOperand());
+    ret += handleExpression(n.getOperand(), settings);
   } else if (n instanceof FalseLiteral) {
     ret += "abap_false";
   } else if (n instanceof ParenthesizedExpression) {
-    ret += "( " + handleExpression(n.getExpression()) + " )";
+    ret += "( " + handleExpression(n.getExpression(), settings) + " )";
   } else if (n instanceof ThisExpression) {
     ret += "me";
   } else if (n instanceof TrueLiteral) {
     ret += "abap_true";
   } else if (n instanceof Identifier) {
-    ret += text;
+    ret += mapName(text, settings);
   } else if (text === "&&") {
     ret += " AND ";
   } else if (text === "||") {
@@ -99,10 +101,10 @@ export function handleExpression(n?: Node): string {
   return ret;
 }
 
-export function handleExpressions(nodes: Node[]): string {
+export function handleExpressions(nodes: Node[], settings: MorphSettings): string {
   let ret = "";
   for (const n of nodes) {
-    ret += handleExpression(n);
+    ret += handleExpression(n, settings);
   }
   return ret;
 }

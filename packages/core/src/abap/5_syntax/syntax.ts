@@ -1,7 +1,7 @@
 import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {Issue} from "../../issue";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {StatementNode, StructureNode} from "../nodes";
 import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
@@ -373,7 +373,7 @@ export class SyntaxLogic {
     return this.scope;
   }
 
-  private newIssue(token: Token, message: string): void {
+  private newIssue(token: AbstractToken, message: string): void {
     const issue = Issue.atToken(this.currentFile, token, message, "check_syntax", Severity.Error);
     this.issues.push(issue);
   }
