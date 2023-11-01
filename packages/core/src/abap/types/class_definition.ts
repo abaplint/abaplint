@@ -168,7 +168,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     for (const m of this.getMethodDefinitions().getAll()) {
       if (names.has(m.getName().toUpperCase()) && m.isRedefinition() === false) {
-//        throw new Error(`Method ${m.getName().toUpperCase()} already declared in superclass`);
+        throw new Error(`Method ${m.getName().toUpperCase()} already declared in superclass`);
       }
     }
   }
