@@ -5,7 +5,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
 import {MacroCall} from "../abap/2_statements/statements/_statement";
-import { VirtualPosition } from "../virtual_position";
+import {VirtualPosition} from "../virtual_position";
 
 export class ExpandMacrosConf extends BasicRuleConfig {
 

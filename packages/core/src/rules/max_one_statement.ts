@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import { VirtualPosition } from "../virtual_position";
+import {VirtualPosition} from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
 
 export class MaxOneStatementConf extends BasicRuleConfig {

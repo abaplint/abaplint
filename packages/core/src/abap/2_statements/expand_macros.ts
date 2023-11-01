@@ -9,7 +9,7 @@ import {Version} from "../../version";
 import {StatementParser} from "./statement_parser";
 import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
-import { VirtualPosition } from "../../virtual_position";
+import {VirtualPosition} from "../../virtual_position";
 import {IRegistry} from "../../_iregistry";
 import {Program} from "../../objects/program";
 

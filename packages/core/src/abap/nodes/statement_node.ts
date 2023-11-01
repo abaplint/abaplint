@@ -1,5 +1,5 @@
 import {Position} from "../../position";
-import { VirtualPosition } from "../../virtual_position";
+import {VirtualPosition} from "../../virtual_position";
 import {AbstractNode} from "./_abstract_node";
 import {INode} from "./_inode";
 import {TokenNode} from "./token_node";

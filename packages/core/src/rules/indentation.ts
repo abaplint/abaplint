@@ -10,7 +10,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
 import {Position} from "../position";
-import { VirtualPosition } from "../virtual_position";
+import {VirtualPosition} from "../virtual_position";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
 

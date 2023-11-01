@@ -1,6 +1,6 @@
 import {IFile} from "../../files/_ifile";
 import {Position} from "../../position";
-import { VirtualPosition } from "../../virtual_position";
+import {VirtualPosition} from "../../virtual_position";
 import {Token} from "./tokens/_token";
 import {IABAPLexerResult} from "./lexer_result";
 import {At, AtW, BracketLeft, BracketLeftW, BracketRight, BracketRightW, Comment, Dash, DashW, Identifier, InstanceArrow, InstanceArrowW, ParenLeft, ParenLeftW, ParenRight, ParenRightW, Plus, PlusW, Pragma, Punctuation, StaticArrow, StaticArrowW, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle, StringToken, WAt, WAtW, WBracketLeft, WBracketLeftW, WBracketRight, WBracketRightW, WDash, WDashW, WInstanceArrow, WInstanceArrowW, WParenLeft, WParenLeftW, WParenRight, WParenRightW, WPlus, WPlusW, WStaticArrow, WStaticArrowW} from "./tokens";

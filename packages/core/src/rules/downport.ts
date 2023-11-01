@@ -9,7 +9,7 @@ import {Unknown} from "../abap/2_statements/statements/_statement";
 import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {IEdit, EditHelper} from "../edit_helper";
 import {Position} from "../position";
-import { VirtualPosition } from "../virtual_position";
+import {VirtualPosition} from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";

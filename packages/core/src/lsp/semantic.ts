@@ -1,6 +1,6 @@
 import * as LServer from "vscode-languageserver-types";
 import {Position} from "../position";
-import { VirtualPosition } from "../virtual_position";
+import {VirtualPosition} from "../virtual_position";
 import {Comment, Punctuation, StringToken, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle} from "../abap/1_lexer/tokens";
 import {TokenNodeRegex} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";

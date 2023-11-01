@@ -3,7 +3,7 @@ import {FixCase} from "./fix_keyword_case";
 import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";
 import {IConfiguration} from "../_config";
-import { VirtualPosition } from "../virtual_position";
+import {VirtualPosition} from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
 import {Indentation, IndentationConf} from "../rules/indentation";
 
