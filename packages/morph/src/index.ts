@@ -103,22 +103,44 @@ const classes = [
   {inputFile: "abap/1_lexer/tokens/wbracket_left.ts", inputClassName: "WBracketLeft", outputClassName: "zcl_alint_wbracket_left"},
   {inputFile: "abap/1_lexer/tokens/bracket_leftw.ts", inputClassName: "BracketLeftW", outputClassName: "zcl_alint_bracket_leftw"},
   {inputFile: "abap/1_lexer/tokens/wbracket_leftw.ts", inputClassName: "WBracketLeftW", outputClassName: "zcl_alint_wbracket_leftw"},
-/*
-  "abap/1_lexer/tokens/bracket_left.ts"
-  "abap/1_lexer/tokens/bracket_right.ts"
-  "abap/1_lexer/tokens/colon.ts"
-  "abap/1_lexer/tokens/comment.ts"
-  "abap/1_lexer/tokens/dash.ts"
-  "abap/1_lexer/tokens/identifier.ts"
-  "abap/1_lexer/tokens/instance_arrow.ts"
-  "abap/1_lexer/tokens/paren_left.ts"
-  "abap/1_lexer/tokens/paren_right.ts"
-  "abap/1_lexer/tokens/plus.ts"
-  "abap/1_lexer/tokens/pragma.ts"
-  "abap/1_lexer/tokens/punctuation.ts"
-  "abap/1_lexer/tokens/static_arrow.ts"
-  "abap/1_lexer/tokens/string.ts"
-*/
+  {inputFile: "abap/1_lexer/tokens/bracket_right.ts", inputClassName: "BracketRight", outputClassName: "zcl_alint_bracket_right"},
+  {inputFile: "abap/1_lexer/tokens/wbracket_right.ts", inputClassName: "WBracketRight", outputClassName: "zcl_alint_wbracket_right"},
+  {inputFile: "abap/1_lexer/tokens/bracket_rightw.ts", inputClassName: "BracketRightW", outputClassName: "zcl_alint_bracket_rightw"},
+  {inputFile: "abap/1_lexer/tokens/wbracket_rightw.ts", inputClassName: "WBracketRightW", outputClassName: "zcl_alint_wbracket_rightw"},
+  {inputFile: "abap/1_lexer/tokens/instance_arrow.ts", inputClassName: "InstanceArrow", outputClassName: "zcl_alint_instance_arrow"},
+  {inputFile: "abap/1_lexer/tokens/winstance_arrow.ts", inputClassName: "WInstanceArrow", outputClassName: "zcl_alint_winstance_arrow"},
+  {inputFile: "abap/1_lexer/tokens/instance_arroww.ts", inputClassName: "InstanceArrowW", outputClassName: "zcl_alint_instance_arroww"},
+  {inputFile: "abap/1_lexer/tokens/winstance_arroww.ts", inputClassName: "WInstanceArrowW", outputClassName: "zcl_alint_winstance_arroww"},
+  {inputFile: "abap/1_lexer/tokens/paren_left.ts", inputClassName: "ParenLeft", outputClassName: "zcl_alint_paren_left"},
+  {inputFile: "abap/1_lexer/tokens/wparen_left.ts", inputClassName: "WParenLeft", outputClassName: "zcl_alint_wparen_left"},
+  {inputFile: "abap/1_lexer/tokens/paren_leftw.ts", inputClassName: "ParenLeftW", outputClassName: "zcl_alint_paren_leftw"},
+  {inputFile: "abap/1_lexer/tokens/wparen_leftw.ts", inputClassName: "WParenLeftW", outputClassName: "zcl_alint_wparen_leftw"},
+  {inputFile: "abap/1_lexer/tokens/paren_right.ts", inputClassName: "ParenRight", outputClassName: "zcl_alint_paren_right"},
+  {inputFile: "abap/1_lexer/tokens/wparen_right.ts", inputClassName: "WParenRight", outputClassName: "zcl_alint_wparen_right"},
+  {inputFile: "abap/1_lexer/tokens/paren_rightw.ts", inputClassName: "ParenRightW", outputClassName: "zcl_alint_paren_rightw"},
+  {inputFile: "abap/1_lexer/tokens/wparen_rightw.ts", inputClassName: "WParenRightW", outputClassName: "zcl_alint_wparen_rightw"},
+  {inputFile: "abap/1_lexer/tokens/dash.ts", inputClassName: "Dash", outputClassName: "zcl_alint_dash"},
+  {inputFile: "abap/1_lexer/tokens/wdash.ts", inputClassName: "WDash", outputClassName: "zcl_alint_wdash"},
+  {inputFile: "abap/1_lexer/tokens/dashw.ts", inputClassName: "DashW", outputClassName: "zcl_alint_dashw"},
+  {inputFile: "abap/1_lexer/tokens/wdashw.ts", inputClassName: "WDashW", outputClassName: "zcl_alint_wdashw"},
+  {inputFile: "abap/1_lexer/tokens/plus.ts", inputClassName: "Plus", outputClassName: "zcl_alint_plus"},
+  {inputFile: "abap/1_lexer/tokens/wplus.ts", inputClassName: "WPlus", outputClassName: "zcl_alint_wplus"},
+  {inputFile: "abap/1_lexer/tokens/plusw.ts", inputClassName: "PlusW", outputClassName: "zcl_alint_plusw"},
+  {inputFile: "abap/1_lexer/tokens/wplusw.ts", inputClassName: "WPlusW", outputClassName: "zcl_alint_wplusw"},
+  {inputFile: "abap/1_lexer/tokens/static_arrow.ts", inputClassName: "StaticArrow", outputClassName: "zcl_alint_static_arrow"},
+  {inputFile: "abap/1_lexer/tokens/wstatic_arrow.ts", inputClassName: "WStaticArrow", outputClassName: "zcl_alint_wstatic_arrow"},
+  {inputFile: "abap/1_lexer/tokens/static_arroww.ts", inputClassName: "StaticArrowW", outputClassName: "zcl_alint_static_arroww"},
+  {inputFile: "abap/1_lexer/tokens/wstatic_arroww.ts", inputClassName: "WStaticArrowW", outputClassName: "zcl_alint_wstatic_arroww"},
+  {inputFile: "abap/1_lexer/tokens/string.ts", inputClassName: "StringToken", outputClassName: "zcl_alint_string_token"},
+  {inputFile: "abap/1_lexer/tokens/string_template.ts", inputClassName: "StringTemplate", outputClassName: "zcl_alint_string_template"},
+  {inputFile: "abap/1_lexer/tokens/string_template_begin.ts", inputClassName: "StringTemplateBegin", outputClassName: "zcl_alint_string_template_begi"},
+  {inputFile: "abap/1_lexer/tokens/string_template_end.ts", inputClassName: "StringTemplateEnd", outputClassName: "zcl_alint_string_template_end"},
+  {inputFile: "abap/1_lexer/tokens/string_template_middle.ts", inputClassName: "StringTemplateMiddle", outputClassName: "zcl_alint_string_template_midd"},
+  {inputFile: "abap/1_lexer/tokens/colon.ts", inputClassName: "Colon", outputClassName: "zcl_alint_colon"},
+  {inputFile: "abap/1_lexer/tokens/comment.ts", inputClassName: "Comment", outputClassName: "zcl_alint_comment"},
+  {inputFile: "abap/1_lexer/tokens/identifier.ts", inputClassName: "Identifier", outputClassName: "zcl_alint_identifier"},
+  {inputFile: "abap/1_lexer/tokens/pragma.ts", inputClassName: "Pragma", outputClassName: "zcl_alint_pragma"},
+  {inputFile: "abap/1_lexer/tokens/punctuation.ts", inputClassName: "Punctuation", outputClassName: "zcl_alint_punctuation"},
 ];
 
 const nameMap: {[name: string]: string} = {};
@@ -126,7 +148,7 @@ for (const h of classes) {
   if (h.outputClassName.length > 30) {
     throw h.outputClassName + " longer than 30 characters";
   } else if (nameMap[h.inputClassName] !== undefined) {
-    throw "duplicate name " + h.inputClassName ;
+    throw new Error("duplicate name " + h.inputClassName);
   }
   nameMap[h.inputClassName] = h.outputClassName;
   project.createSourceFile(h.inputFile, fs.readFileSync(INPUT_FOLDER + h.inputFile, "utf-8"));
