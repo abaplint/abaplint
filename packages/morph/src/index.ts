@@ -3,7 +3,8 @@ import * as path from "node:path";
 import {Project} from "ts-morph";
 import {handleStatement} from "./statements";
 
-const OUTPUT_FOLDER = "abap/";
+const OUTPUT_FOLDER1 = "abap1/";
+const OUTPUT_FOLDER2 = "abap2/";
 const INPUT_FOLDER = "../core/src/";
 
 let project = new Project();
@@ -55,7 +56,7 @@ if (diagnostics.length > 0) {
     });
   }
   result = "* auto generated, do not touch\n" + result;
-  fs.writeFileSync("abap/zcl_alint_lexer.clas.locals_imp.abap", result);
+  fs.writeFileSync(OUTPUT_FOLDER1 + "zcl_alint_lexer.clas.locals_imp.abap", result);
 }
 
 ////////////////////////////////////////////
@@ -113,6 +114,6 @@ if (diagnostics.length > 0) {
       });
     }
     result = "* auto generated, do not touch\n" + result;
-    fs.writeFileSync(OUTPUT_FOLDER + h.outputClassName + ".clas.abap", result);
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.abap", result);
   }
 }
