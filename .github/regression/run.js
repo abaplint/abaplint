@@ -111,7 +111,7 @@ for (let name in map) {
   comment += map[name].version.trim() + " |\n";
 
   for (const i of map[name].after) {
-    if (issues.length > 10000) { // keep the comment at a reasonable size
+    if (issues.length > 20000) { // keep the comment at a reasonable size
       continue;
     }
     let urlFile = i.file.split("/").splice(1).join("/");
