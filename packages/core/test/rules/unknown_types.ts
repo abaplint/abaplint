@@ -2190,4 +2190,20 @@ CREATE DATA foo TYPE REF TO zlif.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("aliased constant from super interface", () => {
+    const abap = `
+INTERFACE if1.
+  CONSTANTS world TYPE string VALUE 'moo'.
+ENDINTERFACE.
+
+INTERFACE if2.
+  INTERFACES if1.
+  ALIASES hello FOR if1~world.
+  METHODS moo IMPORTING sdf TYPE string DEFAULT hello.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

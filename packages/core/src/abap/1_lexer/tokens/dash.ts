@@ -6,20 +6,3 @@ export class Dash extends AbstractToken {
   }
 }
 
-export class WDash extends AbstractToken {
-  public static railroad(): string {
-    return " -";
-  }
-}
-
-export class DashW extends AbstractToken {
-  public static railroad(): string {
-    return "- ";
-  }
-}
-
-export class WDashW extends AbstractToken {
-  public static railroad(): string {
-    return " - ";
-  }
-}

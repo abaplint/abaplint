@@ -1406,4 +1406,20 @@ CLEAR sdf.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("constants, needed", async () => {
+    const abap = `
+    CONSTANTS foo TYPE c LENGTH 1 VALUE 'a' ##NEEDED.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("constants, structured, needed", async () => {
+    const abap = `
+CONSTANTS: BEGIN OF foo ##NEEDED,
+             sdf TYPE c LENGTH 1 VALUE 'a',
+           END OF foo.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
