@@ -2190,7 +2190,7 @@ CREATE DATA foo TYPE REF TO zlif.`;
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("aliased constant from super interface", () => {
+  it("aliased constant from super interface", () => {
     const abap = `
 INTERFACE if1.
   CONSTANTS world TYPE string VALUE 'moo'.

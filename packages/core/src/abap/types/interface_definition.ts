@@ -17,6 +17,10 @@ import {MethodDefinitions} from "./method_definitions";
 import {IAliases} from "./_aliases";
 import {Aliases} from "./aliases";
 import {ReferenceType} from "../5_syntax/_reference";
+import {ClassConstant} from "./class_constant";
+import {TypedIdentifier} from "./_typed_identifier";
+import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
+
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
@@ -41,7 +45,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     this.implementing = [];
 
     scope.push(ScopeType.Interface, name.getStr(), node.getFirstToken().getStart(), filename);
-    this.parse(scope);
+    this.parse(scope, filename);
     scope.pop(node.getLastToken().getEnd());
   }
 
@@ -83,7 +87,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
 /////////////////
 
-  private parse(scope: CurrentScope) {
+  private parse(scope: CurrentScope, filename: string) {
     // todo, proper sequencing, the statements should be processed line by line
     this.attributes = new Attributes(this.node, this.filename, scope);
     this.typeDefinitions = this.attributes.getTypes();
@@ -94,9 +98,17 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
       const [objName, fieldName] = a.getComponent().split("~");
       const idef = scope.findInterfaceDefinition(objName);
       if (idef) {
-        const found = idef.getTypeDefinitions().getByName(fieldName);
-        if (found) {
-          scope.addTypeNamed(a.getName(), found);
+        const foundType = idef.getTypeDefinitions().getByName(fieldName);
+        if (foundType) {
+          scope.addTypeNamed(a.getName(), foundType);
+        } else {
+          const foundField = idef.getAttributes().findByName(fieldName);
+          if (foundField && foundField instanceof ClassConstant) {
+            const token = new TokenIdentifier(a.getStart(), a.getName());
+            const id = new TypedIdentifier(token, filename, foundField.getType());
+            const constant = new ClassConstant(id, Visibility.Public, foundField.getValue());
+            scope.addIdentifier(constant);
+          }
         }
       }
     }
