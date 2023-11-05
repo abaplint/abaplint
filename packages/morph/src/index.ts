@@ -215,6 +215,6 @@ if (diagnostics.length > 0) {
 </abapGit>`;
     }
     const bom = Buffer.from("EFBBBF", "hex").toString();
-    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + extension + ".xml", bom + xml);
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + extension + ".xml", bom + xml + "\n");
   }
 }
