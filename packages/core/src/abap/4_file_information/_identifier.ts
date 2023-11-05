@@ -1,11 +1,11 @@
 import {Position} from "../../position";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 export class Identifier {
-  private readonly token: Token;
+  private readonly token: AbstractToken;
   protected readonly filename: string;
 
-  public constructor(token: Token, filename: string) {
+  public constructor(token: AbstractToken, filename: string) {
     this.token = token;
     this.filename = filename;
   }
@@ -27,7 +27,7 @@ export class Identifier {
       && id.getFilename() === this.getFilename();
   }
 
-  public getToken(): Token {
+  public getToken(): AbstractToken {
     return this.token;
   }
 

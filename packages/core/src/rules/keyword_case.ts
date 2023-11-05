@@ -8,10 +8,10 @@ import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
-import {VirtualPosition} from "../position";
+import {VirtualPosition} from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
 import {EditDraft} from "../edit_helper";
 import {IFile} from "../files/_ifile";
@@ -103,7 +103,7 @@ class Skip {
   }
 }
 
-type TokenAndKeyword = {token: Token, keyword: boolean};
+type TokenAndKeyword = {token: AbstractToken, keyword: boolean};
 
 export class KeywordCase extends ABAPRule {
   private conf = new KeywordCaseConf();
@@ -148,7 +148,7 @@ export class KeywordCase extends ABAPRule {
     }
 
     const skip = new Skip(this.getConfig());
-    let prev: Token | undefined = undefined;
+    let prev: AbstractToken | undefined = undefined;
     for (const statement of file.getStatements()) {
       if (skip.skipStatement(statement) === true) {
         continue;

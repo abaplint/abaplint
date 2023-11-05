@@ -1,6 +1,6 @@
 {
   "global": {
-    "files": "/abap/**/*.*"
+    "files": "/{abap1,abap2}/**/*.*"
   },
   "dependencies": [
     {
@@ -26,6 +26,9 @@
     "keyword_case": true,
     "in_statement_indentation": true,
     "check_ddic": true,
+    "definitions_top": true,
+    "prefix_is_current_class": true,
+    "whitespace_end": true,
     "indentation": true,
     "check_include": true,
     "check_syntax": true,

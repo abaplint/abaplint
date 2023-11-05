@@ -9,6 +9,7 @@ import {ObjectOriented} from "../_object_oriented";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
 import {BasicTypes} from "../basic_types";
+import {TypeUtils} from "../_type_utils";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
@@ -93,7 +94,10 @@ export class NewObject {
       if (type === undefined) {
         throw new Error("NewObject, no default importing parameter found for constructor, " + name);
       }
-      new Source().runSyntax(source, scope, filename, type);
+      const sourceType = new Source().runSyntax(source, scope, filename, type);
+      if (new TypeUtils(scope).isAssignableStrict(sourceType, type) === false) {
+        throw new Error(`NEW parameter type not compatible`);
+      }
     } else if (parameters) {
       // parameters with names
       if (method === undefined) {

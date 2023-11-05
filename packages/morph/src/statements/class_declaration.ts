@@ -1,12 +1,13 @@
 import {ClassDeclaration, ConstructorDeclaration, Identifier, MethodDeclaration, PropertyDeclaration, Scope, SyntaxKind} from "ts-morph";
 import {handleExpression} from "../expressions";
-import {handleStatements} from "../statements";
+import {MorphSettings, handleStatements} from "../statements";
 import {handleType} from "../types";
 import {buildParameters} from "./_helpers";
+import {mapName} from "../map_name";
 
 export class MorphClassDeclaration {
 
-  public run(s: ClassDeclaration) {
+  public run(s: ClassDeclaration, settings: MorphSettings) {
 
     let superDefinition: ClassDeclaration | undefined = undefined;
 
@@ -15,7 +16,7 @@ export class MorphClassDeclaration {
     for (const i of s.getHeritageClauses()) {
       if (i.getToken() === SyntaxKind.ExtendsKeyword) {
         const typ = i.getTypeNodes()[0];
-        inherit = " INHERITING FROM " + typ.getText();
+        inherit = " INHERITING FROM " + mapName(typ.getText(), settings);
 
         const desc = i.getDescendants();
         const id = desc[desc.length - 1];
@@ -34,21 +35,22 @@ export class MorphClassDeclaration {
       interfaces = "\n    INTERFACES " + itype.getSymbol()?.getName() + ".";
     }
     const classAbstract = s.isAbstract() ? " ABSTRACT" : "";
+    const global = settings.globalObjects ? " PUBLIC" : "";
 
-    let definition = `CLASS ${s.getName()} DEFINITION${inherit}${classAbstract}.
+    let definition = `CLASS ${mapName(s.getName(), settings)} DEFINITION${inherit}${classAbstract}${global}.
   PUBLIC SECTION.${interfaces}\n`;
     let privateSection = "";
-    let implementation = `CLASS ${s.getName()} IMPLEMENTATION.\n`;
+    let implementation = `CLASS ${mapName(s.getName(), settings)} IMPLEMENTATION.\n`;
 
     for (const m of s.getMembers()) {
       if (m instanceof PropertyDeclaration) {
-        let init = handleExpression(m.getInitializer());
+        let init = handleExpression(m.getInitializer(), settings);
         if (init !== "") {
           init = " VALUE " + init;
         }
 
         const st = m.isStatic() ? "CLASS-" : "";
-        const code = `    ${st}DATA ${m.getName()} TYPE ${handleType(m.getType())}${init}.\n`;
+        const code = `    ${st}DATA ${m.getName()} TYPE ${handleType(m.getType(), settings)}${init}.\n`;
 
         if (m.getScope() === Scope.Private) {
           privateSection += code;
@@ -56,23 +58,25 @@ export class MorphClassDeclaration {
           definition += code;
         }
       } else if (m instanceof ConstructorDeclaration) {
-        const parameters = buildParameters(m, true);
+        const parameters = buildParameters(m, settings, true);
         definition += `    METHODS constructor${parameters}.\n`;
         implementation += `  METHOD constructor.\n`;
-        implementation += handleStatements(m.getStatements());
+        implementation += handleStatements(m.getStatements(), settings);
         implementation += `  ENDMETHOD.\n\n`;
       } else if (m instanceof MethodDeclaration) {
         let pre = "";
         if (itype?.getProperty(m.getName())) {
           definition += `    ALIASES ${m.getName()} FOR ${itype.getSymbol()?.getName()}~${m.getName()}.\n`;
           pre = itype.getSymbol()?.getName() + "~";
+        } else if (m.getName().startsWith("[")) {
+          // nothing
         } else {
           const st = m.isStatic() ? "CLASS-" : "";
           let code = "";
           if (superDefinition?.getMember(m.getName())) {
             code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
           } else {
-            const parameters = buildParameters(m);
+            const parameters = buildParameters(m, settings);
             code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
           }
           if (m.getScope() === Scope.Private) {
@@ -82,9 +86,11 @@ export class MorphClassDeclaration {
           }
         }
 
-        implementation += `  METHOD ${pre}${m.getName()}.\n`;
-        implementation += handleStatements(m.getStatements());
-        implementation += `  ENDMETHOD.\n\n`;
+        if (m.getName().startsWith("[") === false) {
+          implementation += `  METHOD ${pre}${m.getName()}.\n`;
+          implementation += handleStatements(m.getStatements(), settings);
+          implementation += `  ENDMETHOD.\n\n`;
+        }
       } else {
         console.dir(m.constructor.name + " - todo class_declaration");
       }

@@ -22,6 +22,9 @@ export class Select {
 
     const from = node.findDirectExpression(Expressions.SQLFrom);
     const dbSources = from ? new SQLFrom().runSyntax(from, scope, filename) : [];
+    if (dbSources.length === 0) {
+      throw new Error(`Missing FROM`);
+    }
 
     const fields = this.findFields(node);
     if (fields.length === 0

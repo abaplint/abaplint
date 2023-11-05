@@ -3,7 +3,7 @@ import {BuiltIn} from "./_builtin";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode} from "./spaghetti_scope";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {Identifier} from "../4_file_information/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
@@ -156,7 +156,7 @@ export class CurrentScope {
     this.addNamedIdentifier(identifier.getName(), identifier);
   }
 
-  public addDeferred(token: Token | undefined) {
+  public addDeferred(token: AbstractToken | undefined) {
     if (token === undefined) {
       return;
     }
@@ -176,7 +176,7 @@ export class CurrentScope {
   }
 
   public addReference(
-    usage: Token | undefined,
+    usage: AbstractToken | undefined,
     referencing: Identifier | undefined,
     type: ReferenceType | ReferenceType[] | undefined,
     filename: string,
@@ -196,7 +196,7 @@ export class CurrentScope {
     }
   }
 
-  public addSQLConversion(fieldName: string, message: string, token: Token) {
+  public addSQLConversion(fieldName: string, message: string, token: AbstractToken) {
     this.current?.getData().sqlConversion.push({fieldName, message, token});
   }
 

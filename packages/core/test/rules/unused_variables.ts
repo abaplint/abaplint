@@ -1388,4 +1388,38 @@ CLEAR lt_tab.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("select, in", async () => {
+    const abap = `
+CONSTANTS lc TYPE c LENGTH 1 VALUE '1'.
+SELECT * FROM void INTO TABLE @DATA(sdf) WHERE field IN (@lc).
+CLEAR sdf.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CREATE OBJECT, voided", async () => {
+    const abap = `
+  DATA lo TYPE REF TO voided.
+  CONSTANTS lc_hex TYPE x LENGTH 3 VALUE '290000'.
+  CREATE OBJECT lo EXPORTING foo = lc_hex.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("constants, needed", async () => {
+    const abap = `
+    CONSTANTS foo TYPE c LENGTH 1 VALUE 'a' ##NEEDED.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("constants, structured, needed", async () => {
+    const abap = `
+CONSTANTS: BEGIN OF foo ##NEEDED,
+             sdf TYPE c LENGTH 1 VALUE 'a',
+           END OF foo.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

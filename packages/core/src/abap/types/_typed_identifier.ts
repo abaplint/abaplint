@@ -1,4 +1,4 @@
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {Identifier} from "../4_file_information/_identifier";
 import {AbstractType} from "./basic/_abstract_type";
 
@@ -26,12 +26,14 @@ export class TypedIdentifier extends Identifier {
   private readonly type: AbstractType;
   private readonly meta: readonly IdentifierMeta[];
   private readonly value: string | {[index: string]: string} | undefined;
-
+  public [Symbol.for("debug.description")](){
+    return `${this.constructor.name} ${this.getName()}:${this.getType().constructor.name}`;
+  }
   public static from(id: Identifier, type: TypedIdentifier | AbstractType, meta?: readonly IdentifierMeta[]): TypedIdentifier {
     return new TypedIdentifier(id.getToken(), id.getFilename(), type, meta);
   }
 
-  public constructor(token: Token, filename: string, type: TypedIdentifier | AbstractType,
+  public constructor(token: AbstractToken, filename: string, type: TypedIdentifier | AbstractType,
                      meta?: readonly IdentifierMeta[], value?: string | {[index: string]: string}) {
     super(token, filename);
 

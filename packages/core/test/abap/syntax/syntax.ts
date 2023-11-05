@@ -8078,7 +8078,7 @@ START-OF-SELECTION.
   CREATE OBJECT lo_heap.
   WRITE |<sdf{ lo_heap->add( ) }>|.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("Not character like");
+    expect(issues[0]?.getMessage()).to.contain("not character like");
   });
 
   it("write hex via string template", () => {
@@ -9265,6 +9265,27 @@ ENDSELECT.`;
     expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
+  it("structure into basic, not compatible", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS moo IMPORTING int TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA: BEGIN OF dat,
+          foo TYPE i,
+        END OF dat.
+  lcl=>moo( dat ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
   it("error, static call of instance method", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -9306,7 +9327,7 @@ ASSIGN COMPONENT 2 OF STRUCTURE <lg_any> TO <lg_any>.`;
 WRITE |{ foo }|.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("Not character like");
+    expect(issues[0].getMessage()).to.contain("not character like");
   });
 
   it("error, not charlike2", () => {
@@ -9316,7 +9337,7 @@ WRITE |{ foo }|.`;
 WRITE |{ foo }|.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("Not character like");
+    expect(issues[0].getMessage()).to.contain("not character like");
   });
 
   it("error, constructor method in interface", () => {
@@ -9326,6 +9347,160 @@ ENDINTERFACE.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain("Interfaces cannot have constructor methods");
+  });
+
+  it("Missing FROM", () => {
+    const abap = `TYPES: BEGIN OF ty,
+    strkorr TYPE c LENGTH 20,
+  END OF ty.
+DATA lt_e070 TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+TYPES: BEGIN OF ty2,
+    trkorr TYPE c LENGTH 20,
+  END OF ty2.
+DATA rt_trkorr TYPE STANDARD TABLE OF ty2 WITH EMPTY KEY.
+
+SELECT trkorr INTO TABLE rt_trkorr
+  FOR ALL ENTRIES IN lt_e070
+  WHERE trkorr = lt_e070-strkorr
+  AND trfunction = '2'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Missing FROM");
+  });
+
+  it("not compatible, CREATE OBJECT", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING foo TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CONSTANTS lc_hex TYPE x LENGTH 3 VALUE '290000'.
+  CREATE OBJECT lo EXPORTING foo = lc_hex.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
+  it("not compatible, NEW", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING foo TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CONSTANTS lc_hex TYPE x LENGTH 3 VALUE '290000'.
+  lo = NEW #( lc_hex ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
+  });
+
+  it("Method already declared in super", () => {
+    const abap = `CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS sup IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
+  it("Method already declared in super, but ok, its private", () => {
+    const abap = `CLASS sup DEFINITION.
+  PRIVATE SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS sup IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Method already declared in super, but error, its private the other way around", () => {
+    const abap = `CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS sup IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PRIVATE SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD methodname.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
+  it("ok, REDUCE, INIT 2nd", () => {
+    const abap = `
+TYPES string_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA(split) = REDUCE string_table( LET split_input = |sdf|
+  split_by    = |.|
+  offset      = 0
+  IN
+  INIT string_result = VALUE string_table( )
+   add = ||
+  FOR index1 = 0 WHILE index1 <= strlen( split_input )
+  NEXT
+  string_result = COND #(
+  WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
+  THEN VALUE #( BASE string_result ( add ) )
+  ELSE string_result )
+  add    = COND #(
+  WHEN index1 = strlen( split_input ) OR split_input+index1(1) = split_by
+  THEN ||
+  ELSE |{ add }{ split_input+index1(1) }| ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
 // todo, static method cannot access instance attributes

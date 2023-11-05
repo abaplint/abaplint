@@ -6,7 +6,7 @@ import {StatementNode, TokenNode} from "../../../src/abap/nodes";
 import {IStructure} from "../../../src/abap/3_structures/structures/_structure";
 import {IStatement} from "../../../src/abap/2_statements/statements/_statement";
 import {AbstractNode} from "../../../src/abap/nodes/_abstract_node";
-import {Token} from "../../../src/abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../../../src/abap/1_lexer/tokens/abstract_token";
 import {Dash} from "../../../src/abap/1_lexer/tokens/dash";
 import {Position} from "../../../src/position";
 
@@ -14,10 +14,10 @@ class DummyNode extends AbstractNode<TokenNode> {
   public get(): undefined {
     return undefined;
   }
-  public getFirstToken(): Token {
+  public getFirstToken(): AbstractToken {
     throw new Error("not implemented");
   }
-  public getLastToken(): Token {
+  public getLastToken(): AbstractToken {
     throw new Error("not implemented");
   }
 }

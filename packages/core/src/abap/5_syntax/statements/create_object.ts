@@ -10,6 +10,7 @@ import {ClassDefinition, InterfaceDefinition} from "../../types";
 import {StatementSyntax} from "../_statement_syntax";
 import {IClassDefinition} from "../../types/_class_definition";
 import {ObjectOriented} from "../_object_oriented";
+import {TypeUtils} from "../_type_utils";
 
 export class CreateObject implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -35,7 +36,7 @@ export class CreateObject implements StatementSyntax {
     }
 
     // just recurse
-    for (const s of node.findAllExpressions(Expressions.Source)) {
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
 
@@ -76,11 +77,15 @@ export class CreateObject implements StatementSyntax {
       new Dynamic().runSyntax(t, scope, filename);
     }
 
-    this.validateParameters(cdef, node, scope);
+    this.validateParameters(cdef, node, scope, filename);
   }
 
-  private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, scope: CurrentScope) {
+  private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, scope: CurrentScope, filename: string) {
     if (cdef === undefined) {
+      const sources = node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.Source);
+      for (const s of sources || []) {
+        new Source().runSyntax(s, scope, filename);
+      }
       return;
     }
 
@@ -90,16 +95,22 @@ export class CreateObject implements StatementSyntax {
     const allImporting = methodParameters?.getImporting() || [];
     const requiredImporting = new Set(methodParameters?.getRequiredParameters().map(i => i.getName().toUpperCase()));
 
-// todo, validate types
     for (const p of node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.ParameterS) || []) {
       const name = p.findDirectExpression(Expressions.ParameterName)?.concatTokens().toUpperCase();
       if (name === undefined) {
         continue;
       }
 
-      if (allImporting?.some(p => p.getName().toUpperCase() === name) === false) {
+      const source = p.findDirectExpression(Expressions.Source);
+      const sourceType = new Source().runSyntax(source, scope, filename);
+
+      const found = allImporting?.find(p => p.getName().toUpperCase() === name);
+      if (found === undefined) {
         throw new Error(`constructor parameter "${name}" does not exist`);
+      } else if (new TypeUtils(scope).isAssignableStrict(sourceType, found.getType()) === false) {
+        throw new Error(`constructor parameter "${name}" type not compatible`);
       }
+
       requiredImporting.delete(name);
     }
 

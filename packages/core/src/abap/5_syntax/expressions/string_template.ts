@@ -18,7 +18,7 @@ export class StringTemplate {
         throw new Error("No target type determined");
       } else if ((typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false)
           || type instanceof StructureType) {
-        throw new Error("Not character like, " + type.constructor.name);
+        throw new Error("String template, not character like, " + type.constructor.name);
       }
 
       const format = templateSource.findDirectExpression(Expressions.StringTemplateFormatting);

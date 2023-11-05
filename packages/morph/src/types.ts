@@ -1,6 +1,8 @@
 import {Type} from "ts-morph";
+import {MorphSettings} from "./statements";
+import {mapName} from "./map_name";
 
-export function handleType(t: Type) {
+export function handleType(t: Type, settings: MorphSettings) {
   const text = t.getText();
   const name = t.getSymbol()?.getName();
   const arrayType = t.getArrayElementType()?.getSymbol()?.getName();
@@ -27,7 +29,7 @@ export function handleType(t: Type) {
       } else if (name === "__type") {
         return text;
       } else if (name) {
-        return "REF TO " + name;
+        return "REF TO " + mapName(name, settings);
       }
       return text;
   }

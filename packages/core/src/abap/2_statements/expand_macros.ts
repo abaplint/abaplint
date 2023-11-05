@@ -3,13 +3,13 @@ import * as Expressions from "./expressions";
 import * as Tokens from "../1_lexer/tokens";
 import {MacroContent, Comment, Unknown, MacroCall} from "./statements/_statement";
 import {StatementNode} from "../nodes/statement_node";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {TokenNode} from "../nodes/token_node";
 import {Version} from "../../version";
 import {StatementParser} from "./statement_parser";
 import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
-import {VirtualPosition} from "../../position";
+import {VirtualPosition} from "../../virtual_position";
 import {IRegistry} from "../../_iregistry";
 import {Program} from "../../objects/program";
 
@@ -168,7 +168,7 @@ export class ExpandMacros {
     let build = "";
     for (let i = 1; i < tokens.length - 1; i++) {
       const now = tokens[i];
-      let next: Token | undefined = tokens[i + 1];
+      let next: AbstractToken | undefined = tokens[i + 1];
       if (i + 2 === tokens.length) {
         next = undefined; // dont take the punctuation
       }
@@ -193,9 +193,9 @@ export class ExpandMacros {
     return result;
   }
 
-  private findName(tokens: readonly Token[]): string | undefined {
+  private findName(tokens: readonly AbstractToken[]): string | undefined {
     let macroName: string | undefined = undefined;
-    let previous: Token | undefined = undefined;
+    let previous: AbstractToken | undefined = undefined;
     for (const i of tokens) {
       if (previous && previous?.getEnd().getCol() !== i.getStart().getCol()) {
         break;
@@ -215,7 +215,7 @@ export class ExpandMacros {
     return macroName;
   }
 
-  private tokensToNodes(tokens: readonly Token[]): TokenNode[] {
+  private tokensToNodes(tokens: readonly AbstractToken[]): TokenNode[] {
     const ret: TokenNode[] = [];
 
     for (const t of tokens) {

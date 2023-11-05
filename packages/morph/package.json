@@ -5,7 +5,8 @@
   "description": "test",
   "scripts": {
     "build": "rm -rf output && abap_transpile abap_transpile.json",
-    "downport": "rm -rf downport && cp -r abap downport && abaplint --fix abaplint-downport.jsonc",
+    "downport": "rm -rf downport && cp -r abap1 downport && cp -r abap2 downport && abaplint --fix abaplint-downport.jsonc",
+    "lint": "abaplint abaplint-downport.jsonc",
     "ts_to_abap": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js && abaplint --fix",
     "test": "npm run ts_to_abap && npm run downport && npm run build && node output/index.mjs"
   },
@@ -26,16 +27,16 @@
   },
   "homepage": "https://abaplint.org",
   "dependencies": {
-    "@abaplint/cli": "^2.95.42",
-    "@abaplint/runtime": "^2.5.31",
-    "@abaplint/transpiler-cli": "^2.5.31",
-    "@types/chai": "^4.3.4",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^18.15.1",
-    "chai": "^4.3.7",
+    "@abaplint/cli": "^2.102.68",
+    "@abaplint/runtime": "^2.7.129",
+    "@abaplint/transpiler-cli": "^2.7.129",
+    "@types/chai": "^4.3.9",
+    "@types/mocha": "^10.0.3",
+    "@types/node": "^20.8.10",
+    "chai": "^4.3.10",
     "mocha": "^10.2.0",
     "source-map-support": "^0.5.21",
-    "ts-morph": "^17.0.1",
-    "typescript": "^4.9.5"
+    "ts-morph": "^20.0.0",
+    "typescript": "^5.2.2"
   }
 }

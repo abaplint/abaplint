@@ -1,25 +1,8 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class ParenRight extends Token {
+export class ParenRight extends AbstractToken {
   public static railroad(): string {
     return ")";
   }
 }
 
-export class WParenRight extends Token {
-  public static railroad(): string {
-    return " )";
-  }
-}
-
-export class ParenRightW extends Token {
-  public static railroad(): string {
-    return ") ";
-  }
-}
-
-export class WParenRightW extends Token {
-  public static railroad(): string {
-    return " ) ";
-  }
-}

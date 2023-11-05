@@ -1,5 +1,5 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class Pragma extends Token {
+export class Pragma extends AbstractToken {
 
 }

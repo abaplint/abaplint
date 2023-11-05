@@ -23,6 +23,7 @@ export class SlowParameterPassing implements IRule {
       key: "slow_parameter_passing",
       title: "Slow Parameter Passing",
       shortDescription: `Detects slow pass by value passing for methods where parameter is not changed`,
+      extendedInformation: `Method parameters defined in interfaces is not checked`,
       tags: [RuleTag.Performance],
     };
   }
@@ -52,18 +53,21 @@ export class SlowParameterPassing implements IRule {
 
     for (const m of methods) {
       const vars = m.getData().vars;
+      if (m.getIdentifier().sname.includes("~")) {
+        // skip methods defined in interfaces
+        // todo: checking for just "~" is not correct, there might be ALIASES
+        continue;
+      }
       for (const v in vars) {
         const id = vars[v];
         if (id.getMeta().includes(IdentifierMeta.PassByValue) === false) {
+          continue;
+        } else if (this.reg.isFileDependency(id.getFilename()) === true) {
           continue;
         }
         const writes = this.listWritePositions(m, id);
         if (writes.length === 0) {
           const message = "Parameter " + id.getName() + " passed by VALUE but not changed";
-
-          if (this.reg.isFileDependency(id.getFilename()) === true) {
-            continue;
-          }
 
           issues.push(Issue.atIdentifier(id, message, this.getMetadata().key, this.getConfig().severity));
         }

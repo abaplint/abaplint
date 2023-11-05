@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight} from "../abap/1_lexer/tokens";
 import {TokenNode, StatementNode, TokenNodeRegex} from "../abap/nodes";
 import {Unknown, MacroContent, MacroCall} from "../abap/2_statements/statements/_statement";
@@ -113,7 +113,7 @@ export class DoubleSpace extends ABAPRule {
   private checkParen(s: StatementNode, file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
 
-    let prev: Token | undefined = undefined;
+    let prev: AbstractToken | undefined = undefined;
     for (const t of s.getTokens()) {
       if (prev === undefined) {
         prev = t;
@@ -152,7 +152,7 @@ export class DoubleSpace extends ABAPRule {
     return issues;
   }
 
-  private pragmaInRange(pragmas: readonly Token[], start: Position, end: Position): boolean {
+  private pragmaInRange(pragmas: readonly AbstractToken[], start: Position, end: Position): boolean {
     let ret = false;
     for (const p of pragmas) {
       if (p.getStart().isBetween(start, end)) {

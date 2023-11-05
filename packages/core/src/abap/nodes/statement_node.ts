@@ -1,21 +1,26 @@
-import {Position, VirtualPosition} from "../../position";
+import {Position} from "../../position";
+import {VirtualPosition} from "../../virtual_position";
 import {AbstractNode} from "./_abstract_node";
 import {INode} from "./_inode";
 import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
 import {Comment} from "../1_lexer/tokens/comment";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {Pragma} from "../1_lexer/tokens/pragma";
-import {StringToken, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd} from "../1_lexer/tokens/string";
+import {StringToken} from "../1_lexer/tokens/string";
+import {StringTemplateMiddle} from "../1_lexer/tokens/string_template_middle";
+import {StringTemplateEnd} from "../1_lexer/tokens/string_template_end";
+import {StringTemplateBegin} from "../1_lexer/tokens/string_template_begin";
+import {StringTemplate} from "../1_lexer/tokens/string_template";
 import {IStatement} from "../2_statements/statements/_statement";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
 
 export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   private readonly statement: IStatement;
-  private readonly colon: Token | undefined;
-  private readonly pragmas: readonly Token[];
+  private readonly colon: AbstractToken | undefined;
+  private readonly pragmas: readonly AbstractToken[];
 
-  public constructor(statement: IStatement, colon?: Token | undefined, pragmas?: readonly Token[]) {
+  public constructor(statement: IStatement, colon?: AbstractToken | undefined, pragmas?: readonly AbstractToken[]) {
     super();
     this.statement = statement;
     this.colon = colon;
@@ -31,11 +36,11 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return this.statement;
   }
 
-  public getColon(): Token | undefined {
+  public getColon(): AbstractToken | undefined {
     return this.colon;
   }
 
-  public getPragmas(): readonly Token[] {
+  public getPragmas(): readonly AbstractToken[] {
     return this.pragmas;
   }
 
@@ -58,8 +63,8 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return last.getEnd();
   }
 
-  public getTokens(): readonly Token[] {
-    const tokens: Token[] = [];
+  public getTokens(): readonly AbstractToken[] {
+    const tokens: AbstractToken[] = [];
 
     for (const c of this.getChildren()) {
       tokens.push(...this.toTokens(c));
@@ -68,7 +73,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return tokens;
   }
 
-  public includesToken(search: Token): boolean {
+  public includesToken(search: AbstractToken): boolean {
     for (const t of this.getTokens()) {
       if (t.getStart().equals(search.getStart())) {
         return true;
@@ -89,7 +94,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
 
   public concatTokens(): string {
     let str = "";
-    let prev: Token | undefined;
+    let prev: AbstractToken | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Pragma) {
         continue;
@@ -109,7 +114,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
 
   public concatTokensVirtual(): string {
     let str = "";
-    let prev: Token | undefined;
+    let prev: AbstractToken | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Pragma) {
         continue;
@@ -132,7 +137,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
 
   public concatTokensWithoutStringsAndComments(): string {
     let str = "";
-    let prev: Token | undefined;
+    let prev: AbstractToken | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Comment
           || token instanceof StringToken
@@ -159,14 +164,14 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return this.getLastToken().getStr();
   }
 
-  public getFirstToken(): Token {
+  public getFirstToken(): AbstractToken {
     for (const child of this.getChildren()) {
       return child.getFirstToken();
     }
     throw new Error("StatementNode, getFirstToken, no children, " + this.get().constructor.name);
   }
 
-  public getLastToken(): Token {
+  public getLastToken(): AbstractToken {
     const child = this.getLastChild();
 
     if (child !== undefined) {
@@ -195,7 +200,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
-  public findDirectTokenByText(text: string): Token | undefined {
+  public findDirectTokenByText(text: string): AbstractToken | undefined {
     const upper = text.toUpperCase();
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode && child.get().getStr().toUpperCase() === upper) {
@@ -274,7 +279,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
    * @param second - Text of the second Token
    */
   public findTokenSequencePosition(first: string, second: string): Position | undefined {
-    let prev: Token | undefined;
+    let prev: AbstractToken | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Comment
           || token instanceof StringToken
@@ -328,8 +333,8 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
 
 ////////////////////////////////
 
-  private toTokens(b: INode): readonly Token[] {
-    const tokens: Token[] = [];
+  private toTokens(b: INode): readonly AbstractToken[] {
+    const tokens: AbstractToken[] = [];
 
     if (b instanceof TokenNode) {
       tokens.push(b.get());

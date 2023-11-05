@@ -1,13 +1,14 @@
 import {CallExpression} from "ts-morph";
 import {handleExpression} from "../expressions";
+import {MorphSettings} from "../statements";
 
 let counter = 1;
 
 export class MorphCall {
-  public run(s: CallExpression) {
+  public run(s: CallExpression, settings: MorphSettings) {
 
     const expr = s.getExpression();
-    let ret = handleExpression(expr);
+    let ret = handleExpression(expr, settings);
     let post = "";
 
     const name = expr.getType().getSymbol()?.getName();
@@ -47,10 +48,19 @@ export class MorphCall {
       THEN ||
       ELSE |{ add }{ split_input+index${counter}(1) }| ) )`;
       counter++;
+    } else if (name === "lastIndexOf" && signature === "(searchString: string, position?: number) => number") {
+      ret = "find( val = " + ret.replace("->lastIndexOf", "");
+      parameterNames.push("sub");
+      post = " occ = -1 )";
     } else if (name === "charAt" && signature === "(pos: number) => string") {
       parameterNames.push("off");
       post = " )";
     } else if (name === "substr" && signature === "(from: number, length?: number) => string") {
+      parameterNames.push("off");
+      parameterNames.push("len");
+      post = " )";
+    } else if (name === "substring" && signature === "(start: number, end?: number) => string") {
+      ret = "substring( val = " + ret.replace("->substring", "");
       parameterNames.push("off");
       parameterNames.push("len");
       post = " )";
@@ -67,9 +77,9 @@ export class MorphCall {
     for (const a of s.getArguments()) {
       const name = parameterNames.pop();
       if (name !== undefined && name !== "") {
-        ret += " " + name + " = " + handleExpression(a);
+        ret += " " + name + " = " + handleExpression(a, settings);
       } else {
-        ret += " " + handleExpression(a);
+        ret += " " + handleExpression(a, settings);
       }
     }
 

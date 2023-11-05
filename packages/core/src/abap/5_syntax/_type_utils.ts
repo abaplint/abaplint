@@ -296,9 +296,10 @@ export class TypeUtils {
           }
         }
         return true;
-      } else if (target instanceof CharacterType) {
-        return false;
+      } else if (target instanceof VoidType || target instanceof AnyType) {
+        return true;
       }
+      return false;
     } else if (source instanceof Integer8Type) {
       if (target instanceof IntegerType || target instanceof StringType) {
         return false;

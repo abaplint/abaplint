@@ -1,25 +1,8 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class Dash extends Token {
+export class Dash extends AbstractToken {
   public static railroad(): string {
     return "-";
   }
 }
 
-export class WDash extends Token {
-  public static railroad(): string {
-    return " -";
-  }
-}
-
-export class DashW extends Token {
-  public static railroad(): string {
-    return "- ";
-  }
-}
-
-export class WDashW extends Token {
-  public static railroad(): string {
-    return " - ";
-  }
-}

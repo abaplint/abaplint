@@ -1,5 +1,5 @@
 import {TokenNode} from "./token_node";
-import {Token} from "../1_lexer/tokens/_token";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {INode} from "./_inode";
 import {Pragma, StringToken, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../1_lexer/tokens";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
@@ -25,7 +25,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
-  public getFirstToken(): Token {
+  public getFirstToken(): AbstractToken {
     for (const child of this.getChildren()) {
       return child.getFirstToken();
     }
@@ -34,7 +34,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
 
   public concatTokens(): string {
     let str = "";
-    let prev: Token | undefined;
+    let prev: AbstractToken | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Pragma) {
         continue;
@@ -54,7 +54,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
 
   public concatTokensWithoutStringsAndComments(): string {
     let str = "";
-    let prev: Token | undefined;
+    let prev: AbstractToken | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Comment
           || token instanceof StringToken
@@ -77,8 +77,8 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return str;
   }
 
-  public getTokens(): readonly Token[] {
-    const tokens: Token[] = [];
+  public getTokens(): readonly AbstractToken[] {
+    const tokens: AbstractToken[] = [];
 
     for (const c of this.getChildren()) {
       tokens.push(...this.toTokens(c));
@@ -87,8 +87,8 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return tokens;
   }
 
-  private toTokens(b: INode): readonly Token[] {
-    const tokens: Token[] = [];
+  private toTokens(b: INode): readonly AbstractToken[] {
+    const tokens: AbstractToken[] = [];
 
     if (b instanceof TokenNode) {
       tokens.push(b.get());
@@ -106,7 +106,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return tokens;
   }
 
-  public getLastToken(): Token {
+  public getLastToken(): AbstractToken {
     const child = this.getLastChild();
 
     if (child) {
@@ -116,8 +116,8 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     throw new Error("ExpressionNode, getLastToken, no children");
   }
 
-  public getAllTokens(): Token[] {
-    const ret: Token[] = [];
+  public getAllTokens(): AbstractToken[] {
+    const ret: AbstractToken[] = [];
 
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
@@ -130,8 +130,8 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
-  public getDirectTokens(): readonly Token[] {
-    const ret: Token[] = [];
+  public getDirectTokens(): readonly AbstractToken[] {
+    const ret: AbstractToken[] = [];
 
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
@@ -192,7 +192,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
-  public findDirectTokenByText(text: string): Token | undefined {
+  public findDirectTokenByText(text: string): AbstractToken | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode && child.get().getStr().toUpperCase() === text.toUpperCase()) {
         return child.get();

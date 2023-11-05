@@ -13,7 +13,7 @@ function test(ts: string) {
   } else {
     let result = "";
     for (const s of file.getStatements()) {
-      result += handleStatement(s);
+      result += handleStatement(s, {globalObjects: false, nameMap: {}});
     }
     return result.trim();
   }
@@ -62,7 +62,7 @@ foo = bar.trim();`;
     const abap = `
 DATA(foo) = |foo|.
 DATA(bar) = |foo|.
-foo = condense( bar ).`;
+foo = condense( val = bar del = |\\n | ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 
@@ -511,6 +511,43 @@ ELSE.
 IF ahead->length EQ 1 AND line_exists( splits[ table_line = ahead ] ).
 ENDIF.
 ENDIF.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("special method", async () => {
+    const ts = `
+export abstract class Token {
+  public [Symbol.for("debug.description")](){
+    return '2';
+  }
+}`;
+    const abap = `
+CLASS Token DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS Token IMPLEMENTATION.
+ENDCLASS.`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("lastIndexOf", async () => {
+    const ts = `
+const foobar = "sdf";
+const index = foobar.lastIndexOf("a");`;
+    const abap = `
+DATA(foobar) = |sdf|.
+DATA(index) = find( val = foobar sub = |a| occ = -1 ).`;
+    expect(test(ts)).to.equal(abap.trim());
+  });
+
+  it("substring", async () => {
+    const ts = `
+const foobar = "sdsdff";
+const res = foobar.substring(1);`;
+    const abap = `
+DATA(foobar) = |sdsdff|.
+DATA(res) = substring( val = foobar off = 1 ).`;
     expect(test(ts)).to.equal(abap.trim());
   });
 

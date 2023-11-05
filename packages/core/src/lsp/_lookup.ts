@@ -9,7 +9,7 @@ import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorData, LSPUtils} from "./_lsp_utils";
 import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Identifier} from "../abap/4_file_information/_identifier";
-import {Token} from "../abap/1_lexer/tokens/_token";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
@@ -306,7 +306,7 @@ export class LSPLookup {
     return "* " + p.getName() + extra + " TYPE " + p.getType().toText(1) + "\n\n";
   }
 
-  private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference[] {
+  private static searchReferences(scope: ISpaghettiScopeNode, token: AbstractToken): IReference[] {
     const ret: IReference[] = [];
 
     for (const r of scope.getData().references) {

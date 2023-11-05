@@ -1,25 +1,7 @@
-import {Token} from "./_token";
+import {AbstractToken} from "./abstract_token";
 
-export class StaticArrow extends Token {
+export class StaticArrow extends AbstractToken {
   public static railroad(): string {
     return "=>";
-  }
-}
-
-export class WStaticArrow extends Token {
-  public static railroad(): string {
-    return " =>";
-  }
-}
-
-export class StaticArrowW extends Token {
-  public static railroad(): string {
-    return "=> ";
-  }
-}
-
-export class WStaticArrowW extends Token {
-  public static railroad(): string {
-    return " => ";
   }
 }

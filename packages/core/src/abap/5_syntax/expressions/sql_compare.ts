@@ -1,10 +1,11 @@
-import {Token} from "../../1_lexer/tokens/_token";
+import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {CharacterType, IntegerType, NumericType, StructureType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
 import {DatabaseTableSource} from "./database_table";
+import {Source} from "./source";
 import {SQLSource} from "./sql_source";
 
 export class SQLCompare {
@@ -12,7 +13,12 @@ export class SQLCompare {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string, tables: DatabaseTableSource[]): void {
 
     let sourceType: AbstractType | undefined;
-    let token: Token | undefined;
+    let token: AbstractToken | undefined;
+
+    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
     for (const s of node.findAllExpressions(Expressions.SQLSource)) {
       for (const child of s.getChildren()) {
         if (child instanceof ExpressionNode) {
