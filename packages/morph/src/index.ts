@@ -141,6 +141,9 @@ const classes = [
   {inputFile: "abap/1_lexer/tokens/identifier.ts", inputClassName: "Identifier", outputClassName: "zcl_alint_identifier"},
   {inputFile: "abap/1_lexer/tokens/pragma.ts", inputClassName: "Pragma", outputClassName: "zcl_alint_pragma"},
   {inputFile: "abap/1_lexer/tokens/punctuation.ts", inputClassName: "Punctuation", outputClassName: "zcl_alint_punctuation"},
+  {inputFile: "files/_ifile.ts", inputClassName: "IFile", outputClassName: "zif_alint_ifile"},
+  {inputFile: "files/_abstract_file.ts", inputClassName: "AbstractFile", outputClassName: "zcl_alint_abstract_file"},
+  {inputFile: "files/memory_file.ts", inputClassName: "MemoryFile", outputClassName: "zcl_alint_memory_file"},
 ];
 
 const nameMap: {[name: string]: string} = {};
@@ -150,7 +153,7 @@ for (const h of classes) {
   } else if (nameMap[h.inputClassName] !== undefined) {
     throw new Error("duplicate name " + h.inputClassName);
   }
-  nameMap[h.inputClassName] = h.outputClassName;
+  nameMap[h.inputClassName.toUpperCase()] = h.outputClassName;
   project.createSourceFile(h.inputFile, fs.readFileSync(INPUT_FOLDER + h.inputFile, "utf-8"));
 }
 
@@ -171,8 +174,14 @@ if (diagnostics.length > 0) {
     if (h.search && h.replace) {
       result = result.replace(h.search, h.replace);
     }
-    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.abap", result);
-    const xml = `<?xml version="1.0" encoding="utf-8"?>
+
+    let extension = ".clas";
+    if (result.includes("ENDINTERFACE.")) {
+      extension = ".intf";
+    }
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + extension + ".abap", result);
+
+    let xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
@@ -188,6 +197,24 @@ if (diagnostics.length > 0) {
   </asx:values>
  </asx:abap>
 </abapGit>`;
-    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + ".clas.xml", xml);
+    if (extension === ".intf") {
+      xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>${h.outputClassName.toUpperCase()}</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>abaplint</DESCRIPT>
+    <EXPOSURE>2</EXPOSURE>
+    <STATE>1</STATE>
+    <UNICODE>X</UNICODE>
+   </VSEOINTERF>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    }
+    const bom = Buffer.from("EFBBBF", "hex").toString();
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + extension + ".xml", bom + xml + "\n");
   }
 }

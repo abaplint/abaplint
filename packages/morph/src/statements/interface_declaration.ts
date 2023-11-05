@@ -2,12 +2,14 @@ import {InterfaceDeclaration, MethodSignature, PropertyDeclaration} from "ts-mor
 import {handleType} from "../types";
 import {buildParameters} from "./_helpers";
 import {MorphSettings} from "../statements";
+import {mapName} from "../map_name";
 
 export class MorphInterfaceDeclaration {
 
   public run(s: InterfaceDeclaration, settings: MorphSettings) {
 
-    let definition = `INTERFACE ${s.getName()}.\n`;
+    const global = settings.globalObjects ? " PUBLIC" : "";
+    let definition = `INTERFACE ${mapName(s.getName(), settings)}${global}.\n`;
 
     for (const m of s.getMembers()) {
       if (m instanceof PropertyDeclaration) {

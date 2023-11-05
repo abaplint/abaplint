@@ -9503,6 +9503,60 @@ DATA(split) = REDUCE string_table( LET split_input = |sdf|
     expect(issues.length).to.equals(0);
   });
 
+  it("Method already declared in super, via alias, expect error", () => {
+    const abap = `INTERFACE lif.
+  METHODS get.
+ENDINTERFACE.
+
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES get FOR lif~get.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    METHODS get.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
+  it("Constant already declared in super, via alias, expect error", () => {
+    const abap = `INTERFACE lif.
+  CONSTANTS get TYPE i VALUE 2.
+ENDINTERFACE.
+
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES get FOR lif~get.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    METHODS get.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
