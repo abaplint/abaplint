@@ -10,7 +10,7 @@ ENDCLASS.
 
 CLASS zcl_alint_memory_file IMPLEMENTATION.
   METHOD constructor.
-    super->constructor( filename ).
+    super->constructor( filename = filename ).
     me->raw = raw.
   ENDMETHOD.
 
