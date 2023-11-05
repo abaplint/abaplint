@@ -32,7 +32,7 @@ export class MorphClassDeclaration {
     const itype = s.getImplements()[0]?.getType();
     let interfaces = "";
     if (itype) {
-      interfaces = "\n    INTERFACES " + itype.getSymbol()?.getName() + ".";
+      interfaces = "\n    INTERFACES " + mapName(itype.getSymbol()?.getName(), settings) + ".";
     }
     const classAbstract = s.isAbstract() ? " ABSTRACT" : "";
     const global = settings.globalObjects ? " PUBLIC" : "";
@@ -66,8 +66,9 @@ export class MorphClassDeclaration {
       } else if (m instanceof MethodDeclaration) {
         let pre = "";
         if (itype?.getProperty(m.getName())) {
-          definition += `    ALIASES ${m.getName()} FOR ${itype.getSymbol()?.getName()}~${m.getName()}.\n`;
-          pre = itype.getSymbol()?.getName() + "~";
+          const iname = mapName(itype.getSymbol()?.getName(), settings);
+          definition += `    ALIASES ${m.getName()} FOR ${iname}~${m.getName()}.\n`;
+          pre = iname + "~";
         } else if (m.getName().startsWith("[")) {
           // nothing
         } else {
