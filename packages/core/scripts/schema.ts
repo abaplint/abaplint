@@ -39,6 +39,7 @@ import {DefinitionsTopConf} from "../src/rules/definitions_top";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
 import {DoubleSpaceConf} from "../src/rules/double_space";
 import {DownportConf} from "../src/rules/downport";
+import {DynproChecksConf} from "../src/rules/dynpro_checks";
 import {EasyToFindMessagesConf} from "../src/rules/easy_to_find_messages";
 import {EmptyLineinStatementConf} from "../src/rules/empty_line_in_statement";
 import {EmptyStatementConf} from "../src/rules/empty_statement";
@@ -212,6 +213,7 @@ export interface IConfig {
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
+    "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
     "empty_line_in_statement"?: EmptyLineinStatementConf | boolean,
     "empty_statement"?: EmptyStatementConf | boolean,
@@ -374,6 +376,7 @@ export interface IConfig {
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
+    "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
     "empty_line_in_statement"?: EmptyLineinStatementConf | boolean,
     "empty_statement"?: EmptyStatementConf | boolean,

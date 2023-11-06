@@ -1039,6 +1039,23 @@
       },
       "type": "object"
     },
+    "DynproChecksConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "EasyToFindMessagesConf": {
       "additionalProperties": false,
       "properties": {
@@ -1912,6 +1929,17 @@
                 }
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
+            },
+            "dynpro_checks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynproChecksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Various Dynpro checks\nTags: Syntax\nhttps://rules.abaplint.org/dynpro_checks"
             },
             "easy_to_find_messages": {
               "anyOf": [
@@ -3672,6 +3700,17 @@
                 }
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
+            },
+            "dynpro_checks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynproChecksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Various Dynpro checks\nTags: Syntax\nhttps://rules.abaplint.org/dynpro_checks"
             },
             "easy_to_find_messages": {
               "anyOf": [
