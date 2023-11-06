@@ -159,7 +159,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
         const name = m.getName().toUpperCase();
         if (m.getVisibility() === Visibility.Private) {
           continue;
-        } else if (name === "CONSTRUCTOR") {
+        } else if (name === "CONSTRUCTOR" || name === "CLASS_CONSTRUCTOR") {
           continue;
         }
         names.add(name);

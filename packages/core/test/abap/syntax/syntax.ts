@@ -9557,7 +9557,7 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("already declared");
   });
 
-  it.only("class constructors, ok", () => {
+  it("class constructors, ok", () => {
     const abap = `CLASS sup DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS class_constructor.
