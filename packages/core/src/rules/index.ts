@@ -37,6 +37,7 @@ export * from "./definitions_top";
 export * from "./description_empty";
 export * from "./double_space";
 export * from "./downport";
+export * from "./dynpro_checks";
 export * from "./easy_to_find_messages";
 export * from "./empty_line_in_statement";
 export * from "./empty_statement";
