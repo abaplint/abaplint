@@ -9557,6 +9557,28 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("already declared");
   });
 
+  it("class constructors, ok", () => {
+    const abap = `CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
