@@ -12,12 +12,9 @@ export class DataDefinition extends Expression {
 
     const table = seq(Expressions.TypeTable, optPrio("READ-ONLY"));
 
-    // todo, add version,
-    const hier = seq("TYPE STRUCTURE FOR HIERARCHY", Expressions.NamespaceSimpleName);
-
     return seq(Expressions.DefinitionName,
                optPrio(Expressions.ConstantFieldLength),
-               alt(simple, table, hier));
+               alt(simple, table, Expressions.TypeHierarchy));
 
   }
 }
