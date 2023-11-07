@@ -142,6 +142,7 @@ export class Normal implements IStructure {
                sta(Statements.Put),
                sta(Statements.PrintControl),
                sta(Statements.RaiseEvent),
+               sta(Statements.RaiseEntityEvent),
                sta(Statements.Raise),
                sta(Statements.Ranges),
                sta(Statements.ReadDataset),
