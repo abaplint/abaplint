@@ -89,6 +89,7 @@ export * from "./personalization_object";
 export * from "./program";
 export * from "./proxy_object";
 export * from "./push_channel";
+export * from "./query_user_group";
 export * from "./restriction_field";
 export * from "./restriction_type";
 export * from "./rfc_service";
