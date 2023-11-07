@@ -1,5 +1,6 @@
 export * from "./activation_variant";
 export * from "./api_release_state";
+export * from "./application_log_object";
 export * from "./application_job_catalog_entry";
 export * from "./application_job_template";
 export * from "./assignment_service_to_authorization_group";
@@ -45,6 +46,8 @@ export * from "./ecatt_test_data_container";
 export * from "./ecatt_test_script";
 export * from "./enhancement_implementation";
 export * from "./enhancement_spot";
+export * from "./event_binding";
+export * from "./event_consumer";
 export * from "./event_binding";
 export * from "./extension_index";
 export * from "./field_catalog";
