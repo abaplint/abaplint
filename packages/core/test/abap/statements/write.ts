@@ -75,6 +75,8 @@ const tests = [
   "WRITE foo COLOR OFF INTENSIFIED.",
   "WRITE (6)sy-sysid.",
   "WRITE |{ bar DECIMALS = 0 ALIGN = RIGHT WIDTH = 15 }|.",
+  "WRITE AT /.",
+  "WRITE AT / 'sdf'.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);
