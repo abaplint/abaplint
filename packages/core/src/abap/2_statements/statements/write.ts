@@ -54,10 +54,10 @@ export class Write implements IStatement {
                         seq("CURRENCY", Source),
                         "NO-SIGN");
 
-    const ret = seq("WRITE",
-                    opt(WriteOffsetLength),
-                    altPrio(Source, Dynamic, "/"),
-                    opt(options));
+    const ret = seq("WRITE", alt("AT /",
+                                 seq(opt(WriteOffsetLength),
+                                     altPrio(Source, Dynamic, "/"),
+                                     opt(options))));
 
     return verNot(Version.Cloud, ret);
   }

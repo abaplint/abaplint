@@ -38,6 +38,7 @@ export class TypeTable extends Expression {
       "ACTION IMPORT",
       "ACTION RESULT",
       "CREATE",
+      "EVENT",
       "FAILED",
       "LOCK",
       "READ RESULT",

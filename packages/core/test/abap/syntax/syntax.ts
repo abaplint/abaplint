@@ -9579,6 +9579,18 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ok, select from internal tab", () => {
+    const abap = `TYPES: BEGIN OF ty,
+    dat TYPE d,
+  END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty.
+SELECT SINGLE MIN( dat ) AS date
+  FROM @tab AS t1
+  INTO @DATA(lv_datum).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
