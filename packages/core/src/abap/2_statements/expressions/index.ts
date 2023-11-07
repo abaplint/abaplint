@@ -190,7 +190,7 @@ export * from "./string_template_formatting";
 export * from "./string_template_source";
 export * from "./string_template";
 export * from "./super_class_name";
-export * from "./type_hierarchy";
+export * from "./type_structure";
 export * from "./switch_body";
 export * from "./table_body";
 export * from "./table_expression";

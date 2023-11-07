@@ -97,6 +97,7 @@ const tests = [
   `DATA foo TYPE TABLE FOR ACTION RESULT EntityItem~action.`,
   `DATA ls_data TYPE STRUCTURE FOR HIERARCHY /foo/bar.`,
   `DATA lt_events TYPE TABLE FOR EVENT /foo/bar.`,
+  `DATA ls_event  TYPE STRUCTURE FOR EVENT /foo/bar~send.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

@@ -2,7 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {UnknownType} from "../../types/basic";
+import {UnknownType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {TypeTable} from "./type_table";
 
@@ -19,6 +19,12 @@ export class DataDefinition {
       value = new BasicTypes(filename, scope).findValue(node);
     }
 
+    const name = node.findFirstExpression(Expressions.DefinitionName);
+    const typeStructure = node.findFirstExpression(Expressions.TypeStructure);
+    if (typeStructure && name) {
+      return new TypedIdentifier(name.getFirstToken(), filename, new VoidType("DataDefinition, TypeStructure"));
+    }
+
     const bfound = new BasicTypes(filename, scope).simpleType(node);
     if (bfound) {
       if (value) {
@@ -28,8 +34,8 @@ export class DataDefinition {
       }
     }
 
-    const name = node.findFirstExpression(Expressions.DefinitionName);
     if (name) {
+      console.dir("undef");
       return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType("DataDefinition, fallback"));
     }
 
