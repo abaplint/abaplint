@@ -80,6 +80,7 @@ if (diagnostics.length > 0) {
     result += handleStatement(s, {
       globalObjects: false,
       nameMap: {},
+      ddicName: "",
     });
   }
   result = "* auto generated, do not touch\n" + result;

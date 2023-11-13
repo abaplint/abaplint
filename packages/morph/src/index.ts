@@ -64,10 +64,8 @@ const inputFiles = [
   {inputFile: "files/memory_file.ts", inputName: "MemoryFile", outputName: "zcl_alint_memory_file"},
   {inputFile: "abap/1_lexer/lexer_buffer.ts", inputName: "LexerBuffer", outputName: "zcl_alint_lexer_stream"},
   {inputFile: "abap/1_lexer/lexer_stream.ts", inputName: "LexerStream", outputName: "zcl_alint_lexer_buffer"},
-  /*
   {inputFile: "abap/1_lexer/lexer_result.ts", inputName: "", outputName: ""},
   {inputFile: "abap/1_lexer/lexer.ts", inputName: "Lexer", outputName: "zcl_alint_lexer"},
-  */
 ];
 
 const nameMap: {[name: string]: string} = {};
@@ -100,6 +98,7 @@ if (diagnostics.length > 0) {
     for (const s of file?.getStatements() || []) {
       result += handleStatement(s, {
         globalObjects: true,
+        ddicName: "zif_alint_ddic",
         nameMap: nameMap,
       });
     }

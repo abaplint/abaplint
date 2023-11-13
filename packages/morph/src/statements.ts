@@ -11,6 +11,7 @@ import {MorphVariable} from "./statements/variable";
 
 export type MorphSettings = {
   globalObjects: boolean,
+  ddicName: string,
   nameMap: {[name: string]: string},
 };
 

@@ -25,12 +25,16 @@ export function handleType(t: Type, settings: MorphSettings) {
       return "STANDARD TABLE OF string WITH EMPTY KEY";
     default:
       if (arrayType) {
-        return "STANDARD TABLE OF REF TO " + arrayType + " WITH EMPTY KEY";
+        return "STANDARD TABLE OF REF TO " + mapName(arrayType, settings) + " WITH EMPTY KEY";
       } else if (name === "__type") {
+        if (text.startsWith("import(")) {
+          return text.replace(/import\(".*"\)\./, settings.ddicName + "=>");
+        }
         return text;
       } else if (name) {
         return "REF TO " + mapName(name, settings);
       }
+
       return text;
   }
 }
