@@ -4,119 +4,8 @@ import {VirtualPosition} from "../../virtual_position";
 import {AbstractToken} from "./tokens/abstract_token";
 import {IABAPLexerResult} from "./lexer_result";
 import {At, AtW, BracketLeft, BracketLeftW, BracketRight, BracketRightW, Comment, Dash, DashW, Identifier, InstanceArrow, InstanceArrowW, ParenLeft, ParenLeftW, ParenRight, ParenRightW, Plus, PlusW, Pragma, Punctuation, StaticArrow, StaticArrowW, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle, StringToken, WAt, WAtW, WBracketLeft, WBracketLeftW, WBracketRight, WBracketRightW, WDash, WDashW, WInstanceArrow, WInstanceArrowW, WParenLeft, WParenLeftW, WParenRight, WParenRightW, WPlus, WPlusW, WStaticArrow, WStaticArrowW} from "./tokens";
-
-class Buffer {
-  private buf: string;
-
-  public constructor() {
-    this.buf = "";
-  }
-
-  public add(s: string): string {
-    this.buf = this.buf + s;
-    return this.buf;
-  }
-
-  public get(): string {
-    return this.buf;
-  }
-
-  public clear(): void {
-    this.buf = "";
-  }
-
-  public countIsEven(char: string): boolean {
-    let count = 0;
-    for (let i = 0; i < this.buf.length; i += 1) {
-      if (this.buf.charAt(i) === char) {
-        count += 1;
-      }
-    }
-    return count % 2 === 0;
-  }
-}
-
-class Stream {
-  private readonly raw: string;
-  private offset = -1;
-  private row: number;
-  private col: number;
-
-  public constructor(raw: string) {
-    this.raw = raw;
-    this.row = 0;
-    this.col = 0;
-  }
-
-  public advance(): boolean {
-    if (this.currentChar() === "\n") {
-      this.col = 1;
-      this.row = this.row + 1;
-    }
-
-    if (this.offset === this.raw.length) {
-      return false;
-    }
-
-    this.col = this.col + 1;
-
-    this.offset = this.offset + 1;
-    return true;
-  }
-
-  public getCol(): number {
-    return this.col;
-  }
-
-  public getRow(): number {
-    return this.row;
-  }
-
-  public prevChar(): string {
-    if (this.offset - 1 < 0) {
-      return "";
-    }
-    return this.raw.substr(this.offset - 1, 1);
-  }
-
-  public prevPrevChar(): string {
-    if (this.offset - 2 < 0) {
-      return "";
-    }
-    return this.raw.substr(this.offset - 2, 2);
-  }
-
-  public currentChar(): string {
-    if (this.offset < 0) {
-      return "\n"; // simulate newline at start of file to handle star(*) comments
-    } else if (this.offset >= this.raw.length) {
-      return "";
-    }
-    return this.raw.substr(this.offset, 1);
-  }
-
-  public nextChar(): string {
-    if (this.offset + 2 > this.raw.length) {
-      return "";
-    }
-    return this.raw.substr(this.offset + 1, 1);
-  }
-
-  public nextNextChar(): string {
-    if (this.offset + 3 > this.raw.length) {
-      return this.nextChar();
-    }
-    return this.raw.substr(this.offset + 1, 2);
-  }
-
-  public getRaw(): string {
-    return this.raw;
-  }
-
-  public getOffset() {
-    return this.offset;
-  }
-}
+import {LexerBuffer} from "./lexer_buffer";
+import {LexerStream} from "./lexer_stream";
 
 export class Lexer {
   private readonly ModeNormal: number = 1;
@@ -129,8 +18,8 @@ export class Lexer {
   private virtual: Position | undefined;
   private tokens: AbstractToken[];
   private m: number;
-  private stream: Stream;
-  private buffer: Buffer;
+  private stream: LexerStream;
+  private buffer: LexerBuffer;
 
   public run(file: IFile, virtual?: Position): IABAPLexerResult {
     this.virtual = virtual;
@@ -294,8 +183,8 @@ export class Lexer {
   }
 
   private process(raw: string) {
-    this.stream = new Stream(raw.replace(/\r/g, ""));
-    this.buffer = new Buffer();
+    this.stream = new LexerStream(raw.replace(/\r/g, ""));
+    this.buffer = new LexerBuffer();
 
     const splits: {[name: string]: boolean} = {};
     splits[" "] = true;

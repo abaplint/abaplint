@@ -63,6 +63,8 @@ input += fs.readFileSync("../core/src/files/_ifile.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/files/_abstract_file.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/files/memory_file.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/lexer_result.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/lexer_stream.ts", "utf-8") + "\n";
+input += fs.readFileSync("../core/src/abap/1_lexer/lexer_buffer.ts", "utf-8") + "\n";
 input += fs.readFileSync("../core/src/abap/1_lexer/lexer.ts", "utf-8") + "\n";
 
 input = input.replace(/import .*/g, "");
@@ -144,6 +146,10 @@ const classes = [
   {inputFile: "files/_ifile.ts", inputClassName: "IFile", outputClassName: "zif_alint_ifile"},
   {inputFile: "files/_abstract_file.ts", inputClassName: "AbstractFile", outputClassName: "zcl_alint_abstract_file"},
   {inputFile: "files/memory_file.ts", inputClassName: "MemoryFile", outputClassName: "zcl_alint_memory_file"},
+  {inputFile: "abap/1_lexer/lexer_buffer.ts", inputClassName: "LexerBuffer", outputClassName: "zcl_alint_lexer_stream"},
+  {inputFile: "abap/1_lexer/lexer_stream.ts", inputClassName: "LexerStream", outputClassName: "zcl_alint_lexer_buffer"},
+//  {inputFile: "abap/1_lexer/lexer_result.ts", inputClassName: "", outputClassName: ""},
+//  {inputFile: "abap/1_lexer/lexer.ts", inputClassName: "", outputClassName: ""},
 ];
 
 const nameMap: {[name: string]: string} = {};

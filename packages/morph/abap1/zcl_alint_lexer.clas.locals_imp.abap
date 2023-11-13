@@ -762,52 +762,7 @@ TYPES BEGIN OF iabaplexerresult.
 TYPES file TYPE REF TO ifile.
 TYPES tokens TYPE STANDARD TABLE OF REF TO abstracttoken WITH EMPTY KEY.
 TYPES END OF iabaplexerresult.
-CLASS buffer DEFINITION.
-  PUBLIC SECTION.
-    METHODS constructor.
-    METHODS add IMPORTING s TYPE string RETURNING VALUE(return) TYPE string.
-    METHODS get RETURNING VALUE(return) TYPE string.
-    METHODS clear.
-    METHODS countiseven IMPORTING char TYPE string RETURNING VALUE(return) TYPE abap_bool.
-  PRIVATE SECTION.
-    DATA buf TYPE string.
-ENDCLASS.
-
-CLASS Buffer IMPLEMENTATION.
-  METHOD constructor.
-    me->buf = ||.
-  ENDMETHOD.
-
-  METHOD add.
-    me->buf = me->buf && s.
-    return = me->buf.
-
-  ENDMETHOD.
-
-  METHOD get.
-    return = me->buf.
-
-  ENDMETHOD.
-
-  METHOD clear.
-    me->buf = ||.
-  ENDMETHOD.
-
-  METHOD countiseven.
-    DATA(count) = 0.
-    DATA(i) = 0.
-    WHILE i < strlen( buf ).
-      IF substring( val = buf len = 1 off = i ) EQ char.
-        count += 1.
-      ENDIF.
-      i += 1.
-    ENDWHILE.
-    return = xsdbool( count MOD 2 EQ 0 ).
-
-  ENDMETHOD.
-
-ENDCLASS.
-CLASS stream DEFINITION.
+CLASS lexerstream DEFINITION.
   PUBLIC SECTION.
     METHODS constructor IMPORTING raw TYPE string.
     METHODS advance RETURNING VALUE(return) TYPE abap_bool.
@@ -827,7 +782,7 @@ CLASS stream DEFINITION.
     DATA col TYPE i.
 ENDCLASS.
 
-CLASS Stream IMPLEMENTATION.
+CLASS LexerStream IMPLEMENTATION.
   METHOD constructor.
     me->raw = raw.
     me->row = 0.
@@ -919,6 +874,51 @@ CLASS Stream IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+CLASS lexerbuffer DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+    METHODS add IMPORTING s TYPE string RETURNING VALUE(return) TYPE string.
+    METHODS get RETURNING VALUE(return) TYPE string.
+    METHODS clear.
+    METHODS countiseven IMPORTING char TYPE string RETURNING VALUE(return) TYPE abap_bool.
+  PRIVATE SECTION.
+    DATA buf TYPE string.
+ENDCLASS.
+
+CLASS LexerBuffer IMPLEMENTATION.
+  METHOD constructor.
+    me->buf = ||.
+  ENDMETHOD.
+
+  METHOD add.
+    me->buf = me->buf && s.
+    return = me->buf.
+
+  ENDMETHOD.
+
+  METHOD get.
+    return = me->buf.
+
+  ENDMETHOD.
+
+  METHOD clear.
+    me->buf = ||.
+  ENDMETHOD.
+
+  METHOD countiseven.
+    DATA(count) = 0.
+    DATA(i) = 0.
+    WHILE i < strlen( buf ).
+      IF substring( val = buf len = 1 off = i ) EQ char.
+        count += 1.
+      ENDIF.
+      i += 1.
+    ENDWHILE.
+    return = xsdbool( count MOD 2 EQ 0 ).
+
+  ENDMETHOD.
+
+ENDCLASS.
 CLASS lexer DEFINITION.
   PUBLIC SECTION.
     METHODS run IMPORTING file TYPE REF TO ifile virtual TYPE REF TO position OPTIONAL RETURNING VALUE(return) TYPE iabaplexerresult.
@@ -932,8 +932,8 @@ CLASS lexer DEFINITION.
     DATA virtual TYPE REF TO position.
     DATA tokens TYPE STANDARD TABLE OF REF TO abstracttoken WITH EMPTY KEY.
     DATA m TYPE i.
-    DATA stream TYPE REF TO stream.
-    DATA buffer TYPE REF TO buffer.
+    DATA stream TYPE REF TO lexerstream.
+    DATA buffer TYPE REF TO lexerbuffer.
     METHODS add.
     METHODS process IMPORTING raw TYPE string.
 ENDCLASS.
@@ -1137,8 +1137,8 @@ CLASS Lexer IMPLEMENTATION.
   METHOD process.
     DATA splits TYPE STANDARD TABLE OF string WITH EMPTY KEY.
     DATA bufs TYPE STANDARD TABLE OF string WITH EMPTY KEY.
-    stream = NEW stream( raw = replace( val = raw regex = |\r| with = || ) ).
-    me->buffer = NEW buffer( ).
+    stream = NEW lexerstream( raw = replace( val = raw regex = |\r| with = || ) ).
+    me->buffer = NEW lexerbuffer( ).
 
     CLEAR splits.
     APPEND | | TO splits.
