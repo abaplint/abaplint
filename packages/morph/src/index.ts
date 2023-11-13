@@ -179,6 +179,13 @@ if (diagnostics.length > 0) {
     if (result.includes("ENDINTERFACE.")) {
       extension = ".intf";
     }
+    // workarounds
+    if (h.outputClassName === "zcl_alint_memory_file") {
+      result = result.replace(/METHODS getraw RETURNING VALUE\(return\) TYPE string./i,
+                              "METHODS getraw REDEFINITION.");
+      result = result.replace(/METHODS getrawrows RETURNING VALUE\(return\) TYPE string_table./i,
+                              "METHODS getrawrows REDEFINITION.");
+    }
     fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + extension + ".abap", result);
 
     let xml = `<?xml version="1.0" encoding="utf-8"?>
@@ -197,6 +204,7 @@ if (diagnostics.length > 0) {
   </asx:values>
  </asx:abap>
 </abapGit>`;
+
     if (extension === ".intf") {
       xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
@@ -214,7 +222,7 @@ if (diagnostics.length > 0) {
  </asx:abap>
 </abapGit>`;
     }
-    const bom = Buffer.from("EFBBBF", "hex").toString();
-    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + extension + ".xml", bom + xml + "\n");
+    const byteOrderMark = Buffer.from("EFBBBF", "hex").toString();
+    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputClassName + extension + ".xml", byteOrderMark + xml + "\n");
   }
 }
