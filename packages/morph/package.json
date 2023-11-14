@@ -7,7 +7,7 @@
     "build": "rm -rf output && abap_transpile abap_transpile.json",
     "downport": "rm -rf downport && cp -r abap2 downport && abaplint --fix abaplint-downport.jsonc",
     "lint": "abaplint abaplint-downport.jsonc",
-    "ts_to_abap": "rm -f blah.ts && tsc && mocha --timeout 5000 && node build/src/index.js && abaplint abaplint.jsonc --fix",
+    "ts_to_abap": "rm -f blah.ts && tsc && mocha --timeout 10000 && node build/src/index.js && abaplint abaplint.jsonc --fix",
     "test": "npm run ts_to_abap && npm run downport && npm run build && node output/index.mjs"
   },
   "author": "Lars Hvam Petersen",

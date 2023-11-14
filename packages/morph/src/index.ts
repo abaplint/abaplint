@@ -88,24 +88,29 @@ if (diagnostics.length > 0) {
   console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
   process.exit(-1);
 } else {
-  for (const h of inputFiles) {
-    if (h.outputName === "") {
-      continue;
-    }
+  const config = {
+    globalObjects: true,
+    ddicName: "zif_alint_ddic",
+    nameMap: nameMap,
+  };
 
+  let ddic = "INTERFACE " + config.ddicName + " PUBLIC.\n";
+  let extension = "";
+  for (const h of inputFiles) {
     const file = project.getSourceFile(path.basename(h.inputFile));
     let result = "";
     for (const s of file?.getStatements() || []) {
-      result += handleStatement(s, {
-        globalObjects: true,
-        ddicName: "zif_alint_ddic",
-        nameMap: nameMap,
-      });
+      if (h.outputName === "") {
+        // then its DDIC
+        ddic += handleStatement(s, config);
+      } else {
+        result += handleStatement(s, config);
+      }
     }
 
     result = "* auto generated, do not touch\n" + result;
 
-    let extension = ".clas";
+    extension = ".clas";
     if (result.includes("ENDINTERFACE.")) {
       extension = ".intf";
     }
@@ -122,13 +127,23 @@ if (diagnostics.length > 0) {
     }
 
     fs.writeFileSync(OUTPUT_FOLDER2 + h.outputName + extension + ".abap", result);
+    saveXML(h.outputName, extension);
+  }
 
-    let xml = `<?xml version="1.0" encoding="utf-8"?>
+  extension = ".intf";
+  ddic += "ENDINTERFACE.\n";
+  fs.writeFileSync(OUTPUT_FOLDER2 + config.ddicName + extension + ".abap", ddic);
+  saveXML(config.ddicName, extension);
+}
+
+
+function saveXML(outputName: string, extension: string) {
+  let xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <VSEOCLASS>
-    <CLSNAME>${h.outputName.toUpperCase()}</CLSNAME>
+    <CLSNAME>${outputName.toUpperCase()}</CLSNAME>
     <LANGU>E</LANGU>
     <DESCRIPT>abaplint</DESCRIPT>
     <STATE>1</STATE>
@@ -140,13 +155,13 @@ if (diagnostics.length > 0) {
  </asx:abap>
 </abapGit>`;
 
-    if (extension === ".intf") {
-      xml = `<?xml version="1.0" encoding="utf-8"?>
+  if (extension === ".intf") {
+    xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <VSEOINTERF>
-    <CLSNAME>${h.outputName.toUpperCase()}</CLSNAME>
+    <CLSNAME>${outputName.toUpperCase()}</CLSNAME>
     <LANGU>E</LANGU>
     <DESCRIPT>abaplint</DESCRIPT>
     <EXPOSURE>2</EXPOSURE>
@@ -156,8 +171,7 @@ if (diagnostics.length > 0) {
   </asx:values>
  </asx:abap>
 </abapGit>`;
-    }
-    const byteOrderMark = Buffer.from("EFBBBF", "hex").toString();
-    fs.writeFileSync(OUTPUT_FOLDER2 + h.outputName + extension + ".xml", byteOrderMark + xml + "\n");
   }
+  const byteOrderMark = Buffer.from("EFBBBF", "hex").toString();
+  fs.writeFileSync(OUTPUT_FOLDER2 + outputName + extension + ".xml", byteOrderMark + xml + "\n");
 }
