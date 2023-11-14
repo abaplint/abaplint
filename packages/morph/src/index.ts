@@ -107,6 +107,9 @@ if (diagnostics.length > 0) {
         result += handleStatement(s, config);
       }
     }
+    if (h.outputName === "") {
+      continue;
+    }
 
     result = "* auto generated, do not touch\n" + result;
 
