@@ -67,7 +67,7 @@ const inputFiles = [
   {inputFile: "abap/1_lexer/lexer_result.ts", inputName: "", outputName: ""},
   {inputFile: "abap/1_lexer/lexer.ts", inputName: "Lexer", outputName: "zcl_alint_lexer"},
   {inputFile: "abap/nodes/_inode.ts", inputName: "INode", outputName: "zif_alint_inode"},
-//  {inputFile: "abap/nodes/token_node.ts", inputName: "TokenNode", outputName: "zif_alint_token_node"},
+  {inputFile: "abap/nodes/token_node.ts", inputName: "TokenNode", outputName: "zif_alint_token_node"},
 ];
 
 const nameMap: {[name: string]: string} = {};
