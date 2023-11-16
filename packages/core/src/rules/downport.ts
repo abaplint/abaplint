@@ -3203,15 +3203,15 @@ ${indentation}    output = ${uniqueName}.\n`;
         if (cdef && cdef.getMethodDefinitions === undefined) {
           return undefined; // something wrong
         }
-        const importing = cdef?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
+        const importing = this.findConstructor(cdef, spag)?.getParameters().getDefaultImporting();
         if (importing) {
           extra += " EXPORTING " + importing + " = " + source;
         } else if (spag === undefined) {
-          extra += " SpagUndefined";
+          extra += " SpagUndefined ERROR";
         } else if (cdef === undefined) {
-          extra += " ClassDefinitionNotFound";
+          extra += " ClassDefinitionNotFound ERROR";
         } else {
-          extra += " SomeError";
+          extra += " SomeError ERROR";
         }
       }
     }
@@ -3219,6 +3219,22 @@ ${indentation}    output = ${uniqueName}.\n`;
     const abap = `CREATE OBJECT ${name}${extra}.`;
 
     return abap;
+  }
+
+  private findConstructor(cdef: IClassDefinition | undefined, spag: ISpaghettiScopeNode | undefined): any {
+    let def = cdef;
+    while (def !== undefined) {
+      const method = def?.getMethodDefinitions().getByName("CONSTRUCTOR");
+      if (method) {
+        return method;
+      }
+      const name = def.getSuperClass();
+      if (name) {
+        def = spag?.findClassDefinition(name);
+      } else {
+        return undefined;
+      }
+    }
   }
 
 }
