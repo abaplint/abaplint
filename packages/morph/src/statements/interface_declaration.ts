@@ -16,13 +16,13 @@ export class MorphInterfaceDeclaration {
         definition += `  DATA ${m.getName()} TYPE ${handleType(m.getType(), settings)}.\n`;
       } else if (m instanceof MethodSignature) {
         const parameters = buildParameters(m, settings);
-        definition += `  METHODS ${m.getName()}${parameters}.\n`;
+        definition += parameters.definition + `  METHODS ${m.getName()}${parameters.parameters}.\n`;
       } else {
         console.dir(m.constructor.name + " - todo class_declaration");
       }
     }
 
     definition += `ENDINTERFACE.\n`;
-    return definition + "\n";
+    return definition;
   }
 }

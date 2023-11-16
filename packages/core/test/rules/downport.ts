@@ -5557,4 +5557,44 @@ SELECT * FROM void INTO TABLE sdf WHERE field IN (lc).`;
     testFix(abap, expected);
   });
 
+  it("constructor parameter name from superclass", async () => {
+    const abap = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lcl.
+  foo = NEW #( 2 ).`;
+    const expected = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lcl.
+  CREATE OBJECT foo EXPORTING BAR = 2.`;
+    testFix(abap, expected);
+  });
+
 });

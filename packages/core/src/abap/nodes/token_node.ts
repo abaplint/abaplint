@@ -40,7 +40,3 @@ export class TokenNode implements INode {
     return this.token;
   }
 }
-
-export class TokenNodeRegex extends TokenNode {
-
-}

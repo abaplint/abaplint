@@ -13,7 +13,7 @@ function test(ts: string) {
   } else {
     let result = "";
     for (const s of file.getStatements()) {
-      result += handleStatement(s, {globalObjects: false, nameMap: {}});
+      result += handleStatement(s, {globalObjects: false, nameMap: {}, ddicName: ""});
     }
     return result.trim();
   }
@@ -351,7 +351,6 @@ class Position implements IFace {
 INTERFACE IFace.
   METHODS foo RETURNING VALUE(return) TYPE string.
 ENDINTERFACE.
-
 CLASS Position DEFINITION.
   PUBLIC SECTION.
     INTERFACES IFace.
@@ -466,7 +465,6 @@ class MemoryFile extends AbstractFile {
 INTERFACE IFile.
   METHODS getRaw RETURNING VALUE(return) TYPE string.
 ENDINTERFACE.
-
 CLASS AbstractFile DEFINITION ABSTRACT.
   PUBLIC SECTION.
     INTERFACES IFile.

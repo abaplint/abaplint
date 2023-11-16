@@ -2,15 +2,15 @@
 CLASS zcl_alint_memory_file DEFINITION INHERITING FROM zcl_alint_abstract_file PUBLIC.
   PUBLIC SECTION.
     METHODS constructor IMPORTING filename TYPE string raw TYPE string.
-    METHODS getraw RETURNING VALUE(return) TYPE string.
-    METHODS getrawrows RETURNING VALUE(return) TYPE string_table.
+    METHODS getraw REDEFINITION.
+    METHODS getrawrows REDEFINITION.
   PRIVATE SECTION.
     DATA raw TYPE string.
 ENDCLASS.
 
 CLASS zcl_alint_memory_file IMPLEMENTATION.
   METHOD constructor.
-    super->constructor( filename = filename ).
+    super->constructor( filename ).
     me->raw = raw.
   ENDMETHOD.
 
@@ -26,16 +26,16 @@ CLASS zcl_alint_memory_file IMPLEMENTATION.
       IN
       INIT string_result = VALUE string_table( )
        add = ||
-      FOR index6 = 0 WHILE index6 <= strlen( split_input )
+      FOR index3 = 0 WHILE index3 <= strlen( split_input )
       NEXT
       string_result = COND #(
-      WHEN index6 = strlen( split_input ) OR split_input+index6(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN VALUE #( BASE string_result ( add ) )
       ELSE string_result )
       add    = COND #(
-      WHEN index6 = strlen( split_input ) OR split_input+index6(1) = split_by
+      WHEN index3 = strlen( split_input ) OR split_input+index3(1) = split_by
       THEN ||
-      ELSE |{ add }{ split_input+index6(1) }| ) ).
+      ELSE |{ add }{ split_input+index3(1) }| ) ).
 
   ENDMETHOD.
 

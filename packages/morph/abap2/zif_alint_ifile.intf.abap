@@ -6,4 +6,3 @@ INTERFACE zif_alint_ifile PUBLIC.
   METHODS getraw RETURNING VALUE(return) TYPE string.
   METHODS getrawrows RETURNING VALUE(return) TYPE string_table.
 ENDINTERFACE.
-

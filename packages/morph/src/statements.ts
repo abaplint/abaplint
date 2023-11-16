@@ -1,4 +1,4 @@
-import {Block, BreakStatement, ClassDeclaration, EnumDeclaration, ExpressionStatement, ForStatement, IfStatement, ImportDeclaration, InterfaceDeclaration, ReturnStatement, Statement, TypeAliasDeclaration, VariableStatement} from "ts-morph";
+import {Block, BreakStatement, ClassDeclaration, EnumDeclaration, ExportDeclaration, ExpressionStatement, ForStatement, IfStatement, ImportDeclaration, InterfaceDeclaration, ReturnStatement, Statement, ThrowStatement, TypeAliasDeclaration, VariableStatement} from "ts-morph";
 import {MorphClassDeclaration} from "./statements/class_declaration";
 import {MorphEnumDeclaration} from "./statements/enum_declaration";
 import {MorphExpression} from "./statements/expression";
@@ -11,13 +11,14 @@ import {MorphVariable} from "./statements/variable";
 
 export type MorphSettings = {
   globalObjects: boolean,
+  ddicName: string,
   nameMap: {[name: string]: string},
 };
 
 export function handleStatement(s: Statement, settings: MorphSettings): string {
   if (s instanceof ClassDeclaration) {
     return new MorphClassDeclaration().run(s, settings);
-  }else if (s instanceof InterfaceDeclaration) {
+  } else if (s instanceof InterfaceDeclaration) {
     return new MorphInterfaceDeclaration().run(s, settings);
   } else if (s instanceof BreakStatement) {
     return "EXIT.\n";
@@ -35,8 +36,12 @@ export function handleStatement(s: Statement, settings: MorphSettings): string {
     return new MorphIf().run(s, settings);
   } else if (s instanceof ForStatement) {
     return new MorphFor().run(s, settings);
+  } else if (s instanceof ThrowStatement) {
+    return "ASSERT 1 = 'ThrowStatement'.\n";
   } else if (s instanceof ReturnStatement) {
     return new MorphReturn().run(s, settings);
+  } else if (s instanceof ExportDeclaration) {
+    return "";
   } else if (s instanceof ImportDeclaration) {
     return "";
   } else {
