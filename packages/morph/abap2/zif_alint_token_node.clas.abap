@@ -21,9 +21,11 @@ CLASS zif_alint_token_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_alint_inode~addchild.
+    ASSERT 1 = 'ThrowStatement'.
   ENDMETHOD.
 
   METHOD zif_alint_inode~setchildren.
+    ASSERT 1 = 'ThrowStatement'.
   ENDMETHOD.
 
   METHOD zif_alint_inode~getchildren.

@@ -23,6 +23,6 @@ export class MorphInterfaceDeclaration {
     }
 
     definition += `ENDINTERFACE.\n`;
-    return definition + "\n";
+    return definition;
   }
 }

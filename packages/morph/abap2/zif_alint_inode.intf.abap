@@ -9,4 +9,3 @@ INTERFACE zif_alint_inode PUBLIC.
   METHODS getfirsttoken RETURNING VALUE(return) TYPE REF TO zcl_alint_abstract_token.
   METHODS getlasttoken RETURNING VALUE(return) TYPE REF TO zcl_alint_abstract_token.
 ENDINTERFACE.
-
