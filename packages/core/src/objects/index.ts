@@ -84,6 +84,7 @@ export * from "./messaging_channel";
 export * from "./mime_object";
 export * from "./namespace";
 export * from "./number_range";
+export * from "./oauth2_profile";
 export * from "./object_characteristic";
 export * from "./outbound_service";
 export * from "./package_interface";
