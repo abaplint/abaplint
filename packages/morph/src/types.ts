@@ -17,6 +17,8 @@ export function handleType(t: Type, settings: MorphSettings) {
   switch (text) {
     case "string[]":
       return "string_table";
+    case "object":
+      return "REF TO object";
     case "number":
       return "i";
     case "boolean":

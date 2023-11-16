@@ -11,8 +11,8 @@ import {Dash} from "../../../src/abap/1_lexer/tokens/dash";
 import {Position} from "../../../src/position";
 
 class DummyNode extends AbstractNode<TokenNode> {
-  public get(): undefined {
-    return undefined;
+  public get(): object {
+    return this;
   }
   public getFirstToken(): AbstractToken {
     throw new Error("not implemented");

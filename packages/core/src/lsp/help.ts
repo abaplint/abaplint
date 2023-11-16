@@ -199,6 +199,7 @@ export class Help {
       switch (node.constructor.name) {
         case "TokenNode":
         case "TokenNodeRegex":
+          // @ts-ignore
           extra = node.get().constructor.name + ", \"" + node.get().getStr() + "\"";
           break;
         case "ExpressionNode":

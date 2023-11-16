@@ -59,7 +59,7 @@ export class MorphClassDeclaration {
         }
       } else if (m instanceof ConstructorDeclaration) {
         const parameters = buildParameters(m, settings, true);
-        definition += `    METHODS constructor${parameters}.\n`;
+        definition += parameters.definition + `    METHODS constructor${parameters.parameters}.\n`;
         implementation += `  METHOD constructor.\n`;
         implementation += handleStatements(m.getStatements(), settings);
         implementation += `  ENDMETHOD.\n\n`;
@@ -78,7 +78,7 @@ export class MorphClassDeclaration {
             code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
           } else {
             const parameters = buildParameters(m, settings);
-            code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
+            code = parameters.definition + `    ${st}METHODS ${m.getName()}${parameters.parameters}.\n`;
           }
           if (m.getScope() === Scope.Private) {
             privateSection += code;
