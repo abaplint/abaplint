@@ -45,13 +45,11 @@ for (const chip of document.getElementsByClassName("chip")) {
 const form = document.getElementById("input");
 let delayedSearch;
 const fuse = new Fuse(list, {
-  threshold: 0.2,
+  threshold: 0.3,
   keys: ["key", "title", "shortDescription", "extendedInformation"],
 });
 
 function renderVisual(result) {
-  console.dir("render");
-  console.dir(result);
   document.getElementById("chipsDiv").classList.add("hidden");
 
   for (const rule of document.getElementById("rules").children) {
