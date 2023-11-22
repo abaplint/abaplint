@@ -124,6 +124,7 @@ export * from "./web_dynpro_application";
 export * from "./web_dynpro_component_configuration";
 export * from "./web_dynpro_component";
 export * from "./web_mime";
+export * from "./zn00";
 export * from "./zn01";
 export * from "./zn02";
 export * from "./zn03";
