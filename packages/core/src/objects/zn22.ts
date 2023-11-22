@@ -1,6 +1,6 @@
 import {AbstractObject} from "./_abstract_object";
 
-export class ZN0122 extends AbstractObject {
+export class NeptuneMobileClient extends AbstractObject {
 
   public getType(): string {
     return "ZN22";

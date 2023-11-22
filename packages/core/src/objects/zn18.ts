@@ -1,6 +1,6 @@
 import {AbstractObject} from "./_abstract_object";
 
-export class ZN18 extends AbstractObject {
+export class NeptuneMediaLibrary extends AbstractObject {
 
   public getType(): string {
     return "ZN18";
