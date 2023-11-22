@@ -5731,7 +5731,7 @@
           },
           "type": "array"
         },
-        "numericParamters": {
+        "numericParameters": {
           "type": "boolean"
         },
         "severity": {
@@ -5740,7 +5740,7 @@
         }
       },
       "required": [
-        "numericParamters"
+        "numericParameters"
       ],
       "type": "object"
     },
