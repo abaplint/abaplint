@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.103.8",
+    "version": "2.103.9",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
