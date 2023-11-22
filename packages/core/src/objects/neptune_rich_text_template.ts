@@ -1,9 +1,9 @@
 import {AbstractObject} from "./_abstract_object";
 
-export class ZN05 extends AbstractObject {
+export class NeptuneRichTextTemplate extends AbstractObject {
 
   public getType(): string {
-    return "ZN05";
+    return "ZN14";
   }
 
   public getAllowedNaming() {

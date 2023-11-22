@@ -1,9 +1,9 @@
 import {AbstractObject} from "./_abstract_object";
 
-export class ZN01 extends AbstractObject {
+export class NeptuneMetadata extends AbstractObject {
 
   public getType(): string {
-    return "ZN01";
+    return "ZN00";
   }
 
   public getAllowedNaming() {

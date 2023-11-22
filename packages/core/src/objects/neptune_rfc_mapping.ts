@@ -1,9 +1,9 @@
 import {AbstractObject} from "./_abstract_object";
 
-export class ZN16 extends AbstractObject {
+export class NeptuneRFCMapping extends AbstractObject {
 
   public getType(): string {
-    return "ZN16";
+    return "ZN17";
   }
 
   public getAllowedNaming() {
