@@ -9599,6 +9599,14 @@ CLEAR ls_data.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("DEFAULT, infer type", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA(sdf) = VALUE #( tab[ 1 ] DEFAULT VALUE #( ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
