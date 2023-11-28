@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
@@ -12,7 +12,7 @@ import {TypeUtils} from "../_type_utils";
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const assignSource = node.findDirectExpression(Expressions.AssignSource);
-    const sources = assignSource?.findDirectExpressions(Expressions.Source) || [];
+    const sources: ExpressionNode[] = assignSource?.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource3]) || [];
     const theSource = sources[sources.length - 1];
 
     let sourceType: AbstractType | undefined = undefined;

@@ -44,6 +44,7 @@ const versions = [
   {abap: "ASSIGN entity->* TO FIELD-SYMBOL(<entity>).", ver: Version.v740sp02},
   {abap: "ASSIGN it_cols_width[ KEY primary_key col = lv_col ] TO FIELD-SYMBOL(<ls_cols_width>).", ver: Version.v740sp02},
   {abap: "ASSIGN lt_table[ table_line->guid = lv_guid ] TO <target>.", ver: Version.v740sp02},
+  {abap: "ASSIGN COMPONENT li_field->get_name( ) OF STRUCTURE ls_item TO <lv_field>.", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "ASSIGN", Statements.Assign);
