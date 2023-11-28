@@ -47,3 +47,6 @@ const versions = [
 ];
 
 statementVersion(versions, "ASSIGN", Statements.Assign);
+
+
+" ASSIGN COMPONENT li_field->get_name( ) OF STRUCTURE ls_item TO <lv_field>.
