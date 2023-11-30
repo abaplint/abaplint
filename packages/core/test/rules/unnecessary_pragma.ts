@@ -114,6 +114,19 @@ DATA: BEGIN OF blah ##NEEDED,
     expect(issues.length).to.equal(0);
   });
 
+  it("CLASS DATA", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA sv_var TYPE string ##NEEDED.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await findIssues(abap, "zfoobar.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
   it("BEGIN CONSTANTS", async () => {
     const abap = `
 CONSTANTS: BEGIN OF c_pragma_test ##NEEDED,
