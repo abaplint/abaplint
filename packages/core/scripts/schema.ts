@@ -115,6 +115,7 @@ import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_e
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
+import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
@@ -289,6 +290,7 @@ export interface IConfig {
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
@@ -452,6 +454,7 @@ export interface IConfig {
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,

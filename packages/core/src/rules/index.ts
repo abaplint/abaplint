@@ -113,6 +113,7 @@ export * from "./prefer_returning_to_exporting";
 export * from "./prefer_xsdbool";
 export * from "./preferred_compare_operator";
 export * from "./prefix_is_current_class";
+export * from "./reduce_procedural_code";
 export * from "./reduce_string_templates";
 export * from "./release_idoc";
 export * from "./remove_descriptions";
