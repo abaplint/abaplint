@@ -2766,6 +2766,17 @@
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
+            "reduce_procedural_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ReduceProceduralCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks FORM and FUNCTION-MODULE have few statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/reduce_procedural_code"
+            },
             "reduce_string_templates": {
               "anyOf": [
                 {
@@ -4536,6 +4547,17 @@
                 }
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
+            },
+            "reduce_procedural_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ReduceProceduralCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks FORM and FUNCTION-MODULE have few statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/reduce_procedural_code"
             },
             "reduce_string_templates": {
               "anyOf": [
@@ -6910,6 +6932,29 @@
       "required": [
         "name",
         "replace"
+      ],
+      "type": "object"
+    },
+    "ReduceProceduralCodeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "maxStatements": {
+          "type": "number"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "maxStatements"
       ],
       "type": "object"
     },
