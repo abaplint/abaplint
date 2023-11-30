@@ -20,8 +20,6 @@ export class ReduceProceduralCode extends ABAPRule {
       shortDescription: `Checks FORM and FUNCTION-MODULE have few statements`,
       extendedInformation: `Delegate logic to a class method instead of using FORM or FUNCTION-MODULE.
 
-Only one issue is reported per include/file.
-
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-object-orientation-to-procedural-programming`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       badExample: `FORM foo.
