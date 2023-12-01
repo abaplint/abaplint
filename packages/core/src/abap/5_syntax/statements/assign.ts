@@ -31,7 +31,7 @@ export class Assign implements StatementSyntax {
     }
 
     if (assignSource?.getChildren().length === 5
-        && assignSource?.getFirstChild()?.concatTokens() === "COMPONENT") {
+        && assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
       const componentSource = sources[sources.length - 2];
       const componentType = new Source().runSyntax(componentSource, scope, filename);
       if (new TypeUtils(scope).isAssignable(componentType, new CharacterType(30)) === false) {

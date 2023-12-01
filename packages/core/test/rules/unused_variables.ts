@@ -1422,4 +1422,23 @@ CONSTANTS: BEGIN OF foo ##NEEDED,
     expect(issues.length).to.equal(0);
   });
 
+  it("constants, structured, needed", async () => {
+    const abap = `
+CONSTANTS: BEGIN OF foo ##NEEDED,
+             sdf TYPE c LENGTH 1 VALUE 'a',
+           END OF foo.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("assign component, lower case", async () => {
+    const abap = `
+constants lc_sel_fieldname type string value 'SELECTED'.
+field-symbols <ls_selection> type voided.
+field-symbols <lr_sel_field> type voided.
+assign component lc_sel_fieldname of structure <ls_selection> to <lr_sel_field>.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
