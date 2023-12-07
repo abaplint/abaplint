@@ -211,7 +211,7 @@ ENDCLASS.`;
     }
   });
 
-  it.only("CLAS, with usage in PROG, DEFAULT", () => {
+  it("CLAS, with usage in PROG, DEFAULT", () => {
     const clas = `CLASS zcl_foo DEFINITION PUBLIC.
   PUBLIC SECTION.
     CONSTANTS const TYPE i VALUE 2.
