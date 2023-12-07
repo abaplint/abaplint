@@ -814,6 +814,7 @@ export class BasicTypes {
       const attr = token.getStr();
       const c = new ObjectOriented(this.scope).searchConstantName(obj, attr);
       if (c instanceof ClassConstant) {
+        this.scope.addReference(firstToken, obj, ReferenceType.ObjectOrientedReference, this.filename);
         this.scope.addReference(token, c, ReferenceType.DataReadReference, this.filename);
         const val = c.getValue();
         if (typeof val === "string") {
