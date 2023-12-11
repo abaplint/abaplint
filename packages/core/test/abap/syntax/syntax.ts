@@ -9619,6 +9619,18 @@ ASSIGN <fs>->* TO FIELD-SYMBOL(<fs2>).`;
     expect(issues.length).to.equals(0);
   });
 
+  it.only("fields inside TYPES cannot be generic", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+TYPES: BEGIN OF ty_internal,
+         dd05m TYPE TABLE OF ty,
+       END OF ty_internal.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("generic");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
