@@ -9607,7 +9607,7 @@ CLEAR ls_data.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("ASSIGN component inline fs", () => {
+  it("ASSIGN component inline fs", () => {
     const abap = `
 TYPES: BEGIN OF test,
          comp TYPE REF TO data,

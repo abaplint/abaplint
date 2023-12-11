@@ -48,7 +48,11 @@ export class Assign implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.FSTarget);
     if (target) {
-      new FSTarget().runSyntax(target, scope, filename, sourceType);
+      if (assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
+        new FSTarget().runSyntax(target, scope, filename, new AnyType());
+      } else {
+        new FSTarget().runSyntax(target, scope, filename, sourceType);
+      }
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
