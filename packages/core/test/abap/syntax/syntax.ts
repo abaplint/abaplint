@@ -9607,6 +9607,18 @@ CLEAR ls_data.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ASSIGN component inline fs", () => {
+    const abap = `
+TYPES: BEGIN OF test,
+         comp TYPE REF TO data,
+       END OF test.
+DATA var TYPE test.
+ASSIGN COMPONENT 'COMP' OF STRUCTURE var TO FIELD-SYMBOL(<fs>).
+ASSIGN <fs>->* TO FIELD-SYMBOL(<fs2>).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
