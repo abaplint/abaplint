@@ -20,6 +20,7 @@ export class RenameTable implements ObjectRenamer {
     let changes: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[] = [];
     const helper = new RenamerHelper(this.reg);
     changes = changes.concat(helper.buildXMLFileEdits(obj, "TABNAME", oldName, newName));
+    changes = changes.concat(helper.buildXMLFileEdits(obj, "FORTABLE", oldName, newName));
     changes = changes.concat(helper.renameFiles(obj, oldName, newName));
     changes = changes.concat(helper.renameDDICCodeReferences(obj, oldName, newName));
     changes = changes.concat(helper.renameDDICTABLReferences(obj, oldName, newName));
