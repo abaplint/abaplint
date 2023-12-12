@@ -21,14 +21,12 @@ export class NoPrefixesConf extends BasicRuleConfig {
   public types: string = "^ty_";
   /** importing, exporting, returning and changing parameters */
   public methodParameters: string = "^[ierc]._";
-  public functionModuleParameters: string = "";
-  /** SELECT-OPTIONS, case insensitive regex */
-  public selectOptions: string = "";
-  /** PARAMETERS, case insensitive regex */
-  public parameters: string = "";
   public localClass: string = "";
   public localInterface: string = "";
 
+  // todo, public functionModuleParameters: string = "";
+  // todo, public parameters: string = "";
+  // todo, public selectOptions: string = "";
   // todo, public formParameters: string = "";
 }
 
@@ -92,18 +90,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
 
     if (config.methodParameters !== undefined && config.methodParameters !== "") {
       ret.push(...this.checkMethodParameters(structure, new RegExp(config.methodParameters, "i"), file));
-    }
-
-    if (config.functionModuleParameters !== undefined && config.functionModuleParameters !== "") {
-      ret.push(...this.checkFunctionModuleParameters(structure, new RegExp(config.functionModuleParameters, "i"), file));
-    }
-
-    if (config.selectOptions !== undefined && config.selectOptions !== "") {
-      ret.push(...this.checkSelectOptions(structure, new RegExp(config.selectOptions, "i"), file));
-    }
-
-    if (config.parameters !== undefined && config.parameters !== "") {
-      ret.push(...this.checkParameters(structure, new RegExp(config.parameters, "i"), file));
     }
 
     if (config.localClass !== undefined && config.localClass !== "") {
@@ -221,24 +207,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
   }
 
   private checkMethodParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
-    const ret: Issue[] = [];
-// todo
-    return ret;
-  }
-
-  private checkFunctionModuleParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
-    const ret: Issue[] = [];
-// todo
-    return ret;
-  }
-
-  private checkSelectOptions(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
-    const ret: Issue[] = [];
-// todo
-    return ret;
-  }
-
-  private checkParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
