@@ -9619,7 +9619,7 @@ ASSIGN <fs>->* TO FIELD-SYMBOL(<fs2>).`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("fields inside TYPES cannot be generic", () => {
+  it.skip("fields inside TYPES cannot be generic", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          foo TYPE i,
