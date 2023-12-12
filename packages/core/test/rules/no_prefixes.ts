@@ -73,4 +73,30 @@ describe("Rule: no_prefixes", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("method parameter, error expected", async () => {
+    const abap = `CLASS logic DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING iv_bar TYPE i.
+ENDCLASS.
+CLASS logic IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("method parameter, fixed", async () => {
+    const abap = `CLASS logic DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS logic IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
