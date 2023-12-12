@@ -206,9 +206,19 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     return ret;
   }
 
-  private checkMethodParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
+  private checkMethodParameters(topNode: StructureNode, regex: RegExp, file: IFile): Issue[] {
     const ret: Issue[] = [];
-// todo
+
+    for (const method of topNode.findAllStatements(Statements.MethodDef)) {
+      for (const def of method.findAllExpressions(Expressions.MethodParamName)) {
+        const name = def.concatTokens();
+        if (name !== "" && name.match(regex)) {
+          const issue = Issue.atToken(file, method.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+          ret.push(issue);
+        }
+      }
+    }
+
     return ret;
   }
 
