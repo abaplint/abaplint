@@ -94,6 +94,7 @@ import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoExternalFormCallsConf} from "../src/rules/no_external_form_calls";
 import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
+import {NoPrefixesConf} from "../src/rules/no_prefixes";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
 import {NROBConsistencyConf} from "../src/rules/nrob_consistency";
@@ -269,6 +270,7 @@ export interface IConfig {
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
+    "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "nrob_consistency"?: NROBConsistencyConf | boolean,
@@ -433,6 +435,7 @@ export interface IConfig {
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
+    "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "nrob_consistency"?: NROBConsistencyConf | boolean,

@@ -2535,6 +2535,17 @@
               ],
               "description": "Don't declare inline in optional branches\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_inline_in_optional_branches"
             },
+            "no_prefixes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoPrefixesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Dont use hungarian notation\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_prefixes"
+            },
             "no_public_attributes": {
               "anyOf": [
                 {
@@ -4316,6 +4327,17 @@
                 }
               ],
               "description": "Don't declare inline in optional branches\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_inline_in_optional_branches"
+            },
+            "no_prefixes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoPrefixesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Dont use hungarian notation\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_prefixes"
             },
             "no_public_attributes": {
               "anyOf": [
@@ -6197,6 +6219,78 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "NoPrefixesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "constants": {
+          "description": "CONSTANTS, CONSTANTS BEGIN OF",
+          "type": "string"
+        },
+        "data": {
+          "description": "DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA()",
+          "type": "string"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fieldSymbols": {
+          "description": "FIELD-SYMBOLS and inline FIELD-SYMBOLS()",
+          "type": "string"
+        },
+        "formParameters": {
+          "type": "string"
+        },
+        "functionModuleParameters": {
+          "type": "string"
+        },
+        "localClass": {
+          "type": "string"
+        },
+        "localInterface": {
+          "type": "string"
+        },
+        "methodParameters": {
+          "type": "string"
+        },
+        "parameters": {
+          "description": "PARAMETERS",
+          "type": "string"
+        },
+        "selectOptions": {
+          "description": "SELECT-OPTIONS",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "statics": {
+          "type": "string"
+        },
+        "types": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "statics",
+        "fieldSymbols",
+        "constants",
+        "types",
+        "formParameters",
+        "methodParameters",
+        "functionModuleParameters",
+        "selectOptions",
+        "parameters",
+        "localClass",
+        "localInterface"
+      ],
       "type": "object"
     },
     "NoPublicAttributesConf": {
