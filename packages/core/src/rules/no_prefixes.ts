@@ -11,14 +11,16 @@ import {IFile} from "../files/_ifile";
 export class NoPrefixesConf extends BasicRuleConfig {
   /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex */
   public data: string = "^[lg]._";
+  /** STATICS, STATICS BEGIN OF */
   public statics: string = "";
   /** FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex */
   public fieldSymbols: string = "";
   /** CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex */
-  public constants: string = "";
-  public types: string = "";
+  public constants: string = "^[lg]c_";
+  public types: string = "^ty_";
   public formParameters: string = "";
-  public methodParameters: string = "";
+  /** importing, exporting, returning and changing parameters */
+  public methodParameters: string = "^[ierc]._";
   public functionModuleParameters: string = "";
   /** SELECT-OPTIONS, case insensitive regex */
   public selectOptions: string = "";
@@ -71,46 +73,46 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     }
 
     if (config.statics !== undefined && config.statics !== "") {
-      ret.push(...this.checkStatics(structure, new RegExp(config.statics, "i")));
+      ret.push(...this.checkStatics(structure, new RegExp(config.statics, "i"), file));
     }
 
     if (config.fieldSymbols !== undefined && config.fieldSymbols !== "") {
-      ret.push(...this.checkFieldSymbols(structure, new RegExp(config.fieldSymbols, "i")));
+      ret.push(...this.checkFieldSymbols(structure, new RegExp(config.fieldSymbols, "i"), file));
     }
 
     if (config.constants !== undefined && config.constants !== "") {
-      ret.push(...this.checkConstants(structure, new RegExp(config.constants, "i")));
+      ret.push(...this.checkConstants(structure, new RegExp(config.constants, "i"), file));
     }
 
     if (config.types !== undefined && config.types !== "") {
-      ret.push(...this.checkTypes(structure, new RegExp(config.types, "i")));
+      ret.push(...this.checkTypes(structure, new RegExp(config.types, "i"), file));
     }
 
     if (config.formParameters !== undefined && config.formParameters !== "") {
-      ret.push(...this.checkFormParameters(structure, new RegExp(config.formParameters, "i")));
+      ret.push(...this.checkFormParameters(structure, new RegExp(config.formParameters, "i"), file));
     }
 
     if (config.methodParameters !== undefined && config.methodParameters !== "") {
-      ret.push(...this.checkMethodParameters(structure, new RegExp(config.methodParameters, "i")));
+      ret.push(...this.checkMethodParameters(structure, new RegExp(config.methodParameters, "i"), file));
     }
 
     if (config.functionModuleParameters !== undefined && config.functionModuleParameters !== "") {
-      ret.push(...this.checkFunctionModuleParameters(structure, new RegExp(config.functionModuleParameters, "i")));
+      ret.push(...this.checkFunctionModuleParameters(structure, new RegExp(config.functionModuleParameters, "i"), file));
     }
 
     if (config.selectOptions !== undefined && config.selectOptions !== "") {
-      ret.push(...this.checkSelectOptions(structure, new RegExp(config.selectOptions, "i")));
+      ret.push(...this.checkSelectOptions(structure, new RegExp(config.selectOptions, "i"), file));
     }
 
     if (config.parameters !== undefined && config.parameters !== "") {
-      ret.push(...this.checkParameters(structure, new RegExp(config.parameters, "i")));
+      ret.push(...this.checkParameters(structure, new RegExp(config.parameters, "i"), file));
     }
 
     if (config.localClass !== undefined && config.localClass !== "") {
-      ret.push(...this.checkLocalClass(structure, new RegExp(config.localClass, "i")));
+      ret.push(...this.checkLocalClass(structure, new RegExp(config.localClass, "i"), file));
     }
     if (config.localInterface !== undefined && config.localInterface !== "") {
-      ret.push(...this.checkLocalInterface(structure, new RegExp(config.localInterface, "i")));
+      ret.push(...this.checkLocalInterface(structure, new RegExp(config.localInterface, "i"), file));
     }
 
     return ret;
@@ -146,68 +148,78 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     return ret;
   }
 
-  private checkStatics(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkStatics(topNode: StructureNode, regex: RegExp, file: IFile): Issue[] {
+    const ret: Issue[] = [];
+
+    for (const data of topNode.findAllStatements(Statements.Static).concat(
+      topNode.findAllStatements(Statements.StaticBegin))) {
+
+      const name = data.findFirstExpression(Expressions.DefinitionName)?.concatTokens() || "";
+      if (name !== "" && name.match(regex)) {
+        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      }
+    }
+
+    return ret;
+  }
+
+  private checkFieldSymbols(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkFieldSymbols(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkConstants(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkConstants(_topNode: StructureNode, _regex: RegExp): Issue[] {
-    const ret: Issue[] = [];
-// todo
-    return ret;
-  }
-
-  private checkTypes(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkTypes(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
 // including ENUM and MESH?
     return ret;
   }
 
-  private checkFormParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkFormParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkMethodParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkMethodParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkFunctionModuleParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkFunctionModuleParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkSelectOptions(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkSelectOptions(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkLocalClass(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkLocalClass(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
   }
 
-  private checkLocalInterface(_topNode: StructureNode, _regex: RegExp): Issue[] {
+  private checkLocalInterface(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
     const ret: Issue[] = [];
 // todo
     return ret;
