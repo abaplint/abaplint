@@ -6,20 +6,20 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class NoPrefixesConf extends BasicRuleConfig {
-  /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA() */
+  /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex */
   public data: string = "^[lg]._";
   public statics: string = "";
-  /** FIELD-SYMBOLS and inline FIELD-SYMBOLS() */
+  /** FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex */
   public fieldSymbols: string = "";
-  /** CONSTANTS, CONSTANTS BEGIN OF */
+  /** CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex */
   public constants: string = "";
   public types: string = "";
   public formParameters: string = "";
   public methodParameters: string = "";
   public functionModuleParameters: string = "";
-  /** SELECT-OPTIONS */
+  /** SELECT-OPTIONS, case insensitive regex */
   public selectOptions: string = "";
-  /** PARAMETERS */
+  /** PARAMETERS, case insensitive regex */
   public parameters: string = "";
   public localClass: string = "";
   public localInterface: string = "";
