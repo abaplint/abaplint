@@ -1,10 +1,12 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
-// import * as Expressions from "../abap/2_statements/expressions";
+import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {StructureNode} from "../abap/nodes";
+import {IFile} from "../files/_ifile";
 
 export class NoPrefixesConf extends BasicRuleConfig {
   /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex */
@@ -25,6 +27,8 @@ export class NoPrefixesConf extends BasicRuleConfig {
   public localClass: string = "";
   public localInterface: string = "";
 }
+
+const MESSAGE = "Avoid hungarian notation";
 
 export class NoPrefixes extends ABAPRule {
 
@@ -63,7 +67,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     }
 
     if (config.data !== undefined && config.data !== "") {
-      ret.push(...this.checkData(structure, new RegExp(config.data, "i")));
+      ret.push(...this.checkData(structure, new RegExp(config.data, "i"), file));
     }
 
     if (config.statics !== undefined && config.statics !== "") {
@@ -112,64 +116,101 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     return ret;
   }
 
-  private checkData(_topNode: StructureNode, _regex: RegExp): Issue[] {
-// todo
-    return [];
+  private checkData(topNode: StructureNode, regex: RegExp, file: IFile): Issue[] {
+    const ret: Issue[] = [];
+
+    for (const data of topNode.findAllStatements(Statements.Data).concat(
+      topNode.findAllStatements(Statements.DataBegin)).concat(
+      topNode.findAllStatements(Statements.ClassDataBegin)).concat(
+      topNode.findAllStatements(Statements.ClassData))) {
+
+      let name = data.findFirstExpression(Expressions.DefinitionName)?.concatTokens() || "";
+      if (name === "") {
+        name = data.findFirstExpression(Expressions.NamespaceSimpleName)?.concatTokens() || "";
+      }
+
+      if (name !== "" && name.match(regex)) {
+        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      }
+    }
+
+    for (const data of topNode.findAllExpressions(Expressions.InlineData)) {
+      const name = data.findFirstExpression(Expressions.TargetField)?.concatTokens() || "";
+      if (name !== "" && name.match(regex)) {
+        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      }
+    }
+
+    return ret;
   }
 
   private checkStatics(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkFieldSymbols(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkConstants(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkTypes(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+// including ENUM and MESH?
+    return ret;
   }
 
   private checkFormParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkMethodParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkFunctionModuleParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkSelectOptions(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkLocalClass(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
   private checkLocalInterface(_topNode: StructureNode, _regex: RegExp): Issue[] {
+    const ret: Issue[] = [];
 // todo
-    return [];
+    return ret;
   }
 
 }
