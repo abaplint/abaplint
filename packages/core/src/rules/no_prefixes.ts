@@ -14,7 +14,7 @@ export class NoPrefixesConf extends BasicRuleConfig {
   /** STATICS, STATICS BEGIN OF */
   public statics: string = "";
   /** FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex */
-  public fieldSymbols: string = "";
+  public fieldSymbols: string = "^<l._";
   /** CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex */
   public constants: string = "^[lg]c_";
   public types: string = "^ty_";
@@ -164,9 +164,25 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     return ret;
   }
 
-  private checkFieldSymbols(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
+  private checkFieldSymbols(topNode: StructureNode, regex: RegExp, file: IFile): Issue[] {
     const ret: Issue[] = [];
-// todo
+
+    for (const data of topNode.findAllStatements(Statements.FieldSymbol)) {
+      const name = data.findFirstExpression(Expressions.FieldSymbol)?.concatTokens() || "";
+      if (name !== "" && name.match(regex)) {
+        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      }
+    }
+
+    for (const data of topNode.findAllExpressions(Expressions.InlineFS)) {
+      const name = data.findFirstExpression(Expressions.FieldSymbol)?.concatTokens() || "";
+      if (name !== "" && name.match(regex)) {
+        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      }
+    }
+
     return ret;
   }
 

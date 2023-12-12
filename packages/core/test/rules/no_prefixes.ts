@@ -55,4 +55,16 @@ describe("Rule: no_prefixes", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("FIELD-SYMBOLS, error", async () => {
+    const abap = `FIELD-SYMBOLS <lv_foo> TYPE i.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("FIELD-SYMBOLS, fixed", async () => {
+    const abap = `FIELD-SYMBOLS <foo> TYPE i.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
