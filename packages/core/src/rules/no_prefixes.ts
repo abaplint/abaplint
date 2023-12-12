@@ -17,8 +17,8 @@ export class NoPrefixesConf extends BasicRuleConfig {
   public fieldSymbols: string = "^<l._";
   /** CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex */
   public constants: string = "^[lg]c_";
+  /** TYPES, ENUM, MESH, case insensitive regex */
   public types: string = "^ty_";
-  public formParameters: string = "";
   /** importing, exporting, returning and changing parameters */
   public methodParameters: string = "^[ierc]._";
   public functionModuleParameters: string = "";
@@ -28,6 +28,8 @@ export class NoPrefixesConf extends BasicRuleConfig {
   public parameters: string = "";
   public localClass: string = "";
   public localInterface: string = "";
+
+  // todo, public formParameters: string = "";
 }
 
 const MESSAGE = "Avoid hungarian notation";
@@ -86,10 +88,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
 
     if (config.types !== undefined && config.types !== "") {
       ret.push(...this.checkTypes(structure, new RegExp(config.types, "i"), file));
-    }
-
-    if (config.formParameters !== undefined && config.formParameters !== "") {
-      ret.push(...this.checkFormParameters(structure, new RegExp(config.formParameters, "i"), file));
     }
 
     if (config.methodParameters !== undefined && config.methodParameters !== "") {
@@ -186,22 +184,39 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     return ret;
   }
 
-  private checkConstants(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
+  private checkConstants(topNode: StructureNode, regex: RegExp, file: IFile): Issue[] {
     const ret: Issue[] = [];
-// todo
+
+    for (const data of topNode.findAllStatements(Statements.Constant).concat(
+      topNode.findAllStatements(Statements.ConstantBegin))) {
+
+      const name = data.findFirstExpression(Expressions.DefinitionName)?.concatTokens() || "";
+      if (name !== "" && name.match(regex)) {
+        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      }
+    }
+
     return ret;
   }
 
-  private checkTypes(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
+  private checkTypes(topNode: StructureNode, regex: RegExp, file: IFile): Issue[] {
     const ret: Issue[] = [];
-// todo
-// including ENUM and MESH?
-    return ret;
-  }
 
-  private checkFormParameters(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
-    const ret: Issue[] = [];
-// todo
+    for (const data of topNode.findAllStatements(Statements.Type).concat(
+      topNode.findAllStatements(Statements.TypeEnum)).concat(
+      topNode.findAllStatements(Statements.TypeEnumBegin)).concat(
+      topNode.findAllStatements(Statements.TypeMesh)).concat(
+      topNode.findAllStatements(Statements.TypeMeshBegin)).concat(
+      topNode.findAllStatements(Statements.TypeBegin))) {
+
+      const name = data.findFirstExpression(Expressions.NamespaceSimpleName)?.concatTokens() || "";
+      if (name !== "" && name.match(regex)) {
+        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+        ret.push(issue);
+      }
+    }
+
     return ret;
   }
 
