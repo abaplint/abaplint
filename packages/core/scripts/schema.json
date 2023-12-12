@@ -6225,11 +6225,11 @@
       "additionalProperties": false,
       "properties": {
         "constants": {
-          "description": "CONSTANTS, CONSTANTS BEGIN OF",
+          "description": "CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex",
           "type": "string"
         },
         "data": {
-          "description": "DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA()",
+          "description": "DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex",
           "type": "string"
         },
         "exclude": {
@@ -6240,7 +6240,7 @@
           "type": "array"
         },
         "fieldSymbols": {
-          "description": "FIELD-SYMBOLS and inline FIELD-SYMBOLS()",
+          "description": "FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex",
           "type": "string"
         },
         "formParameters": {
@@ -6259,11 +6259,11 @@
           "type": "string"
         },
         "parameters": {
-          "description": "PARAMETERS",
+          "description": "PARAMETERS, case insensitive regex",
           "type": "string"
         },
         "selectOptions": {
-          "description": "SELECT-OPTIONS",
+          "description": "SELECT-OPTIONS, case insensitive regex",
           "type": "string"
         },
         "severity": {

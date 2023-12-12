@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 // import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {StructureNode} from "../abap/nodes";
 
 export class NoPrefixesConf extends BasicRuleConfig {
   /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex */
@@ -55,112 +56,118 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
 
     const config = this.getConfig();
 
+    const structure = file.getStructure();
+    if (structure === undefined) {
+      // syntax error, skip
+      return [];
+    }
+
     if (config.data !== undefined && config.data !== "") {
-      ret.push(...this.checkData(file, config.data));
+      ret.push(...this.checkData(structure, new RegExp(config.data, "i")));
     }
 
     if (config.statics !== undefined && config.statics !== "") {
-      ret.push(...this.checkStatics(file, config.data));
+      ret.push(...this.checkStatics(structure, new RegExp(config.statics, "i")));
     }
 
     if (config.fieldSymbols !== undefined && config.fieldSymbols !== "") {
-      ret.push(...this.checkFieldSymbols(file, config.data));
+      ret.push(...this.checkFieldSymbols(structure, new RegExp(config.fieldSymbols, "i")));
     }
 
     if (config.constants !== undefined && config.constants !== "") {
-      ret.push(...this.checkConstants(file, config.data));
+      ret.push(...this.checkConstants(structure, new RegExp(config.constants, "i")));
     }
 
     if (config.types !== undefined && config.types !== "") {
-      ret.push(...this.checkTypes(file, config.data));
+      ret.push(...this.checkTypes(structure, new RegExp(config.types, "i")));
     }
 
     if (config.formParameters !== undefined && config.formParameters !== "") {
-      ret.push(...this.checkFormParameters(file, config.data));
+      ret.push(...this.checkFormParameters(structure, new RegExp(config.formParameters, "i")));
     }
 
     if (config.methodParameters !== undefined && config.methodParameters !== "") {
-      ret.push(...this.checkMethodParameters(file, config.data));
+      ret.push(...this.checkMethodParameters(structure, new RegExp(config.methodParameters, "i")));
     }
 
     if (config.functionModuleParameters !== undefined && config.functionModuleParameters !== "") {
-      ret.push(...this.checkFunctionModuleParameters(file, config.data));
+      ret.push(...this.checkFunctionModuleParameters(structure, new RegExp(config.functionModuleParameters, "i")));
     }
 
     if (config.selectOptions !== undefined && config.selectOptions !== "") {
-      ret.push(...this.checkSelectOptions(file, config.data));
+      ret.push(...this.checkSelectOptions(structure, new RegExp(config.selectOptions, "i")));
     }
 
     if (config.parameters !== undefined && config.parameters !== "") {
-      ret.push(...this.checkParameters(file, config.data));
+      ret.push(...this.checkParameters(structure, new RegExp(config.parameters, "i")));
     }
 
     if (config.localClass !== undefined && config.localClass !== "") {
-      ret.push(...this.checkLocalClass(file, config.data));
+      ret.push(...this.checkLocalClass(structure, new RegExp(config.localClass, "i")));
     }
     if (config.localInterface !== undefined && config.localInterface !== "") {
-      ret.push(...this.checkLocalInterface(file, config.data));
+      ret.push(...this.checkLocalInterface(structure, new RegExp(config.localInterface, "i")));
     }
 
     return ret;
   }
 
-  private checkData(_file: ABAPFile, _regex: string): Issue[] {
+  private checkData(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkStatics(_file: ABAPFile, _regex: string): Issue[] {
+  private checkStatics(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkFieldSymbols(_file: ABAPFile, _regex: string): Issue[] {
+  private checkFieldSymbols(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkConstants(_file: ABAPFile, _regex: string): Issue[] {
+  private checkConstants(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkTypes(_file: ABAPFile, _regex: string): Issue[] {
+  private checkTypes(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkFormParameters(_file: ABAPFile, _regex: string): Issue[] {
+  private checkFormParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkMethodParameters(_file: ABAPFile, _regex: string): Issue[] {
+  private checkMethodParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkFunctionModuleParameters(_file: ABAPFile, _regex: string): Issue[] {
+  private checkFunctionModuleParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkSelectOptions(_file: ABAPFile, _regex: string): Issue[] {
+  private checkSelectOptions(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkParameters(_file: ABAPFile, _regex: string): Issue[] {
+  private checkParameters(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkLocalClass(_file: ABAPFile, _regex: string): Issue[] {
+  private checkLocalClass(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
 
-  private checkLocalInterface(_file: ABAPFile, _regex: string): Issue[] {
+  private checkLocalInterface(_topNode: StructureNode, _regex: RegExp): Issue[] {
 // todo
     return [];
   }
