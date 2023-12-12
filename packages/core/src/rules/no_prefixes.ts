@@ -21,9 +21,9 @@ export class NoPrefixesConf extends BasicRuleConfig {
   public types: string = "^ty_";
   /** importing, exporting, returning and changing parameters */
   public methodParameters: string = "^[ierc]._";
-  public localClass: string = "";
-  public localInterface: string = "";
 
+  // todo, public localClass: string = "";
+  // todo, public localInterface: string = "";
   // todo, public functionModuleParameters: string = "";
   // todo, public parameters: string = "";
   // todo, public selectOptions: string = "";
@@ -90,13 +90,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
 
     if (config.methodParameters !== undefined && config.methodParameters !== "") {
       ret.push(...this.checkMethodParameters(structure, new RegExp(config.methodParameters, "i"), file));
-    }
-
-    if (config.localClass !== undefined && config.localClass !== "") {
-      ret.push(...this.checkLocalClass(structure, new RegExp(config.localClass, "i"), file));
-    }
-    if (config.localInterface !== undefined && config.localInterface !== "") {
-      ret.push(...this.checkLocalInterface(structure, new RegExp(config.localInterface, "i"), file));
     }
 
     return ret;
@@ -219,18 +212,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
       }
     }
 
-    return ret;
-  }
-
-  private checkLocalClass(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
-    const ret: Issue[] = [];
-// todo
-    return ret;
-  }
-
-  private checkLocalInterface(_topNode: StructureNode, _regex: RegExp, _file: IFile): Issue[] {
-    const ret: Issue[] = [];
-// todo
     return ret;
   }
 
