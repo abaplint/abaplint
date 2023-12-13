@@ -46,6 +46,8 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-encod
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodings.md`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
+      badExample: `DATA lv_foo TYPE i.`,
+      goodExample: `DATA foo TYPE i.`,
     };
   }
 

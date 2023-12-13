@@ -6243,27 +6243,8 @@
           "description": "FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex",
           "type": "string"
         },
-        "formParameters": {
-          "type": "string"
-        },
-        "functionModuleParameters": {
-          "type": "string"
-        },
-        "localClass": {
-          "type": "string"
-        },
-        "localInterface": {
-          "type": "string"
-        },
         "methodParameters": {
-          "type": "string"
-        },
-        "parameters": {
-          "description": "PARAMETERS, case insensitive regex",
-          "type": "string"
-        },
-        "selectOptions": {
-          "description": "SELECT-OPTIONS, case insensitive regex",
+          "description": "importing, exporting, returning and changing parameters",
           "type": "string"
         },
         "severity": {
@@ -6271,9 +6252,11 @@
           "description": "Problem severity"
         },
         "statics": {
+          "description": "STATICS, STATICS BEGIN OF",
           "type": "string"
         },
         "types": {
+          "description": "TYPES, ENUM, MESH, case insensitive regex",
           "type": "string"
         }
       },
@@ -6283,13 +6266,7 @@
         "fieldSymbols",
         "constants",
         "types",
-        "formParameters",
-        "methodParameters",
-        "functionModuleParameters",
-        "selectOptions",
-        "parameters",
-        "localClass",
-        "localInterface"
+        "methodParameters"
       ],
       "type": "object"
     },
