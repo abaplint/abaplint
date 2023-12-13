@@ -105,21 +105,21 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
       topNode.findAllStatements(Statements.ClassDataBegin)).concat(
       topNode.findAllStatements(Statements.ClassData))) {
 
-      let name = data.findFirstExpression(Expressions.DefinitionName)?.concatTokens() || "";
-      if (name === "") {
-        name = data.findFirstExpression(Expressions.NamespaceSimpleName)?.concatTokens() || "";
-      }
+      const nameExpression = data.findFirstExpression(Expressions.DefinitionName)
+        || data.findFirstExpression(Expressions.NamespaceSimpleName);
+      const name = nameExpression?.concatTokens() || "";
 
-      if (name !== "" && name.match(regex)) {
-        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      if (name !== "" && nameExpression && name.match(regex)) {
+        const issue = Issue.atToken(file, nameExpression.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
 
     for (const data of topNode.findAllExpressions(Expressions.InlineData)) {
-      const name = data.findFirstExpression(Expressions.TargetField)?.concatTokens() || "";
-      if (name !== "" && name.match(regex)) {
-        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      const nameExpression = data.findFirstExpression(Expressions.TargetField);
+      const name = nameExpression?.concatTokens() || "";
+      if (name !== "" && nameExpression && name.match(regex)) {
+        const issue = Issue.atToken(file, nameExpression.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
@@ -133,9 +133,10 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     for (const data of topNode.findAllStatements(Statements.Static).concat(
       topNode.findAllStatements(Statements.StaticBegin))) {
 
-      const name = data.findFirstExpression(Expressions.DefinitionName)?.concatTokens() || "";
-      if (name !== "" && name.match(regex)) {
-        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      const nameExpression = data.findFirstExpression(Expressions.DefinitionName);
+      const name = nameExpression?.concatTokens() || "";
+      if (name !== "" && nameExpression && name.match(regex)) {
+        const issue = Issue.atToken(file, nameExpression.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
@@ -147,17 +148,19 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     const ret: Issue[] = [];
 
     for (const data of topNode.findAllStatements(Statements.FieldSymbol)) {
-      const name = data.findFirstExpression(Expressions.FieldSymbol)?.concatTokens() || "";
-      if (name !== "" && name.match(regex)) {
-        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      const nameExpression = data.findFirstExpression(Expressions.FieldSymbol);
+      const name = nameExpression?.concatTokens() || "";
+      if (name !== "" && nameExpression && name.match(regex)) {
+        const issue = Issue.atToken(file, nameExpression.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
 
     for (const data of topNode.findAllExpressions(Expressions.InlineFS)) {
-      const name = data.findFirstExpression(Expressions.FieldSymbol)?.concatTokens() || "";
-      if (name !== "" && name.match(regex)) {
-        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      const nameExpression = data.findFirstExpression(Expressions.FieldSymbol);
+      const name = nameExpression?.concatTokens() || "";
+      if (name !== "" && nameExpression && name.match(regex)) {
+        const issue = Issue.atToken(file, nameExpression.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
@@ -171,9 +174,10 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     for (const data of topNode.findAllStatements(Statements.Constant).concat(
       topNode.findAllStatements(Statements.ConstantBegin))) {
 
-      const name = data.findFirstExpression(Expressions.DefinitionName)?.concatTokens() || "";
-      if (name !== "" && name.match(regex)) {
-        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      const nameExpression = data.findFirstExpression(Expressions.DefinitionName);
+      const name = nameExpression?.concatTokens() || "";
+      if (name !== "" && nameExpression && name.match(regex)) {
+        const issue = Issue.atToken(file, nameExpression.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
@@ -191,9 +195,10 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
       topNode.findAllStatements(Statements.TypeMeshBegin)).concat(
       topNode.findAllStatements(Statements.TypeBegin))) {
 
-      const name = data.findFirstExpression(Expressions.NamespaceSimpleName)?.concatTokens() || "";
-      if (name !== "" && name.match(regex)) {
-        const issue = Issue.atToken(file, data.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      const nameExpression = data.findFirstExpression(Expressions.NamespaceSimpleName);
+      const name = nameExpression?.concatTokens() || "";
+      if (name !== "" && nameExpression && name.match(regex)) {
+        const issue = Issue.atToken(file, nameExpression.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
@@ -208,7 +213,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
       for (const def of method.findAllExpressions(Expressions.MethodParamName)) {
         const name = def.concatTokens();
         if (name !== "" && name.match(regex)) {
-          const issue = Issue.atToken(file, method.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+          const issue = Issue.atToken(file, def.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
           ret.push(issue);
         }
       }
