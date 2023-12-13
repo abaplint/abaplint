@@ -11,7 +11,7 @@ import {IFile} from "../files/_ifile";
 export class NoPrefixesConf extends BasicRuleConfig {
   /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex */
   public data: string = "^[lg]._";
-  /** STATICS, STATICS BEGIN OF */
+  /** STATICS, STATICS BEGIN OF, case insensitive regex */
   public statics: string = "";
   /** FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex */
   public fieldSymbols: string = "^<l._";
@@ -19,7 +19,7 @@ export class NoPrefixesConf extends BasicRuleConfig {
   public constants: string = "^[lg]c_";
   /** TYPES, ENUM, MESH, case insensitive regex */
   public types: string = "^ty_";
-  /** importing, exporting, returning and changing parameters */
+  /** importing, exporting, returning and changing parameters, case insensitive regex */
   public methodParameters: string = "^[ierc]._";
 
   // todo, public localClass: string = "";

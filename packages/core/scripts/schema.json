@@ -6244,7 +6244,7 @@
           "type": "string"
         },
         "methodParameters": {
-          "description": "importing, exporting, returning and changing parameters",
+          "description": "importing, exporting, returning and changing parameters, case insensitive regex",
           "type": "string"
         },
         "severity": {
@@ -6252,7 +6252,7 @@
           "description": "Problem severity"
         },
         "statics": {
-          "description": "STATICS, STATICS BEGIN OF",
+          "description": "STATICS, STATICS BEGIN OF, case insensitive regex",
           "type": "string"
         },
         "types": {
