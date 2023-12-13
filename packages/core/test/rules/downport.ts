@@ -5597,4 +5597,18 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
+  it.only("ASSIGN COMPONENT", async () => {
+    const abap = `
+DATA: BEGIN OF struc,
+        quantity1 TYPE i,
+        quantity2 TYPE i,
+      END OF struc.
+FIELD-SYMBOLS <lv_quantity> TYPE i.
+ASSIGN COMPONENT 'QUANTITY' && '1' OF STRUCTURE struc TO <lv_quantity>.
+WRITE <lv_quantity>.`;
+    const expected = `
+todo`;
+    testFix(abap, expected);
+  });
+
 });
