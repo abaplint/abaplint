@@ -35,9 +35,18 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("ok, function module", async () => {
+  it("ok, function module with comments", async () => {
     const abap = `FUNCTION sdfsd.
   DATA lv_bar TYPE i.
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
 ENDFUNCTION.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(0);
