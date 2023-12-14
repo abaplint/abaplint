@@ -9619,7 +9619,7 @@ ASSIGN <fs>->* TO FIELD-SYMBOL(<fs2>).`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("ok, clike structure", () => {
+  it("ok, clike structure", () => {
     const abap = `
 TYPES: BEGIN OF st_160,
          field1 TYPE c LENGTH 18,
