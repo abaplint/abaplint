@@ -47,7 +47,9 @@ STATICS: use CLASS-DATA instead
 
 DESCRIBE TABLE LINES: use lines() instead (quickfix exists)
 
-TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-test-seams-as-temporary-workaround`,
+TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-test-seams-as-temporary-workaround
+
+BREAK points`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
     };
   }

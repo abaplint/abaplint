@@ -42,6 +42,9 @@ export class NoPrefixes extends ABAPRule {
       title: "No Prefixes",
       shortDescription: `Dont use hungarian notation`,
       extendedInformation: `
+Note: not prefixing TYPES will require changing the errorNamespace in the abaplint configuration,
+allowing all types to become voided, abaplint will then provide less precise syntax errors.
+
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-encodings-esp-hungarian-notation-and-prefixes
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodings.md`,
