@@ -10,17 +10,17 @@ import {IFile} from "../files/_ifile";
 
 export class NoPrefixesConf extends BasicRuleConfig {
   /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex */
-  public data: string = "^[lg]._";
+  public data: string = "^[lg].?_";
   /** STATICS, STATICS BEGIN OF, case insensitive regex */
   public statics: string = "";
   /** FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex */
-  public fieldSymbols: string = "^<l._";
+  public fieldSymbols: string = "^<l.?_";
   /** CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex */
   public constants: string = "^[lg]c_";
   /** TYPES, ENUM, MESH, case insensitive regex */
   public types: string = "^ty_";
   /** importing, exporting, returning and changing parameters, case insensitive regex */
-  public methodParameters: string = "^[ierc]._";
+  public methodParameters: string = "^[ierc].?_";
 
   // todo, public localClass: string = "";
   // todo, public localInterface: string = "";
@@ -42,6 +42,9 @@ export class NoPrefixes extends ABAPRule {
       title: "No Prefixes",
       shortDescription: `Dont use hungarian notation`,
       extendedInformation: `
+Note: not prefixing TYPES will require changing the errorNamespace in the abaplint configuration,
+allowing all types to become voided, abaplint will then provide less precise syntax errors.
+
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-encodings-esp-hungarian-notation-and-prefixes
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodings.md`,

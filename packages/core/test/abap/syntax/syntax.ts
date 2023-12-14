@@ -9619,6 +9619,30 @@ ASSIGN <fs>->* TO FIELD-SYMBOL(<fs2>).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ok, clike structure", () => {
+    const abap = `
+TYPES: BEGIN OF st_160,
+         field1 TYPE c LENGTH 18,
+         field2 TYPE c LENGTH 10,
+       END OF st_160.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS moo IMPORTING data TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE st_160.
+  lcl=>moo( foo ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it.skip("fields inside TYPES cannot be generic", () => {
     const abap = `
 TYPES: BEGIN OF ty,

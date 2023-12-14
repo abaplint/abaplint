@@ -35,6 +35,23 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("ok, function module with comments", async () => {
+    const abap = `FUNCTION sdfsd.
+  DATA lv_bar TYPE i.
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+* sdfsd
+ENDFUNCTION.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("ok", async () => {
     const abap = `FORM foo.
   NEW zcl_global_class( )->run_logic( ).

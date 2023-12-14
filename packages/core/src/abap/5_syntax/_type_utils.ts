@@ -296,6 +296,8 @@ export class TypeUtils {
           }
         }
         return true;
+      } else if (target instanceof CLikeType) {
+        return this.isCharLikeStrict(source);
       } else if (target instanceof VoidType || target instanceof AnyType) {
         return true;
       }

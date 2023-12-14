@@ -5,6 +5,7 @@ import * as Statements from "../abap/2_statements/statements";
 import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
 import {StatementNode} from "../abap/nodes";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class ReduceProceduralCodeConf extends BasicRuleConfig {
   public maxStatements: number = 10;
@@ -20,7 +21,9 @@ export class ReduceProceduralCode extends ABAPRule {
       shortDescription: `Checks FORM and FUNCTION-MODULE have few statements`,
       extendedInformation: `Delegate logic to a class method instead of using FORM or FUNCTION-MODULE.
 
-https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-object-orientation-to-procedural-programming`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-object-orientation-to-procedural-programming
+
+Comments are not counted as statements.`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide],
       badExample: `FORM foo.
   DATA lv_bar TYPE i.
@@ -69,6 +72,8 @@ ENDFORM.`,
           issues.push(issue);
         }
         doCount = undefined;
+      } else if (statement.get() instanceof Comment) {
+        continue;
       } else if (doCount !== undefined) {
         count = count + 1;
       }
