@@ -1441,4 +1441,13 @@ assign component lc_sel_fieldname of structure <ls_selection> to <lr_sel_field>.
     expect(issues.length).to.equal(0);
   });
 
+  it("len in target position", async () => {
+    const abap = `
+DATA char10 TYPE c LENGTH 10.
+DATA len TYPE i.
+char10(len) = 'A'.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

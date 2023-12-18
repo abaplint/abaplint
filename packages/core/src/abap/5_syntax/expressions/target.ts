@@ -12,6 +12,7 @@ import {FieldOffset} from "./field_offset";
 import {ReferenceType} from "../_reference";
 import {TableExpression} from "./table_expression";
 import {Dereference} from "../../2_statements/expressions";
+import {FieldLength} from "./field_length";
 
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
@@ -96,6 +97,10 @@ export class Target {
     const offset = node.findDirectExpression(Expressions.FieldOffset);
     if (offset) {
       new FieldOffset().runSyntax(offset, scope, filename);
+    }
+    const length = node.findDirectExpression(Expressions.FieldLength);
+    if (length) {
+      new FieldLength().runSyntax(length, scope, filename);
     }
 
     return context;

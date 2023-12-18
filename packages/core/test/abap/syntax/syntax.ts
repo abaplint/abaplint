@@ -9675,6 +9675,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it.skip("xstring offset/length in writer position not possible", () => {
+    const abap = `
+DATA xstr TYPE xstring.
+xstr+10 = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring offset/length in writer position not possible");
+  });
+
+  it.skip("xstring offset/length in writer position not possible", () => {
+    const abap = `
+DATA xstr TYPE xstring.
+xstr(1) = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring offset/length in writer position not possible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
