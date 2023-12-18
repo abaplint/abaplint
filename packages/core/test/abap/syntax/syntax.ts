@@ -9655,6 +9655,26 @@ TYPES: BEGIN OF ty_internal,
     expect(issues[0].getMessage()).to.contain("generic");
   });
 
+  it("ref into structure, expect error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             foobar TYPE voided,
+           END OF ty.
+    METHODS foo IMPORTING struc TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA ref TYPE REF TO lcl.
+    foo( ref ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

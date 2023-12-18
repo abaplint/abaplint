@@ -326,6 +326,8 @@ export class TypeUtils {
     } else if (source instanceof ObjectReferenceType) {
       if (target instanceof XSequenceType
           || target instanceof IntegerType
+          || target instanceof StructureType
+          || target instanceof TableType
           || target instanceof XStringType) {
         return false;
       }
