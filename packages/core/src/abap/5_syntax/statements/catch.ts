@@ -16,7 +16,7 @@ export class Catch implements StatementSyntax {
       const token = c.getFirstToken();
       const className = token.getStr().toUpperCase();
       const found = scope.existsObject(className);
-      if (found.found === true && found.id) {
+      if (found?.id) {
         scope.addReference(token, found.id, ReferenceType.ObjectOrientedReference, filename);
       } else if (scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
@@ -37,7 +37,7 @@ export class Catch implements StatementSyntax {
     if (target?.findDirectExpression(Expressions.InlineData)) {
       const token = target.findFirstExpression(Expressions.TargetField)?.getFirstToken();
       const found = scope.existsObject(firstClassName);
-      if (token && found.found === true && firstClassName && found.id) {
+      if (token && firstClassName && found?.id) {
         const identifier = new TypedIdentifier(token, filename, new ObjectReferenceType(found.id), [IdentifierMeta.InlineDefinition]);
         scope.addIdentifier(identifier);
         scope.addReference(token, identifier, ReferenceType.DataWriteReference, filename);

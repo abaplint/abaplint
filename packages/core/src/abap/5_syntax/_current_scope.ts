@@ -249,10 +249,9 @@ export class CurrentScope {
     return false;
   }
 
-  // todo, found can be removed from method output?
-  public existsObject(name: string | undefined): {found: boolean, id?: Identifier, ooType?: IReferenceExtras["ooType"], RTTIName?: string} {
+  public existsObject(name: string | undefined): {id: Identifier | undefined, ooType?: IReferenceExtras["ooType"], RTTIName?: string} | undefined {
     if (name === undefined) {
-      return {found: false};
+      return undefined;
     }
 
     let prefixRTTI = "";
@@ -267,12 +266,12 @@ export class CurrentScope {
       if (findLocalClass.isGlobal() === true) {
         prefixRTTI = "";
       }
-      return {found: true, id: findLocalClass, ooType: "CLAS", RTTIName: prefixRTTI + "\\CLASS=" + findLocalClass.getName()};
+      return {id: findLocalClass, ooType: "CLAS", RTTIName: prefixRTTI + "\\CLASS=" + findLocalClass.getName()};
     }
 
     const globalClas = this.reg.getObject("CLAS", name);
     if (globalClas) {
-      return {found: true, id: globalClas.getIdentifier(), ooType: "CLAS", RTTIName: "\\CLASS=" + globalClas.getName()};
+      return {id: globalClas.getIdentifier(), ooType: "CLAS", RTTIName: "\\CLASS=" + globalClas.getName()};
     }
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
@@ -280,20 +279,20 @@ export class CurrentScope {
       if (findLocalInterface.isGlobal() === true) {
         prefixRTTI = "";
       }
-      return {found: true, id: findLocalInterface, ooType: "INTF", RTTIName: prefixRTTI + "\\INTERFACE=" + findLocalInterface.getName()};
+      return {id: findLocalInterface, ooType: "INTF", RTTIName: prefixRTTI + "\\INTERFACE=" + findLocalInterface.getName()};
     }
 
     const globalIntf = this.reg.getObject("INTF", name);
     if (globalIntf) {
-      return {found: true, id: globalIntf.getIdentifier(), ooType: "INTF", RTTIName: "\\INTERFACE=" + globalIntf.getName()};
+      return {id: globalIntf.getIdentifier(), ooType: "INTF", RTTIName: "\\INTERFACE=" + globalIntf.getName()};
     }
 
     const def = this.current?.findDeferred(name);
     if (def !== undefined) {
-      return {found: true, id: def};
+      return {id: def};
     }
 
-    return {found: false};
+    return undefined;
   }
 
 ///////////////////////////

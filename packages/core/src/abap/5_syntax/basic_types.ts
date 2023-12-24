@@ -799,7 +799,7 @@ export class BasicTypes {
     } else if (firstNode.get() instanceof Expressions.ClassName) {
       const obj = this.scope.findObjectDefinition(firstName);
       if (obj === undefined) {
-        if (this.scope.existsObject(firstName).found === true) {
+        if (this.scope.existsObject(firstName) !== undefined) {
           return undefined;
         } else if (this.scope.getDDIC().inErrorNamespace(firstName) === true) {
           throw new Error("resolveConstantValue, not found: " + firstName);
@@ -845,7 +845,7 @@ export class BasicTypes {
         return new Types.GenericObjectReferenceType();
       }
       const search = this.scope.existsObject(name);
-      if (search.found === true && search.id) {
+      if (search?.id) {
         this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename,
                                 {ooType: search.ooType, ooName: name});
         return new Types.ObjectReferenceType(search.id, {qualifiedName: name, RTTIName: search.RTTIName});

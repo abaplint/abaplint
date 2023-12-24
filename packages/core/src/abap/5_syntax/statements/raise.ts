@@ -23,7 +23,7 @@ export class Raise implements StatementSyntax {
     const className = classTok?.getStr();
     if (className) {
       const found = scope.existsObject(className);
-      if (found.found === true && found.id) {
+      if (found?.id) {
         scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, filename);
 
         const def = scope.findObjectDefinition(className);
