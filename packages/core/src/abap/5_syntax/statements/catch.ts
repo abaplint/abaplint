@@ -17,7 +17,7 @@ export class Catch implements StatementSyntax {
       const className = token.getStr().toUpperCase();
       const found = scope.existsObject(className);
       if (found.found === true && found.id) {
-        scope.addReference(token, found.id, found.type, filename);
+        scope.addReference(token, found.id, ReferenceType.ObjectOrientedReference, filename);
       } else if (scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
