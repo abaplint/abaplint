@@ -125,6 +125,7 @@ export class BuiltInMethod extends Identifier implements IMethodDefinition, IMet
 export class BuiltIn {
   public static readonly filename = "_builtin.prog.abap";
   private static counter = 1;
+  private static readonly getCache: TypedIdentifier[] = [];
 
   // todo: "pcre" vs "regex", only one of these parameters are allowed
   // todo: "pcre", only possible from 755
@@ -1080,38 +1081,44 @@ export class BuiltIn {
   }
 
   public get(extras: string[]): TypedIdentifier[] {
-    const ret: TypedIdentifier[] = this.buildSY();
+    const ret: TypedIdentifier[] = [];
 
-    ret.push(this.buildVariable("screen"));
+    if (BuiltIn.getCache.length === 0) {
+      BuiltIn.getCache.push(...this.buildSY());
 
-    ret.push(this.buildConstant("%_ENDIAN"));
-    ret.push(this.buildConstant("%_CHARSIZE"));
+      BuiltIn.getCache.push(this.buildVariable("screen"));
 
-    ret.push(this.buildConstant("%_BACKSPACE", new CharacterType(1), "\b"));
-    ret.push(this.buildConstant("%_CR_LF", new CharacterType(2), "\r\n"));
-    ret.push(this.buildConstant("%_FORMFEED", new CharacterType(1), "\f"));
-    ret.push(this.buildConstant("%_HORIZONTAL_TAB", new CharacterType(1), "\t"));
-    ret.push(this.buildConstant("%_MAXCHAR", new CharacterType(1), Buffer.from("FDFF", "hex").toString()));
-    ret.push(this.buildConstant("%_MINCHAR", new CharacterType(1), Buffer.from("0000", "hex").toString()));
-    ret.push(this.buildConstant("%_NEWLINE", new CharacterType(1), "\n"));
-    ret.push(this.buildConstant("%_VERTICAL_TAB", new CharacterType(1), "\v"));
+      BuiltIn.getCache.push(this.buildConstant("%_ENDIAN"));
+      BuiltIn.getCache.push(this.buildConstant("%_CHARSIZE"));
 
-    ret.push(this.buildConstant("abap_false", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
-    ret.push(this.buildConstant("abap_true", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
-    ret.push(this.buildConstant("abap_undefined", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'-'"));
-    ret.push(this.buildConstant("abap_off", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
-    ret.push(this.buildConstant("abap_on", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
+      BuiltIn.getCache.push(this.buildConstant("%_BACKSPACE", new CharacterType(1), "\b"));
+      BuiltIn.getCache.push(this.buildConstant("%_CR_LF", new CharacterType(2), "\r\n"));
+      BuiltIn.getCache.push(this.buildConstant("%_FORMFEED", new CharacterType(1), "\f"));
+      BuiltIn.getCache.push(this.buildConstant("%_HORIZONTAL_TAB", new CharacterType(1), "\t"));
+      BuiltIn.getCache.push(this.buildConstant("%_MAXCHAR", new CharacterType(1), Buffer.from("FDFF", "hex").toString()));
+      BuiltIn.getCache.push(this.buildConstant("%_MINCHAR", new CharacterType(1), Buffer.from("0000", "hex").toString()));
+      BuiltIn.getCache.push(this.buildConstant("%_NEWLINE", new CharacterType(1), "\n"));
+      BuiltIn.getCache.push(this.buildConstant("%_VERTICAL_TAB", new CharacterType(1), "\v"));
 
-    ret.push(this.buildConstant("col_background", IntegerType.get(), "0"));
-    ret.push(this.buildConstant("col_heading", IntegerType.get(), "1"));
-    ret.push(this.buildConstant("col_key", IntegerType.get(), "4"));
-    ret.push(this.buildConstant("col_negative", IntegerType.get(), "6"));
-    ret.push(this.buildConstant("col_group", IntegerType.get(), "7"));
-    ret.push(this.buildConstant("col_normal", IntegerType.get(), "2"));
-    ret.push(this.buildConstant("col_positive", IntegerType.get(), "5"));
-    ret.push(this.buildConstant("col_total", IntegerType.get(), "3"));
+      BuiltIn.getCache.push(this.buildConstant("abap_false", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
+      BuiltIn.getCache.push(this.buildConstant("abap_true", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
+      BuiltIn.getCache.push(this.buildConstant("abap_undefined", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'-'"));
+      BuiltIn.getCache.push(this.buildConstant("abap_off", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
+      BuiltIn.getCache.push(this.buildConstant("abap_on", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
 
-    ret.push(this.buildConstant("space", new CharacterType(1, {derivedFromConstant: true}), "' '"));
+      BuiltIn.getCache.push(this.buildConstant("col_background", IntegerType.get(), "0"));
+      BuiltIn.getCache.push(this.buildConstant("col_heading", IntegerType.get(), "1"));
+      BuiltIn.getCache.push(this.buildConstant("col_key", IntegerType.get(), "4"));
+      BuiltIn.getCache.push(this.buildConstant("col_negative", IntegerType.get(), "6"));
+      BuiltIn.getCache.push(this.buildConstant("col_group", IntegerType.get(), "7"));
+      BuiltIn.getCache.push(this.buildConstant("col_normal", IntegerType.get(), "2"));
+      BuiltIn.getCache.push(this.buildConstant("col_positive", IntegerType.get(), "5"));
+      BuiltIn.getCache.push(this.buildConstant("col_total", IntegerType.get(), "3"));
+
+      BuiltIn.getCache.push(this.buildConstant("space", new CharacterType(1, {derivedFromConstant: true}), "' '"));
+    }
+
+    ret.push(...BuiltIn.getCache);
 
     for (const e of extras) {
       const id = new TokenIdentifier(new Position(this.row++, 1), e);
