@@ -14,7 +14,7 @@ abstract class ScopeData {
     this.data = {
       vars: {},
       cdefs: {},
-      idefs: [], // todo, refactor to object
+      idefs: {},
       forms: [], // todo, refactor to object
       types: {},
       extraLikeTypes: {},
@@ -144,15 +144,14 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return undefined;
   }
 
-  // todo, optimize
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
+    const upper = name.toUpperCase();
     while (search !== undefined) {
-      for (const idef of search.getData().idefs) {
-        if (idef.getName().toUpperCase() === name.toUpperCase()) {
-          return idef;
-        }
+      const idef = search.getData().idefs[upper];
+      if (idef) {
+        return idef;
       }
       search = search.getParent();
     }
@@ -165,9 +164,9 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
 
     const upper = name.toUpperCase();
     while (search !== undefined) {
-      const data = search.getData();
-      if (data.types[upper]) {
-        return data.types[upper];
+      const found = search.getData().types[upper];
+      if (found) {
+        return found;
       }
       search = search.getParent();
     }

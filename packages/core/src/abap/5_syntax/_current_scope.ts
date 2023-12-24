@@ -133,7 +133,14 @@ export class CurrentScope {
   }
 
   public addInterfaceDefinition(i: IInterfaceDefinition) {
-    this.current?.getData().idefs.push(i);
+    if (this.current === undefined) {
+      return;
+    }
+    const name = i.getName().toUpperCase();
+    if (this.current.getData().cdefs[name] !== undefined) {
+      throw new Error(`Interface "${name}" already defined`);
+    }
+    this.current.getData().idefs[name] = i;
   }
 
   public addNamedIdentifier(name: string, identifier: TypedIdentifier) {

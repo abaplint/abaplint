@@ -31,7 +31,7 @@ export interface IScopeData {
   deferred: AbstractToken[];
 
   cdefs: {[name: string]: IClassDefinition};
-  idefs: IInterfaceDefinition[];
+  idefs: {[name: string]: IInterfaceDefinition};
   forms: IFormDefinition[];
 
   references: IReference[];
