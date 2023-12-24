@@ -18,6 +18,7 @@ interface IBuiltinMethod {
   version?: Version,
   predicate?: boolean,
   return: AbstractType;
+  cache?: BuiltInMethod | undefined;
 }
 
 export class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodParameters {
@@ -1026,9 +1027,14 @@ export class BuiltIn {
   private row = 1;
 
   private buildDefinition(method: IBuiltinMethod, name: string): IMethodDefinition {
+    if (method.cache) {
+      return method.cache;
+    }
+
     const token = new TokenIdentifier(new Position(1, 1), name);
-    // todo, cache the definition?
-    return new BuiltInMethod(token, BuiltIn.filename, method, method.counter);
+    const result = new BuiltInMethod(token, BuiltIn.filename, method, method.counter);
+    method.cache = result;
+    return result;
   }
 
   public searchBuiltin(name: string | undefined): IMethodDefinition | undefined {
