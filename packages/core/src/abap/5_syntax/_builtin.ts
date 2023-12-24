@@ -1076,6 +1076,8 @@ export class BuiltIn {
   public get(extras: string[]): TypedIdentifier[] {
     const ret: TypedIdentifier[] = this.buildSY();
 
+    ret.push(this.buildVariable("screen"));
+
     ret.push(this.buildConstant("%_ENDIAN"));
     ret.push(this.buildConstant("%_CHARSIZE"));
 
@@ -1114,6 +1116,11 @@ export class BuiltIn {
   }
 
   /////////////////////////////
+
+  private buildVariable(name: string) {
+    const id = new TokenIdentifier(new Position(this.row++, 1), name);
+    return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name), [IdentifierMeta.BuiltIn]);
+  }
 
   private buildSY(): TypedIdentifier[] {
     const components: IStructureComponent[] = [];
