@@ -144,21 +144,6 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return undefined;
   }
 
-  // todo, can be deleted, not called from anywhere?
-  public listFormDefinitions(): IFormDefinition[] {
-    let search: SpaghettiScopeNode | undefined = this;
-    const ret: IFormDefinition[] = [];
-
-    while (search !== undefined) {
-      for (const form of search.getData().forms) {
-        ret.push(form);
-      }
-      search = search.getParent();
-    }
-
-    return ret;
-  }
-
   // todo, optimize
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
