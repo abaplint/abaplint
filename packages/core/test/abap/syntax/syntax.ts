@@ -9707,6 +9707,27 @@ str(1) = 'AA'.`;
     expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
   });
 
+  it("CHANGING parameter must be supplied", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      IMPORTING sdfs TYPE string
+      CHANGING chang TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo->foo( 'sdf' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Method "foo" has more than one importing or changing parameter`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
