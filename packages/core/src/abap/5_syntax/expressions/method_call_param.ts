@@ -32,8 +32,12 @@ export class MethodCallParam {
     } else if (child instanceof ExpressionNode
         && (child.get() instanceof Expressions.Source
         || child.get() instanceof Expressions.ConstantString)) {
-      if (!(method instanceof VoidType) && method.getParameters().getImporting().length === 0) {
-        throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
+      if (!(method instanceof VoidType)) {
+        if (method.getParameters().getImporting().length === 0) {
+          throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
+        } else if (method.getParameters().getRequiredParameters().length > 1) {
+          throw new Error("Method \"" + method.getName() + "\" has more than one importing or changing parameter");
+        }
       }
       let targetType: AbstractType | undefined = undefined;
       if (!(method instanceof VoidType)) {

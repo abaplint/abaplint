@@ -12,12 +12,13 @@ import {IMethodParameters} from "../types/_method_parameters";
 import {Version} from "../../version";
 
 interface IBuiltinMethod {
-  name: string;
+  counter: number,
   mandatory?: {[key: string]: AbstractType},
   optional?: {[key: string]: AbstractType},
   version?: Version,
   predicate?: boolean,
   return: AbstractType;
+  cache?: BuiltInMethod | undefined;
 }
 
 export class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodParameters {
@@ -123,43 +124,46 @@ export class BuiltInMethod extends Identifier implements IMethodDefinition, IMet
 
 export class BuiltIn {
   public static readonly filename = "_builtin.prog.abap";
+  private static counter = 1;
+  private static readonly getCache: TypedIdentifier[] = [];
+
   // todo: "pcre" vs "regex", only one of these parameters are allowed
   // todo: "pcre", only possible from 755
-  public static readonly methods: IBuiltinMethod[] = [
-    {
-      name: "ABS",
+  public static readonly methods: {[name: string]: IBuiltinMethod} = {
+    "ABS": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "ACOS",
+    "ACOS": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "ASIN",
+    "ASIN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "ATAN",
+    "ATAN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "BIT-SET",
+    "BIT-SET": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": IntegerType.get(),
       },
@@ -167,8 +171,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "BOOLC",
+    "BOOLC": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -176,8 +180,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "BOOLX",
+    "BOOLX": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "bool": CLikeType.get(),
       },
@@ -188,16 +192,16 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "CEIL",
+    "CEIL": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "CHAR_OFF",
+    "CHAR_OFF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
         "add": IntegerType.get(),
@@ -209,16 +213,16 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "CHARLEN",
+    "CHARLEN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "CMAX",
+    "CMAX": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val1": CLikeType.get(),
         "val2": CLikeType.get(),
@@ -235,8 +239,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "CMIN",
+    "CMIN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val1": CLikeType.get(),
         "val2": CLikeType.get(),
@@ -253,8 +257,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "CONCAT_LINES_OF",
+    "CONCAT_LINES_OF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "table": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
       },
@@ -265,8 +269,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "CONDENSE",
+    "CONDENSE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -279,8 +283,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "CONTAINS",
+    "CONTAINS": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -300,8 +304,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "CONTAINS_ANY_NOT_OF",
+    "CONTAINS_ANY_NOT_OF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -317,8 +321,8 @@ export class BuiltIn {
       return: new CharacterType(1), version: Version.v702,
     },
 
-    {
-      name: "CONTAINS_ANY_OF",
+    "CONTAINS_ANY_OF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -335,24 +339,24 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "COS",
+    "COS": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "COSH",
+    "COSH": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "COUNT",
+    "COUNT": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -368,8 +372,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "COUNT_ANY_NOT_OF",
+    "COUNT_ANY_NOT_OF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -385,8 +389,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "COUNT_ANY_OF",
+    "COUNT_ANY_OF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -402,16 +406,16 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "DBMAXLEN",
+    "DBMAXLEN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "DISTANCE",
+    "DISTANCE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val1": CLikeType.get(),
         "val2": CLikeType.get(),
@@ -420,8 +424,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "ESCAPE",
+    "ESCAPE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
         "format": CLikeType.get(),
@@ -430,16 +434,16 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "EXP",
+    "EXP": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "FIND",
+    "FIND": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -456,8 +460,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "FIND_ANY_NOT_OF",
+    "FIND_ANY_NOT_OF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -471,8 +475,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "FIND_ANY_OF",
+    "FIND_ANY_OF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -486,8 +490,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "FIND_END",
+    "FIND_END": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -504,24 +508,24 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "FLOOR",
+    "FLOOR": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "FRAC",
+    "FRAC": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "FROM_MIXED",
+    "FROM_MIXED": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get()},
       optional: {
@@ -533,8 +537,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "INSERT",
+    "INSERT": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
         "sub": CLikeType.get(),
@@ -546,8 +550,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "IPOW",
+    "IPOW": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "base": new FloatType(),
         "exp": new FloatType(),
@@ -556,8 +560,8 @@ export class BuiltIn {
       version: Version.v740sp02,
     },
 
-    {
-      name: "LINE_EXISTS",
+    "LINE_EXISTS": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new AnyType(),
       },
@@ -566,8 +570,8 @@ export class BuiltIn {
       version: Version.v740sp02,
     },
 
-    {
-      name: "LINE_INDEX",
+    "LINE_INDEX": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new AnyType(),
       },
@@ -575,32 +579,32 @@ export class BuiltIn {
       version: Version.v740sp02,
     },
 
-    {
-      name: "LINES",
+    "LINES": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "LOG",
+    "LOG": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "LOG10",
+    "LOG10": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "MATCH",
+    "MATCH": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       }, optional: {
@@ -613,8 +617,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "MATCHES",
+    "MATCHES": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -630,8 +634,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "NMAX",
+    "NMAX": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val1": CLikeType.get(),
         "val2": CLikeType.get(),
@@ -649,8 +653,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "NMIN",
+    "NMIN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val1": CLikeType.get(),
         "val2": CLikeType.get(),
@@ -668,16 +672,16 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "NUMOFCHAR",
+    "NUMOFCHAR": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "REPEAT",
+    "REPEAT": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
         "occ": CLikeType.get(),
@@ -686,8 +690,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "REPLACE",
+    "REPLACE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
         "with": CLikeType.get(),
@@ -705,8 +709,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "RESCALE",
+    "RESCALE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
@@ -719,8 +723,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "REVERSE",
+    "REVERSE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -728,8 +732,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "ROUND",
+    "ROUND": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
@@ -742,8 +746,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SEGMENT",
+    "SEGMENT": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
         "index": IntegerType.get(),
@@ -756,8 +760,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SHIFT_LEFT",
+    "SHIFT_LEFT": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -771,8 +775,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SHIFT_RIGHT",
+    "SHIFT_RIGHT": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -785,48 +789,48 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SIGN",
+    "SIGN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "SIN",
+    "SIN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "SINH",
+    "SINH": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "SQRT",
+    "SQRT": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "STRLEN",
+    "STRLEN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "SUBSTRING",
+    "SUBSTRING": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -838,8 +842,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SUBSTRING_AFTER",
+    "SUBSTRING_AFTER": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -855,8 +859,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SUBSTRING_BEFORE",
+    "SUBSTRING_BEFORE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -872,8 +876,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SUBSTRING_FROM",
+    "SUBSTRING_FROM": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -889,8 +893,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "SUBSTRING_TO",
+    "SUBSTRING_TO": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -906,24 +910,24 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "TAN",
+    "TAN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "TANH",
+    "TANH": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: new FloatType(),
     },
 
-    {
-      name: "TO_LOWER",
+    "TO_LOWER": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -931,8 +935,8 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "TO_MIXED",
+    "TO_MIXED": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -946,15 +950,15 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "TO_UPPER",
+    "TO_UPPER": {
+      counter: BuiltIn.counter++,
       mandatory: {"val": CLikeType.get()},
       return: StringType.get(),
       version: Version.v702,
     },
 
-    {
-      name: "TRANSLATE",
+    "TRANSLATE": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
         "from": CLikeType.get(),
@@ -964,16 +968,16 @@ export class BuiltIn {
       version: Version.v702,
     },
 
-    {
-      name: "TRUNC",
+    "TRUNC": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new FloatType(),
       },
       return: IntegerType.get(),
     },
 
-    {
-      name: "UTCLONG_ADD",
+    "UTCLONG_ADD": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new UTCLongType(),
       },
@@ -987,14 +991,14 @@ export class BuiltIn {
       version: Version.v754,
     },
 
-    {
-      name: "UTCLONG_CURRENT",
+    "UTCLONG_CURRENT": {
+      counter: BuiltIn.counter++,
       return: new UTCLongType(),
       version: Version.v754,
     },
 
-    {
-      name: "UTCLONG_DIFF",
+    "UTCLONG_DIFF": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "high": new UTCLongType(),
         "low": new UTCLongType(),
@@ -1003,8 +1007,8 @@ export class BuiltIn {
       version: Version.v754,
     },
 
-    {
-      name: "XSDBOOL",
+    "XSDBOOL": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -1012,19 +1016,26 @@ export class BuiltIn {
       version: Version.v740sp08,
     },
 
-    {
-      name: "XSTRLEN",
+    "XSTRLEN": {
+      counter: BuiltIn.counter++,
       mandatory: {
         "val": new XSequenceType(),
       },
       return: IntegerType.get(),
     },
-  ];
+  };
+
   private row = 1;
 
-  private buildDefinition(method: IBuiltinMethod, row: number): IMethodDefinition {
-    const token = new TokenIdentifier(new Position(row, 1), method.name);
-    return new BuiltInMethod(token, BuiltIn.filename, method, row);
+  private buildDefinition(method: IBuiltinMethod, name: string): IMethodDefinition {
+    if (method.cache) {
+      return method.cache;
+    }
+
+    const token = new TokenIdentifier(new Position(1, 1), name);
+    const result = new BuiltInMethod(token, BuiltIn.filename, method, method.counter);
+    method.cache = result;
+    return result;
   }
 
   public searchBuiltin(name: string | undefined): IMethodDefinition | undefined {
@@ -1032,13 +1043,12 @@ export class BuiltIn {
       return undefined;
     }
 
-    // todo, optimize, use hash map
-    const index = BuiltIn.methods.findIndex(a => a.name === name.toUpperCase());
-    if (index < 0) {
+    const def = BuiltIn.methods[name.toUpperCase()];
+    if (def === undefined) {
       return undefined;
     }
 
-    return this.buildDefinition(BuiltIn.methods[index], index);
+    return this.buildDefinition(def, name);
   }
 
   public isPredicate(name: string | undefined): boolean | undefined {
@@ -1046,13 +1056,12 @@ export class BuiltIn {
       return undefined;
     }
 
-    // todo, optimize, use hash map
-    const index = BuiltIn.methods.findIndex(a => a.name === name.toUpperCase());
-    if (index < 0) {
+    const def = BuiltIn.methods[name.toUpperCase()];
+    if (def === undefined) {
       return undefined;
     }
 
-    return BuiltIn.methods[index].predicate;
+    return def.predicate;
   }
 
   public getTypes(): TypedIdentifier[] {
@@ -1072,38 +1081,44 @@ export class BuiltIn {
   }
 
   public get(extras: string[]): TypedIdentifier[] {
-    const ret: TypedIdentifier[] = this.buildSY();
+    const ret: TypedIdentifier[] = [];
 
-    ret.push(this.buildVariable("screen")); // todo, add structure, or alternatively make native Statements
+    if (BuiltIn.getCache.length === 0) {
+      BuiltIn.getCache.push(...this.buildSY());
 
-    ret.push(this.buildConstant("%_ENDIAN"));
-    ret.push(this.buildConstant("%_CHARSIZE"));
+      BuiltIn.getCache.push(this.buildVariable("screen"));
 
-    ret.push(this.buildConstant("%_BACKSPACE", new CharacterType(1), "\b"));
-    ret.push(this.buildConstant("%_CR_LF", new CharacterType(2), "\r\n"));
-    ret.push(this.buildConstant("%_FORMFEED", new CharacterType(1), "\f"));
-    ret.push(this.buildConstant("%_HORIZONTAL_TAB", new CharacterType(1), "\t"));
-    ret.push(this.buildConstant("%_MAXCHAR", new CharacterType(1), Buffer.from("FDFF", "hex").toString()));
-    ret.push(this.buildConstant("%_MINCHAR", new CharacterType(1), Buffer.from("0000", "hex").toString()));
-    ret.push(this.buildConstant("%_NEWLINE", new CharacterType(1), "\n"));
-    ret.push(this.buildConstant("%_VERTICAL_TAB", new CharacterType(1), "\v"));
+      BuiltIn.getCache.push(this.buildConstant("%_ENDIAN"));
+      BuiltIn.getCache.push(this.buildConstant("%_CHARSIZE"));
 
-    ret.push(this.buildConstant("abap_false", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
-    ret.push(this.buildConstant("abap_true", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
-    ret.push(this.buildConstant("abap_undefined", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'-'"));
-    ret.push(this.buildConstant("abap_off", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
-    ret.push(this.buildConstant("abap_on", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
+      BuiltIn.getCache.push(this.buildConstant("%_BACKSPACE", new CharacterType(1), "\b"));
+      BuiltIn.getCache.push(this.buildConstant("%_CR_LF", new CharacterType(2), "\r\n"));
+      BuiltIn.getCache.push(this.buildConstant("%_FORMFEED", new CharacterType(1), "\f"));
+      BuiltIn.getCache.push(this.buildConstant("%_HORIZONTAL_TAB", new CharacterType(1), "\t"));
+      BuiltIn.getCache.push(this.buildConstant("%_MAXCHAR", new CharacterType(1), Buffer.from("FDFF", "hex").toString()));
+      BuiltIn.getCache.push(this.buildConstant("%_MINCHAR", new CharacterType(1), Buffer.from("0000", "hex").toString()));
+      BuiltIn.getCache.push(this.buildConstant("%_NEWLINE", new CharacterType(1), "\n"));
+      BuiltIn.getCache.push(this.buildConstant("%_VERTICAL_TAB", new CharacterType(1), "\v"));
 
-    ret.push(this.buildConstant("col_background", IntegerType.get(), "0"));
-    ret.push(this.buildConstant("col_heading", IntegerType.get(), "1"));
-    ret.push(this.buildConstant("col_key", IntegerType.get(), "4"));
-    ret.push(this.buildConstant("col_negative", IntegerType.get(), "6"));
-    ret.push(this.buildConstant("col_group", IntegerType.get(), "7"));
-    ret.push(this.buildConstant("col_normal", IntegerType.get(), "2"));
-    ret.push(this.buildConstant("col_positive", IntegerType.get(), "5"));
-    ret.push(this.buildConstant("col_total", IntegerType.get(), "3"));
+      BuiltIn.getCache.push(this.buildConstant("abap_false", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
+      BuiltIn.getCache.push(this.buildConstant("abap_true", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
+      BuiltIn.getCache.push(this.buildConstant("abap_undefined", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'-'"));
+      BuiltIn.getCache.push(this.buildConstant("abap_off", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
+      BuiltIn.getCache.push(this.buildConstant("abap_on", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
 
-    ret.push(this.buildConstant("space", new CharacterType(1, {derivedFromConstant: true}), "' '"));
+      BuiltIn.getCache.push(this.buildConstant("col_background", IntegerType.get(), "0"));
+      BuiltIn.getCache.push(this.buildConstant("col_heading", IntegerType.get(), "1"));
+      BuiltIn.getCache.push(this.buildConstant("col_key", IntegerType.get(), "4"));
+      BuiltIn.getCache.push(this.buildConstant("col_negative", IntegerType.get(), "6"));
+      BuiltIn.getCache.push(this.buildConstant("col_group", IntegerType.get(), "7"));
+      BuiltIn.getCache.push(this.buildConstant("col_normal", IntegerType.get(), "2"));
+      BuiltIn.getCache.push(this.buildConstant("col_positive", IntegerType.get(), "5"));
+      BuiltIn.getCache.push(this.buildConstant("col_total", IntegerType.get(), "3"));
+
+      BuiltIn.getCache.push(this.buildConstant("space", new CharacterType(1, {derivedFromConstant: true}), "' '"));
+    }
+
+    ret.push(...BuiltIn.getCache);
 
     for (const e of extras) {
       const id = new TokenIdentifier(new Position(this.row++, 1), e);
@@ -1114,6 +1129,11 @@ export class BuiltIn {
   }
 
   /////////////////////////////
+
+  private buildVariable(name: string) {
+    const id = new TokenIdentifier(new Position(this.row++, 1), name);
+    return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name), [IdentifierMeta.BuiltIn]);
+  }
 
   private buildSY(): TypedIdentifier[] {
     const components: IStructureComponent[] = [];
@@ -1314,11 +1334,6 @@ export class BuiltIn {
       value = "'?'";
     }
     return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn], value);
-  }
-
-  private buildVariable(name: string) {
-    const id = new TokenIdentifier(new Position(this.row++, 1), name);
-    return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name), [IdentifierMeta.BuiltIn]);
   }
 
 }

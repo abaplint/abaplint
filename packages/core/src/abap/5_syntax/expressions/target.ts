@@ -5,13 +5,14 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {INode} from "../../nodes/_inode";
 import {Dash, InstanceArrow} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType} from "../../types/basic";
+import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, XStringType, StringType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {FieldOffset} from "./field_offset";
 import {ReferenceType} from "../_reference";
 import {TableExpression} from "./table_expression";
 import {Dereference} from "../../2_statements/expressions";
+import {FieldLength} from "./field_length";
 
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
@@ -95,7 +96,18 @@ export class Target {
 
     const offset = node.findDirectExpression(Expressions.FieldOffset);
     if (offset) {
+      if (context instanceof XStringType || context instanceof StringType) {
+        throw new Error("xstring/string offset/length in writer position not possible");
+      }
       new FieldOffset().runSyntax(offset, scope, filename);
+    }
+
+    const length = node.findDirectExpression(Expressions.FieldLength);
+    if (length) {
+      if (context instanceof XStringType || context instanceof StringType) {
+        throw new Error("xstring/string offset/length in writer position not possible");
+      }
+      new FieldLength().runSyntax(length, scope, filename);
     }
 
     return context;

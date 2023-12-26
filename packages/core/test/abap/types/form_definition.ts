@@ -15,7 +15,7 @@ function runProgram(abap: string) {
   if (scope === undefined) {
     return [];
   }
-  return scope.listFormDefinitions();
+  return scope.getData().forms;
 }
 
 describe("Types, FormDefinition", () => {

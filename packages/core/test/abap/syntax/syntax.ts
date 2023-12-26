@@ -1308,7 +1308,7 @@ DATA(output) = REDUCE string( INIT result = ||
 
   it("Field offset, lv_i not specified", () => {
     const abap = `
-      DATA rv_s TYPE string.
+      DATA rv_s TYPE c LENGTH 10.
       rv_s+lv_i(1) = 'a'.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
@@ -9673,6 +9673,59 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("xstring offset/length in writer position not possible", () => {
+    const abap = `
+DATA xstr TYPE xstring.
+xstr+10 = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("xstring offset/length in writer position not possible", () => {
+    const abap = `
+DATA xstr TYPE xstring.
+xstr(1) = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("string offset/length in writer position not possible", () => {
+    const abap = `
+DATA str TYPE string.
+str+10 = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("string offset/length in writer position not possible", () => {
+    const abap = `
+DATA str TYPE string.
+str(1) = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("CHANGING parameter must be supplied", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      IMPORTING sdfs TYPE string
+      CHANGING chang TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo->foo( 'sdf' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Method "foo" has more than one importing or changing parameter`);
   });
 
 // todo, static method cannot access instance attributes

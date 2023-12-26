@@ -32,7 +32,7 @@ export class ClassLocalFriends implements StatementSyntax {
       const className = classNames[i].concatTokens();
       // make sure to check also DEFINITION DEFERRED
       const found = scope.existsObject(className);
-      if (found.found === false) {
+      if (found === undefined) {
         throw new Error(`Class ${className.toUpperCase()} not found`);
       }
     }

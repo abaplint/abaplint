@@ -172,8 +172,8 @@ export class FieldChain {
         return new GenericObjectReferenceType();
       }
       const found = scope.existsObject(classNam);
-      if (found.found === true && found.id) {
-        scope.addReference(classTok, found.id, found.type, filename);
+      if (found?.id) {
+        scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, filename);
         return new ObjectReferenceType(found.id);
       } else if (scope.getDDIC().inErrorNamespace(classNam) === false) {
         scope.addReference(classTok, undefined,

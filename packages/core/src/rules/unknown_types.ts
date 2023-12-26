@@ -114,13 +114,15 @@ export class UnknownTypes implements IRule {
       }
     }
 
-    for (const v of nodeData.idefs) {
+    for (const name in nodeData.idefs) {
+      const v = nodeData.idefs[name];
       const found = this.checkParameters(v);
       if (found) {
         const message = "Contains unknown, " + found.found;
         ret.push(Issue.atIdentifier(found.id, message, this.getMetadata().key, this.conf.severity));
       }
     }
+
     for (const name in nodeData.cdefs) {
       const v = nodeData.cdefs[name];
       const found = this.checkParameters(v);
