@@ -1,4 +1,5 @@
 import {AbstractObject} from "./_abstract_object";
+import {IAllowedNaming} from "./_iobject";
 
 export class NeptuneAPI extends AbstractObject {
 
@@ -6,10 +7,11 @@ export class NeptuneAPI extends AbstractObject {
     return "ZN02";
   }
 
-  public getAllowedNaming() {
+  public getAllowedNaming(): IAllowedNaming {
     return { // todo, verify
       maxLength: 100,
       allowNamespace: true,
+      customRegex: /.*/i,
     };
   }
 
