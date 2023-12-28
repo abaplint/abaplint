@@ -12,6 +12,8 @@ export class AbapdocConf extends BasicRuleConfig {
   public checkLocal: boolean = false;
   public classDefinition: boolean = false;
   public interfaceDefinition: boolean = false;
+  /** Ignores classes flagged as FOR TESTING */
+  public ignoreTestClasses: boolean = false;
 }
 
 export class Abapdoc extends ABAPRule {
@@ -52,8 +54,12 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-on
       if (this.conf.checkLocal === false && classDef.isLocal === true) {
         continue;
       }
+      if (this.conf.ignoreTestClasses === true && classDef.isForTesting === true) {
+        continue;
+      }
       methods = methods.concat(classDef.methods.filter(m => m.visibility === Visibility.Public));
-      if (this.getConfig().classDefinition === true) {
+
+      if (this.conf.classDefinition === true) {
         const previousRow = classDef.identifier.getStart().getRow() - 2;
         if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
           const message = "Missing ABAP Doc for class " + classDef.identifier.getToken().getStr();
@@ -69,7 +75,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-on
       }
       methods = methods.concat(interfaceDef.methods);
 
-      if (this.getConfig().interfaceDefinition === true) {
+      if (this.conf.interfaceDefinition === true) {
         const previousRow = interfaceDef.identifier.getStart().getRow() - 2;
         if (rows[previousRow]?.trim().substring(0, 2) !== "\"!") {
           const message = "Missing ABAP Doc for interface " + interfaceDef.identifier.getToken().getStr();
@@ -87,6 +93,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-on
       if (previousRowsTexts === undefined) {
         continue;
       }
+
       for (const rowText of previousRowsTexts) {
         if (rowText.trim().match(regexEmptyTags) !== null) {
           const message = "Empty tag(s) in ABAP Doc for method " + method.identifier.getToken().getStr() + " (" + rowText + ")";

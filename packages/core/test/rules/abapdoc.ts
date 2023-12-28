@@ -194,9 +194,31 @@ INTERFACE if_test PUBLIC.
     calculate RAISING cx_test.
 ENDINTERFACE.`, cnt: 0,
   },
+  {
+    // global class for testing: check only methods with default config, two missing
+    abap: `
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          foobar FOR TESTING,
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 2,
+  },
+  {
+    // global class for testing: check only methods with default config, class missing okay
+    abap: `
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          "! docu
+          foobar FOR TESTING,
+          "! docu
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 0,
+  },
 ];
 
-testRule(defaultConfigTests, Abapdoc);
+testRule(defaultConfigTests, Abapdoc, undefined, `rule: abapdoc`);
 
 
 const localCheckActiveTests = [
@@ -234,4 +256,47 @@ const localCheckConfig = new AbapdocConf();
 localCheckConfig.checkLocal = true;
 localCheckConfig.classDefinition = false;
 
-testRule(localCheckActiveTests, Abapdoc, localCheckConfig);
+testRule(localCheckActiveTests, Abapdoc, localCheckConfig, `rule: abapdoc - localCheckActive`);
+
+const ignoreForTestingActiveTests = [
+  // glocal class for testing: don't check any with turned on ignore
+  {
+    abap: `
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          foobar FOR TESTING,
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 0,
+  },
+  // glocal class for testing: don't check any with turned on ignore
+  {
+    abap: `
+    "! docu
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          "! docu
+          foobar FOR TESTING,
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 0,
+  },
+  // glocal class for testing: don't check any with turned on ignore
+  {
+    abap: `
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          "! docu
+          foobar FOR TESTING,
+          "! docu
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 0,
+  },
+];
+
+const ignoreTestClassesConfig = new AbapdocConf();
+ignoreTestClassesConfig.ignoreTestClasses = true;
+ignoreTestClassesConfig.classDefinition = true;
+
+testRule(ignoreForTestingActiveTests, Abapdoc, ignoreTestClassesConfig, `rule: abapdoc - forTestingActive`);
