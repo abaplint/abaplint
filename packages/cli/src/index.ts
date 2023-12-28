@@ -136,12 +136,13 @@ export type Arguments = {
   runRename?: boolean,
   outFormat?: string,
   outFile?: string,
+  file?: string,
 };
 
 function displayHelp(): string {
   // follow https://docopt.org conventions,
   return "Usage:\n" +
-    "  abaplint [<abaplint.json> -f <format> -c --outformat <format> --outfile <file> --fix] \n" +
+    "  abaplint [<abaplint.json> -f <format> -c --outformat <format> --outfile <file> --fix --file <file>] \n" +
     "  abaplint -h | --help      show this help\n" +
     "  abaplint -v | --version   show version\n" +
     "  abaplint -d | --default   show default configuration\n" +
@@ -153,7 +154,8 @@ function displayHelp(): string {
     "  --fix                  apply quick fixes to files\n" +
     "  --rename               rename object according to rules in abaplint.json\n" +
     "  -p                     output performance information\n" +
-    "  -c                     compress files in memory\n";
+    "  -c                     compress files in memory\n" +
+    "  --file                 input file, glob format\n" ;
 }
 
 function out(issues: Issue[], length: number, arg: Arguments): string {
@@ -199,7 +201,9 @@ export async function run(arg: Arguments) {
       if (config.get().global.files === undefined) {
         throw "Error: Update abaplint configuration file to latest format";
       }
-      const files = FileOperations.loadFileNames(base + config.get().global.files);
+      const files = (arg.file)
+        ? FileOperations.loadFileNames(base + arg.file)
+        : FileOperations.loadFileNames(base + config.get().global.files);
       loaded = await FileOperations.loadFiles(arg.compress, files, progress);
       deps = await loadDependencies(config, arg.compress, progress, base);
 
