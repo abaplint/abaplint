@@ -9728,6 +9728,18 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(`Method "foo" has more than one importing or changing parameter`);
   });
 
+  it("error if instantiating interface", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lif.
+  foo = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`lif is an interface, cannot be instantiated`);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

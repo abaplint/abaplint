@@ -18,12 +18,18 @@ export class NewObject {
     const typeExpr = node.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpr?.getFirstToken();
     const typeName = typeExpr?.concatTokens();
+
     if (typeName === undefined) {
       throw new Error("NewObject, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
       const clas = scope.findClassDefinition(targetType.getIdentifierName());
       if (clas) {
         scope.addReference(typeToken, clas, ReferenceType.InferredType, filename);
+      } else {
+        const intf = scope.findInterfaceDefinition(targetType.getIdentifierName());
+        if (intf) {
+          throw new Error(intf.getName() + " is an interface, cannot be instantiated");
+        }
       }
       ret = targetType;
 
