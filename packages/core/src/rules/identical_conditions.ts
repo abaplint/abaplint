@@ -19,8 +19,8 @@ class Conditions {
     this.arr.push(e.concatTokens());
   }
 
-  public hasDuplicates(): boolean {
-    return this.arr.some(x => this.arr.indexOf(x) !== this.arr.lastIndexOf(x));
+  public findFirstDuplicate() {
+    return this.arr.find(x => this.arr.indexOf(x) !== this.arr.lastIndexOf(x));
   }
 }
 
@@ -87,8 +87,9 @@ Prerequsites: code is pretty printed with identical cAsE`,
       }
     }
 
-    if (conditions.hasDuplicates()) {
-      const message = "Identical conditions";
+    const duplicate = conditions.findFirstDuplicate();
+    if (duplicate) {
+      const message = "Identical conditions: " + duplicate;
       const issue = Issue.atToken(file, node.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
       return [issue];
     }
@@ -115,8 +116,9 @@ Prerequsites: code is pretty printed with identical cAsE`,
       }
     }
 
-    if (conditions.hasDuplicates()) {
-      const message = "Identical conditions";
+    const duplicate = conditions.findFirstDuplicate();
+    if (duplicate) {
+      const message = "Identical conditions: " + duplicate;
       const issue = Issue.atStatement(file, i, message, this.getMetadata().key, this.conf.severity);
       return [issue];
     }
@@ -142,8 +144,9 @@ Prerequsites: code is pretty printed with identical cAsE`,
       }
     }
 
-    if (conditions.hasDuplicates()) {
-      const message = "Identical conditions";
+    const duplicate = conditions.findFirstDuplicate();
+    if (duplicate) {
+      const message = "Identical conditions: " + duplicate;
       const issue = Issue.atStatement(file, i, message, this.getMetadata().key, this.conf.severity);
       return [issue];
     }
