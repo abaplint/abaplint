@@ -9740,6 +9740,21 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(`lif is an interface, cannot be instantiated`);
   });
 
+  it("dynamic assign", () => {
+    const abap = `
+CLASS zlcl DEFINITION.
+ENDCLASS.
+
+CLASS zlcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <any> TYPE any.
+  ASSIGN zlcl=>('INSTANCE') TO <any>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

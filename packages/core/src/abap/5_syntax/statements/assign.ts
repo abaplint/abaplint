@@ -21,9 +21,9 @@ export class Assign implements StatementSyntax {
     const thirdAssign = assignSource?.getChildren()[2];
     if (secondAssign?.concatTokens() === "=>" && firstAssign && thirdAssign?.get() instanceof Expressions.Dynamic) {
       const name = firstAssign.concatTokens();
-      const found = scope.findObjectDefinition(name) === undefined || scope.findVariable(name);
+      const found = scope.findClassDefinition(name) || scope.findVariable(name);
       if (found === undefined && scope.getDDIC().inErrorNamespace(name)) {
-        throw new Error(secondAssign.concatTokens() + " not found");
+        throw new Error(name + " not found, dynamic");
       }
       sourceType = new VoidType("Dynamic");
     } else {
