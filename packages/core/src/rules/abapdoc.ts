@@ -13,7 +13,7 @@ export class AbapdocConf extends BasicRuleConfig {
   public classDefinition: boolean = false;
   public interfaceDefinition: boolean = false;
   /** Ignores classes flagged as FOR TESTING */
-  public ignoreTestClasses: boolean = false;
+  public ignoreTestClasses: boolean = true;
 }
 
 export class Abapdoc extends ABAPRule {

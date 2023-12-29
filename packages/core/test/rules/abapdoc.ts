@@ -194,19 +194,44 @@ INTERFACE if_test PUBLIC.
     calculate RAISING cx_test.
 ENDINTERFACE.`, cnt: 0,
   },
+  // glocal class for testing: don't check any with default
   {
-    // global class for testing: check only methods with default config, two missing
     abap: `
     CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
       PUBLIC SECTION.
         METHODS:
           foobar FOR TESTING,
           moobar FOR TESTING.
-    ENDCLASS.`, cnt: 2,
+    ENDCLASS.`, cnt: 0,
   },
+  // glocal class for testing: don't check any with default
   {
-    // global class for testing: check only methods with default config, class missing okay
     abap: `
+    "! docu
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          "! docu
+          foobar FOR TESTING,
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 0,
+  },
+  // glocal class for testing: don't check any with default
+  {
+    abap: `
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          "! docu
+          foobar FOR TESTING,
+          "! docu
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 0,
+  },
+  // glocal class for testing: don't check any with default
+  {
+    abap: `
+    "! docu
     CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
       PUBLIC SECTION.
         METHODS:
@@ -254,35 +279,22 @@ const localCheckActiveTests = [
 
 const localCheckConfig = new AbapdocConf();
 localCheckConfig.checkLocal = true;
-localCheckConfig.classDefinition = false;
 
-testRule(localCheckActiveTests, Abapdoc, localCheckConfig, `rule: abapdoc - localCheckActive`);
+testRule(localCheckActiveTests, Abapdoc, localCheckConfig, `rule: abapdoc, localCheckActive`);
 
-const ignoreForTestingActiveTests = [
-  // glocal class for testing: don't check any with turned on ignore
+const ignoreTestMethodsInactiveTests = [
   {
+    // global class for testing: check only methods, two missing
     abap: `
     CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
       PUBLIC SECTION.
         METHODS:
           foobar FOR TESTING,
           moobar FOR TESTING.
-    ENDCLASS.`, cnt: 0,
+    ENDCLASS.`, cnt: 2,
   },
-  // glocal class for testing: don't check any with turned on ignore
   {
-    abap: `
-    "! docu
-    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
-      PUBLIC SECTION.
-        METHODS:
-          "! docu
-          foobar FOR TESTING,
-          moobar FOR TESTING.
-    ENDCLASS.`, cnt: 0,
-  },
-  // glocal class for testing: don't check any with turned on ignore
-  {
+    // global class for testing: check only methods, class missing okay
     abap: `
     CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
       PUBLIC SECTION.
@@ -295,8 +307,38 @@ const ignoreForTestingActiveTests = [
   },
 ];
 
+const ignoreTestMethodsConfig = new AbapdocConf();
+ignoreTestMethodsConfig.ignoreTestClasses = false;
+
+testRule(ignoreTestMethodsInactiveTests, Abapdoc, ignoreTestMethodsConfig, `rule: abapdoc, ignoreTestMethodsInactive`);
+
+const ignoreTestClassesInactiveTests = [
+  {
+    // global class for testing: check all, three missing
+    abap: `
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          foobar FOR TESTING,
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 3,
+  },
+  {
+    // global class for testing: check all, class missing error
+    abap: `
+    CLASS zcl_foo DEFINITION PUBLIC FOR TESTING.
+      PUBLIC SECTION.
+        METHODS:
+          "! docu
+          foobar FOR TESTING,
+          "! docu
+          moobar FOR TESTING.
+    ENDCLASS.`, cnt: 1,
+  },
+];
+
 const ignoreTestClassesConfig = new AbapdocConf();
-ignoreTestClassesConfig.ignoreTestClasses = true;
+ignoreTestClassesConfig.ignoreTestClasses = false;
 ignoreTestClassesConfig.classDefinition = true;
 
-testRule(ignoreForTestingActiveTests, Abapdoc, ignoreTestClassesConfig, `rule: abapdoc - forTestingActive`);
+testRule(ignoreTestClassesInactiveTests, Abapdoc, ignoreTestClassesConfig, `rule: abapdoc, ignoreTestClassesInactive`);
