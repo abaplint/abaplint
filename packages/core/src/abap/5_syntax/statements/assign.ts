@@ -22,7 +22,7 @@ export class Assign implements StatementSyntax {
     if (secondAssign?.concatTokens() === "=>" && firstAssign && thirdAssign?.get() instanceof Expressions.Dynamic) {
       const name = firstAssign.concatTokens();
       const found = scope.findClassDefinition(name) || scope.findVariable(name);
-      if (found === undefined && scope.getDDIC().inErrorNamespace(name)) {
+      if (found === undefined && scope.getDDIC().inErrorNamespace(name) && name.startsWith("(") === false) {
         throw new Error(name + " not found, dynamic");
       }
       sourceType = new VoidType("Dynamic");
