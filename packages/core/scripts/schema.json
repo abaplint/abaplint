@@ -19,6 +19,10 @@
           },
           "type": "array"
         },
+        "ignoreTestClasses": {
+          "description": "Ignores classes flagged as FOR TESTING",
+          "type": "boolean"
+        },
         "interfaceDefinition": {
           "type": "boolean"
         },
@@ -30,7 +34,8 @@
       "required": [
         "checkLocal",
         "classDefinition",
-        "interfaceDefinition"
+        "interfaceDefinition",
+        "ignoreTestClasses"
       ],
       "type": "object"
     },

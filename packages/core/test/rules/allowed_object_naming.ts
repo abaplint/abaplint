@@ -123,4 +123,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("OK, ZN02", async () => {
+    const issues = await findIssues("#neptune#editor_monaco@c8613ae5-bbb5-4ec8-9871-675c1b41f734.zn02.#neptune#api.json");
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

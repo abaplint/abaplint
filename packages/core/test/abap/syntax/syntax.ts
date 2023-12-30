@@ -9728,6 +9728,50 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(`Method "foo" has more than one importing or changing parameter`);
   });
 
+  it("error if instantiating interface", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lif.
+  foo = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`lif is an interface, cannot be instantiated`);
+  });
+
+  it("dynamic assign", () => {
+    const abap = `
+CLASS zlcl DEFINITION.
+ENDCLASS.
+
+CLASS zlcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <any> TYPE any.
+  ASSIGN zlcl=>('INSTANCE') TO <any>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("dynamic assign, 2", () => {
+    const abap = `
+CLASS zlcl DEFINITION.
+  public section.
+    class-data ref type ref to voided.
+ENDCLASS.
+
+CLASS zlcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <any> TYPE any.
+  ASSIGN (zlcl=>ref)=>('INSTANCE') TO <any>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

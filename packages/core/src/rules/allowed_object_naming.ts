@@ -4,6 +4,8 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 
+const NAME_REGEX = /^(\/[A-Z_\d]{3,8}\/)?[A-Z_\d<> ]+$/i;
+
 export class AllowedObjectNamingConf extends BasicRuleConfig {
 }
 
@@ -44,7 +46,7 @@ export class AllowedObjectNaming implements IRule {
       if (name.match(allowed.customRegex) === null) {
         message = "Name not allowed";
       }
-    } else if (name.match(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_\d<> ]+$/i) === null) {
+    } else if (name.match(NAME_REGEX) === null) {
       message = "Name not allowed";
     }
 

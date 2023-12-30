@@ -1,5 +1,5 @@
 import {IFile} from "../files/_ifile";
-import {IObject, IParseResult} from "./_iobject";
+import {IAllowedNaming, IObject, IParseResult} from "./_iobject";
 import {XMLParser} from "fast-xml-parser";
 import {Issue} from "../issue";
 import {Version} from "../version";
@@ -15,7 +15,7 @@ export abstract class AbstractObject implements IObject {
   private readonly name: string;
 
   public abstract getType(): string;
-  public abstract getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
+  public abstract getAllowedNaming(): IAllowedNaming;
   public abstract getDescription(): string | undefined;
 
   public constructor(name: string) {
