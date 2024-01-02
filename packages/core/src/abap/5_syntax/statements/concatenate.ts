@@ -40,7 +40,7 @@ export class Concatenate implements StatementSyntax {
         continue;
       }
 
-      const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLike(type);
+      const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLikeStrict(type);
       if (compatible === false) {
         throw new Error("Source type not compatible");
       }

@@ -9772,6 +9772,15 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("concatenate, must be charlike", () => {
+    const abap = `
+DATA lv_bit TYPE i.
+DATA lv_bits TYPE string.
+CONCATENATE lv_bit lv_bits INTO lv_bits.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Source type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
