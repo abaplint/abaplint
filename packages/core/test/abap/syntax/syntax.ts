@@ -9781,6 +9781,28 @@ CONCATENATE lv_bit lv_bits INTO lv_bits.`;
     expect(issues[0]?.getMessage()).to.equal("Source type not compatible");
   });
 
+  it("constructor, ok, its a calculated value", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+    CLASS-METHODS ret RETURNING VALUE(ret) TYPE int8.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+  METHOD ret.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CREATE OBJECT lo EXPORTING bar = lcl=>ret( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
