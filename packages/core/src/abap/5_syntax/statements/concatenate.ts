@@ -23,7 +23,7 @@ export class Concatenate implements StatementSyntax {
       }
     } else if (target) {
       const type = new Target().runSyntax(target, scope, filename);
-      const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLike(type);
+      const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLikeStrict(type);
       if (compatible === false) {
         throw new Error("Target type not compatible");
       }

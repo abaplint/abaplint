@@ -9781,6 +9781,16 @@ CONCATENATE lv_bit lv_bits INTO lv_bits.`;
     expect(issues[0]?.getMessage()).to.equal("Source type not compatible");
   });
 
+  it("concatenate, target must be charlike", () => {
+    const abap = `
+DATA char1 TYPE c LENGTH 1.
+DATA char2 TYPE c LENGTH 1.
+DATA int TYPE i.
+CONCATENATE char1 char2 INTO int.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Target type not compatible");
+  });
+
   it("constructor, ok, its a calculated value", () => {
     const abap = `
 CLASS lcl DEFINITION.
