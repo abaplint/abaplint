@@ -9813,6 +9813,26 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("concatenate, source table with header line", () => {
+    const abap = `
+DATA lv_html TYPE string.
+DATA it_text(255) TYPE c OCCURS 0 WITH HEADER LINE.
+CONCATENATE lv_html it_text
+  INTO lv_html SEPARATED BY space.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it.only("concatenate, target table with header line", () => {
+    const abap = `
+DATA lv_html TYPE string.
+DATA it_text(255) TYPE c OCCURS 0 WITH HEADER LINE.
+CONCATENATE lv_html lv_html
+  INTO it_text SEPARATED BY space.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
