@@ -9833,6 +9833,16 @@ CONCATENATE lv_html lv_html
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("concatenate, target table with header line, hex", () => {
+    const abap = `
+DATA lv_html TYPE x LENGTH 2.
+DATA it_text(255) TYPE x OCCURS 0 WITH HEADER LINE.
+CONCATENATE lv_html lv_html
+  INTO it_text IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
