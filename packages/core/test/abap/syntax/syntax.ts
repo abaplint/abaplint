@@ -9813,7 +9813,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("concatenate, source table with header line", () => {
+  it("concatenate, source table with header line", () => {
     const abap = `
 DATA lv_html TYPE string.
 DATA it_text(255) TYPE c OCCURS 0 WITH HEADER LINE.
@@ -9823,7 +9823,7 @@ CONCATENATE lv_html it_text
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("concatenate, target table with header line", () => {
+  it("concatenate, target table with header line", () => {
     const abap = `
 DATA lv_html TYPE string.
 DATA it_text(255) TYPE c OCCURS 0 WITH HEADER LINE.

@@ -23,6 +23,8 @@ export class TypeUtils {
         }
       }
       return true;
+    } else if (type instanceof TableType && type.isWithHeader()) {
+      return this.isCharLikeStrict(type.getRowType());
     } else if (type instanceof StringType
         || type instanceof AnyType
         || type instanceof CharacterType
