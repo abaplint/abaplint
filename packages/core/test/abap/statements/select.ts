@@ -367,16 +367,16 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     WHERE created_on IN @it_created_on
     ORDER BY mandt, created_on
     %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
-    INTO TABLE @lt_foo ##SUBRC_OK. `,
+    INTO TABLE @lt_foo ##SUBRC_OK.`,
 
   `SELECT field1, field2 FROM zfoo
     WHERE created_on IN @it_created_on
     %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
-    INTO TABLE @lt_foo ##SUBRC_OK. `,
+    INTO TABLE @lt_foo ##SUBRC_OK.`,
 
   `SELECT field1, field2 FROM zfoo
     %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
-    INTO TABLE @lt_foo ##SUBRC_OK. `,
+    INTO TABLE @lt_foo ##SUBRC_OK.`,
 
   `SELECT field1, field2 FROM zfoo
     %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
