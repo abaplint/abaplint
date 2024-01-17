@@ -362,6 +362,26 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   `SELECT FROM some_table
     FIELDS DISTINCT fieldname AS name
     INTO CORRESPONDING FIELDS OF TABLE @result.`,
+
+  `SELECT field1, field2 FROM zfoo
+    WHERE created_on IN @it_created_on
+    ORDER BY mandt, created_on
+    %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
+    INTO TABLE @lt_foo ##SUBRC_OK. `,
+
+  `SELECT field1, field2 FROM zfoo
+    WHERE created_on IN @it_created_on
+    %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
+    INTO TABLE @lt_foo ##SUBRC_OK. `,
+
+  `SELECT field1, field2 FROM zfoo
+    %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
+    INTO TABLE @lt_foo ##SUBRC_OK. `,
+
+  `SELECT field1, field2 FROM zfoo
+    %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
+    INTO TABLE @lt_foo
+    UP TO 100 ROWS ##SUBRC_OK. `,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
