@@ -1,7 +1,7 @@
 import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {CharacterType, IntegerType, NumericType, StructureType} from "../../types/basic";
+import {CharacterType, IntegerType, NumericType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
 import {DatabaseTableSource} from "./database_table";
@@ -28,6 +28,20 @@ export class SQLCompare {
       }
 
       sourceType = new SQLSource().runSyntax(s, scope, filename);
+    }
+
+    const sqlin = node.findDirectExpression(Expressions.SQLIn);
+    if (sqlin && sqlin.getChildren().length === 2) {
+      const insource = node.findFirstExpression(Expressions.SQLSource);
+      if (insource) {
+        const intype = new SQLSource().runSyntax(insource, scope, filename);
+        if (intype &&
+            !(intype instanceof VoidType) &&
+            !(intype instanceof UnknownType) &&
+            !(intype instanceof TableType)) {
+          throw new Error("IN, not a table");
+        }
+      }
     }
 
     const fieldName = node.findDirectExpression(Expressions.SQLFieldName)?.concatTokens();

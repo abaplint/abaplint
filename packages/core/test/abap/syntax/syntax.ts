@@ -9843,6 +9843,22 @@ CONCATENATE lv_html lv_html
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT, IN, ok", () => {
+    const abap = `
+DATA lt_range TYPE RANGE OF t100-arbgb.
+SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT, IN, error", () => {
+    const abap = `
+    DATA lt_range TYPE i.
+    SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("IN, not a table");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
