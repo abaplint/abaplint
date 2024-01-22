@@ -175,6 +175,9 @@ export class Source {
     while (children.length >= 0) {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
         context = new MethodCallChain().runSyntax(first, scope, filename, targetType);
+        if (context === undefined) {
+          throw new Error("Method has no RETURNING value");
+        }
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
         context = new FieldChain().runSyntax(first, scope, filename, type);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
