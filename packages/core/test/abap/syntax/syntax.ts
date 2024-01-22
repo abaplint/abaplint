@@ -1854,7 +1854,7 @@ START-OF-SELECTION.
   int = mo_moo->method( ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage().toLowerCase()).to.contain("type");
+    expect(issues[0].getMessage()).to.contain("Method has no RETURNING value");
   });
 
   it("WHEN TYPE", () => {
@@ -8059,7 +8059,7 @@ START-OF-SELECTION.
   CREATE OBJECT lo_heap.
   WRITE |<sdf{ lo_heap->add( ) }>|.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("No target type determined");
+    expect(issues[0]?.getMessage()).to.contain("Method has no RETURNING value");
   });
 
   it("String template, not character like return type", () => {
@@ -9841,6 +9841,41 @@ CONCATENATE lv_html lv_html
   INTO it_text IN BYTE MODE.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT, IN, ok", () => {
+    const abap = `
+DATA lt_range TYPE RANGE OF t100-arbgb.
+SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT, IN, error", () => {
+    const abap = `
+    DATA lt_range TYPE i.
+    SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("IN, not a table");
+  });
+
+  it("Error, run() does not return anything", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_html TYPE string.
+  lv_html = lv_html && lcl=>run( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method has no RETURNING value");
   });
 
 // todo, static method cannot access instance attributes
