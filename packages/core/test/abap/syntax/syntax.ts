@@ -9859,6 +9859,25 @@ SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
     expect(issues[0]?.getMessage()).to.equal("IN, not a table");
   });
 
+  it.only("Error, run() does not return anything", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_html TYPE string.
+  lv_html = lv_html && lcl=>run( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("error");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

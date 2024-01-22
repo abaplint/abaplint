@@ -40,7 +40,7 @@
     "devDependencies": {
         "@abaplint/core": "^2.105.11",
         "@types/chai": "^4.3.11",
-        "@types/glob": "^7.2.0",
+        "@types/glob": "^8.1.0",
         "@types/minimist": "^1.2.5",
         "@types/mocha": "^10.0.6",
         "@types/node": "^20.11.5",
