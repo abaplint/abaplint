@@ -5618,4 +5618,63 @@ WRITE <lv_quantity>.`;
     testFix(abap, expected);
   });
 
+  it("Character conversion of structure", async () => {
+    const abap = `
+TYPES: BEGIN OF cty,
+         segnam TYPE c LENGTH 10,
+         sdata  TYPE c LENGTH 10,
+       END OF cty.
+
+TYPES: BEGIN OF row,
+         data TYPE c LENGTH 100,
+       END OF row.
+
+DATA temp1 TYPE row.
+temp1-data = VALUE cty( segnam = 'BB' sdata = 'aa' ).`;
+    const expected = `
+TYPES: BEGIN OF cty,
+         segnam TYPE c LENGTH 10,
+         sdata  TYPE c LENGTH 10,
+       END OF cty.
+
+TYPES: BEGIN OF row,
+         data TYPE c LENGTH 100,
+       END OF row.
+
+DATA temp1 TYPE row.
+DATA temp2 TYPE cty.
+CLEAR temp2.
+temp2-segnam = 'BB'.
+temp2-sdata = 'aa'.
+temp1-data = temp2.`;
+    testFix(abap, expected);
+  });
+
+  it("Outline clike", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(sdfsd) = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdfsd TYPE string.
+    sdfsd = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });

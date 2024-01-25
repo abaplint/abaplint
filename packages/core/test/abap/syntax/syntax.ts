@@ -9878,6 +9878,22 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal("Method has no RETURNING value");
   });
 
+  it("C Generic cannot be used for inference", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE c.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(sdfsd) = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("InlineData, generic type C cannot be used for inferred type");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
