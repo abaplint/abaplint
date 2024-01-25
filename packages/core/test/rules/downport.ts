@@ -5650,4 +5650,31 @@ temp1-data = temp2.`;
     testFix(abap, expected);
   });
 
+  it("Outline clike", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(sdfsd) = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdfsd TYPE string.
+    sdfsd = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });
