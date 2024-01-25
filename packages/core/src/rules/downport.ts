@@ -1733,6 +1733,11 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     if (valueBody === undefined) {
       return;
     }
+    const type = source.findDirectExpression(Expressions.TypeNameOrInfer);
+    if (type === undefined || type?.concatTokens() !== "#") {
+      return;
+    }
+
     const fieldAssignments = valueBody.findDirectExpressions(Expressions.FieldAssignment);
     if (fieldAssignments.length === 0) {
       return;
