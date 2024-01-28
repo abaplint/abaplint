@@ -16,3 +16,5 @@ dump.json
 graph.svg
 circular.txt
 lexer_performance.abap
+*.0x
+isolate-*
