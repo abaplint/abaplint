@@ -849,7 +849,7 @@ export class BasicTypes {
     }
 
     const name = chain.getFirstToken().getStr();
-    if (chain.getAllTokens().length === 1) {
+    if (chain.getChildren().length === 1) {
       if (name.toUpperCase() === "OBJECT") {
         return new Types.GenericObjectReferenceType();
       }
