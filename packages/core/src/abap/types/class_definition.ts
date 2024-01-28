@@ -32,6 +32,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly implementing: IImplementing[];
   private readonly testing: boolean;
   private readonly abstract: boolean;
+  private readonly finalValue: boolean;
+  private readonly globalValue: boolean;
   private readonly sharedMemory: boolean;
   private aliases: IAliases;
 
@@ -48,6 +50,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.node = node;
     this.events = [];
     this.implementing = [];
+    this.globalValue = def!.findFirstExpression(Expressions.ClassGlobal) !== undefined;
+    this.finalValue = def!.findFirstExpression(Expressions.ClassFinal) !== undefined;
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
 
@@ -72,12 +76,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     scope.pop(node.getLastToken().getEnd());
 
-    const cdef = this.node.findFirstStatement(Statements.ClassDefinition);
-    const concat = cdef!.concatTokens().toUpperCase();
+    const concat = def!.concatTokens().toUpperCase();
 
     this.testing = concat.includes(" FOR TESTING");
     this.sharedMemory = concat.includes(" SHARED MEMORY ENABLED");
-    this.abstract = cdef?.findDirectTokenByText("ABSTRACT") !== undefined;
+    this.abstract = def?.findDirectTokenByText("ABSTRACT") !== undefined;
 
     // perform checks after everything has been initialized
     this.checkMethodsFromSuperClasses(scope);
@@ -108,11 +111,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 
   public isGlobal(): boolean {
-    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
+    return this.globalValue;
   }
 
   public isFinal(): boolean {
-    return this.node.findFirstExpression(Expressions.ClassFinal) !== undefined;
+    return this.finalValue;
   }
 
   public getImplementing(): readonly IImplementing[] {
