@@ -25,7 +25,6 @@ export class FieldChain {
     refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
     const children = node.getChildren();
-    let contextName = children[0].concatTokens();
 
     let context: AbstractType | undefined = undefined;
     try {
@@ -49,7 +48,6 @@ export class FieldChain {
     }
 
     for (let i = 1; i < children.length; i++) {
-      contextName += children[i].concatTokens();
       const current = children[i];
       if (current === undefined) {
         break;
@@ -64,7 +62,11 @@ export class FieldChain {
             && !(context instanceof TableType && context.isWithHeader())
             && !(context instanceof VoidType)) {
           if (context instanceof TableType && context.isWithHeader() === false) {
-            if (scope.isAllowHeaderUse(contextName.substring(0, contextName.length - 1))) {
+            let contextName = "";
+            for (let j = 0; j < i; j++) {
+              contextName += children[j].concatTokens();
+            }
+            if (scope.isAllowHeaderUse(contextName)) {
               // FOR ALL ENTRIES workaround
               context = context.getRowType();
               if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
