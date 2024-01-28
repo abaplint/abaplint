@@ -24,12 +24,12 @@ export class FieldChain {
     filename: string,
     refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
-    const children = node.getChildren().slice();
+    const children = node.getChildren();
     let contextName = children[0].concatTokens();
 
     let context: AbstractType | undefined = undefined;
     try {
-      context = this.findTop(children.shift(), scope, filename, refType);
+      context = this.findTop(children[0], scope, filename, refType);
     } catch (error) {
       const concat = node.concatTokens();
       if (concat.includes("-") && node.getFirstChild()?.get() instanceof Expressions.SourceField) {
@@ -48,9 +48,9 @@ export class FieldChain {
       throw error;
     }
 
-    while (children.length > 0) {
-      contextName += children[0].concatTokens();
-      const current = children.shift();
+    for (let i = 1; i < children.length; i++) {
+      contextName += children[i].concatTokens();
+      const current = children[i];
       if (current === undefined) {
         break;
       }
