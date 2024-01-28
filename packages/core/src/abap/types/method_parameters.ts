@@ -265,7 +265,7 @@ export class MethodParameters implements IMethodParameters {
       const id = new MethodParam().runSyntax(p, scope, this.filename, [...meta, ...extraMeta]);
       scope.addIdentifier(id);
       target.push(id);
-      if (opt.getLastToken().getStr().toUpperCase() === "OPTIONAL") {
+      if (opt.findDirectTokenByText("OPTIONAL")) {
         const name = target[target.length - 1].getName().toUpperCase();
         this.optional.push(name);
       } else if (opt.findFirstExpression(Expressions.Default)) {
