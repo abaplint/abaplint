@@ -1,5 +1,4 @@
-import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {MethodCallChain} from "../expressions/method_call_chain";
 import {MethodSource} from "../expressions/method_source";
@@ -9,20 +8,22 @@ import {StatementSyntax} from "../_statement_syntax";
 
 export class Call implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    const chain = node.findDirectExpression(Expressions.MethodCallChain);
-    if (chain) {
-      new MethodCallChain().runSyntax(chain, scope, filename);
+    const children = node.getChildren();
+
+    if (children.length === 2) {
+      const first = children[0] as ExpressionNode;
+      new MethodCallChain().runSyntax(first, scope, filename);
       return;
     }
 
-    const methodSource = node.findDirectExpression(Expressions.MethodSource);
+    const methodSource = children[2] as ExpressionNode;
     if (methodSource === undefined) {
       throw new Error("Call, child MethodSource not found");
     }
     const methodDef = new MethodSource().runSyntax(methodSource, scope, filename);
 
-    const body = node.findDirectExpression(Expressions.MethodCallBody);
-    if (body) {
+    const body = children[3];
+    if (body instanceof ExpressionNode) {
       // todo, resolve the method definition above and pass, if possible, in case of dynamic pass void
       new MethodCallBody().runSyntax(body, scope, filename, methodDef || new VoidType("CallTODO"));
     }

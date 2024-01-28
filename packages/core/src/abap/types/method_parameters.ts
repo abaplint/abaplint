@@ -177,7 +177,7 @@ export class MethodParameters implements IMethodParameters {
     const importing = node.findFirstExpression(Expressions.MethodDefImporting);
     if (importing) {
       this.add(this.importing, importing, scope, [IdentifierMeta.MethodImporting], abstractMethod);
-      if (importing.concatTokens().toUpperCase().includes(" PREFERRED PARAMETER")) {
+      if (importing.findDirectTokenByText("PREFERRED")) {
         this.preferred = importing.getLastToken().getStr().toUpperCase();
         if (this.preferred.startsWith("!")) {
           this.preferred = this.preferred.substring(1);
@@ -214,10 +214,11 @@ export class MethodParameters implements IMethodParameters {
         this.importing.push(new TypedIdentifier(foo.getFirstToken(), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
       }
 
-      if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ")
-          || node.concatTokens().toUpperCase().includes(" FOR BEHAVIOR ")
-          || node.concatTokens().toUpperCase().includes(" FOR FEATURES ")
-          || node.concatTokens().toUpperCase().includes(" FOR MODIFY ")) {
+      const concat = node.concatTokens().toUpperCase();
+      if (concat.includes(" FOR VALIDATE ")
+          || concat.includes(" FOR BEHAVIOR ")
+          || concat.includes(" FOR FEATURES ")
+          || concat.includes(" FOR MODIFY ")) {
         const token = isRap.getFirstToken();
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "mapped"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
@@ -253,7 +254,7 @@ export class MethodParameters implements IMethodParameters {
         continue;
       }
       const extraMeta: IdentifierMeta[] = [];
-      if (opt.concatTokens().toUpperCase().startsWith("VALUE(")) {
+      if (p.getFirstToken().getStr().toUpperCase() === "VALUE" && p.getChildren()[1]?.getFirstToken().getStr() === "(") {
         extraMeta.push(IdentifierMeta.PassByValue);
       } else if (meta.includes(IdentifierMeta.MethodImporting)) {
         extraMeta.push(IdentifierMeta.ReadOnly);
@@ -264,7 +265,7 @@ export class MethodParameters implements IMethodParameters {
       const id = new MethodParam().runSyntax(p, scope, this.filename, [...meta, ...extraMeta]);
       scope.addIdentifier(id);
       target.push(id);
-      if (opt.getLastToken().getStr().toUpperCase() === "OPTIONAL") {
+      if (opt.findDirectTokenByText("OPTIONAL")) {
         const name = target[target.length - 1].getName().toUpperCase();
         this.optional.push(name);
       } else if (opt.findFirstExpression(Expressions.Default)) {

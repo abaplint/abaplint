@@ -24,12 +24,11 @@ export class FieldChain {
     filename: string,
     refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
-    const children = node.getChildren().slice();
-    let contextName = children[0].concatTokens();
+    const children = node.getChildren();
 
     let context: AbstractType | undefined = undefined;
     try {
-      context = this.findTop(children.shift(), scope, filename, refType);
+      context = this.findTop(children[0], scope, filename, refType);
     } catch (error) {
       const concat = node.concatTokens();
       if (concat.includes("-") && node.getFirstChild()?.get() instanceof Expressions.SourceField) {
@@ -48,9 +47,8 @@ export class FieldChain {
       throw error;
     }
 
-    while (children.length > 0) {
-      contextName += children[0].concatTokens();
-      const current = children.shift();
+    for (let i = 1; i < children.length; i++) {
+      const current = children[i];
       if (current === undefined) {
         break;
       }
@@ -64,7 +62,11 @@ export class FieldChain {
             && !(context instanceof TableType && context.isWithHeader())
             && !(context instanceof VoidType)) {
           if (context instanceof TableType && context.isWithHeader() === false) {
-            if (scope.isAllowHeaderUse(contextName.substring(0, contextName.length - 1))) {
+            let contextName = "";
+            for (let j = 0; j < i; j++) {
+              contextName += children[j].concatTokens();
+            }
+            if (scope.isAllowHeaderUse(contextName)) {
               // FOR ALL ENTRIES workaround
               context = context.getRowType();
               if (!(context instanceof StructureType) && !(context instanceof VoidType)) {

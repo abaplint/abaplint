@@ -77,6 +77,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return str;
   }
 
+  // todo: delete this method?, its slow
   public getTokens(): readonly AbstractToken[] {
     const tokens: AbstractToken[] = [];
 
@@ -193,8 +194,9 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public findDirectTokenByText(text: string): AbstractToken | undefined {
+    const search = text.toUpperCase();
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode && child.get().getStr().toUpperCase() === text.toUpperCase()) {
+      if (child instanceof TokenNode && child.get().getStr().toUpperCase() === search) {
         return child.get();
       }
     }

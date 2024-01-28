@@ -13,7 +13,7 @@ import {Visibility} from "../4_file_information/visibility";
 import {IAliases} from "../types/_aliases";
 
 // todo, think some of the public methods can be made private
-
+// todo: changet this class to static? for performance
 export class ObjectOriented {
   private readonly scope: CurrentScope;
 

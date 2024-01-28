@@ -18,7 +18,7 @@ abstract class ScopeData {
       forms: [], // todo, refactor to object
       types: {},
       extraLikeTypes: {},
-      deferred: [],
+      deferred: {},
       references: [],
       sqlConversion: [],
     };
@@ -78,10 +78,9 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {
-      for (const d of search.getData().deferred) {
-        if (d.getStr().toUpperCase() === name.toUpperCase()) {
-          return new Identifier(d, search.identifier.filename);
-        }
+      const found = search.getData().deferred[name.toUpperCase()];
+      if (found) {
+        return new Identifier(found, search.identifier.filename);
       }
       search = search.getParent();
     }

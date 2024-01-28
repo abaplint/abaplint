@@ -167,7 +167,7 @@ export class CurrentScope {
     if (token === undefined) {
       return;
     }
-    this.current?.getData().deferred.push(token);
+    this.current!.getData().deferred[token.getStr().toUpperCase()] = token;
   }
 
   public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {

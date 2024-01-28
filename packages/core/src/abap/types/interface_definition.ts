@@ -23,12 +23,12 @@ import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
-  private readonly node: StructureNode;
   private attributes: IAttributes;
   private readonly implementing: IImplementing[];
   private typeDefinitions: ITypeDefinitions;
   private methodDefinitions: IMethodDefinitions;
   private readonly events: IEventDefinition[];
+  private readonly globalValue: boolean;
   private aliases: IAliases;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -40,12 +40,12 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     super(name, filename);
     scope.addInterfaceDefinition(this);
 
-    this.node = node;
     this.events = [];
     this.implementing = [];
+    this.globalValue = node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
 
     scope.push(ScopeType.Interface, name.getStr(), node.getFirstToken().getStart(), filename);
-    this.parse(scope, filename);
+    this.parse(scope, filename, node);
     scope.pop(node.getLastToken().getEnd());
   }
 
@@ -74,11 +74,11 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   }
 
   public isLocal(): boolean {
-    return !this.isGlobal();
+    return !this.globalValue;
   }
 
   public isGlobal(): boolean {
-    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
+    return this.globalValue;
   }
 
   public getMethodDefinitions(): IMethodDefinitions {
@@ -87,12 +87,12 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
 /////////////////
 
-  private parse(scope: CurrentScope, filename: string) {
+  private parse(scope: CurrentScope, filename: string, node: StructureNode) {
     // todo, proper sequencing, the statements should be processed line by line
-    this.attributes = new Attributes(this.node, this.filename, scope);
+    this.attributes = new Attributes(node, this.filename, scope);
     this.typeDefinitions = this.attributes.getTypes();
 
-    this.aliases = new Aliases(this.node, this.filename, scope);
+    this.aliases = new Aliases(node, this.filename, scope);
     // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
     for (const a of this.aliases.getAll()) {
       const [objName, fieldName] = a.getComponent().split("~");
@@ -113,17 +113,17 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
       }
     }
 
-    this.methodDefinitions = new MethodDefinitions(this.node, this.filename, scope);
+    this.methodDefinitions = new MethodDefinitions(node, this.filename, scope);
     if (this.methodDefinitions.getByName("CONSTRUCTOR") !== undefined) {
       throw new Error("Interfaces cannot have constructor methods");
     }
 
-    const events = this.node.findAllStatements(Statements.Events);
+    const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
       this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope));
     }
 
-    for (const i of this.node.findAllStatements(Statements.InterfaceDef)) {
+    for (const i of node.findAllStatements(Statements.InterfaceDef)) {
       const token = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken();
       const name = token?.getStr();
       if (name) {
