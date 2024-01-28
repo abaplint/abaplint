@@ -177,7 +177,7 @@ export class MethodParameters implements IMethodParameters {
     const importing = node.findFirstExpression(Expressions.MethodDefImporting);
     if (importing) {
       this.add(this.importing, importing, scope, [IdentifierMeta.MethodImporting], abstractMethod);
-      if (importing.concatTokens().toUpperCase().includes(" PREFERRED PARAMETER")) {
+      if (importing.findDirectTokenByText("PREFERRED")) {
         this.preferred = importing.getLastToken().getStr().toUpperCase();
         if (this.preferred.startsWith("!")) {
           this.preferred = this.preferred.substring(1);
