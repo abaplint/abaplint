@@ -14,7 +14,7 @@ export class DataDefinition extends Expression {
 
     return seq(Expressions.DefinitionName,
                optPrio(Expressions.ConstantFieldLength),
-               alt(simple, table));
+               alt(simple, table, Expressions.TypeStructure));
 
   }
 }

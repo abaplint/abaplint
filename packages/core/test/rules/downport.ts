@@ -5557,4 +5557,124 @@ SELECT * FROM void INTO TABLE sdf WHERE field IN (lc).`;
     testFix(abap, expected);
   });
 
+  it("constructor parameter name from superclass", async () => {
+    const abap = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lcl.
+  foo = NEW #( 2 ).`;
+    const expected = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lcl.
+  CREATE OBJECT foo EXPORTING BAR = 2.`;
+    testFix(abap, expected);
+  });
+
+  it("ASSIGN COMPONENT", async () => {
+    const abap = `
+DATA: BEGIN OF struc,
+        quantity1 TYPE i,
+        quantity2 TYPE i,
+      END OF struc.
+FIELD-SYMBOLS <lv_quantity> TYPE i.
+ASSIGN COMPONENT 'QUANTITY' && '1' OF STRUCTURE struc TO <lv_quantity>.
+WRITE <lv_quantity>.`;
+    const expected = `
+DATA: BEGIN OF struc,
+        quantity1 TYPE i,
+        quantity2 TYPE i,
+      END OF struc.
+FIELD-SYMBOLS <lv_quantity> TYPE i.
+DATA(temp1) = 'QUANTITY' && '1'.
+ASSIGN COMPONENT temp1 OF STRUCTURE struc TO <lv_quantity>.
+WRITE <lv_quantity>.`;
+    testFix(abap, expected);
+  });
+
+  it("Character conversion of structure", async () => {
+    const abap = `
+TYPES: BEGIN OF cty,
+         segnam TYPE c LENGTH 10,
+         sdata  TYPE c LENGTH 10,
+       END OF cty.
+
+TYPES: BEGIN OF row,
+         data TYPE c LENGTH 100,
+       END OF row.
+
+DATA temp1 TYPE row.
+temp1-data = VALUE cty( segnam = 'BB' sdata = 'aa' ).`;
+    const expected = `
+TYPES: BEGIN OF cty,
+         segnam TYPE c LENGTH 10,
+         sdata  TYPE c LENGTH 10,
+       END OF cty.
+
+TYPES: BEGIN OF row,
+         data TYPE c LENGTH 100,
+       END OF row.
+
+DATA temp1 TYPE row.
+DATA temp2 TYPE cty.
+CLEAR temp2.
+temp2-segnam = 'BB'.
+temp2-sdata = 'aa'.
+temp1-data = temp2.`;
+    testFix(abap, expected);
+  });
+
+  it("Outline clike", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(sdfsd) = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA sdfsd TYPE string.
+    sdfsd = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });

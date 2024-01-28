@@ -55,6 +55,7 @@ import {CDSParser} from "./cds/cds_parser";
 import {RulesRunner} from "./rules_runner";
 import {RuleTag} from "./rules/_irule";
 import {CyclomaticComplexityStats} from "./utils/cyclomatic_complexity_stats";
+import {SkipLogic} from "./skip_logic";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -62,7 +63,7 @@ import {CyclomaticComplexityStats} from "./utils/cyclomatic_complexity_stats";
 // file used to build typings, index.d.ts
 export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
-  ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile,
+  ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile, SkipLogic,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,

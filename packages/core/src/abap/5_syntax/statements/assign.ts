@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
@@ -12,7 +12,7 @@ import {TypeUtils} from "../_type_utils";
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const assignSource = node.findDirectExpression(Expressions.AssignSource);
-    const sources = assignSource?.findDirectExpressions(Expressions.Source) || [];
+    const sources: ExpressionNode[] = assignSource?.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource3]) || [];
     const theSource = sources[sources.length - 1];
 
     let sourceType: AbstractType | undefined = undefined;
@@ -21,9 +21,9 @@ export class Assign implements StatementSyntax {
     const thirdAssign = assignSource?.getChildren()[2];
     if (secondAssign?.concatTokens() === "=>" && firstAssign && thirdAssign?.get() instanceof Expressions.Dynamic) {
       const name = firstAssign.concatTokens();
-      const found = scope.findObjectDefinition(name) === undefined || scope.findVariable(name);
-      if (found === undefined && scope.getDDIC().inErrorNamespace(name)) {
-        throw new Error(secondAssign.concatTokens() + " not found");
+      const found = scope.findClassDefinition(name) || scope.findVariable(name);
+      if (found === undefined && scope.getDDIC().inErrorNamespace(name) && name.startsWith("(") === false) {
+        throw new Error(name + " not found, dynamic");
       }
       sourceType = new VoidType("Dynamic");
     } else {
@@ -31,7 +31,7 @@ export class Assign implements StatementSyntax {
     }
 
     if (assignSource?.getChildren().length === 5
-        && assignSource?.getFirstChild()?.concatTokens() === "COMPONENT") {
+        && assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
       const componentSource = sources[sources.length - 2];
       const componentType = new Source().runSyntax(componentSource, scope, filename);
       if (new TypeUtils(scope).isAssignable(componentType, new CharacterType(30)) === false) {
@@ -48,7 +48,11 @@ export class Assign implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.FSTarget);
     if (target) {
-      new FSTarget().runSyntax(target, scope, filename, sourceType);
+      if (assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
+        new FSTarget().runSyntax(target, scope, filename, new AnyType());
+      } else {
+        new FSTarget().runSyntax(target, scope, filename, sourceType);
+      }
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {

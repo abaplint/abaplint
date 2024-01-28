@@ -153,6 +153,8 @@ DATA: BEGIN OF blah ##NEEDED,
         && !(statement.get() instanceof Statements.Parameter)
         && !(statement.get() instanceof Statements.Data)
         && !(statement.get() instanceof Statements.DataBegin)
+        && !(statement.get() instanceof Statements.ClassData)
+        && !(statement.get() instanceof Statements.ClassDataBegin)
         && !(statement.get() instanceof Statements.Type)
         && !(statement.get() instanceof Statements.Form)
         && !(statement.get() instanceof Statements.Tables)

@@ -20,6 +20,7 @@ const arg: Arguments = {
   runRename: parsed["rename"],
   outFormat: parsed["outformat"],
   outFile: parsed["outfile"],
+  file: parsed["file"],
 };
 
 run(arg).then(({output, issues}) => {

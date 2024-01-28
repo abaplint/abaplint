@@ -1,6 +1,6 @@
 {
   "global": {
-    "files": "/{abap1,abap2}/**/*.*"
+    "files": "/abap2/**/*.*"
   },
   "dependencies": [
     {

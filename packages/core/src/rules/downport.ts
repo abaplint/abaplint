@@ -424,6 +424,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.assignComponent(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportRefSimple(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -1673,6 +1678,35 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, ASSIGN table expr", this.getMetadata().key, this.conf.severity, fix);
   }
 
+  private assignComponent(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+
+    if (!(high.get() instanceof Statements.Assign)) {
+      return undefined;
+    }
+
+    const assignSource = high.findDirectExpression(Expressions.AssignSource);
+    if (assignSource === undefined || assignSource.getFirstToken().getStr().toUpperCase() !== "COMPONENT") {
+      return undefined;
+    }
+
+    const componentSource = assignSource.findExpressionAfterToken("COMPONENT");
+    if (componentSource === undefined || componentSource.get() instanceof Expressions.SimpleSource3) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(assignSource.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+
+    const code = `DATA(${uniqueName}) = ${componentSource.concatTokens()}.\n`;
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, componentSource.getFirstToken().getStart(), componentSource.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport, ASSIGN COMPONENT source", this.getMetadata().key, this.conf.severity, fix);
+  }
+
   private moveWithSimpleValue(low: StatementNode, high: StatementNode, lowFile: ABAPFile): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
@@ -1699,6 +1733,11 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     if (valueBody === undefined) {
       return;
     }
+    const type = source.findDirectExpression(Expressions.TypeNameOrInfer);
+    if (type === undefined || type?.concatTokens() !== "#") {
+      return;
+    }
+
     const fieldAssignments = valueBody.findDirectExpressions(Expressions.FieldAssignment);
     if (fieldAssignments.length === 0) {
       return;
@@ -3203,15 +3242,15 @@ ${indentation}    output = ${uniqueName}.\n`;
         if (cdef && cdef.getMethodDefinitions === undefined) {
           return undefined; // something wrong
         }
-        const importing = cdef?.getMethodDefinitions().getByName("CONSTRUCTOR")?.getParameters().getDefaultImporting();
+        const importing = this.findConstructor(cdef, spag)?.getParameters().getDefaultImporting();
         if (importing) {
           extra += " EXPORTING " + importing + " = " + source;
         } else if (spag === undefined) {
-          extra += " SpagUndefined";
+          extra += " SpagUndefined ERROR";
         } else if (cdef === undefined) {
-          extra += " ClassDefinitionNotFound";
+          extra += " ClassDefinitionNotFound ERROR";
         } else {
-          extra += " SomeError";
+          extra += " SomeError ERROR";
         }
       }
     }
@@ -3219,6 +3258,22 @@ ${indentation}    output = ${uniqueName}.\n`;
     const abap = `CREATE OBJECT ${name}${extra}.`;
 
     return abap;
+  }
+
+  private findConstructor(cdef: IClassDefinition | undefined, spag: ISpaghettiScopeNode | undefined): any {
+    let def = cdef;
+    while (def !== undefined) {
+      const method = def?.getMethodDefinitions().getByName("CONSTRUCTOR");
+      if (method) {
+        return method;
+      }
+      const name = def.getSuperClass();
+      if (name) {
+        def = spag?.findClassDefinition(name);
+      } else {
+        return undefined;
+      }
+    }
   }
 
 }

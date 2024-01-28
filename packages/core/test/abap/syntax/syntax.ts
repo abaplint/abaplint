@@ -1308,7 +1308,7 @@ DATA(output) = REDUCE string( INIT result = ||
 
   it("Field offset, lv_i not specified", () => {
     const abap = `
-      DATA rv_s TYPE string.
+      DATA rv_s TYPE c LENGTH 10.
       rv_s+lv_i(1) = 'a'.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
@@ -1854,7 +1854,7 @@ START-OF-SELECTION.
   int = mo_moo->method( ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage().toLowerCase()).to.contain("type");
+    expect(issues[0].getMessage()).to.contain("Method has no RETURNING value");
   });
 
   it("WHEN TYPE", () => {
@@ -8059,7 +8059,7 @@ START-OF-SELECTION.
   CREATE OBJECT lo_heap.
   WRITE |<sdf{ lo_heap->add( ) }>|.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("No target type determined");
+    expect(issues[0]?.getMessage()).to.contain("Method has no RETURNING value");
   });
 
   it("String template, not character like return type", () => {
@@ -9501,6 +9501,397 @@ DATA(split) = REDUCE string_table( LET split_input = |sdf|
   ELSE |{ add }{ split_input+index1(1) }| ) ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("Method already declared in super, via alias, expect error", () => {
+    const abap = `INTERFACE lif.
+  METHODS get.
+ENDINTERFACE.
+
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES get FOR lif~get.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    METHODS get.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
+  it("Constant already declared in super, via alias, expect error", () => {
+    const abap = `INTERFACE lif.
+  CONSTANTS get TYPE i VALUE 2.
+ENDINTERFACE.
+
+CLASS top DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES get FOR lif~get.
+ENDCLASS.
+CLASS top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS sub DEFINITION INHERITING FROM top.
+  PUBLIC SECTION.
+    METHODS get.
+ENDCLASS.
+CLASS sub IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("already declared");
+  });
+
+  it("class constructors, ok", () => {
+    const abap = `CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, select from internal tab", () => {
+    const abap = `TYPES: BEGIN OF ty,
+    dat TYPE d,
+  END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty.
+SELECT SINGLE MIN( dat ) AS date
+  FROM @tab AS t1
+  INTO @DATA(lv_datum).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("voided TYPE STRUTURE", () => {
+    const abap = `
+DATA ls_data TYPE STRUCTURE FOR HIERARCHY /foo/bar.
+CLEAR ls_data.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("DEFAULT, infer type", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA(sdf) = VALUE #( tab[ 1 ] DEFAULT VALUE #( ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ASSIGN component inline fs", () => {
+    const abap = `
+TYPES: BEGIN OF test,
+         comp TYPE REF TO data,
+       END OF test.
+DATA var TYPE test.
+ASSIGN COMPONENT 'COMP' OF STRUCTURE var TO FIELD-SYMBOL(<fs>).
+ASSIGN <fs>->* TO FIELD-SYMBOL(<fs2>).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, clike structure", () => {
+    const abap = `
+TYPES: BEGIN OF st_160,
+         field1 TYPE c LENGTH 18,
+         field2 TYPE c LENGTH 10,
+       END OF st_160.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS moo IMPORTING data TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE st_160.
+  lcl=>moo( foo ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it.skip("fields inside TYPES cannot be generic", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+TYPES: BEGIN OF ty_internal,
+         dd05m TYPE TABLE OF ty,
+       END OF ty_internal.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("generic");
+  });
+
+  it("ref into structure, expect error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             foobar TYPE voided,
+           END OF ty.
+    METHODS foo IMPORTING struc TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA ref TYPE REF TO lcl.
+    foo( ref ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("xstring offset/length in writer position not possible", () => {
+    const abap = `
+DATA xstr TYPE xstring.
+xstr+10 = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("xstring offset/length in writer position not possible", () => {
+    const abap = `
+DATA xstr TYPE xstring.
+xstr(1) = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("string offset/length in writer position not possible", () => {
+    const abap = `
+DATA str TYPE string.
+str+10 = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("string offset/length in writer position not possible", () => {
+    const abap = `
+DATA str TYPE string.
+str(1) = 'AA'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  });
+
+  it("CHANGING parameter must be supplied", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      IMPORTING sdfs TYPE string
+      CHANGING chang TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo->foo( 'sdf' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Method "foo" has more than one importing or changing parameter`);
+  });
+
+  it("error if instantiating interface", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lif.
+  foo = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`lif is an interface, cannot be instantiated`);
+  });
+
+  it("dynamic assign", () => {
+    const abap = `
+CLASS zlcl DEFINITION.
+ENDCLASS.
+
+CLASS zlcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <any> TYPE any.
+  ASSIGN zlcl=>('INSTANCE') TO <any>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("dynamic assign, 2", () => {
+    const abap = `
+CLASS zlcl DEFINITION.
+  public section.
+    class-data ref type ref to voided.
+ENDCLASS.
+
+CLASS zlcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  FIELD-SYMBOLS <any> TYPE any.
+  ASSIGN (zlcl=>ref)=>('INSTANCE') TO <any>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("concatenate, must be charlike", () => {
+    const abap = `
+DATA lv_bit TYPE i.
+DATA lv_bits TYPE string.
+CONCATENATE lv_bit lv_bits INTO lv_bits.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Source type not compatible");
+  });
+
+  it("concatenate, target must be charlike", () => {
+    const abap = `
+DATA char1 TYPE c LENGTH 1.
+DATA char2 TYPE c LENGTH 1.
+DATA int TYPE i.
+CONCATENATE char1 char2 INTO int.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Target type not compatible");
+  });
+
+  it("constructor, ok, its a calculated value", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+    CLASS-METHODS ret RETURNING VALUE(ret) TYPE int8.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+  METHOD ret.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CREATE OBJECT lo EXPORTING bar = lcl=>ret( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("concatenate, source table with header line", () => {
+    const abap = `
+DATA lv_html TYPE string.
+DATA it_text(255) TYPE c OCCURS 0 WITH HEADER LINE.
+CONCATENATE lv_html it_text
+  INTO lv_html SEPARATED BY space.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("concatenate, target table with header line", () => {
+    const abap = `
+DATA lv_html TYPE string.
+DATA it_text(255) TYPE c OCCURS 0 WITH HEADER LINE.
+CONCATENATE lv_html lv_html
+  INTO it_text SEPARATED BY space.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("concatenate, target table with header line, hex", () => {
+    const abap = `
+DATA lv_html TYPE x LENGTH 2.
+DATA it_text(255) TYPE x OCCURS 0 WITH HEADER LINE.
+CONCATENATE lv_html lv_html
+  INTO it_text IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT, IN, ok", () => {
+    const abap = `
+DATA lt_range TYPE RANGE OF t100-arbgb.
+SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT, IN, error", () => {
+    const abap = `
+    DATA lt_range TYPE i.
+    SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("IN, not a table");
+  });
+
+  it("Error, run() does not return anything", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_html TYPE string.
+  lv_html = lv_html && lcl=>run( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method has no RETURNING value");
+  });
+
+  it("C Generic cannot be used for inference", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE c.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(sdfsd) = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("InlineData, generic type C cannot be used for inferred type");
   });
 
 // todo, static method cannot access instance attributes

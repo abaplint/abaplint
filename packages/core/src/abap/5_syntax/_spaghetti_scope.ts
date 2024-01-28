@@ -31,7 +31,7 @@ export interface IScopeData {
   deferred: AbstractToken[];
 
   cdefs: {[name: string]: IClassDefinition};
-  idefs: IInterfaceDefinition[];
+  idefs: {[name: string]: IInterfaceDefinition};
   forms: IFormDefinition[];
 
   references: IReference[];
@@ -50,7 +50,6 @@ export interface ISpaghettiScopeNode {
   listClassDefinitions(): IClassDefinition[];
   listInterfaceDefinitions(): IInterfaceDefinition[];
   findFormDefinition(name: string): IFormDefinition | undefined;
-  listFormDefinitions(): IFormDefinition[];
   findInterfaceDefinition(name: string): IInterfaceDefinition | undefined;
   findType(name: string): TypedIdentifier | undefined;
   findVariable(name: string): TypedIdentifier | undefined;

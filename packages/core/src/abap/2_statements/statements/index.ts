@@ -218,6 +218,7 @@ export * from "./free";
 export * from "./endon";
 export * from "./fetch_next_cursor";
 export * from "./reserve";
+export * from "./raise_entity_event";
 export * from "./refresh_control";
 export * from "./delete_dynpro";
 export * from "./generate_dynpro";

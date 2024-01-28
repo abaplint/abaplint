@@ -7,7 +7,8 @@ const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
 
 function findDefault(ruleKey: string) {
   const def = abaplint.Config.getDefault();
-  return JSON.stringify(def.readByRule(ruleKey), null, 2);
+  const res = JSON.stringify(def.readByRule(ruleKey), null, 2);
+  return res.replace("\\", "\\\\");
 }
 
 function renderExtended(str: string) {

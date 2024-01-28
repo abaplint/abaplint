@@ -211,4 +211,32 @@ ENDCLASS.`;
     }
   });
 
+  it("CLAS, with usage in PROG, DEFAULT", () => {
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    CONSTANTS const TYPE i VALUE 2.
+ENDCLASS.
+CLASS ZCL_FOO IMPLEMENTATION.
+ENDCLASS.`;
+    const prog = `DATA val TYPE i VALUE zcl_foo=>const.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcl_foo.clas.abap", clas),
+      new MemoryFile("zfoo.prog.abap", prog),
+    ]).parse();
+
+    new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "cl_foo.clas.abap") {
+        continue;
+      } else if (f.getFilename() === "zfoo.prog.abap") {
+        expect(f.getRaw()).to.equal(`DATA val TYPE i VALUE cl_foo=>const.`);
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+  });
+
 });

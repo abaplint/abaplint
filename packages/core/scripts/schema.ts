@@ -39,6 +39,7 @@ import {DefinitionsTopConf} from "../src/rules/definitions_top";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
 import {DoubleSpaceConf} from "../src/rules/double_space";
 import {DownportConf} from "../src/rules/downport";
+import {DynproChecksConf} from "../src/rules/dynpro_checks";
 import {EasyToFindMessagesConf} from "../src/rules/easy_to_find_messages";
 import {EmptyLineinStatementConf} from "../src/rules/empty_line_in_statement";
 import {EmptyStatementConf} from "../src/rules/empty_statement";
@@ -93,6 +94,7 @@ import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoExternalFormCallsConf} from "../src/rules/no_external_form_calls";
 import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
+import {NoPrefixesConf} from "../src/rules/no_prefixes";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
 import {NROBConsistencyConf} from "../src/rules/nrob_consistency";
@@ -114,6 +116,7 @@ import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_e
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
+import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
@@ -212,6 +215,7 @@ export interface IConfig {
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
+    "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
     "empty_line_in_statement"?: EmptyLineinStatementConf | boolean,
     "empty_statement"?: EmptyStatementConf | boolean,
@@ -266,6 +270,7 @@ export interface IConfig {
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
+    "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "nrob_consistency"?: NROBConsistencyConf | boolean,
@@ -287,6 +292,7 @@ export interface IConfig {
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
@@ -374,6 +380,7 @@ export interface IConfig {
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
+    "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
     "empty_line_in_statement"?: EmptyLineinStatementConf | boolean,
     "empty_statement"?: EmptyStatementConf | boolean,
@@ -428,6 +435,7 @@ export interface IConfig {
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
+    "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
     "nrob_consistency"?: NROBConsistencyConf | boolean,
@@ -449,6 +457,7 @@ export interface IConfig {
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,

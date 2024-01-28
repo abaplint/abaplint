@@ -7,8 +7,8 @@ import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
 export class MSAGConsistencyConf extends BasicRuleConfig {
-  /** paramters must be numbered */
-  public numericParamters = true;
+  /** parameters must be numbered */
+  public numericParameters = true;
 }
 
 export class MSAGConsistency implements IRule {
@@ -74,7 +74,7 @@ export class MSAGConsistency implements IRule {
         numbers.add(num);
       }
 
-      if (this.getConfig().numericParamters === true) {
+      if (this.getConfig().numericParameters === true) {
         const placeholderCount = message.getPlaceholderCount();
         if (placeholderCount > 4) {
           const text = `More than 4 placeholders in mesasge ${message.getNumber()}` ;

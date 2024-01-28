@@ -156,19 +156,23 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     while (sup !== undefined) {
       const cdef = scope.findClassDefinition(sup);
       for (const m of cdef?.getMethodDefinitions()?.getAll() || []) {
+        const name = m.getName().toUpperCase();
         if (m.getVisibility() === Visibility.Private) {
           continue;
-        } else if (m.getName().toUpperCase() === "CONSTRUCTOR") {
+        } else if (name === "CONSTRUCTOR" || name === "CLASS_CONSTRUCTOR") {
           continue;
         }
-        names.add(m.getName().toUpperCase());
+        names.add(name);
+      }
+      for (const a of cdef?.getAliases().getAll() || []) {
+        names.add(a.getName().toUpperCase());
       }
       sup = cdef?.getSuperClass();
     }
 
     for (const m of this.getMethodDefinitions().getAll()) {
       if (names.has(m.getName().toUpperCase()) && m.isRedefinition() === false) {
-        throw new Error(`Method ${m.getName().toUpperCase()} already declared in superclass`);
+        throw new Error(`${m.getName().toUpperCase()} already declared in superclass`);
       }
     }
   }

@@ -11,7 +11,7 @@ export class Type implements IStatement {
 
     const def = seq(Expressions.NamespaceSimpleName,
                     opt(Expressions.ConstantFieldLength),
-                    opt(alt(simple, Expressions.TypeTable)));
+                    opt(alt(simple, Expressions.TypeTable, Expressions.TypeStructure)));
 
 // todo, BOXED is only allowed with structures inside structures?
     const boxed = ver(Version.v702, "BOXED");

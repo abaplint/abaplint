@@ -4,8 +4,8 @@ export class VoidType extends AbstractType {
   // this contains the name of the type that was the original reason for the void
   private readonly voided: string | undefined;
 
-  public constructor(voided: string | undefined, name?: string) {
-    super({qualifiedName: name});
+  public constructor(voided: string | undefined, qualifiedName?: string) {
+    super({qualifiedName: qualifiedName});
     this.voided = voided;
   }
 

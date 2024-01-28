@@ -19,6 +19,10 @@
           },
           "type": "array"
         },
+        "ignoreTestClasses": {
+          "description": "Ignores classes flagged as FOR TESTING",
+          "type": "boolean"
+        },
         "interfaceDefinition": {
           "type": "boolean"
         },
@@ -30,7 +34,8 @@
       "required": [
         "checkLocal",
         "classDefinition",
-        "interfaceDefinition"
+        "interfaceDefinition",
+        "ignoreTestClasses"
       ],
       "type": "object"
     },
@@ -1039,6 +1044,23 @@
       },
       "type": "object"
     },
+    "DynproChecksConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "EasyToFindMessagesConf": {
       "additionalProperties": false,
       "properties": {
@@ -1913,6 +1935,17 @@
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
+            "dynpro_checks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynproChecksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Various Dynpro checks\nTags: Syntax\nhttps://rules.abaplint.org/dynpro_checks"
+            },
             "easy_to_find_messages": {
               "anyOf": [
                 {
@@ -2507,6 +2540,17 @@
               ],
               "description": "Don't declare inline in optional branches\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_inline_in_optional_branches"
             },
+            "no_prefixes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoPrefixesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Dont use hungarian notation\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_prefixes"
+            },
             "no_public_attributes": {
               "anyOf": [
                 {
@@ -2737,6 +2781,17 @@
                 }
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
+            },
+            "reduce_procedural_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ReduceProceduralCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks FORM and FUNCTION-MODULE have few statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/reduce_procedural_code"
             },
             "reduce_string_templates": {
               "anyOf": [
@@ -3673,6 +3728,17 @@
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
+            "dynpro_checks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynproChecksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Various Dynpro checks\nTags: Syntax\nhttps://rules.abaplint.org/dynpro_checks"
+            },
             "easy_to_find_messages": {
               "anyOf": [
                 {
@@ -4267,6 +4333,17 @@
               ],
               "description": "Don't declare inline in optional branches\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_inline_in_optional_branches"
             },
+            "no_prefixes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoPrefixesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Dont use hungarian notation\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_prefixes"
+            },
             "no_public_attributes": {
               "anyOf": [
                 {
@@ -4497,6 +4574,17 @@
                 }
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
+            },
+            "reduce_procedural_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ReduceProceduralCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks FORM and FUNCTION-MODULE have few statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/reduce_procedural_code"
             },
             "reduce_string_templates": {
               "anyOf": [
@@ -5692,7 +5780,7 @@
           },
           "type": "array"
         },
-        "numericParamters": {
+        "numericParameters": {
           "type": "boolean"
         },
         "severity": {
@@ -5701,7 +5789,7 @@
         }
       },
       "required": [
-        "numericParamters"
+        "numericParameters"
       ],
       "type": "object"
     },
@@ -6136,6 +6224,55 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "NoPrefixesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "constants": {
+          "description": "CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex",
+          "type": "string"
+        },
+        "data": {
+          "description": "DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex",
+          "type": "string"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fieldSymbols": {
+          "description": "FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex",
+          "type": "string"
+        },
+        "methodParameters": {
+          "description": "importing, exporting, returning and changing parameters, case insensitive regex",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "statics": {
+          "description": "STATICS, STATICS BEGIN OF, case insensitive regex",
+          "type": "string"
+        },
+        "types": {
+          "description": "TYPES, ENUM, MESH, case insensitive regex",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "statics",
+        "fieldSymbols",
+        "constants",
+        "types",
+        "methodParameters"
+      ],
       "type": "object"
     },
     "NoPublicAttributesConf": {
@@ -6871,6 +7008,29 @@
       "required": [
         "name",
         "replace"
+      ],
+      "type": "object"
+    },
+    "ReduceProceduralCodeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "maxStatements": {
+          "type": "number"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "maxStatements"
       ],
       "type": "object"
     },

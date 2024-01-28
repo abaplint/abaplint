@@ -32,7 +32,7 @@ export class MorphClassDeclaration {
     const itype = s.getImplements()[0]?.getType();
     let interfaces = "";
     if (itype) {
-      interfaces = "\n    INTERFACES " + itype.getSymbol()?.getName() + ".";
+      interfaces = "\n    INTERFACES " + mapName(itype.getSymbol()?.getName(), settings) + ".";
     }
     const classAbstract = s.isAbstract() ? " ABSTRACT" : "";
     const global = settings.globalObjects ? " PUBLIC" : "";
@@ -59,15 +59,16 @@ export class MorphClassDeclaration {
         }
       } else if (m instanceof ConstructorDeclaration) {
         const parameters = buildParameters(m, settings, true);
-        definition += `    METHODS constructor${parameters}.\n`;
+        definition += parameters.definition + `    METHODS constructor${parameters.parameters}.\n`;
         implementation += `  METHOD constructor.\n`;
         implementation += handleStatements(m.getStatements(), settings);
         implementation += `  ENDMETHOD.\n\n`;
       } else if (m instanceof MethodDeclaration) {
         let pre = "";
         if (itype?.getProperty(m.getName())) {
-          definition += `    ALIASES ${m.getName()} FOR ${itype.getSymbol()?.getName()}~${m.getName()}.\n`;
-          pre = itype.getSymbol()?.getName() + "~";
+          const iname = mapName(itype.getSymbol()?.getName(), settings);
+          definition += `    ALIASES ${m.getName()} FOR ${iname}~${m.getName()}.\n`;
+          pre = iname + "~";
         } else if (m.getName().startsWith("[")) {
           // nothing
         } else {
@@ -77,7 +78,7 @@ export class MorphClassDeclaration {
             code = `    ${st}METHODS ${m.getName()} REDEFINITION.\n`;
           } else {
             const parameters = buildParameters(m, settings);
-            code = `    ${st}METHODS ${m.getName()}${parameters}.\n`;
+            code = parameters.definition + `    ${st}METHODS ${m.getName()}${parameters.parameters}.\n`;
           }
           if (m.getScope() === Scope.Private) {
             privateSection += code;

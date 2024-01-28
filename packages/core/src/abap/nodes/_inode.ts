@@ -4,8 +4,7 @@ export interface INode {
   addChild(n: INode): void;
   setChildren(children: INode[]): void;
   getChildren(): readonly INode[];
-  get(): any;
+  get(): object;
   getFirstToken(): AbstractToken;
   getLastToken(): AbstractToken;
-// todo, consider adding find* get* methods from nodes, subclasses currently contain similar methods
 }

@@ -39,7 +39,7 @@ export class ValueBody {
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      type = new Source().runSyntax(s, scope, filename);
+      type = new Source().runSyntax(s, scope, filename, type);
     }
 
     for (const foo of node.findDirectExpressions(Expressions.ValueBodyLine)) {

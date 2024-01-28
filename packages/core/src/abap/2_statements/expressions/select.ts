@@ -20,11 +20,13 @@ export class Select extends Expression {
 
     const fields = ver(Version.v750, SQLFields);
 
+    // todo, HINTS cannot be anywhere, need an expression dedicated for strict sql
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
                      SQLOrderBy, SQLUpTo, offset, SQLClient, SQLHaving,
-                     bypass, SQLGroupBy, fields, DatabaseConnection);
+                     bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints);
 
-    const permSingle = per(SQLFrom, altPrio(SQLIntoStructure, SQLIntoList), where, SQLClient, bypass, fields, DatabaseConnection);
+    const permSingle = per(SQLFrom, altPrio(SQLIntoStructure, SQLIntoList), where, SQLClient,
+                           bypass, fields, DatabaseConnection, SQLHints);
 
     const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
 
@@ -34,7 +36,7 @@ export class Select extends Expression {
 
     const other = seq(optPrio("DISTINCT"), fieldList, perm);
 
-    const ret = seq("SELECT", altPrio(single, other), optPrio(SQLHints));
+    const ret = seq("SELECT", altPrio(single, other));
 
     return ret;
   }
