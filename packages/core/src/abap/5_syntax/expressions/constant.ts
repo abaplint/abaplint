@@ -8,13 +8,16 @@ export class Constant {
     // todo: ConcatenatedConstant is not used?
     if (node.findDirectExpression(Integer)) {
       return IntegerType.get({derivedFromConstant: true});
-    } else if (node.getFirstToken().getStr().startsWith("'")) {
-      let len = node.getFirstToken().getStr().length - 2;
+    }
+
+    const first = node.getFirstToken().getStr();
+    if (first.startsWith("'")) {
+      let len = first.length - 2;
       if (len <= 0) {
         len = 1;
       }
       return new CharacterType(len, {derivedFromConstant: true});
-    } else if (node.getFirstToken().getStr().startsWith("`")) {
+    } else if (first.startsWith("`")) {
       return StringType.get({derivedFromConstant: true});
     } else {
       return StringType.get();
