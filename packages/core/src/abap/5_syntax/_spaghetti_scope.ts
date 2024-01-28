@@ -28,7 +28,7 @@ export interface IScopeData {
   // static methods can type LIKE instance variables that are not visible
   extraLikeTypes: {[name: string]: TypedIdentifier};
 
-  deferred: AbstractToken[];
+  deferred: {[name: string]: AbstractToken};
 
   cdefs: {[name: string]: IClassDefinition};
   idefs: {[name: string]: IInterfaceDefinition};
