@@ -203,7 +203,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   private parse(filename: string, scope: CurrentScope, inputNode: StructureNode) {
     for (const node of inputNode.findAllStatements(Statements.InterfaceDef)) {
-      const partial = node.concatTokens().toUpperCase().includes(" PARTIALLY IMPLEMENTED");
+      const partial = node.findDirectTokenByText("PARTIALLY") !== undefined;
       const token = node.findFirstExpression(Expressions.InterfaceName)?.getFirstToken();
       if (token === undefined) {
         throw new Error("ClassDefinition, unable to find interface token");
