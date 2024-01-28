@@ -523,4 +523,73 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("missing method of unknown aliases", async () => {
+    const issues = await runMulti([
+      {
+        filename: "cl_foo.clas.abap",
+        contents: `CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      ALIASES blah FOR zlif~blah.
+  ENDCLASS.
+  
+  CLASS lcl IMPLEMENTATION.
+  ENDCLASS.`,
+      },
+    ]);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("implemented method of unknown aliases", async () => {
+    const issues = await runMulti([
+      {
+        filename: "cl_foo.clas.abap",
+        contents: `CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      ALIASES blah FOR zlif~blah.
+  ENDCLASS.
+  
+  CLASS lcl IMPLEMENTATION.
+    METHOD zlif~blah.
+    ENDMETHOD
+  ENDCLASS.`,
+      },
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("implemented method as alias of unknown aliases", async () => {
+    const issues = await runMulti([
+      {
+        filename: "cl_foo.clas.abap",
+        contents: `CLASS lcl DEFINITION.
+    PUBLIC SECTION.
+      ALIASES blah FOR zlif~blah.
+  ENDCLASS.
+  
+  CLASS lcl IMPLEMENTATION.
+    METHOD blah.
+    ENDMETHOD
+  ENDCLASS.`,
+      },
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("no need to implement data interface, implemented", async () => {
+    const intf = `INTERFACE zif_bar PUBLIC.
+        DATA: foobar TYPE i.
+      ENDINTERFACE.\n`;
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES: zif_bar.
+          ALIASES: bar FOR zif_bar~foobar.
+      ENDCLASS.
+      CLASS zcl_foo IMPLEMENTATION.
+      ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zcl_foo.clas.abap", contents: clas},
+      {filename: "zif_bar.intf.abap", contents: intf}]);
+    expect(issues.length).to.equals(0);
+  });
+
 });
