@@ -77,6 +77,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return str;
   }
 
+  // todo: delete this method?, its slow
   public getTokens(): readonly AbstractToken[] {
     const tokens: AbstractToken[] = [];
 

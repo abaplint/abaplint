@@ -653,8 +653,10 @@ export class BasicTypes {
         if (foundType === undefined) {
           return new Types.UnknownType("Could not resolve type " + chainText);
         }
-        this.scope.addReference(expr.getTokens()[2], foundId, ReferenceType.TypeReference, this.filename);
-
+        const token = expr.getChildren()[2]?.getFirstToken();
+        if (token) {
+          this.scope.addReference(token, foundId, ReferenceType.TypeReference, this.filename);
+        }
       } else {
     // lookup in local and global scope
         const obj = this.scope.findObjectDefinition(className);
@@ -675,7 +677,11 @@ export class BasicTypes {
         if (byName === undefined || foundType === undefined) {
           return new Types.UnknownType(subs[0] + " not found in class or interface");
         }
-        this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
+
+        const token = expr.getChildren()[2]?.getFirstToken();
+        if (token) {
+          this.scope.addReference(token, byName, ReferenceType.TypeReference, this.filename);
+        }
       }
     } else if (className && chainText.includes("->")) {
       const varVar = this.scope.findVariable(className);
@@ -702,7 +708,10 @@ export class BasicTypes {
           if (byName === undefined || foundType === undefined) {
             return new Types.UnknownType(typeName + " not found in class or interface");
           }
-          this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
+          const token = expr.getChildren()[2]?.getFirstToken();
+          if (token) {
+            this.scope.addReference(token, byName, ReferenceType.TypeReference, this.filename);
+          }
         } else {
           return new Types.UnknownType("Not an object reference, " + className + ", " + id.constructor.name);
         }
