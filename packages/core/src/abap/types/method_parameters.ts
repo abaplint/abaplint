@@ -214,10 +214,11 @@ export class MethodParameters implements IMethodParameters {
         this.importing.push(new TypedIdentifier(foo.getFirstToken(), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
       }
 
-      if (node.concatTokens().toUpperCase().includes(" FOR VALIDATE ")
-          || node.concatTokens().toUpperCase().includes(" FOR BEHAVIOR ")
-          || node.concatTokens().toUpperCase().includes(" FOR FEATURES ")
-          || node.concatTokens().toUpperCase().includes(" FOR MODIFY ")) {
+      const concat = node.concatTokens().toUpperCase();
+      if (concat.includes(" FOR VALIDATE ")
+          || concat.includes(" FOR BEHAVIOR ")
+          || concat.includes(" FOR FEATURES ")
+          || concat.includes(" FOR MODIFY ")) {
         const token = isRap.getFirstToken();
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "mapped"), filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
@@ -253,7 +254,7 @@ export class MethodParameters implements IMethodParameters {
         continue;
       }
       const extraMeta: IdentifierMeta[] = [];
-      if (opt.concatTokens().toUpperCase().startsWith("VALUE(")) {
+      if (p.getFirstToken().getStr().toUpperCase() === "VALUE" && p.getChildren()[1]?.getFirstToken().getStr() === "(") {
         extraMeta.push(IdentifierMeta.PassByValue);
       } else if (meta.includes(IdentifierMeta.MethodImporting)) {
         extraMeta.push(IdentifierMeta.ReadOnly);
