@@ -1,4 +1,4 @@
-import {ExpressionNode} from "../../nodes";
+import {ExpressionNode, TokenNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -35,7 +35,7 @@ export class MethodCallChain {
       children.unshift(first);
     }
 
-    let previous = "";
+    let previous: ExpressionNode | TokenNode | undefined = undefined;
     while (children.length > 0) {
       const current = children.shift();
       if (current === undefined) {
@@ -56,7 +56,7 @@ export class MethodCallChain {
             scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename);
           }
         } else {
-          if (previous === "=>" && method?.isStatic() === false) {
+          if (previous && previous.getFirstToken().getStr() === "=>" && method?.isStatic() === false) {
             throw new Error("Method \"" + methodName + "\" not static");
           }
           const extra: IReferenceExtras = {
@@ -93,7 +93,7 @@ export class MethodCallChain {
         context = new AttributeName().runSyntax(context, current, scope, filename);
       }
 
-      previous = current.concatTokens();
+      previous = current;
     }
 
     return context;
