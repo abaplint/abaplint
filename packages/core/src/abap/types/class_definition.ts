@@ -22,7 +22,6 @@ import {ReferenceType} from "../5_syntax/_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
-  private readonly node: StructureNode;
   private readonly methodDefs: MethodDefinitions;
   private readonly types: TypeDefinitions;
   private readonly attributes: Attributes;
@@ -47,7 +46,6 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     super(name, filename);
     scope.addClassDefinition(this);
 
-    this.node = node;
     this.events = [];
     this.implementing = [];
     this.globalValue = def!.findFirstExpression(Expressions.ClassGlobal) !== undefined;
@@ -58,21 +56,21 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.superClass = this.findSuper(def, filename, scope);
     this.friends = this.findFriends(def, filename, scope);
 
-    this.parse(filename, scope);
+    this.parse(filename, scope, node);
 
     const helper = new ObjectOriented(scope);
     helper.fromSuperClassesAndInterfaces(this);
     helper.addAliasedTypes(this.aliases);
 
-    this.attributes = new Attributes(this.node, this.filename, scope);
+    this.attributes = new Attributes(node, this.filename, scope);
     this.types = this.attributes.getTypes();
 
-    const events = this.node.findAllStatements(Statements.Events);
+    const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
       this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope)); // todo, all these are not Public
     }
 
-    this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
+    this.methodDefs = new MethodDefinitions(node, this.filename, scope);
 
     scope.pop(node.getLastToken().getEnd());
 
@@ -203,8 +201,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
   }
 
-  private parse(filename: string, scope: CurrentScope) {
-    for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
+  private parse(filename: string, scope: CurrentScope, inputNode: StructureNode) {
+    for (const node of inputNode.findAllStatements(Statements.InterfaceDef)) {
       const partial = node.concatTokens().toUpperCase().includes(" PARTIALLY IMPLEMENTED");
       const token = node.findFirstExpression(Expressions.InterfaceName)?.getFirstToken();
       if (token === undefined) {
@@ -223,7 +221,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       }
     }
 
-    this.aliases = new Aliases(this.node, this.filename, scope);
+    this.aliases = new Aliases(inputNode, this.filename, scope);
   }
 
 }

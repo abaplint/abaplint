@@ -74,7 +74,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   }
 
   public isLocal(): boolean {
-    return !this.isGlobal();
+    return !this.globalValue;
   }
 
   public isGlobal(): boolean {
