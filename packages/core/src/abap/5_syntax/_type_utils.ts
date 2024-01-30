@@ -262,9 +262,9 @@ export class TypeUtils {
           return source.getLength() <= target.getLength();
         }
         return source.getLength() === target.getLength();
-      } else if (target instanceof XStringType || target instanceof Integer8Type) {
+      } else if (target instanceof XStringType) {
         return false;
-      } else if (target instanceof IntegerType) {
+      } else if (target instanceof IntegerType || target instanceof Integer8Type) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
         }
