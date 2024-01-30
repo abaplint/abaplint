@@ -401,4 +401,19 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
   });
 
+  it("raise exception new", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    RAISE EXCEPTION NEW cx_salv_error( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "newex.prog.abap");
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
+  });
+
 });
