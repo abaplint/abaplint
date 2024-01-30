@@ -401,7 +401,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
   });
 
-  it.only("raise exception new", async () => {
+  it("raise exception new", async () => {
     const progabap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

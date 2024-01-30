@@ -130,6 +130,10 @@ export class UncaughtException extends ABAPRule {
         const concat = n.concatTokens().toUpperCase();
         if (concat.startsWith("RAISE EXCEPTION TYPE ")) {
           name = n.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr().toUpperCase();
+        } else if (concat.startsWith("RAISE EXCEPTION NEW ")) {
+          name = n.findFirstExpression(Expressions.NewObject)?.findFirstExpression(
+            Expressions.TypeNameOrInfer)?.getFirstToken().getStr().toUpperCase();
+// todo: else its a normal Source, infer the type from it
         }
 
         this.check(name, n, file);
