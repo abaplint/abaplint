@@ -9894,6 +9894,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("InlineData, generic type C cannot be used for inferred type");
   });
 
+  it.only("incompatible, passing hex to int8", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE int8.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA hex TYPE x LENGTH 1.
+    foo( hex ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
