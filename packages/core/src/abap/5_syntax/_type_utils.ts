@@ -226,11 +226,11 @@ export class TypeUtils {
   public isAssignableStrict(source: AbstractType | undefined,
                             target: AbstractType | undefined,
                             calculated: boolean = false): boolean {
-/*
+
     console.dir(source);
     console.dir(target);
     console.dir(calculated);
-*/
+
     if (calculated && source instanceof StringType && target instanceof XStringType) {
       return false;
     }
