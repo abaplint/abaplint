@@ -109,7 +109,11 @@ export class Config implements IConfiguration {
   }
 
   public readByKey(rule: string, key: string) {
-    return this.config["rules"][rule] ? this.config["rules"][rule][key] : undefined;
+    if (this.config["rules"]) {
+      return this.config["rules"][rule] ? this.config["rules"][rule][key] : undefined;
+    } else {
+      return undefined;
+    }
   }
 
   public readByRule(rule: string) {
