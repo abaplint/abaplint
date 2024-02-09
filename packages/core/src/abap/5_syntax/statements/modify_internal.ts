@@ -25,8 +25,10 @@ export class ModifyInternal implements StatementSyntax {
           || targetType instanceof UnknownType) {
         // ok
       } else if (targetType instanceof TableType) {
-        if (node.findDirectTokenByText("TABLE") && targetType.isWithHeader() === false) {
-          // MODIFY TABLE
+        if (node.findDirectTokenByText("TABLE")
+            && node.findDirectTokenByText("INDEX")
+            && targetType.isWithHeader() === false) {
+          // MODIFY TABLE INDEX
           throw new Error("Table does not have header line");
         }
       } else {

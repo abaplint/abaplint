@@ -9950,6 +9950,15 @@ MODIFY mt_locals INDEX lv_index FROM ii_value.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, MODIFY TABLE FROM", () => {
+    const abap = `
+DATA rt_variables TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA ls_variable LIKE LINE OF rt_variables.
+MODIFY TABLE rt_variables FROM ls_variable.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
