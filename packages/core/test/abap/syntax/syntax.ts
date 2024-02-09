@@ -9930,7 +9930,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("error, does not have header line MODIFY TABLE", () => {
+  it("error, does not have header line MODIFY TABLE", () => {
     const abap = `
 DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA lv_index TYPE i.
