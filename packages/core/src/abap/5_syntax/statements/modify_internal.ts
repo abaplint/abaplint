@@ -6,6 +6,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {ComponentCond} from "../expressions/component_cond";
+import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
 
 export class ModifyInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -14,8 +15,20 @@ export class ModifyInternal implements StatementSyntax {
       new Source().runSyntax(s, scope, filename);
     }
 
-    for (const t of node.findDirectExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, scope, filename);
+    // there is only one
+    const targetExpression = node.findFirstExpression(Expressions.Target);
+    if (targetExpression) {
+      // it might be a dynamic target
+      const targetType = new Target().runSyntax(targetExpression, scope, filename);
+      if (targetType instanceof VoidType
+          || targetType instanceof AnyType
+          || targetType instanceof UnknownType) {
+        // ok
+      } else if (targetType instanceof TableType) {
+        // ok, todo
+      } else {
+        throw new Error("Not an internal table");
+      }
     }
 
     const target = node.findDirectExpression(Expressions.FSTarget);

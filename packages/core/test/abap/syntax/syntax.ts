@@ -9930,6 +9930,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("error, does not have header line MODIFY TABLE", () => {
+    const abap = `
+DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lv_index TYPE i.
+DATA ii_value TYPE i.
+MODIFY TABLE mt_locals INDEX lv_index FROM ii_value.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Table does not have header line");
+  });
+
+  it("ok, MODIFY INDEX FROM", () => {
+    const abap = `
+DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lv_index TYPE i.
+DATA ii_value TYPE i.
+MODIFY mt_locals INDEX lv_index FROM ii_value.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
