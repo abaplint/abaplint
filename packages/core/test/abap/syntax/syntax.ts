@@ -9959,6 +9959,13 @@ MODIFY TABLE rt_variables FROM ls_variable.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RADIOBUTTON and LENGTH not possible together", () => {
+    const abap = `
+PARAMETERS p_conf TYPE c LENGTH 1 RADIOBUTTON GROUP g1 DEFAULT 'X'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("RADIOBUTTON and LENGTH not possible together");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
