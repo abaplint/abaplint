@@ -17,6 +17,7 @@ const tests = [
   {abap: `TYPES: ty_table TYPE STANDARD TABLE OF usr02 WITH DEFAULT KEY. "comment`, cnt: 1},
   {abap: `TYPES: ty_table TYPE STANDARD TABLE OF usr02 WITH EMPTY KEY. "DEFAULT KEY`, cnt: 0},
   {abap: "TYPES: ty_table TYPE STANDARD TABLE OF usr02 WITH EMPTY KEY.", cnt: 0},
+  {abap: `DATA: lt_foo TYPE STANDARD TABLE OF usr02 WITH DEFAULT KEY. "#EC DEFAULT_KEY`, cnt: 0},
   {abap: "DATA: lt_foo TYPE STANDARD TABLE OF usr02 WITH DEFAULT KEY.", cnt: 1},
   {abap: "DATA: lt_foo TYPE STANDARD TABLE OF usr02 WITH EMPTY KEY.", cnt: 0},
 
@@ -32,6 +33,8 @@ const tests = [
   {abap: "bar = lines( foo ).", cnt: 0, fix: false},
 
   {abap: `TEST-SEAM authorization_seam. END-TEST-SEAM.`, cnt: 1},
+  {abap: `TEST-SEAM authorization_seam. "#EC TEST_SEAM_USAGE
+          END-TEST-SEAM.`, cnt: 0},
 
   {abap: `EXPORT asdf TO MEMORY ID 'ZSDF'.`, cnt: 1},
   {abap: `EXPORT tab = tab TO DATABASE foo(tx) ID bar FROM moo.`, cnt: 1},
