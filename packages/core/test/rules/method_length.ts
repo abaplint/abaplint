@@ -168,6 +168,19 @@ const testClassTests = [
     conf: confCheckTestClasses,
     filename: `zcl_foo.clas.abap`,
     issueLength: 0},
+
+  {abap: `CLASS foo DEFINITION FOR TESTING.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS foo IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`,
+  description: "global testclass",
+  conf: confIgnoreTestClasses,
+  filename: `foo.clas.abap`,
+  issueLength: 0},
 ];
 
 testRulesWithFile(testClassTests);

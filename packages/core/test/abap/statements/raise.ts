@@ -39,5 +39,6 @@ statementVersion(versions, "RAISE", Statements.Raise);
 
 const fails = [
   "RAISE EXCEPTION NEW cx_blah( ) MESSAGE e003.",
+  "RAISE EXCEPTION TYPE zcx_sdfds MESSAGE e006(sdf) WITH xstrlen( val ) ms_info.",
 ];
 statementExpectFail(fails, "RAISE");

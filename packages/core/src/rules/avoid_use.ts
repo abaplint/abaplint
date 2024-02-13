@@ -8,6 +8,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {Version} from "../version";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {EditHelper, IEdit} from "../edit_helper";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class AvoidUseConf extends BasicRuleConfig {
   /** Do not emit quick fix suggestion */
@@ -16,11 +17,11 @@ export class AvoidUseConf extends BasicRuleConfig {
   public define: boolean = true;
   /** Detects statics */
   public statics: boolean = true;
-  /** Detects DEFAULT KEY definitions, from version v740sp02 and up */
+  /** Detects DEFAULT KEY definitions, from version v740sp02 and up. Use pseudo comment DEFAULT_KEY to ignore */
   public defaultKey: boolean = true;
   /** Detects BREAK and BREAK-POINTS */
   public break: boolean = true;
-  /** Detects TEST SEAMS */
+  /** Detects TEST SEAMS. Use pseudo comment TEST_SEAM_USAGE to ignore */
   public testSeams: boolean = true;
   /** Detects DESCRIBE TABLE LINES, use lines() instead */
   public describeLines: boolean = true;
@@ -70,8 +71,11 @@ BREAK points`,
     const issues: Issue[] = [];
     let isStaticsBlock: boolean = false;
 
-    for (const statementNode of file.getStatements()) {
+    const statements = file.getStatements();
+    for (let i = 0; i < statements.length; i++) {
+      const statementNode = statements[i];
       const statement = statementNode.get();
+
       let message: string | undefined = undefined;
       let fix: IEdit | undefined = undefined;
       if (this.conf.define && statement instanceof Statements.Define) {
@@ -92,6 +96,10 @@ BREAK points`,
       } else if (this.conf.exportToDatabase && statement instanceof Statements.Export && statementNode.concatTokens().includes("TO DATABASE ")) {
         message = "EXPORT TO DATABASE";
       } else if (this.conf.testSeams && statement instanceof Statements.TestSeam) {
+        const next = statements[i + 1];
+        if (next?.get() instanceof Comment && next.concatTokens().includes("EC TEST_SEAM_USAGE")) {
+          continue;
+        }
         message = "TEST-SEAM";
       } else if (this.conf.statics && statement instanceof Statements.Static && isStaticsBlock === false) {
         message = "STATICS";
@@ -111,6 +119,10 @@ BREAK points`,
         const tt = statementNode.findFirstExpression(TypeTable)?.findDirectExpression(TypeTableKey);
         const token = tt?.findDirectTokenByText("DEFAULT");
         if (tt && token) {
+          const next = statements[i + 1];
+          if (next?.get() instanceof Comment && next.concatTokens().includes("EC DEFAULT_KEY")) {
+            continue;
+          }
           message = "DEFAULT KEY";
           issues.push(Issue.atToken(file, token, this.getDescription(message), this.getMetadata().key, this.conf.severity));
         }

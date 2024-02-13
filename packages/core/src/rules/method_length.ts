@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
+import * as Objects from "../objects";
 import {IMethodLengthResult, MethodLengthStats} from "../utils/method_length_stats";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -65,6 +66,13 @@ Abstract methods without statements are considered okay.`,
   }
 
   public run(obj: IObject): Issue[] {
+
+    if (this.conf.ignoreTestClasses === true
+        && obj instanceof Objects.Class
+        && obj.getClassDefinition()?.isForTesting === true) {
+      return [];
+    }
+
     const methodStats = MethodLengthStats.run(obj);
     const methodIssues = this.check(methodStats, "METHOD");
 
@@ -87,6 +95,7 @@ Abstract methods without statements are considered okay.`,
         && s.file.getFilename().includes(".testclasses.")) {
         continue;
       }
+
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
         if (this.isAbstract(s)) {
           continue;

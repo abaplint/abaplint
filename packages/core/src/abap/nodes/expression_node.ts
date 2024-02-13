@@ -32,6 +32,30 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     throw new Error("ExpressionNode, getFirstToken, no children");
   }
 
+  public concatTokensWithLinebreaks(): string {
+    let str = "";
+    let prev: AbstractToken | undefined;
+    for (const token of this.getTokens()) {
+      if (token instanceof Pragma) {
+        continue;
+      }
+      if (str === "") {
+        str = token.getStr();
+      } else if (prev && prev.getStr().length + prev.getCol() === token.getCol()
+          && prev.getRow() === token.getRow()) {
+        str = str + token.getStr();
+      } else {
+        if (prev && prev.getRow() !== token.getRow()) {
+          str = str + "\n" + token.getStr();
+        } else {
+          str = str + " " + token.getStr();
+        }
+      }
+      prev = token;
+    }
+    return str;
+  }
+
   public concatTokens(): string {
     let str = "";
     let prev: AbstractToken | undefined;

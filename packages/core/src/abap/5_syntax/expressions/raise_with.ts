@@ -5,7 +5,7 @@ import {Source} from "./source";
 
 export class RaiseWith {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string) {
-    for (const f of node.findDirectExpressions(Expressions.Source)) {
+    for (const f of node.findDirectExpressions(Expressions.SimpleSource3)) {
       new Source().runSyntax(f, scope, filename);
     }
   }

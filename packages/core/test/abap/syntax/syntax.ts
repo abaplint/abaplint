@@ -9930,6 +9930,42 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, does not have header line MODIFY TABLE", () => {
+    const abap = `
+DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lv_index TYPE i.
+DATA ii_value TYPE i.
+MODIFY TABLE mt_locals INDEX lv_index FROM ii_value.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Table does not have header line");
+  });
+
+  it("ok, MODIFY INDEX FROM", () => {
+    const abap = `
+DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lv_index TYPE i.
+DATA ii_value TYPE i.
+MODIFY mt_locals INDEX lv_index FROM ii_value.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, MODIFY TABLE FROM", () => {
+    const abap = `
+DATA rt_variables TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA ls_variable LIKE LINE OF rt_variables.
+MODIFY TABLE rt_variables FROM ls_variable.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("RADIOBUTTON and LENGTH not possible together", () => {
+    const abap = `
+PARAMETERS p_conf TYPE c LENGTH 1 RADIOBUTTON GROUP g1 DEFAULT 'X'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("RADIOBUTTON and LENGTH not possible together");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

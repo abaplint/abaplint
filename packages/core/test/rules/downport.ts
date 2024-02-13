@@ -5677,4 +5677,23 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("must respect line break when outlininig", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         text TYPE string,
+       END OF ty.
+DATA foo TYPE ty.
+foo = VALUE #( text = 'lorem' &&
+  'ipsum' ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         text TYPE string,
+       END OF ty.
+DATA foo TYPE ty.
+CLEAR foo.
+foo-text = 'lorem' &&
+'ipsum'.`;
+    testFix(abap, expected);
+  });
+
 });

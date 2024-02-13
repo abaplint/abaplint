@@ -1313,7 +1313,7 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       startToken = node.getFirstToken();
     }
 
-    const withs = node.findDirectExpression(Expressions.RaiseWith)?.findDirectExpressions(Expressions.Source) || [];
+    const withs = node.findDirectExpression(Expressions.RaiseWith)?.findDirectExpressions(Expressions.SimpleSource3) || [];
 
     const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
 
@@ -1748,7 +1748,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     let code = `CLEAR ${target.concatTokens()}.\n`;
     for (const fieldAssignment of fieldAssignments) {
-      code += indentation + target.concatTokens() + "-" + fieldAssignment.concatTokens() + `.\n`;
+      code += indentation + target.concatTokens() + "-" + fieldAssignment.concatTokensWithLinebreaks() + `.\n`;
     }
     code = code.trimEnd();
 
