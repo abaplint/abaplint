@@ -1450,7 +1450,7 @@ char10(len) = 'A'.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("cond and concat", async () => {
+  it.only("cond and concat", async () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
