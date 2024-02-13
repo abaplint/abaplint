@@ -103,6 +103,11 @@ export class Source {
           } else {
             this.addIfInferred(node, scope, filename, foundType);
           }
+          children.shift();
+          children.shift();
+          children.shift();
+          children.shift();
+          this.traverseRemainingChildren(children, scope, filename);
           return foundType ? foundType : bodyType;
         }
         case "CONV":
@@ -214,6 +219,13 @@ export class Source {
   }
 
 ////////////////////////////////
+
+  private traverseRemainingChildren(children: (ExpressionNode | TokenNode)[], scope: CurrentScope, filename: string) {
+    const last = children[children.length - 1];
+    if (last && last.get() instanceof Expressions.Source) {
+      new Source().runSyntax(last as ExpressionNode, scope, filename);
+    }
+  }
 
   private infer(context: AbstractType | undefined, found: AbstractType | undefined) {
     if (context instanceof FloatType && found instanceof IntegerType) {
