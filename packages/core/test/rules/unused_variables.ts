@@ -1450,4 +1450,25 @@ char10(len) = 'A'.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("cond and concat", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS my_method.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+
+  METHOD my_method.
+    DATA(lt_tab) = VALUE string_table( ).
+    LOOP AT lt_tab REFERENCE INTO DATA(lr_row).
+      DATA(lv_test) = COND #( WHEN 'test' = 'test' THEN 'test' ) && lr_row->*.
+      WRITE lv_test.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
