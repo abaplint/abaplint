@@ -126,7 +126,7 @@
           "type": "boolean"
         },
         "defaultKey": {
-          "description": "Detects DEFAULT KEY definitions, from version v740sp02 and up",
+          "description": "Detects DEFAULT KEY definitions, from version v740sp02 and up. Use pseudo comment DEFAULT_KEY to ignore",
           "type": "boolean"
         },
         "define": {
@@ -165,7 +165,7 @@
           "type": "boolean"
         },
         "testSeams": {
-          "description": "Detects TEST SEAMS",
+          "description": "Detects TEST SEAMS. Use pseudo comment TEST_SEAM_USAGE to ignore",
           "type": "boolean"
         }
       },
