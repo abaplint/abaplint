@@ -5,6 +5,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
 import {Comment} from "../abap/2_statements/statements/_statement";
+import {StatementNode} from "../abap/nodes";
 
 export class UnnecessaryChainingConf extends BasicRuleConfig {
 }
@@ -51,9 +52,9 @@ export class UnnecessaryChaining extends ABAPRule {
       }
 
       j = 1;
-      let prevStatement = statements[i - j];
+      let prevStatement: StatementNode | undefined = statements[i - j];
       while (prevStatement?.get() instanceof Comment) {
-        j--;
+        j++;
         prevStatement = statements[i - j];
       }
 
