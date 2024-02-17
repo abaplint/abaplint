@@ -22,13 +22,18 @@ export interface IScopeVariable {
   identifier: TypedIdentifier;
 }
 
+export type DeferredInformation = {
+  token: AbstractToken,
+  ooType: "CLAS" | "INTF",
+};
+
 export interface IScopeData {
   vars: {[name: string]: TypedIdentifier};
   types: {[name: string]: TypedIdentifier};
   // static methods can type LIKE instance variables that are not visible
   extraLikeTypes: {[name: string]: TypedIdentifier};
 
-  deferred: {[name: string]: AbstractToken};
+  deferred: {[name: string]: DeferredInformation};
 
   cdefs: {[name: string]: IClassDefinition};
   idefs: {[name: string]: IInterfaceDefinition};

@@ -74,13 +74,16 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     this.identifier.end = end;
   }
 
-  public findDeferred(name: string): Identifier | undefined {
+  public findDeferred(name: string): {id: Identifier | undefined, ooType: "CLAS" | "INTF"} | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {
       const found = search.getData().deferred[name.toUpperCase()];
       if (found) {
-        return new Identifier(found, search.identifier.filename);
+        return {
+          id: new Identifier(found.token, search.identifier.filename),
+          ooType: found.ooType,
+        };
       }
       search = search.getParent();
     }

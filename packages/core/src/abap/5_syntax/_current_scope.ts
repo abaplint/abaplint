@@ -163,11 +163,11 @@ export class CurrentScope {
     this.addNamedIdentifier(identifier.getName(), identifier);
   }
 
-  public addDeferred(token: AbstractToken | undefined) {
+  public addDeferred(token: AbstractToken | undefined, type: "CLAS" | "INTF") {
     if (token === undefined) {
       return;
     }
-    this.current!.getData().deferred[token.getStr().toUpperCase()] = token;
+    this.current!.getData().deferred[token.getStr().toUpperCase()] = {token, ooType: type};
   }
 
   public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {
@@ -289,7 +289,16 @@ export class CurrentScope {
 
     const def = this.current?.findDeferred(name);
     if (def !== undefined) {
-      return {id: def};
+      let rttiName = prefixRTTI;
+      switch (def.ooType) {
+        case "INTF":
+          rttiName = rttiName + "\\INTERFACE=" + name;
+          break;
+        default:
+          rttiName = rttiName + "\\CLASS=" + name;
+          break;
+      }
+      return {id: def.id, ooType: def.ooType, RTTIName: rttiName};
     }
 
     return undefined;
