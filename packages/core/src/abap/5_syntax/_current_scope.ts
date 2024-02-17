@@ -326,6 +326,12 @@ export class CurrentScope {
       return undefined;
     }
 
+    if (this.parentObj.getType() === "TYPE"
+        && this.parentObj.getName().toUpperCase() === typePoolName.toUpperCase()) {
+// dont recurse into itself
+      return undefined;
+    }
+
     const typePool = this.reg.getObject("TYPE", typePoolName) as TypePool | undefined;
     if (typePool === undefined) {
       return undefined;
@@ -345,6 +351,12 @@ export class CurrentScope {
     const typePoolName = name.split("_")[0];
 
     if (typePoolName.length <= 2 || typePoolName.length > 5) {
+      return undefined;
+    }
+
+    if (this.parentObj.getType() === "TYPE"
+        && this.parentObj.getName().toUpperCase() === typePoolName.toUpperCase()) {
+// dont recurse into itself
       return undefined;
     }
 

@@ -46,7 +46,7 @@ ENDCLASS.`;
     new FindGlobalDefinitions(reg).run();
   });
 
-  it.only("cyclic class and type pool", async () => {
+  it("cyclic class and type pool", async () => {
     const abap = `
 CLASS cl_abap_typedescr DEFINITION PUBLIC ABSTRACT CREATE PUBLIC .
   PUBLIC SECTION.
