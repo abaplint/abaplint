@@ -5696,4 +5696,27 @@ foo-text = 'lorem' &&
     testFix(abap, expected);
   });
 
+  it("must respect line break when outlininig, another", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         text TYPE string,
+       END OF ty.
+DATA foo TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+foo = VALUE #( ( text = 'lorem' &&
+  'ipsum' ) ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         text TYPE string,
+       END OF ty.
+DATA foo TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA temp1 LIKE foo.
+CLEAR temp1.
+DATA temp2 LIKE LINE OF temp1.
+temp2-text = 'lorem' &&
+'ipsum'.
+INSERT temp2 INTO TABLE temp1.
+foo = temp1.`;
+    testFix(abap, expected);
+  });
+
 });
