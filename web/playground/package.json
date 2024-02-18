@@ -16,13 +16,13 @@
     "@phosphor/widgets": "^1.9.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
-    "monaco-editor": "^0.45.0",
+    "monaco-editor": "^0.46.0",
     "stream-browserify": "^3.0.0",
     "vscode-languageserver-types": "^3.17.5"
   },
   "devDependencies": {
-    "@abaplint/monaco": "^2.105.17",
-    "@abaplint/core": "^2.105.17",
+    "@abaplint/monaco": "^2.105.18",
+    "@abaplint/core": "^2.105.18",
     "css-loader": "^6.10.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.0",
@@ -34,8 +34,8 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "url-loader": "^4.1.1",
-    "webpack": "^5.90.1",
+    "webpack": "^5.90.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.1"
+    "webpack-dev-server": "^5.0.2"
   }
 }
