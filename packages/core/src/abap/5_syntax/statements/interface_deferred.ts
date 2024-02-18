@@ -6,6 +6,6 @@ import {StatementSyntax} from "../_statement_syntax";
 export class InterfaceDeferred implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): void {
     const name = node.findFirstExpression(Expressions.InterfaceName)?.getFirstToken();
-    scope.addDeferred(name);
+    scope.addDeferred(name, "INTF");
   }
 }

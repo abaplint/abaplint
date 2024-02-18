@@ -77,7 +77,7 @@ export class EditorWidget extends Widget {
         theme: "vs-dark",
 //        "semanticHighlighting.enabled": true,
         lightbulb: {
-          enabled: true,
+          enabled: monaco.editor.ShowLightbulbIconMode.On,
         },
       });
 

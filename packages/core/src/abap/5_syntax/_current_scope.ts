@@ -163,11 +163,11 @@ export class CurrentScope {
     this.addNamedIdentifier(identifier.getName(), identifier);
   }
 
-  public addDeferred(token: AbstractToken | undefined) {
+  public addDeferred(token: AbstractToken | undefined, type: "CLAS" | "INTF") {
     if (token === undefined) {
       return;
     }
-    this.current!.getData().deferred[token.getStr().toUpperCase()] = token;
+    this.current!.getData().deferred[token.getStr().toUpperCase()] = {token, ooType: type};
   }
 
   public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {
@@ -289,7 +289,16 @@ export class CurrentScope {
 
     const def = this.current?.findDeferred(name);
     if (def !== undefined) {
-      return {id: def};
+      let rttiName = prefixRTTI;
+      switch (def.ooType) {
+        case "INTF":
+          rttiName = rttiName + "\\INTERFACE=" + name;
+          break;
+        default:
+          rttiName = rttiName + "\\CLASS=" + name;
+          break;
+      }
+      return {id: def.id, ooType: def.ooType, RTTIName: rttiName};
     }
 
     return undefined;
@@ -326,6 +335,12 @@ export class CurrentScope {
       return undefined;
     }
 
+    if (this.parentObj.getType() === "TYPE"
+        && this.parentObj.getName().toUpperCase() === typePoolName.toUpperCase()) {
+// dont recurse into itself
+      return undefined;
+    }
+
     const typePool = this.reg.getObject("TYPE", typePoolName) as TypePool | undefined;
     if (typePool === undefined) {
       return undefined;
@@ -345,6 +360,12 @@ export class CurrentScope {
     const typePoolName = name.split("_")[0];
 
     if (typePoolName.length <= 2 || typePoolName.length > 5) {
+      return undefined;
+    }
+
+    if (this.parentObj.getType() === "TYPE"
+        && this.parentObj.getName().toUpperCase() === typePoolName.toUpperCase()) {
+// dont recurse into itself
       return undefined;
     }
 

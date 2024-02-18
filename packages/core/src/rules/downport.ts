@@ -2491,7 +2491,7 @@ ${indentation}    output = ${uniqueName}.\n`;
                 body += data;
                 added = true;
               }
-              body += indentation + structureName + "-" + b.concatTokens() + ".\n";
+              body += indentation + structureName + "-" + (b as ExpressionNode).concatTokensWithLinebreaks() + ".\n";
             } else if (b.get() instanceof Expressions.Source) {
 // note: it wont work with APPEND for Hashed/Sorted Tables, so use INSERT,
               body += indentation + "INSERT " + b.concatTokens() + ` INTO TABLE ${uniqueName}.\n`;
