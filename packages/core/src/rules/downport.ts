@@ -1313,7 +1313,7 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       startToken = node.getFirstToken();
     }
 
-    const withs = node.findDirectExpression(Expressions.RaiseWith)?.findDirectExpressions(Expressions.SimpleSource3) || [];
+    const withs = node.findDirectExpression(Expressions.RaiseWith)?.findDirectExpressions(Expressions.SimpleSource1) || [];
 
     const className = node.findDirectExpression(Expressions.ClassName)?.concatTokens() || "ERROR";
 

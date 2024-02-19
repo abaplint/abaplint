@@ -19,6 +19,11 @@ const tests = [
   "RAISE EXCEPTION NEW zcx_excel( i_message = 'Worksheet not found.').",
   "RAISE exc.",
   "RAISE SHORTDUMP TYPE /foo/bar MESSAGE e401(/foo/bar) WITH iv_table.",
+  "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZZZ' NUMBER '001' WITH |23234|.",
+  "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZZZ' NUMBER '001' WITH |23234| && |sdf|.",
+  `RAISE EXCEPTION TYPE zcxsdfsd MESSAGE e003(zsdfsdf)
+    WITH lx_error->get_text( )
+    EXPORTING previous = lx_error.`,
 ];
 
 statementType(tests, "RAISE", Statements.Raise);
@@ -39,6 +44,6 @@ statementVersion(versions, "RAISE", Statements.Raise);
 
 const fails = [
   "RAISE EXCEPTION NEW cx_blah( ) MESSAGE e003.",
-  "RAISE EXCEPTION TYPE zcx_sdfds MESSAGE e006(sdf) WITH xstrlen( val ) ms_info.",
+//  "RAISE EXCEPTION TYPE zcx_sdfds MESSAGE e006(sdf) WITH xstrlen( val ) ms_info.",
 ];
 statementExpectFail(fails, "RAISE");

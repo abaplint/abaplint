@@ -78,6 +78,11 @@ CASE bar.
     ASSERT 1 = 'todo'.
 ENDCASE.`, cnt: 4},
 
+// with syntax error
+  {abap: `LOOP AT foobar.
+  sdfsddfs.
+  ENDLOOP.`, cnt: 0},
+
 ];
 
 testRule(tests, EmptyStructure);
