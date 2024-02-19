@@ -99,6 +99,33 @@ const tests = [
     ENDLOOP.
   ENDIF.`, cnt: 0},
 
+// with syntax error
+  {abap: `
+IF lv_error = abap_false.
+  CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+    DESTINATION 'NONE'
+    EXPORTING
+      wait                  = abap_true
+    EXCEPTIONS
+      system_failure        = 1 MESSAGE lv_msg
+      communication_failure = 2 MESSAGE lv_msg
+      resource_failure      = 3
+      OTHERS                = 4.
+  ASSERT sy-subrc = 0.
+ELSE.
+  CALL FUNCTION 'BAPI_TRANSACTION_ROLLBACK'
+    DESTINATION 'NONE'
+    EXCEPTIONS
+      system_failure        = 1 MESSAGE lv_msg
+      communication_failure = 2 MESSAGE lv_msg
+      resource_failure      = 3
+      OTHERS                = 4.
+  ASSERT sy-subrc = 0.
+  RAISE EXCEPTION TYPE zsdsdf
+    MESSAGE e001(zsdfsdf)
+    WITH.
+ENDIF.`, cnt: 0},
+
 ];
 
 testRule(tests, IdenticalContents);

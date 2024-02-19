@@ -5,6 +5,7 @@ import {ABAPRule} from "./_abap_rule";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {StatementNode, StructureNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
+import {Unknown} from "../abap/2_statements/statements/_statement";
 
 export class IdenticalContentsConf extends BasicRuleConfig {
 }
@@ -52,6 +53,11 @@ WRITE 'world'.`,
     const structure = file.getStructure();
     if (structure === undefined) {
       return [];
+    }
+    for (const statement of file.getStatements()) {
+      if (statement.get() instanceof Unknown) {
+        return []; // contains parser errors
+      }
     }
 
     for (const i of structure.findAllStructuresRecursive(Structures.If)) {
