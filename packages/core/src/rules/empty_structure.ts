@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {StructureNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {Unknown} from "../abap/2_statements/statements/_statement";
 
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty LOOP blocks */
@@ -60,6 +61,11 @@ export class EmptyStructure extends ABAPRule {
     const stru = file.getStructure();
     if (stru === undefined) {
       return [];
+    }
+    for (const statement of file.getStatements()) {
+      if (statement.get() instanceof Unknown) {
+        return []; // contains parser errors
+      }
     }
 
     const candidates: StructureNode[] = [];
