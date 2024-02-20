@@ -4,7 +4,7 @@ import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {IObjectAndToken} from "../_iddic_references";
-import {AnyType, DataReference, GenericObjectReferenceType, ITableOptions, TableAccessType} from "../abap/types/basic";
+import {DataReference, GenericObjectReferenceType, ITableOptions, TableAccessType} from "../abap/types/basic";
 import {xmlToArray} from "../xml_utils";
 
 export class TableType extends AbstractObject {
@@ -141,7 +141,7 @@ export class TableType extends AbstractObject {
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype === "OBJECT") {
       type = new Types.TableType(new GenericObjectReferenceType(), tableOptions, this.getName());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype === "DATA") {
-      type = new Types.TableType(new DataReference(new AnyType()), tableOptions, this.getName());
+      type = new Types.TableType(new DataReference(new Types.DataType()), tableOptions, this.getName());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
       const lookup = ddic.lookupObject(this.parsedXML.rowtype);
       type = new Types.TableType(lookup.type, tableOptions, this.getName());

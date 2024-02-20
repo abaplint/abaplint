@@ -1,5 +1,5 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
@@ -73,6 +73,7 @@ export class TypeUtils {
         || type instanceof CSequenceType
         || type instanceof CGenericType
         || type instanceof DateType
+        || type instanceof DataType
         || type instanceof CLikeType
         || type instanceof PackedType
         || type instanceof TimeType) {
@@ -302,7 +303,9 @@ export class TypeUtils {
         return true;
       } else if (target instanceof CLikeType) {
         return this.isCharLikeStrict(source);
-      } else if (target instanceof VoidType || target instanceof AnyType) {
+      } else if (target instanceof VoidType
+          || target instanceof AnyType
+          || target instanceof DataType) {
         return true;
       }
       return false;
@@ -358,6 +361,7 @@ export class TypeUtils {
       }
       if (source instanceof VoidType
           || source instanceof AnyType
+          || source instanceof DataType
           || source instanceof UnknownType) {
         return true;
       } else if (source instanceof TableType) {
@@ -395,6 +399,7 @@ export class TypeUtils {
       if (source instanceof ObjectReferenceType
           || source instanceof GenericObjectReferenceType
           || source instanceof VoidType
+          || source instanceof DataType
           || source instanceof AnyType
           || source instanceof UnknownType) {
         return true;
@@ -403,6 +408,7 @@ export class TypeUtils {
     } else if (target instanceof DataReference) {
       if (source instanceof DataReference
           || source instanceof VoidType
+          || source instanceof DataType
           || source instanceof AnyType
           || source instanceof UnknownType) {
         return true;
@@ -413,6 +419,7 @@ export class TypeUtils {
         return this.isAssignable(source.getRowType(), target);
       } else if (source instanceof VoidType
           || source instanceof AnyType
+          || source instanceof DataType
           || source instanceof UnknownType) {
         return true;
       } else if (source instanceof StructureType) {

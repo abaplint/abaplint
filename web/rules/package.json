@@ -10,15 +10,15 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/core": "^2.105.19",
-    "@abaplint/monaco": "^2.105.19",
+    "@abaplint/core": "^2.105.20",
+    "@abaplint/monaco": "^2.105.20",
     "@types/node": "^20.11.19",
     "fuse.js": "^7.0.0",
     "monaco-editor": "^0.46.0",
     "buffer": "^6.0.3",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "webpack": "^5.90.2",
+    "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4",
     "yaserver": "^0.4.0"
   }

@@ -9966,6 +9966,147 @@ PARAMETERS p_conf TYPE c LENGTH 1 RADIOBUTTON GROUP g1 DEFAULT 'X'.`;
     expect(issues[0]?.getMessage()).to.equal("RADIOBUTTON and LENGTH not possible together");
   });
 
+  it("DATA REF TO ANY is generic", () => {
+    const abap = `DATA foo TYPE REF TO any.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("DATA definition cannot be generic");
+  });
+
+  it("ok changing type DATA", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo CHANGING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lv_str TYPE string.
+    foo( CHANGING bar = lv_str ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok changing type DATA 2", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo CHANGING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TYPES: BEGIN OF ty,
+             sdf TYPE i,
+             bar TYPE REF TO object,
+           END OF ty.
+    DATA lv_str TYPE ty.
+    foo( CHANGING bar = lv_str ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok importing type DATA, struc", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TYPES: BEGIN OF ty,
+             sdf TYPE i,
+             bar TYPE REF TO object,
+           END OF ty.
+    DATA struc TYPE ty.
+    foo( struc ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("template type DATA", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    WRITE |{ bar }|.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, dereference data", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    FIELD-SYMBOLS <any> TYPE any.
+    ASSIGN bar->* TO <any>.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, refs and fs", () => {
+    const abap = `
+FIELD-SYMBOLS <lg_ecatt_object> TYPE data.
+DATA lo_ecatt_sp                TYPE REF TO object.
+lo_ecatt_sp = <lg_ecatt_object>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, changing deep data", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo CHANGING data TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TYPES: BEGIN OF ty_data,
+             abap    TYPE i,
+             foo     TYPE string,
+             another TYPE string,
+           END OF ty_data.
+    DATA ls_data TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
+    foo( CHANGING data = ls_data ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, refs of data data", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS method2 CHANGING data TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method2.
+    DATA lr_actual TYPE REF TO data.
+    method2( CHANGING data = lr_actual ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

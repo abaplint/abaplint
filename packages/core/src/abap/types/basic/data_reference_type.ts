@@ -1,4 +1,5 @@
 import {AbstractType} from "./_abstract_type";
+import {AnyType} from "./any_type";
 
 export class DataReference extends AbstractType {
   private readonly type: AbstractType;
@@ -25,7 +26,9 @@ export class DataReference extends AbstractType {
   }
 
   public isGeneric() {
-    // a DATA definition can be "REF TO data", so its not generic
+    if (this.type instanceof AnyType) {
+      return true;
+    }
     return false;
   }
 
