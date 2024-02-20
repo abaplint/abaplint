@@ -408,6 +408,7 @@ export class TypeUtils {
     } else if (target instanceof DataReference) {
       if (source instanceof DataReference
           || source instanceof VoidType
+          || source instanceof DataType
           || source instanceof AnyType
           || source instanceof UnknownType) {
         return true;
