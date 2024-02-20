@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType, UnknownType, DataReference, AnyType} from "../../types/basic";
+import {VoidType, TableType, UnknownType, DataReference, AnyType, DataType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
@@ -45,6 +45,7 @@ export class Loop implements StatementSyntax {
       throw new Error("Loop, no header line");
     } else if (!(sourceType instanceof TableType)
         && !(sourceType instanceof AnyType)
+        && !(sourceType instanceof DataType)
         && !(sourceType instanceof VoidType)
         && concat.startsWith("LOOP AT GROUP ") === false) {
       throw new Error("Loop, not a table type");

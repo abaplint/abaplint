@@ -9966,6 +9966,12 @@ PARAMETERS p_conf TYPE c LENGTH 1 RADIOBUTTON GROUP g1 DEFAULT 'X'.`;
     expect(issues[0]?.getMessage()).to.equal("RADIOBUTTON and LENGTH not possible together");
   });
 
+  it("DATA REF TO ANY is generic", () => {
+    const abap = `DATA foo TYPE REF TO any.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("DATA definition cannot be generic");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

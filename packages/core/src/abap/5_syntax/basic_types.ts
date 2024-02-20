@@ -865,7 +865,7 @@ export class BasicTypes {
     if (found && !(found instanceof Types.UnknownType) && !(found instanceof Types.VoidType)) {
       return new Types.DataReference(found);
     } else if (chain.concatTokens().toUpperCase() === "DATA") {
-      return new Types.DataReference(new Types.AnyType());
+      return new Types.DataReference(new Types.DataType());
     }
 
     if (this.scope.isBadiDef(name) === true) {

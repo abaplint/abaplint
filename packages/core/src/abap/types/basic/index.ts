@@ -4,6 +4,7 @@ export * from "./character_type";
 export * from "./clike_type";
 export * from "./csequence_type";
 export * from "./data_reference_type";
+export * from "./data_type";
 export * from "./date_type";
 export * from "./decfloat_type";
 export * from "./decfloat16_type";

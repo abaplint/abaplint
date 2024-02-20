@@ -90,7 +90,7 @@ export class DDIC {
       case "TABLE":
         return new Types.TableType(new Types.AnyType(), {withHeader: false, keyType: Types.TableKeyType.default});
       case "DATA":
-        return new Types.AnyType({qualifiedName: qualifiedName});
+        return new Types.DataType({qualifiedName: qualifiedName});
       case "NUMERIC":
         return new Types.NumericGenericType({qualifiedName: qualifiedName});
       case "UTCLONG": // todo, take version into account
