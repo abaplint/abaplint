@@ -10008,6 +10008,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok importing type DATA, struc", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TYPES: BEGIN OF ty,
+             sdf TYPE i,
+             bar TYPE REF TO object,
+           END OF ty.
+    DATA struc TYPE ty.
+    foo( struc ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("template type DATA", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
