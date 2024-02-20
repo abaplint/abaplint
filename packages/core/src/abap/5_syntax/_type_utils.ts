@@ -398,6 +398,7 @@ export class TypeUtils {
       if (source instanceof ObjectReferenceType
           || source instanceof GenericObjectReferenceType
           || source instanceof VoidType
+          || source instanceof DataType
           || source instanceof AnyType
           || source instanceof UnknownType) {
         return true;
