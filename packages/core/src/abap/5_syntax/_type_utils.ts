@@ -361,6 +361,7 @@ export class TypeUtils {
       }
       if (source instanceof VoidType
           || source instanceof AnyType
+          || source instanceof DataType
           || source instanceof UnknownType) {
         return true;
       } else if (source instanceof TableType) {

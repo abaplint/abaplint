@@ -10068,6 +10068,28 @@ lo_ecatt_sp = <lg_ecatt_object>.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, changing deep data", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo CHANGING data TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TYPES: BEGIN OF ty_data,
+             abap    TYPE i,
+             foo     TYPE string,
+             another TYPE string,
+           END OF ty_data.
+    DATA ls_data TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
+    foo( CHANGING data = ls_data ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
