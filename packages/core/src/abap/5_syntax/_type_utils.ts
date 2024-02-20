@@ -73,6 +73,7 @@ export class TypeUtils {
         || type instanceof CSequenceType
         || type instanceof CGenericType
         || type instanceof DateType
+        || type instanceof DataType
         || type instanceof CLikeType
         || type instanceof PackedType
         || type instanceof TimeType) {
