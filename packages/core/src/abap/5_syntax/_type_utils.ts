@@ -1,5 +1,5 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
@@ -413,6 +413,7 @@ export class TypeUtils {
         return this.isAssignable(source.getRowType(), target);
       } else if (source instanceof VoidType
           || source instanceof AnyType
+          || source instanceof DataType
           || source instanceof UnknownType) {
         return true;
       } else if (source instanceof StructureType) {

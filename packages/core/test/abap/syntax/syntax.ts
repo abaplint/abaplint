@@ -9972,6 +9972,42 @@ PARAMETERS p_conf TYPE c LENGTH 1 RADIOBUTTON GROUP g1 DEFAULT 'X'.`;
     expect(issues[0]?.getMessage()).to.contain("DATA definition cannot be generic");
   });
 
+  it("ok changing type DATA", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo CHANGING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lv_str TYPE string.
+    foo( CHANGING bar = lv_str ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok changing type DATA 2", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo CHANGING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TYPES: BEGIN OF ty,
+             sdf TYPE i,
+             bar TYPE REF TO object,
+           END OF ty.
+    DATA lv_str TYPE ty.
+    foo( CHANGING bar = lv_str ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
