@@ -111,7 +111,7 @@ export class NewObject {
       }
       new MethodParameters().checkExporting(parameters, scope, method, filename);
     } else if (requiredParameters.length > 0) {
-      throw new Error(`constructor parameter "${requiredParameters[0].getName()}" must be supplied` + name);
+      throw new Error(`constructor parameter "${requiredParameters[0].getName()}" must be supplied, ` + name);
     }
   }
 
