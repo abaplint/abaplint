@@ -27,6 +27,7 @@ export class TypeUtils {
       return this.isCharLikeStrict(type.getRowType());
     } else if (type instanceof StringType
         || type instanceof AnyType
+        || type instanceof DataType
         || type instanceof CharacterType
         || type instanceof SimpleType
         || type instanceof CGenericType
