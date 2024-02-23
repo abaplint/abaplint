@@ -10124,6 +10124,14 @@ CREATE OBJECT <data> TYPE ('sdfsdffsd').`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, object not clike", () => {
+    const abap = `
+DATA foo TYPE REF TO object.
+WRITE / foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Source not character like");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
