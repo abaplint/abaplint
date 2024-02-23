@@ -36,6 +36,9 @@ const tests = [
       ENDIF.`, cnt: 0},
   {abap: `DATA(lv_xyz) = get_something( VALUE #( field1 = 'X'
                                                  field2 = 'Y' ) ).`, cnt: 0},
+  {abap: `io_memory->set_linear( NEW zcl_wasm_memory_linear(
+      iv_min = mv_min
+      iv_max = mv_max ) ).`, cnt: 0},
 ];
 
 testRule(tests, KeepSingleParameterCallsOnOneLine);

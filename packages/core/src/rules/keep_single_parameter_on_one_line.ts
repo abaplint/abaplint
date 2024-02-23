@@ -142,6 +142,12 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
 
   private isSingleParameter(c: ExpressionNode): boolean {
     if (c.findDirectExpression(Expressions.Source)) {
+      for (const params of c.findAllExpressions(Expressions.ParameterListS)) {
+        if (params.getChildren().length > 1) {
+          return false;
+        }
+      }
+
       return true;
     }
 

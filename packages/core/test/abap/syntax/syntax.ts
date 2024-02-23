@@ -10107,6 +10107,23 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, data is clike", () => {
+    const abap = `
+FIELD-SYMBOLS <data> TYPE data.
+DATA str TYPE string.
+CONCATENATE 'a' <data> INTO str.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, create object data", () => {
+    const abap = `
+FIELD-SYMBOLS <data> TYPE data.
+CREATE OBJECT <data> TYPE ('sdfsdffsd').`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
