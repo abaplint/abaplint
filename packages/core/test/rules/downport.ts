@@ -5719,7 +5719,7 @@ foo = temp1.`;
     testFix(abap, expected);
   });
 
-  it.skip("reference, generic typing, ANY downported to REF TO DATA", async () => {
+  it.only("reference, generic typing, ANY downported to REF TO DATA", async () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
