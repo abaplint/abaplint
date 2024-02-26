@@ -5,7 +5,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
-import {DataReference} from "../../types/basic";
+import {AnyType, DataReference} from "../../types/basic";
 
 export class GetReference implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -14,7 +14,11 @@ export class GetReference implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
+// todo: error if inline field symbol
     if (inline) {
+      if (type instanceof AnyType) {
+        throw new Error("GET REFERENCE generic and inline declaration not possible");
+      }
       new InlineData().runSyntax(inline, scope, filename, type ? new DataReference(type) : undefined);
     } else if (target) {
       new Target().runSyntax(target, scope, filename);

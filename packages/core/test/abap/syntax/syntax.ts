@@ -10132,6 +10132,22 @@ WRITE / foo.`;
     expect(issues[0].getMessage()).to.contain("Source not character like");
   });
 
+  it("error, GET REFERENCE generic + inline", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING iv_data TYPE any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    GET REFERENCE OF iv_data INTO DATA(sdfs).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("GET REFERENCE generic and inline declaration not possible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

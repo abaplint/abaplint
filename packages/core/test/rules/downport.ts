@@ -5719,4 +5719,21 @@ foo = temp1.`;
     testFix(abap, expected);
   });
 
+  it.skip("reference, generic typing, ANY downported to REF TO DATA", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING iv_data TYPE any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(sdf) = REF #( iv_data ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+sdfds`;
+    testFix(abap, expected);
+  });
+
 });
