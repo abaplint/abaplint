@@ -14,7 +14,11 @@ export class Write implements StatementSyntax {
 
 // todo, more
 
-    const second = node.getChildren()[1];
+    let second = node.getChildren()[1];
+    if (second.get() instanceof Expressions.WriteOffsetLength) {
+      second = node.getChildren()[2];
+    }
+
     for (const s of node.findAllExpressions(Expressions.Source)) {
       const type = new Source().runSyntax(s, scope, filename);
       if (s === second

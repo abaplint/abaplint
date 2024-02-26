@@ -21,7 +21,7 @@ import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_sc
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
+import {AnyType, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {At, ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
@@ -1467,7 +1467,22 @@ IF sy-subrc <> 0.
 ENDIF.
 GET REFERENCE OF <${uniqueName}> INTO ${target.concatTokens()}`;
     } else {
-      code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${target.concatTokens()}`;
+      const concat = target.concatTokens();
+      code = `GET REFERENCE OF ${sourceRef.concatTokens()} INTO ${concat}`;
+
+      // workaround for handling generic ANY type,
+      if (concat.toUpperCase().startsWith("DATA(")) {
+        const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
+        if (spag !== undefined) {
+          const found = spag.findVariable(sourceRef.concatTokens());
+          const tt = found?.getType();
+          if (tt instanceof AnyType) {
+            const tname = target.findFirstExpression(Expressions.TargetField)?.concatTokens();
+            code = `DATA ${tname} TYPE REF TO data.\nGET REFERENCE OF ${sourceRef.concatTokens()} INTO ${tname}`;
+          }
+        }
+      }
+
     }
 
     const start = high.getFirstToken().getStart();
