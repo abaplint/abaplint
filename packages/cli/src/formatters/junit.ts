@@ -92,7 +92,14 @@ export class Junit implements IFormatter {
   }
 
   private formatFailureMessage(message: string): string {
-    return message.replace("<", "").replace(">", "");
+    let ret = message;
+    while (ret.includes("<")) {
+      ret = ret.replace("<", "&lt;");
+    }
+    while (ret.includes(">")) {
+      ret = ret.replace(">", "&gt;");
+    }
+    return ret;
   }
 
 }
