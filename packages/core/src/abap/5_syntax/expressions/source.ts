@@ -23,6 +23,7 @@ import {BuiltIn} from "../_builtin";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
+import {TypeUtils} from "../_type_utils";
 
 /*
 * Type interference, valid scenarios:
@@ -113,7 +114,10 @@ export class Source {
         case "CONV":
         {
           const foundType = this.determineType(node, scope, filename, targetType);
-          new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
+          const bodyType = new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
+          if (new TypeUtils(scope).isAssignable(foundType, bodyType) === false) {
+            throw new Error("CONV: Types not compatible");
+          }
           this.addIfInferred(node, scope, filename, foundType);
           return foundType;
         }

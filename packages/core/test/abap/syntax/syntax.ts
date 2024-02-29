@@ -10148,6 +10148,70 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("GET REFERENCE generic and inline declaration not possible");
   });
 
+  it("error, not compatible, READ TABLE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_function,
+         typeidx TYPE i,
+         codeidx TYPE i,
+       END OF ty_function.
+TYPES ty_functions TYPE STANDARD TABLE OF ty_function WITH DEFAULT KEY.
+
+DATA rv_type TYPE i.
+DATA lv_index TYPE i.
+DATA mt_functions TYPE ty_functions.
+READ TABLE mt_functions INDEX lv_index INTO rv_type.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Incompatible types");
+  });
+
+  it("error, not compatible, APPEND", () => {
+    const abap = `
+TYPES: BEGIN OF ty_function,
+         typeidx TYPE i,
+         codeidx TYPE i,
+       END OF ty_function.
+TYPES ty_functions TYPE STANDARD TABLE OF ty_function WITH DEFAULT KEY .
+
+DATA rv_type TYPE i.
+DATA lv_index TYPE i.
+DATA mt_functions TYPE ty_functions.
+
+APPEND rv_type TO mt_functions.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Incompatible types");
+  });
+
+  it("error, not compatible, CONV", () => {
+    const abap = `
+DATA: BEGIN OF foo,
+        bar TYPE i,
+      END OF foo.
+DATA(sdf) = CONV i( foo ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Types not compatible");
+  });
+
+  it("types ok, APPEND", () => {
+    const abap = `
+    DATA lv_integer TYPE string.
+    DATA lv_offset TYPE i.
+    DATA lv_length TYPE i.
+    TYPES ty_split TYPE i .
+    TYPES ty_split_tt TYPE STANDARD TABLE OF ty_split WITH DEFAULT KEY .
+    DATA mt_split TYPE ty_split_tt .
+    APPEND lv_integer+lv_offset(lv_length) TO mt_split.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("types ok, APPEND LINES", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    APPEND LINES OF tab TO tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
