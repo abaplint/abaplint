@@ -280,7 +280,8 @@ export class TypeUtils {
           return true;
         }
         return false;
-      } else if (target instanceof CGenericType) {
+      } else if (target instanceof CGenericType
+          || target instanceof GenericObjectReferenceType) {
         return false;
       } else if (target instanceof XSequenceType || target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {

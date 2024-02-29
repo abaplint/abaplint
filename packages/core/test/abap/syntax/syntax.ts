@@ -10148,6 +10148,22 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("GET REFERENCE generic and inline declaration not possible");
   });
 
+  it("error, not compatible, READ TABLE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_function,
+         typeidx TYPE i,
+         codeidx TYPE i,
+       END OF ty_function.
+TYPES ty_functions TYPE STANDARD TABLE OF ty_function WITH DEFAULT KEY.
+
+DATA rv_type TYPE i.
+DATA lv_index TYPE i.
+DATA mt_functions TYPE ty_functions.
+READ TABLE mt_functions INDEX lv_index INTO rv_type.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
