@@ -59,8 +59,14 @@ export class Append implements StatementSyntax {
       }
       const sourceType = new Source().runSyntax(source, scope, filename, rowType);
 
-      if (new TypeUtils(scope).isAssignable(sourceType, rowType) === false) {
-        throw new Error("Incompatible types");
+      if (node.findDirectTokenByText("LINES")) {
+        if (new TypeUtils(scope).isAssignable(sourceType, targetType) === false) {
+          throw new Error("Incompatible types");
+        }
+      } else {
+        if (new TypeUtils(scope).isAssignable(sourceType, rowType) === false) {
+          throw new Error("Incompatible types");
+        }
       }
     }
 

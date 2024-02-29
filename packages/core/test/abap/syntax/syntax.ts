@@ -10191,7 +10191,7 @@ DATA(sdf) = CONV i( foo ).`;
     expect(issues[0].getMessage()).to.contain("Types not compatible");
   });
 
-  it("types ok", () => {
+  it("types ok, APPEND", () => {
     const abap = `
     DATA lv_integer TYPE string.
     DATA lv_offset TYPE i.
@@ -10200,6 +10200,14 @@ DATA(sdf) = CONV i( foo ).`;
     TYPES ty_split_tt TYPE STANDARD TABLE OF ty_split WITH DEFAULT KEY .
     DATA mt_split TYPE ty_split_tt .
     APPEND lv_integer+lv_offset(lv_length) TO mt_split.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("types ok, APPEND LINES", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    APPEND LINES OF tab TO tab.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
