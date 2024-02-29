@@ -10254,6 +10254,18 @@ READ TABLE keys INDEX 1 INTO key_name.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("types ok, READ TABLE FROM structured", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         int TYPE i,
+       END OF ty.
+DATA lt_fonts TYPE HASHED TABLE OF ty WITH UNIQUE KEY int.
+DATA ls_font TYPE ty.
+READ TABLE lt_fonts FROM ls_font TRANSPORTING NO FIELDS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
