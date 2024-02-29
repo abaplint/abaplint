@@ -10191,6 +10191,19 @@ DATA(sdf) = CONV i( foo ).`;
     expect(issues[0].getMessage()).to.contain("Types not compatible");
   });
 
+  it("types ok", () => {
+    const abap = `
+    DATA lv_integer TYPE string.
+    DATA lv_offset TYPE i.
+    DATA lv_length TYPE i.
+    TYPES ty_split TYPE i .
+    TYPES ty_split_tt TYPE STANDARD TABLE OF ty_split WITH DEFAULT KEY .
+    DATA mt_split TYPE ty_split_tt .
+    APPEND lv_integer+lv_offset(lv_length) TO mt_split.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

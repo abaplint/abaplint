@@ -59,7 +59,7 @@ export class Append implements StatementSyntax {
       }
       const sourceType = new Source().runSyntax(source, scope, filename, rowType);
 
-      if (new TypeUtils(scope).isAssignableStrict(sourceType, rowType) === false) {
+      if (new TypeUtils(scope).isAssignable(sourceType, rowType) === false) {
         throw new Error("Incompatible types");
       }
     }
