@@ -49,8 +49,8 @@ export class ReadTable implements StatementSyntax {
     const fromSource = node.findExpressionAfterToken("FROM");
     if (fromSource) {
       const fromType = new Source().runSyntax(fromSource, scope, filename);
-      if (new TypeUtils(scope).isAssignable(fromType, IntegerType.get()) === false) {
-        throw new Error("READ TABLE, FROM must be simple");
+      if (new TypeUtils(scope).isAssignable(fromType, rowType) === false) {
+        throw new Error("READ TABLE, FROM must be compatible");
       }
     }
 
@@ -76,7 +76,7 @@ export class ReadTable implements StatementSyntax {
         new FSTarget().runSyntax(fst, scope, filename, rowType);
       } else if (t) {
         const targetType = new Target().runSyntax(t, scope, filename);
-        if (new TypeUtils(scope).isAssignableStrict(rowType, targetType) === false) {
+        if (new TypeUtils(scope).isAssignable(rowType, targetType) === false) {
           throw new Error("Incompatible types");
         }
       }
