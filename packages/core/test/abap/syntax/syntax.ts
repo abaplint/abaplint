@@ -10181,6 +10181,16 @@ APPEND rv_type TO mt_functions.`;
     expect(issues[0].getMessage()).to.contain("Incompatible types");
   });
 
+  it.skip("error, not compatible, CONV", () => {
+    const abap = `
+DATA: BEGIN OF foo,
+        bar TYPE i,
+      END OF foo.
+DATA(sdf) = CONV i( foo ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
