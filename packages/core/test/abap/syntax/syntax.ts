@@ -10148,6 +10148,19 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("GET REFERENCE generic and inline declaration not possible");
   });
 
+  it("error, not compatible, move structure into int", () => {
+    const abap = `
+TYPES: BEGIN OF ty_function,
+         typeidx TYPE i,
+         codeidx TYPE i,
+       END OF ty_function.
+DATA ls_function TYPE ty_function.
+DATA rv_type TYPE i.
+rv_type = ls_function.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Incompatible types");
+  });
+
   it("error, not compatible, READ TABLE", () => {
     const abap = `
 TYPES: BEGIN OF ty_function,
@@ -10208,6 +10221,35 @@ DATA(sdf) = CONV i( foo ).`;
     const abap = `
     DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     APPEND LINES OF tab TO tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("types ok, structure into string", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         name TYPE c LENGTH 10,
+       END OF ty.
+DATA ls TYPE ty.
+DATA key_name TYPE string.
+key_name = ls.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("types ok, READ TABLE", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         name TYPE c LENGTH 10,
+       END OF ty.
+DATA keys TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA row LIKE LINE OF keys.
+DATA key_name TYPE string.
+
+row-name = 'hello'.
+APPEND row TO keys.
+
+READ TABLE keys INDEX 1 INTO key_name.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });

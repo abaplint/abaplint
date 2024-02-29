@@ -444,8 +444,13 @@ export class TypeUtils {
         || target instanceof StringType) {
       if (source instanceof TableType && source.isWithHeader() === false) {
         return false;
+      } else if (target instanceof StringType
+          && source instanceof StructureType
+          && this.isCharLike(source)) {
+        return true;
       } else if (source instanceof DataReference
           || source instanceof ObjectReferenceType
+          || source instanceof StructureType
           || source instanceof GenericObjectReferenceType) {
         return false;
       }
