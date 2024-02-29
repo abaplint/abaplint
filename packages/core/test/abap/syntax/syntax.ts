@@ -10181,14 +10181,14 @@ APPEND rv_type TO mt_functions.`;
     expect(issues[0].getMessage()).to.contain("Incompatible types");
   });
 
-  it.skip("error, not compatible, CONV", () => {
+  it("error, not compatible, CONV", () => {
     const abap = `
 DATA: BEGIN OF foo,
         bar TYPE i,
       END OF foo.
 DATA(sdf) = CONV i( foo ).`;
     const issues = runProgram(abap);
-    expect(issues[0].getMessage()).to.contain("Incompatible types");
+    expect(issues[0].getMessage()).to.contain("Types not compatible");
   });
 
 // todo, static method cannot access instance attributes
