@@ -8,6 +8,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
+import {TypeUtils} from "../_type_utils";
 
 // todo: issue error for short APPEND if the source is without header line
 export class Append implements StatementSyntax {
@@ -49,13 +50,18 @@ export class Append implements StatementSyntax {
           && !(targetType instanceof VoidType)) {
         throw new Error("Append, target not a table type");
       }
+
       let rowType: AbstractType | undefined = undefined;
       if (targetType instanceof TableType) {
         rowType = targetType.getRowType();
       } else if (targetType instanceof VoidType) {
         rowType = targetType;
       }
-      new Source().runSyntax(source, scope, filename, rowType);
+      const sourceType = new Source().runSyntax(source, scope, filename, rowType);
+
+      if (new TypeUtils(scope).isAssignableStrict(sourceType, rowType) === false) {
+        throw new Error("Incompatible types");
+      }
     }
 
     const from = node.findExpressionAfterToken("FROM");
