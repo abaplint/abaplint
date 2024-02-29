@@ -444,7 +444,7 @@ export class TypeUtils {
         || target instanceof StringType) {
       if (source instanceof TableType && source.isWithHeader() === false) {
         return false;
-      } else if (target instanceof StringType
+      } else if ((target instanceof StringType || target instanceof CharacterType)
           && source instanceof StructureType
           && this.isCharLike(source)) {
         return true;

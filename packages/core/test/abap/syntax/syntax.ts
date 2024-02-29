@@ -10266,6 +10266,21 @@ READ TABLE lt_fonts FROM ls_font TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("types ok, char from structure", () => {
+    const abap = `
+DATA: BEGIN OF stru,
+        field1 TYPE c LENGTH 2,
+        field2 TYPE c LENGTH 2,
+      END OF stru.
+DATA target TYPE c LENGTH 3.
+stru-field1 = '12'.
+stru-field2 = '34'.
+target = stru.
+WRITE target.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
