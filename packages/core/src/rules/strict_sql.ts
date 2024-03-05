@@ -28,6 +28,8 @@ Also see separate rule sql_escape_host_variables
 
 Activates from v750 and up`,
       tags: [RuleTag.Upport, RuleTag.Quickfix],
+      badExample: `SELECT * FROM ztabl INTO TABLE @rt_content WHERE type = @iv_type ORDER BY PRIMARY KEY.`,
+      goodExample: `SELECT * FROM ztabl WHERE type = @iv_type ORDER BY PRIMARY KEY INTO TABLE @rt_content.`,
     };
   }
 

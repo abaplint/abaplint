@@ -39,6 +39,18 @@ export class IdenticalConditions extends ABAPRule {
 
 Prerequsites: code is pretty printed with identical cAsE`,
       tags: [RuleTag.SingleFile],
+      badExample: `IF foo = bar OR 1 = a OR foo = bar.
+ENDIF.
+CASE bar.
+  WHEN '1'.
+  WHEN 'A' OR '1'.
+ENDCASE.`,
+      goodExample: `IF foo = bar OR 1 = a.
+ENDIF.
+CASE bar.
+  WHEN '1'.
+  WHEN 'A'.
+ENDCASE.`,
     };
   }
 
