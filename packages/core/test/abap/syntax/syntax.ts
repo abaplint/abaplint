@@ -10281,6 +10281,46 @@ WRITE target.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-XOR 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-XOR 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR, opposite", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = 'FFFFFFFFFFFFFFFF' BIT-XOR lv_hex.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-OR 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-AND 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

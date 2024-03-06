@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, XSequenceType, XStringType, HexType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -181,6 +181,8 @@ export class Source {
       type.push(ReferenceType.DataWriteReference);
     }
 
+    let hexExpected = false;
+    let hexNext = false;
     while (children.length >= 0) {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
         context = new MethodCallChain().runSyntax(first, scope, filename, targetType);
@@ -205,8 +207,27 @@ export class Source {
         if (first.concatTokens() === "**") {
           context = new FloatType();
         }
+        const operator = first.concatTokens().toUpperCase();
+        if (operator === "BIT-OR" || operator === "BIT-AND" || operator === "BIT-XOR") {
+          hexExpected = true;
+          hexNext = true;
+        }
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeChain) {
         context = new AttributeChain().runSyntax(context, first, scope, filename, type);
+      }
+
+      if (hexExpected === true) {
+        if (!(context instanceof VoidType)
+            && !(context instanceof XStringType)
+            && !(context instanceof HexType)
+            && !(context instanceof XSequenceType)
+            && !(context instanceof UnknownType)) {
+          throw new Error("Operator only valid for XSTRING or HEX");
+        }
+        if (hexNext === false) {
+          hexExpected = false;
+        }
+        hexNext = false;
       }
 
       first = children.shift();
