@@ -29,7 +29,7 @@ export class Concatenate implements StatementSyntax {
       }
     }
 
-    for (const s of node.findDirectExpressions(Expressions.Source)) {
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
       const type = new Source().runSyntax(s, scope, filename);
 
       if (linesMode) {

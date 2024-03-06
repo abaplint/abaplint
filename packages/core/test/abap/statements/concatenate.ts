@@ -18,5 +18,8 @@ statementType(tests, "CONCATENATE", Statements.Concatenate);
 
 const fails = [
   "CONCATENATE asdf.",
+  "CONCATENATE lv_got li_param->get_type( ) INTO lv_got IN BYTE MODE.", // errors on 754
+  "CONCATENATE |dsfds| |sfs| into DATA(sdf).", // error, at least on 750
+  "CONCATENATE 'sdfs' 'sdf' INTO DATA(dsfs) SEPARATED BY |a|.", // also error on 750
 ];
 statementExpectFail(fails, "CONCATENATE");
