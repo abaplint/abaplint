@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, XSequenceType, XStringType, HexType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, XSequenceType, XStringType, HexType, XGenericType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -220,6 +220,7 @@ export class Source {
         if (!(context instanceof VoidType)
             && !(context instanceof XStringType)
             && !(context instanceof HexType)
+            && !(context instanceof XGenericType)
             && !(context instanceof XSequenceType)
             && !(context instanceof UnknownType)) {
           throw new Error("Operator only valid for XSTRING or HEX");
