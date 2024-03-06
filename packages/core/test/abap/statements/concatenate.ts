@@ -1,4 +1,4 @@
-import {statementType} from "../_utils";
+import {statementExpectFail, statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -15,3 +15,8 @@ const tests = [
 ];
 
 statementType(tests, "CONCATENATE", Statements.Concatenate);
+
+const fails = [
+  "CONCATENATE asdf.",
+];
+statementExpectFail(fails, "CONCATENATE");
