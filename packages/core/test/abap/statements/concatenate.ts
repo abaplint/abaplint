@@ -12,6 +12,7 @@ const tests = [
   "CONCATENATE lv_result lv_base+lv_offset(lv_len) INTO lv_result IN BYTE MODE.",
   "CONCATENATE '/SAP/PUBLIC/zgit/' 'script.js' INTO lv_url.",
   "CONCATENATE LINES OF tab INTO <fs> SEPARATED BY lv_sep RESPECTING BLANKS.",
+  "CONCATENATE LINES OF cl_slin_io=>old_line_to_src( <ls_line> ) INTO lv_tmp.",
 ];
 
 statementType(tests, "CONCATENATE", Statements.Concatenate);
