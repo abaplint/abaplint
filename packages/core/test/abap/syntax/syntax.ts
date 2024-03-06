@@ -10281,6 +10281,23 @@ WRITE target.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("hex generic, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING iv_x TYPE x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    CONSTANTS lc_mask TYPE x VALUE 112.
+    DATA lv_xtype TYPE x.
+    lv_xtype = iv_x BIT-AND lc_mask.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("binary operation, char not good, XOR", () => {
     const abap = `
 DATA lv_hex TYPE x LENGTH 8.
