@@ -99,6 +99,7 @@ export class Procedural {
 
     const ddic = new DDIC(this.reg);
 
+    const allNames = new Set<string>();
     for (const param of definition.getParameters()) {
       let found: AbstractType | undefined = undefined;
       if (param.type === undefined || param.type === "") {
@@ -177,8 +178,15 @@ export class Procedural {
         found = new VoidType(param.type);
       }
 
-      const type = new TypedIdentifier(nameToken, filename, found);
-      this.scope.addNamedIdentifier(param.name, type);
+      if (allNames.has(param.name.toUpperCase())) {
+        // yea, IMPORTING and EXPORTING can have the same name
+        // workaround to avoid false postivies, can be improved
+        continue;
+      } else {
+        const type = new TypedIdentifier(nameToken, filename, found);
+        this.scope.addNamedIdentifier(param.name, type);
+        allNames.add(param.name.toUpperCase());
+      }
     }
   }
 

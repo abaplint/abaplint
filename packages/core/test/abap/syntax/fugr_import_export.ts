@@ -3,7 +3,7 @@ import {runMulti} from "./syntax";
 
 describe("syntax.ts, function module same import and export name", () => {
 
-  it.only("function module same import and export name", () => {
+  it("function module same import and export name", () => {
     const xml =
       `<?xml version="1.0" encoding="utf-8"?>
       <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
@@ -82,7 +82,6 @@ describe("syntax.ts, function module same import and export name", () => {
       {filename: "zdfs.fugr.saplzdfs.abap", contents: abap1},
       {filename: "zdfs.fugr.lzdfstop.abap", contents: abap2},
       {filename: "zdfs.fugr.zsdfsd.abap", contents: code}]);
-    console.dir(issues);
     expect(issues.length).to.equals(0);
   });
 
