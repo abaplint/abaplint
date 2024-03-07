@@ -35,7 +35,7 @@ function run(reg: IRegistry, globalConstants?: string[], version?: Version, erro
   return ret;
 }
 
-function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
+export function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
   const reg = new Registry();
   for (const obj of objects) {
     const file = new MemoryFile(obj.filename, obj.contents);
@@ -10279,6 +10279,63 @@ target = stru.
 WRITE target.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("hex generic, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING iv_x TYPE x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    CONSTANTS lc_mask TYPE x VALUE 112.
+    DATA lv_xtype TYPE x.
+    lv_xtype = iv_x BIT-AND lc_mask.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-XOR 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-XOR 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR, opposite", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = 'FFFFFFFFFFFFFFFF' BIT-XOR lv_hex.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-OR 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
+  });
+
+  it("binary operation, char not good, XOR", () => {
+    const abap = `
+DATA lv_hex TYPE x LENGTH 8.
+lv_hex = lv_hex BIT-AND 'FFFFFFFFFFFFFFFF'.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
   });
 
 // todo, static method cannot access instance attributes

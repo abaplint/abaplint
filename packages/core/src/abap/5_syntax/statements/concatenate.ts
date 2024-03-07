@@ -11,7 +11,7 @@ import {TypeUtils} from "../_type_utils";
 export class Concatenate implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const byteMode = node.findDirectTokenByText("BYTE") !== undefined;
-    let linesMode = node.findDirectTokenByText("LINES") !== undefined;
+    const linesMode = node.findDirectTokenByText("LINES") !== undefined;
 
     const target = node.findFirstExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
@@ -29,20 +29,20 @@ export class Concatenate implements StatementSyntax {
       }
     }
 
-    for (const s of node.findDirectExpressions(Expressions.Source)) {
-      const type = new Source().runSyntax(s, scope, filename);
-
-      if (linesMode) {
+    if (linesMode) {
+      for (const s of node.findDirectExpressions(Expressions.Source)) {
+        const type = new Source().runSyntax(s, scope, filename);
         if (!(type instanceof UnknownType) && !(type instanceof VoidType) && !(type instanceof TableType)) {
           throw new Error("Source must be an internal table");
         }
-        linesMode = false;
-        continue;
       }
-
-      const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLikeStrict(type);
-      if (compatible === false) {
-        throw new Error("Source type not compatible");
+    } else {
+      for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
+        const type = new Source().runSyntax(s, scope, filename);
+        const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLikeStrict(type);
+        if (compatible === false) {
+          throw new Error("Source type not compatible");
+        }
       }
     }
 

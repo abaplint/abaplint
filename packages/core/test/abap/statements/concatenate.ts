@@ -1,4 +1,4 @@
-import {statementType} from "../_utils";
+import {statementExpectFail, statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -12,6 +12,15 @@ const tests = [
   "CONCATENATE lv_result lv_base+lv_offset(lv_len) INTO lv_result IN BYTE MODE.",
   "CONCATENATE '/SAP/PUBLIC/zgit/' 'script.js' INTO lv_url.",
   "CONCATENATE LINES OF tab INTO <fs> SEPARATED BY lv_sep RESPECTING BLANKS.",
+  "CONCATENATE LINES OF cl_slin_io=>old_line_to_src( <ls_line> ) INTO lv_tmp.",
 ];
 
 statementType(tests, "CONCATENATE", Statements.Concatenate);
+
+const fails = [
+  "CONCATENATE asdf.",
+  "CONCATENATE lv_got li_param->get_type( ) INTO lv_got IN BYTE MODE.", // errors on 754
+  "CONCATENATE |dsfds| |sfs| into DATA(sdf).", // error, at least on 750
+  "CONCATENATE 'sdfs' 'sdf' INTO DATA(dsfs) SEPARATED BY |a|.", // also error on 750
+];
+statementExpectFail(fails, "CONCATENATE");

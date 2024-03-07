@@ -25,6 +25,24 @@ export class SlowParameterPassing implements IRule {
       shortDescription: `Detects slow pass by value passing for methods where parameter is not changed`,
       extendedInformation: `Method parameters defined in interfaces is not checked`,
       tags: [RuleTag.Performance],
+      badExample: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING VALUE(sdf) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE sdf.
+  ENDMETHOD.
+ENDCLASS.`,
+      goodExample: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING sdf TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE sdf.
+  ENDMETHOD.
+ENDCLASS.`,
     };
   }
 
