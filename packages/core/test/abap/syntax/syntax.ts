@@ -35,7 +35,7 @@ function run(reg: IRegistry, globalConstants?: string[], version?: Version, erro
   return ret;
 }
 
-function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
+export function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
   const reg = new Registry();
   for (const obj of objects) {
     const file = new MemoryFile(obj.filename, obj.contents);

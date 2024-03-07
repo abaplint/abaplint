@@ -2232,6 +2232,17 @@
               ],
               "description": "Interface contains references to class\nhttps://rules.abaplint.org/intf_referencing_clas"
             },
+            "invalid_table_index": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InvalidTableIndexConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Issues error for constant table index zero, as ABAP starts from 1\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/invalid_table_index"
+            },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
                 {
@@ -4025,6 +4036,17 @@
               ],
               "description": "Interface contains references to class\nhttps://rules.abaplint.org/intf_referencing_clas"
             },
+            "invalid_table_index": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InvalidTableIndexConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Issues error for constant table index zero, as ABAP starts from 1\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/invalid_table_index"
+            },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
                 {
@@ -5471,6 +5493,23 @@
       "required": [
         "allow"
       ],
+      "type": "object"
+    },
+    "InvalidTableIndexConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "KeepSingleParameterCallsOnOneLineConf": {
