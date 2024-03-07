@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
+import {ReadTable} from "../abap/2_statements/statements";
 
 
 export class InvalidTableIndexConf extends BasicRuleConfig {
@@ -19,8 +20,10 @@ export class InvalidTableIndex extends ABAPRule {
       title: "Invalid Table Index",
       shortDescription: `Issues error for constant table index zero, as ABAP starts from 1`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
-      badExample: `DATA(first) = table[ 0 ].`,
-      goodExample: `DATA(first) = table[ 1 ].`,
+      badExample: `DATA(first) = table[ 0 ].
+READ TABLE gt_stack ASSIGNING <ls_stack> INDEX 0.`,
+      goodExample: `DATA(first) = table[ 1 ].
+READ TABLE gt_stack ASSIGNING <ls_stack> INDEX 1.`,
     };
   }
 
@@ -43,6 +46,21 @@ export class InvalidTableIndex extends ABAPRule {
     const expr = stru.findAllExpressionsRecursive(Expressions.TableExpression);
     for (const e of expr) {
       const token = e.findDirectExpression(Expressions.Source)
+        ?.findDirectExpression(Expressions.Constant)
+        ?.findFirstExpression(Expressions.Integer)?.getFirstToken();
+      if (token === undefined) {
+        continue;
+      }
+      if (token.getStr() === "0") {
+        const message = "Table index starts from 1";
+        const fix = EditHelper.replaceToken(file, token, "1");
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity, fix);
+        issues.push(issue);
+      }
+    }
+
+    for (const rt of stru.findAllStatements(ReadTable)) {
+      const token = rt.findExpressionAfterToken("INDEX")
         ?.findDirectExpression(Expressions.Constant)
         ?.findFirstExpression(Expressions.Integer)?.getFirstToken();
       if (token === undefined) {
