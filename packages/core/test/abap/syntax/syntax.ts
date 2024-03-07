@@ -10338,6 +10338,18 @@ lv_hex = lv_hex BIT-AND 'FFFFFFFFFFFFFFFF'.`;
     expect(issues[0].getMessage()).to.contain("only valid for XSTRING or HEX");
   });
 
+  it.only("APPEND LINES OF vs header line", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         data TYPE i,
+       END OF ty.
+DATA li_users_tmp TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA li_users TYPE STANDARD TABLE OF ty WITH HEADER LINE.
+APPEND LINES OF li_users_tmp TO li_users.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
