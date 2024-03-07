@@ -36,13 +36,13 @@ export class Concatenate implements StatementSyntax {
           throw new Error("Source must be an internal table");
         }
       }
-    } else {
-      for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
-        const type = new Source().runSyntax(s, scope, filename);
-        const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLikeStrict(type);
-        if (compatible === false) {
-          throw new Error("Source type not compatible");
-        }
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
+      const type = new Source().runSyntax(s, scope, filename);
+      const compatible = byteMode ? new TypeUtils(scope).isHexLike(type) : new TypeUtils(scope).isCharLikeStrict(type);
+      if (compatible === false) {
+        throw new Error("Source type not compatible");
       }
     }
 
