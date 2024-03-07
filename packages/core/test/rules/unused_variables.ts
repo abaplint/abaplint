@@ -1471,4 +1471,18 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SEPARATED BY", async () => {
+    const abap = `
+INTERFACE lif.
+  CONSTANTS sep TYPE string VALUE '-'.
+ENDINTERFACE.
+DATA lt_version_parts TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA res TYPE string.
+INSERT \`foo\` INTO TABLE lt_version_parts.
+INSERT \`bar\` INTO TABLE lt_version_parts.
+CONCATENATE LINES OF lt_version_parts INTO res SEPARATED BY lif=>sep.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
