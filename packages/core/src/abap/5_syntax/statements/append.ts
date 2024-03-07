@@ -57,9 +57,16 @@ export class Append implements StatementSyntax {
       } else if (targetType instanceof VoidType) {
         rowType = targetType;
       }
-      const sourceType = new Source().runSyntax(source, scope, filename, rowType);
+      let sourceType = new Source().runSyntax(source, scope, filename, rowType);
 
       if (node.findDirectTokenByText("LINES")) {
+        // hmm, checking only the row types are compatible will not check the table type, e.g. sorted or hashed
+        if (sourceType instanceof TableType) {
+          sourceType = sourceType.getRowType();
+        }
+        if (targetType instanceof TableType) {
+          targetType = targetType.getRowType();
+        }
         if (new TypeUtils(scope).isAssignable(sourceType, targetType) === false) {
           throw new Error("Incompatible types");
         }
