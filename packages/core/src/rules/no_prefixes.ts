@@ -10,17 +10,17 @@ import {IFile} from "../files/_ifile";
 
 export class NoPrefixesConf extends BasicRuleConfig {
   /** DATA, CLASS-DATA, DATA BEGIN OF, CLASS-DATA BEGIN OF, FINAL(), DATA(), case insensitive regex */
-  public data: string = "^[lg].?_";
+  public data: string = "^[LGM].?_";
   /** STATICS, STATICS BEGIN OF, case insensitive regex */
-  public statics: string = "";
+  public statics: string = "^S.?_";
   /** FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex */
-  public fieldSymbols: string = "^<l.?_";
+  public fieldSymbols: string = "^<[LGM].?_";
   /** CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex */
-  public constants: string = "^[lg]c_";
+  public constants: string = "^[LGM]?C.?_";
   /** TYPES, ENUM, MESH, case insensitive regex */
-  public types: string = "^ty_";
+  public types: string = "^TY_";
   /** importing, exporting, returning and changing parameters, case insensitive regex */
-  public methodParameters: string = "^[ierc].?_";
+  public methodParameters: string = "^[ICER].?_";
 
   // todo, public localClass: string = "";
   // todo, public localInterface: string = "";
