@@ -14,8 +14,8 @@ export class TypeTable extends Expression {
 
     const normal1 = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                         "TABLE OF",
-                        opt("REF TO"),
-                        opt(TypeName));
+                        optPrio("REF TO"),
+                        TypeName);
 
     const likeType = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                          "TABLE OF",
@@ -23,8 +23,8 @@ export class TypeTable extends Expression {
                          opt(FieldChain),
                          opt(per(header, initial, plusPrio(TypeTableKey))));
 
-    const rangeType = seq("RANGE OF", TypeName, opt(header), opt(initial));
-    const rangeLike = seq("RANGE OF", SimpleFieldChain, opt(header), opt(initial));
+    const rangeType = seq("RANGE OF", TypeName, optPrio(header), optPrio(initial));
+    const rangeLike = seq("RANGE OF", SimpleFieldChain, optPrio(header), optPrio(initial));
 
     // a maximum of 15 secondary table keys can be defined
     // "WITH" is not allowed as a field name in keys
