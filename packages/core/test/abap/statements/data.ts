@@ -1,4 +1,4 @@
-import {statementType} from "../_utils";
+import {statementExpectFail, statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -101,3 +101,8 @@ const tests = [
 ];
 
 statementType(tests, "DATA", Statements.Data);
+
+const fails = [
+  `DATA something TYPE STANDARD TABLE OF  WITH DEFAULT KEY.`, // missing type
+];
+statementExpectFail(fails, "DATA");

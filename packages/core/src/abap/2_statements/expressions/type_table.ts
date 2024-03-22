@@ -14,8 +14,8 @@ export class TypeTable extends Expression {
 
     const normal1 = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                         "TABLE OF",
-                        opt("REF TO"),
-                        opt(TypeName));
+                        optPrio("REF TO"),
+                        TypeName);
 
     const likeType = seq(opt(alt("STANDARD", "HASHED", "INDEX", "SORTED", "ANY")),
                          "TABLE OF",
