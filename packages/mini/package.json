@@ -1,0 +1,15 @@
+{
+  "name": "mini",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
+    "test": "tsc"
+  },
+  "author": "Lars Hvam",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^5.4.3"
+  }
+}
