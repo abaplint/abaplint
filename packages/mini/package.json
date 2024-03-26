@@ -4,12 +4,13 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
-    "test": "tsc"
+    "esbuild": "esbuild build/mini/src/index.js --bundle --platform=node --banner:js=/*eslint-disable*/ --outfile=bundle.js",
+    "test": "tsc && npm run esbuild"
   },
   "author": "Lars Hvam",
   "license": "MIT",
   "dependencies": {
+    "esbuild": "^0.20.2",
     "typescript": "^5.4.3"
   }
 }
