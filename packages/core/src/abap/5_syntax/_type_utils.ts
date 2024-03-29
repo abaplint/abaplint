@@ -117,7 +117,10 @@ export class TypeUtils {
     if (tname === sname) {
       return true;
     }
-
+/*
+    console.dir(sid);
+    console.dir(tid);
+*/
     if (!(sid instanceof ClassDefinition || sid instanceof InterfaceDefinition)) {
       const found = this.scope.findObjectDefinition(sid.getName());
       if (found) {
@@ -329,7 +332,11 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof GenericObjectReferenceType) {
-      if (target instanceof ObjectReferenceType) {
+      if (target instanceof ObjectReferenceType
+          || target instanceof StringType
+          || target instanceof CharacterType
+          || target instanceof TableType
+          || target instanceof CLikeType) {
         return false;
       }
     } else if (source instanceof ObjectReferenceType) {

@@ -10352,6 +10352,168 @@ APPEND LINES OF li_users TO li_users.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error CHANGING inline", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar CHANGING foo TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>bar( CHANGING foo = DATA(sdf) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("CHANGING cannot be inlined");
+  });
+
+  it("bad input to strlen()", () => {
+    const abap = `
+DATA lv_ref TYPE REF TO object.
+WRITE strlen( lv_ref ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+
+  it("bad input to DO", () => {
+    const abap = `
+DATA foo TYPE REF TO object.
+DO foo TIMES.
+ENDDO.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("DO TIMES must be numeric");
+  });
+
+  it("not compatible", () => {
+    const abap = `
+DATA mt_functions TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+INSERT 'hello' INTO TABLE mt_functions.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Types not compatible");
+  });
+
+  it("Field defined twice in inline value", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+       END OF ty.
+DATA stru TYPE ty.
+
+stru = VALUE #(
+  field1 = 2
+  field1 = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Duplicate field assignment");
+  });
+
+  it("KEY cannot be string", () => {
+    const abap = `
+DATA mt_names TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA iv_name TYPE string.
+READ TABLE mt_names WITH KEY iv_name INTO DATA(lv_name).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Key cannot be string or table or reference");
+  });
+
+  it("READ TABLE, bad compare", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         name   TYPE string,
+         module TYPE REF TO object,
+       END OF ty.
+DATA str TYPE string.
+DATA it_imports TYPE STANDARD TABLE OF ty.
+READ TABLE it_imports WITH KEY module = str INTO DATA(ls_import).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("ComponentCompareSimple, incompatible types");
+  });
+
+  it("INSERT, not an internal table", () => {
+    const abap = `
+DATA: BEGIN OF lt_table,
+        foo TYPE i,
+      END OF lt_table.
+INSERT INITIAL LINE INTO lt_table.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("INSERT target must be a table");
+  });
+
+  it("INSERT, not an internal table, generics", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    FIELD-SYMBOLS <any> TYPE any.
+    INSERT <any> INTO TABLE data.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("INSERT target must be a table");
+  });
+
+  it("INSERT, ok, generics", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <at> TYPE ANY TABLE.
+    ASSIGN data TO <at>.
+    INSERT <any> INTO TABLE <at>.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("READ TABLE, ok", () => {
+    const abap = `
+DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+READ TABLE lt_list TRANSPORTING NO FIELDS WITH TABLE KEY table_line = 2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("READ TABLE, ok, ref", () => {
+    const abap = `
+DATA lt_list TYPE STANDARD TABLE OF REF TO object WITH DEFAULT KEY.
+DATA ref TYPE REF TO object.
+READ TABLE lt_list TRANSPORTING NO FIELDS WITH TABLE KEY table_line = ref.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("READ TABLE, ok, objects", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+TYPES ty_repo_list TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
+DATA tab TYPE ty_repo_list.
+DATA ref TYPE REF TO lcl.
+READ TABLE tab TRANSPORTING NO FIELDS WITH TABLE KEY table_line = ref.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

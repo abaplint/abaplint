@@ -9,7 +9,7 @@ describe("getPreviousVersion", () => {
   });
 
   it("cloud", () => {
-    expect(getPreviousVersion(Version.Cloud)).to.equal(Version.v757);
+    expect(getPreviousVersion(Version.Cloud)).to.equal(Version.v758);
   });
 
   it("open-abap", () => {

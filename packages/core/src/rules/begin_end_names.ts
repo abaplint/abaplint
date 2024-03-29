@@ -6,7 +6,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import {StructureNode} from "../abap/nodes";
 import {IStructure} from "../abap/3_structures/structures/_structure";
-import {IStatement} from "../abap/2_statements/statements/_statement";
+import {IStatement, Unknown} from "../abap/2_statements/statements/_statement";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
@@ -45,6 +45,11 @@ export class BeginEndNames extends ABAPRule {
 
     const struc = file.getStructure();
     if (struc === undefined) {
+      return [];
+    }
+
+    const containsUnknown = file.getStatements().some(s => s.get() instanceof Unknown);
+    if (containsUnknown === true) {
       return [];
     }
 

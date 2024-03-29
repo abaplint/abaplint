@@ -6,7 +6,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {DataReference, TableType} from "../../types/basic";
+import {AnyType, CharacterType, DataReference, StringType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
@@ -19,7 +19,12 @@ export class InsertInternal implements StatementSyntax {
     if (t) {
       targetType = new Target().runSyntax(t, scope, filename);
     }
-    if (targetType instanceof TableType
+    if (!(targetType instanceof TableType)
+        && !(targetType instanceof VoidType)
+        && !(targetType instanceof AnyType)
+        && !(targetType instanceof UnknownType)) {
+      throw new Error("INSERT target must be a table");
+    } else if (targetType instanceof TableType
         && node.findDirectTokenByText("LINES") === undefined) {
       targetType = targetType.getRowType();
     }
@@ -40,9 +45,13 @@ export class InsertInternal implements StatementSyntax {
       }
     }
 
-    if (node.findDirectTokenByText("INITIAL") === undefined
-        && new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
-      throw new Error("Types not compatible");
+    if (node.findDirectTokenByText("INITIAL") === undefined) {
+      if (new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
+        throw new Error("Types not compatible");
+      } else if (sourceType instanceof CharacterType && targetType instanceof StringType) {
+        // yea, well, INSERT doesnt convert the values automatically, like everything else?
+        throw new Error("Types not compatible");
+      }
     }
 
     const afterInto = node.findExpressionAfterToken("INTO");
