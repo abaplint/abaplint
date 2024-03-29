@@ -36,6 +36,14 @@ export class InsertInternal implements StatementSyntax {
     }
     const sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : targetType;
 
+    if (targetType === undefined
+        && !(sourceType instanceof TableType)
+        && !(sourceType instanceof VoidType)
+        && !(sourceType instanceof AnyType)
+        && !(sourceType instanceof UnknownType)) {
+      throw new Error("INSERT target must be a table");
+    }
+
     const afterAssigning = node.findExpressionAfterToken("ASSIGNING");
     if (afterAssigning?.get() instanceof Expressions.FSTarget) {
       const inlinefs = afterAssigning?.findDirectExpression(Expressions.InlineFS);

@@ -10524,6 +10524,14 @@ INSERT it_undo INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, INSERT short", () => {
+    const abap = `
+DATA it_undo TYPE string.
+INSERT it_undo INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
