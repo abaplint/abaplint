@@ -38,6 +38,8 @@ const repos = [
   "oisee/zvdb",
   "open-abap/open-abap-bal",
   "open-abap/open-abap-core",
+  "open-abap/open-abap-gui",
+  "open-abap/open-abap-odata",
   "open-abap/open-table-maintenance",
   "SAP/abap-file-formats-tools",
   "SAP/abap-file-formats",
