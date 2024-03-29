@@ -7,6 +7,7 @@ import {StatementNode} from "../abap/nodes";
 import {Comment, MacroContent} from "../abap/2_statements/statements/_statement";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper} from "../edit_helper";
 
 export class UnnecessaryPragmaConf extends BasicRuleConfig {
   /** Allow NO_TEXT in global CLAS and INTF definitions,
@@ -122,7 +123,8 @@ DATA: BEGIN OF blah ##NEEDED,
     if (statement.findFirstExpression(Expressions.ConstantString) === undefined
         && statement.findFirstExpression(Expressions.StringTemplate) === undefined) {
       const message = "There is no text, NO_TEXT can be removed";
-      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity)];
+      const fix = EditHelper.deleteToken(file, p);
+      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity, fix)];
     }
 
     return [];
@@ -137,7 +139,8 @@ DATA: BEGIN OF blah ##NEEDED,
     const concat = next.concatTokens().toUpperCase();
     if (concat.includes(" SY-SUBRC")) {
       const message = "SUBRC_OK can be removed as sy-subrc is checked";
-      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity)];
+      const fix = EditHelper.deleteToken(file, p);
+      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity, fix)];
     }
 
     return [];
@@ -167,7 +170,8 @@ DATA: BEGIN OF blah ##NEEDED,
         && !(statement.get() instanceof Statements.MethodDef)
         && statement.findFirstExpression(Expressions.InlineFS) === undefined) {
       const message = "There is no data definition, NEEDED can be removed";
-      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity)];
+      const fix = EditHelper.deleteToken(file, p);
+      return [Issue.atToken(file, p, message, this.getMetadata().key, this.getConfig().severity, fix)];
     }
 
     return [];
