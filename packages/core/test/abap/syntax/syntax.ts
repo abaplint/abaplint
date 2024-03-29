@@ -10387,6 +10387,14 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.contain("DO TIMES must be numeric");
   });
 
+  it("not compatible", () => {
+    const abap = `
+DATA mt_functions TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+INSERT 'hello' INTO TABLE mt_functions.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Types not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
