@@ -10441,6 +10441,23 @@ INSERT INITIAL LINE INTO lt_table.`;
     expect(issues[0].getMessage()).to.contain("INSERT target must be a table");
   });
 
+  it("READ TABLE, ok", () => {
+    const abap = `
+DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+READ TABLE lt_list TRANSPORTING NO FIELDS WITH TABLE KEY table_line = 2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("READ TABLE, ok, ref", () => {
+    const abap = `
+DATA lt_list TYPE STANDARD TABLE OF REF TO object WITH DEFAULT KEY.
+DATA ref TYPE REF TO object.
+READ TABLE lt_list TRANSPORTING NO FIELDS WITH TABLE KEY table_line = ref.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
