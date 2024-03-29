@@ -33,8 +33,17 @@ export class ValueBody {
       }
     }
 
+    const fields = new Set<string>();
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
       new FieldAssignment().runSyntax(s, scope, filename, targetType);
+
+      const fieldname = s.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
+      if (fieldname) {
+        if (fields.has(fieldname)) {
+          throw new Error("Duplicate field assignment");
+        }
+        fields.add(fieldname);
+      }
     }
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body

@@ -10395,6 +10395,20 @@ INSERT 'hello' INTO TABLE mt_functions.`;
     expect(issues[0].getMessage()).to.contain("Types not compatible");
   });
 
+  it("Field defined twice in inline value", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+       END OF ty.
+DATA stru TYPE ty.
+
+stru = VALUE #(
+  field1 = 2
+  field1 = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Duplicate field assignment");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
