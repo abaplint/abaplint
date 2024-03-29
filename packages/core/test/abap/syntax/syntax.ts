@@ -10378,6 +10378,15 @@ WRITE strlen( lv_ref ).`;
     expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
   });
 
+  it("bad input to DO", () => {
+    const abap = `
+DATA foo TYPE REF TO object.
+DO foo TIMES.
+ENDDO.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("DO TIMES must be numeric");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
