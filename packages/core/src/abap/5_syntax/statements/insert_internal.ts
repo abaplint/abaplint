@@ -22,7 +22,8 @@ export class InsertInternal implements StatementSyntax {
     if (!(targetType instanceof TableType)
         && !(targetType instanceof VoidType)
         && !(targetType instanceof AnyType)
-        && !(targetType instanceof UnknownType)) {
+        && !(targetType instanceof UnknownType)
+        && targetType !== undefined) {
       throw new Error("INSERT target must be a table");
     } else if (targetType instanceof TableType
         && node.findDirectTokenByText("LINES") === undefined) {
@@ -34,6 +35,14 @@ export class InsertInternal implements StatementSyntax {
       source = node.findDirectExpression(Expressions.Source);
     }
     const sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : targetType;
+
+    if (targetType === undefined
+        && !(sourceType instanceof TableType)
+        && !(sourceType instanceof VoidType)
+        && !(sourceType instanceof AnyType)
+        && !(sourceType instanceof UnknownType)) {
+      throw new Error("INSERT target must be a table");
+    }
 
     const afterAssigning = node.findExpressionAfterToken("ASSIGNING");
     if (afterAssigning?.get() instanceof Expressions.FSTarget) {
