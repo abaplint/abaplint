@@ -10458,6 +10458,26 @@ READ TABLE lt_list TRANSPORTING NO FIELDS WITH TABLE KEY table_line = ref.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("READ TABLE, ok, objects", () => {
+    const abap = `
+INTERFACE lif.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+TYPES ty_repo_list TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
+DATA tab TYPE ty_repo_list.
+DATA ref TYPE REF TO lcl.
+READ TABLE tab TRANSPORTING NO FIELDS WITH TABLE KEY table_line = ref.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
