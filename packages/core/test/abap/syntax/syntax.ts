@@ -10458,6 +10458,25 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("INSERT target must be a table");
   });
 
+  it("INSERT, ok, generics", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <at> TYPE ANY TABLE.
+    ASSIGN data TO <at>.
+    INSERT <any> INTO TABLE <at>.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("READ TABLE, ok", () => {
     const abap = `
 DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
