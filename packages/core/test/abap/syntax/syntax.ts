@@ -10370,6 +10370,14 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("CHANGING cannot be inlined");
   });
 
+  it("bad input to strlen()", () => {
+    const abap = `
+DATA lv_ref TYPE REF TO object.
+WRITE strlen( lv_ref ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
