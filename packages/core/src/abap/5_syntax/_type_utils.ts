@@ -117,7 +117,10 @@ export class TypeUtils {
     if (tname === sname) {
       return true;
     }
-
+/*
+    console.dir(sid);
+    console.dir(tid);
+*/
     if (!(sid instanceof ClassDefinition || sid instanceof InterfaceDefinition)) {
       const found = this.scope.findObjectDefinition(sid.getName());
       if (found) {

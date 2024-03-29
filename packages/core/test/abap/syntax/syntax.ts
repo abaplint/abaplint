@@ -10458,7 +10458,7 @@ READ TABLE lt_list TRANSPORTING NO FIELDS WITH TABLE KEY table_line = ref.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("READ TABLE, ok, objects", () => {
+  it("READ TABLE, ok, objects", () => {
     const abap = `
 INTERFACE lif.
 ENDINTERFACE.

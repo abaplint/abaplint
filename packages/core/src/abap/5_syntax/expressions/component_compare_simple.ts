@@ -18,7 +18,7 @@ export class ComponentCompareSimple {
           targetType = undefined;
         } else if (c.get() instanceof Expressions.Source) {
           const sourceType = new Source().runSyntax(c, scope, filename, targetType);
-          if (targetType && new TypeUtils(scope).isAssignable(targetType, sourceType) === false) {
+          if (targetType && new TypeUtils(scope).isAssignable(sourceType, targetType) === false) {
             throw new Error("ComponentCompareSimple, incompatible types");
           }
         } else {
