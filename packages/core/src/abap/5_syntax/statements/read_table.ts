@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType, IntegerType, DataReference, AnyType, UnknownType, StructureType} from "../../types/basic";
+import {VoidType, TableType, IntegerType, DataReference, AnyType, UnknownType, StructureType, ObjectReferenceType, StringType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
@@ -54,11 +54,17 @@ export class ReadTable implements StatementSyntax {
       }
     }
 
+    const afterKey = node.findExpressionAfterToken("KEY");
     for (const s of sources) {
       if (s === firstSource || s === indexSource || s === fromSource) {
         continue;
       }
-      new Source().runSyntax(s, scope, filename);
+      const type = new Source().runSyntax(s, scope, filename);
+      if (s === afterKey) {
+        if (type instanceof StringType || type instanceof TableType || type instanceof ObjectReferenceType) {
+          throw new Error("Key cannot be string or table or reference");
+        }
+      }
     }
 
     const target = node.findDirectExpression(Expressions.ReadTableTarget);

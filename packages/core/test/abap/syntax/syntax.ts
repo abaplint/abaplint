@@ -10409,6 +10409,15 @@ stru = VALUE #(
     expect(issues[0].getMessage()).to.contain("Duplicate field assignment");
   });
 
+  it("KEY cannot be string", () => {
+    const abap = `
+DATA mt_names TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA iv_name TYPE string.
+READ TABLE mt_names WITH KEY iv_name INTO DATA(lv_name).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Key cannot be string or table or reference");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
