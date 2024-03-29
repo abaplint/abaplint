@@ -10418,6 +10418,19 @@ READ TABLE mt_names WITH KEY iv_name INTO DATA(lv_name).`;
     expect(issues[0].getMessage()).to.contain("Key cannot be string or table or reference");
   });
 
+  it("READ TABLE, bad compare", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         name   TYPE string,
+         module TYPE REF TO object,
+       END OF ty.
+DATA str TYPE string.
+DATA it_imports TYPE STANDARD TABLE OF ty.
+READ TABLE it_imports WITH KEY module = str INTO DATA(ls_import).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("ComponentCompareSimple, incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

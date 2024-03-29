@@ -2,6 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
+import {TypeUtils} from "../_type_utils";
 import {ComponentChain} from "./component_chain";
 import {Source} from "./source";
 
@@ -16,7 +17,10 @@ export class ComponentCompareSimple {
         } else if (c.get() instanceof Expressions.Dynamic) {
           targetType = undefined;
         } else if (c.get() instanceof Expressions.Source) {
-          new Source().runSyntax(c, scope, filename, targetType);
+          const sourceType = new Source().runSyntax(c, scope, filename, targetType);
+          if (targetType && new TypeUtils(scope).isAssignable(targetType, sourceType) === false) {
+            throw new Error("ComponentCompareSimple, incompatible types");
+          }
         } else {
           throw "ComponentCompareSimple, unexpected node";
         }
