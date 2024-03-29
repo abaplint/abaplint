@@ -10514,7 +10514,7 @@ READ TABLE tab TRANSPORTING NO FIELDS WITH TABLE KEY table_line = ref.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, INSERT, occurs data", () => {
+  it("ok, INSERT, occurs data", () => {
     const abap = `
 DATA: BEGIN OF it_undo OCCURS 0,
         data TYPE string,

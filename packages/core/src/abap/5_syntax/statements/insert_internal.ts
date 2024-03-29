@@ -22,7 +22,8 @@ export class InsertInternal implements StatementSyntax {
     if (!(targetType instanceof TableType)
         && !(targetType instanceof VoidType)
         && !(targetType instanceof AnyType)
-        && !(targetType instanceof UnknownType)) {
+        && !(targetType instanceof UnknownType)
+        && targetType !== undefined) {
       throw new Error("INSERT target must be a table");
     } else if (targetType instanceof TableType
         && node.findDirectTokenByText("LINES") === undefined) {
