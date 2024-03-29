@@ -10431,6 +10431,16 @@ READ TABLE it_imports WITH KEY module = str INTO DATA(ls_import).`;
     expect(issues[0].getMessage()).to.contain("ComponentCompareSimple, incompatible types");
   });
 
+  it("INSERT, not an internal table", () => {
+    const abap = `
+DATA: BEGIN OF lt_table,
+        foo TYPE i,
+      END OF lt_table.
+INSERT INITIAL LINE INTO lt_table.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("INSERT target must be a table");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
