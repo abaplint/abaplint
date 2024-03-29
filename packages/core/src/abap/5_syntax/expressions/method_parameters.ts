@@ -113,6 +113,10 @@ export class MethodParameters {
 
   private checkChanging(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
     for (const item of this.parameterListT(node, scope, filename)) {
+      if (item.target.findFirstExpression(Expressions.InlineData) !== undefined) {
+        throw new Error("CHANGING cannot be inlined");
+      }
+
       let parameterType: AbstractType | undefined = undefined;
       if (method instanceof VoidType) {
         parameterType = method;

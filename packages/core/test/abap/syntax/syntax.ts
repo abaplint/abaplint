@@ -10352,6 +10352,24 @@ APPEND LINES OF li_users TO li_users.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error CHANGING inline", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar CHANGING foo TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>bar( CHANGING foo = DATA(sdf) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("CHANGING cannot be inlined");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
