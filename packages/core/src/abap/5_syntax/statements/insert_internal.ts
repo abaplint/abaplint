@@ -6,7 +6,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {CharacterType, DataReference, StringType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, DataReference, DataType, StringType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
@@ -21,6 +21,8 @@ export class InsertInternal implements StatementSyntax {
     }
     if (!(targetType instanceof TableType)
         && !(targetType instanceof VoidType)
+        && !(targetType instanceof AnyType)
+        && !(targetType instanceof DataType)
         && !(targetType instanceof UnknownType)) {
       throw new Error("INSERT target must be a table");
     } else if (targetType instanceof TableType
