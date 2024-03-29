@@ -10441,6 +10441,23 @@ INSERT INITIAL LINE INTO lt_table.`;
     expect(issues[0].getMessage()).to.contain("INSERT target must be a table");
   });
 
+  it("INSERT, not an internal table, generics", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    FIELD-SYMBOLS <any> TYPE any.
+    INSERT <any> INTO TABLE data.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("INSERT target must be a table");
+  });
+
   it("READ TABLE, ok", () => {
     const abap = `
 DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
