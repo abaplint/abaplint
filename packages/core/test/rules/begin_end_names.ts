@@ -58,6 +58,11 @@ TYPES: BEGIN OF t,
          name_value TYPE STANDARD TABLE OF string WITH EMPTY KEY,
        END OF t.`, cnt: 0},
 
+  {abap: `
+  TYPES: BEGIN OF something,
+           something TYPE STANDARD TABLE OF  WITH DEFAULT KEY,
+         END OF something.`, cnt: 0}, // contains unknown so dont report it
+
 ];
 
 testRule(tests, BeginEndNames);
