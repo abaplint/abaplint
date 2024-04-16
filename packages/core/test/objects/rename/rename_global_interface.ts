@@ -220,7 +220,7 @@ ENDCLASS.`;
     expect(result.updatedFiles.has("zcl_clas.clas.abap")).to.equal(true);
   });
 
-  it.only("INTF, CASTed in CLAS", () => {
+  it("INTF, CASTed in CLAS", () => {
     const intf = `INTERFACE zif_intf PUBLIC.
 ENDINTERFACE.`;
 
