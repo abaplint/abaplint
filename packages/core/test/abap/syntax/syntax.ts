@@ -10532,11 +10532,12 @@ INSERT it_undo INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
   });
 
-  it.only("CAST on target side", () => {
+  it("CAST on target side", () => {
     const abap = `
-CAST zif_sdfsdfsd( mo_app )->id_draft = 2.`;
+DATA ref TYPE REF TO object.
+CAST zif_sdfsdfsd( ref )->id_draft = 2.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal("sdfsd");
+    expect(issues[0]?.getMessage()).to.equal("CAST, uknown type");
   });
 
 // todo, static method cannot access instance attributes
