@@ -220,4 +220,40 @@ ENDCLASS.`;
     expect(result.updatedFiles.has("zcl_clas.clas.abap")).to.equal(true);
   });
 
+  it.only("INTF, CASTed in CLAS", () => {
+    const intf = `INTERFACE zif_intf PUBLIC.
+ENDINTERFACE.`;
+
+    const clas = `CLASS zcl_clas DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS zcl_clas IMPLEMENTATION.
+  METHOD foo.
+    DATA obj TYPE REF TO zif_intf.
+    DATA(sdf) = CAST zif_intf( obj ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zif_intf.intf.abap", intf),
+      new MemoryFile("zcl_clas.clas.abap", clas),
+    ]).parse();
+
+    const result = new Renamer(reg).rename("INTF", "zif_intf", "yif_foo");
+
+    expect(reg.getObjectCount()).to.equal(2);
+    for (const f of reg.getFiles()) {
+      if (f.getFilename() === "yif_foo.intf.abap") {
+        continue;
+      } else if (f.getFilename() === "zcl_clas.clas.abap") {
+        expect(f.getRaw()).to.include("CAST yif_foo(");
+      } else {
+        expect(1).to.equal(f.getFilename(), "unexpected file");
+      }
+    }
+
+    expect(result.updatedFiles.has("zcl_clas.clas.abap")).to.equal(true);
+  });
+
 });
