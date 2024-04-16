@@ -1,5 +1,5 @@
 import {seq, optPrio, tok, starPrio, altPrio, Expression} from "../combi";
-import {TargetField, TargetFieldSymbol, NewObject, InlineData, InlineFS, Arrow, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody, ClassName, Cast, ComponentName} from ".";
+import {TargetField, TargetFieldSymbol, NewObject, InlineData, InlineFS, TableExpression, FieldOffset, FieldLength, TableBody, ClassName, Cast, ComponentName} from ".";
 import {InstanceArrow, StaticArrow, Dash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {AttributeName} from "./attribute_name";
@@ -12,10 +12,8 @@ export class Target extends Expression {
 
     const something = starPrio(altPrio(Dereference, attr, comp, TableExpression));
 
-    const cast = seq(altPrio(Cast, NewObject), Arrow, FieldAll);
-
     const clas = seq(ClassName, tok(StaticArrow), AttributeName);
-    const start = altPrio(cast, clas, TargetField, TargetFieldSymbol);
+    const start = altPrio(Cast, NewObject, clas, TargetField, TargetFieldSymbol);
 
     const fields = seq(optPrio(FieldOffset), optPrio(FieldLength));
 

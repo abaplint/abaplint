@@ -10524,12 +10524,39 @@ INSERT it_undo INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, CAST target", () => {
+    const abap = `
+CLASS zcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo EXPORTING dat TYPE d.
+ENDCLASS.
+
+CLASS zcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA parameter_value TYPE REF TO data.
+  zcl=>foo( IMPORTING dat = CAST d( parameter_value )->* ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error, INSERT short", () => {
     const abap = `
 DATA it_undo TYPE string.
 INSERT it_undo INDEX 1.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
+  });
+
+  it("CAST on target side", () => {
+    const abap = `
+DATA ref TYPE REF TO object.
+CAST zif_sdfsdfsd( ref )->id_draft = 2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("CAST, uknown type");
   });
 
 // todo, static method cannot access instance attributes
