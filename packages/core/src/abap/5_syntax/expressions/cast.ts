@@ -6,6 +6,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
 import {BasicTypes} from "../basic_types";
+import {ReferenceType} from "../_reference";
 
 export class Cast {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
@@ -34,6 +35,7 @@ export class Cast {
         const found = scope.findObjectDefinition(typeName);
         if (found) {
           tt = new ObjectReferenceType(found, {qualifiedName: typeName});
+          scope.addReference(typeExpression.getFirstToken(), found, ReferenceType.ObjectOrientedReference, filename);
         }
       } else {
         tt = new DataReference(tt, typeName);
