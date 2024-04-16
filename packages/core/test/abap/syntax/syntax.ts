@@ -10532,6 +10532,13 @@ INSERT it_undo INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
   });
 
+  it.only("CAST on target side", () => {
+    const abap = `
+CAST zif_sdfsdfsd( mo_app )->id_draft = 2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("sdfsd");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
