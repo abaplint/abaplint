@@ -10524,7 +10524,7 @@ INSERT it_undo INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, CAST target", () => {
+  it("ok, CAST target", () => {
     const abap = `
 CLASS zcl DEFINITION.
   PUBLIC SECTION.
