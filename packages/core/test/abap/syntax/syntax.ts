@@ -10524,6 +10524,25 @@ INSERT it_undo INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("ok, CAST target", () => {
+    const abap = `
+CLASS zcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo EXPORTING dat TYPE d.
+ENDCLASS.
+
+CLASS zcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA parameter_value TYPE REF TO data.
+  zcl=>foo( IMPORTING dat = CAST d( parameter_value )->* ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error, INSERT short", () => {
     const abap = `
 DATA it_undo TYPE string.
