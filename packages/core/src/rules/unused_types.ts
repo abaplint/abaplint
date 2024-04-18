@@ -13,7 +13,7 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
 import {StatementNode} from "../abap/nodes";
-import {Unknown} from "../abap/2_statements/statements/_statement";
+import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 
 class WorkArea {
   private readonly workarea: TypedIdentifier[] = [];
@@ -65,6 +65,7 @@ export class UnusedTypes implements IRule {
       extendedInformation: `Unused types are not reported if the object contains parser or syntax errors.`,
       tags: [RuleTag.Quickfix],
       pragma: "##NEEDED",
+      pseudoComment: "EC NEEDED",
     };
   }
 
@@ -141,11 +142,36 @@ export class UnusedTypes implements IRule {
       if (statement.getPragmas().some(t => t.getStr() === this.getMetadata().pragma)) {
         continue;
       }
+      else if (this.suppressedbyPseudo(statement, file)) {
+        continue;
+      }
 
       const fix = this.buildFix(file, statement);
       ret.push(Issue.atIdentifier(t, message, this.getMetadata().key, this.conf.severity, fix));
     }
     return ret;
+  }
+
+  private suppressedbyPseudo(statement: StatementNode | undefined, file: ABAPFile): boolean {
+    if (statement === undefined) {
+      return false;
+    }
+
+    if (file === undefined) {
+      return false;
+    }
+
+    let next = false;
+    for (const s of file.getStatements()) {
+      if (next === true && s.get() instanceof Comment) {
+        return s.concatTokens().includes(this.getMetadata().pseudoComment + "");
+      }
+      if (s === statement) {
+        next = true;
+      }
+    }
+
+    return false;
   }
 
 ////////////////////////////

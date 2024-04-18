@@ -13,7 +13,9 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 import {EditHelper} from "../edit_helper";
-import {Unknown} from "../abap/2_statements/statements/_statement";
+import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
+import {StatementNode} from "../abap/nodes/statement_node";
+import {ABAPFile} from "../abap/abap_file";
 
 export class UnusedMethodsConf extends BasicRuleConfig {
 }
@@ -82,6 +84,7 @@ Skips:
 `,
       tags: [],
       pragma: "##CALLED",
+      pseudoComment: "EC CALLED",
     };
   }
 
@@ -167,12 +170,37 @@ Skips:
       if (statement.getPragmas().some(t => t.getStr() === this.getMetadata().pragma)) {
         continue;
       }
+      else if (this.suppressedbyPseudo(statement, file)) {
+        continue;
+      }
 
       const message = "Method \"" + i.identifier.getName() + "\" not used";
       issues.push(Issue.atIdentifier(i.identifier, message, this.getMetadata().key, this.conf.severity));
     }
 
     return issues;
+  }
+
+  private suppressedbyPseudo(statement: StatementNode | undefined, file: ABAPFile): boolean {
+    if (statement === undefined) {
+      return false;
+    }
+
+    if (file === undefined) {
+      return false;
+    }
+
+    let next = false;
+    for (const s of file.getStatements()) {
+      if (next === true && s.get() instanceof Comment) {
+        return s.concatTokens().includes(this.getMetadata().pseudoComment + "");
+      }
+      if (s === statement) {
+        next = true;
+      }
+    }
+
+    return false;
   }
 
   private searchGlobalSubclasses(obj: ABAPObject) {
