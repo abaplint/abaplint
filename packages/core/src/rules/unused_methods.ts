@@ -15,7 +15,7 @@ import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_inform
 import {EditHelper} from "../edit_helper";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import {StatementNode} from "../abap/nodes/statement_node";
-import { ABAPFile } from "../abap/abap_file";
+import {ABAPFile} from "../abap/abap_file";
 
 export class UnusedMethodsConf extends BasicRuleConfig {
 }
