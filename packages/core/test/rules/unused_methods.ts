@@ -236,4 +236,40 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Pseudo commented", async () => {
+    const abap = `
+CLASS lcl_test DEFINITION.
+  PRIVATE SECTION.
+    CLASS-METHODS get
+      EXPORTING
+        ev_test TYPE i. "#EC CALLED
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD get.
+    CLEAR ev_test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Wrong Pseudo comment place", async () => {
+    const abap = `
+CLASS lcl_test DEFINITION.
+  PRIVATE SECTION.
+    CLASS-METHODS get "#EC CALLED
+      EXPORTING
+        ev_test TYPE i.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD get.
+    CLEAR ev_test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
 });
