@@ -168,7 +168,7 @@ Skips:
         continue;
       }
       if (statement.getPragmas().some(t => t.getStr() === this.getMetadata().pragma)) {
-        continue; 
+        continue;
       }
       else if (this.suppressedbyPseudo(statement, file)) {
         continue;
