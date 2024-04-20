@@ -1485,7 +1485,7 @@ CONCATENATE LINES OF lt_version_parts INTO res SEPARATED BY lif=>sep.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("dynamic sql", async () => {
+  it("dynamic sql", async () => {
     const abap = `
 DATA from   TYPE string.
 DATA fields TYPE string.

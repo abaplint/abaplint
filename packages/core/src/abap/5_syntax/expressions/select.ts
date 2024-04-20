@@ -12,7 +12,7 @@ import {SQLCompare} from "./sql_compare";
 import {DatabaseTableSource} from "./database_table";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SQLOrderBy} from "./sql_order_by";
-import { Dynamic } from "./dynamic";
+import {Dynamic} from "./dynamic";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
