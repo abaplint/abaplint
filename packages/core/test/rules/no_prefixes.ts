@@ -99,7 +99,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("is prefix with bool", async () => {
+  it("is prefix with bool", async () => {
     const abap = `CLASS foo DEFINITION.
   PUBLIC SECTION.
     METHODS bar

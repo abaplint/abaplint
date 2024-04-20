@@ -21,6 +21,7 @@ export class NoPrefixesConf extends BasicRuleConfig {
   public types: string = "^TY_";
   /** importing, exporting, returning and changing parameters, case insensitive regex */
   public methodParameters: string = "^[ICER].?_";
+  public allowIsPrefixBoolean: boolean = true;
 
   // todo, public localClass: string = "";
   // todo, public localInterface: string = "";
@@ -213,10 +214,17 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     const ret: Issue[] = [];
 
     for (const method of topNode.findAllStatements(Statements.MethodDef)) {
-      for (const def of method.findAllExpressions(Expressions.MethodParamName)) {
-        const name = def.concatTokens();
-        if (name !== "" && name.match(regex)) {
-          const issue = Issue.atToken(file, def.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
+      for (const param of method.findAllExpressionsMulti([Expressions.MethodDefReturning, Expressions.MethodParam])) {
+        const nameToken = param?.findFirstExpression(Expressions.MethodParamName);
+        const type = param?.findFirstExpression(Expressions.TypeParam)?.concatTokens()?.toUpperCase();
+
+        if (this.getConfig().allowIsPrefixBoolean === true && type?.endsWith("TYPE ABAP_BOOL")) {
+          continue;
+        }
+
+        const name = nameToken?.concatTokens();
+        if (nameToken && name && name !== "" && name.match(regex)) {
+          const issue = Issue.atToken(file, nameToken.getFirstToken(), MESSAGE, this.getMetadata().key, this.conf.severity);
           ret.push(issue);
         }
       }
