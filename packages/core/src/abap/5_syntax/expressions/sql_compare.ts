@@ -5,6 +5,7 @@ import {CharacterType, IntegerType, NumericType, StructureType, TableType, Unkno
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
 import {DatabaseTableSource} from "./database_table";
+import {Dynamic} from "./dynamic";
 import {Source} from "./source";
 import {SQLSource} from "./sql_source";
 
@@ -14,6 +15,11 @@ export class SQLCompare {
 
     let sourceType: AbstractType | undefined;
     let token: AbstractToken | undefined;
+
+    if (node.getFirstChild()?.get() instanceof Expressions.Dynamic) {
+      new Dynamic().runSyntax(node.getFirstChild() as ExpressionNode, scope, filename);
+      return;
+    }
 
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
       new Source().runSyntax(s, scope, filename);

@@ -12,6 +12,7 @@ import {SQLCompare} from "./sql_compare";
 import {DatabaseTableSource} from "./database_table";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SQLOrderBy} from "./sql_order_by";
+import {Dynamic} from "./dynamic";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -26,7 +27,7 @@ export class Select {
       throw new Error(`Missing FROM`);
     }
 
-    const fields = this.findFields(node);
+    const fields = this.findFields(node, scope, filename);
     if (fields.length === 0
         && node.findDirectExpression(Expressions.SQLFieldListLoop) === undefined) {
       throw new Error(`fields missing`);
@@ -212,13 +213,17 @@ export class Select {
     return new VoidType("SELECT_todo");
   }
 
-  private findFields(node: ExpressionNode): FieldList {
+  private findFields(node: ExpressionNode, scope: CurrentScope, filename: string): FieldList {
     let expr: ExpressionNode | undefined = undefined;
     const ret = [];
 
     expr = node.findFirstExpression(Expressions.SQLFieldList);
     if (expr === undefined) {
       expr = node.findDirectExpression(Expressions.SQLFieldListLoop);
+    }
+
+    if (expr?.getFirstChild()?.get() instanceof Expressions.Dynamic) {
+      new Dynamic().runSyntax(expr.getFirstChild() as ExpressionNode, scope, filename);
     }
 
     for (const field of expr?.findDirectExpressionsMulti([Expressions.SQLField, Expressions.SQLFieldName]) || []) {

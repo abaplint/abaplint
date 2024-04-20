@@ -1485,4 +1485,21 @@ CONCATENATE LINES OF lt_version_parts INTO res SEPARATED BY lif=>sep.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("dynamic sql", async () => {
+    const abap = `
+DATA from   TYPE string.
+DATA fields TYPE string.
+DATA where  TYPE string.
+DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+
+SELECT
+  FROM (from)
+  FIELDS (fields)
+  FOR ALL ENTRIES IN @result
+  WHERE (where)
+  INTO TABLE @result.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
