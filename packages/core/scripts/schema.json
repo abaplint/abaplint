@@ -6268,6 +6268,9 @@
     "NoPrefixesConf": {
       "additionalProperties": false,
       "properties": {
+        "allowIsPrefixBoolean": {
+          "type": "boolean"
+        },
         "constants": {
           "description": "CONSTANTS, CONSTANTS BEGIN OF, case insensitive regex",
           "type": "string"
@@ -6310,7 +6313,8 @@
         "fieldSymbols",
         "constants",
         "types",
-        "methodParameters"
+        "methodParameters",
+        "allowIsPrefixBoolean"
       ],
       "type": "object"
     },
