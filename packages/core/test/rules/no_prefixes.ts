@@ -99,4 +99,20 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("is prefix with bool", async () => {
+    const abap = `CLASS foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      CHANGING
+        is_error TYPE abap_bool.
+ENDCLASS.
+
+CLASS foo IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
