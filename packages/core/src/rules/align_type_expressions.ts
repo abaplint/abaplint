@@ -1,18 +1,23 @@
-import {Issue} from "../issue";
+import {ABAPFile} from "../abap/abap_file";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {Class} from "../objects";
+import {DDIC} from "../ddic";
+import {IObject} from "../objects/_iobject";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPFile} from "../abap/abap_file";
-import * as Structures from "../abap/3_structures/structures";
-import * as Statements from "../abap/2_statements/statements";
+import {Issue} from "../issue";
 import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../abap/2_statements/statements";
+import * as Structures from "../abap/3_structures/structures";
 /*
 import {EditHelper, IEdit} from "../edit_helper";
 */
 
 export class AlignTypeExpressionsConf extends BasicRuleConfig {
+  /** Ignore global exception classes */
+  public ignoreExceptions: boolean = true;
 }
 
 export class AlignTypeExpressions extends ABAPRule {
@@ -25,6 +30,8 @@ export class AlignTypeExpressions extends ABAPRule {
       shortDescription: `Align TYPE expressions in statements`,
       extendedInformation: `
 Currently works for METHODS + BEGIN OF
+
+If BEGIN OF has an INCLUDE its ignored
 
 Also note that clean ABAP does not recommend aligning TYPE clauses:
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-align-type-clauses`,
@@ -64,12 +71,23 @@ ENDINTERFACE.`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
 
     const stru = file.getStructure();
     if (stru === undefined) {
       return issues; // parser error
+    }
+
+    const ddic = new DDIC(this.reg);
+
+    if (obj instanceof Class) {
+      const definition = obj.getClassDefinition();
+      if (definition === undefined) {
+        return [];
+      } else if (this.conf.ignoreExceptions && ddic.isException(definition, obj)) {
+        return [];
+      }
     }
 
     issues.push(...this.checkTypes(stru, file));
@@ -122,6 +140,10 @@ ENDINTERFACE.`,
     const issues: Issue[] = [];
     const types = stru.findAllStructuresRecursive(Structures.Types);
     for (const t of types) {
+      if (t.findDirectStatement(Statements.IncludeType)) {
+        continue;
+      }
+
       const fields: {nameEnd: Position, after: Position}[] = [];
       let column = 0;
       const st = t.findDirectStatements(Statements.Type);

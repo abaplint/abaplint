@@ -99,4 +99,15 @@ ENDINTERFACE.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("Types, with INCLUDE, skip", async () => {
+    const issues = await findIssues(`
+  TYPES:
+    BEGIN OF ty_packing_top.
+      INCLUDE TYPE ty_packing_fields.
+  TYPES: content TYPE STANDARD TABLE OF ty_content WITH EMPTY KEY,
+      packing TYPE STANDARD TABLE OF ty_packing_sub WITH EMPTY KEY,
+    END OF ty_packing_top .`);
+    expect(issues.length).to.equal(0);
+  });
+
 });
