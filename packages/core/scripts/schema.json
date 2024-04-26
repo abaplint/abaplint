@@ -66,11 +66,18 @@
           },
           "type": "array"
         },
+        "ignoreExceptions": {
+          "description": "Ignore global exception classes",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "ignoreExceptions"
+      ],
       "type": "object"
     },
     "AllowedObjectNamingConf": {
@@ -1565,7 +1572,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Align TYPE expressions in statements\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/align_type_expressions"
+              "description": "Align TYPE expressions in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_type_expressions"
             },
             "allowed_object_naming": {
               "anyOf": [
@@ -3380,7 +3387,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Align TYPE expressions in statements\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/align_type_expressions"
+              "description": "Align TYPE expressions in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_type_expressions"
             },
             "allowed_object_naming": {
               "anyOf": [

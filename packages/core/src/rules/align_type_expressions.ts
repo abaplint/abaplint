@@ -1,18 +1,23 @@
-import {Issue} from "../issue";
+import {ABAPFile} from "../abap/abap_file";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {Class} from "../objects";
+import {DDIC} from "../ddic";
+import {IObject} from "../objects/_iobject";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPFile} from "../abap/abap_file";
-import * as Structures from "../abap/3_structures/structures";
-import * as Statements from "../abap/2_statements/statements";
+import {Issue} from "../issue";
 import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import * as Expressions from "../abap/2_statements/expressions";
-/*
+import * as Statements from "../abap/2_statements/statements";
+import * as Structures from "../abap/3_structures/structures";
 import {EditHelper, IEdit} from "../edit_helper";
-*/
+
+type fields = {nameEnd: Position, after: Position}[];
 
 export class AlignTypeExpressionsConf extends BasicRuleConfig {
+  /** Ignore global exception classes */
+  public ignoreExceptions: boolean = true;
 }
 
 export class AlignTypeExpressions extends ABAPRule {
@@ -26,9 +31,11 @@ export class AlignTypeExpressions extends ABAPRule {
       extendedInformation: `
 Currently works for METHODS + BEGIN OF
 
+If BEGIN OF has an INCLUDE TYPE its ignored
+
 Also note that clean ABAP does not recommend aligning TYPE clauses:
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-align-type-clauses`,
-      tags: [RuleTag.SingleFile, RuleTag.Whitespace],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Quickfix],
       badExample: `
 TYPES: BEGIN OF foo,
          bar TYPE i,
@@ -64,7 +71,7 @@ ENDINTERFACE.`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
 
     const stru = file.getStructure();
@@ -72,8 +79,42 @@ ENDINTERFACE.`,
       return issues; // parser error
     }
 
+    const ddic = new DDIC(this.reg);
+
+    if (obj instanceof Class) {
+      const definition = obj.getClassDefinition();
+      if (definition === undefined) {
+        return [];
+      } else if (this.conf.ignoreExceptions && ddic.isException(definition, obj)) {
+        return [];
+      }
+    }
+
     issues.push(...this.checkTypes(stru, file));
     issues.push(...this.checkMethods(stru, file));
+
+    return issues;
+  }
+
+  private check(fields: fields, column: number, file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
+
+    for (const f of fields) {
+      if (f.after.getCol() === column) {
+        continue;
+      }
+
+      let fix: IEdit | undefined = undefined;
+      if (f.after.getCol() < column) {
+        fix = EditHelper.insertAt(file, f.after, " ".repeat(column - f.after.getCol()));
+      } else {
+        fix = EditHelper.deleteRange(file, new Position(f.after.getRow(), column), f.after);
+      }
+
+      const message = `Align TYPE expressions to column ${column}`;
+      const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity, fix);
+      issues.push(issue);
+    }
 
     return issues;
   }
@@ -83,7 +124,7 @@ ENDINTERFACE.`,
 
     const methods = stru.findAllStatements(Statements.MethodDef);
     for (const m of methods) {
-      const fields: {nameEnd: Position, after: Position}[] = [];
+      const fields: fields = [];
       const params = m.findAllExpressions(Expressions.MethodParam);
       let column = 0;
       for (const p of params) {
@@ -105,14 +146,7 @@ ENDINTERFACE.`,
         column = Math.max(column, name.getLastToken().getEnd().getCol() + 1);
       }
 
-      for (const f of fields) {
-        if (f.after.getCol() !== column) {
-//          const fix = this.buildFix(f.name, column);
-          const message = `Align TYPE expressions to column ${column}`;
-          const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
-        }
-      }
+      issues.push(...this.check(fields, column, file));
     }
 
     return issues;
@@ -122,7 +156,11 @@ ENDINTERFACE.`,
     const issues: Issue[] = [];
     const types = stru.findAllStructuresRecursive(Structures.Types);
     for (const t of types) {
-      const fields: {nameEnd: Position, after: Position}[] = [];
+      if (t.findDirectStatement(Statements.IncludeType)) {
+        continue;
+      }
+
+      const fields: fields = [];
       let column = 0;
       const st = t.findDirectStatements(Statements.Type);
       for (const s of st) {
@@ -133,14 +171,7 @@ ENDINTERFACE.`,
         column = Math.max(column, name.getFirstToken().getEnd().getCol() + 1);
       }
 
-      for (const f of fields) {
-        if (f.after.getCol() !== column) {
-//          const fix = this.buildFix(f.name, column);
-          const message = `Align TYPE expressions to column ${column}`;
-          const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
-        }
-      }
+      issues.push(...this.check(fields, column, file));
     }
 
     return issues;
