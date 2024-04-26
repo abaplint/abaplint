@@ -22,6 +22,8 @@ https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abencharacter_set_gui
 
 Checkes files with extensions ".abap" and ".asddls"`,
       tags: [RuleTag.SingleFile],
+      badExample: `WRITE '뽑'.`,
+      goodExample: `WRITE cl_abap_conv_in_ce=>uccp( 'BF51' ).`,
     };
   }
 
