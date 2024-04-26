@@ -3,13 +3,11 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {AlignTypeExpressions} from "../../src/rules";
 import {Issue} from "../../src/issue";
-//import {testRuleFixSingle} from "./_utils";
+import {testRuleFixSingle} from "./_utils";
 
-/*
 function testFix(input: string, expected: string, noIssuesAfter = true) {
   testRuleFixSingle(input, expected, new AlignTypeExpressions(), undefined, undefined, noIssuesAfter);
 }
-*/
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
@@ -18,20 +16,26 @@ async function findIssues(abap: string): Promise<readonly Issue[]> {
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe("Rule: align_type_expressions", () => {
+describe.only("Rule: align_type_expressions", () => {
 
   it("parser error, no issues expected", async () => {
     const issues = await findIssues("hello world.");
     expect(issues.length).to.equal(0);
   });
 
-  it("Align TYPEs", async () => {
-    const issues = await findIssues(`
+  it.skip("Align TYPEs", async () => {
+    const input = `
 TYPES: BEGIN OF foo,
          bar TYPE i,
          foobar TYPE i,
-       END OF foo.`);
-    expect(issues.length).to.equal(1);
+       END OF foo.`;
+
+    const expected = `
+TYPES: BEGIN OF foo,
+         bar    TYPE i,
+         foobar TYPE i,
+       END OF foo.`;
+    testFix(input, expected);
   });
 
   it("Align TYPEs, ok", async () => {

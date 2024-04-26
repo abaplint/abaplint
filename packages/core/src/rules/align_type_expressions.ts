@@ -15,6 +15,8 @@ import * as Structures from "../abap/3_structures/structures";
 import {EditHelper, IEdit} from "../edit_helper";
 */
 
+type fields = {nameEnd: Position, after: Position}[];
+
 export class AlignTypeExpressionsConf extends BasicRuleConfig {
   /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
@@ -35,7 +37,7 @@ If BEGIN OF has an INCLUDE TYPE its ignored
 
 Also note that clean ABAP does not recommend aligning TYPE clauses:
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-align-type-clauses`,
-      tags: [RuleTag.SingleFile, RuleTag.Whitespace],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Quickfix],
       badExample: `
 TYPES: BEGIN OF foo,
          bar TYPE i,
@@ -96,12 +98,27 @@ ENDINTERFACE.`,
     return issues;
   }
 
+  private check(fields: fields, column: number, file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
+
+    for (const f of fields) {
+      if (f.after.getCol() !== column) {
+//          const fix = this.buildFix(f.name, column);
+        const message = `Align TYPE expressions to column ${column}`;
+        const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+    }
+
+    return issues;
+  }
+
   private checkMethods(stru: StructureNode, file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
 
     const methods = stru.findAllStatements(Statements.MethodDef);
     for (const m of methods) {
-      const fields: {nameEnd: Position, after: Position}[] = [];
+      const fields: fields = [];
       const params = m.findAllExpressions(Expressions.MethodParam);
       let column = 0;
       for (const p of params) {
@@ -123,14 +140,7 @@ ENDINTERFACE.`,
         column = Math.max(column, name.getLastToken().getEnd().getCol() + 1);
       }
 
-      for (const f of fields) {
-        if (f.after.getCol() !== column) {
-//          const fix = this.buildFix(f.name, column);
-          const message = `Align TYPE expressions to column ${column}`;
-          const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
-        }
-      }
+      issues.push(...this.check(fields, column, file));
     }
 
     return issues;
@@ -144,7 +154,7 @@ ENDINTERFACE.`,
         continue;
       }
 
-      const fields: {nameEnd: Position, after: Position}[] = [];
+      const fields: fields = [];
       let column = 0;
       const st = t.findDirectStatements(Statements.Type);
       for (const s of st) {
@@ -155,14 +165,7 @@ ENDINTERFACE.`,
         column = Math.max(column, name.getFirstToken().getEnd().getCol() + 1);
       }
 
-      for (const f of fields) {
-        if (f.after.getCol() !== column) {
-//          const fix = this.buildFix(f.name, column);
-          const message = `Align TYPE expressions to column ${column}`;
-          const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
-        }
-      }
+      issues.push(...this.check(fields, column, file));
     }
 
     return issues;
