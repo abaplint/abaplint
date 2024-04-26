@@ -7,12 +7,9 @@ import * as Structures from "../abap/3_structures/structures";
 import * as Statements from "../abap/2_statements/statements";
 import {Position} from "../position";
 import {INode} from "../abap/nodes/_inode";
-/*
-import * as Expressions from "../abap/2_statements/expressions";
-import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
-import {INode} from "../abap/nodes/_inode";
-import {Statements} from "..";
+import * as Expressions from "../abap/2_statements/expressions";
+/*
 import {EditHelper, IEdit} from "../edit_helper";
 */
 
@@ -37,12 +34,26 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-align-
 TYPES: BEGIN OF foo,
          bar TYPE i,
          foobar TYPE i,
-       END OF foo.`,
+       END OF foo.
+
+INTERFACE lif.
+  METHODS bar
+    IMPORTING
+      foo TYPE i
+      foobar TYPE i.
+ENDINTERFACE.`,
       goodExample: `
 TYPES: BEGIN OF foo,
          bar    TYPE i,
          foobar TYPE i,
-       END OF foo.`,
+       END OF foo.
+
+INTERFACE lif.
+  METHODS bar
+    IMPORTING
+      foo    TYPE i
+      foobar TYPE i.
+ENDINTERFACE.`,
     };
   }
 
@@ -62,6 +73,43 @@ TYPES: BEGIN OF foo,
       return issues; // parser error
     }
 
+    issues.push(...this.checkTypes(stru, file));
+    issues.push(...this.checkMethods(stru, file));
+
+    return issues;
+  }
+
+  private checkMethods(stru: StructureNode, file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
+
+    const methods = stru.findAllStatements(Statements.MethodDef);
+    for (const m of methods) {
+      const fields: {name: INode, after: Position}[] = [];
+      const params = m.findAllExpressions(Expressions.MethodParam);
+      let column = 0;
+      for (const p of params) {
+        const name = p.getChildren()[0];
+        fields.push({
+          name: name,
+          after: p.findFirstExpression(Expressions.TypeParam)!.getFirstToken().getStart()});
+        column = Math.max(column, name.getFirstToken().getEnd().getCol() + 1);
+      }
+
+      for (const f of fields) {
+        if (f.after.getCol() !== column) {
+//          const fix = this.buildFix(f.name, column);
+          const message = `Align TYPE expressions to column ${column}`;
+          const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
+      }
+    }
+
+    return issues;
+  }
+
+  private checkTypes(stru: StructureNode, file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
     const types = stru.findAllStructuresRecursive(Structures.Types);
     for (const t of types) {
       const fields: {name: INode, after: Position}[] = [];
