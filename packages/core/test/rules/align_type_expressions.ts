@@ -89,4 +89,14 @@ ENDINTERFACE.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("Types, length, ok", async () => {
+    const issues = await findIssues(`
+    TYPES:
+      BEGIN OF ty_color_line,
+        exception(1) TYPE c,
+        color        TYPE lvc_t_scol,
+      BEGIN OF ty_color_line.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });
