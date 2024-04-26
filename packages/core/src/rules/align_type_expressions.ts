@@ -11,9 +11,7 @@ import {StructureNode} from "../abap/nodes";
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
-/*
 import {EditHelper, IEdit} from "../edit_helper";
-*/
 
 type fields = {nameEnd: Position, after: Position}[];
 
@@ -102,12 +100,20 @@ ENDINTERFACE.`,
     const issues: Issue[] = [];
 
     for (const f of fields) {
-      if (f.after.getCol() !== column) {
-//          const fix = this.buildFix(f.name, column);
-        const message = `Align TYPE expressions to column ${column}`;
-        const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+      if (f.after.getCol() === column) {
+        continue;
       }
+
+      let fix: IEdit | undefined = undefined;
+      if (f.after.getCol() < column) {
+        fix = EditHelper.insertAt(file, f.after, " ".repeat(column - f.after.getCol()));
+      } else {
+        fix = EditHelper.deleteRange(file, new Position(f.after.getRow(), column), f.after);
+      }
+
+      const message = `Align TYPE expressions to column ${column}`;
+      const issue = Issue.atPosition(file, f.after, message, this.getMetadata().key, this.conf.severity, fix);
+      issues.push(issue);
     }
 
     return issues;

@@ -16,14 +16,14 @@ async function findIssues(abap: string): Promise<readonly Issue[]> {
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe.only("Rule: align_type_expressions", () => {
+describe("Rule: align_type_expressions", () => {
 
   it("parser error, no issues expected", async () => {
     const issues = await findIssues("hello world.");
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("Align TYPEs", async () => {
+  it("Align TYPEs, insert spaces", async () => {
     const input = `
 TYPES: BEGIN OF foo,
          bar TYPE i,
@@ -112,6 +112,21 @@ ENDINTERFACE.`);
       packing TYPE STANDARD TABLE OF ty_packing_sub WITH EMPTY KEY,
     END OF ty_packing_top .`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("Align TYPEs, remove spaces", async () => {
+    const input = `
+TYPES: BEGIN OF foo,
+         bar    TYPE i,
+         foobar    TYPE i,
+       END OF foo.`;
+
+    const expected = `
+TYPES: BEGIN OF foo,
+         bar    TYPE i,
+         foobar TYPE i,
+       END OF foo.`;
+    testFix(input, expected);
   });
 
 });
