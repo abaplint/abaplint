@@ -8,6 +8,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference, GenericObjectReferenceType} from "../abap/types/basic";
 import {IObjectAndToken} from "../_iddic_references";
 import {Version} from "../version";
+import {IAllowedNaming} from "./_iobject";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -55,7 +56,7 @@ export class Table extends AbstractObject {
     return undefined;
   }
 
-  public getAllowedNaming() {
+  public getAllowedNaming(): IAllowedNaming {
     let length = 30;
 
     if (this.getTableCategory() === TableCategory.Transparent) {
