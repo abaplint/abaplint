@@ -128,4 +128,24 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TABL, ok, numbers", async () => {
+    const issues = await findIssues("z012345.tabl.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("TABL, too short", async () => {
+    const issues = await findIssues("z.tabl.xml");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("TABL, underscore error", async () => {
+    const issues = await findIssues("y_sdfsd.tabl.xml");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("TABL, underscore error, another", async () => {
+    const issues = await findIssues("ya_sdfsd.tabl.xml");
+    expect(issues.length).to.equal(1);
+  });
+
 });
