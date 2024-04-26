@@ -58,11 +58,10 @@ export class Table extends AbstractObject {
 
   public getAllowedNaming(): IAllowedNaming {
     let length = 30;
-    let regex = /^[a-zA-Z0-9]{3}\w{1,27}$/;
+    const regex = /^((\/[A-Z_\d]{3,8}\/)|[a-zA-Z0-9]{3})\w+$/;
 
     if (this.getTableCategory() === TableCategory.Transparent) {
       length = 16;
-      regex = /^[a-zA-Z0-9]{3}\w{1,13}$/;
     }
 
     return {

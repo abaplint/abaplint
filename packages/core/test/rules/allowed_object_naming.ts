@@ -148,4 +148,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("TABL, with namespace, ok", async () => {
+    const issues = await findIssues("#mbtools#manifest.tabl.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });
