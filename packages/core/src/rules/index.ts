@@ -1,6 +1,7 @@
 export * from "./7bit_ascii";
 export * from "./abapdoc";
 export * from "./align_parameters";
+export * from "./align_type_expressions";
 export * from "./allowed_object_naming";
 export * from "./allowed_object_types";
 export * from "./ambiguous_statement";
