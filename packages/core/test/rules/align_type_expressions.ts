@@ -18,7 +18,7 @@ async function findIssues(abap: string): Promise<readonly Issue[]> {
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe.only("Rule: align_type_expressions", () => {
+describe("Rule: align_type_expressions", () => {
 
   it("parser error, no issues expected", async () => {
     const issues = await findIssues("hello world.");
@@ -32,6 +32,15 @@ TYPES: BEGIN OF foo,
          foobar TYPE i,
        END OF foo.`);
     expect(issues.length).to.equal(1);
+  });
+
+  it("Align TYPEs, ok", async () => {
+    const issues = await findIssues(`
+TYPES: BEGIN OF foo,
+         bar    TYPE i,
+         foobar TYPE i,
+       END OF foo.`);
+    expect(issues.length).to.equal(0);
   });
 
 });
