@@ -28,7 +28,7 @@ Currently works for METHODS + BEGIN OF
 
 Also note that clean ABAP does not recommend aligning TYPE clauses:
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-align-type-clauses`,
-      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.Quickfix],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace],
       badExample: `
 TYPES: BEGIN OF foo,
          bar TYPE i,
