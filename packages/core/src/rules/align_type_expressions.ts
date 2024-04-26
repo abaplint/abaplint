@@ -31,7 +31,7 @@ export class AlignTypeExpressions extends ABAPRule {
       extendedInformation: `
 Currently works for METHODS + BEGIN OF
 
-If BEGIN OF has an INCLUDE its ignored
+If BEGIN OF has an INCLUDE TYPE its ignored
 
 Also note that clean ABAP does not recommend aligning TYPE clauses:
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-align-type-clauses`,
