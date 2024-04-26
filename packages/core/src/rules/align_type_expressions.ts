@@ -6,7 +6,6 @@ import {ABAPFile} from "../abap/abap_file";
 import * as Structures from "../abap/3_structures/structures";
 import * as Statements from "../abap/2_statements/statements";
 import {Position} from "../position";
-import {INode} from "../abap/nodes/_inode";
 import {StructureNode} from "../abap/nodes";
 import * as Expressions from "../abap/2_statements/expressions";
 /*
@@ -84,15 +83,26 @@ ENDINTERFACE.`,
 
     const methods = stru.findAllStatements(Statements.MethodDef);
     for (const m of methods) {
-      const fields: {name: INode, after: Position}[] = [];
+      const fields: {nameEnd: Position, after: Position}[] = [];
       const params = m.findAllExpressions(Expressions.MethodParam);
       let column = 0;
       for (const p of params) {
-        const name = p.getChildren()[0];
+        const children = p.getChildren();
+        const name = children[children.length - 2];
         fields.push({
-          name: name,
+          nameEnd: name.getLastToken().getEnd(),
           after: p.findFirstExpression(Expressions.TypeParam)!.getFirstToken().getStart()});
         column = Math.max(column, name.getFirstToken().getEnd().getCol() + 1);
+      }
+
+      const ret = m.findFirstExpression(Expressions.MethodDefReturning);
+      if (ret) {
+        const children = ret.getChildren();
+        const name = children[children.length - 2];
+        fields.push({
+          nameEnd: name.getLastToken().getEnd(),
+          after: ret.findFirstExpression(Expressions.TypeParam)!.getFirstToken().getStart()});
+        column = Math.max(column, name.getLastToken().getEnd().getCol() + 1);
       }
 
       for (const f of fields) {
@@ -112,13 +122,13 @@ ENDINTERFACE.`,
     const issues: Issue[] = [];
     const types = stru.findAllStructuresRecursive(Structures.Types);
     for (const t of types) {
-      const fields: {name: INode, after: Position}[] = [];
+      const fields: {nameEnd: Position, after: Position}[] = [];
       let column = 0;
       const st = t.findDirectStatements(Statements.Type);
       for (const s of st) {
         const name = s.getChildren()[1];
         fields.push({
-          name: name,
+          nameEnd: name.getLastToken().getEnd(),
           after: s.getChildren()[2].getFirstToken().getStart()});
         column = Math.max(column, name.getFirstToken().getEnd().getCol() + 1);
       }

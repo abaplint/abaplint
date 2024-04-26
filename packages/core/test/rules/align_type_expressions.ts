@@ -65,4 +65,28 @@ ENDINTERFACE.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("Align METHODS types, returning", async () => {
+    const issues = await findIssues(`
+INTERFACE lif.
+  METHODS bar
+    IMPORTING
+      foo TYPE i
+    RETURNING
+      VALUE(sdf) TYPE f.
+ENDINTERFACE.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Align METHODS types, ok", async () => {
+    const issues = await findIssues(`
+INTERFACE lif.
+  METHODS bar
+    IMPORTING
+      foo        TYPE i
+    RETURNING
+      VALUE(sdf) TYPE f.
+ENDINTERFACE.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });
