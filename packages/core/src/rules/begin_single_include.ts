@@ -31,7 +31,8 @@ STATICS BEGIN OF bar.
 INCLUDE STRUCTURE syst.
 STATICS END OF bar.`,
       goodExample: `DATA BEGIN OF foo.
-INCLUDE STRUCTURE dselc.
+  DATA field TYPE i.
+  INCLUDE STRUCTURE dselc.
 DATA END OF foo.`,
     };
   }
