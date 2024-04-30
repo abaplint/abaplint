@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
 import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_irule";
-import {home, renderIcons, preamble, postamble} from "./common";
+import {home, renderIcons, preamble, postamble, example} from "./common";
 
 const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
 
@@ -81,6 +81,9 @@ export function buildRule(meta: IRuleMetadata) {
 
   html += home();
   html += renderIcons(meta.tags);
+  if (meta.badExample !== undefined) {
+    html += example();
+  }
   const link = findPath(meta.key);
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
