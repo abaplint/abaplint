@@ -25,6 +25,8 @@ export class TypesNaming extends ABAPRule {
       shortDescription: `Allows you to enforce a pattern for TYPES definitions`,
       extendedInformation: `Does not run for TYPE POOLS`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
+      badExample: `TYPES foo TYPE i.`,
+      goodExample: `TYPES ty_foo TYPE i.`,
     };
   }
 

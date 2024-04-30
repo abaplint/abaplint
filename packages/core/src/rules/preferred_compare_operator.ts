@@ -24,6 +24,10 @@ export class PreferredCompareOperator extends ABAPRule {
       title: "Preferred compare operator",
       shortDescription: `Configure undesired operator variants`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
+      badExample: `IF foo EQ bar.
+ENDIF.`,
+      goodExample: `IF foo = bar.
+ENDIF.`,
     };
   }
 

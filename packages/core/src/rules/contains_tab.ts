@@ -24,6 +24,8 @@ export class ContainsTab extends ABAPRule {
 https://docs.abapopenchecks.org/checks/09/
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
       tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `\tWRITE 'hello world'.`,
+      goodExample: `  WRITE 'hello world'.`,
     };
   }
 

@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class PreferReturningToExportingConf extends BasicRuleConfig {
@@ -13,7 +13,7 @@ export class PreferReturningToExporting extends ABAPRule {
 
   private conf = new PreferReturningToExportingConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "prefer_returning_to_exporting",
       title: "Prefer RETURNING to EXPORTING",
@@ -21,6 +21,10 @@ export class PreferReturningToExporting extends ABAPRule {
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-returning-to-exporting
 https://docs.abapopenchecks.org/checks/44/`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS test EXPORTING ev_foo TYPE i.
+ENDCLASS.`,
     };
   }
 

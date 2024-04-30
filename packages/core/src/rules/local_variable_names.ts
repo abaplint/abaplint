@@ -7,7 +7,7 @@ import {StructureNode} from "../abap/nodes";
 import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {NamingRuleConfig} from "./_naming_rule_config";
 import {NameValidator} from "../utils/name_validator";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class LocalVariableNamesConf extends NamingRuleConfig {
@@ -23,7 +23,7 @@ export class LocalVariableNames extends ABAPRule {
 
   private conf = new LocalVariableNamesConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "local_variable_names",
       title: "Local variable naming conventions",
@@ -31,6 +31,12 @@ export class LocalVariableNames extends ABAPRule {
 Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.
 Regexes are case-insensitive.`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
+      badExample: `FORM bar.
+  DATA foo.
+ENDFORM.`,
+      goodExample: `FORM bar.
+  DATA lv_foo.
+ENDFORM.`,
     };
   }
 

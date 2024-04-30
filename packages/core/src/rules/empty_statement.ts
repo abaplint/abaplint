@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {Position} from "../position";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class EmptyStatementConf extends BasicRuleConfig {
@@ -14,12 +14,14 @@ export class EmptyStatement extends ABAPRule {
 
   private conf = new EmptyStatementConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "empty_statement",
       title: "Remove empty statement",
       shortDescription: `Checks for empty statements (an empty statement is a single dot)`,
       tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      badExample: `WRITE 'hello world'..`,
+      goodExample: `WRITE 'hello world'.`,
     };
   }
 

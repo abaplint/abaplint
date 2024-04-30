@@ -19,6 +19,16 @@ export class UseClassBasedExceptions extends ABAPRule {
       shortDescription: `Use class based exceptions, checks interface and class definitions`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-class-based-exceptions`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `INTERFACE lif.
+  METHODS load_data
+    EXCEPTIONS
+      invalid_parameter.
+ENDINTERFACE.`,
+      goodExample: `INTERFACE lif.
+  METHODS load_data
+    RAISING
+      cx_something.
+ENDINTERFACE.`,
     };
   }
 

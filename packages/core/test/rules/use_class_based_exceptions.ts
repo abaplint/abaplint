@@ -9,6 +9,11 @@ const tests = [
     EXCEPTIONS
       dp_invalid_parameter.
 ENDINTERFACE.`, cnt: 1},
+  {abap: `INTERFACE sdfds.
+  METHODS load_data
+    RAISING
+      cx_something.
+ENDINTERFACE.`, cnt: 0},
 ];
 
 testRule(tests, UseClassBasedExceptions);
