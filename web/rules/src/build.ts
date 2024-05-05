@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
-import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon, singleFileIcon, performanceIcon} from "./common";
+import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon, singleFileIcon, performanceIcon, example} from "./common";
 import {buildRule} from "./rule_page";
 import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
@@ -9,6 +9,7 @@ import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 function buildChips(json: any) {
   let html = `<div id="chipsDiv">`;
   let issued = 0;
+
   for (const tag in RuleTag) {
     let icon = "";
 
@@ -72,6 +73,7 @@ function buildChips(json: any) {
       html += "<br><br>\n";
     }
   }
+
   html += "</div><br>\n";
 
   return html;
@@ -105,6 +107,9 @@ ${buildChips(json)}
     html += `\n<div id="rule-${r.key}"><a href='./${r.key}/'><tt>${r.key}</tt> - ${r.title}</a>`;
     html += `<div class="hidden">${(r.tags || []).join(",")}</div>`;
     html += renderIcons(r.tags);
+    if (r.hasExample) {
+      html += example();
+    }
     html += `<br>${r.shortDescription}<br><br></div>\n`;
   }
   html += `</div>
@@ -138,6 +143,7 @@ function buildRulesJson() {
       title: meta.title,
       shortDescription: meta.shortDescription,
       extendedInformation: meta.extendedInformation || "",
+      hasExample: meta.badExample !== undefined,
       tags: meta.tags ? meta.tags : []});
   }
   fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));

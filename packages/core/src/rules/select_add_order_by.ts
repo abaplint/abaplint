@@ -33,6 +33,8 @@ add ORDER BY PRIMARY KEY if in doubt
 
 If the target is a sorted/hashed table, no issue is reported`,
       tags: [RuleTag.SingleFile],
+      badExample: `SELECT * FROM db INTO TABLE @DATA(tab).`,
+      goodExample: `SELECT * FROM db INTO TABLE @DATA(tab) ORDER BY PRIMARY KEY.`,
     };
   }
 

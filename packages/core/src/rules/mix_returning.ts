@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class MixReturningConf extends BasicRuleConfig {
@@ -13,7 +13,7 @@ export class MixReturning extends ABAPRule {
 
   private conf = new MixReturningConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "mix_returning",
       title: "Mix of returning and exporting",
@@ -21,6 +21,13 @@ export class MixReturning extends ABAPRule {
       // eslint-disable-next-line max-len
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS
+      foobar
+        EXPORTING foo TYPE i
+        RETURNING VALUE(rv_string) TYPE string.
+ENDCLASS.`,
     };
   }
 

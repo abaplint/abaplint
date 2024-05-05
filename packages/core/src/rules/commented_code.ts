@@ -29,6 +29,7 @@ export class CommentedCode extends ABAPRule {
 `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
 https://docs.abapopenchecks.org/checks/14/`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
+      badExample: `* WRITE 'hello world'.`,
     };
   }
 

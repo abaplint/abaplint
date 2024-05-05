@@ -23,6 +23,15 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obscu
 
 Interface method names are ignored`,
       tags: [RuleTag.Naming, RuleTag.SingleFile, RuleTag.Styleguide],
+      badExample: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS matches.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD matches.
+  ENDMETHOD.
+ENDCLASS.`,
     };
   }
 

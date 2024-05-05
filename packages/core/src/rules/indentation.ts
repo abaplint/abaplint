@@ -35,6 +35,24 @@ export class Indentation extends ABAPRule {
       title: "Indentation",
       shortDescription: `Checks indentation`,
       tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
+      badExample: `CLASS lcl DEFINITION.
+PRIVATE SECTION.
+METHODS constructor.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+METHOD constructor.
+ENDMETHOD.
+ENDCLASS.`,
+      goodExample: `CLASS lcl DEFINITION.
+  PRIVATE SECTION.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.`,
     };
   }
 
