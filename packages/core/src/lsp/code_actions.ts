@@ -22,7 +22,7 @@ export class CodeActions {
 
     const ret: LServer.CodeAction[] = [];
     for (const i of issues) {
-      const fix = i.getFix();
+      const fix = i.getDefaultFix();
       if (fix === undefined) {
         continue;
       }
@@ -64,7 +64,7 @@ export class CodeActions {
     const fixes: IEdit[] = [];
 
     for (const i of issues) {
-      const fix = i.getFix();
+      const fix = i.getDefaultFix();
       if (fix === undefined) {
         continue;
       }

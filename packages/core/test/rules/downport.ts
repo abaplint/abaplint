@@ -2067,7 +2067,7 @@ ENDFORM.`;
     reg.parse();
     const issues = new Downport().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equal(1, "single issue expected");
-    expect(issues[0].getFix()).to.not.equal(undefined);
+    expect(issues[0].getDefaultFix()).to.not.equal(undefined);
   });
 
   it("line_eixsts, dashed source table", async () => {
