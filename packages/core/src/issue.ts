@@ -14,7 +14,12 @@ interface IIssueData {
   start: Position;
   end: Position;
   severity: Severity;
-  fix?: IEdit;
+  /** The default fix for the issue, it always makes sense to apply this fix
+   *  These are applied by "abaplint --fix" and in the document formatter in vscode
+   */
+  defaultFix?: IEdit;
+  /** Alternative quick fixes, the developer must choose which to apply */
+  fixes?: IEdit[];
 }
 
 export class Issue {
