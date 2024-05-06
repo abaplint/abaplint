@@ -69,6 +69,14 @@ ENDINTERFACE.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("One line, no issue expected", async () => {
+    const issues = await findIssues(`
+INTERFACE lif.
+  METHODS get_form_field IMPORTING name TYPE string RETURNING VALUE(value) TYPE string.
+ENDINTERFACE.`);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Align METHODS types, returning", async () => {
     const issues = await findIssues(`
 INTERFACE lif.
