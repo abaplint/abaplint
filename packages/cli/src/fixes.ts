@@ -116,7 +116,7 @@ export class ApplyFixes {
     const appliedIssues: Issue[] = [];
 
     for (const i of issues) {
-      const edit = i.getFix();
+      const edit = i.getDefaultFix();
       if (edit === undefined) {
         continue;
       } else if (this.possibleOverlap(edit, edits) === true) {
