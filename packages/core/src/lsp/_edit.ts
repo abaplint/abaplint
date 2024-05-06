@@ -14,22 +14,7 @@ export class LSPEdit {
     }
     return workspace;
   }
-/*
-  public static mapEditsDocument(edit: IEdit): LServer.WorkspaceEdit {
-    const workspace: LServer.WorkspaceEdit = {documentChanges: []};
-    for (const filename in edit) {
-      const doc: LServer.VersionedTextDocumentIdentifier = {uri: filename, version: 1};
 
-      const e = LServer.TextDocumentEdit.create(doc, this.mapText(edit[filename]));
-      workspace.documentChanges?.push(e);
-    }
-    // @ts-ignore
-    console.dir(workspace.documentChanges![0].edits[0]);
-    // @ts-ignore
-    console.dir(workspace.documentChanges![0].edits[1]);
-    return workspace;
-  }
-*/
   public static mapEdit(edit: IEdit): LServer.WorkspaceEdit {
     const workspace: LServer.WorkspaceEdit = {changes: {}};
     for (const filename in edit) {

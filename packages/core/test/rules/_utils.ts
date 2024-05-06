@@ -46,10 +46,10 @@ export function testRule(tests: TestRuleType, rule: new () => IRule, config?: an
         if (test.fix !== undefined) {
           issues.forEach((issue) => {
             if (test.fix === true) {
-              expect(issue.getFix()).to.not.equals(undefined, "Expected fix to exist");
+              expect(issue.getDefaultFix()).to.not.equals(undefined, "Expected fix to exist");
             }
             else {
-              expect(issue.getFix()).to.equals(undefined, "Expected fix not to exist");
+              expect(issue.getDefaultFix()).to.equals(undefined, "Expected fix not to exist");
             }
           });
         }
@@ -91,7 +91,7 @@ export function testRuleFixSingle(
   let issues = rule.initialize(reg).run(reg.getFirstObject()!);
   expect(issues.length).to.equal(1, "single issue expected");
 
-  const fix = issues[0].getFix();
+  const fix = issues[0].getDefaultFix();
   expect(fix).to.not.equal(undefined, "Fix should exist");
   applyEditSingle(reg, fix!);
 
@@ -119,7 +119,7 @@ export function testRuleFixCount(
   expect(issues.length).to.equal(count, "single issue expected");
 
   for (const issue of [...issues].reverse()) {
-    const fix = issue.getFix();
+    const fix = issue.getDefaultFix();
     expect(fix).to.not.equal(undefined, "Fix should exist");
     applyEditSingle(reg, fix!);
   }

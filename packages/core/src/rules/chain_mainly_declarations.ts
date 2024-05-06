@@ -135,7 +135,7 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
 
       let prevFix: IEdit | undefined;
       if (previousRow === colon.getStart().getRow()) {
-        prevFix = issues.pop()?.getFix();
+        prevFix = issues.pop()?.getDefaultFix();
       }
 
       const fix = this.getFix(file, statement, statementNode, prevFix);

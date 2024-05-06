@@ -222,7 +222,7 @@ ENDCLASS.`;
            END OF ty_includes.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(1);
-    expect(issues[0].getFix()).to.equal(undefined);
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
   });
 
   it("INCLUDE TYPE 1", async () => {

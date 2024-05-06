@@ -14,7 +14,12 @@ interface IIssueData {
   start: Position;
   end: Position;
   severity: Severity;
-  fix?: IEdit;
+  /** The default fix for the issue, it always makes sense to apply this fix
+   *  These are applied by "abaplint --fix" and in the document formatter in vscode extension
+   */
+  defaultFix?: IEdit;
+  /** Alternative quick fixes, the developer must choose which to apply */
+  alternativeFixes?: IEdit[];
 }
 
 export class Issue {
@@ -50,7 +55,7 @@ export class Issue {
       key,
       start,
       end,
-      fix,
+      defaultFix: fix,
       severity,
     });
   }
@@ -66,7 +71,7 @@ export class Issue {
       key,
       start,
       end,
-      fix,
+      defaultFix: fix,
       severity,
     });
   }
@@ -79,7 +84,7 @@ export class Issue {
       key,
       start,
       end,
-      fix,
+      defaultFix: fix,
       severity,
     });
   }
@@ -93,7 +98,7 @@ export class Issue {
       start: token.getStart(),
       end: token.getEnd(),
       severity,
-      fix,
+      defaultFix: fix,
     });
   }
 
@@ -106,7 +111,7 @@ export class Issue {
       start: identifier.getStart(),
       end: identifier.getEnd(),
       severity,
-      fix,
+      defaultFix: fix,
     });
   }
 
@@ -115,7 +120,7 @@ export class Issue {
 
     if (this.data.start instanceof VirtualPosition) {
       // no quick fixes inside macros
-      this.data.fix = undefined;
+      this.data.defaultFix = undefined;
     }
 
     if (this.data.start.getCol() < 1) {
@@ -149,8 +154,12 @@ export class Issue {
     return this.data.filename;
   }
 
-  public getFix() {
-    return this.data.fix;
+  public getDefaultFix() {
+    return this.data.defaultFix;
+  }
+
+  public getAlternativeFixes() {
+    return this.data.alternativeFixes;
   }
 
   public getSeverity() {
