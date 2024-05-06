@@ -39,7 +39,7 @@
     "homepage": "https://abaplint.org",
     "devDependencies": {
         "@abaplint/core": "^2.107.2",
-        "@types/chai": "^4.3.15",
+        "@types/chai": "^4.3.16",
         "@types/glob": "^8.1.0",
         "@types/minimist": "^1.2.5",
         "@types/mocha": "^10.0.6",

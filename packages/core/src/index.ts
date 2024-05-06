@@ -56,6 +56,7 @@ import {RulesRunner} from "./rules_runner";
 import {RuleTag} from "./rules/_irule";
 import {CyclomaticComplexityStats} from "./utils/cyclomatic_complexity_stats";
 import {SkipLogic} from "./skip_logic";
+import {Diagnostics} from "./lsp/diagnostics";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -72,4 +73,4 @@ export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityS
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
-  IRenameSettings, Info, Visibility, Severity, RuleTag};
+  Diagnostics, IRenameSettings, Info, Visibility, Severity, RuleTag};
