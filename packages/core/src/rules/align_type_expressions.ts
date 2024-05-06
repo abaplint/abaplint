@@ -99,6 +99,15 @@ ENDINTERFACE.`,
   private check(fields: fields, column: number, file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
 
+    const rows = new Set<number>();
+    for (const f of fields) {
+      const row = f.after.getRow();
+      if (rows.has(row)) {
+        return [];
+      }
+      rows.add(row);
+    }
+
     for (const f of fields) {
       if (f.after.getCol() === column) {
         continue;
