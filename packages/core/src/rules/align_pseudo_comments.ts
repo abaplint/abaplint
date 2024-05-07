@@ -41,13 +41,16 @@ export class AlignPseudoComments extends ABAPRule {
         previousEnd = statement.getLastToken().getEnd();
         continue;
       }
-      const firstToken = statement.getFirstToken();
-      if (firstToken.getStr().startsWith(`"#`) === false) {
+      const commentLength = statement.concatTokens().length;
+      const firstCommentToken = statement.getFirstToken();
+      if (firstCommentToken.getStr().startsWith(`"#`) === false) {
         continue;
       } else if (previousEnd === undefined) {
         continue;
-      } else if (previousEnd.getCol() < 60 && firstToken.getStart().getCol() !== 60) {
-        const message = "Align pseudo comment to column 60";
+      } else if (commentLength > 10) {
+        console.dir("todo");
+      } else if (previousEnd.getCol() < 62 && firstCommentToken.getStart().getCol() !== 62) {
+        const message = "Align pseudo comment to column 62";
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       }
     }
