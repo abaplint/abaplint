@@ -18,7 +18,7 @@ async function findIssues(abap: string): Promise<readonly Issue[]> {
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe.only("Rule: align_pseudo_comments", () => {
+describe("Rule: align_pseudo_comments", () => {
 
   it("parser error, no issues expected", async () => {
     const issues = await findIssues("hello world.");
@@ -35,7 +35,7 @@ describe.only("Rule: align_pseudo_comments", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.only("ok3", async () => {
+  it("ok3", async () => {
     const issues = await findIssues(`WRITE 'sdf'.                                    "#EC sdfsdfsdfsdfsdfsdf`);
     expect(issues.length).to.equal(0);
   });
