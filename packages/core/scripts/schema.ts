@@ -3,6 +3,7 @@ import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintA
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
 import {AlignParametersConf} from "../src/rules/align_parameters";
+import {AlignPseudoCommentsConf} from "../src/rules/align_pseudo_comments";
 import {AlignTypeExpressionsConf} from "../src/rules/align_type_expressions";
 import {AllowedObjectNamingConf} from "../src/rules/allowed_object_naming";
 import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
@@ -181,6 +182,7 @@ export interface IConfig {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
+    "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
     "allowed_object_naming"?: AllowedObjectNamingConf | boolean,
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
@@ -348,6 +350,7 @@ export interface IConfig {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
+    "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
     "allowed_object_naming"?: AllowedObjectNamingConf | boolean,
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,

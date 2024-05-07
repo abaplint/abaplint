@@ -17,7 +17,7 @@ export class AlignPseudoComments extends ABAPRule {
       key: "align_pseudo_comments",
       title: "Align pseudo comments",
       shortDescription: `Align code inspector pseudo comments in statements`,
-      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Quickfix],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace],
       badExample: `WRITE 'sdf'. "#EC sdf`,
       goodExample: `WRITE 'sdf'.                                                "#EC sdf`,
     };

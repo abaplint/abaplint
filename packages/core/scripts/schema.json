@@ -56,6 +56,23 @@
       },
       "type": "object"
     },
+    "AlignPseudoCommentsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AlignTypeExpressionsConf": {
       "additionalProperties": false,
       "properties": {
@@ -1562,6 +1579,17 @@
                 }
               ],
               "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/align_parameters"
+            },
+            "align_pseudo_comments": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AlignPseudoCommentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/align_pseudo_comments"
             },
             "align_type_expressions": {
               "anyOf": [
@@ -3377,6 +3405,17 @@
                 }
               ],
               "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/align_parameters"
+            },
+            "align_pseudo_comments": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AlignPseudoCommentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/align_pseudo_comments"
             },
             "align_type_expressions": {
               "anyOf": [
