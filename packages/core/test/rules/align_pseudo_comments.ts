@@ -40,8 +40,13 @@ describe("Rule: align_pseudo_comments", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it("err", async () => {
+  it("err1", async () => {
     const issues = await findIssues(`WRITE 'sdf'. "#EC sdf`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("err2", async () => {
+    const issues = await findIssues(`WRITE 'sdf'.            "#EC sdf`);
     expect(issues.length).to.equal(1);
   });
 
