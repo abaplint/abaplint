@@ -95,6 +95,7 @@ import {CloseDataset} from "./statements/close_dataset";
 import {GetRunTime} from "./statements/get_run_time";
 import {UpdateDatabase} from "./statements/update_database";
 import {Add} from "./statements/add";
+import {EditorCall} from "./statements/editor_call";
 import {Subtract} from "./statements/subtract";
 import {AddCorresponding} from "./statements/add_corresponding";
 import {SubtractCorresponding} from "./statements/subtract_corresponding";
@@ -274,6 +275,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Translate());
   addToMap(new ModifyInternal());
   addToMap(new ReadTextpool());
+  addToMap(new EditorCall());
 }
 
 // -----------------------------------

@@ -1502,7 +1502,7 @@ SELECT
     expect(issues.length).to.equal(0);
   });
 
-  it.only("EDITOR-CALL", async () => {
+  it("EDITOR-CALL", async () => {
     const abap = `
     DATA(lv_title) = |foo|.
     DATA lt_tab TYPE voided.
