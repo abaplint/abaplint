@@ -1502,4 +1502,13 @@ SELECT
     expect(issues.length).to.equal(0);
   });
 
+  it.only("EDITOR-CALL", async () => {
+    const abap = `
+    DATA(lv_title) = |foo|.
+    DATA lt_tab TYPE voided.
+    EDITOR-CALL FOR lt_tab TITLE lv_title DISPLAY-MODE.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
