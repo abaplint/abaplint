@@ -51,7 +51,7 @@ describe("lexer", () => {
     expect(tokens[2]).to.not.be.instanceof(StringTemplateEnd);
   });
 
-  it.only("two comments, same column", () => {
+  it("two comments, same column", () => {
     const tokens = getTokens(`
  " hello
  " world`);
