@@ -48,13 +48,13 @@ export class AlignPseudoComments extends ABAPRule {
       } else if (previousEnd === undefined) {
         continue;
       } else if (commentLength > 10) {
-        const expectedColumn = 72 - commentLength + 1;
+        const expectedColumn = 72 - commentLength;
         if (previousEnd.getCol() < expectedColumn && firstCommentToken.getStart().getCol() !== expectedColumn) {
           const message = "Align pseudo comment to column " + expectedColumn;
           issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
         }
-      } else if (previousEnd.getCol() < 62 && firstCommentToken.getStart().getCol() !== 62) {
-        const message = "Align pseudo comment to column 62";
+      } else if (previousEnd.getCol() < 61 && firstCommentToken.getStart().getCol() !== 61) {
+        const message = "Align pseudo comment to column 61";
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       }
     }

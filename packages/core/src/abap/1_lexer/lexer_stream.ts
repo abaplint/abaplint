@@ -17,6 +17,7 @@ export class LexerStream {
     }
 
     if (this.offset === this.raw.length) {
+      this.col = this.col - 1;
       return false;
     }
 
