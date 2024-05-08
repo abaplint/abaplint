@@ -55,8 +55,9 @@ describe("Rule: align_pseudo_comments", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("ok, select", async () => {
-    const issues = await findIssues(`IF sy-subrc = 0.
+  it.skip("ok, select, nested", async () => {
+    const issues = await findIssues(`
+IF sy-subrc = 0.
   IF sy-subrc = 0.
     IF sy-subrc = 0.
       SELECT SINGLE time_zone FROM adrc INTO @DATA(lv_time_zone)
@@ -65,6 +66,14 @@ describe("Rule: align_pseudo_comments", () => {
     ENDIF.
   ENDIF.
 ENDIF.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it.skip("ok, select", async () => {
+    const issues = await findIssues(`
+SELECT SINGLE time_zone FROM adrc INTO @DATA(lv_time_zone)
+  WHERE addrnumber = @lv_adrnr
+  AND nation = '' ##SUBRC_OK.                           "#EC CI_NOORDER`);
     expect(issues.length).to.equal(0);
   });
 

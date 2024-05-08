@@ -48,7 +48,7 @@ export class AlignPseudoComments extends ABAPRule {
       } else if (previousEnd === undefined) {
         continue;
       } else if (commentLength > 10) {
-        const expectedColumn = 72 - commentLength + 1;
+        const expectedColumn = 72 - commentLength;
         if (previousEnd.getCol() < expectedColumn && firstCommentToken.getStart().getCol() !== expectedColumn) {
           const message = "Align pseudo comment to column " + expectedColumn;
           issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
