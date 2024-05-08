@@ -51,4 +51,12 @@ describe("lexer", () => {
     expect(tokens[2]).to.not.be.instanceof(StringTemplateEnd);
   });
 
+  it.only("two comments, same column", () => {
+    const tokens = getTokens(`
+ " hello
+ " world`);
+    expect(tokens.length).to.equal(2);
+    expect(tokens[0].getCol()).to.equal(tokens[1].getCol(), "comments should be in same column");
+  });
+
 });
