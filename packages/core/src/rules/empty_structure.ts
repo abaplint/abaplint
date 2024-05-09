@@ -10,6 +10,8 @@ import {Unknown} from "../abap/2_statements/statements/_statement";
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty LOOP blocks */
   public loop: boolean = true;
+  /** Allow empty if subrc is checked after the loop */
+  public loopAllowIfSubrc: boolean = true;
   /** Checks for empty IF blocks */
   public if: boolean = true;
   /** Checks for empty WHILE blocks */
@@ -40,6 +42,14 @@ export class EmptyStructure extends ABAPRule {
       shortDescription: `Checks that the code does not contain empty blocks.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#no-empty-if-branches`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `IF foo = bar.
+ENDIF.
+
+DO 2 TIMES.
+ENDDO.`,
+      goodExample: `LOOP AT itab WHERE qty = 0 OR date > sy-datum.
+ENDLOOP.
+result = xsdbool( sy-subrc = 0 ).`,
     };
   }
 
@@ -62,16 +72,15 @@ export class EmptyStructure extends ABAPRule {
     if (stru === undefined) {
       return [];
     }
-    for (const statement of file.getStatements()) {
+
+    const statements = file.getStatements();
+    for (const statement of statements) {
       if (statement.get() instanceof Unknown) {
         return []; // contains parser errors
       }
     }
 
     const candidates: StructureNode[] = [];
-    if (this.getConfig().loop === true) {
-      candidates.push(...stru.findAllStructuresRecursive(Structures.Loop));
-    }
     if (this.getConfig().while === true) {
       candidates.push(...stru.findAllStructuresRecursive(Structures.While));
     }
@@ -110,6 +119,25 @@ export class EmptyStructure extends ABAPRule {
             this.getDescription(t.get().constructor.name),
             this.getMetadata().key,
             this.conf.severity);
+          issues.push(issue);
+        }
+      }
+    }
+
+    if (this.getConfig().loop === true) {
+      const loops = stru.findAllStructuresRecursive(Structures.Loop);
+      for (const loop of loops) {
+        if (loop.getChildren().length === 2) {
+          const endloopStatement = loop.getLastChild();
+          const endloopIndex = statements.findIndex((s) => s === endloopStatement);
+          const afterEndloop = statements[endloopIndex + 1];
+          if (afterEndloop !== undefined && afterEndloop.concatTokens().toUpperCase().includes("SY-SUBRC")) {
+            continue;
+          }
+
+          const token = loop.getFirstToken();
+          const issue = Issue.atToken(
+            file, token, this.getDescription(loop.get().constructor.name), this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }
