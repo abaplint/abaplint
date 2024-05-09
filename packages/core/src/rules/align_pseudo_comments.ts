@@ -5,6 +5,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {Issue} from "../issue";
 import {Comment} from "../abap/2_statements/statements/_statement";
 import {Position} from "../position";
+import {EditHelper, IEdit} from "../edit_helper";
 
 export class AlignPseudoCommentsConf extends BasicRuleConfig {
 }
@@ -17,7 +18,7 @@ export class AlignPseudoComments extends ABAPRule {
       key: "align_pseudo_comments",
       title: "Align pseudo comments",
       shortDescription: `Align code inspector pseudo comments in statements`,
-      tags: [RuleTag.SingleFile, RuleTag.Whitespace],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Quickfix],
       badExample: `WRITE 'sdf'. "#EC sdf`,
       goodExample: `WRITE 'sdf'.                                                "#EC sdf`,
     };
@@ -54,9 +55,17 @@ export class AlignPseudoComments extends ABAPRule {
         expectedColumn = 72 - commentLength;
       }
 
-      if (previousEnd.getCol() < expectedColumn && firstCommentToken.getStart().getCol() !== expectedColumn) {
+      const col = firstCommentToken.getStart().getCol();
+      if (previousEnd.getCol() < expectedColumn && col !== expectedColumn) {
+        let fix: IEdit | undefined = undefined;
+        if (col < expectedColumn) {
+          fix = EditHelper.insertAt(file, firstCommentToken.getStart(), " ".repeat(expectedColumn - col));
+        } else {
+          const from = new Position(firstCommentToken.getStart().getRow(), expectedColumn);
+          fix = EditHelper.deleteRange(file, from, firstCommentToken.getStart());
+        }
         const message = "Align pseudo comment to column " + expectedColumn;
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, fix));
       }
     }
 

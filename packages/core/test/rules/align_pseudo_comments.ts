@@ -16,7 +16,7 @@ async function findIssues(abap: string): Promise<readonly Issue[]> {
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe.only("Rule: align_pseudo_comments", () => {
+describe("Rule: align_pseudo_comments", () => {
 
   it("parser error, no issues expected", async () => {
     const issues = await findIssues("hello world.");
@@ -38,8 +38,14 @@ describe.only("Rule: align_pseudo_comments", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("err1", async () => {
+  it("err1, fix insert spaces", async () => {
     const input = `WRITE 'sdf'. "#EC sdf`;
+    const expected = `WRITE 'sdf'.                                                "#EC sdf`;
+    testFix(input, expected);
+  });
+
+  it("err1, fix removes spaces", async () => {
+    const input = `WRITE 'sdf'.                                                               "#EC sdf`;
     const expected = `WRITE 'sdf'.                                                "#EC sdf`;
     testFix(input, expected);
   });
