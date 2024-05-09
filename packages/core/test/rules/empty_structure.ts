@@ -83,6 +83,10 @@ ENDCASE.`, cnt: 4},
   sdfsddfs.
   ENDLOOP.`, cnt: 0},
 
+  {abap: `LOOP AT itab WHERE qty = 0 OR date > sy-datum.
+ENDLOOP.
+result = xsdbool( sy-subrc = 0 ).`, cnt: 0},
+
 ];
 
 testRule(tests, EmptyStructure);

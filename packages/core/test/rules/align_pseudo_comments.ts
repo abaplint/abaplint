@@ -3,13 +3,11 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {AlignPseudoComments} from "../../src/rules";
 import {Issue} from "../../src/issue";
-// import {testRuleFixSingle} from "./_utils";
+import {testRuleFixSingle} from "./_utils";
 
-/*
 function testFix(input: string, expected: string, noIssuesAfter = true) {
   testRuleFixSingle(input, expected, new AlignPseudoComments(), undefined, undefined, noIssuesAfter);
 }
-*/
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
@@ -40,9 +38,16 @@ describe("Rule: align_pseudo_comments", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("err1", async () => {
-    const issues = await findIssues(`WRITE 'sdf'. "#EC sdf`);
-    expect(issues.length).to.equal(1);
+  it("err1, fix insert spaces", async () => {
+    const input = `WRITE 'sdf'. "#EC sdf`;
+    const expected = `WRITE 'sdf'.                                                "#EC sdf`;
+    testFix(input, expected);
+  });
+
+  it("err1, fix removes spaces", async () => {
+    const input = `WRITE 'sdf'.                                                               "#EC sdf`;
+    const expected = `WRITE 'sdf'.                                                "#EC sdf`;
+    testFix(input, expected);
   });
 
   it("err2", async () => {

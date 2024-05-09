@@ -1190,6 +1190,10 @@
           "description": "Checks for empty LOOP blocks",
           "type": "boolean"
         },
+        "loopAllowIfSubrc": {
+          "description": "Allow empty LOOP if subrc is checked after the loop",
+          "type": "boolean"
+        },
         "select": {
           "description": "Checks for empty SELECT blockss",
           "type": "boolean"
@@ -1213,6 +1217,7 @@
       },
       "required": [
         "loop",
+        "loopAllowIfSubrc",
         "if",
         "while",
         "case",
@@ -1589,7 +1594,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/align_pseudo_comments"
+              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_pseudo_comments"
             },
             "align_type_expressions": {
               "anyOf": [
@@ -3415,7 +3420,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/align_pseudo_comments"
+              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_pseudo_comments"
             },
             "align_type_expressions": {
               "anyOf": [
