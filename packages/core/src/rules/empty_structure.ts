@@ -10,7 +10,7 @@ import {Unknown} from "../abap/2_statements/statements/_statement";
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty LOOP blocks */
   public loop: boolean = true;
-  /** Allow empty if subrc is checked after the loop */
+  /** Allow empty LOOP if subrc is checked after the loop */
   public loopAllowIfSubrc: boolean = true;
   /** Checks for empty IF blocks */
   public if: boolean = true;
