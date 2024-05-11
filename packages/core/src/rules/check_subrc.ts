@@ -56,7 +56,7 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
   private buildFix(file: ABAPFile, statement: StatementNode) {
     return {
       description: "Add ##SUBRC_OK",
-      edit: EditHelper.insertAt(file, statement.getLastToken().getEnd(), " ##SUBRC_OK"),
+      edit: EditHelper.insertAt(file, statement.getLastToken().getStart(), " ##SUBRC_OK"),
     };
   }
 
