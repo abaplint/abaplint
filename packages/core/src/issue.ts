@@ -7,6 +7,11 @@ import {StatementNode} from "./abap/nodes";
 import {IEdit} from "./edit_helper";
 import {Severity} from "./severity";
 
+type Fix = {
+  description: string,
+  edit: IEdit,
+};
+
 interface IIssueData {
   filename: string;
   message: string;
@@ -19,7 +24,7 @@ interface IIssueData {
    */
   defaultFix?: IEdit;
   /** Alternative quick fixes, the developer must choose which to apply */
-  alternativeFixes?: IEdit[];
+  alternativeFixes?: Fix[];
 }
 
 export class Issue {
@@ -41,8 +46,9 @@ export class Issue {
     });
   }
 
-  public static atStatement(file: IFile, statement: StatementNode, message: string, key: string, severity?: Severity, fix?: IEdit) {
-    return this.atRange(file, statement.getStart(), statement.getEnd(), message, key, severity, fix);
+  public static atStatement(file: IFile, statement: StatementNode, message: string, key: string,
+                            severity?: Severity, fix?: IEdit, alternativeFixes?: Fix[]) {
+    return this.atRange(file, statement.getStart(), statement.getEnd(), message, key, severity, fix, alternativeFixes);
   }
 
   public static atPosition(file: IFile, start: Position, message: string, key: string, severity?: Severity, fix?: IEdit) {
@@ -76,7 +82,8 @@ export class Issue {
     });
   }
 
-  public static atRange(file: IFile, start: Position, end: Position, message: string, key: string, severity?: Severity, fix?: IEdit) {
+  public static atRange(file: IFile, start: Position, end: Position, message: string, key: string,
+                        severity?: Severity, fix?: IEdit, alternativeFixes?: Fix[]) {
     severity = severity ?? Severity.Error;
     return new Issue({
       filename: file.getFilename(),
@@ -86,6 +93,7 @@ export class Issue {
       end,
       defaultFix: fix,
       severity,
+      alternativeFixes,
     });
   }
 

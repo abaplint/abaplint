@@ -23,28 +23,37 @@ export class CodeActions {
     const ret: LServer.CodeAction[] = [];
     for (const i of issues) {
       const fix = i.getDefaultFix();
-      if (fix === undefined) {
-        continue;
+      if (fix !== undefined) {
+        if (totals[i.getKey()] === undefined) {
+          totals[i.getKey()] = 1;
+        } else {
+          totals[i.getKey()]++;
+        }
+
+        if (this.inRange(i, params.range) === true) {
+          ret.push({
+            title: "Apply fix, " + i.getKey(),
+            kind: LServer.CodeActionKind.QuickFix,
+            diagnostics: [Diagnostics.mapDiagnostic(i)],
+            isPreferred: true,
+            edit: LSPEdit.mapEdit(fix),
+          });
+          shown.add(i.getKey());
+        }
       }
 
-      if (totals[i.getKey()] === undefined) {
-        totals[i.getKey()] = 1;
-      } else {
-        totals[i.getKey()]++;
+      for (const alternative of i.getAlternativeFixes() || []) {
+        if (this.inRange(i, params.range) === true) {
+          ret.push({
+            title: alternative.description,
+            kind: LServer.CodeActionKind.QuickFix,
+            diagnostics: [Diagnostics.mapDiagnostic(i)],
+            isPreferred: true,
+            edit: LSPEdit.mapEdit(alternative.edit),
+          });
+          shown.add(i.getKey());
+        }
       }
-
-      if (this.inRange(i, params.range) === false) {
-        continue;
-      }
-
-      ret.push({
-        title: "Apply fix, " + i.getKey(),
-        kind: LServer.CodeActionKind.QuickFix,
-        diagnostics: [Diagnostics.mapDiagnostic(i)],
-        isPreferred: true,
-        edit: LSPEdit.mapEdit(fix),
-      });
-      shown.add(i.getKey());
     }
 
     for (const s of shown) {
