@@ -7,6 +7,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper} from "../edit_helper";
 
 export class CheckSubrcConf extends BasicRuleConfig {
   public openDataset: boolean = true;
@@ -52,6 +53,13 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
     this.conf = conf;
   }
 
+  private buildFix(file: ABAPFile, statement: StatementNode) {
+    return {
+      description: "Add ##SUBRC_OK",
+      edit: EditHelper.insertAt(file, statement.getLastToken().getEnd(), " ##SUBRC_OK"),
+    };
+  }
+
   public runParsed(file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
     const statements = file.getStatements();
@@ -70,10 +78,12 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
       if (config.openDataset === true
           && statement.get() instanceof Statements.OpenDataset
           && this.isChecked(i, statements) === false) {
+// it doesnt make sense to ignore the subrc for open dataset, so no quick fix
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.authorityCheck === true
           && statement.get() instanceof Statements.AuthorityCheck
           && this.isChecked(i, statements) === false) {
+// it doesnt make sense to ignore the subrc for authority checks, so no quick fix
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.selectSingle === true
           && statement.get() instanceof Statements.Select
@@ -84,7 +94,8 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
         if (concat.startsWith("SELECT SINGLE @ABAP_TRUE FROM ")) {
           continue;
         }
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.selectTable === true
           && statement.get() instanceof Statements.Select
           && statement.concatTokens().toUpperCase().startsWith("SELECT SINGLE ") === false
@@ -92,36 +103,43 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
           && statement.concatTokens().toUpperCase().startsWith("SELECT COUNT(*) ") === false
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.updateDatabase === true
           && statement.get() instanceof Statements.UpdateDatabase
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.insertDatabase === true
           && statement.get() instanceof Statements.InsertDatabase
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.modifyDatabase === true
           && statement.get() instanceof Statements.ModifyDatabase
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.readTable === true
           && statement.get() instanceof Statements.ReadTable
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.assign === true
           && statement.get() instanceof Statements.Assign
           && this.isSimpleAssign(statement) === false
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.find === true
           && statement.get() instanceof Statements.Find
           && this.isExemptedFind(statement) === false
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       }
     }
 
