@@ -99,6 +99,9 @@ INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`, cnt: 0},
     nodes TYPE HASHED TABLE OF t_search_index WITH UNIQUE KEY info-id
     WITH NON-UNIQUE SORTED KEY type COMPONENTS info-type READ-ONLY.`, cnt: 0},
 
+  {abap: `CONSTANTS TEXT TYPE i VALUE 0.`, cnt: 1},
+  {abap: `CONSTANTS text TYPE i VALUE 0.`, cnt: 0},
+
   {abap: `data: foo TYPE i, boo TYPE i.`, cnt: 1},
   {abap: `READ TABLE lt_trkorr INDEX 1 TRANSPORTING trkorr INTO ls_trkorr.`, cnt: 0},
 ];
