@@ -5746,4 +5746,21 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it.only("outline MESSAGE value", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RETURNING VALUE(text) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    MESSAGE foo( ) TYPE 'E'.
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+foo`;
+    testFix(abap, expected);
+  });
+
 });
