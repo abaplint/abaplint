@@ -46,8 +46,8 @@ export class Transaction extends AbstractObject {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].TSTCT.TTEXT;
-    this.parsedXML.programName = parsed.abapGit["asx:abap"]["asx:values"].TSTC.PGMNA;
+    this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].TSTCT?.TTEXT;
+    this.parsedXML.programName = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.PGMNA;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
