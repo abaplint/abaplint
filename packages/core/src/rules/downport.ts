@@ -612,6 +612,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.downportMessageSource(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportMessage(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -1006,6 +1011,25 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
       return Issue.atToken(lowFile, high.getFirstToken(), "Outline table source", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
+  private downportMessageSource(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Message)) {
+      return undefined;
+    }
+
+    const source = high.findExpressionAfterToken("MESSAGE");
+    if (source?.get() instanceof Expressions.Source) {
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+      const firstToken = high.getFirstToken();
+      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA(${uniqueName}) = ${source.concatTokens()}.\n` + indentation);
+      const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, high.getFirstToken(), "Outline message source", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;

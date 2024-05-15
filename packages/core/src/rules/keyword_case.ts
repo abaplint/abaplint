@@ -222,8 +222,13 @@ export class KeywordCase extends ABAPRule {
   private traverse(s: StatementNode | ExpressionNode, parent: IStatement): TokenAndKeyword[] {
     let ret: TokenAndKeyword[] = [];
 
-    for (const child of s.getChildren()) {
+    const children = s.getChildren();
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+
       if (child instanceof TokenNodeRegex) {
+        const next = children[i + 1];
+
         if (this.conf.ignoreLowerClassImplmentationStatement
           && parent instanceof Statements.ClassImplementation) {
           continue;
@@ -231,7 +236,7 @@ export class KeywordCase extends ABAPRule {
         const str = child.get().getStr();
         const upper = str.toUpperCase();
         // todo, this is a hack, the parser should recongize OTHERS/TEXT as a keyword
-        if (upper === "OTHERS" || upper === "TEXT") {
+        if (upper === "OTHERS" || (upper === "TEXT" && next?.concatTokens() === "-")) {
           continue;
         }
         if (this.conf.ignoreFunctionModuleName === true
