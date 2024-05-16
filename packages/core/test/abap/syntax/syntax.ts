@@ -10559,6 +10559,26 @@ CAST zif_sdfsdfsd( ref )->id_draft = 2.`;
     expect(issues[0]?.getMessage()).to.equal("CAST, uknown type");
   });
 
+  it.only("Table types, expect error", () => {
+    const abap = `
+DATA ty1 TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA ty2 TYPE STANDARD TABLE OF xstring WITH EMPTY KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING foo TYPE ty1.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA data TYPE ty2.
+    foo( data ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Incompatible types");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
