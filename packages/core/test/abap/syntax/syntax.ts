@@ -10561,8 +10561,8 @@ CAST zif_sdfsdfsd( ref )->id_draft = 2.`;
 
   it.only("Table types, expect error", () => {
     const abap = `
-DATA ty1 TYPE STANDARD TABLE OF string WITH EMPTY KEY.
-DATA ty2 TYPE STANDARD TABLE OF xstring WITH EMPTY KEY.
+TYPES ty1 TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+TYPES ty2 TYPE STANDARD TABLE OF xstring WITH EMPTY KEY.
 
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -10576,7 +10576,7 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal("Incompatible types");
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
 // todo, static method cannot access instance attributes

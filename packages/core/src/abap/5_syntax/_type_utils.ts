@@ -355,6 +355,14 @@ export class TypeUtils {
           || target instanceof HexType) {
         return false;
       }
+    } else if (source instanceof TableType) {
+      if (target instanceof TableType) {
+        return this.isAssignableStrict(source.getRowType(), target);
+      } else if (target instanceof UnknownType
+          || target instanceof AnyType
+          || target instanceof VoidType) {
+        return true;
+      }
     }
     return this.isAssignable(source, target);
   }
