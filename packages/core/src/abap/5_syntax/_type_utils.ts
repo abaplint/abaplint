@@ -357,7 +357,7 @@ export class TypeUtils {
       }
     } else if (source instanceof TableType) {
       if (target instanceof TableType) {
-        return this.isAssignableStrict(source.getRowType(), target);
+        return this.isAssignableStrict(source.getRowType(), target.getRowType());
       } else if (target instanceof UnknownType
           || target instanceof AnyType
           || target instanceof VoidType) {

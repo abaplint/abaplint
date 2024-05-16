@@ -10559,7 +10559,7 @@ CAST zif_sdfsdfsd( ref )->id_draft = 2.`;
     expect(issues[0]?.getMessage()).to.equal("CAST, uknown type");
   });
 
-  it.only("Table types, expect error", () => {
+  it("Table types, expect error", () => {
     const abap = `
 TYPES ty1 TYPE STANDARD TABLE OF string WITH EMPTY KEY.
 TYPES ty2 TYPE STANDARD TABLE OF xstring WITH EMPTY KEY.
