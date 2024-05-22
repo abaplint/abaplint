@@ -1792,7 +1792,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check sy-subrc\nTags: SingleFile\nhttps://rules.abaplint.org/check_subrc"
+              "description": "Check sy-subrc\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/check_subrc"
             },
             "check_syntax": {
               "anyOf": [
@@ -2947,7 +2947,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detect SELECT SINGLE which are possibily not unique\nhttps://rules.abaplint.org/select_single_full_key"
+              "description": "Detect SELECT SINGLE which are possibily not unique\nTags: Quickfix\nhttps://rules.abaplint.org/select_single_full_key"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -3618,7 +3618,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check sy-subrc\nTags: SingleFile\nhttps://rules.abaplint.org/check_subrc"
+              "description": "Check sy-subrc\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/check_subrc"
             },
             "check_syntax": {
               "anyOf": [
@@ -4773,7 +4773,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detect SELECT SINGLE which are possibily not unique\nhttps://rules.abaplint.org/select_single_full_key"
+              "description": "Detect SELECT SINGLE which are possibily not unique\nTags: Quickfix\nhttps://rules.abaplint.org/select_single_full_key"
             },
             "selection_screen_naming": {
               "anyOf": [

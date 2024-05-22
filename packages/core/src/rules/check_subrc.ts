@@ -39,7 +39,7 @@ If sy-dbcnt is checked after database statements, it is considered okay.
 If IS ASSIGNED is checked after assigning, it is considered okay.
 
 FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       pseudoComment: "EC CI_SUBRC",
       pragma: "##SUBRC_OK",
     };
