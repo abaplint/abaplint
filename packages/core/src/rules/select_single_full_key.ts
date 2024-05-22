@@ -1,8 +1,10 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRule, IRuleMetadata} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile, ABAPObject, Comment, Expressions, IObject, IRegistry, ISpaghettiScope, Position, Statements, SyntaxLogic} from "..";
 import {Table} from "../objects";
+import {StatementNode} from "../abap/nodes";
+import {EditHelper} from "../edit_helper";
 
 export class SelectSingleFullKeyConf extends BasicRuleConfig {
   public allowPseudo = true;
@@ -21,7 +23,7 @@ export class SelectSingleFullKey implements IRule {
 
 If the statement contains a JOIN it is not checked`,
       pseudoComment: "EC CI_NOORDER",
-      tags: [],
+      tags: [RuleTag.Quickfix],
     };
   }
 
@@ -44,6 +46,13 @@ If the statement contains a JOIN it is not checked`,
 
   public setConfig(conf: SelectSingleFullKeyConf) {
     this.conf = conf;
+  }
+
+  private buildFix(file: ABAPFile, statement: StatementNode) {
+    return {
+      description: `Add "#EC CI_NOORDER`,
+      edit: EditHelper.insertAt(file, statement.getLastToken().getStart(), ` "#EC CI_NOORDER`),
+    };
   }
 
   public run(obj: IObject): readonly Issue[] {
@@ -111,7 +120,8 @@ If the statement contains a JOIN it is not checked`,
         }
 
         if (set.size > 0) {
-          issues.push(Issue.atStatement(file, s, message, this.getMetadata().key, this.getConfig().severity));
+          const fix = this.buildFix(file, s);
+          issues.push(Issue.atStatement(file, s, message, this.getMetadata().key, this.getConfig().severity, undefined, [fix]));
         }
       }
     }
