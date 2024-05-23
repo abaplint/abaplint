@@ -30,7 +30,7 @@ class Sequence implements IStructureRunnable {
 
   public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
-    const out: StatementNode[] = [];
+    let out: StatementNode[] = [];
     for (const i of this.list) {
       const match = i.run(inn, parent);
       if (match.error) {
@@ -42,7 +42,15 @@ class Sequence implements IStructureRunnable {
           errorMatched: out.length,
         };
       }
-      out.push(...match.matched);
+
+      if (match.matched.length < 100) {
+        out.push(...match.matched);
+      } else {
+        // avoid using the spread operator, it might trigger "Maximum call stack size exceeded"
+        // when the number of matched elements is very large
+        out = out.concat(match.matched);
+      }
+
       inn = match.unmatched;
     }
     return {
@@ -198,7 +206,7 @@ class Star implements IStructureRunnable {
 
   public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
-    const out: StatementNode[] = [];
+    let out: StatementNode[] = [];
     while (true) {
       if (inn.length === 0) {
         return {
@@ -231,7 +239,15 @@ class Star implements IStructureRunnable {
           };
         }
       }
-      out.push(...match.matched);
+
+      if (match.matched.length < 100) {
+        out.push(...match.matched);
+      } else {
+        // avoid using the spread operator, it might trigger "Maximum call stack size exceeded"
+        // when the number of matched elements is very large
+        out = out.concat(match.matched);
+      }
+
       inn = match.unmatched;
     }
   }

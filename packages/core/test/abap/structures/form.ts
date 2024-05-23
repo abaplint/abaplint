@@ -1,4 +1,4 @@
-import {structureType} from "../_utils";
+import {parse, structureType} from "../_utils";
 import {Form} from "../../../src/abap/3_structures/structures";
 
 const cases = [
@@ -12,3 +12,24 @@ const cases = [
 ];
 
 structureType(cases, new Form());
+
+//////////////////////////////////////////////
+
+describe("Structure FORM", () => {
+
+  it.skip("FORM, many statements", () => {
+    let abap = `
+DATA lv TYPE string.
+DEFINE x. lv = lv && &1. END-OF-DEFINITION.
+
+FORM foobar1.
+\n`;
+
+    for (let i = 0; i < 70000; i++) {
+      abap += "x 'hello'.\n";
+    }
+    abap += "ENDFORM.\n";
+    parse(abap);
+  });
+
+});
