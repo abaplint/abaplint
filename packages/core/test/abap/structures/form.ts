@@ -12,3 +12,16 @@ const cases = [
 ];
 
 structureType(cases, new Form());
+
+describe("Structure FORM", () => {
+
+  it.only("program, different scope", () => {
+    let abap = "FORM foobar1.\n";
+    for (let i = 0; i < 500; i++) {
+      abap += "WRITE 'hello'.\n";
+    }
+    abap += "ENDFORM.\n";
+    structureType([{abap: abap}], new Form());
+  });
+
+});
