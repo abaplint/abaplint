@@ -10,7 +10,7 @@
         "lint:fix": "eslint src/**/*.ts test/**/*.ts --format unix --fix",
         "compile": "tsc && sh scripts/version.sh",
         "test": "npm run compile && mocha --timeout 1000 && npm run lint && npm run schema && api-extractor run",
-        "test:only": "npm run compile && mocha",
+        "test:only": "npm run compile && mocha --timeout 1000000",
         "test:parallel": "npm run compile && mocha --timeout 1000 --parallel --reporter dot",
         "coverage": "npm run compile && c8 mocha && c8 report --reporter=html",
         "lexer_performance": "tsc && curl -o lexer_performance.abap https://raw.githubusercontent.com/abapGit/build/main/zabapgit_standalone.prog.abap && node build/adhoc/lexer_performance.js",
