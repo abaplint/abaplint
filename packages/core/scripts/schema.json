@@ -7848,6 +7848,9 @@
     "UnnecessaryReturnConf": {
       "additionalProperties": false,
       "properties": {
+        "allowEmpty": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -7860,6 +7863,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "allowEmpty"
+      ],
       "type": "object"
     },
     "UnreachableCodeConf": {
