@@ -1,12 +1,15 @@
 import {expect} from "chai";
 import {MemoryFile, Registry} from "../../src";
-import {UnnecessaryReturn} from "../../src/rules";
+import {UnnecessaryReturn, UnnecessaryReturnConf} from "../../src/rules";
 import {testRuleFixCount} from "./_utils";
 
-async function findIssues(abap: string) {
+async function findIssues(abap: string, config?: UnnecessaryReturnConf) {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new UnnecessaryReturn();
+  if (config) {
+    rule.setConfig(config);
+  }
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
@@ -29,6 +32,31 @@ FORM foo.
 ENDFORM.`;
     const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
+  });
+
+  it("test FORM, ok via config", async () => {
+    const abap = `
+FORM foo.
+  RETURN.
+ENDFORM.`;
+
+    const config = new UnnecessaryReturnConf();
+    config.allowEmpty = true;
+    const issues = await findIssues(abap, config);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("test FORM, ok via config, with comment", async () => {
+    const abap = `
+FORM foo.
+* hello world
+  RETURN.
+ENDFORM.`;
+
+    const config = new UnnecessaryReturnConf();
+    config.allowEmpty = true;
+    const issues = await findIssues(abap, config);
+    expect(issues.length).to.equal(0);
   });
 
   it("test FORM fix", async () => {

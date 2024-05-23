@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.108.8",
+    "version": "2.108.9",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -50,7 +50,7 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@microsoft/api-extractor": "^7.43.7",
+        "@microsoft/api-extractor": "^7.43.8",
         "@types/chai": "^4.3.16",
         "@types/mocha": "^10.0.6",
         "@types/node": "^20.12.12",
@@ -63,7 +63,7 @@
         "typescript": "^5.4.5"
     },
     "dependencies": {
-        "fast-xml-parser": "^4.3.6",
+        "fast-xml-parser": "^4.4.0",
         "json5": "^2.2.3",
         "vscode-languageserver-types": "^3.17.5"
     }

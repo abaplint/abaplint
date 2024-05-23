@@ -5,8 +5,11 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import * as Statements from "../abap/2_statements/statements";
 import {EditHelper} from "../edit_helper";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class UnnecessaryReturnConf extends BasicRuleConfig {
+  /** Allow empty METHODs + FORMs + FUNCTION-MODULEs */
+  public allowEmpty = false;
 }
 
 export class UnnecessaryReturn extends ABAPRule {
@@ -54,16 +57,34 @@ ENDFORM.`,
     const message = "Unnecessary RETURN";
 
     const statements = file.getStatements();
+    let statementCounter = 0;
+
     for (let i = 0; i < statements.length; i++) {
       const node = statements[i];
-      if (!(node.get() instanceof Statements.EndMethod
-          || node.get() instanceof Statements.EndForm
-          || node.get() instanceof Statements.EndFunction)) {
+      const nodeType = node.get();
+      if ((nodeType instanceof Statements.MethodImplementation
+          || nodeType instanceof Statements.Form
+          || nodeType instanceof Statements.FunctionModule)) {
+        statementCounter = 0;
+        continue;
+      }
+
+      if (!(nodeType instanceof Comment)) {
+        statementCounter++;
+      }
+
+      if (!(nodeType instanceof Statements.EndMethod
+          || nodeType instanceof Statements.EndForm
+          || nodeType instanceof Statements.EndFunction)) {
         continue;
       }
 
       const prev = statements[i - 1];
       if (prev && prev.get() instanceof Statements.Return) {
+        if (this.conf.allowEmpty === true && statementCounter === 2) {
+          continue;
+        }
+
         const fix = EditHelper.deleteStatement(file, prev);
         issues.push(Issue.atStatement(file, prev, message, this.getMetadata().key, this.getConfig().severity, fix));
       }
