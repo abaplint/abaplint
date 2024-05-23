@@ -47,6 +47,15 @@ ENDLOOP.`, cnt: 0, fix: false},
   FOR repo_result IN is_result-repo_result_list
   WHERE ( status = iv_status )
   NEXT result = result + 1 ).`, cnt: 0, fix: false},
+  {abap: `SELECT vbak~vbeln
+      vbak~erdat
+      vbak~erzet
+      FROM ( ( ( ( ( vbak INNER JOIN vbap ON vbak~vbeln = vbap~vbeln )
+      INNER JOIN likp ON vbak~vbeln = likp~vbeln )
+      INNER JOIN lips ON vbak~vbeln = lips~vbeln )
+      INNER JOIN rseg ON likp~xabln = rseg~belnr )
+      INNER JOIN rbkp ON rseg~belnr = rbkp~belnr )
+      INTO TABLE it_rep.`, cnt: 1, fix: false},
 ];
 
 testRule(tests, ManyParentheses);
