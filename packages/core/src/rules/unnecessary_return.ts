@@ -5,7 +5,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import * as Statements from "../abap/2_statements/statements";
 import {EditHelper} from "../edit_helper";
-import { Comment } from "../abap/2_statements/statements/_statement";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 export class UnnecessaryReturnConf extends BasicRuleConfig {
   /** Allow empty METHODs + FORMs + FUNCTION-MODULEs */
