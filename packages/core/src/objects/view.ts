@@ -6,8 +6,15 @@ import {DDIC} from "../ddic";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {IObjectAndToken} from "../_iddic_references";
 
+enum ViewClass {
+  ExternalView = "X",
+}
+
 export class View extends AbstractObject {
   private parsedData: {
+    header: {
+      VIEWCLASS: string,
+    },
     fields: {
       VIEWFIELD: string,
       TABNAME: string,
@@ -60,12 +67,21 @@ export class View extends AbstractObject {
 
     const components: Types.IStructureComponent[] = [];
     const references: IObjectAndToken[] = [];
+
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
       if (field.VIEWFIELD === "*" || field.VIEWFIELD === "-") {
         // ignore, this is a special case of old style .INCLUDE
         continue;
+      } else if (this.parsedData.header.VIEWCLASS === ViewClass.ExternalView) {
+        components.push({
+          name: field.VIEWFIELD,
+          type: new Types.VoidType("ExternalView")});
+        continue;
+      } else if (field.TABNAME === this.getName()) {
+        throw new Error("Unexpected self reference in view " + this.getName() + ", " + field.FIELDNAME + " " + field.FIELDNAME);
       }
+
       const lookup = ddic.lookupTableOrView(field.TABNAME);
       let found = lookup.type;
       if (lookup.object) {
@@ -104,12 +120,23 @@ export class View extends AbstractObject {
 ///////////////
 
   private parseXML() {
-    this.parsedData = {fields: [], join: []};
+    this.parsedData = {
+      header: {
+        VIEWCLASS: "",
+      },
+      fields: [],
+      join: [],
+    };
 
     const parsed = super.parseRaw2();
     if (parsed === undefined || parsed.abapGit === undefined) {
       return;
     }
+
+    const header = parsed.abapGit["asx:abap"]["asx:values"]?.DD25V;
+    this.parsedData.header = {
+      VIEWCLASS: header?.VIEWCLASS || "",
+    };
 
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
     for (const field of xmlToArray(fields?.DD27P)) {
