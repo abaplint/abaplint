@@ -60,12 +60,16 @@ export class View extends AbstractObject {
 
     const components: Types.IStructureComponent[] = [];
     const references: IObjectAndToken[] = [];
+
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
       if (field.VIEWFIELD === "*" || field.VIEWFIELD === "-") {
         // ignore, this is a special case of old style .INCLUDE
         continue;
+      } else if (field.TABNAME === this.getName()) {
+        throw new Error("Unexpected self reference in view " + this.getName() + ", " + field.FIELDNAME + " " + field.FIELDNAME);
       }
+
       const lookup = ddic.lookupTableOrView(field.TABNAME);
       let found = lookup.type;
       if (lookup.object) {
