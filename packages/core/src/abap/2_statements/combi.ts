@@ -350,7 +350,7 @@ class Star implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result = r;
+    let result = r;
 
     try {
       let res = r;
@@ -363,7 +363,12 @@ class Star implements IStatementRunnable {
           break;
         }
 
-        result.push(...res);
+        if (res.length > 1000) {
+          // avoid stack overflow
+          result = result.concat(res);
+        } else {
+          result.push(...res);
+        }
       }
     } catch (err) {
       if (err instanceof FailStarError) {
@@ -540,7 +545,7 @@ class Sequence implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
+    let result: Result[] = [];
 
     for (const input of r) {
       let temp = [input];
@@ -554,7 +559,12 @@ class Sequence implements IStatementRunnable {
       }
 
       if (match === true) {
-        result.push(...temp);
+        if (temp.length > 1000) {
+          // avoid stack overflow
+          result = result.concat(temp);
+        } else {
+          result.push(...temp);
+        }
       }
     }
 
