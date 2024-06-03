@@ -136,6 +136,52 @@ const tests = [
     ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
     ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
     )`, r: new Expressions.Source(), e: true},
+  {c: `cond zif_foobar=>ty_customization( let all_values = 2 in
+    when line_exists( lt_tab[ tab = lv_context alarm = type foobar = lv_al sk = lv_sk ] )
+      then            lt_tab[ tab = lv_context alarm = type foobar = lv_al sk = lv_sk ]
+    when line_exists( lt_tab[ tab = lv_context alarm = type foobar = lv_al sk = all_values ] )
+      then            lt_tab[ tab = lv_context alarm = type foobar = lv_al sk = all_values ]
+    when line_exists( lt_tab[ tab = lv_context alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = lv_context alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = lv_context alarm = type foobar = all_values sk = all_values ] )
+      then            lt_tab[ tab = lv_context alarm = type foobar = all_values sk = all_values ]
+    when line_exists( lt_tab[ tab = lv_context alarm = all_values foobar = lv_al sk = lv_sk ] )
+      then            lt_tab[ tab = lv_context alarm = all_values foobar = lv_al sk = lv_sk ]
+    when line_exists( lt_tab[ tab = lv_context alarm = all_values foobar = lv_al sk = all_values ] )
+      then            lt_tab[ tab = lv_context alarm = all_values foobar = lv_al sk = all_values ]
+    when line_exists( lt_tab[ tab = lv_context alarm = all_values foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = lv_context alarm = all_values foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = lv_context alarm = all_values foobar = all_values sk = all_values ] )
+      then            lt_tab[ tab = lv_context alarm = all_values foobar = all_values sk = all_values ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = lv_al sk = all_values ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = lv_al sk = all_values ]
+    when line_exists( lt_tab[ tab = all_values alarm = all_values foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = all_values foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = all_values foobar = lv_al sk = all_values ] )
+      then            lt_tab[ tab = all_values alarm = all_values foobar = lv_al sk = all_values ]
+    when line_exists( lt_tab[ tab = all_values alarm = all_values foobar = lv_al sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = all_values foobar = lv_al sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = all_values ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = all_values ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = all_values sk = lv_sk ]
+    when line_exists( lt_tab[ tab = all_values alarm = type foobar = lv_al sk = lv_sk ] )
+      then            lt_tab[ tab = all_values alarm = type foobar = lv_al sk = lv_sk ]
+    else lt_tab[ 1 ] )`, r: new Expressions.Source(), e: true},
 ];
 
 describe("Test expression, Source", () => {
