@@ -1519,4 +1519,15 @@ DATA foo TYPE c.`;
     expect(hover?.value).to.contain("helloooooo");
   });
 
+  it("hover macro name", () => {
+    const abap = `DEFINE foobar.
+  WRITE 'hello'.
+END-OF-DEFINITION.`;
+    const file = new MemoryFile("zif_interface.intf.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Macro Name");
+  });
+
 });
