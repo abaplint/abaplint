@@ -73,6 +73,10 @@ export class CodeActions {
     const fixes: IEdit[] = [];
 
     for (const i of issues) {
+      if (i.getKey() !== key) {
+        continue;
+      }
+
       const fix = i.getDefaultFix();
       if (fix === undefined) {
         continue;
