@@ -1,8 +1,9 @@
+import * as Tokens from "../abap/1_lexer/tokens";
+import * as Statements from "../abap/2_statements/statements";
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
-import * as Tokens from "../abap/1_lexer/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
 import {LSPLookup} from "./_lookup";
 
@@ -31,6 +32,8 @@ export class Hover {
       || found.token instanceof Tokens.StringTemplateEnd
       || found.token instanceof Tokens.StringTemplateMiddle) {
       return {kind: LServer.MarkupKind.Markdown, value: "String Template"};
+    } else if (found.snode.get() instanceof Statements.Define && found.stack.length === 2) {
+      return {kind: LServer.MarkupKind.Markdown, value: "Macro Name"};
     } else if (found.token instanceof Tokens.Comment) {
       let type = "Comment";
       if (found.token.getStr().startsWith(`"!`)) {
