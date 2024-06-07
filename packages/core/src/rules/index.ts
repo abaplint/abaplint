@@ -15,6 +15,7 @@ export * from "./cds_legacy_view";
 export * from "./cds_parser_error";
 export * from "./chain_mainly_declarations";
 export * from "./change_if_to_case";
+export * from "./unused_macros";
 export * from "./check_abstract";
 export * from "./check_comments";
 export * from "./check_ddic";
