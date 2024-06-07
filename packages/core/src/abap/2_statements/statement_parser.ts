@@ -114,7 +114,7 @@ export class StatementParser {
     }
 
     for (const w of wa) {
-      const res = macros.handleMacros(w.statements);
+      const res = macros.handleMacros(w.statements, w.file);
       w.statements = res.statements;
       if (res.containsUnknown === true) {
         this.lazyUnknown(w);

@@ -52,6 +52,7 @@ export class UnusedMacros implements IRule {
     for (const file of obj.getABAPFiles()) {
       for (const macro of references.listDefinitionsByFile(file.getFilename())) {
         const usages = references.listUsagesbyMacro(file.getFilename(), macro.token);
+
         if (usages.length === 0 && this.conf.skipNames?.includes(macro.token.getStr().toUpperCase()) === false) {
           const message = "Unused macro definition: " + macro.token.getStr();
           result.push(Issue.atToken(file, macro.token, message, this.getMetadata().key, this.conf.severity));

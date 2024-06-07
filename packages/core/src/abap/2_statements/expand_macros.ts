@@ -15,24 +15,33 @@ import {Program} from "../../objects/program";
 import {IFile} from "../../files/_ifile";
 
 class Macros {
-  private readonly macros: {[index: string]: StatementNode[]};
+  private readonly macros: {[index: string]: {
+    statements: StatementNode[],
+    filename: string | undefined,
+  }};
 
   public constructor(globalMacros: readonly string[]) {
     this.macros = {};
     for (const m of globalMacros) {
-      this.macros[m.toUpperCase()] = [];
+      this.macros[m.toUpperCase()] = {
+        statements: [],
+        filename: undefined,
+      };
     }
   }
 
-  public addMacro(name: string, contents: StatementNode[]): void {
+  public addMacro(name: string, contents: StatementNode[], filename: string): void {
     if (this.isMacro(name)) {
       return;
     }
-    this.macros[name.toUpperCase()] = contents;
+    this.macros[name.toUpperCase()] = {
+      statements: contents,
+      filename: filename,
+    };
   }
 
   public getContents(name: string): StatementNode[] | undefined {
-    return this.macros[name.toUpperCase()];
+    return this.macros[name.toUpperCase()].statements;
   }
 
   public listMacroNames(): string[] {
@@ -44,6 +53,10 @@ class Macros {
       return true;
     }
     return false;
+  }
+
+  public getMacroFilename(name: string): string | undefined {
+    return this.macros[name.toUpperCase()].filename;
   }
 }
 
@@ -66,7 +79,7 @@ export class ExpandMacros {
     let contents: StatementNode[] = [];
 
     const macroReferences = this.reg?.getMacroReferences();
-    macroReferences?.clearDefinitions(file.getFilename());
+    macroReferences?.clear(file.getFilename());
 
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
@@ -90,8 +103,9 @@ export class ExpandMacros {
         }
       } else if (nameToken) {
         if (type instanceof Statements.EndOfDefinition) {
-          this.macros.addMacro(nameToken.getStr(), contents);
+          this.macros.addMacro(nameToken.getStr(), contents, file.getFilename());
           macroReferences?.addDefinition({filename: file.getFilename(), token: nameToken});
+
           nameToken = undefined;
         } else if (!(type instanceof Comment)) {
           statements[i] = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
@@ -101,19 +115,30 @@ export class ExpandMacros {
     }
   }
 
-  public handleMacros(statements: readonly StatementNode[]): {statements: StatementNode[], containsUnknown: boolean} {
+  public handleMacros(statements: readonly StatementNode[], file: IFile): {statements: StatementNode[], containsUnknown: boolean} {
     const result: StatementNode[] = [];
     let containsUnknown = false;
+
+    const macroReferences = this.reg?.getMacroReferences();
 
     for (const statement of statements) {
       const type = statement.get();
       if (type instanceof Unknown || type instanceof MacroCall) {
         const macroName = this.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
+
+          const filename = this.macros.getMacroFilename(macroName);
+          if (filename) {
+            macroReferences?.addReference({
+              filename: filename,
+              token: statement.getFirstToken(),
+            });
+          }
+
           result.push(new StatementNode(new MacroCall(), statement.getColon()).setChildren(this.tokensToNodes(statement.getTokens())));
 
           const expanded = this.expandContents(macroName, statement);
-          const handled = this.handleMacros(expanded);
+          const handled = this.handleMacros(expanded, file);
           for (const e of handled.statements) {
             result.push(e);
           }

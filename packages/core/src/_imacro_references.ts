@@ -10,6 +10,5 @@ export interface IMacroReferences {
   addReference(ref: IFilenameAndToken): void;
   listDefinitionsByFile(filename: string): IFilenameAndToken[];
   listUsagesbyMacro(filename: string, token: AbstractToken): IFilenameAndToken[];
-  clearDefinitions(filename: string): void;
-  clearReferences(filename: string): void;
+  clear(filename: string): void;
 }

@@ -10,7 +10,7 @@ async function runSingle(abap: string): Promise<Issue[]> {
   return new UnusedMacros().initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe.skip("Rule: unused_macros, single file", () => {
+describe("Rule: unused_macros, single file", () => {
 
   it("test1", async () => {
     const abap = "parser error";

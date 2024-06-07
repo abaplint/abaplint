@@ -26,6 +26,7 @@ export class MacroReferences implements IMacroReferences {
   public listUsagesbyMacro(filename: string, token: AbstractToken): IFilenameAndToken[] {
     const ret: IFilenameAndToken[] = [];
     const tokenStr = token.getStr().toUpperCase();
+
     for (const ref of this.references[filename] || []) {
       if (ref.token.getStr().toUpperCase() === tokenStr) {
         ret.push(ref);
@@ -34,11 +35,8 @@ export class MacroReferences implements IMacroReferences {
     return ret;
   }
 
-  public clearDefinitions(filename: string): void {
+  public clear(filename: string): void {
     delete this.definitions[filename];
-  }
-
-  public clearReferences(filename: string): void {
     delete this.references[filename];
   }
 
