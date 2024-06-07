@@ -22,7 +22,7 @@ export class MacroReferences implements IMacroReferences {
   public getDefinitionPosition(filename: string, token: AbstractToken): {start: Position, end: Position} | undefined {
     for (const d of this.definitions[filename] || []) {
       if (d.token.getStart().equals(token.getStart())) {
-        return {start: d.token.getStart(), end: d.token.getEnd()};
+        return {start: d.start, end: d.end};
       }
     }
     return undefined;
