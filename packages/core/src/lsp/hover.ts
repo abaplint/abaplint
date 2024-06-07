@@ -6,7 +6,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
 import {ITextDocumentPositionParams} from "./_interfaces";
 import {LSPLookup} from "./_lookup";
-import { MacroCall } from "../abap/2_statements/statements/_statement";
+import {MacroCall} from "../abap/2_statements/statements/_statement";
 
 export class Hover {
   private readonly reg: IRegistry;
