@@ -3257,6 +3257,17 @@
               ],
               "description": "Checks the usage of DDIC objects\nhttps://rules.abaplint.org/unused_ddic"
             },
+            "unused_macros": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedMacrosConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unused macro definitions definitions\nTags: Quickfix\nhttps://rules.abaplint.org/unused_macros"
+            },
             "unused_methods": {
               "anyOf": [
                 {
@@ -5082,6 +5093,17 @@
                 }
               ],
               "description": "Checks the usage of DDIC objects\nhttps://rules.abaplint.org/unused_ddic"
+            },
+            "unused_macros": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedMacrosConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unused macro definitions definitions\nTags: Quickfix\nhttps://rules.abaplint.org/unused_macros"
             },
             "unused_methods": {
               "anyOf": [
@@ -7915,6 +7937,31 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UnusedMacrosConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "skipNames": {
+          "description": "skip specific names, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
         }
       },
       "type": "object"

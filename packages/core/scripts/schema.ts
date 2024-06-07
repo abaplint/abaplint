@@ -155,6 +155,7 @@ import {UnnecessaryReturnConf} from "../src/rules/unnecessary_return";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
 import {UnsecureFAEConf} from "../src/rules/unsecure_fae";
 import {UnusedDDICConf} from "../src/rules/unused_ddic";
+import {UnusedMacrosConf} from "../src/rules/unused_macros";
 import {UnusedMethodsConf} from "../src/rules/unused_methods";
 import {UnusedTypesConf} from "../src/rules/unused_types";
 import {UnusedVariablesConf} from "../src/rules/unused_variables";
@@ -334,6 +335,7 @@ export interface IConfig {
     "unreachable_code"?: UnreachableCodeConf | boolean,
     "unsecure_fae"?: UnsecureFAEConf | boolean,
     "unused_ddic"?: UnusedDDICConf | boolean,
+    "unused_macros"?: UnusedMacrosConf | boolean,
     "unused_methods"?: UnusedMethodsConf | boolean,
     "unused_types"?: UnusedTypesConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,
@@ -502,6 +504,7 @@ export interface IConfig {
     "unreachable_code"?: UnreachableCodeConf | boolean,
     "unsecure_fae"?: UnsecureFAEConf | boolean,
     "unused_ddic"?: UnusedDDICConf | boolean,
+    "unused_macros"?: UnusedMacrosConf | boolean,
     "unused_methods"?: UnusedMethodsConf | boolean,
     "unused_types"?: UnusedTypesConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,

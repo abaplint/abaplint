@@ -12,26 +12,36 @@ import {Lexer} from "../1_lexer/lexer";
 import {VirtualPosition} from "../../virtual_position";
 import {IRegistry} from "../../_iregistry";
 import {Program} from "../../objects/program";
+import {IFile} from "../../files/_ifile";
 
 class Macros {
-  private readonly macros: {[index: string]: StatementNode[]};
+  private readonly macros: {[index: string]: {
+    statements: StatementNode[],
+    filename: string | undefined,
+  }};
 
   public constructor(globalMacros: readonly string[]) {
     this.macros = {};
     for (const m of globalMacros) {
-      this.macros[m.toUpperCase()] = [];
+      this.macros[m.toUpperCase()] = {
+        statements: [],
+        filename: undefined,
+      };
     }
   }
 
-  public addMacro(name: string, contents: StatementNode[]): void {
+  public addMacro(name: string, contents: StatementNode[], filename: string): void {
     if (this.isMacro(name)) {
       return;
     }
-    this.macros[name.toUpperCase()] = contents;
+    this.macros[name.toUpperCase()] = {
+      statements: contents,
+      filename: filename,
+    };
   }
 
   public getContents(name: string): StatementNode[] | undefined {
-    return this.macros[name.toUpperCase()];
+    return this.macros[name.toUpperCase()].statements;
   }
 
   public listMacroNames(): string[] {
@@ -43,6 +53,10 @@ class Macros {
       return true;
     }
     return false;
+  }
+
+  public getMacroFilename(name: string): string | undefined {
+    return this.macros[name.toUpperCase()].filename;
   }
 }
 
@@ -60,9 +74,12 @@ export class ExpandMacros {
     this.reg = reg;
   }
 
-  public find(statements: StatementNode[]) {
-    let name: string | undefined = undefined;
+  public find(statements: StatementNode[], file: IFile) {
+    let nameToken: AbstractToken | undefined = undefined;
     let contents: StatementNode[] = [];
+
+    const macroReferences = this.reg?.getMacroReferences();
+    macroReferences?.clear(file.getFilename());
 
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
@@ -70,7 +87,7 @@ export class ExpandMacros {
 
       if (type instanceof Statements.Define) {
         // todo, will this break if first token is a pragma?
-        name = statement.getTokens()[1].getStr();
+        nameToken = statement.getTokens()[1];
         contents = [];
       } else if (type instanceof Statements.Include) {
         const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
@@ -78,16 +95,18 @@ export class ExpandMacros {
         const prog = this.reg?.getObject("PROG", includeName) as Program | undefined;
         if (prog) {
           prog.parse(this.version, this.globalMacros, this.reg);
-          const main = prog.getMainABAPFile();
-          if (main) {
+          const includeMainFile = prog.getMainABAPFile();
+          if (includeMainFile) {
             // slow, this copies everything,
-            this.find([...main.getStatements()]);
+            this.find([...includeMainFile.getStatements()], includeMainFile);
           }
         }
-      } else if (name) {
+      } else if (nameToken) {
         if (type instanceof Statements.EndOfDefinition) {
-          this.macros.addMacro(name, contents);
-          name = undefined;
+          this.macros.addMacro(nameToken.getStr(), contents, file.getFilename());
+          macroReferences?.addDefinition({filename: file.getFilename(), token: nameToken});
+
+          nameToken = undefined;
         } else if (!(type instanceof Comment)) {
           statements[i] = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
           contents.push(statements[i]);
@@ -96,19 +115,30 @@ export class ExpandMacros {
     }
   }
 
-  public handleMacros(statements: readonly StatementNode[]): {statements: StatementNode[], containsUnknown: boolean} {
+  public handleMacros(statements: readonly StatementNode[], file: IFile): {statements: StatementNode[], containsUnknown: boolean} {
     const result: StatementNode[] = [];
     let containsUnknown = false;
+
+    const macroReferences = this.reg?.getMacroReferences();
 
     for (const statement of statements) {
       const type = statement.get();
       if (type instanceof Unknown || type instanceof MacroCall) {
         const macroName = this.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
+
+          const filename = this.macros.getMacroFilename(macroName);
+          if (filename) {
+            macroReferences?.addReference({
+              filename: filename,
+              token: statement.getFirstToken(),
+            });
+          }
+
           result.push(new StatementNode(new MacroCall(), statement.getColon()).setChildren(this.tokensToNodes(statement.getTokens())));
 
           const expanded = this.expandContents(macroName, statement);
-          const handled = this.handleMacros(expanded);
+          const handled = this.handleMacros(expanded, file);
           for (const e of handled.statements) {
             result.push(e);
           }
