@@ -4,6 +4,7 @@ import {IRegistry} from "../_iregistry";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
+import {EditHelper} from "../edit_helper";
 
 export class UnusedMacrosConf extends BasicRuleConfig {
   /** skip specific names, case insensitive
@@ -58,12 +59,15 @@ foobar2.`,
 
     const references = this.reg.getMacroReferences();
     for (const file of obj.getABAPFiles()) {
-      for (const macro of references.listDefinitionsByFile(file.getFilename())) {
-        const usages = references.listUsagesbyMacro(file.getFilename(), macro.token);
+      for (const macroToken of references.listDefinitionsByFile(file.getFilename())) {
+        const usages = references.listUsagesbyMacro(file.getFilename(), macroToken);
 
-        if (usages.length === 0 && this.conf.skipNames?.includes(macro.token.getStr().toUpperCase()) === false) {
-          const message = "Unused macro definition: " + macro.token.getStr();
-          result.push(Issue.atToken(file, macro.token, message, this.getMetadata().key, this.conf.severity));
+        if (usages.length === 0 && this.conf.skipNames?.includes(macroToken.getStr().toUpperCase()) === false) {
+          const message = "Unused macro definition: " + macroToken.getStr();
+
+          const pos = references.getDefinitionPosition(file.getFilename(), macroToken);
+          const fix = EditHelper.deleteRange(file, pos!.start, pos!.end);
+          result.push(Issue.atToken(file, macroToken, message, this.getMetadata().key, this.conf.severity, fix));
         }
       }
     }

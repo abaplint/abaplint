@@ -13,6 +13,7 @@ import {VirtualPosition} from "../../virtual_position";
 import {IRegistry} from "../../_iregistry";
 import {Program} from "../../objects/program";
 import {IFile} from "../../files/_ifile";
+import {Position} from "../../position";
 
 class Macros {
   private readonly macros: {[index: string]: {
@@ -76,6 +77,7 @@ export class ExpandMacros {
 
   public find(statements: StatementNode[], file: IFile, clear = true) {
     let nameToken: AbstractToken | undefined = undefined;
+    let start: Position | undefined = undefined;
     let contents: StatementNode[] = [];
 
     const macroReferences = this.reg?.getMacroReferences();
@@ -90,6 +92,7 @@ export class ExpandMacros {
       if (type instanceof Statements.Define) {
         // todo, will this break if first token is a pragma?
         nameToken = statement.getTokens()[1];
+        start = statement.getFirstToken().getStart();
         contents = [];
       } else if (type instanceof Statements.Include) {
         const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
@@ -106,7 +109,7 @@ export class ExpandMacros {
       } else if (nameToken) {
         if (type instanceof Statements.EndOfDefinition) {
           this.macros.addMacro(nameToken.getStr(), contents, file.getFilename());
-          macroReferences?.addDefinition({filename: file.getFilename(), token: nameToken});
+          macroReferences?.addDefinition({filename: file.getFilename(), token: nameToken}, start!, statement.getLastToken().getEnd());
 
           nameToken = undefined;
         } else if (!(type instanceof Comment)) {
