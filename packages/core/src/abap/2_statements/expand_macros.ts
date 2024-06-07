@@ -62,7 +62,7 @@ export class ExpandMacros {
   }
 
   public find(statements: StatementNode[], file: IFile) {
-    let name: string | undefined = undefined;
+    let nameToken: AbstractToken | undefined = undefined;
     let contents: StatementNode[] = [];
 
     const macroReferences = this.reg?.getMacroReferences();
@@ -74,10 +74,8 @@ export class ExpandMacros {
 
       if (type instanceof Statements.Define) {
         // todo, will this break if first token is a pragma?
-        const nameToken = statement.getTokens()[1];
-        name = nameToken.getStr();
+        nameToken = statement.getTokens()[1];
         contents = [];
-        macroReferences?.addDefinition({filename: file.getFilename(), token: nameToken});
       } else if (type instanceof Statements.Include) {
         const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
         // todo, this does not take function module includes into account
@@ -90,10 +88,11 @@ export class ExpandMacros {
             this.find([...includeMainFile.getStatements()], includeMainFile);
           }
         }
-      } else if (name) {
+      } else if (nameToken) {
         if (type instanceof Statements.EndOfDefinition) {
-          this.macros.addMacro(name, contents);
-          name = undefined;
+          this.macros.addMacro(nameToken.getStr(), contents);
+          macroReferences?.addDefinition({filename: file.getFilename(), token: nameToken});
+          nameToken = undefined;
         } else if (!(type instanceof Comment)) {
           statements[i] = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
           contents.push(statements[i]);
