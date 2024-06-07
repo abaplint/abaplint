@@ -42,13 +42,24 @@ export class UnusedMacros implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
+    const result: Issue[] = [];
+
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
-// todo
+    const references = this.reg.getMacroReferences();
+    for (const file of obj.getABAPFiles()) {
+      for (const macro of references.listDefinitionsByFile(file.getFilename())) {
+        const usages = references.listUsagesbyMacro(file.getFilename(), macro.token);
+        if (usages.length === 0 && this.conf.skipNames?.includes(macro.token.getStr().toUpperCase()) === false) {
+          const message = "Unused macro definition: " + macro.token.getStr();
+          result.push(Issue.atToken(file, macro.token, message, this.getMetadata().key, this.conf.severity));
+        }
+      }
+    }
 
-    return [];
+    return result;
   }
 
 }

@@ -12,6 +12,7 @@ import {Lexer} from "../1_lexer/lexer";
 import {VirtualPosition} from "../../virtual_position";
 import {IRegistry} from "../../_iregistry";
 import {Program} from "../../objects/program";
+import {IFile} from "../../files/_ifile";
 
 class Macros {
   private readonly macros: {[index: string]: StatementNode[]};
@@ -60,9 +61,12 @@ export class ExpandMacros {
     this.reg = reg;
   }
 
-  public find(statements: StatementNode[]) {
+  public find(statements: StatementNode[], file: IFile) {
     let name: string | undefined = undefined;
     let contents: StatementNode[] = [];
+
+    const macroReferences = this.reg?.getMacroReferences();
+    macroReferences?.clearDefinitions(file.getFilename());
 
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
@@ -70,18 +74,20 @@ export class ExpandMacros {
 
       if (type instanceof Statements.Define) {
         // todo, will this break if first token is a pragma?
-        name = statement.getTokens()[1].getStr();
+        const nameToken = statement.getTokens()[1];
+        name = nameToken.getStr();
         contents = [];
+        macroReferences?.addDefinition({filename: file.getFilename(), token: nameToken});
       } else if (type instanceof Statements.Include) {
         const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
         // todo, this does not take function module includes into account
         const prog = this.reg?.getObject("PROG", includeName) as Program | undefined;
         if (prog) {
           prog.parse(this.version, this.globalMacros, this.reg);
-          const main = prog.getMainABAPFile();
-          if (main) {
+          const includeMainFile = prog.getMainABAPFile();
+          if (includeMainFile) {
             // slow, this copies everything,
-            this.find([...main.getStatements()]);
+            this.find([...includeMainFile.getStatements()], includeMainFile);
           }
         }
       } else if (name) {

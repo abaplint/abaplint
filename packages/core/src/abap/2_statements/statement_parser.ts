@@ -54,7 +54,7 @@ class StatementMap {
 }
 
 class WorkArea {
-  private readonly file: IFile;
+  public readonly file: IFile;
   public readonly tokens: readonly AbstractToken[];
   public statements: StatementNode[];
 
@@ -110,7 +110,7 @@ export class StatementParser {
     for (const w of wa) {
       this.process(w);
       this.categorize(w);
-      macros.find(w.statements);
+      macros.find(w.statements, w.file);
     }
 
     for (const w of wa) {

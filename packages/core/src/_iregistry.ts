@@ -5,6 +5,7 @@ import {IProgress} from "./progress";
 import {Issue} from "./issue";
 import {IDDICReferences} from "./_iddic_references";
 import {IMSAGReferences} from "./_imsag_references";
+import {IMacroReferences} from "./_imacro_references";
 
 export interface IRunInput {
   progress?: IProgress;
@@ -29,6 +30,7 @@ export interface IRegistry {
   inErrorNamespace(name: string): boolean;
   getDDICReferences(): IDDICReferences;
   getMSAGReferences(): IMSAGReferences;
+  getMacroReferences(): IMacroReferences;
 
   // config operations
   getConfig(): IConfiguration;
