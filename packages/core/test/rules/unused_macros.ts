@@ -18,9 +18,20 @@ describe.only("Rule: unused_macros, single file", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("single issue", async () => {
+  it("macro not in use, single issue", async () => {
     const abap = `DEFINE foobar.
+  WRITE 'hello'.
 END-OF-DEFINITION.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("macro in use, no issue", async () => {
+    const abap = `DEFINE foobar.
+  WRITE 'hello'.
+END-OF-DEFINITION.
+
+foobar.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });

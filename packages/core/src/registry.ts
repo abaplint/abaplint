@@ -12,6 +12,8 @@ import {IDDICReferences} from "./_iddic_references";
 import {RulesRunner} from "./rules_runner";
 import {IMSAGReferences} from "./_imsag_references";
 import {MSAGReferences} from "./msag_references";
+import {IMacroReferences} from "./_imacro_references";
+import {MacroReferences} from "./macro_references";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -80,12 +82,14 @@ export class Registry implements IRegistry {
   private readonly dependencies: { [type: string]: { [name: string]: boolean } } = {};
   private readonly ddicReferences: IDDICReferences;
   private readonly msagReferences: IMSAGReferences;
+  private readonly macroReferences: IMacroReferences;
   private conf: IConfiguration;
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
     this.ddicReferences = new DDICReferences();
     this.msagReferences = new MSAGReferences();
+    this.macroReferences = new MacroReferences();
   }
 
   public static abaplintVersion(): string {
@@ -99,6 +103,10 @@ export class Registry implements IRegistry {
 
   public getMSAGReferences() {
     return this.msagReferences;
+  }
+
+  public getMacroReferences() {
+    return this.macroReferences;
   }
 
   public* getObjects(): Generator<IObject, void, undefined> {
