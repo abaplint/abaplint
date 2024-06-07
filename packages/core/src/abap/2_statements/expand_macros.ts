@@ -74,12 +74,14 @@ export class ExpandMacros {
     this.reg = reg;
   }
 
-  public find(statements: StatementNode[], file: IFile) {
+  public find(statements: StatementNode[], file: IFile, clear = true) {
     let nameToken: AbstractToken | undefined = undefined;
     let contents: StatementNode[] = [];
 
     const macroReferences = this.reg?.getMacroReferences();
-    macroReferences?.clear(file.getFilename());
+    if (clear) {
+      macroReferences?.clear(file.getFilename());
+    }
 
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
@@ -98,7 +100,7 @@ export class ExpandMacros {
           const includeMainFile = prog.getMainABAPFile();
           if (includeMainFile) {
             // slow, this copies everything,
-            this.find([...includeMainFile.getStatements()], includeMainFile);
+            this.find([...includeMainFile.getStatements()], includeMainFile, false);
           }
         }
       } else if (nameToken) {

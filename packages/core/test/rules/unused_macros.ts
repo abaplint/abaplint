@@ -84,4 +84,18 @@ END-OF-DEFINITION.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("two mains, with INCLUDE, ok", async () => {
+    const main1 = `INCLUDE zincl.
+hello.`;
+    const main2 = `INCLUDE zincl.`;
+    const incl = `DEFINE hello.
+END-OF-DEFINITION.`;
+    const issues = await runMulti([
+      new MemoryFile("zmain1.prog.abap", main1),
+      new MemoryFile("zmain2.prog.abap", main2),
+      new MemoryFile("zincl.prog.abap", incl),
+    ]);
+    expect(issues.length).to.equal(0);
+  });
+
 });

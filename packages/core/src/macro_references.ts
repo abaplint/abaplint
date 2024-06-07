@@ -8,6 +8,8 @@ export class MacroReferences implements IMacroReferences {
   public addDefinition(ref: IFilenameAndToken): void {
     if (this.definitions[ref.filename] === undefined) {
       this.definitions[ref.filename] = [];
+    } else if (this.definitions[ref.filename].find((d) => d.token.getStart().equals(ref.token.getStart()))) {
+      return;
     }
     this.definitions[ref.filename].push(ref);
   }
