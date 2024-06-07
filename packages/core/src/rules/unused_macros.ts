@@ -22,6 +22,14 @@ export class UnusedMacros implements IRule {
       title: "Unused macros",
       shortDescription: `Checks for unused macro definitions definitions`,
       tags: [RuleTag.Quickfix],
+      badExample: `DEFINE foobar.
+  WRITE 'hello'.
+END-OF-DEFINITION.`,
+      goodExample: `DEFINE foobar.
+  WRITE 'hello'.
+END-OF-DEFINITION.
+
+foobar.`,
     };
   }
 
