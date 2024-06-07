@@ -3,9 +3,18 @@ import {UnusedMacros} from "../../src/rules";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
+import {Config, IConfiguration} from "../../src";
+
+function getConfig(): IConfiguration {
+  const conf = Config.getDefault().get();
+  conf.syntax.globalMacros = ["global_macro"];
+  return new Config(JSON.stringify(conf));
+}
 
 async function runSingle(abap: string): Promise<Issue[]> {
-  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
+  const reg = new Registry()
+    .setConfig(getConfig())
+    .addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   return new UnusedMacros().initialize(reg).run(reg.getFirstObject()!);
 }
@@ -32,6 +41,12 @@ END-OF-DEFINITION.`;
 END-OF-DEFINITION.
 
 foobar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ignore global macros", async () => {
+    const abap = `WRITE 'hello'.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });
