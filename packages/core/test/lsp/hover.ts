@@ -1530,4 +1530,17 @@ END-OF-DEFINITION.`;
     expect(hover?.value).to.contain("Macro Name");
   });
 
+  it("hover macro call", () => {
+    const abap = `DEFINE foobar.
+  WRITE 'hello'.
+END-OF-DEFINITION.
+
+foobar.`;
+    const file = new MemoryFile("zif_interface.intf.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 4, 2));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Macro Call");
+  });
+
 });
