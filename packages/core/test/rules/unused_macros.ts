@@ -19,6 +19,16 @@ async function runSingle(abap: string): Promise<Issue[]> {
   return new UnusedMacros().initialize(reg).run(reg.getFirstObject()!);
 }
 
+async function runMulti(files: MemoryFile[]): Promise<Issue[]> {
+  const reg = new Registry().addFiles(files);
+  await reg.parseAsync();
+  let issues: Issue[] = [];
+  for (const o of reg.getObjects()) {
+    issues = issues.concat(new UnusedMacros().initialize(reg).run(o));
+  }
+  return issues;
+}
+
 describe("Rule: unused_macros, single file", () => {
 
   it("test1", async () => {
@@ -48,6 +58,43 @@ foobar.`;
   it("ignore global macros", async () => {
     const abap = `WRITE 'hello'.`;
     const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("with INCLUDE, unused macro", async () => {
+    const main = `INCLUDE zincl.`;
+    const incl = `DEFINE hello.
+END-OF-DEFINITION.`;
+    const issues = await runMulti([
+      new MemoryFile("zmain.prog.abap", main),
+      new MemoryFile("zincl.prog.abap", incl),
+    ]);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("with INCLUDE, ok", async () => {
+    const main = `INCLUDE zincl.
+hello.`;
+    const incl = `DEFINE hello.
+END-OF-DEFINITION.`;
+    const issues = await runMulti([
+      new MemoryFile("zmain.prog.abap", main),
+      new MemoryFile("zincl.prog.abap", incl),
+    ]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("two mains, with INCLUDE, ok", async () => {
+    const main1 = `INCLUDE zincl.
+hello.`;
+    const main2 = `INCLUDE zincl.`;
+    const incl = `DEFINE hello.
+END-OF-DEFINITION.`;
+    const issues = await runMulti([
+      new MemoryFile("zmain1.prog.abap", main1),
+      new MemoryFile("zmain2.prog.abap", main2),
+      new MemoryFile("zincl.prog.abap", incl),
+    ]);
     expect(issues.length).to.equal(0);
   });
 

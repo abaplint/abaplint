@@ -6,6 +6,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
 import {ITextDocumentPositionParams} from "./_interfaces";
 import {LSPLookup} from "./_lookup";
+import {MacroCall} from "../abap/2_statements/statements/_statement";
 
 export class Hover {
   private readonly reg: IRegistry;
@@ -32,6 +33,8 @@ export class Hover {
       || found.token instanceof Tokens.StringTemplateEnd
       || found.token instanceof Tokens.StringTemplateMiddle) {
       return {kind: LServer.MarkupKind.Markdown, value: "String Template"};
+    } else if (found.snode.get() instanceof MacroCall) {
+      return {kind: LServer.MarkupKind.Markdown, value: "Macro Call"};
     } else if (found.snode.get() instanceof Statements.Define && found.stack.length === 2) {
       return {kind: LServer.MarkupKind.Markdown, value: "Macro Name"};
     } else if (found.token instanceof Tokens.Comment) {

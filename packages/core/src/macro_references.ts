@@ -1,15 +1,31 @@
 import {IFilenameAndToken, IMacroReferences} from "./_imacro_references";
 import {AbstractToken} from "./abap/1_lexer/tokens/abstract_token";
+import {Position} from "./position";
 
 export class MacroReferences implements IMacroReferences {
-  private readonly definitions: {[index: string]: IFilenameAndToken[]} = {};
+  private readonly definitions: {[index: string]: {
+    token: AbstractToken,
+    start: Position,
+    end: Position,
+  }[]} = {};
   private readonly references: {[index: string]: IFilenameAndToken[]} = {};
 
-  public addDefinition(ref: IFilenameAndToken): void {
+  public addDefinition(ref: IFilenameAndToken, start: Position, end: Position): void {
     if (this.definitions[ref.filename] === undefined) {
       this.definitions[ref.filename] = [];
+    } else if (this.definitions[ref.filename].find((d) => d.token.getStart().equals(ref.token.getStart()))) {
+      return;
     }
-    this.definitions[ref.filename].push(ref);
+    this.definitions[ref.filename].push({token: ref.token, start, end});
+  }
+
+  public getDefinitionPosition(filename: string, token: AbstractToken): {start: Position, end: Position} | undefined {
+    for (const d of this.definitions[filename] || []) {
+      if (d.token.getStart().equals(token.getStart())) {
+        return {start: d.token.getStart(), end: d.token.getEnd()};
+      }
+    }
+    return undefined;
   }
 
   public addReference(ref: IFilenameAndToken): void {
@@ -19,8 +35,12 @@ export class MacroReferences implements IMacroReferences {
     this.references[ref.filename].push(ref);
   }
 
-  public listDefinitionsByFile(filename: string): IFilenameAndToken[] {
-    return this.definitions[filename] || [];
+  public listDefinitionsByFile(filename: string): AbstractToken[] {
+    const ret: AbstractToken[] = [];
+    for (const d of this.definitions[filename] || []) {
+      ret.push(d.token);
+    }
+    return ret;
   }
 
   public listUsagesbyMacro(filename: string, token: AbstractToken): IFilenameAndToken[] {
