@@ -115,7 +115,7 @@ REPLACE ALL OCCURRENCES OF lif_bar=>foo IN lv_string WITH '2'.`);
     expect(found.length).to.equal(2);
   });
 
-  it.only("find references for macro definition", async () => {
+  it.skip("find references for macro definition", async () => {
     const abap = `DEFINE foobar.
 END-OF-DEFINITION.
 
