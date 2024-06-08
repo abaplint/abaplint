@@ -115,4 +115,17 @@ REPLACE ALL OCCURRENCES OF lif_bar=>foo IN lv_string WITH '2'.`);
     expect(found.length).to.equal(2);
   });
 
+  it.only("find references for macro definition", async () => {
+    const abap = `DEFINE foobar.
+END-OF-DEFINITION.
+
+foobar.`;
+
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 0, 10));
+    expect(found.length).to.equal(1);
+  });
+
 });

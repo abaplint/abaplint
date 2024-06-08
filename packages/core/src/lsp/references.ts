@@ -40,8 +40,10 @@ export class References {
     return locs.map(LSPUtils.identiferToLocation);
   }
 
+////////////////////////////////////////////
+
 // todo, cleanup this mehtod, some of the method parameters are not used anymore?
-  public search(identifier: Identifier, node: ISpaghettiScopeNode, exitAfterFound = false, removeDuplicates = true): Identifier[] {
+  private search(identifier: Identifier, node: ISpaghettiScopeNode, exitAfterFound = false, removeDuplicates = true): Identifier[] {
     let ret: Identifier[] = [];
 
     // todo, this first assumes that the identifier is a variable?
@@ -69,8 +71,6 @@ export class References {
       return ret;
     }
   }
-
-////////////////////////////////////////////
 
   private removeDuplicates(arr: Identifier[]): Identifier[] {
     const values: any = {};
