@@ -11,6 +11,7 @@ export interface IMacroReferences {
   addReference(ref: IFilenameAndToken): void;
   listDefinitionsByFile(filename: string): AbstractToken[];
   listUsagesbyMacro(filename: string, token: AbstractToken): IFilenameAndToken[];
-  getDefinitionPosition(filename: string, token: AbstractToken): {start: Position, end: Position} | undefined;
+  getDefinitionRange(filename: string, token: AbstractToken): {start: Position, end: Position} | undefined;
+  findDefinitionByUsage(filename: string, token: AbstractToken): {filename: string, token: AbstractToken} | undefined;
   clear(filename: string): void;
 }

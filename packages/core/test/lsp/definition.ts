@@ -114,6 +114,18 @@ DATA sdf TYPE REF TO lif_foo.`;
     expect(intf).to.not.equal(undefined);
   });
 
+  it("resolve macro", () => {
+    const abap = `DEFINE foobar.
+END-OF-DEFINITION.
+
+foobar.`;
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+
+    const definition = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(3, 3));
+    expect(definition).to.not.equal(undefined);
+  });
+
 // todo
 // INHERITING FROM zcl_jump_here
 // INTERFACES zif_jump_here
