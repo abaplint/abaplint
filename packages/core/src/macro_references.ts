@@ -3,12 +3,13 @@ import {AbstractToken} from "./abap/1_lexer/tokens/abstract_token";
 import {Position} from "./position";
 
 export class MacroReferences implements IMacroReferences {
-  private readonly definitions: {[index: string]: {
+  private readonly definitions: {[filename: string]: {
     token: AbstractToken,
     start: Position,
     end: Position,
   }[]} = {};
-  private readonly references: {[index: string]: IFilenameAndToken[]} = {};
+
+  private readonly references: {[filename: string]: IFilenameAndToken[]} = {};
 
   public addDefinition(ref: IFilenameAndToken, start: Position, end: Position): void {
     if (this.definitions[ref.filename] === undefined) {
@@ -19,7 +20,7 @@ export class MacroReferences implements IMacroReferences {
     this.definitions[ref.filename].push({token: ref.token, start, end});
   }
 
-  public getDefinitionPosition(filename: string, token: AbstractToken): {start: Position, end: Position} | undefined {
+  public getDefinitionRange(filename: string, token: AbstractToken): {start: Position, end: Position} | undefined {
     for (const d of this.definitions[filename] || []) {
       if (d.token.getStart().equals(token.getStart())) {
         return {start: d.start, end: d.end};
@@ -58,6 +59,25 @@ export class MacroReferences implements IMacroReferences {
   public clear(filename: string): void {
     delete this.definitions[filename];
     delete this.references[filename];
+  }
+
+  public findDefinitionByUsage(filename: string, token: AbstractToken): {filename: string, token: AbstractToken} | undefined {
+    const tokenStr = token.getStr().toUpperCase();
+
+    for (const ref of this.references[filename] || []) {
+      if (ref.token.getStart().equals(token.getStart())) {
+        for (const d of this.definitions[ref.filename] || []) {
+          if (d.token.getStr().toUpperCase() === tokenStr) {
+            return {
+              filename: ref.filename,
+              token: d.token,
+            };
+          }
+        }
+
+      }
+    }
+    return undefined;
   }
 
 }

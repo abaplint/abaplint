@@ -65,7 +65,7 @@ foobar2.`,
         if (usages.length === 0 && this.conf.skipNames?.includes(macroToken.getStr().toUpperCase()) === false) {
           const message = "Unused macro definition: " + macroToken.getStr();
 
-          const pos = references.getDefinitionPosition(file.getFilename(), macroToken);
+          const pos = references.getDefinitionRange(file.getFilename(), macroToken);
           const fix = EditHelper.deleteRange(file, pos!.start, pos!.end);
           result.push(Issue.atToken(file, macroToken, message, this.getMetadata().key, this.conf.severity, fix));
         }

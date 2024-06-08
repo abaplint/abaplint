@@ -19,6 +19,7 @@ import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {ABAPFile} from "../abap/abap_file";
 import {IMethodDefinition} from "..";
 import {FormDefinition} from "../abap/types";
+import {MacroCall} from "../abap/2_statements/statements/_statement";
 
 export interface LSPLookupResult {
   /** in markdown */
@@ -161,6 +162,19 @@ export class LSPLookup {
         definitionId: refs[0].resolved,
         scope: bottomScope,
       };
+    }
+
+    if (cursor.snode.get() instanceof MacroCall) {
+      const macroDefinition = reg.getMacroReferences().findDefinitionByUsage(cursor.identifier.getFilename(), cursor.snode.getFirstToken());
+      if (macroDefinition) {
+        return {
+          hover: "Macro Call",
+          definition: {
+            uri: macroDefinition?.filename,
+            range: LSPUtils.tokenToRange(macroDefinition.token),
+          },
+        };
+      }
     }
 
     if (hoverValue !== "") {
