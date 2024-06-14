@@ -10,7 +10,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {TypePool} from "../objects";
 
 export class TypesNamingConf extends BasicRuleConfig {
-  /** The pattern for TYPES */
+  /** The pattern for TYPES, case insensitive */
   public pattern: string = "^TY_.+$";
 }
 
