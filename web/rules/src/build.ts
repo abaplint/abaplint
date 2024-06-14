@@ -94,7 +94,7 @@ documentation as well as abaplint.json definitions which attempt to align abapli
 <br><br>
 <div id="searchBox">
 <form role="search">
-  <input type="search" placeholder="Search..." id="input" />
+  <input type="search" placeholder="Search..." id="input" autofocus />
 </form>
 </div>
 

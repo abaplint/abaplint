@@ -2410,6 +2410,17 @@
               ],
               "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_variable_names"
             },
+            "macro_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MacroNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Allows you to enforce a pattern for macro definitions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/macro_naming"
+            },
             "main_file_contents": {
               "anyOf": [
                 {
@@ -4247,6 +4258,17 @@
               ],
               "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_variable_names"
             },
+            "macro_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MacroNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Allows you to enforce a pattern for macro definitions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/macro_naming"
+            },
             "main_file_contents": {
               "anyOf": [
                 {
@@ -5941,6 +5963,30 @@
       },
       "required": [
         "numericParameters"
+      ],
+      "type": "object"
+    },
+    "MacroNamingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pattern": {
+          "description": "The pattern for macros, case insensitive",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "pattern"
       ],
       "type": "object"
     },
@@ -7772,7 +7818,7 @@
           "type": "array"
         },
         "pattern": {
-          "description": "The pattern for TYPES",
+          "description": "The pattern for TYPES, case insensitive",
           "type": "string"
         },
         "severity": {
