@@ -34,6 +34,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
   },
   "rules": {
     "begin_end_names": true,
+    "cds_parser_error": true,
     "check_ddic": true,
     "check_include": true,
     "check_syntax": true,
