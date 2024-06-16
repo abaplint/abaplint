@@ -661,4 +661,33 @@ define view entity ZCDS_union as select from ztopfoo {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("no squiggle brackets, distinct key", () => {
+    const cds = `
+define view YFOOBAR as
+  select distinct key kunnr
+  from knvk
+  where yyview <> ''
+`;
+    const file = new MemoryFile("yfoobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("more without squiggle brackets", () => {
+    const cds = `
+define view YINVOICES
+    as select
+    key invoicenumber,
+    key invoiceline,
+        cast ( invoicedate as abap.char(8) ) as invoiceDate,
+        ordername,
+        ordernumber,
+        pdfoutput
+  from ysdfsdfsdf
+`;
+    const file = new MemoryFile("yinvoices.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

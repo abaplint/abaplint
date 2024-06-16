@@ -6,17 +6,19 @@ import {CDSJoin} from "./cds_join";
 
 export class CDSSelect extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq("SELECT", opt("DISTINCT"), "FROM", CDSSource,
+    const fields = opt(seq(star(seq(CDSElement, ",")), CDSElement));
+    const distinct = str("DISTINCT");
+
+    const elements = seq(str("{"), plus(CDSElement), star(seq(",", CDSElement)), str("}"));
+
+    return seq("SELECT", opt(distinct), opt(fields), "FROM", CDSSource,
                opt(CDSParametersSelect),
                opt(CDSAs),
                star(CDSJoin),
                star(CDSComposition),
                star(CDSAssociation),
                star(CDSComposition),
-               str("{"),
-               plus(CDSElement),
-               star(seq(",", CDSElement)),
-               str("}"),
+               opt(elements),
                opt(CDSGroupBy),
                opt(CDSWhere),
                opt(seq("UNION", opt("ALL"), CDSSelect)));

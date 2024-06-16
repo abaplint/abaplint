@@ -449,7 +449,7 @@ ENDIF.`,
       const sourceString = children[1].concatTokens();
       const targetString = children[3].concatTokens();
 
-      let operator = children[2].concatTokens();
+      let operator = children[2].concatTokens().toUpperCase();
       if (operator === "TO") {
         operator = " = ";
       }
