@@ -668,7 +668,24 @@ define view YFOOBAR as
   from knvk
   where yyview <> ''
 `;
-    const file = new MemoryFile("Yfoobar.ddls.asddls", cds);
+    const file = new MemoryFile("yfoobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("more without squiggle brackets", () => {
+    const cds = `
+define view YINVOICES
+    as select
+    key invoicenumber,
+    key invoiceline,
+        cast ( invoicedate as abap.char(8) ) as invoiceDate,
+        ordername,
+        ordernumber,
+        pdfoutput
+  from ysdfsdfsdf
+`;
+    const file = new MemoryFile("yinvoices.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
