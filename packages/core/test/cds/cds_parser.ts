@@ -661,4 +661,16 @@ define view entity ZCDS_union as select from ztopfoo {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("no squiggle brackets, distinct key", () => {
+    const cds = `
+define view YFOOBAR as
+  select distinct key kunnr
+  from knvk
+  where yyview <> ''
+`;
+    const file = new MemoryFile("Yfoobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
