@@ -16,6 +16,10 @@ const cases = [
   {abap: `CLASS lcl_service DEFINITION.
     TYPE-POOLS: abcd, efgh.
     ENDCLASS.`},
+  {abap: `CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    INCLUDE zasdfd IF FOUND.
+ENDCLASS.`},
 ];
 
 structureType(cases, new ClassDefinition());
