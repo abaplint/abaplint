@@ -98,6 +98,7 @@ const tests = [
   `DATA ls_data TYPE STRUCTURE FOR HIERARCHY /foo/bar.`,
   `DATA lt_events TYPE TABLE FOR EVENT /foo/bar.`,
   `DATA ls_event  TYPE STRUCTURE FOR EVENT /foo/bar~send.`,
+  `DATA range_ko LIKE RANGE OF structure_ref->field.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
