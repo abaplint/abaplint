@@ -382,6 +382,13 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
     INTO TABLE @lt_foo
     UP TO 100 ROWS ##SUBRC_OK. `,
+
+  `select orig~id, orig~parentid,
+     coalesce( refm~domainid, ref~domainid, orig~domainid ) as domainid,
+     case when refm~id is not null then 4 else case when ref~id is not null then 5 end end as scope
+     from      zorig    as orig
+     left join zref     as ref  on orig~reff = ref~id
+     appending table @join.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
