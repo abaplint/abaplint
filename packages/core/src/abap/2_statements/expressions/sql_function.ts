@@ -15,7 +15,7 @@ export class SQLFunction extends Expression {
     const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
     const at = ver(Version.v740sp05, seq(tok(WAt), alt(SimpleSource3, paren)));
 
-    const param = alt(SQLFieldName, SQLAliasField, SQLFunction, Constant, SQLAggregation, at);
+    const param = altPrio(SQLFunction, SQLAggregation, SQLFieldName, SQLAliasField, Constant, at);
 
     const castTypes = altPrio(
       seq("CHAR", tok(ParenLeftW), Integer, tok(WParenRightW)),
