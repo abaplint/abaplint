@@ -35,7 +35,7 @@ import {VirtualPosition} from "./virtual_position";
 import {AbstractFile} from "./files/_abstract_file";
 import {PrettyPrinter} from "./pretty_printer/pretty_printer";
 import {ISpaghettiScope, ISpaghettiScopeNode} from "./abap/5_syntax/_spaghetti_scope";
-import {Empty, Unknown, Comment} from "./abap/2_statements/statements/_statement";
+import {Empty, Unknown, Comment, MacroCall, MacroContent, NativeSQL} from "./abap/2_statements/statements/_statement";
 import {applyEditSingle, applyEditList, IEdit} from "./edit_helper";
 import {IClassDefinition} from "./abap/types/_class_definition";
 import {IInterfaceDefinition} from "./abap/types/_interface_definition";
@@ -71,6 +71,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityS
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
+  MacroCall, MacroContent, NativeSQL,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
