@@ -389,6 +389,8 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      from      zorig    as orig
      left join zref     as ref  on orig~reff = ref~id
      appending table @join.`,
+
+  `SELECT object FROM tadir WHERE @( strlen( 'asd' ) ) = 2 INTO TABLE @DATA(TEST).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
