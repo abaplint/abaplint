@@ -1,5 +1,5 @@
 import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio, plus, ver} from "../combi";
-import {Constant, TypeName, Integer, SimpleFieldChain} from ".";
+import {Constant, TypeName, Integer} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
 import {TypeTableKey} from "./type_table_key";
@@ -24,7 +24,7 @@ export class TypeTable extends Expression {
                          opt(per(header, initial, plusPrio(TypeTableKey))));
 
     const rangeType = seq("RANGE OF", TypeName, optPrio(header), optPrio(initial));
-    const rangeLike = seq("RANGE OF", SimpleFieldChain, optPrio(header), optPrio(initial));
+    const rangeLike = seq("RANGE OF", FieldChain, optPrio(header), optPrio(initial));
 
     // a maximum of 15 secondary table keys can be defined
     // "WITH" is not allowed as a field name in keys

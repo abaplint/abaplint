@@ -435,7 +435,7 @@ export class BasicTypes {
       options.primaryKey!.type = TableAccessType.standard;
       return new Types.TableType(structure, options, name);
     } else if (text.startsWith("LIKE RANGE OF ")) {
-      const sub = node.findFirstExpression(Expressions.SimpleFieldChain);
+      const sub = node.findFirstExpression(Expressions.FieldChain);
       found = this.resolveLikeName(sub);
       if (found === undefined) {
         return new Types.UnknownType("LIKE RANGE OF, could not resolve type");
