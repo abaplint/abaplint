@@ -1,7 +1,8 @@
-import {ver, seq, optPrio, altPrio, Expression, plusPrio} from "../combi";
-import {SQLSource, SQLFieldName, Dynamic, Select, SQLIn, SQLCompareOperator, SQLFunction} from ".";
+import {ver, seq, optPrio, altPrio, Expression, plusPrio, tok} from "../combi";
+import {SQLSource, SQLFieldName, Dynamic, Select, SQLIn, SQLCompareOperator, SQLFunction, Source, SimpleSource3} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
 
 export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -19,7 +20,10 @@ export class SQLCompare extends Expression {
 
     const arith = ver(Version.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)));
 
-    const rett = seq(altPrio(SQLFunction, seq(SQLFieldName, optPrio(arith))),
+    const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
+    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)));
+
+    const rett = seq(altPrio(SQLFunction, seq(SQLFieldName, optPrio(arith)), at),
                      altPrio(seq(SQLCompareOperator, altPrio(sub, source)),
                              seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
                              nul));
