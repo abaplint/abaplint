@@ -2206,4 +2206,20 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.only("BEGIN + OCCURS + INCLUDE STRUCTURE", () => {
+    const abap = `
+DATA:
+  BEGIN OF lips,
+    vgbel(10),
+  END of lips,
+  BEGIN OF xlips OCCURS 0.
+      INCLUDE STRUCTURE lips.
+DATA:
+  END   OF xlips.
+DATA: da_vgbel LIKE xlips-vgbel.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
