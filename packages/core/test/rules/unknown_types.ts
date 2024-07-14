@@ -2206,7 +2206,7 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("BEGIN + OCCURS + INCLUDE STRUCTURE", () => {
+  it("BEGIN + OCCURS + INCLUDE STRUCTURE", () => {
     const abap = `
 DATA:
   BEGIN OF lips,
