@@ -39,7 +39,12 @@ export class Data {
         // INCLUDES
         const typeToken = c.findFirstExpression(Expressions.TypeName)?.getFirstToken();
         const typeName = typeToken?.getStr();
-        const foundId = scope.findType(typeName);
+
+        let foundId = scope.findType(typeName);
+        if (foundId === undefined) {
+          foundId = scope.findVariable(typeName);
+        }
+
         let found = foundId?.getType();
         if (found === undefined) {
           const f = scope.getDDIC().lookupTableOrView(typeName).type;
