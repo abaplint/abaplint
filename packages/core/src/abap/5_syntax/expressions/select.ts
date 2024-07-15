@@ -13,6 +13,7 @@ import {DatabaseTableSource} from "./database_table";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SQLOrderBy} from "./sql_order_by";
 import {Dynamic} from "./dynamic";
+import {ReferenceType} from "../_reference";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -55,9 +56,14 @@ export class Select {
       const fields = node.findFirstExpression(Expressions.SQLAggregation)?.concatTokens();
       const c = new RegExp(/^count\(\s*\*\s*\)$/, "i");
       if (fields === undefined || c.test(fields) === false) {
-        const name = from?.findDirectExpression(Expressions.SQLFromSource)?.concatTokens();
-        if (name && scope.findVariable(name) === undefined) {
-          throw new Error(`Target variable ${name} not found in scope`);
+        const nameToken = from?.findDirectExpression(Expressions.SQLFromSource);
+        if (nameToken) {
+          const found = scope.findVariable(nameToken.concatTokens());
+          if (found) {
+            scope.addReference(nameToken.getFirstToken(), found, ReferenceType.DataWriteReference, filename);
+          } else {
+            throw new Error(`Target variable ${nameToken.concatTokens()} not found in scope`);
+          }
         }
       }
     }
