@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import {statementType, statementVersion, statementVersionFail} from "../_utils";
+import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -438,11 +438,15 @@ const versions = [
     FOR GROUPS _tabname OF _dd03l IN dd03l
     GROUP BY _dd03l-tabname
     ( _tabname ) ).`, ver: Version.v740sp08},
-
-  {abap: `lv_ref_bgqc_name->* = me->ms_item-obj_name.`, ver: Version.v756},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
+
+const ok = [
+  {abap: `lv_ref_bgqc_name->* = me->ms_item-obj_name.`, ver: Version.v756},
+];
+
+statementVersionOk(ok, "MOVE", Statements.Move);
 
 const versionsFail = [
   {abap: "lv_foo *= 2.", ver: Version.OpenABAP},

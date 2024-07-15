@@ -1,4 +1,4 @@
-import {statementExpectFail, statementType, statementVersion, statementVersionFail} from "../_utils";
+import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -50,6 +50,12 @@ const versions = [
 ];
 
 statementVersion(versions, "INSERT internal", Statements.InsertInternal);
+
+const ok = [
+  {abap: "INSERT ls_node INTO TABLE mr_dest_tree->*.", ver: Version.v702},
+];
+
+statementVersionOk(ok, "INSERT internal", Statements.InsertInternal);
 
 const versionsFail = [
   {abap: "insert |field_more| into table ls_result-struc_data-field_more.", ver: Version.v702},
