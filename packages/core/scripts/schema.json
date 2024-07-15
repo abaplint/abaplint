@@ -3147,6 +3147,17 @@
               ],
               "description": "Checks that tables do not have the enhancement category 'not classified'.\nhttps://rules.abaplint.org/tabl_enhancement_category"
             },
+            "tables_declared_locally": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TablesDeclaredLocallyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
+            },
             "try_without_catch": {
               "anyOf": [
                 {
@@ -4994,6 +5005,17 @@
                 }
               ],
               "description": "Checks that tables do not have the enhancement category 'not classified'.\nhttps://rules.abaplint.org/tabl_enhancement_category"
+            },
+            "tables_declared_locally": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TablesDeclaredLocallyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
             },
             "try_without_catch": {
               "anyOf": [
@@ -7757,6 +7779,23 @@
       "type": "object"
     },
     "TABLEnhancementCategoryConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "TablesDeclaredLocallyConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
