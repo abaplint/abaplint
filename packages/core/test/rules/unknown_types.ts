@@ -2222,4 +2222,15 @@ DATA: da_vgbel LIKE xlips-vgbel.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("BEGIN + OCCURS + INCLUDE STRUCTURE, more voided", () => {
+    const abap = `
+DATA BEGIN OF xlips OCCURS 0.
+INCLUDE STRUCTURE lips.
+DATA END OF xlips.
+DATA da_vgbel LIKE xlips-vgbel.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
