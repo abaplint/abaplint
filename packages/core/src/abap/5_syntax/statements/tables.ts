@@ -4,6 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {StatementSyntax} from "../_statement_syntax";
 import {UnknownType} from "../../types/basic/unknown_type";
+import {ScopeType} from "../_scope_type";
 
 export class Tables implements StatementSyntax {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -21,7 +22,13 @@ export class Tables implements StatementSyntax {
     const found = scope.getDDIC()?.lookupTableOrView(name);
     if (found) {
       scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found.object, filename: filename, token: nameToken});
-      scope.addIdentifier(new TypedIdentifier(nameToken, filename, found.type));
+
+      if (scope.getType() === ScopeType.Form || scope.getType() === ScopeType.FunctionModule) {
+        // hoist TABLES definitions to global scope
+        scope.addNamedIdentifierToParent(nameToken.getStr(), new TypedIdentifier(nameToken, filename, found.type));
+      } else {
+        scope.addIdentifier(new TypedIdentifier(nameToken, filename, found.type));
+      }
       return;
     }
 

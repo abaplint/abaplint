@@ -10579,6 +10579,19 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("TABLES definitions are hoisted", () => {
+    const abap = `
+FORM foo.
+  TABLES t100.
+ENDFORM.
+
+FORM bar.
+  SELECT SINGLE * FROM t100.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
