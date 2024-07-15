@@ -1511,4 +1511,12 @@ SELECT
     expect(issues.length).to.equal(0);
   });
 
+  it("SELECT without INTO", async () => {
+    const abap = `
+TABLES t100.
+SELECT SINGLE * FROM t100.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

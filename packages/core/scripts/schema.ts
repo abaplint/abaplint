@@ -145,6 +145,7 @@ import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {SuperfluousValueConf} from "../src/rules/superfluous_value";
 import {SyModificationConf} from "../src/rules/sy_modification";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
+import {TablesDeclaredLocallyConf} from "../src/rules/tables_declared_locally";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
@@ -326,6 +327,7 @@ export interface IConfig {
     "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
+    "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
@@ -496,6 +498,7 @@ export interface IConfig {
     "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
+    "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,

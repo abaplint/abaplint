@@ -174,17 +174,17 @@ export class BasicTypes {
             type = new TableType(type.getRowType(), {withHeader: false, keyType: Types.TableKeyType.default});
           }
         } else { // field name
-          let sub: AbstractType | undefined = undefined;
           if (type instanceof Types.TableType) {
             type = type.getRowType();
           }
           if (type instanceof Types.StructureType) {
-            sub = type.getComponentByName(child.getFirstToken().getStr());
-          }
-          if (sub === undefined) {
+            type = type.getComponentByName(child.getFirstToken().getStr());
+            if (type === undefined) {
+              return new Types.UnknownType("Type error, field not part of structure " + fullName);
+            }
+          } else if (!(type instanceof Types.VoidType)) {
             return new Types.UnknownType("Type error, field not part of structure " + fullName);
           }
-          type = sub;
         }
       }
 

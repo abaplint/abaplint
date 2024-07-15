@@ -22,7 +22,7 @@ export class MacroNaming extends ABAPRule {
       key: "macro_naming",
       title: "Macro naming conventions",
       shortDescription: `Allows you to enforce a pattern for macro definitions`,
-      extendedInformation: `Use rule "avoid_use" to avoid macros alotogether.`,
+      extendedInformation: `Use rule "avoid_use" to avoid macros altogether.`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
       badExample: `DEFINE something.
 END-OF-DEFINITION.`,

@@ -156,6 +156,24 @@ export class CurrentScope {
     this.current.getData().vars[upper] = identifier;
   }
 
+  public addNamedIdentifierToParent(name: string, identifier: TypedIdentifier) {
+    if (this.current === undefined) {
+      return;
+    }
+    const parent = this.current.getParent();
+    if (parent === undefined) {
+      return;
+    }
+
+    const upper = name.toUpperCase();
+    if (parent.getData().vars[upper] !== undefined) {
+      throw new Error(`Variable name "${name}" already defined`);
+    } else if (this.isOO() && parent.getData().types[upper] !== undefined) {
+      throw new Error(`"${name}" already defined`);
+    }
+    parent.getData().vars[upper] = identifier;
+  }
+
   public addIdentifier(identifier: TypedIdentifier | undefined) {
     if (identifier === undefined) {
       return;
