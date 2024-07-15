@@ -16,7 +16,9 @@ export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
     const comp = seq(tok(Dash), ComponentChain);
     const attr = seq(Arrow, AttributeChain);
-    const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), optPrio(Dereference));
+    const deref = optPrio(ver(Version.v756, Dereference));
+
+    const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), deref);
 
     const rparen = tok(WParenRightW);
     const rparenNoSpace = altPrio(tok(ParenRightW), tok(WParenRightW));
@@ -41,7 +43,7 @@ export class Source extends Expression {
                                              TextElement,
                                              bool,
                                              method,
-                                             seq(FieldChain, optPrio(Dereference)),
+                                             seq(FieldChain, deref),
                                              paren),
                     optPrio(after));
 
