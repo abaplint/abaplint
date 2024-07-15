@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import {statementType, statementVersion, statementVersionFail} from "../_utils";
+import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -441,6 +441,12 @@ const versions = [
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
+
+const ok = [
+  {abap: `lv_ref_bgqc_name->* = me->ms_item-obj_name.`, ver: Version.v756},
+];
+
+statementVersionOk(ok, "MOVE", Statements.Move);
 
 const versionsFail = [
   {abap: "lv_foo *= 2.", ver: Version.OpenABAP},
