@@ -438,6 +438,8 @@ const versions = [
     FOR GROUPS _tabname OF _dd03l IN dd03l
     GROUP BY _dd03l-tabname
     ( _tabname ) ).`, ver: Version.v740sp08},
+
+  {abap: `lv_ref_bgqc_name->* = me->ms_item-obj_name.`, ver: Version.v756},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
