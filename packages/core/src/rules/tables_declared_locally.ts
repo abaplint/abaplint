@@ -17,6 +17,7 @@ export class TablesDeclaredLocally extends ABAPRule {
       key: "tables_declared_locally",
       title: "Check for locally declared TABLES",
       shortDescription: `TABLES are always global, so declare them globally`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abaptables.htm`,
       tags: [RuleTag.SingleFile],
       badExample: `FORM foo.
   TABLES t100.
