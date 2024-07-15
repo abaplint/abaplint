@@ -24,6 +24,10 @@ export class MacroNaming extends ABAPRule {
       shortDescription: `Allows you to enforce a pattern for macro definitions`,
       extendedInformation: `Use rule "avoid_use" to avoid macros alotogether.`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
+      badExample: `DEFINE something.
+END-OF-DEFINITION.`,
+      goodExample: `DEFINE _something.
+END-OF-DEFINITION.`,
     };
   }
 
