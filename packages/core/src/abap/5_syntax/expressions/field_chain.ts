@@ -24,28 +24,25 @@ export class FieldChain {
     filename: string,
     refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
-    const children = node.getChildren();
+    if (node.getFirstChild()?.get() instanceof Expressions.SourceField
+        && node.findDirectExpression(Expressions.ComponentName)) {
+      // workaround for names with dashes, eg. "sy-repid"
+      const concat = node.concatTokens();
+      const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
+      const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
+      const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
+      if (found) {
+        if (refType) {
+          scope.addReference(node.getFirstToken(), found, refType, filename);
+        }
+        // this is not completely correct, but will work, dashes in names is a mess anyhow
+        return found.getType();
+      }
+    }
 
     let context: AbstractType | undefined = undefined;
-    try {
-      context = this.findTop(children[0], scope, filename, refType);
-    } catch (error) {
-      const concat = node.concatTokens();
-      if (concat.includes("-") && node.getFirstChild()?.get() instanceof Expressions.SourceField) {
-        // workaround for names with dashes, eg. "sy-repid"
-        const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
-        const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
-        const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
-        if (found) {
-          if (refType) {
-            scope.addReference(node.getFirstToken(), found, refType, filename);
-          }
-          // this is not completely correct, but will work, dashes in names is a mess anyhow
-          return found.getType();
-        }
-      }
-      throw error;
-    }
+    const children = node.getChildren();
+    context = this.findTop(children[0], scope, filename, refType);
 
     for (let i = 1; i < children.length; i++) {
       const current = children[i];
@@ -91,28 +88,7 @@ export class FieldChain {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
         }
-        try {
-          context = new ComponentName().runSyntax(context, current);
-        } catch (error) {
-          const concat = node.concatTokens();
-          if (concat.includes("-")) {
-            // workaround for names with dashes, eg. "sy-repid"
-            const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
-            const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
-            const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
-            if (found) {
-              if (refType) {
-                scope.addReference(node.getFirstToken(), found, refType, filename);
-              }
-              context = found.getType();
-            } else {
-              throw error;
-            }
-          } else {
-            throw error;
-          }
-        }
-
+        context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {

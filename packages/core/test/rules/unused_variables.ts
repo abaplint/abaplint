@@ -1519,4 +1519,17 @@ SELECT SINGLE * FROM t100.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("offsets", async () => {
+    const abap = `
+DATA abap_doc TYPE string.
+DATA: BEGIN OF first_match,
+        offset TYPE i,
+        length TYPE i,
+      END OF first_match.
+data(sdf) = abap_doc+first_match-offset(first_match-length).
+clear sdf.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
