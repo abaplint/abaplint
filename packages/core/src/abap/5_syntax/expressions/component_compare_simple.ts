@@ -22,7 +22,7 @@ export class ComponentCompareSimple {
             throw new Error("ComponentCompareSimple, incompatible types");
           }
         } else {
-          throw "ComponentCompareSimple, unexpected node";
+          throw new Error("ComponentCompareSimple, unexpected node");
         }
       }
     }

@@ -10592,6 +10592,20 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("no cascasing syntax errors.", () => {
+    const abap = `
+DATA foo TYPE i.
+
+DATA BEGIN OF bar.
+INCLUDE STRUCTURE foo.
+DATA END OF bar.
+
+CLEAR bar.`;
+    const issues = runProgram(abap);
+    console.dir(issues);
+    expect(issues.length).to.equal(1);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
