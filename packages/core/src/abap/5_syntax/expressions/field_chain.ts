@@ -24,9 +24,10 @@ export class FieldChain {
     filename: string,
     refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
-    const concat = node.concatTokens();
-    if (concat.includes("-") && node.getFirstChild()?.get() instanceof Expressions.SourceField) {
+    if (node.getFirstChild()?.get() instanceof Expressions.SourceField
+        && node.findDirectExpression(Expressions.ComponentName)) {
       // workaround for names with dashes, eg. "sy-repid"
+      const concat = node.concatTokens();
       const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
       const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
       const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
