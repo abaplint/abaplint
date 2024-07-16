@@ -87,29 +87,7 @@ export class FieldChain {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
         }
-
-        /*
-        let foundIt = false;
-        if (concat.includes("-")) {
-          // workaround for names with dashes, eg. "sy-repid"
-          const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
-          const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
-          const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
-          if (found) {
-            console.dir("moo");
-            if (refType) {
-              scope.addReference(node.getFirstToken(), found, refType, filename);
-            }
-            foundIt = true;
-            context = found.getType();
-          }
-        }
-          */
-
-        // if (foundIt === false) {
         context = new ComponentName().runSyntax(context, current);
-        // }
-
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {
