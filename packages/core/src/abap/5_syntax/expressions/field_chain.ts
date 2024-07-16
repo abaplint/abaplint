@@ -88,27 +88,27 @@ export class FieldChain {
           context = context.getRowType();
         }
 
-        try {
-          context = new ComponentName().runSyntax(context, current);
-        } catch (error) {
-          const concat = node.concatTokens();
-          if (concat.includes("-")) {
-            // workaround for names with dashes, eg. "sy-repid"
-            const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
-            const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
-            const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
-            if (found) {
-              if (refType) {
-                scope.addReference(node.getFirstToken(), found, refType, filename);
-              }
-              context = found.getType();
-            } else {
-              throw error;
+        /*
+        let foundIt = false;
+        if (concat.includes("-")) {
+          // workaround for names with dashes, eg. "sy-repid"
+          const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
+          const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
+          const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
+          if (found) {
+            console.dir("moo");
+            if (refType) {
+              scope.addReference(node.getFirstToken(), found, refType, filename);
             }
-          } else {
-            throw error;
+            foundIt = true;
+            context = found.getType();
           }
         }
+          */
+
+        // if (foundIt === false) {
+        context = new ComponentName().runSyntax(context, current);
+        // }
 
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
