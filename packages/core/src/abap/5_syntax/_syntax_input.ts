@@ -1,4 +1,6 @@
 import {Issue} from "../../issue";
+import {Severity} from "../../severity";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {CurrentScope} from "./_current_scope";
 
 export const CheckSyntaxKey = "check_syntax";
@@ -10,3 +12,7 @@ export type SyntaxInput = {
   filename: string,
   issues: Issue[],
 };
+
+export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string) {
+  return Issue.atTokenFilename(input.filename, token, message, CheckSyntaxKey, Severity.Error);
+}

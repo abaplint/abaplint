@@ -1,9 +1,7 @@
 import {INode} from "../../nodes/_inode";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Basic from "../../types/basic";
-import {CheckSyntaxKey, SyntaxInput} from "../_syntax_input";
-import {Issue} from "../../../issue";
-import {Severity} from "../../../severity";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ComponentName {
   public runSyntax(context: AbstractType | undefined, node: INode, input: SyntaxInput): AbstractType | undefined {
@@ -17,8 +15,7 @@ export class ComponentName {
     if (context instanceof Basic.StructureType) {
       const ret = context.getComponentByName(name);
       if (ret === undefined) {
-        const message = "Component \"" + name + "\" not found in structure";
-        input.issues.push(Issue.atTokenFilename(input.filename, nameToken, message, CheckSyntaxKey, Severity.Error));
+        input.issues.push(syntaxIssue(input, nameToken, "Component \"" + name + "\" not found in structure"));
         return new Basic.VoidType(CheckSyntaxKey);
       }
       return ret;
@@ -33,13 +30,15 @@ export class ComponentName {
       } else if (rowType instanceof Basic.StructureType) {
         const ret = rowType.getComponentByName(name);
         if (ret === undefined) {
-          throw new Error("Component \"" + name + "\" not found in structure");
+          input.issues.push(syntaxIssue(input, nameToken, "Component \"" + name + "\" not found in structure"));
+          return new Basic.VoidType(CheckSyntaxKey);
         }
         return ret;
       }
     }
 
-    throw new Error("Not a structure, ComponentName, \"" + name + "\"");
+    input.issues.push(syntaxIssue(input, nameToken, "Not a structure, ComponentName, \"" + name + "\""));
+    return new Basic.VoidType(CheckSyntaxKey);
   }
 
 }
