@@ -146,6 +146,7 @@ import {InsertFieldGroup} from "./statements/insert_field_group";
 import {ReadEntities} from "./statements/read_entities";
 import {ModifyEntities} from "./statements/modify_entities";
 import {CommitEntities} from "./statements/commit_entities";
+import {SyntaxInput} from "./_syntax_input";
 
 // -----------------------------------
 
@@ -423,26 +424,28 @@ export class SyntaxLogic {
     const filename = this.currentFile.getFilename();
     const stru = node.get();
 
+    const input: SyntaxInput = {scope: this.scope, filename};
+
     if (stru instanceof Structures.ClassDefinition) {
-      new ClassDefinition(node, {scope: this.scope, filename});
+      new ClassDefinition(node, input);
       return true;
     } else if (stru instanceof Structures.Interface) {
-      new InterfaceDefinition(node, {filename, scope: this.scope});
+      new InterfaceDefinition(node, input);
       return true;
     } else if (stru instanceof Structures.Types) {
-      this.scope.addType(new Types().runSyntax(node, {scope: this.scope, filename}));
+      this.scope.addType(new Types().runSyntax(node, input));
       return true;
     } else if (stru instanceof Structures.Constants) {
-      this.scope.addIdentifier(new Constants().runSyntax(node, {scope: this.scope, filename}).type);
+      this.scope.addIdentifier(new Constants().runSyntax(node, input).type);
       return true;
     } else if (stru instanceof Structures.Data) {
-      this.scope.addIdentifier(new DataStructure().runSyntax(node, {scope: this.scope, filename}));
+      this.scope.addIdentifier(new DataStructure().runSyntax(node, input));
       return true;
     } else if (stru instanceof Structures.Statics) {
-      this.scope.addIdentifier(new Statics().runSyntax(node, {scope: this.scope, filename}));
+      this.scope.addIdentifier(new Statics().runSyntax(node, input));
       return true;
     } else if (stru instanceof Structures.TypeEnum) {
-      const values = new TypeEnum().runSyntax(node, {scope: this.scope, filename}).values;
+      const values = new TypeEnum().runSyntax(node, input).values;
       this.scope.addList(values);
       return true;
     }
@@ -453,24 +456,26 @@ export class SyntaxLogic {
     const filename = this.currentFile.getFilename();
     const s = node.get();
 
+    const input: SyntaxInput = {scope: this.scope, filename};
+
     // todo, refactor
     if (s instanceof Statements.Type) {
-      this.scope.addType(new Type().runSyntax(node, {scope: this.scope, filename}));
+      this.scope.addType(new Type().runSyntax(node, input));
       return;
     } else if (s instanceof Statements.Constant) {
-      this.scope.addIdentifier(new Constant().runSyntax(node, {scope: this.scope, filename}));
+      this.scope.addIdentifier(new Constant().runSyntax(node, input));
       return;
     } else if (s instanceof Statements.Static) {
-      this.scope.addIdentifier(new Static().runSyntax(node, {scope: this.scope, filename}));
+      this.scope.addIdentifier(new Static().runSyntax(node, input));
       return;
     } else if (s instanceof Statements.Data) {
-      this.scope.addIdentifier(new DataStatement().runSyntax(node, {scope: this.scope, filename}));
+      this.scope.addIdentifier(new DataStatement().runSyntax(node, input));
       return;
     }
 
     const name = s.constructor.name;
     if (map[name]) {
-      map[name].runSyntax(node, {scope: this.scope, filename});
+      map[name].runSyntax(node, input);
       return;
     }
 
