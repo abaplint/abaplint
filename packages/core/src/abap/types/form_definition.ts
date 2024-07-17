@@ -5,7 +5,6 @@ import {Identifier} from "../4_file_information/_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../nodes";
 import {Expression} from "../2_statements/combi";
 import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
-import {CurrentScope} from "../5_syntax/_current_scope";
 import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
 import {TableKeyType, TableType, UnknownType, VoidType} from "./basic";
@@ -30,8 +29,8 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     this.node = st;
 
     this.tableParameters = this.findTables(input);
-    this.usingParameters = this.findType(Expressions.FormUsing, input.scope);
-    this.changingParameters = this.findType(Expressions.FormChanging, input.scope);
+    this.usingParameters = this.findType(Expressions.FormUsing, input);
+    this.changingParameters = this.findType(Expressions.FormChanging, input);
   }
 
   public getTablesParameters(): TypedIdentifier[] {
@@ -83,18 +82,18 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     return ret;
   }
 
-  private findType(type: new () => Expression, scope: CurrentScope): TypedIdentifier[] {
+  private findType(type: new () => Expression, input: SyntaxInput): TypedIdentifier[] {
     const found = this.node.findFirstExpression(type);
     if (found === undefined) {
       return [];
     }
-    return this.findParams(found, scope);
+    return this.findParams(found, input);
   }
 
-  private findParams(node: ExpressionNode | StatementNode, scope: CurrentScope) {
+  private findParams(node: ExpressionNode | StatementNode, input: SyntaxInput) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
-      const p = new FormParam().runSyntax(param, {scope, filename: this.filename});
+      const p = new FormParam().runSyntax(param, input);
       res.push(p);
     }
     return res;
