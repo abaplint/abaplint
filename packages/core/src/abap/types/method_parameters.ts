@@ -5,7 +5,6 @@ import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode} from "../nodes";
 import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {ObjectReferenceType, UnknownType, VoidType} from "./basic";
-import {CurrentScope} from "../5_syntax/_current_scope";
 import {MethodDefReturning} from "../5_syntax/expressions/method_def_returning";
 import {MethodParam} from "../5_syntax/expressions/method_param";
 import {IMethodParameters} from "./_method_parameters";
@@ -178,7 +177,7 @@ export class MethodParameters implements IMethodParameters {
 
     const importing = node.findFirstExpression(Expressions.MethodDefImporting);
     if (importing) {
-      this.add(this.importing, importing, input.scope, [IdentifierMeta.MethodImporting], abstractMethod);
+      this.add(this.importing, importing, input, [IdentifierMeta.MethodImporting], abstractMethod);
       if (importing.findDirectTokenByText("PREFERRED")) {
         this.preferred = importing.getLastToken().getStr().toUpperCase();
         if (this.preferred.startsWith("!")) {
@@ -189,12 +188,12 @@ export class MethodParameters implements IMethodParameters {
 
     const exporting = node.findFirstExpression(Expressions.MethodDefExporting);
     if (exporting) {
-      this.add(this.exporting, exporting, input.scope, [IdentifierMeta.MethodExporting], abstractMethod);
+      this.add(this.exporting, exporting, input, [IdentifierMeta.MethodExporting], abstractMethod);
     }
 
     const changing = node.findFirstExpression(Expressions.MethodDefChanging);
     if (changing) {
-      this.add(this.changing, changing, input.scope, [IdentifierMeta.MethodChanging], abstractMethod);
+      this.add(this.changing, changing, input, [IdentifierMeta.MethodChanging], abstractMethod);
     }
 
     const returning = node.findFirstExpression(Expressions.MethodDefReturning);
@@ -249,7 +248,7 @@ export class MethodParameters implements IMethodParameters {
     }
   }
 
-  private add(target: TypedIdentifier[], source: ExpressionNode, scope: CurrentScope, meta: IdentifierMeta[], abstractMethod: boolean): void {
+  private add(target: TypedIdentifier[], source: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[], abstractMethod: boolean): void {
     for (const opt of source.findAllExpressions(Expressions.MethodParamOptional)) {
       const p = opt.findDirectExpression(Expressions.MethodParam);
       if (p === undefined) {
@@ -264,8 +263,8 @@ export class MethodParameters implements IMethodParameters {
       if (abstractMethod === true) {
         extraMeta.push(IdentifierMeta.Abstract);
       }
-      const id = new MethodParam().runSyntax(p, {scope, filename: this.filename}, [...meta, ...extraMeta]);
-      scope.addIdentifier(id);
+      const id = new MethodParam().runSyntax(p, input, [...meta, ...extraMeta]);
+      input.scope.addIdentifier(id);
       target.push(id);
       if (opt.findDirectTokenByText("OPTIONAL")) {
         const name = target[target.length - 1].getName().toUpperCase();
@@ -286,7 +285,7 @@ export class MethodParameters implements IMethodParameters {
 
     const params = source.findAllExpressions(Expressions.MethodParam);
     for (const param of params) {
-      target.push(new MethodParam().runSyntax(param, {scope, filename: this.filename}, meta));
+      target.push(new MethodParam().runSyntax(param, input, meta));
     }
   }
 
