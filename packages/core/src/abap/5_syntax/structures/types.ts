@@ -24,12 +24,12 @@ export class Types {
       const ctyp = c.get();
       if (c instanceof StatementNode) {
         if (ctyp instanceof Statements.Type) {
-          const found = new Type().runSyntax(c, input.scope, input.filename, qualifiedNamePrefix + name.getStr() + "-");
+          const found = new Type().runSyntax(c, input, qualifiedNamePrefix + name.getStr() + "-");
           if (found) {
             components.push({name: found.getName(), type: found.getType()});
           }
         } else if (ctyp instanceof Statements.IncludeType) {
-          const found = new IncludeType().runSyntax(c, input.scope, input.filename);
+          const found = new IncludeType().runSyntax(c, input);
           if (found instanceof VoidType) {
             voidd = found;
           } else {

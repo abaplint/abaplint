@@ -22,7 +22,7 @@ export class Constants {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.Constant) {
-        const found = new Constant().runSyntax(c, input.scope, input.filename);
+        const found = new Constant().runSyntax(c, input);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
           values[found.getName()] = found.getValue();

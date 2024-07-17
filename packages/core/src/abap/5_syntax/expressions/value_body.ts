@@ -1,5 +1,4 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {For} from "./for";
 import {Source} from "./source";
@@ -7,12 +6,12 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
 import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {SyntaxInput} from "../_syntax_input";
 
 export class ValueBody {
   public runSyntax(
     node: ExpressionNode | undefined,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     targetType: AbstractType | undefined): AbstractType | undefined {
 
     if (node === undefined) {
@@ -22,12 +21,12 @@ export class ValueBody {
     let letScoped = false;
     const letNode = node.findDirectExpression(Expressions.Let);
     if (letNode) {
-      letScoped = new Let().runSyntax(letNode, scope, filename);
+      letScoped = new Let().runSyntax(letNode, input);
     }
 
     let forScopes = 0;
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
-      const scoped = new For().runSyntax(forNode, scope, filename);
+      const scoped = new For().runSyntax(forNode, input);
       if (scoped === true) {
         forScopes++;
       }
@@ -35,7 +34,7 @@ export class ValueBody {
 
     const fields = new Set<string>();
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
-      new FieldAssignment().runSyntax(s, scope, filename, targetType);
+      new FieldAssignment().runSyntax(s, input, targetType);
 
       const fieldname = s.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
       if (fieldname) {
@@ -48,7 +47,7 @@ export class ValueBody {
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      type = new Source().runSyntax(s, scope, filename, type);
+      type = new Source().runSyntax(s, input, type);
     }
 
     for (const foo of node.findDirectExpressions(Expressions.ValueBodyLine)) {
@@ -67,23 +66,23 @@ export class ValueBody {
       for (const l of foo.findDirectExpressions(Expressions.ValueBodyLines)) {
         for (const s of l.findDirectExpressions(Expressions.Source)) {
 // LINES OF ?? todo, pass type,
-          new Source().runSyntax(s, scope, filename);
+          new Source().runSyntax(s, input);
         }
       }
       for (const s of foo.findDirectExpressions(Expressions.FieldAssignment)) {
-        new FieldAssignment().runSyntax(s, scope, filename, rowType);
+        new FieldAssignment().runSyntax(s, input, rowType);
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, scope, filename, rowType);
+        new Source().runSyntax(s, input, rowType);
       }
     }
 
     if (letScoped === true) {
-      scope.pop(node.getLastToken().getEnd());
+      input.scope.pop(node.getLastToken().getEnd());
     }
 
     for (let i = 0; i < forScopes; i++) {
-      scope.pop(node.getLastToken().getEnd());
+      input.scope.pop(node.getLastToken().getEnd());
     }
 
     if (targetType?.isGeneric() && type) {

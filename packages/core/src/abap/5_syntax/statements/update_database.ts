@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {ScopeType} from "../_scope_type";
 import {StructureType} from "../../types/basic";
@@ -9,43 +8,44 @@ import {Identifier} from "../../1_lexer/tokens/identifier";
 import {DatabaseTable} from "../expressions/database_table";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class UpdateDatabase implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
     if (dbtab !== undefined) {
-      new DatabaseTable().runSyntax(dbtab, scope, filename);
+      new DatabaseTable().runSyntax(dbtab, input);
     }
 
     const tableName = node.findDirectExpression(Expressions.DatabaseTable);
     const tokenName = tableName?.getFirstToken();
     if (tableName && tokenName) {
       // todo, this also finds structures, it should only find transparent tables
-      const found = scope.getDDIC().lookupTable(tokenName.getStr());
+      const found = input.scope.getDDIC().lookupTable(tokenName.getStr());
       if (found instanceof StructureType) {
-        scope.push(ScopeType.OpenSQL, "UPDATE", tokenName.getStart(), filename);
+        input.scope.push(ScopeType.OpenSQL, "UPDATE", tokenName.getStart(), input.filename);
         for (const field of found.getComponents()) {
           const fieldToken = new Identifier(node.getFirstToken().getStart(), field.name);
-          const id = new TypedIdentifier(fieldToken, filename, field.type);
-          scope.addIdentifier(id);
+          const id = new TypedIdentifier(fieldToken, input.filename, field.type);
+          input.scope.addIdentifier(id);
         }
       }
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(d, scope, filename);
+      new Dynamic().runSyntax(d, input);
     }
 
-    if (scope.getType() === ScopeType.OpenSQL) {
-      scope.pop(node.getLastToken().getEnd());
+    if (input.scope.getType() === ScopeType.OpenSQL) {
+      input.scope.pop(node.getLastToken().getEnd());
     }
 
   }

@@ -3,17 +3,16 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType} from "../../types/basic/void_type";
 import {ObjectReferenceType} from "../../types/basic/object_reference_type";
 import {ObjectOriented} from "../_object_oriented";
-import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AttributeName} from "../../2_statements/expressions";
+import {SyntaxInput} from "../_syntax_input";
 
 export class AttributeChain {
   public runSyntax(
     inputContext: AbstractType | undefined,
     node: INode,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     type: ReferenceType[]): AbstractType | undefined {
 
     if (inputContext instanceof VoidType) {
@@ -28,13 +27,13 @@ export class AttributeChain {
       throw new Error("AttributeChain, unexpected first child");
     }
 
-    const def = scope.findObjectDefinition(inputContext.getIdentifierName());
+    const def = input.scope.findObjectDefinition(inputContext.getIdentifierName());
     if (def === undefined) {
       throw new Error("Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)");
     }
     const nameToken = first.getFirstToken();
     const name = nameToken.getStr();
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
 
     let context: TypedIdentifier | undefined = helper.searchAttributeName(def, name);
     if (context === undefined) {
@@ -44,7 +43,7 @@ export class AttributeChain {
       throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
     }
     for (const t of type) {
-      scope.addReference(nameToken, context, t, filename);
+      input.scope.addReference(nameToken, context, t, input.filename);
     }
 
 // todo, loop, handle ArrowOrDash, ComponentName, TableExpression

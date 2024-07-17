@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {VoidType, TableType, IntegerType, DataReference, AnyType, UnknownType, StructureType, ObjectReferenceType, StringType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
@@ -10,9 +9,10 @@ import {ComponentCompareSimple} from "../expressions/component_compare_simple";
 import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput} from "../_syntax_input";
 
 export class ReadTable implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const concat = node.concatTokens().toUpperCase();
     const sources = node.findDirectExpressions(Expressions.Source);
 
@@ -20,7 +20,7 @@ export class ReadTable implements StatementSyntax {
     if (firstSource === undefined) {
       firstSource = sources[0];
     }
-    const sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : undefined;
+    const sourceType = firstSource ? new Source().runSyntax(firstSource, input) : undefined;
 
     if (sourceType === undefined) {
       throw new Error("No source type determined, read table");
@@ -35,21 +35,21 @@ export class ReadTable implements StatementSyntax {
 
     const components = node.findDirectExpression(Expressions.ComponentCompareSimple);
     if (components !== undefined) {
-      new ComponentCompareSimple().runSyntax(components, scope, filename, rowType);
+      new ComponentCompareSimple().runSyntax(components, input, rowType);
     }
 
     const indexSource = node.findExpressionAfterToken("INDEX");
     if (indexSource) {
-      const indexType = new Source().runSyntax(indexSource, scope, filename);
-      if (new TypeUtils(scope).isAssignable(indexType, IntegerType.get()) === false) {
+      const indexType = new Source().runSyntax(indexSource, input);
+      if (new TypeUtils(input.scope).isAssignable(indexType, IntegerType.get()) === false) {
         throw new Error("READ TABLE, INDEX must be simple");
       }
     }
 
     const fromSource = node.findExpressionAfterToken("FROM");
     if (fromSource) {
-      const fromType = new Source().runSyntax(fromSource, scope, filename);
-      if (new TypeUtils(scope).isAssignable(fromType, rowType) === false) {
+      const fromType = new Source().runSyntax(fromSource, input);
+      if (new TypeUtils(input.scope).isAssignable(fromType, rowType) === false) {
         throw new Error("READ TABLE, FROM must be compatible");
       }
     }
@@ -59,7 +59,7 @@ export class ReadTable implements StatementSyntax {
       if (s === firstSource || s === indexSource || s === fromSource) {
         continue;
       }
-      const type = new Source().runSyntax(s, scope, filename);
+      const type = new Source().runSyntax(s, input);
       if (s === afterKey) {
         if (type instanceof StringType || type instanceof TableType || type instanceof ObjectReferenceType) {
           throw new Error("Key cannot be string or table or reference");
@@ -77,12 +77,12 @@ export class ReadTable implements StatementSyntax {
       const fst = target.findDirectExpression(Expressions.FSTarget);
       const t = target.findFirstExpression(Expressions.Target);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, rowType);
+        new InlineData().runSyntax(inline, input, rowType);
       } else if (fst) {
-        new FSTarget().runSyntax(fst, scope, filename, rowType);
+        new FSTarget().runSyntax(fst, input, rowType);
       } else if (t) {
-        const targetType = new Target().runSyntax(t, scope, filename);
-        if (new TypeUtils(scope).isAssignable(rowType, targetType) === false) {
+        const targetType = new Target().runSyntax(t, input);
+        if (new TypeUtils(input.scope).isAssignable(rowType, targetType) === false) {
           throw new Error("Incompatible types");
         }
       }

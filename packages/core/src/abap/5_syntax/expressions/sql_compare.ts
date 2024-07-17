@@ -4,6 +4,7 @@ import {ExpressionNode, StatementNode} from "../../nodes";
 import {CharacterType, IntegerType, NumericType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
+import {SyntaxInput} from "../_syntax_input";
 import {DatabaseTableSource} from "./database_table";
 import {Dynamic} from "./dynamic";
 import {Source} from "./source";
@@ -11,18 +12,18 @@ import {SQLSource} from "./sql_source";
 
 export class SQLCompare {
 
-  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string, tables: DatabaseTableSource[]): void {
+  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput, tables: DatabaseTableSource[]): void {
 
     let sourceType: AbstractType | undefined;
     let token: AbstractToken | undefined;
 
     if (node.getFirstChild()?.get() instanceof Expressions.Dynamic) {
-      new Dynamic().runSyntax(node.getFirstChild() as ExpressionNode, scope, filename);
+      new Dynamic().runSyntax(node.getFirstChild() as ExpressionNode, input);
       return;
     }
 
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     for (const s of node.findAllExpressions(Expressions.SQLSource)) {
@@ -33,14 +34,14 @@ export class SQLCompare {
         }
       }
 
-      sourceType = new SQLSource().runSyntax(s, scope, filename);
+      sourceType = new SQLSource().runSyntax(s, input);
     }
 
     const sqlin = node.findDirectExpression(Expressions.SQLIn);
     if (sqlin && sqlin.getChildren().length === 2) {
       const insource = node.findFirstExpression(Expressions.SQLSource);
       if (insource) {
-        const intype = new SQLSource().runSyntax(insource, scope, filename);
+        const intype = new SQLSource().runSyntax(insource, input);
         if (intype &&
             !(intype instanceof VoidType) &&
             !(intype instanceof UnknownType) &&
@@ -53,7 +54,7 @@ export class SQLCompare {
     const fieldName = node.findDirectExpression(Expressions.SQLFieldName)?.concatTokens();
     if (fieldName && sourceType && token) {
 // check compatibility for rule sql_value_conversion
-      const targetType = this.findType(fieldName, tables, scope);
+      const targetType = this.findType(fieldName, tables, input.scope);
 
       let message = "";
       if (sourceType instanceof IntegerType
@@ -78,7 +79,7 @@ export class SQLCompare {
         message = "Source field longer than database field, NUMC -> NUMC";
       }
       if (message !== "") {
-        scope.addSQLConversion(fieldName, message, token);
+        input.scope.addSQLConversion(fieldName, message, token);
       }
     }
   }

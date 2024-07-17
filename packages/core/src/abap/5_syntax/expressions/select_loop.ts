@@ -1,10 +1,10 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
+import {SyntaxInput} from "../_syntax_input";
 import {Select} from "./select";
 
 export class SelectLoop {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): void {
     // try using the other Select, they should look very much the same
-    new Select().runSyntax(node, scope, filename);
+    new Select().runSyntax(node, input);
   }
 }

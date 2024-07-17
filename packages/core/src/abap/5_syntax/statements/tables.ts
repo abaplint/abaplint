@@ -1,13 +1,13 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {StatementSyntax} from "../_statement_syntax";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {ScopeType} from "../_scope_type";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Tables implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const nameToken = node.findFirstExpression(Expressions.Field)?.getFirstToken();
     if (nameToken === undefined) {
       return undefined;
@@ -19,20 +19,21 @@ export class Tables implements StatementSyntax {
     }
 
     // lookupTableOrView will also give Unknown and Void
-    const found = scope.getDDIC()?.lookupTableOrView(name);
+    const found = input.scope.getDDIC()?.lookupTableOrView(name);
     if (found) {
-      scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found.object, filename: filename, token: nameToken});
+      input.scope.getDDICReferences().addUsing(input.scope.getParentObj(),
+                                               {object: found.object, filename: input.filename, token: nameToken});
 
-      if (scope.getType() === ScopeType.Form || scope.getType() === ScopeType.FunctionModule) {
+      if (input.scope.getType() === ScopeType.Form || input.scope.getType() === ScopeType.FunctionModule) {
         // hoist TABLES definitions to global scope
-        scope.addNamedIdentifierToParent(nameToken.getStr(), new TypedIdentifier(nameToken, filename, found.type));
+        input.scope.addNamedIdentifierToParent(nameToken.getStr(), new TypedIdentifier(nameToken, input.filename, found.type));
       } else {
-        scope.addIdentifier(new TypedIdentifier(nameToken, filename, found.type));
+        input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, found.type));
       }
       return;
     }
 
     // this should never happen,
-    scope.addIdentifier(new TypedIdentifier(nameToken, filename, new UnknownType("Tables, fallback")));
+    input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, new UnknownType("Tables, fallback")));
   }
 }

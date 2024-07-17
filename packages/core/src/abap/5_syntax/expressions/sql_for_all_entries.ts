@@ -1,18 +1,18 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "./source";
 import {VoidType, TableType} from "../../types/basic";
+import {SyntaxInput} from "../_syntax_input";
 
 export class SQLForAllEntries {
 
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): void {
     let s = node.findFirstExpression(Expressions.Source);
     if (s === undefined) {
       s = node.findFirstExpression(Expressions.SimpleSource3);
     }
     if (s) {
-      const type = new Source().runSyntax(s, scope, filename);
+      const type = new Source().runSyntax(s, input);
       if (type instanceof VoidType) {
         return;
       }
@@ -21,7 +21,7 @@ export class SQLForAllEntries {
       }
 
       const name = s.concatTokens().replace("[]", "");
-      scope.setAllowHeaderUse(name);
+      input.scope.setAllowHeaderUse(name);
     }
   }
 

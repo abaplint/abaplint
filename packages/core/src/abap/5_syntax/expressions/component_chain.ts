@@ -6,13 +6,12 @@ import {ExpressionNode} from "../../nodes";
 import {DataReference, ObjectReferenceType, UnknownType} from "../../types/basic";
 import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
-import {CurrentScope} from "../_current_scope";
 import {ObjectOriented} from "../_object_oriented";
+import {SyntaxInput} from "../_syntax_input";
 
 export class ComponentChain {
   public runSyntax(context: AbstractType | undefined, node: ExpressionNode,
-                   scope: CurrentScope,
-                   filename: string): AbstractType | undefined {
+                   input: SyntaxInput): AbstractType | undefined {
 
     if (context === undefined) {
       return undefined;
@@ -59,12 +58,12 @@ export class ComponentChain {
           }
         } else if (context instanceof ObjectReferenceType) {
           const id = context.getIdentifier();
-          const def = scope.findObjectDefinition(id.getName());
+          const def = input.scope.findObjectDefinition(id.getName());
           if (def === undefined) {
             throw new Error(id.getName() + " not found in scope");
           }
 
-          const helper = new ObjectOriented(scope);
+          const helper = new ObjectOriented(input.scope);
           const found = helper.searchAttributeName(def, name);
 
           context = found?.getType();
@@ -74,7 +73,7 @@ export class ComponentChain {
             const extra: IReferenceExtras = {
               ooName: id.getName(),
               ooType: id instanceof ClassDefinition ? "CLAS" : "INTF"};
-            scope.addReference(child.getFirstToken(), found, ReferenceType.DataWriteReference, filename, extra);
+            input.scope.addReference(child.getFirstToken(), found, ReferenceType.DataWriteReference, input.filename, extra);
           }
 
         } else {

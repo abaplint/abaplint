@@ -262,7 +262,7 @@ export class MethodParameters implements IMethodParameters {
       if (abstractMethod === true) {
         extraMeta.push(IdentifierMeta.Abstract);
       }
-      const id = new MethodParam().runSyntax(p, scope, this.filename, [...meta, ...extraMeta]);
+      const id = new MethodParam().runSyntax(p, {scope, filename: this.filename}, [...meta, ...extraMeta]);
       scope.addIdentifier(id);
       target.push(id);
       if (opt.findDirectTokenByText("OPTIONAL")) {
@@ -284,7 +284,7 @@ export class MethodParameters implements IMethodParameters {
 
     const params = source.findAllExpressions(Expressions.MethodParam);
     for (const param of params) {
-      target.push(new MethodParam().runSyntax(param, scope, this.filename, meta));
+      target.push(new MethodParam().runSyntax(param, {scope, filename: this.filename}, meta));
     }
   }
 

@@ -1,12 +1,12 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {IStructureComponent, StructureType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
+import {SyntaxInput} from "../_syntax_input";
 
 export class IncludeType {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): IStructureComponent[] | VoidType {
+  public runSyntax(node: StatementNode, input: SyntaxInput): IStructureComponent[] | VoidType {
     const components: IStructureComponent[] = [];
 
     const iname = node.findFirstExpression(Expressions.TypeName);
@@ -15,7 +15,7 @@ export class IncludeType {
     }
     const name = iname.getFirstToken().getStr();
 
-    let ityp = new BasicTypes(filename, scope).parseType(iname);
+    let ityp = new BasicTypes(input.filename, input.scope).parseType(iname);
     const as = node.findExpressionAfterToken("AS")?.concatTokens();
     if (as && ityp instanceof StructureType) {
       ityp = new StructureType(ityp.getComponents().concat([{
@@ -50,7 +50,7 @@ export class IncludeType {
       components.push(...ityp.getComponents());
     } else if (ityp && ityp instanceof VoidType) {
       return ityp;
-    } else if (scope.getDDIC().inErrorNamespace(name) === false) {
+    } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
       return new VoidType(name);
     } else {
       throw new Error("IncludeType, type not found \"" + iname.concatTokens() + "\"");

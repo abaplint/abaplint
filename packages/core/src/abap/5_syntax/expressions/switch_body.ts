@@ -1,10 +1,10 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
+import {SyntaxInput} from "../_syntax_input";
 
 export class SwitchBody {
-  public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string) {
+  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput) {
     if (node === undefined) {
       return;
     }
@@ -13,13 +13,13 @@ export class SwitchBody {
     if (!(thenSource?.get() instanceof Expressions.Source)) {
       throw new Error("SwitchBody, unexpected");
     }
-    const type = new Source().runSyntax(thenSource, scope, filename);
+    const type = new Source().runSyntax(thenSource, input);
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       if (s === thenSource) {
         continue;
       }
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     return type;

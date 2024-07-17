@@ -1,5 +1,4 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";

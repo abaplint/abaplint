@@ -16,7 +16,7 @@ export class ClassData {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.ClassData) {
-        const found = new ClassDataSyntax().runSyntax(c, input.scope, input.filename);
+        const found = new ClassDataSyntax().runSyntax(c, input);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
           values[found.getName()] = found.getValue() as string;

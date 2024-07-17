@@ -1,29 +1,29 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../basic_types";
 import {UnknownType} from "../../types/basic";
 import {TypeTable} from "../expressions/type_table";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Static {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      const ttfound = new TypeTable().runSyntax(node, scope, filename);
+      const ttfound = new TypeTable().runSyntax(node, input);
       if (ttfound) {
         return ttfound;
       }
     }
 
-    const found = new BasicTypes(filename, scope).simpleType(node);
+    const found = new BasicTypes(input.filename, input.scope).simpleType(node);
     if (found) {
       return found;
     }
 
     const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Static, fallback"));
+      return new TypedIdentifier(fallback.getFirstToken(), input.filename, new UnknownType("Static, fallback"));
     }
 
     return undefined;

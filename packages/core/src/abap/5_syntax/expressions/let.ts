@@ -1,21 +1,21 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {InlineFieldDefinition} from "./inline_field_definition";
 import {ScopeType} from "../_scope_type";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Let {
-  public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string, skipScope = false): boolean {
+  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput, skipScope = false): boolean {
     if (node === undefined) {
       return false;
     }
 
     if (skipScope !== true) {
-      scope.push(ScopeType.Let, "LET", node.getFirstToken().getStart(), filename);
+      input.scope.push(ScopeType.Let, "LET", node.getFirstToken().getStart(), input.filename);
     }
 
     for (const f of node.findDirectExpressions(Expressions.InlineFieldDefinition)) {
-      new InlineFieldDefinition().runSyntax(f, scope, filename);
+      new InlineFieldDefinition().runSyntax(f, input);
     }
 
     return true;

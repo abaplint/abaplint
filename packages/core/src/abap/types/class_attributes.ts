@@ -187,14 +187,14 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Statements.ClassData) {
           this.static.push(this.parseAttribute(c, visibility, scope));
         } else if (ctyp instanceof Statements.Constant) {
-          const found = new ConstantStatement().runSyntax(c, scope, this.filename);
+          const found = new ConstantStatement().runSyntax(c, {scope, filename: this.filename});
           if (found) {
             const attr = new ClassConstant(found, visibility, found.getValue());
             this.constants.push(attr);
             scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Statements.Type) {
-          const res = new Type().runSyntax(c, scope, this.filename);
+          const res = new Type().runSyntax(c, {scope, filename: this.filename});
           if (res) {
             scope.addType(res);
             this.tlist.push({type: res, visibility});
@@ -209,9 +209,9 @@ export class Attributes implements IAttributes {
     const s = node.get();
 
     if (s instanceof Statements.Data) {
-      found = new DataStatement().runSyntax(node, scope, this.filename);
+      found = new DataStatement().runSyntax(node, {scope, filename: this.filename});
     } else if (s instanceof Statements.ClassData) {
-      found = new ClassDataStatement().runSyntax(node, scope, this.filename);
+      found = new ClassDataStatement().runSyntax(node, {scope, filename: this.filename});
     } else {
       throw new Error("ClassAttribute, unexpected node, 1, " + this.filename);
     }

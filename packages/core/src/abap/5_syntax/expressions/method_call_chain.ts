@@ -1,5 +1,4 @@
 import {ExpressionNode, TokenNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType, ObjectReferenceType} from "../../types/basic";
@@ -30,7 +29,7 @@ export class MethodCallChain {
       throw new Error("MethodCallChain, first child expected");
     }
 
-    let context: AbstractType | undefined = this.findTop(first, input.scope, targetType, input.filename);
+    let context: AbstractType | undefined = this.findTop(first, input, targetType);
     if (first.get() instanceof Expressions.MethodCall) {
       children.unshift(first);
     }
@@ -83,14 +82,14 @@ export class MethodCallChain {
 
         const param = current.findDirectExpression(Expressions.MethodCallParam);
         if (param && method) {
-          new MethodCallParam().runSyntax(param, input.scope, method, input.filename);
+          new MethodCallParam().runSyntax(param, input, method);
         } else if (param && context instanceof VoidType) {
-          new MethodCallParam().runSyntax(param, input.scope, context, input.filename);
+          new MethodCallParam().runSyntax(param, input, context);
         }
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, input.scope, input.filename);
+        context = new AttributeName().runSyntax(context, current, input);
       }
 
       previous = current;
@@ -101,28 +100,28 @@ export class MethodCallChain {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType | undefined {
+  private findTop(first: INode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const token = first.getFirstToken();
       const className = token.getStr();
-      const classDefinition = scope.findObjectDefinition(className);
-      if (classDefinition === undefined && scope.getDDIC().inErrorNamespace(className) === false) {
+      const classDefinition = input.scope.findObjectDefinition(className);
+      if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         return new VoidType(className);
       } else if (classDefinition === undefined) {
         throw new Error("Class " + className + " not found");
       }
-      scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, filename);
+      input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
+      return new FieldChain().runSyntax(first, input, ReferenceType.DataReadReference);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
-      return new NewObject().runSyntax(first, scope, targetType, filename);
+      return new NewObject().runSyntax(first, input, targetType);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {
-      return new Cast().runSyntax(first, scope, targetType, filename);
+      return new Cast().runSyntax(first, input, targetType);
     } else {
-      const meType = scope.findVariable("me")?.getType();
+      const meType = input.scope.findVariable("me")?.getType();
       if (meType) {
         return meType;
       }

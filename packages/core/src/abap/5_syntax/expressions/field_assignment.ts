@@ -2,15 +2,14 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {StructureType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {CurrentScope} from "../_current_scope";
+import {SyntaxInput} from "../_syntax_input";
 import {Source} from "./source";
 
 export class FieldAssignment {
 
   public runSyntax(
     node: ExpressionNode | StatementNode,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     targetType: AbstractType | undefined): void {
 
     const fieldSub = node.findDirectExpression(Expressions.FieldSub);
@@ -40,7 +39,7 @@ export class FieldAssignment {
       type = targetType;
     }
 
-    new Source().runSyntax(s, scope, filename, type);
+    new Source().runSyntax(s, input, type);
   }
 
 }

@@ -1,15 +1,15 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Move implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const targets = node.findDirectExpressions(Expressions.Target);
     const firstTarget = targets[0];
 
@@ -17,31 +17,31 @@ export class Move implements StatementSyntax {
 
     let targetType: AbstractType | undefined = undefined;
     if (inline === undefined) {
-      targetType = firstTarget ? new Target().runSyntax(firstTarget, scope, filename) : undefined;
+      targetType = firstTarget ? new Target().runSyntax(firstTarget, input) : undefined;
       for (const t of targets) {
         if (t === firstTarget) {
           continue;
         }
-        new Target().runSyntax(t, scope, filename);
+        new Target().runSyntax(t, input);
       }
     }
 
     const source = node.findDirectExpression(Expressions.Source);
-    const sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : undefined;
+    const sourceType = source ? new Source().runSyntax(source, input, targetType) : undefined;
     if (sourceType === undefined) {
       throw new Error("No source type determined");
     }
 
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, sourceType);
+      new InlineData().runSyntax(inline, input, sourceType);
       targetType = sourceType;
     }
 
     if (node.findDirectTokenByText("?=")) {
-      if (new TypeUtils(scope).isCastable(sourceType, targetType) === false) {
+      if (new TypeUtils(input.scope).isCastable(sourceType, targetType) === false) {
         throw new Error("Incompatible types");
       }
-    } else if (new TypeUtils(scope).isAssignable(sourceType, targetType) === false) {
+    } else if (new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
       throw new Error("Incompatible types");
     }
   }

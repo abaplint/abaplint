@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
@@ -10,27 +9,28 @@ import {RaiseWith} from "../expressions/raise_with";
 import {ObjectOriented} from "../_object_oriented";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "../expressions/method_parameters";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Raise implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
 // todo
 
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
     let method: IMethodDefinition | VoidType | undefined;
 
     const classTok = node.findDirectExpression(Expressions.ClassName)?.getFirstToken();
     const className = classTok?.getStr();
     if (className) {
-      const found = scope.existsObject(className);
+      const found = input.scope.existsObject(className);
       if (found?.id) {
-        scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, filename);
+        input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename);
 
-        const def = scope.findObjectDefinition(className);
+        const def = input.scope.findObjectDefinition(className);
         method = helper.searchMethodName(def, "CONSTRUCTOR")?.method;
-      } else if (scope.getDDIC().inErrorNamespace(className) === false) {
+      } else if (input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
-        scope.addReference(classTok, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+        input.scope.addReference(classTok, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         method = new VoidType(className);
       } else {
         throw new Error("RAISE, unknown class " + className);
@@ -43,11 +43,11 @@ export class Raise implements StatementSyntax {
 
     const c = node.findExpressionAfterToken("EXCEPTION");
     if (c instanceof ExpressionNode && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
-      const type = new Source().runSyntax(c, scope, filename);
+      const type = new Source().runSyntax(c, input);
       if (type instanceof VoidType) {
         method = type;
       } else if (type instanceof ObjectReferenceType) {
-        const def = scope.findObjectDefinition(type.getIdentifierName());
+        const def = input.scope.findObjectDefinition(type.getIdentifierName());
         method = helper.searchMethodName(def, "CONSTRUCTOR")?.method;
       } else if (type !== undefined) {
         throw new Error("RAISE EXCEPTION, must be object reference, got " + type.constructor.name);
@@ -61,22 +61,22 @@ export class Raise implements StatementSyntax {
     // check parameters vs constructor
     const param = node.findDirectExpression(Expressions.ParameterListS);
     if (param) {
-      new MethodParameters().checkExporting(param, scope, method, filename, true);
+      new MethodParameters().checkExporting(param, input, method, true);
     }
 
     for (const s of node.findDirectExpressions(Expressions.RaiseWith)) {
-      new RaiseWith().runSyntax(s, scope, filename);
+      new RaiseWith().runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
     for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.MessageSource)) {
-      new MessageSource().runSyntax(s, scope, filename);
+      new MessageSource().runSyntax(s, input);
     }
 
     const id = node.findExpressionAfterToken("ID")?.concatTokens();
@@ -89,7 +89,7 @@ export class Raise implements StatementSyntax {
     }
     if (id?.startsWith("'") && number) {
       const messageClass = id.substring(1, id.length - 1).toUpperCase();
-      scope.getMSAGReferences().addUsing(filename, node.getFirstToken(), messageClass, number);
+      input.scope.getMSAGReferences().addUsing(input.filename, node.getFirstToken(), messageClass, number);
     }
 
   }

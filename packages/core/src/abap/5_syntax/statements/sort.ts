@@ -1,21 +1,21 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {AnyType, StructureType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Sort implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(s, scope, filename);
+      new Dynamic().runSyntax(s, input);
     }
 
     const tnode = node.findDirectExpression(Expressions.Target);
     if (tnode) {
-      const ttype = new Target().runSyntax(tnode, scope, filename);
+      const ttype = new Target().runSyntax(tnode, input);
       if (ttype instanceof TableType) {
         if (ttype.getOptions()?.primaryKey?.type === TableAccessType.sorted) {
           throw new Error(`Sorted table, already sorted`);

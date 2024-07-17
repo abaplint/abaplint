@@ -2,18 +2,18 @@ import {ExpressionNode} from "../../nodes";
 import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, StructureType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput} from "../_syntax_input";
 
 export class StringTemplate {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType {
-    const typeUtils = new TypeUtils(scope);
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
+    const typeUtils = new TypeUtils(input.scope);
     const ret = StringType.get();
 
     for (const templateSource of node.findAllExpressions(Expressions.StringTemplateSource)) {
       const s = templateSource.findDirectExpression(Expressions.Source);
-      const type = new Source().runSyntax(s, scope, filename, ret);
+      const type = new Source().runSyntax(s, input, ret);
       if (type === undefined) {
         throw new Error("No target type determined");
       } else if ((typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false)
@@ -24,7 +24,7 @@ export class StringTemplate {
       const format = templateSource.findDirectExpression(Expressions.StringTemplateFormatting);
       const formatConcat = format?.concatTokens();
       for (const formatSource of format?.findAllExpressions(Expressions.Source) || []) {
-        new Source().runSyntax(formatSource, scope, filename);
+        new Source().runSyntax(formatSource, input);
       }
 
       if (formatConcat?.includes("ALPHA = ")

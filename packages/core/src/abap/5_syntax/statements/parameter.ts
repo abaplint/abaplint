@@ -1,13 +1,13 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Parameter implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
 
     if (nameToken && nameToken.getStr().length > 8) {
@@ -18,14 +18,14 @@ export class Parameter implements StatementSyntax {
       throw new Error("RADIOBUTTON and LENGTH not possible together");
     }
 
-    const bfound = new BasicTypes(filename, scope).parseType(node);
+    const bfound = new BasicTypes(input.filename, input.scope).parseType(node);
     if (nameToken && bfound) {
-      scope.addIdentifier(new TypedIdentifier(nameToken, filename, bfound));
+      input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, bfound));
       return;
     }
 
     if (nameToken) {
-      scope.addIdentifier(new TypedIdentifier(nameToken, filename, new UnknownType("Parameter, fallback")));
+      input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, new UnknownType("Parameter, fallback")));
     }
   }
 }

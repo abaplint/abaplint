@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {VoidType, TableType, UnknownType, DataReference, AnyType, DataType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
@@ -12,13 +11,14 @@ import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Loop implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const loopTarget = node.findDirectExpression(Expressions.LoopTarget);
 
     let target = loopTarget?.findDirectExpression(Expressions.Target);
-    const targetType = target ? new Target().runSyntax(target, scope, filename) : undefined;
+    const targetType = target ? new Target().runSyntax(target, input) : undefined;
     if (target === undefined) {
       target = node.findDirectExpression(Expressions.FSTarget);
     }
@@ -30,7 +30,7 @@ export class Loop implements StatementSyntax {
     if (firstSource === undefined) {
       firstSource = sources[0];
     }
-    let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename, targetType, write) : undefined;
+    let sourceType = firstSource ? new Source().runSyntax(firstSource, input, targetType, write) : undefined;
     let rowType: AbstractType | undefined = undefined;
 
     const concat = node.concatTokens().toUpperCase();
@@ -72,37 +72,37 @@ export class Loop implements StatementSyntax {
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, sourceType);
+      new InlineData().runSyntax(inline, input, sourceType);
     }
 
     for (const s of sources) {
       if (s === firstSource) {
         continue;
       }
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     const inlinefs = target?.findDirectExpression(Expressions.InlineFS);
     if (inlinefs) {
-      new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
+      new InlineFS().runSyntax(inlinefs, input, sourceType);
     } else {
       const fstarget = loopTarget?.findDirectExpression(Expressions.FSTarget);
       if (fstarget) {
-        new FSTarget().runSyntax(fstarget, scope, filename, sourceType);
+        new FSTarget().runSyntax(fstarget, input, sourceType);
       }
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, scope, filename, rowType);
+      new ComponentCond().runSyntax(t, input, rowType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(t, scope, filename);
+      new Dynamic().runSyntax(t, input);
     }
 
     const group = node.findDirectExpression(Expressions.LoopGroupBy);
     if (group) {
-      new LoopGroupBy().runSyntax(group, scope, filename);
+      new LoopGroupBy().runSyntax(group, input);
     }
 
   }

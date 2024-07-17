@@ -1,12 +1,12 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {CharacterType, StructureType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class SelectionScreen implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string) {
+  public runSyntax(node: StatementNode, input: SyntaxInput) {
 
     const field = node.findFirstExpression(Expressions.InlineField);
     if (field === undefined) {
@@ -23,11 +23,11 @@ export class SelectionScreen implements StatementSyntax {
         {name: "ACTIVETAB", type: new CharacterType(132)},
       ]);
 
-      scope.addIdentifier(new TypedIdentifier(name, filename, type, [IdentifierMeta.SelectionScreenTab]));
+      input.scope.addIdentifier(new TypedIdentifier(name, input.filename, type, [IdentifierMeta.SelectionScreenTab]));
     } else if (concat.startsWith("SELECTION-SCREEN TAB")) {
-      scope.addIdentifier(new TypedIdentifier(name, filename, new CharacterType(83), [IdentifierMeta.SelectionScreenTab]));
+      input.scope.addIdentifier(new TypedIdentifier(name, input.filename, new CharacterType(83), [IdentifierMeta.SelectionScreenTab]));
     } else {
-      scope.addIdentifier(new TypedIdentifier(name, filename, new CharacterType(83)));
+      input.scope.addIdentifier(new TypedIdentifier(name, input.filename, new CharacterType(83)));
     }
   }
 }

@@ -1,18 +1,18 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {ComponentCond} from "../expressions/component_cond";
 import {AnyType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {SyntaxInput} from "../_syntax_input";
 
 export class ModifyInternal implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     // there is only one
@@ -20,7 +20,7 @@ export class ModifyInternal implements StatementSyntax {
     const targetExpression = target;
     if (targetExpression) {
       // it might be a dynamic target
-      const targetType = new Target().runSyntax(targetExpression, scope, filename);
+      const targetType = new Target().runSyntax(targetExpression, input);
       if (targetType instanceof VoidType
           || targetType instanceof AnyType
           || targetType instanceof UnknownType) {
@@ -44,11 +44,11 @@ export class ModifyInternal implements StatementSyntax {
 
     const fstarget = node.findDirectExpression(Expressions.FSTarget);
     if (fstarget) {
-      new FSTarget().runSyntax(fstarget, scope, filename, undefined);
+      new FSTarget().runSyntax(fstarget, input, undefined);
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, scope, filename);
+      new ComponentCond().runSyntax(t, input);
     }
 
   }

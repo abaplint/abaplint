@@ -1,25 +1,25 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class RaiseEvent implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 // todo: only possible in classes
 
     const f = node.findDirectExpression(Expressions.EventName);
     if (f?.concatTokens().includes("~")) {
       const name = f.concatTokens().split("~")[0];
-      const idef = scope.findInterfaceDefinition(name);
+      const idef = input.scope.findInterfaceDefinition(name);
       if (idef) {
-        scope.addReference(f.getFirstToken(), idef, ReferenceType.ObjectOrientedReference, filename);
+        input.scope.addReference(f.getFirstToken(), idef, ReferenceType.ObjectOrientedReference, input.filename);
       }
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
   }

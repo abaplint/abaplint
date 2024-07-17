@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {INode} from "../../nodes/_inode";
@@ -35,7 +34,7 @@ export class Target {
       return undefined;
     }
 
-    let context = this.findTop(first, input.scope, input.filename);
+    let context = this.findTop(first, input);
     if (context === undefined) {
       throw new Error(`"${first.getFirstToken().getStr()}" not found, Target`);
     }
@@ -117,7 +116,7 @@ export class Target {
 
 /////////////////////////////////
 
-  private findTop(node: INode | undefined, scope: CurrentScope, filename: string): AbstractType | undefined {
+  private findTop(node: INode | undefined, input: SyntaxInput): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -127,30 +126,30 @@ export class Target {
 
     if (node.get() instanceof Expressions.TargetField
         || node.get() instanceof Expressions.TargetFieldSymbol) {
-      const found = scope.findVariable(name);
+      const found = input.scope.findVariable(name);
       if (found) {
-        scope.addReference(token, found, ReferenceType.DataWriteReference, filename);
+        input.scope.addReference(token, found, ReferenceType.DataWriteReference, input.filename);
       }
       if (name.includes("~")) {
-        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
+        const idef = input.scope.findInterfaceDefinition(name.split("~")[0]);
         if (idef) {
-          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, filename);
+          input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, input.filename);
         }
       }
       return found?.getType();
     } else if (node.get() instanceof Expressions.ClassName) {
-      const found = scope.findObjectDefinition(name);
+      const found = input.scope.findObjectDefinition(name);
       if (found) {
-        scope.addReference(token, found, ReferenceType.ObjectOrientedReference, filename);
+        input.scope.addReference(token, found, ReferenceType.ObjectOrientedReference, input.filename);
         return new ObjectReferenceType(found);
-      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name, ooType: "CLAS"});
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name, ooType: "CLAS"});
         return new VoidType(name);
       } else {
         return new UnknownType(name + " unknown, Target");
       }
     } else if (node.get() instanceof Expressions.Cast && node instanceof ExpressionNode) {
-      const ret = new Cast().runSyntax(node, scope, undefined, filename);
+      const ret = new Cast().runSyntax(node, input, undefined);
       if (ret instanceof UnknownType) {
         throw new Error("CAST, uknown type");
       }

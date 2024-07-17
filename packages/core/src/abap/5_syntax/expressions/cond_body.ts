@@ -1,16 +1,15 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
 import {Let} from "./let";
 import {Cond} from "./cond";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {SyntaxInput} from "../_syntax_input";
 
 export class CondBody {
   public runSyntax(
     node: ExpressionNode | undefined,
-    scope: CurrentScope,
-    filename: string): AbstractType | undefined {
+    input: SyntaxInput): AbstractType | undefined {
 
     if (node === undefined) {
       return undefined;
@@ -19,24 +18,24 @@ export class CondBody {
     let scoped = false;
     const l = node.findDirectExpression(Expressions.Let);
     if (l) {
-      scoped = new Let().runSyntax(l, scope, filename);
+      scoped = new Let().runSyntax(l, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(s, scope, filename);
+      new Cond().runSyntax(s, input);
     }
 
     let type: AbstractType | undefined = undefined;
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       if (type === undefined) {
-        type = new Source().runSyntax(s, scope, filename);
+        type = new Source().runSyntax(s, input);
       } else {
-        new Source().runSyntax(s, scope, filename);
+        new Source().runSyntax(s, input);
       }
     }
 
     if (scoped === true) {
-      scope.pop(node.getLastToken().getEnd());
+      input.scope.pop(node.getLastToken().getEnd());
     }
 
     return type;
