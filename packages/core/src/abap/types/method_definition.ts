@@ -83,7 +83,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     }
 
     this.visibility = visibility;
-    this.parameters = new MethodParameters(node, this.filename, input.scope, this.abstract);
+    this.parameters = new MethodParameters(node, input, this.abstract);
   }
 
   public getVisibility(): Visibility {
