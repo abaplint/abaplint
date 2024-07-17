@@ -67,6 +67,7 @@ export class MethodSource {
 
       } else if (current.get() instanceof Expressions.AttributeName
           || current.get() instanceof Expressions.SourceField) {
+
         try {
           if (context instanceof AbstractType) {
             const attr = new AttributeName().runSyntax(context, current, input, ReferenceType.DataReadReference);

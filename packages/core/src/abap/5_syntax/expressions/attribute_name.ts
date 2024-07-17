@@ -8,7 +8,7 @@ import {DataReference} from "../../types/basic/data_reference_type";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AnyType} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeName {
   public runSyntax(
@@ -28,7 +28,9 @@ export class AttributeName {
     if (context instanceof ObjectReferenceType) {
       const def = input.scope.findObjectDefinition(context.getIdentifierName());
       if (def === undefined) {
-        throw new Error("Definition for \"" + context.getIdentifierName() + "\" not found in scope(AttributeName)");
+        const message = "Definition for \"" + context.getIdentifierName() + "\" not found in scope(AttributeName)";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
       const token = node.getFirstToken();
       const name = token.getStr();
@@ -37,6 +39,7 @@ export class AttributeName {
         found = helper.searchConstantName(def, name);
       }
       if (found === undefined) {
+        // TODOSYNTAX: there is a catch in method_source
         throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
       }
       if (type) {
@@ -56,14 +59,20 @@ export class AttributeName {
         return sub;
       }
       if (!(sub instanceof StructureType)) {
-        throw new Error("Data reference not structured");
+        const message = "Data reference not structured";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
       ret = sub.getComponentByName(name);
       if (ret === undefined) {
-        throw new Error("Component \"" + name + "\" not found in data reference structure");
+        const message = "Component \"" + name + "\" not found in data reference structure";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     } else {
-      throw new Error("Not an object reference, attribute name");
+      const message = "Not an object reference, attribute name";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     return ret;

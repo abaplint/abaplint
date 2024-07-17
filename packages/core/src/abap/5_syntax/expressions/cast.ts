@@ -6,13 +6,15 @@ import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
 import {BasicTypes} from "../basic_types";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Cast {
   public runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
     const sourceNode = node.findDirectExpression(Expressions.Source);
     if (sourceNode === undefined) {
-      throw new Error("Cast, source node not found");
+      const message = "Cast, source node not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     const sourceType = new Source().runSyntax(sourceNode, input);
@@ -21,11 +23,15 @@ export class Cast {
     const typeExpression = node.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeName = typeExpression?.concatTokens();
     if (typeName === undefined) {
-      throw new Error("Cast, child TypeNameOrInfer not found");
+      const message = "Cast, child TypeNameOrInfer not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     } else if (typeName === "#" && targetType) {
       tt = targetType;
     } else if (typeName === "#") {
-      throw new Error("Cast, todo, infer type");
+      const message = "Cast, todo, infer type";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     if (tt === undefined && typeExpression) {
@@ -46,13 +52,17 @@ export class Cast {
         return new GenericObjectReferenceType();
       } else if (tt === undefined) {
         // todo, this should be an UnknownType instead?
-        throw new Error("Type \"" + typeName + "\" not found in scope, Cast");
+        const message = "Type \"" + typeName + "\" not found in scope, Cast";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     }
     new Source().addIfInferred(node, input, tt);
 
     if (new TypeUtils(input.scope).isCastable(sourceType, tt) === false) {
-      throw new Error("Cast, incompatible types");
+      const message = "Cast, incompatible types";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     return tt!;
