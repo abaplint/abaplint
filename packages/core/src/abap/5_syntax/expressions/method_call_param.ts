@@ -1,5 +1,4 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {StringType, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
@@ -8,9 +7,10 @@ import {WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput} from "../_syntax_input";
 
 export class MethodCallParam {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string): void {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
     if (!(node.get() instanceof Expressions.MethodCallParam)) {
       throw new Error("MethodCallParam, unexpected input");
     }
@@ -56,7 +56,7 @@ export class MethodCallParam {
       }
       let sourceType: AbstractType | undefined = StringType.get();
       if (child.get() instanceof Expressions.Source) {
-        sourceType = new Source().runSyntax(child, scope, filename, targetType);
+        sourceType = new Source().runSyntax(child, input, targetType);
       }
 
       const calculated = child.findFirstExpression(Expressions.MethodCallChain) !== undefined
@@ -64,13 +64,13 @@ export class MethodCallParam {
         || child.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (sourceType === undefined) {
         throw new Error("No source type determined, method source");
-      } else if (new TypeUtils(scope).isAssignableStrict(sourceType, targetType, calculated) === false) {
+      } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType, calculated) === false) {
         throw new Error("Method parameter type not compatible");
       }
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
-      new MethodParameters().checkExporting(child, scope, method, filename);
+      new MethodParameters().checkExporting(child, input, method);
     } else if (child.get() instanceof Expressions.MethodParameters) {
-      new MethodParameters().runSyntax(child, scope, method, filename);
+      new MethodParameters().runSyntax(child, input, method);
     } else {
 //      console.dir(child);
       throw new Error("MethodCallParam, unexpected child");

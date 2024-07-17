@@ -1,4 +1,3 @@
-import {CurrentScope} from "../_current_scope";
 import {VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
@@ -9,6 +8,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput} from "../_syntax_input";
 
 interface IListItemT {
   name: string;
@@ -26,7 +26,7 @@ export class MethodParameters {
 
   private requiredParameters: Set<string> | undefined = undefined;
 
-  public runSyntax(node: INode, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string): void {
+  public runSyntax(node: INode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
     if (!(node.get() instanceof Expressions.MethodParameters)) {
       throw new Error("MethodParameters, unexpected input");
     }
@@ -42,16 +42,16 @@ export class MethodParameters {
       const name = children.shift()?.getFirstToken().getStr().toUpperCase();
       switch (name) {
         case "EXPORTING":
-          this.checkExporting(children.shift(), scope, method, filename, false);
+          this.checkExporting(children.shift(), input, method, false);
           break;
         case "IMPORTING":
-          this.checkImporting(children.shift(), scope, method, filename);
+          this.checkImporting(children.shift(), input, method);
           break;
         case "CHANGING":
-          this.checkChanging(children.shift(), scope, method, filename);
+          this.checkChanging(children.shift(), input, method);
           break;
         case "RECEIVING":
-          this.checkReceiving(children.shift(), scope, method, filename);
+          this.checkReceiving(children.shift(), input, method);
           break;
         case "EXCEPTIONS":
           children.shift(); // todo, old style exceptions
@@ -66,7 +66,7 @@ export class MethodParameters {
 
 ///////////////////////
 
-  private checkReceiving(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
+  private checkReceiving(node: INode | undefined, input: SyntaxInput, method: IMethodDefinition | VoidType) {
 
     const type = method instanceof VoidType ? method : method.getParameters().getReturning()?.getType();
     if (type === undefined) {
@@ -78,17 +78,17 @@ export class MethodParameters {
     const target = node.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, type);
+      new InlineData().runSyntax(inline, input, type);
     } else if (target) {
-      const targetType = new Target().runSyntax(target, scope, filename);
-      if (targetType && new TypeUtils(scope).isAssignable(type, targetType) === false) {
+      const targetType = new Target().runSyntax(target, input);
+      if (targetType && new TypeUtils(input.scope).isAssignable(type, targetType) === false) {
         throw new Error("Method returning value not type compatible");
       }
     }
   }
 
-  private checkImporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
-    for (const item of this.parameterListT(node, scope, filename)) {
+  private checkImporting(node: INode | undefined, input: SyntaxInput, method: IMethodDefinition | VoidType) {
+    for (const item of this.parameterListT(node, input)) {
       let parameterType: AbstractType | undefined = undefined;
       if (method instanceof VoidType) {
         parameterType = method;
@@ -102,17 +102,17 @@ export class MethodParameters {
 
       const inline = item.target.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, parameterType);
+        new InlineData().runSyntax(inline, input, parameterType);
       } else if (item.targetType === undefined) {
         throw new Error("Could not determine target type");
-      } else if (item.targetType && new TypeUtils(scope).isAssignable(parameterType, item.targetType) === false) {
+      } else if (item.targetType && new TypeUtils(input.scope).isAssignable(parameterType, item.targetType) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
     }
   }
 
-  private checkChanging(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
-    for (const item of this.parameterListT(node, scope, filename)) {
+  private checkChanging(node: INode | undefined, input: SyntaxInput, method: IMethodDefinition | VoidType) {
+    for (const item of this.parameterListT(node, input)) {
       if (item.target.findFirstExpression(Expressions.InlineData) !== undefined) {
         throw new Error("CHANGING cannot be inlined");
       }
@@ -128,7 +128,7 @@ export class MethodParameters {
         parameterType = parameter.getType();
       }
 
-      if (item.targetType && new TypeUtils(scope).isAssignable(parameterType, item.targetType) === false) {
+      if (item.targetType && new TypeUtils(input.scope).isAssignable(parameterType, item.targetType) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
 
@@ -136,10 +136,10 @@ export class MethodParameters {
     }
   }
 
-  public checkExporting(node: INode | undefined, scope: CurrentScope,
-                        method: IMethodDefinition | VoidType, filename: string, errors = true): void {
+  public checkExporting(node: INode | undefined, input: SyntaxInput,
+                        method: IMethodDefinition | VoidType, errors = true): void {
 
-    const items = this.parameterListS(node, scope, filename, method);
+    const items = this.parameterListS(node, input, method);
     if (method instanceof VoidType) {
       return;
     }
@@ -156,7 +156,7 @@ export class MethodParameters {
         || item.source.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (parameter === undefined) {
         throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
-      } else if (new TypeUtils(scope).isAssignableStrict(item.sourceType, parameter.getType(), calculated) === false) {
+      } else if (new TypeUtils(input.scope).isAssignableStrict(item.sourceType, parameter.getType(), calculated) === false) {
         throw new Error("Method parameter type not compatible, " + item.name);
       }
       this.requiredParameters.delete(item.name);
@@ -175,8 +175,7 @@ export class MethodParameters {
 
   private parameterListS(
     node: INode | undefined,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     method: IMethodDefinition | VoidType): IListItemS[] {
 
     if (node === undefined) {
@@ -210,7 +209,7 @@ export class MethodParameters {
           }
         }
       }
-      let sourceType = new Source().runSyntax(source, scope, filename, targetType);
+      let sourceType = new Source().runSyntax(source, input, targetType);
 
       if (sourceType === undefined) {
         if (method instanceof VoidType) {
@@ -228,8 +227,7 @@ export class MethodParameters {
 
   private parameterListT(
     node: INode | undefined,
-    scope: CurrentScope,
-    filename: string): IListItemT[] {
+    input: SyntaxInput): IListItemT[] {
 
     if (node === undefined) {
       return [];
@@ -254,7 +252,7 @@ export class MethodParameters {
         throw new Error("parameterListT, no target found");
       }
 
-      const targetType = new Target().runSyntax(target, scope, filename);
+      const targetType = new Target().runSyntax(target, input);
 
       ret.push({name, target, targetType});
     }

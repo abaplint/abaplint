@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Dynamic} from "./dynamic";
 import {ObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {IReferenceExtras, ReferenceType} from "../_reference";
@@ -15,12 +14,13 @@ import {AttributeName} from "./attribute_name";
 import {ComponentName} from "./component_name";
 import {ClassDefinition} from "../../types";
 import {Version} from "../../../version";
+import {SyntaxInput} from "../_syntax_input";
 
 export class MethodSource {
 
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): IMethodDefinition | VoidType | undefined {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): IMethodDefinition | VoidType | undefined {
 
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
     const children = node.getChildren().slice();
 
     const first = children.shift();
@@ -28,18 +28,18 @@ export class MethodSource {
       throw new Error("MethodSource, first child expected");
     }
 
-    let context: AbstractType | IMethodDefinition | undefined = this.findTop(first, scope, filename);
+    let context: AbstractType | IMethodDefinition | undefined = this.findTop(first, input);
     if (context === undefined) {
-      context = scope.findVariable("me")?.getType();
+      context = input.scope.findVariable("me")?.getType();
       children.unshift(first);
     }
 
-    if (scope.getVersion() === Version.Cloud
+    if (input.scope.getVersion() === Version.Cloud
         && first.get() instanceof Expressions.Dynamic
         && first instanceof ExpressionNode
         && children[0]?.concatTokens() === "=>") {
       const name = first.findDirectExpression(Expressions.Constant)?.concatTokens().replace(/'/g, "").replace(/`/g, "");
-      if (name !== undefined && scope.findClassDefinition(name) === undefined) {
+      if (name !== undefined && input.scope.findClassDefinition(name) === undefined) {
         throw new Error(`Class "${name}" not found/released`);
       }
     }
@@ -69,7 +69,7 @@ export class MethodSource {
           || current.get() instanceof Expressions.SourceField) {
         try {
           if (context instanceof AbstractType) {
-            const attr = new AttributeName().runSyntax(context, current, scope, filename, ReferenceType.DataReadReference);
+            const attr = new AttributeName().runSyntax(context, current, input, ReferenceType.DataReadReference);
             context = attr;
             continue;
           }
@@ -81,7 +81,7 @@ export class MethodSource {
         const className = context instanceof ObjectReferenceType ? context.getIdentifierName() : undefined;
         const methodToken = current.getFirstToken();
         const methodName = methodToken?.getStr();
-        const def = scope.findObjectDefinition(className);
+        const def = input.scope.findObjectDefinition(className);
         // eslint-disable-next-line prefer-const
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
 
@@ -93,7 +93,7 @@ export class MethodSource {
           const extra: IReferenceExtras = {
             ooName: foundDef?.getName(),
             ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
-          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, extra);
+          input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);
 
           context = method;
         }
@@ -104,7 +104,7 @@ export class MethodSource {
         }
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.Dynamic) {
-        new Dynamic().runSyntax(current, scope, filename);
+        new Dynamic().runSyntax(current, input);
         context = new VoidType("Dynamic");
       }
     }
@@ -120,31 +120,31 @@ export class MethodSource {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, scope: CurrentScope, filename: string): AbstractType | undefined {
+  private findTop(first: INode, input: SyntaxInput): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       // todo, refactor this part to new expression handler,
       const token = first.getFirstToken();
       const className = token.getStr();
-      const classDefinition = scope.findObjectDefinition(className);
-      if (classDefinition === undefined && scope.getDDIC().inErrorNamespace(className) === false) {
+      const classDefinition = input.scope.findObjectDefinition(className);
+      if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         return new VoidType(className);
       } else if (classDefinition === undefined) {
         throw new Error("Class " + className + " not found");
       }
-      scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, filename);
+      input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceField) {
       try {
-        return new SourceField().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
+        return new SourceField().runSyntax(first, input, ReferenceType.DataReadReference);
       } catch {
         return undefined;
       }
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceFieldSymbol) {
-      return new SourceFieldSymbol().runSyntax(first, scope, filename);
+      return new SourceFieldSymbol().runSyntax(first, input);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dynamic) {
-      new Dynamic().runSyntax(first, scope, filename);
+      new Dynamic().runSyntax(first, input);
       return new VoidType("Dynamic");
     }
 

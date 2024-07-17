@@ -4,30 +4,29 @@ import {VoidType} from "../../types/basic/void_type";
 import {StructureType} from "../../types/basic/structure_type";
 import {ObjectReferenceType} from "../../types/basic/object_reference_type";
 import {ObjectOriented} from "../_object_oriented";
-import {CurrentScope} from "../_current_scope";
 import {DataReference} from "../../types/basic/data_reference_type";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AnyType} from "../../types/basic";
+import {SyntaxInput} from "../_syntax_input";
 
 export class AttributeName {
   public runSyntax(
     context: AbstractType | undefined,
     node: INode,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     type?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
     if (context instanceof VoidType) {
       return context;
     }
 
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
 
     let ret: AbstractType | undefined = undefined;
 
     if (context instanceof ObjectReferenceType) {
-      const def = scope.findObjectDefinition(context.getIdentifierName());
+      const def = input.scope.findObjectDefinition(context.getIdentifierName());
       if (def === undefined) {
         throw new Error("Definition for \"" + context.getIdentifierName() + "\" not found in scope(AttributeName)");
       }
@@ -41,12 +40,12 @@ export class AttributeName {
         throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
       }
       if (type) {
-        scope.addReference(token, found, type, filename);
+        input.scope.addReference(token, found, type, input.filename);
       }
       if (found && name.includes("~")) {
-        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
+        const idef = input.scope.findInterfaceDefinition(name.split("~")[0]);
         if (idef) {
-          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, filename);
+          input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, input.filename);
         }
       }
       ret = found.getType();

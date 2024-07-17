@@ -24,6 +24,7 @@ import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput} from "../_syntax_input";
 
 /*
 * Type interference, valid scenarios:
@@ -38,8 +39,7 @@ import {TypeUtils} from "../_type_utils";
 export class Source {
   public runSyntax(
     node: ExpressionNode | undefined,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     targetType?: AbstractType,
     writeReference = false): AbstractType | undefined {
 
@@ -62,43 +62,43 @@ export class Source {
         case "BOOLC":
         {
           const method = new BuiltIn().searchBuiltin(tok);
-          scope.addReference(token, method, ReferenceType.BuiltinMethodReference, filename);
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
+          input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), input);
           return StringType.get();
         }
         case "XSDBOOL":
         {
           const method = new BuiltIn().searchBuiltin(tok);
-          scope.addReference(token, method, ReferenceType.BuiltinMethodReference, filename);
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
+          input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), input);
           return new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"});
         }
         case "REDUCE":
         {
-          const foundType = this.determineType(node, scope, filename, targetType);
-          const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename, foundType);
+          const foundType = this.determineType(node, input.scope, input.filename, targetType);
+          const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), input, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
-            this.addIfInferred(node, scope, filename, bodyType);
+            this.addIfInferred(node, input.scope, input.filename, bodyType);
           } else {
-            this.addIfInferred(node, scope, filename, foundType);
+            this.addIfInferred(node, input.scope, input.filename, foundType);
           }
           return foundType ? foundType : bodyType;
         }
         case "SWITCH":
         {
-          const foundType = this.determineType(node, scope, filename, targetType);
-          const bodyType = new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), scope, filename);
+          const foundType = this.determineType(node, input.scope, input.filename, targetType);
+          const bodyType = new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), input);
           if (foundType === undefined || foundType.isGeneric()) {
-            this.addIfInferred(node, scope, filename, bodyType);
+            this.addIfInferred(node, input.scope, input.filename, bodyType);
           } else {
-            this.addIfInferred(node, scope, filename, foundType);
+            this.addIfInferred(node, input.scope, input.filename, foundType);
           }
           return foundType ? foundType : bodyType;
         }
         case "COND":
         {
-          const foundType = this.determineType(node, scope, filename, targetType);
-          const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename);
+          const foundType = this.determineType(node, input.scope, input.filename, targetType);
+          const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), input);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, scope, filename, bodyType);
           } else {

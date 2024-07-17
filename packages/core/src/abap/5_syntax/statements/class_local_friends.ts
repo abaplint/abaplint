@@ -1,11 +1,11 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class ClassLocalFriends implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     const classNames = node.findAllExpressions(Expressions.ClassName);
 
@@ -14,14 +14,14 @@ export class ClassLocalFriends implements StatementSyntax {
       const token = found.getFirstToken();
       const name = token.getStr();
 
-      if (scope.getParentObj().getType() === "CLAS"
-          && name.toUpperCase() !== scope.getParentObj().getName().toUpperCase()) {
-        throw new Error(`Befriending must be ` + scope.getParentObj().getName().toUpperCase());
+      if (input.scope.getParentObj().getType() === "CLAS"
+          && name.toUpperCase() !== input.scope.getParentObj().getName().toUpperCase()) {
+        throw new Error(`Befriending must be ` + input.scope.getParentObj().getName().toUpperCase());
       }
 
-      const def = scope.findClassDefinition(name);
+      const def = input.scope.findClassDefinition(name);
       if (def) {
-        scope.addReference(token, def, ReferenceType.ObjectOrientedReference, filename);
+        input.scope.addReference(token, def, ReferenceType.ObjectOrientedReference, input.filename);
       } else {
         throw new Error(`Class ${name.toUpperCase()} not found`);
       }
@@ -31,7 +31,7 @@ export class ClassLocalFriends implements StatementSyntax {
     for (let i = 1; i < classNames.length; i++) {
       const className = classNames[i].concatTokens();
       // make sure to check also DEFINITION DEFERRED
-      const found = scope.existsObject(className);
+      const found = input.scope.existsObject(className);
       if (found === undefined) {
         throw new Error(`Class ${className.toUpperCase()} not found`);
       }

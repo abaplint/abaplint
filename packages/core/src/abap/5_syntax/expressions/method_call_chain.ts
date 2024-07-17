@@ -14,15 +14,15 @@ import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {ClassDefinition} from "../../types/class_definition";
+import {SyntaxInput} from "../_syntax_input";
 
 export class MethodCallChain {
   public runSyntax(
     node: ExpressionNode,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     targetType?: AbstractType): AbstractType | undefined {
 
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
     const children = node.getChildren().slice();
 
     const first = children.shift();
@@ -30,7 +30,7 @@ export class MethodCallChain {
       throw new Error("MethodCallChain, first child expected");
     }
 
-    let context: AbstractType | undefined = this.findTop(first, scope, targetType, filename);
+    let context: AbstractType | undefined = this.findTop(first, input.scope, targetType, input.filename);
     if (first.get() instanceof Expressions.MethodCall) {
       children.unshift(first);
     }
@@ -47,13 +47,13 @@ export class MethodCallChain {
         const className = context instanceof ObjectReferenceType ? context.getIdentifierName() : undefined;
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
         const methodName = methodToken?.getStr();
-        const def = scope.findObjectDefinition(className);
+        const def = input.scope.findObjectDefinition(className);
         // eslint-disable-next-line prefer-const
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
         if (method === undefined && current === first) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
           if (method) {
-            scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename);
+            input.scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, input.filename);
           }
         } else {
           if (previous && previous.getFirstToken().getStr() === "=>" && method?.isStatic() === false) {
@@ -62,13 +62,13 @@ export class MethodCallChain {
           const extra: IReferenceExtras = {
             ooName: foundDef?.getName(),
             ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
-          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, extra);
+          input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);
         }
         if (methodName?.includes("~")) {
           const name = methodName.split("~")[0];
-          const idef = scope.findInterfaceDefinition(name);
+          const idef = input.scope.findInterfaceDefinition(name);
           if (idef) {
-            scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, filename);
+            input.scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, input.filename);
           }
         }
 
@@ -83,14 +83,14 @@ export class MethodCallChain {
 
         const param = current.findDirectExpression(Expressions.MethodCallParam);
         if (param && method) {
-          new MethodCallParam().runSyntax(param, scope, method, filename);
+          new MethodCallParam().runSyntax(param, input.scope, method, input.filename);
         } else if (param && context instanceof VoidType) {
-          new MethodCallParam().runSyntax(param, scope, context, filename);
+          new MethodCallParam().runSyntax(param, input.scope, context, input.filename);
         }
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope, filename);
+        context = new AttributeName().runSyntax(context, current, input.scope, input.filename);
       }
 
       previous = current;

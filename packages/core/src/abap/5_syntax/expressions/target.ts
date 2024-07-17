@@ -14,16 +14,17 @@ import {TableExpression} from "./table_expression";
 import {Dereference} from "../../2_statements/expressions";
 import {FieldLength} from "./field_length";
 import {Cast} from "./cast";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Target {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
 
     const concat = node.concatTokens();
     if (concat.includes("-")) {
       // workaround for names with dashes
-      const found = scope.findVariable(concat);
+      const found = input.scope.findVariable(concat);
       if (found) {
-        scope.addReference(node.getFirstToken(), found, ReferenceType.DataWriteReference, filename);
+        input.scope.addReference(node.getFirstToken(), found, ReferenceType.DataWriteReference, input.filename);
         return found.getType();
       }
     }
@@ -34,7 +35,7 @@ export class Target {
       return undefined;
     }
 
-    let context = this.findTop(first, scope, filename);
+    let context = this.findTop(first, input.scope, input.filename);
     if (context === undefined) {
       throw new Error(`"${first.getFirstToken().getStr()}" not found, Target`);
     }
@@ -85,13 +86,13 @@ export class Target {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {
           throw new Error("Table expression, expected table");
         }
-        new TableExpression().runSyntax(current, scope, filename);
+        new TableExpression().runSyntax(current, input);
         if (!(context instanceof VoidType)) {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
         const type = children.length === 0 ? ReferenceType.DataWriteReference : ReferenceType.DataReadReference;
-        context = new AttributeName().runSyntax(context, current, scope, filename, type);
+        context = new AttributeName().runSyntax(context, current, input, type);
       }
     }
 
@@ -100,7 +101,7 @@ export class Target {
       if (context instanceof XStringType || context instanceof StringType) {
         throw new Error("xstring/string offset/length in writer position not possible");
       }
-      new FieldOffset().runSyntax(offset, scope, filename);
+      new FieldOffset().runSyntax(offset, input);
     }
 
     const length = node.findDirectExpression(Expressions.FieldLength);
@@ -108,7 +109,7 @@ export class Target {
       if (context instanceof XStringType || context instanceof StringType) {
         throw new Error("xstring/string offset/length in writer position not possible");
       }
-      new FieldLength().runSyntax(length, scope, filename);
+      new FieldLength().runSyntax(length, input);
     }
 
     return context;

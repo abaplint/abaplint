@@ -455,22 +455,22 @@ export class SyntaxLogic {
 
     // todo, refactor
     if (s instanceof Statements.Type) {
-      this.scope.addType(new Type().runSyntax(node, this.scope, filename));
+      this.scope.addType(new Type().runSyntax(node, {scope: this.scope, filename}));
       return;
     } else if (s instanceof Statements.Constant) {
-      this.scope.addIdentifier(new Constant().runSyntax(node, this.scope, filename));
+      this.scope.addIdentifier(new Constant().runSyntax(node, {scope: this.scope, filename}));
       return;
     } else if (s instanceof Statements.Static) {
-      this.scope.addIdentifier(new Static().runSyntax(node, this.scope, filename));
+      this.scope.addIdentifier(new Static().runSyntax(node, {scope: this.scope, filename}));
       return;
     } else if (s instanceof Statements.Data) {
-      this.scope.addIdentifier(new DataStatement().runSyntax(node, this.scope, filename));
+      this.scope.addIdentifier(new DataStatement().runSyntax(node, {scope: this.scope, filename}));
       return;
     }
 
     const name = s.constructor.name;
     if (map[name]) {
-      map[name].runSyntax(node, this.scope, filename);
+      map[name].runSyntax(node, {scope: this.scope, filename});
       return;
     }
 
