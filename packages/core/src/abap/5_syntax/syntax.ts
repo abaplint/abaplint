@@ -147,13 +147,14 @@ import {ReadEntities} from "./statements/read_entities";
 import {ModifyEntities} from "./statements/modify_entities";
 import {CommitEntities} from "./statements/commit_entities";
 import {CheckSyntaxKey, SyntaxInput} from "./_syntax_input";
+import {AssertError} from "./assert_error";
 
 // -----------------------------------
 
 const map: {[name: string]: StatementSyntax} = {};
 function addToMap(handler: StatementSyntax) {
   if (map[handler.constructor.name] !== undefined) {
-    throw new Error("syntax.ts duplicate statement syntax handler");
+    throw new AssertError("syntax.ts duplicate statement syntax handler");
   }
   map[handler.constructor.name] = handler;
 }

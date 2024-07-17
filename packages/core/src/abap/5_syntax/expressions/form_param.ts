@@ -5,6 +5,7 @@ import {FormParamName, SimpleFieldChain} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class FormParam {
   public runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier {
@@ -39,6 +40,6 @@ export class FormParam {
       return new TypedIdentifier(nameToken, input.filename, new UnknownType("FormParam, todo"), [IdentifierMeta.FormParameter]);
     }
 
-    throw new Error("FormParam, unexpected node");
+    throw new AssertError("FormParam, unexpected node");
   }
 }
