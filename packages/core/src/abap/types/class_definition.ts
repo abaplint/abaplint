@@ -71,7 +71,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       this.events.push(new EventDefinition(e, Visibility.Public, input)); // todo, all these are not Public
     }
 
-    this.methodDefs = new MethodDefinitions(node, input.filename, input.scope);
+    this.methodDefs = new MethodDefinitions(node, input);
 
     input.scope.pop(node.getLastToken().getEnd());
 

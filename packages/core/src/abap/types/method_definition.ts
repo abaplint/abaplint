@@ -4,9 +4,9 @@ import * as Expressions from "../2_statements/expressions";
 import {MethodParameters} from "./method_parameters";
 import {Visibility} from "../4_file_information/visibility";
 import {Identifier} from "../4_file_information/_identifier";
-import {CurrentScope} from "../5_syntax/_current_scope";
 import {IMethodDefinition} from "./_method_definition";
 import {ReferenceType} from "../5_syntax/_reference";
+import {SyntaxInput} from "../5_syntax/_syntax_input";
 
 export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly visibility: Visibility;
@@ -20,7 +20,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
 // todo: final flag
 
-  public constructor(node: StatementNode, visibility: Visibility, filename: string, scope: CurrentScope) {
+  public constructor(node: StatementNode, visibility: Visibility, input: SyntaxInput) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
@@ -29,7 +29,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    super(found.getFirstToken(), filename);
+    super(found.getFirstToken(), input.filename);
 
     this.redefinition = false;
     if (node.findDirectExpression(Expressions.Redefinition)) {
@@ -37,9 +37,9 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
       const name = found.getFirstToken().getStr();
       if (name.includes("~")) {
-        const idef = scope.findInterfaceDefinition(name.split("~")[0]);
+        const idef = input.scope.findInterfaceDefinition(name.split("~")[0]);
         if (idef) {
-          scope.addReference(found.getFirstToken(), idef, ReferenceType.ObjectOrientedReference, filename);
+          input.scope.addReference(found.getFirstToken(), idef, ReferenceType.ObjectOrientedReference, input.filename);
         }
       }
     }
@@ -65,13 +65,13 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
       const token = r.getFirstToken();
       const name = token.getStr();
       this.raising.push(name);
-      const clas = scope.findClassDefinition(name);
+      const clas = input.scope.findClassDefinition(name);
       if (clas) {
-        scope.addReference(token, clas, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
-      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-        scope.addReference(token, clas, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+        input.scope.addReference(token, clas, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(token, clas, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
       } else {
-        scope.addReference(token, clas, ReferenceType.ObjectOrientedUnknownReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+        input.scope.addReference(token, clas, ReferenceType.ObjectOrientedUnknownReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
       }
     }
 
@@ -83,7 +83,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     }
 
     this.visibility = visibility;
-    this.parameters = new MethodParameters(node, this.filename, scope, this.abstract);
+    this.parameters = new MethodParameters(node, this.filename, input.scope, this.abstract);
   }
 
   public getVisibility(): Visibility {
