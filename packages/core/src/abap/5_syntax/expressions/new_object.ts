@@ -9,7 +9,8 @@ import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
 import {BasicTypes} from "../basic_types";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
@@ -20,7 +21,7 @@ export class NewObject {
     const typeName = typeExpr?.concatTokens();
 
     if (typeName === undefined) {
-      throw new Error("NewObject, child TypeNameOrInfer not found");
+      throw new AssertError("NewObject, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
       const clas = input.scope.findClassDefinition(targetType.getIdentifierName());
       if (clas) {
@@ -28,18 +29,22 @@ export class NewObject {
       } else {
         const intf = input.scope.findInterfaceDefinition(targetType.getIdentifierName());
         if (intf) {
-          throw new Error(intf.getName() + " is an interface, cannot be instantiated");
+          const message = intf.getName() + " is an interface, cannot be instantiated";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
       }
       ret = targetType;
 
       if (clas?.isAbstract() === true) {
-        throw new Error(clas.getName() + " is abstract, cannot be instantiated");
+        const message = clas.getName() + " is abstract, cannot be instantiated";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     } else if (typeName === "#" && targetType) {
       ret = targetType;
     } else if (typeName === "#") {
-      throw new Error("NewObject, todo, infer type");
+      throw new AssertError("NewObject, todo, infer type");
     }
 
     if (ret === undefined) {
@@ -49,7 +54,9 @@ export class NewObject {
         const objref = new ObjectReferenceType(objDefinition);
         const clas = input.scope.findClassDefinition(objref.getIdentifierName());
         if (clas?.isAbstract() === true) {
-          throw new Error(clas.getName() + " is abstract, cannot be instantiated");
+          const message = clas.getName() + " is abstract, cannot be instantiated";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
         ret = objref;
       }
@@ -65,7 +72,9 @@ export class NewObject {
       } else if (type instanceof VoidType) {
         ret = type;
       } else {
-        throw new Error("Type \"" + typeName + "\" not found in scope, NewObject");
+        const message = "Type \"" + typeName + "\" not found in scope, NewObject";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     }
 
@@ -78,7 +87,9 @@ export class NewObject {
     }
 
     if (ret instanceof UnknownType && input.scope.getDDIC().inErrorNamespace(typeName) === true) {
-      throw new Error("Class or type \"" + typeName + "\" not found");
+      const message = "Class or type \"" + typeName + "\" not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     return ret;
@@ -98,20 +109,28 @@ export class NewObject {
       // single unnamed parameter
       const type = this.defaultImportingType(method);
       if (type === undefined) {
-        throw new Error("NewObject, no default importing parameter found for constructor, " + name);
+        const message = "NewObject, no default importing parameter found for constructor, " + name;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       const sourceType = new Source().runSyntax(source, input, type);
       if (new TypeUtils(input.scope).isAssignableStrict(sourceType, type) === false) {
-        throw new Error(`NEW parameter type not compatible`);
+        const message = `NEW parameter type not compatible`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     } else if (parameters) {
       // parameters with names
       if (method === undefined) {
-        throw new Error("NewObject, no parameters for constructor found, " + name);
+        const message = "NewObject, no parameters for constructor found, " + name;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       new MethodParameters().checkExporting(parameters, input, method);
     } else if (requiredParameters.length > 0) {
-      throw new Error(`constructor parameter "${requiredParameters[0].getName()}" must be supplied, ` + name);
+      const message = `constructor parameter "${requiredParameters[0].getName()}" must be supplied, ` + name;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
   }
 
