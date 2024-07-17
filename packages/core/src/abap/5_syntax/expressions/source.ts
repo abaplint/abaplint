@@ -265,7 +265,7 @@ export class Source {
     input: SyntaxInput,
     inferredType: AbstractType | undefined): void {
 
-    const basic = new BasicTypes(input.filename, input.scope);
+    const basic = new BasicTypes(input);
     const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();
@@ -294,7 +294,7 @@ export class Source {
     input: SyntaxInput,
     targetType: AbstractType | undefined): AbstractType | undefined {
 
-    const basic = new BasicTypes(input.filename, input.scope);
+    const basic = new BasicTypes(input);
     const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();

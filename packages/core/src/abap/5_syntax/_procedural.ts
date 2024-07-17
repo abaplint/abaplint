@@ -29,8 +29,9 @@ export class Procedural {
     const structure = file.getStructure();
     if (structure) {
       const dummy = CurrentScope.buildDefault(this.reg, obj);
+      const input = {scope: dummy, filename: file.getFilename()};
       for (const found of structure.findAllStructures(Structures.Form)) {
-        this.scope.addFormDefinitions([new FormDefinition(found, file.getFilename(), dummy)]);
+        this.scope.addFormDefinitions([new FormDefinition(found, input)]);
       }
     }
 

@@ -20,7 +20,7 @@ export class SelectOption implements StatementSyntax {
     }
 
     const nameExpression = node.findFirstExpression(Expressions.FieldChain);
-    let found = new BasicTypes(input.filename, input.scope).resolveLikeName(nameExpression);
+    let found = new BasicTypes(input).resolveLikeName(nameExpression);
     if (found && nameToken) {
       if (found instanceof StructureType) {
         let length = 0;

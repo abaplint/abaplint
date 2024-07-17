@@ -13,7 +13,7 @@ export class Type {
       return new TypeTable().runSyntax(node, input, qualifiedNamePrefix);
     }
 
-    const found = new BasicTypes(input.filename, input.scope).simpleType(node, qualifiedNamePrefix);
+    const found = new BasicTypes(input).simpleType(node, qualifiedNamePrefix);
     if (found) {
       if (found?.getType().isGeneric() === true
           && found?.getType().containsVoid() === false) {

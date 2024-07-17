@@ -27,7 +27,7 @@ export class InlineFieldDefinition {
     }
     const typeName = node.findDirectExpression(Expressions.TypeName);
     if (typeName) {
-      type = new BasicTypes(input.filename, input.scope).parseType(typeName);
+      type = new BasicTypes(input).parseType(typeName);
     }
     if (targetType !== undefined) {
       type = targetType;

@@ -29,7 +29,7 @@ export class Cast {
     }
 
     if (tt === undefined && typeExpression) {
-      const basic = new BasicTypes(input.filename, input.scope);
+      const basic = new BasicTypes(input);
       tt = basic.parseType(typeExpression);
       if (tt === undefined || tt instanceof VoidType || tt instanceof UnknownType) {
         const found = input.scope.findObjectDefinition(typeName);

@@ -16,7 +16,7 @@ export class DataDefinition {
     const valueNode = node.findFirstExpression(Expressions.Value);
     let value: string | undefined = undefined;
     if (valueNode) {
-      value = new BasicTypes(input.filename, input.scope).findValue(node);
+      value = new BasicTypes(input).findValue(node);
     }
 
     const name = node.findFirstExpression(Expressions.DefinitionName);
@@ -25,7 +25,7 @@ export class DataDefinition {
       return new TypedIdentifier(name.getFirstToken(), input.filename, new VoidType("DataDefinition, TypeStructure"));
     }
 
-    const bfound = new BasicTypes(input.filename, input.scope).simpleType(node);
+    const bfound = new BasicTypes(input).simpleType(node);
     if (bfound) {
       if (value) {
         return new TypedIdentifier(bfound.getToken(), input.filename, bfound.getType(), bfound.getMeta(), value);

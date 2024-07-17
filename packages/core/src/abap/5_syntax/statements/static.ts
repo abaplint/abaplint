@@ -16,7 +16,7 @@ export class Static {
       }
     }
 
-    const found = new BasicTypes(input.filename, input.scope).simpleType(node);
+    const found = new BasicTypes(input).simpleType(node);
     if (found) {
       return found;
     }

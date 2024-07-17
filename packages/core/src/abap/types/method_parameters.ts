@@ -197,7 +197,7 @@ export class MethodParameters implements IMethodParameters {
 
     const returning = node.findFirstExpression(Expressions.MethodDefReturning);
     if (returning) {
-      this.returning = new MethodDefReturning().runSyntax(returning, scope, this.filename, [IdentifierMeta.MethodReturning]);
+      this.returning = new MethodDefReturning().runSyntax(returning, {scope, filename: this.filename}, [IdentifierMeta.MethodReturning]);
     }
 
     this.workaroundRAP(node, scope, filename, parentName);

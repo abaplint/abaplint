@@ -15,7 +15,7 @@ export class Ranges implements StatementSyntax {
       throw new Error("Ranges, unexpected node");
     }
 
-    const found = new BasicTypes(input.filename, input.scope).parseType(typeExpression);
+    const found = new BasicTypes(input).parseType(typeExpression);
     if (found && nameToken) {
       const structure = new StructureType([
         {name: "sign", type: new CharacterType(1)},

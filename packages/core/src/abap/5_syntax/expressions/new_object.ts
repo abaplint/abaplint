@@ -56,7 +56,7 @@ export class NewObject {
     }
 
     if (ret === undefined) {
-      const basic = new BasicTypes(input.filename, input.scope);
+      const basic = new BasicTypes(input);
       const type = basic.resolveTypeName(typeExpr);
       if (type instanceof UnknownType) {
         ret = type;

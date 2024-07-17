@@ -13,7 +13,7 @@ export class Form implements StatementSyntax {
     }
     input.scope.push(ScopeType.Form, name, node.getFirstToken().getStart(), input.filename);
 
-    const form = new FormDefinition(node, input.filename, input.scope);
+    const form = new FormDefinition(node, input);
     input.scope.addList(form.getUsingParameters());
     input.scope.addList(form.getChangingParameters());
     input.scope.addList(form.getTablesParameters());

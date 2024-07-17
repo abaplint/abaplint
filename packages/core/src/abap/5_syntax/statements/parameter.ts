@@ -18,7 +18,7 @@ export class Parameter implements StatementSyntax {
       throw new Error("RADIOBUTTON and LENGTH not possible together");
     }
 
-    const bfound = new BasicTypes(input.filename, input.scope).parseType(node);
+    const bfound = new BasicTypes(input).parseType(node);
     if (nameToken && bfound) {
       input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, bfound));
       return;

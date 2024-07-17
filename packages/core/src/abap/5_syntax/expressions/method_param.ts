@@ -35,7 +35,7 @@ export class MethodParam {
       return new TypedIdentifier(name.getFirstToken(), input.filename, new XGenericType(), meta);
     }
 
-    const found = new BasicTypes(input.filename, input.scope).parseType(type);
+    const found = new BasicTypes(input).parseType(type);
     if (found) {
       return new TypedIdentifier(name.getFirstToken(), input.filename, found, meta);
     } else {

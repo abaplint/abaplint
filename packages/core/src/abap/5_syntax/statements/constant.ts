@@ -7,7 +7,7 @@ import {SyntaxInput} from "../_syntax_input";
 
 export class Constant {
   public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier {
-    const basic = new BasicTypes(input.filename, input.scope);
+    const basic = new BasicTypes(input);
     const found = basic.simpleType(node);
     if (found) {
       const val = basic.findValue(node);

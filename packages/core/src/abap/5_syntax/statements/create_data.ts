@@ -27,7 +27,7 @@ export class CreateData implements StatementSyntax {
 
     const type = node.findDirectExpression(Expressions.TypeName);
     if (type) {
-      const found = new BasicTypes(input.filename, input.scope).resolveTypeName(type);
+      const found = new BasicTypes(input).resolveTypeName(type);
       if (found instanceof UnknownType) {
         if (node.concatTokens().toUpperCase().includes(" REF TO ")) {
           const def = input.scope.findObjectDefinition(type.concatTokens());

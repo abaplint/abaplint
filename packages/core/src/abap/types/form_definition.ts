@@ -9,6 +9,7 @@ import {CurrentScope} from "../5_syntax/_current_scope";
 import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
 import {TableKeyType, TableType, UnknownType, VoidType} from "./basic";
+import {SyntaxInput} from "../5_syntax/_syntax_input";
 
 export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
@@ -16,7 +17,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly usingParameters: TypedIdentifier[];
   private readonly changingParameters: TypedIdentifier[];
 
-  public constructor(node: StructureNode | StatementNode, filename: string, scope: CurrentScope) {
+  public constructor(node: StructureNode | StatementNode, input: SyntaxInput) {
     const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
 
     // FORMs can contain a dash in the name
@@ -25,12 +26,12 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     const name = formName!.concatTokens();
     const nameToken = new Tokens.Identifier(pos, name);
 
-    super(nameToken, filename);
+    super(nameToken, input.filename);
     this.node = st;
 
-    this.tableParameters = this.findTables(scope, filename);
-    this.usingParameters = this.findType(Expressions.FormUsing, scope);
-    this.changingParameters = this.findType(Expressions.FormChanging, scope);
+    this.tableParameters = this.findTables(input);
+    this.usingParameters = this.findType(Expressions.FormUsing, input.scope);
+    this.changingParameters = this.findType(Expressions.FormChanging, input.scope);
   }
 
   public getTablesParameters(): TypedIdentifier[] {
@@ -47,7 +48,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
 
 ///////////////
 
-  private findTables(scope: CurrentScope, filename: string): TypedIdentifier[] {
+  private findTables(input: SyntaxInput): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
 
     const tables = this.node.findFirstExpression(Expressions.FormTables);
@@ -58,9 +59,9 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     for (const param of tables.findAllExpressions(Expressions.FormParam)) {
       if (param.getChildren().length === 1) {
         // untyped TABLES parameter
-        ret.push(new TypedIdentifier(param.getFirstToken(), filename, new VoidType("FORM:UNTYPED"), [IdentifierMeta.FormParameter]));
+        ret.push(new TypedIdentifier(param.getFirstToken(), input.filename, new VoidType("FORM:UNTYPED"), [IdentifierMeta.FormParameter]));
       } else {
-        const p = new FormParam().runSyntax(param, scope, this.filename);
+        const p = new FormParam().runSyntax(param, input);
 
         let type = p.getType();
 
@@ -75,7 +76,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
           type = new UnknownType("FORM TABLES type must be table type");
         }
 
-        ret.push(new TypedIdentifier(p.getToken(), filename, type, [IdentifierMeta.FormParameter]));
+        ret.push(new TypedIdentifier(p.getToken(), input.filename, type, [IdentifierMeta.FormParameter]));
       }
     }
 
@@ -93,7 +94,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
   private findParams(node: ExpressionNode | StatementNode, scope: CurrentScope) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
-      const p = new FormParam().runSyntax(param, scope, this.filename);
+      const p = new FormParam().runSyntax(param, {scope, filename: this.filename});
       res.push(p);
     }
     return res;

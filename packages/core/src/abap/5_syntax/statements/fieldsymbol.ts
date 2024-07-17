@@ -10,7 +10,7 @@ export class FieldSymbol implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const fsname = node.findFirstExpression(Expressions.FieldSymbol)?.getFirstToken();
 
-    const bfound = new BasicTypes(input.filename, input.scope).parseType(node);
+    const bfound = new BasicTypes(input).parseType(node);
     if (bfound && fsname) {
       input.scope.addIdentifier(new TypedIdentifier(fsname, input.filename, bfound));
       return;

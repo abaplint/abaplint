@@ -5,4 +5,5 @@ import {CurrentScope} from "./_current_scope";
 export type SyntaxInput = {
   scope: CurrentScope,
   filename: string,
+//  issues: [],
 };
