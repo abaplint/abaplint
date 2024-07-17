@@ -5,7 +5,7 @@ import {IntegerType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InlineLoopDefinition {
   public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
@@ -27,14 +27,18 @@ export class InlineLoopDefinition {
       } else if (sourceType instanceof VoidType) {
         rowType = sourceType;
       } else if (sourceType instanceof UnknownType) {
-        throw new Error("Unknown type, " + sourceType.getError());
+        const message = "Unknown type, " + sourceType.getError();
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       if (rowType === undefined
           && node.concatTokens().toUpperCase().includes(" IN GROUP ")
           && sourceType !== undefined) {
         rowType = sourceType;
       } else if (rowType === undefined) {
-        throw new Error("InlineLoopDefinition, not a table type");
+        const message = "InlineLoopDefinition, not a table type";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       const identifier = new TypedIdentifier(target.getFirstToken(), input.filename, rowType, [IdentifierMeta.InlineDefinition]);
       input.scope.addReference(target.getFirstToken(), identifier, ReferenceType.DataWriteReference, input.filename);

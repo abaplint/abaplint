@@ -6,7 +6,8 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {BasicTypes} from "../basic_types";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {VoidType} from "../../types/basic";
 
 export class InlineFieldDefinition {
   public runSyntax(
@@ -38,7 +39,9 @@ export class InlineFieldDefinition {
 
     const name = field.getStr();
     if (input.scope.findVariable(name) !== undefined) {
-      throw new Error(`Variable ${name} already defined`);
+      const message = `Variable ${name} already defined`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     const identifier = new TypedIdentifier(field, input.filename, type, [IdentifierMeta.InlineDefinition]);

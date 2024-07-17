@@ -13,7 +13,7 @@ import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {ClassDefinition} from "../../types/class_definition";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodCallChain {
   public runSyntax(
@@ -26,7 +26,9 @@ export class MethodCallChain {
 
     const first = children.shift();
     if (first === undefined) {
-      throw new Error("MethodCallChain, first child expected");
+      const message = "MethodCallChain, first child expected";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     let context: AbstractType | undefined = this.findTop(first, input, targetType);
@@ -56,7 +58,9 @@ export class MethodCallChain {
           }
         } else {
           if (previous && previous.getFirstToken().getStr() === "=>" && method?.isStatic() === false) {
-            throw new Error("Method \"" + methodName + "\" not static");
+            const message = "Method \"" + methodName + "\" not static";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
           const extra: IReferenceExtras = {
             ooName: foundDef?.getName(),
@@ -74,7 +78,9 @@ export class MethodCallChain {
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
-          throw new Error("Method \"" + methodName + "\" not found, methodCallChain");
+          const message = "Method \"" + methodName + "\" not found, methodCallChain";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         } else if (method) {
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;
@@ -110,7 +116,9 @@ export class MethodCallChain {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         return new VoidType(className);
       } else if (classDefinition === undefined) {
-        throw new Error("Class " + className + " not found");
+        const message = "Class " + className + " not found";
+        input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
