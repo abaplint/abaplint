@@ -118,13 +118,16 @@ export class FindGlobalDefinitions {
 
   private update(obj: Interface | Class) {
     const file = obj.getMainABAPFile();
-
     if (file === undefined) {
       obj.setDefinition(undefined);
       return;
     }
 
     const struc = file?.getStructure();
+    if (struc === undefined) {
+      obj.setDefinition(undefined);
+      return;
+    }
 
     const input = {
       filename: file.getFilename(),
@@ -132,8 +135,8 @@ export class FindGlobalDefinitions {
     };
 
     if (obj instanceof Interface) {
-      const found = struc?.findFirstStructure(Structures.Interface);
-      if (struc && found) {
+      const found = struc.findFirstStructure(Structures.Interface);
+      if (found) {
         try {
           const def = new InterfaceDefinition(found, input);
           obj.setDefinition(def);
@@ -144,8 +147,8 @@ export class FindGlobalDefinitions {
         obj.setDefinition(undefined);
       }
     } else {
-      const found = struc?.findFirstStructure(Structures.ClassDefinition);
-      if (struc && found) {
+      const found = struc.findFirstStructure(Structures.ClassDefinition);
+      if (found) {
         try {
           const def = new ClassDefinition(found, input);
           obj.setDefinition(def);
