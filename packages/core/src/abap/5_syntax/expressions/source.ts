@@ -199,7 +199,7 @@ export class Source {
         const found = new Constant().runSyntax(first);
         context = this.infer(context, found);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dereference) {
-        context = new Dereference().runSyntax(context);
+        context = new Dereference().runSyntax(first, context, input);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
         context = new ComponentChain().runSyntax(context, first, input);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArithOperator) {

@@ -1,7 +1,7 @@
 import {DataDefinition, Table, View} from "../../../objects";
 import {ExpressionNode} from "../../nodes";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export type DatabaseTableSource = Table | DataDefinition | View | undefined;
 
@@ -16,7 +16,8 @@ export class DatabaseTable {
 
     const found = input.scope.getDDIC().lookupTableOrView2(name);
     if (found === undefined && input.scope.getDDIC().inErrorNamespace(name) === true) {
-      throw new Error("Database table or view \"" + name + "\" not found");
+      const message = "Database table or view \"" + name + "\" not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     } else if (found === undefined) {
       input.scope.addReference(token, undefined, ReferenceType.TableVoidReference, input.filename);
     } else {

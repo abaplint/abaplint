@@ -82,7 +82,7 @@ export class FieldChain {
           throw new Error("Not an object reference, field chain");
         }
       } else if (current.get() instanceof DereferenceExpression) {
-        context = new Dereference().runSyntax(context);
+        context = new Dereference().runSyntax(current, context, input);
       } else if (current.get() instanceof Expressions.ComponentName) {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
