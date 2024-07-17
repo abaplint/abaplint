@@ -120,7 +120,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
-      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, input.scope));
+      this.events.push(new EventDefinition(e, Visibility.Public, input));
     }
 
     for (const i of node.findAllStatements(Statements.InterfaceDef)) {

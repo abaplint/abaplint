@@ -68,7 +68,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
-      this.events.push(new EventDefinition(e, Visibility.Public, input.filename, input.scope)); // todo, all these are not Public
+      this.events.push(new EventDefinition(e, Visibility.Public, input)); // todo, all these are not Public
     }
 
     this.methodDefs = new MethodDefinitions(node, input.filename, input.scope);
