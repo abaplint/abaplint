@@ -146,7 +146,7 @@ import {InsertFieldGroup} from "./statements/insert_field_group";
 import {ReadEntities} from "./statements/read_entities";
 import {ModifyEntities} from "./statements/modify_entities";
 import {CommitEntities} from "./statements/commit_entities";
-import {SyntaxInput} from "./_syntax_input";
+import {CheckSyntaxKey, SyntaxInput} from "./_syntax_input";
 
 // -----------------------------------
 
@@ -377,7 +377,7 @@ export class SyntaxLogic {
   }
 
   private newIssue(token: AbstractToken, message: string): void {
-    const issue = Issue.atToken(this.currentFile, token, message, "check_syntax", Severity.Error);
+    const issue = Issue.atToken(this.currentFile, token, message, CheckSyntaxKey, Severity.Error);
     this.issues.push(issue);
   }
 
