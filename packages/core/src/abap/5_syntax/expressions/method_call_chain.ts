@@ -87,7 +87,7 @@ export class MethodCallChain {
           new MethodCallParam().runSyntax(param, input, context);
         }
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
-        context = new ComponentName().runSyntax(context, current);
+        context = new ComponentName().runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
         context = new AttributeName().runSyntax(context, current, input);
       }

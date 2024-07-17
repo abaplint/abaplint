@@ -87,7 +87,7 @@ export class FieldChain {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
         }
-        context = new ComponentName().runSyntax(context, current);
+        context = new ComponentName().runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {

@@ -110,6 +110,19 @@ export class Issue {
     });
   }
 
+  public static atTokenFilename(filename: string, token: AbstractToken, message: string, key: string, severity?: Severity, fix?: IEdit) {
+    severity = severity ?? Severity.Error;
+    return new Issue({
+      filename: filename,
+      message,
+      key,
+      start: token.getStart(),
+      end: token.getEnd(),
+      severity,
+      defaultFix: fix,
+    });
+  }
+
   public static atIdentifier(identifier: Identifier, message: string, key: string, severity?: Severity, fix?: IEdit) {
     severity = severity ?? Severity.Error;
     return new Issue({

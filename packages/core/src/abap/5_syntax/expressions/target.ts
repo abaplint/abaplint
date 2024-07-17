@@ -69,7 +69,7 @@ export class Target {
           context = context.getType();
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
-        context = new ComponentName().runSyntax(context, current);
+        context = new ComponentName().runSyntax(context, current, input);
       } else if (current.get() instanceof Expressions.TableBody) {
         if (!(context instanceof TableType)
             && !(context instanceof VoidType)

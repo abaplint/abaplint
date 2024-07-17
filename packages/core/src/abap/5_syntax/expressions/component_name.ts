@@ -1,19 +1,25 @@
 import {INode} from "../../nodes/_inode";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Basic from "../../types/basic";
+import {CheckSyntaxKey, SyntaxInput} from "../_syntax_input";
+import {Issue} from "../../../issue";
+import {Severity} from "../../../severity";
 
 export class ComponentName {
-  public runSyntax(context: AbstractType | undefined, node: INode): AbstractType | undefined {
+  public runSyntax(context: AbstractType | undefined, node: INode, input: SyntaxInput): AbstractType | undefined {
     if (context instanceof Basic.VoidType) {
       return context;
     }
 
-    const name = node.getFirstToken().getStr();
+    const nameToken = node.getFirstToken();
+    const name = nameToken.getStr();
 
     if (context instanceof Basic.StructureType) {
       const ret = context.getComponentByName(name);
       if (ret === undefined) {
-        throw new Error("Component \"" + name + "\" not found in structure");
+        const message = "Component \"" + name + "\" not found in structure";
+        input.issues.push(Issue.atTokenFilename(input.filename, nameToken, message, CheckSyntaxKey, Severity.Error));
+        return new Basic.VoidType(CheckSyntaxKey);
       }
       return ret;
     }
