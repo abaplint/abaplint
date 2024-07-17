@@ -2,15 +2,15 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {StatementNode, StructureNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import * as Basic from "../../types/basic";
 import {IStructureComponent} from "../../types/basic";
 import {Data as DataSyntax} from "../statements/data";
 import {ReferenceType} from "../_reference";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Data {
-  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
     let table: boolean = false;
     const values: {[index: string]: string} = {};
@@ -19,7 +19,7 @@ export class Data {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.Data) {
-        const found = new DataSyntax().runSyntax(c, scope, filename);
+        const found = new DataSyntax().runSyntax(c, input.scope, input.filename);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
           if (found.getValue() !== undefined) {
@@ -27,7 +27,7 @@ export class Data {
           }
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Data) {
-        const found = new Data().runSyntax(c, scope, filename);
+        const found = new Data().runSyntax(c, input);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
@@ -40,31 +40,32 @@ export class Data {
         const typeToken = c.findFirstExpression(Expressions.TypeName)?.getFirstToken();
         const typeName = typeToken?.getStr();
 
-        let foundId = scope.findType(typeName);
+        let foundId = input.scope.findType(typeName);
         if (foundId === undefined) {
-          foundId = scope.findVariable(typeName);
+          foundId = input.scope.findVariable(typeName);
         }
 
         let found = foundId?.getType();
         if (found === undefined) {
-          const f = scope.getDDIC().lookupTableOrView(typeName).type;
+          const f = input.scope.getDDIC().lookupTableOrView(typeName).type;
           if (f instanceof TypedIdentifier) {
             found = f.getType();
           } else {
             found = f;
           }
         } else {
-          scope.addReference(typeToken, foundId, ReferenceType.TypeReference, filename);
+          input.scope.addReference(typeToken, foundId, ReferenceType.TypeReference, input.filename);
         }
         if (found instanceof Basic.VoidType) {
           if (table === true) {
-            return new TypedIdentifier(name, filename, new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default}));
+            const ttyp = new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default});
+            return new TypedIdentifier(name, input.filename, ttyp);
           } else {
-            return new TypedIdentifier(name, filename, found);
+            return new TypedIdentifier(name, input.filename, found);
           }
         }
         if (found instanceof Basic.UnknownType) {
-          return new TypedIdentifier(name, filename, new Basic.UnknownType("unknown type, " + typeName));
+          return new TypedIdentifier(name, input.filename, new Basic.UnknownType("unknown type, " + typeName));
         }
         if (!(found instanceof Basic.StructureType)) {
           throw new Error("not structured, " + typeName);
@@ -76,11 +77,11 @@ export class Data {
     }
 
     if (table === true) {
-      return new TypedIdentifier(name, filename, new Basic.TableType(
+      return new TypedIdentifier(name, input.filename, new Basic.TableType(
         new Basic.StructureType(components), {withHeader: true, keyType: Basic.TableKeyType.default}));
     } else {
       const val = Object.keys(values).length > 0 ? values : undefined;
-      return new TypedIdentifier(name, filename, new Basic.StructureType(components), undefined, val);
+      return new TypedIdentifier(name, input.filename, new Basic.StructureType(components), undefined, val);
     }
   }
 }

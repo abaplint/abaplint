@@ -139,28 +139,28 @@ export class Attributes implements IAttributes {
       const ctyp = c.get();
       if (c instanceof StructureNode) {
         if (ctyp instanceof Structures.Data) {
-          const found = new DataStructure().runSyntax(c, scope, this.filename);
+          const found = new DataStructure().runSyntax(c, {scope, filename: this.filename});
           if (found !== undefined) {
             const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
             this.instance.push(attr);
             scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.ClassData) {
-          const found = new ClassDataStructure().runSyntax(c, scope, this.filename);
+          const found = new ClassDataStructure().runSyntax(c, {scope, filename: this.filename});
           if (found !== undefined) {
             const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
             this.static.push(attr);
             scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.Constants) {
-          const {type: found, values} = new Constants().runSyntax(c, scope, this.filename);
+          const {type: found, values} = new Constants().runSyntax(c, {scope, filename: this.filename});
           if (found !== undefined) {
             const attr = new ClassConstant(found, visibility, values);
             this.constants.push(attr);
             scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
-          const {values, types} = new TypeEnum().runSyntax(c, scope, this.filename);
+          const {values, types} = new TypeEnum().runSyntax(c, {scope, filename: this.filename});
           for (const v of values) {
           // for now add ENUM values as constants
             const attr = new ClassConstant(v, visibility, "novalueClassAttributeEnum");
@@ -172,7 +172,7 @@ export class Attributes implements IAttributes {
 //            scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.Types) {
-          const res = new Types().runSyntax(c, scope, this.filename);
+          const res = new Types().runSyntax(c, {scope, filename: this.filename});
           if (res) {
             scope.addType(res);
             this.tlist.push({type: res, visibility});

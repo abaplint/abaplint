@@ -416,10 +416,13 @@ export class SyntaxLogic {
     }
   }
 
-  // if this returns true, then the traversal should continue with next child
+  /**
+   * if this returns true, then the traversal should continue with next child
+   */
   private updateScopeStructure(node: StructureNode): boolean {
     const filename = this.currentFile.getFilename();
     const stru = node.get();
+
     if (stru instanceof Structures.ClassDefinition) {
       new ClassDefinition(node, filename, this.scope);
       return true;
@@ -427,19 +430,19 @@ export class SyntaxLogic {
       new InterfaceDefinition(node, filename, this.scope);
       return true;
     } else if (stru instanceof Structures.Types) {
-      this.scope.addType(new Types().runSyntax(node, this.scope, filename));
+      this.scope.addType(new Types().runSyntax(node, {scope: this.scope, filename}));
       return true;
     } else if (stru instanceof Structures.Constants) {
-      this.scope.addIdentifier(new Constants().runSyntax(node, this.scope, filename).type);
+      this.scope.addIdentifier(new Constants().runSyntax(node, {scope: this.scope, filename}).type);
       return true;
     } else if (stru instanceof Structures.Data) {
-      this.scope.addIdentifier(new DataStructure().runSyntax(node, this.scope, filename));
+      this.scope.addIdentifier(new DataStructure().runSyntax(node, {scope: this.scope, filename}));
       return true;
     } else if (stru instanceof Structures.Statics) {
-      this.scope.addIdentifier(new Statics().runSyntax(node, this.scope, filename));
+      this.scope.addIdentifier(new Statics().runSyntax(node, {scope: this.scope, filename}));
       return true;
     } else if (stru instanceof Structures.TypeEnum) {
-      const values = new TypeEnum().runSyntax(node, this.scope, filename).values;
+      const values = new TypeEnum().runSyntax(node, {scope: this.scope, filename}).values;
       this.scope.addList(values);
       return true;
     }

@@ -2,15 +2,15 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {StructureNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {IntegerType, IStructureComponent, StructureType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {ReferenceType} from "../_reference";
 import {EnumType} from "../../types/basic/enum_type";
 import {ScopeType} from "../_scope_type";
+import {SyntaxInput} from "../_syntax_input";
 
 export class TypeEnum {
-  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): {values: TypedIdentifier[], types: TypedIdentifier[]} {
+  public runSyntax(node: StructureNode, input: SyntaxInput): {values: TypedIdentifier[], types: TypedIdentifier[]} {
     let values: TypedIdentifier[] = [];
     const types: TypedIdentifier[] = [];
 
@@ -30,7 +30,7 @@ export class TypeEnum {
       }
       const token = expr.getFirstToken();
       // integer is default if BASE TYPE is not specified
-      values.push(new TypedIdentifier(token, filename, IntegerType.get()));
+      values.push(new TypedIdentifier(token, input.filename, IntegerType.get()));
     }
     for (const type of node.findDirectStatements(Statements.TypeEnum)) {
       const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
@@ -39,27 +39,28 @@ export class TypeEnum {
       }
       const token = expr.getFirstToken();
       // integer is default if BASE TYPE is not specified
-      values.push(new TypedIdentifier(token, filename, IntegerType.get()));
+      values.push(new TypedIdentifier(token, input.filename, IntegerType.get()));
     }
 
     const baseType = begin.findExpressionAfterToken("TYPE")?.getFirstToken();
     const baseName = baseType?.getStr();
     if (baseType && baseName) {
-      const found = scope.findType(baseName);
+      const found = input.scope.findType(baseName);
       if (found) {
-        scope.addReference(baseType, found, ReferenceType.TypeReference, filename);
+        input.scope.addReference(baseType, found, ReferenceType.TypeReference, input.filename);
       }
     }
 
     const name = begin.findFirstExpression(Expressions.NamespaceSimpleName);
     if (name) {
       let qualifiedName = name.concatTokens();
-      if (scope.getType() === ScopeType.ClassDefinition
-          || scope.getType() === ScopeType.Interface) {
-        qualifiedName = scope.getName() + "=>" + qualifiedName;
+      if (input.scope.getType() === ScopeType.ClassDefinition
+          || input.scope.getType() === ScopeType.Interface) {
+        qualifiedName = input.scope.getName() + "=>" + qualifiedName;
       }
-      const id = new TypedIdentifier(name.getFirstToken(), filename, new EnumType({qualifiedName: qualifiedName}), [IdentifierMeta.Enum]);
-      scope.addType(id);
+      const etype = new EnumType({qualifiedName: qualifiedName});
+      const id = new TypedIdentifier(name.getFirstToken(), input.filename, etype, [IdentifierMeta.Enum]);
+      input.scope.addType(id);
       types.push(id);
     }
 
@@ -73,7 +74,7 @@ export class TypeEnum {
         });
       }
       values = [];
-      const id = new TypedIdentifier(stru.getFirstToken(), filename, new StructureType(components), [IdentifierMeta.Enum]);
+      const id = new TypedIdentifier(stru.getFirstToken(), input.filename, new StructureType(components), [IdentifierMeta.Enum]);
       values.push(id);
     }
 

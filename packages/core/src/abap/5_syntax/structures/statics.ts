@@ -2,15 +2,15 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {StatementNode, StructureNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import * as Basic from "../../types/basic";
 import {IStructureComponent} from "../../types/basic";
 import {Static} from "../statements/static";
+import {SyntaxInput} from "../_syntax_input";
 
 // todo, this is much like DATA, refactor?
 export class Statics {
-  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
     let table: boolean = false;
 
@@ -18,12 +18,12 @@ export class Statics {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.Static) {
-        const found = new Static().runSyntax(c, scope, filename);
+        const found = new Static().runSyntax(c, input.scope, input.filename);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Statics) {
-        const found = new Statics().runSyntax(c, scope, filename);
+        const found = new Statics().runSyntax(c, input);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
@@ -34,9 +34,9 @@ export class Statics {
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
         // INCLUDES
         const typeName = c.findFirstExpression(Expressions.TypeName)?.getFirstToken().getStr();
-        let found = scope.findType(typeName)?.getType();
+        let found = input.scope.findType(typeName)?.getType();
         if (found === undefined) {
-          const f = scope.getDDIC().lookupTableOrView(typeName).type;
+          const f = input.scope.getDDIC().lookupTableOrView(typeName).type;
           if (f instanceof TypedIdentifier) {
             found = f.getType();
           } else {
@@ -45,13 +45,14 @@ export class Statics {
         }
         if (found instanceof Basic.VoidType) {
           if (table === true) {
-            return new TypedIdentifier(name, filename, new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default}));
+            const ttyp = new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default});
+            return new TypedIdentifier(name, input.filename, ttyp);
           } else {
-            return new TypedIdentifier(name, filename, found);
+            return new TypedIdentifier(name, input.filename, found);
           }
         }
         if (found instanceof Basic.UnknownType) {
-          return new TypedIdentifier(name, filename, new Basic.UnknownType("unknown type, " + typeName));
+          return new TypedIdentifier(name, input.filename, new Basic.UnknownType("unknown type, " + typeName));
         }
         if (!(found instanceof Basic.StructureType)) {
           throw new Error("not structured, " + typeName);
@@ -63,10 +64,10 @@ export class Statics {
     }
 
     if (table === true) {
-      return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components),
-                                                                     {withHeader: true, keyType: Basic.TableKeyType.default}));
+      const ttyp = new Basic.TableType(new Basic.StructureType(components), {withHeader: true, keyType: Basic.TableKeyType.default});
+      return new TypedIdentifier(name, input.filename, ttyp);
     } else {
-      return new TypedIdentifier(name, filename, new Basic.StructureType(components));
+      return new TypedIdentifier(name, input.filename, new Basic.StructureType(components));
     }
   }
 }
