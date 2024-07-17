@@ -132,6 +132,7 @@ export class FindGlobalDefinitions {
     const input = {
       filename: file.getFilename(),
       scope: CurrentScope.buildDefault(this.reg, obj),
+      issues: [],
     };
 
     if (obj instanceof Interface) {

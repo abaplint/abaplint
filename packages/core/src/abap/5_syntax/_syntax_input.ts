@@ -1,3 +1,4 @@
+import {Issue} from "../../issue";
 import {CurrentScope} from "./_current_scope";
 
 // note: these typically doesnt change during the traversal
@@ -5,5 +6,5 @@ import {CurrentScope} from "./_current_scope";
 export type SyntaxInput = {
   scope: CurrentScope,
   filename: string,
-//  issues: [],
+  issues: Issue[],
 };

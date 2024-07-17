@@ -424,7 +424,11 @@ export class SyntaxLogic {
     const filename = this.currentFile.getFilename();
     const stru = node.get();
 
-    const input: SyntaxInput = {scope: this.scope, filename};
+    const input: SyntaxInput = {
+      scope: this.scope,
+      filename,
+      issues: this.issues,
+    };
 
     if (stru instanceof Structures.ClassDefinition) {
       new ClassDefinition(node, input);
@@ -456,7 +460,11 @@ export class SyntaxLogic {
     const filename = this.currentFile.getFilename();
     const s = node.get();
 
-    const input: SyntaxInput = {scope: this.scope, filename};
+    const input: SyntaxInput = {
+      scope: this.scope,
+      filename,
+      issues: this.issues,
+    };
 
     // todo, refactor
     if (s instanceof Statements.Type) {
