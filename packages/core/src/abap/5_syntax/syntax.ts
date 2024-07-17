@@ -427,7 +427,7 @@ export class SyntaxLogic {
       new ClassDefinition(node, {scope: this.scope, filename});
       return true;
     } else if (stru instanceof Structures.Interface) {
-      new InterfaceDefinition(node, filename, this.scope);
+      new InterfaceDefinition(node, {filename, scope: this.scope});
       return true;
     } else if (stru instanceof Structures.Types) {
       this.scope.addType(new Types().runSyntax(node, {scope: this.scope, filename}));

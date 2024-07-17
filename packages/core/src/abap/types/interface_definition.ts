@@ -3,7 +3,6 @@ import {StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
-import {CurrentScope} from "../5_syntax/_current_scope";
 import {IInterfaceDefinition, IImplementing} from "./_interface_definition";
 import {IAttributes} from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
@@ -20,6 +19,7 @@ import {ReferenceType} from "../5_syntax/_reference";
 import {ClassConstant} from "./class_constant";
 import {TypedIdentifier} from "./_typed_identifier";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
+import {SyntaxInput} from "../5_syntax/_syntax_input";
 
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
@@ -31,22 +31,22 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   private readonly globalValue: boolean;
   private aliases: IAliases;
 
-  public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
+  public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.Interface)) {
       throw new Error("InterfaceDefinition, unexpected node type");
     }
 
     const name = node.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
-    super(name, filename);
-    scope.addInterfaceDefinition(this);
+    super(name, input.filename);
+    input.scope.addInterfaceDefinition(this);
 
     this.events = [];
     this.implementing = [];
     this.globalValue = node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
 
-    scope.push(ScopeType.Interface, name.getStr(), node.getFirstToken().getStart(), filename);
-    this.parse(scope, filename, node);
-    scope.pop(node.getLastToken().getEnd());
+    input.scope.push(ScopeType.Interface, name.getStr(), node.getFirstToken().getStart(), input.filename);
+    this.parse(input, node);
+    input.scope.pop(node.getLastToken().getEnd());
   }
 
   public getSuperClass(): undefined {
@@ -87,40 +87,40 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
 /////////////////
 
-  private parse(scope: CurrentScope, filename: string, node: StructureNode) {
+  private parse(input: SyntaxInput, node: StructureNode) {
     // todo, proper sequencing, the statements should be processed line by line
-    this.attributes = new Attributes(node, this.filename, scope);
+    this.attributes = new Attributes(node, this.filename, input.scope);
     this.typeDefinitions = this.attributes.getTypes();
 
-    this.aliases = new Aliases(node, this.filename, scope);
+    this.aliases = new Aliases(node, this.filename, input.scope);
     // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
     for (const a of this.aliases.getAll()) {
       const [objName, fieldName] = a.getComponent().split("~");
-      const idef = scope.findInterfaceDefinition(objName);
+      const idef = input.scope.findInterfaceDefinition(objName);
       if (idef) {
         const foundType = idef.getTypeDefinitions().getByName(fieldName);
         if (foundType) {
-          scope.addTypeNamed(a.getName(), foundType);
+          input.scope.addTypeNamed(a.getName(), foundType);
         } else {
           const foundField = idef.getAttributes().findByName(fieldName);
           if (foundField && foundField instanceof ClassConstant) {
             const token = new TokenIdentifier(a.getStart(), a.getName());
-            const id = new TypedIdentifier(token, filename, foundField.getType());
+            const id = new TypedIdentifier(token, input.filename, foundField.getType());
             const constant = new ClassConstant(id, Visibility.Public, foundField.getValue());
-            scope.addIdentifier(constant);
+            input.scope.addIdentifier(constant);
           }
         }
       }
     }
 
-    this.methodDefinitions = new MethodDefinitions(node, this.filename, scope);
+    this.methodDefinitions = new MethodDefinitions(node, this.filename, input.scope);
     if (this.methodDefinitions.getByName("CONSTRUCTOR") !== undefined) {
       throw new Error("Interfaces cannot have constructor methods");
     }
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
-      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope));
+      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, input.scope));
     }
 
     for (const i of node.findAllStatements(Statements.InterfaceDef)) {
@@ -129,11 +129,11 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
       if (name) {
         this.implementing.push({name, partial: false});
 
-        const idef = scope.findInterfaceDefinition(name);
+        const idef = input.scope.findInterfaceDefinition(name);
         if (idef) {
-          scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
-        } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-          scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
+          input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+        } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+          input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
         } else {
           throw new Error("Interface " + name + " unknown");
         }
