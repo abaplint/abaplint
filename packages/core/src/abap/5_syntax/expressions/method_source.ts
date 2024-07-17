@@ -14,7 +14,8 @@ import {AttributeName} from "./attribute_name";
 import {ComponentName} from "./component_name";
 import {ClassDefinition} from "../../types";
 import {Version} from "../../../version";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class MethodSource {
 
@@ -25,7 +26,7 @@ export class MethodSource {
 
     const first = children.shift();
     if (first === undefined) {
-      throw new Error("MethodSource, first child expected");
+      throw new AssertError("MethodSource, first child expected");
     }
 
     let context: AbstractType | IMethodDefinition | undefined = this.findTop(first, input);
@@ -40,7 +41,9 @@ export class MethodSource {
         && children[0]?.concatTokens() === "=>") {
       const name = first.findDirectExpression(Expressions.Constant)?.concatTokens().replace(/'/g, "").replace(/`/g, "");
       if (name !== undefined && input.scope.findClassDefinition(name) === undefined) {
-        throw new Error(`Class "${name}" not found/released`);
+        const message = `Class "${name}" not found/released`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     }
 
@@ -57,9 +60,13 @@ export class MethodSource {
 
       if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {
-          throw new Error("Not a structure, type unknown, MethodSource");
+          const message = "Not a structure, type unknown, MethodSource";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         } else if (!(context instanceof StructureType)) {
-          throw new Error("Not a structure, MethodSource");
+          const message = "Not a structure, MethodSource";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
       } else if (current.get() instanceof InstanceArrow
           || current.get() instanceof StaticArrow) {
@@ -89,7 +96,9 @@ export class MethodSource {
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = new VoidType("CONSTRUCTOR"); // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
-          throw new Error("Method or attribute \"" + methodName + "\" not found, MethodSource");
+          const message = "Method or attribute \"" + methodName + "\" not found, MethodSource";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         } else if (method) {
           const extra: IReferenceExtras = {
             ooName: foundDef?.getName(),
@@ -111,9 +120,13 @@ export class MethodSource {
     }
 
     if (context instanceof AbstractType && !(context instanceof VoidType)) {
-      throw new Error("Not a method, MethodSource");
+      const message = "Not a method, MethodSource";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     } else if (context === undefined) {
-      throw new Error("Not found, MethodSource");
+      const message = "Not found, MethodSource";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     return context;
@@ -132,7 +145,9 @@ export class MethodSource {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         return new VoidType(className);
       } else if (classDefinition === undefined) {
-        throw new Error("Class " + className + " not found");
+        const message = "Class " + className + " not found";
+        input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
