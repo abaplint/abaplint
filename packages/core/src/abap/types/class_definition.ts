@@ -63,7 +63,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     helper.fromSuperClassesAndInterfaces(this);
     helper.addAliasedTypes(this.aliases);
 
-    this.attributes = new Attributes(node, input.filename, input.scope);
+    this.attributes = new Attributes(node, input);
     this.types = this.attributes.getTypes();
 
     const events = node.findAllStatements(Statements.Events);

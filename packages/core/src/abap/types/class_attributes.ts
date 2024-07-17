@@ -17,6 +17,7 @@ import {IAttributes} from "./_class_attributes";
 import {TypeDefinitions} from "./type_definitions";
 import {Types} from "../5_syntax/structures/types";
 import {Type} from "../5_syntax/statements/type";
+import {SyntaxInput} from "../5_syntax/_syntax_input";
 
 export class Attributes implements IAttributes {
   private readonly static: ClassAttribute[];
@@ -26,13 +27,13 @@ export class Attributes implements IAttributes {
   private readonly tlist: {type: TypedIdentifier, visibility: Visibility}[];
   private readonly filename: string;
 
-  public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
+  public constructor(node: StructureNode, input: SyntaxInput) {
     this.static = [];
     this.instance = [];
     this.constants = [];
-    this.filename = filename;
+    this.filename = input.filename;
     this.tlist = [];
-    this.parse(node, scope);
+    this.parse(node, input);
     this.types = new TypeDefinitions(this.tlist);
   }
 
@@ -112,25 +113,25 @@ export class Attributes implements IAttributes {
 
 /////////////////////////////
 
-  private parse(node: StructureNode, scope: CurrentScope): void {
+  private parse(node: StructureNode, input: SyntaxInput): void {
     const cdef = node.findDirectStructure(Structures.ClassDefinition);
     if (cdef) {
-      this.parseSection(cdef.findDirectStructure(Structures.PublicSection), Visibility.Public, scope);
-      this.parseSection(cdef.findDirectStructure(Structures.ProtectedSection), Visibility.Protected, scope);
-      this.parseSection(cdef.findDirectStructure(Structures.PrivateSection), Visibility.Private, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.PublicSection), Visibility.Public, input);
+      this.parseSection(cdef.findDirectStructure(Structures.ProtectedSection), Visibility.Protected, input);
+      this.parseSection(cdef.findDirectStructure(Structures.PrivateSection), Visibility.Private, input);
       return;
     }
 
     const idef = node.findDirectStructure(Structures.Interface);
     if (idef) {
-      this.parseSection(idef.findDirectStructure(Structures.SectionContents), Visibility.Public, scope);
+      this.parseSection(idef.findDirectStructure(Structures.SectionContents), Visibility.Public, input);
       return;
     }
 
     throw new Error("MethodDefinition, expected ClassDefinition or InterfaceDefinition");
   }
 
-  private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: CurrentScope): void {
+  private parseSection(node: StructureNode | undefined, visibility: Visibility, input: SyntaxInput): void {
     if (node === undefined) {
       return;
     }
@@ -139,64 +140,64 @@ export class Attributes implements IAttributes {
       const ctyp = c.get();
       if (c instanceof StructureNode) {
         if (ctyp instanceof Structures.Data) {
-          const found = new DataStructure().runSyntax(c, {scope, filename: this.filename});
+          const found = new DataStructure().runSyntax(c, input);
           if (found !== undefined) {
             const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
             this.instance.push(attr);
-            scope.addIdentifier(attr);
+            input.scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.ClassData) {
-          const found = new ClassDataStructure().runSyntax(c, {scope, filename: this.filename});
+          const found = new ClassDataStructure().runSyntax(c, input);
           if (found !== undefined) {
             const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
             this.static.push(attr);
-            scope.addIdentifier(attr);
+            input.scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.Constants) {
-          const {type: found, values} = new Constants().runSyntax(c, {scope, filename: this.filename});
+          const {type: found, values} = new Constants().runSyntax(c, input);
           if (found !== undefined) {
             const attr = new ClassConstant(found, visibility, values);
             this.constants.push(attr);
-            scope.addIdentifier(attr);
+            input.scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
-          const {values, types} = new TypeEnum().runSyntax(c, {scope, filename: this.filename});
+          const {values, types} = new TypeEnum().runSyntax(c, input);
           for (const v of values) {
           // for now add ENUM values as constants
             const attr = new ClassConstant(v, visibility, "novalueClassAttributeEnum");
             this.constants.push(attr);
-            scope.addIdentifier(attr);
+            input.scope.addIdentifier(attr);
           }
           for (const t of types) {
             this.tlist.push({type: t, visibility});
 //            scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.Types) {
-          const res = new Types().runSyntax(c, {scope, filename: this.filename});
+          const res = new Types().runSyntax(c, input);
           if (res) {
-            scope.addType(res);
+            input.scope.addType(res);
             this.tlist.push({type: res, visibility});
           }
         } else {
           // begin recursion
-          this.parseSection(c, visibility, scope);
+          this.parseSection(c, visibility, input);
         }
       } else if (c instanceof StatementNode) {
         if (ctyp instanceof Statements.Data) {
-          this.instance.push(this.parseAttribute(c, visibility, scope));
+          this.instance.push(this.parseAttribute(c, visibility, input.scope));
         } else if (ctyp instanceof Statements.ClassData) {
-          this.static.push(this.parseAttribute(c, visibility, scope));
+          this.static.push(this.parseAttribute(c, visibility, input.scope));
         } else if (ctyp instanceof Statements.Constant) {
-          const found = new ConstantStatement().runSyntax(c, {scope, filename: this.filename});
+          const found = new ConstantStatement().runSyntax(c, input);
           if (found) {
             const attr = new ClassConstant(found, visibility, found.getValue());
             this.constants.push(attr);
-            scope.addIdentifier(attr);
+            input.scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Statements.Type) {
-          const res = new Type().runSyntax(c, {scope, filename: this.filename});
+          const res = new Type().runSyntax(c, input);
           if (res) {
-            scope.addType(res);
+            input.scope.addType(res);
             this.tlist.push({type: res, visibility});
           }
         }

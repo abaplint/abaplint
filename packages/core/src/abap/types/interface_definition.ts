@@ -89,7 +89,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
   private parse(input: SyntaxInput, node: StructureNode) {
     // todo, proper sequencing, the statements should be processed line by line
-    this.attributes = new Attributes(node, this.filename, input.scope);
+    this.attributes = new Attributes(node, input);
     this.typeDefinitions = this.attributes.getTypes();
 
     this.aliases = new Aliases(node, this.filename, input.scope);
