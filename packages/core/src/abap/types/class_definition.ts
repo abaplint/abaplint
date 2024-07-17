@@ -20,6 +20,7 @@ import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
 import {ReferenceType} from "../5_syntax/_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
+import {SyntaxInput} from "../5_syntax/_syntax_input";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly methodDefs: MethodDefinitions;
@@ -36,43 +37,43 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly sharedMemory: boolean;
   private aliases: IAliases;
 
-  public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
+  public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
       throw new Error("ClassDefinition, unexpected node type");
     }
 
     const def = node.findFirstStatement(Statements.ClassDefinition);
     const name = def!.findDirectExpression(Expressions.ClassName)!.getFirstToken();
-    super(name, filename);
-    scope.addClassDefinition(this);
+    super(name, input.filename);
+    input.scope.addClassDefinition(this);
 
     this.events = [];
     this.implementing = [];
     this.globalValue = def!.findFirstExpression(Expressions.ClassGlobal) !== undefined;
     this.finalValue = def!.findFirstExpression(Expressions.ClassFinal) !== undefined;
 
-    scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
+    input.scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), input.filename);
 
-    this.superClass = this.findSuper(def, filename, scope);
-    this.friends = this.findFriends(def, filename, scope);
+    this.superClass = this.findSuper(def, input);
+    this.friends = this.findFriends(def, input);
 
-    this.parse(filename, scope, node);
+    this.parse(input, node);
 
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
     helper.fromSuperClassesAndInterfaces(this);
     helper.addAliasedTypes(this.aliases);
 
-    this.attributes = new Attributes(node, this.filename, scope);
+    this.attributes = new Attributes(node, input.filename, input.scope);
     this.types = this.attributes.getTypes();
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
-      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope)); // todo, all these are not Public
+      this.events.push(new EventDefinition(e, Visibility.Public, input.filename, input.scope)); // todo, all these are not Public
     }
 
-    this.methodDefs = new MethodDefinitions(node, this.filename, scope);
+    this.methodDefs = new MethodDefinitions(node, input.filename, input.scope);
 
-    scope.pop(node.getLastToken().getEnd());
+    input.scope.pop(node.getLastToken().getEnd());
 
     const concat = def!.concatTokens().toUpperCase();
 
@@ -81,7 +82,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.abstract = def?.findDirectTokenByText("ABSTRACT") !== undefined;
 
     // perform checks after everything has been initialized
-    this.checkMethodsFromSuperClasses(scope);
+    this.checkMethodsFromSuperClasses(input.scope);
   }
 
   public getFriends() {
@@ -143,9 +144,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   ///////////////////
 
-  private findSuper(def: StatementNode | undefined, filename: string, scope: CurrentScope): string | undefined {
+  private findSuper(def: StatementNode | undefined, input: SyntaxInput): string | undefined {
     const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();
-    this.addReference(token, filename, scope);
+    this.addReference(token, input);
     const name = token?.getStr();
     return name;
   }
@@ -178,30 +179,30 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
   }
 
-  private findFriends(def: StatementNode | undefined, filename: string, scope: CurrentScope): string[] {
+  private findFriends(def: StatementNode | undefined, input: SyntaxInput): string[] {
     const result: string[] = [];
     for (const n of def?.findDirectExpression(Expressions.ClassFriends)?.findDirectExpressions(Expressions.ClassName) || []) {
       const token = n.getFirstToken();
-      this.addReference(token, filename, scope);
+      this.addReference(token, input);
       const name = token.getStr();
       result.push(name);
     }
     return result;
   }
 
-  private addReference(token: AbstractToken | undefined, filename: string, scope: CurrentScope) {
+  private addReference(token: AbstractToken | undefined, input: SyntaxInput) {
     const name = token?.getStr();
     if (name) {
-      const s = scope.findClassDefinition(name);
+      const s = input.scope.findClassDefinition(name);
       if (s) {
-        scope.addReference(token, s, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
-      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename);
+        input.scope.addReference(token, s, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
       }
     }
   }
 
-  private parse(filename: string, scope: CurrentScope, inputNode: StructureNode) {
+  private parse(input: SyntaxInput, inputNode: StructureNode) {
     for (const node of inputNode.findAllStatements(Statements.InterfaceDef)) {
       const partial = node.findDirectTokenByText("PARTIALLY") !== undefined;
       const token = node.findFirstExpression(Expressions.InterfaceName)?.getFirstToken();
@@ -211,17 +212,17 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       const name = token.getStr().toUpperCase();
       this.implementing.push({name, partial});
 
-      const intf = scope.findInterfaceDefinition(name);
+      const intf = input.scope.findInterfaceDefinition(name);
       if (intf) {
-        scope.addReference(token, intf, ReferenceType.ObjectOrientedReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
-      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+        input.scope.addReference(token, intf, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
       } else {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedUnknownReference, filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedUnknownReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
       }
     }
 
-    this.aliases = new Aliases(inputNode, this.filename, scope);
+    this.aliases = new Aliases(inputNode, this.filename, input.scope);
   }
 
 }

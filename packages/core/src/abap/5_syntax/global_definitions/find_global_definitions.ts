@@ -136,7 +136,11 @@ export class FindGlobalDefinitions {
       const found = struc?.findFirstStructure(Structures.ClassDefinition);
       if (struc && file && found) {
         try {
-          const def = new ClassDefinition(found, file.getFilename(), CurrentScope.buildDefault(this.reg, obj));
+          const input = {
+            filename: file.getFilename(),
+            scope: CurrentScope.buildDefault(this.reg, obj),
+          };
+          const def = new ClassDefinition(found, input);
           obj.setDefinition(def);
         } catch {
           obj.setDefinition(undefined);
