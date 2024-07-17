@@ -6,7 +6,7 @@ import {ObjectOriented} from "../_object_oriented";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AttributeName} from "../../2_statements/expressions";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeChain {
   public runSyntax(
@@ -18,18 +18,22 @@ export class AttributeChain {
     if (inputContext instanceof VoidType) {
       return inputContext;
     } else if (!(inputContext instanceof ObjectReferenceType)) {
-      throw new Error("Not an object reference(AttributeChain)");
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), "Not an object reference(AttributeChain)"));
+      return new VoidType(CheckSyntaxKey);
     }
 
     const children = node.getChildren().slice();
     const first = children[0];
     if (!(first.get() instanceof AttributeName)) {
-      throw new Error("AttributeChain, unexpected first child");
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), "AttributeChain, unexpected first child"));
+      return new VoidType(CheckSyntaxKey);
     }
 
     const def = input.scope.findObjectDefinition(inputContext.getIdentifierName());
     if (def === undefined) {
-      throw new Error("Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)");
+      const message = "Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
     const nameToken = first.getFirstToken();
     const name = nameToken.getStr();
@@ -40,7 +44,9 @@ export class AttributeChain {
       context = helper.searchConstantName(def, name);
     }
     if (context === undefined) {
-      throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
+      const message = "Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
     for (const t of type) {
       input.scope.addReference(nameToken, context, t, input.filename);
