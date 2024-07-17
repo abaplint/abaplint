@@ -7,7 +7,7 @@ import {DataReference, ObjectReferenceType, UnknownType} from "../../types/basic
 import {ClassDefinition} from "../../types";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ObjectOriented} from "../_object_oriented";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ComponentChain {
   public runSyntax(context: AbstractType | undefined, node: ExpressionNode,
@@ -30,15 +30,22 @@ export class ComponentChain {
         const concat = child.concatTokens();
         if (concat === "-") {
           if (!(context instanceof StructureType)) {
-            throw new Error("ComponentChain, not a structure");
+            const message = "ComponentChain, not a structure";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
+
           }
         } else if (concat === "=>") {
           if (!(context instanceof ObjectReferenceType)) {
-            throw new Error("ComponentChain, not a reference");
+            const message = "ComponentChain, not a reference";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
         } else if (concat === "->") {
           if (!(context instanceof ObjectReferenceType) && !(context instanceof DataReference)) {
-            throw new Error("ComponentChain, not a reference");
+            const message = "ComponentChain, not a reference";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
         }
       } else if (child.get() instanceof Expressions.ComponentName) {
@@ -54,13 +61,17 @@ export class ComponentChain {
         if (context instanceof StructureType) {
           context = context.getComponentByName(name);
           if (context === undefined) {
-            throw new Error("Component \"" + name + "\" not found in structure");
+            const message = "Component \"" + name + "\" not found in structure";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
         } else if (context instanceof ObjectReferenceType) {
           const id = context.getIdentifier();
           const def = input.scope.findObjectDefinition(id.getName());
           if (def === undefined) {
-            throw new Error(id.getName() + " not found in scope");
+            const message = id.getName() + " not found in scope";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
 
           const helper = new ObjectOriented(input.scope);
@@ -68,16 +79,19 @@ export class ComponentChain {
 
           context = found?.getType();
           if (context === undefined) {
-            throw new Error("Attribute \"" + name + "\" not found");
+            const message = "Attribute \"" + name + "\" not found";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           } else {
             const extra: IReferenceExtras = {
               ooName: id.getName(),
               ooType: id instanceof ClassDefinition ? "CLAS" : "INTF"};
             input.scope.addReference(child.getFirstToken(), found, ReferenceType.DataWriteReference, input.filename, extra);
           }
-
         } else {
-          throw new Error("ComponentChain, not a structure, " + context?.constructor.name);
+          const message = "ComponentChain, not a structure, " + context?.constructor.name;
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
       }
     }
