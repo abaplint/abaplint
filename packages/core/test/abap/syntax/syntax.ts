@@ -6365,7 +6365,7 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(2);
     expect(issues[0].getMessage()).to.contain(`NOT_VALID`);
   });
 

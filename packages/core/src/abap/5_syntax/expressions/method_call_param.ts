@@ -7,17 +7,21 @@ import {WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodCallParam {
   public runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
     if (!(node.get() instanceof Expressions.MethodCallParam)) {
-      throw new Error("MethodCallParam, unexpected input");
+      const message = "MethodCallParam, unexpected input";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const children = node.getChildren();
     if (children.length < 2 || children.length > 3) {
-      throw new Error("MethodCallParam, unexpected child length");
+      const message = "MethodCallParam, unexpected child length";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const child = children[1];
@@ -26,7 +30,9 @@ export class MethodCallParam {
       if (!(method instanceof VoidType)) {
         const required = method.getParameters().getRequiredParameters();
         if (required.length > 0) {
-          throw new Error("Parameter \"" + required[0].getName() + "\" must be supplied");
+          const message = "Parameter \"" + required[0].getName() + "\" must be supplied";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
     } else if (child instanceof ExpressionNode
@@ -34,16 +40,22 @@ export class MethodCallParam {
         || child.get() instanceof Expressions.ConstantString)) {
       if (!(method instanceof VoidType)) {
         if (method.getParameters().getImporting().length === 0) {
-          throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
+          const message = "Method \"" + method.getName() + "\" has no importing parameters";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         } else if (method.getParameters().getRequiredParameters().length > 1) {
-          throw new Error("Method \"" + method.getName() + "\" has more than one importing or changing parameter");
+          const message = "Method \"" + method.getName() + "\" has more than one importing or changing parameter";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
       let targetType: AbstractType | undefined = undefined;
       if (!(method instanceof VoidType)) {
         const name = method.getParameters().getDefaultImporting();
         if (name === undefined) {
-          throw new Error("No default importing parameter");
+          const message = "No default importing parameter";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
         for (const i of method.getParameters().getImporting()) {
           if (i.getName().toUpperCase() === name) {
@@ -63,9 +75,13 @@ export class MethodCallParam {
         || child.findFirstExpression(Expressions.StringTemplate) !== undefined
         || child.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (sourceType === undefined) {
-        throw new Error("No source type determined, method source");
+        const message = "No source type determined, method source";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType, calculated) === false) {
-        throw new Error("Method parameter type not compatible");
+        const message = "Method parameter type not compatible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
       new MethodParameters().checkExporting(child, input, method);
@@ -73,7 +89,9 @@ export class MethodCallParam {
       new MethodParameters().runSyntax(child, input, method);
     } else {
 //      console.dir(child);
-      throw new Error("MethodCallParam, unexpected child");
+      const message = "MethodCallParam, unexpected child";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
   }
 }

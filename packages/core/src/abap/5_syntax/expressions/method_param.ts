@@ -6,17 +6,18 @@ import * as Expressions from "../../2_statements/expressions";
 import {Default} from "./default";
 import {CGenericType} from "../../types/basic/cgeneric_type";
 import {SyntaxInput} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class MethodParam {
   public runSyntax(node: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[]): TypedIdentifier {
     const name = node.findDirectExpression(Expressions.MethodParamName);
     if (name === undefined) {
-      throw new Error("MethodParam, todo, handle pass by value and reference");
+      throw new AssertError("MethodParam, todo, handle pass by value and reference");
     }
 
     const type = node.findDirectExpression(Expressions.TypeParam);
     if (type === undefined) {
-      throw new Error("MethodParam, unexpected structure");
+      throw new AssertError("MethodParam, unexpected structure");
     }
 
     const def = type.findDirectExpression(Expressions.Default);
