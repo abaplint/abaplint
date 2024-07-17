@@ -14,7 +14,7 @@ import {Dereference as DereferenceExpression} from "../../2_statements/expressio
 import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SourceField} from "./source_field";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class FieldChain {
 
@@ -50,10 +50,14 @@ export class FieldChain {
       }
 
       if (current.get() instanceof DashW) {
-        throw new Error("Ending with dash");
+        const message = "Ending with dash";
+        input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       } else if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {
-          throw new Error("Not a structure, type unknown, FieldChain");
+          const message = "Not a structure, type unknown, FieldChain";
+          input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         } else if (!(context instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader())
             && !(context instanceof VoidType)) {
@@ -69,17 +73,23 @@ export class FieldChain {
                 context = new StructureType([{name: "TABLE_LINE", type: context}]);
               }
             } else {
-              throw new Error("Table without header, cannot access fields, " + contextName);
+              const message = "Table without header, cannot access fields, " + contextName;
+              input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+              return new VoidType(CheckSyntaxKey);
             }
           } else {
-            throw new Error("Not a structure, FieldChain");
+            const message = "Not a structure, FieldChain";
+            input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
         }
       } else if (current.get() instanceof InstanceArrow) {
         if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
-          throw new Error("Not an object reference, field chain");
+          const message = "Not an object reference, field chain";
+          input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
       } else if (current.get() instanceof DereferenceExpression) {
         context = new Dereference().runSyntax(current, context, input);
@@ -91,7 +101,9 @@ export class FieldChain {
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {
-          throw new Error("Table expression, expected table");
+          const message = "Table expression, expected table";
+          input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
         new TableExpression().runSyntax(current, input);
         if (!(context instanceof VoidType)) {
@@ -156,7 +168,9 @@ export class FieldChain {
                                  ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: classNam.toUpperCase()});
         return new VoidType(classNam);
       } else {
-        throw new Error("Unknown class " + classNam);
+        const message = "Unknown class " + classNam;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     }
 

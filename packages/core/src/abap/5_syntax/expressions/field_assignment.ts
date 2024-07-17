@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {StructureType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Source} from "./source";
 
 export class FieldAssignment {
@@ -14,12 +14,16 @@ export class FieldAssignment {
 
     const fieldSub = node.findDirectExpression(Expressions.FieldSub);
     if (fieldSub === undefined) {
-      throw new Error("FieldAssignment, FieldSub node not found");
+      const message = "FieldAssignment, FieldSub node not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const s = node.findDirectExpression(Expressions.Source);
     if (s === undefined) {
-      throw new Error("FieldAssignment, Source node not found");
+      const message = "FieldAssignment, Source node not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     let type: AbstractType | undefined = undefined;
@@ -30,7 +34,9 @@ export class FieldAssignment {
         if (text !== "-" && context instanceof StructureType) {
           context = context.getComponentByName(text);
           if (context === undefined && targetType.containsVoid() === false) {
-            throw new Error(`field ${text} does not exist in structure`);
+            const message = `field ${text} does not exist in structure`;
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
           }
         }
       }
