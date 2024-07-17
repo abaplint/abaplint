@@ -4,7 +4,6 @@ import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../nodes";
 import {Visibility} from "../4_file_information/visibility";
-import {CurrentScope} from "../5_syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
 import {ClassData as ClassDataStatement} from "../5_syntax/statements/class_data";
 import {ClassData as ClassDataStructure} from "../5_syntax/structures/class_data";
@@ -184,9 +183,9 @@ export class Attributes implements IAttributes {
         }
       } else if (c instanceof StatementNode) {
         if (ctyp instanceof Statements.Data) {
-          this.instance.push(this.parseAttribute(c, visibility, input.scope));
+          this.instance.push(this.parseAttribute(c, visibility, input));
         } else if (ctyp instanceof Statements.ClassData) {
-          this.static.push(this.parseAttribute(c, visibility, input.scope));
+          this.static.push(this.parseAttribute(c, visibility, input));
         } else if (ctyp instanceof Statements.Constant) {
           const found = new ConstantStatement().runSyntax(c, input);
           if (found) {
@@ -205,14 +204,14 @@ export class Attributes implements IAttributes {
     }
   }
 
-  private parseAttribute(node: StatementNode, visibility: Visibility, scope: CurrentScope): ClassAttribute {
+  private parseAttribute(node: StatementNode, visibility: Visibility, input: SyntaxInput): ClassAttribute {
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
 
     if (s instanceof Statements.Data) {
-      found = new DataStatement().runSyntax(node, {scope, filename: this.filename});
+      found = new DataStatement().runSyntax(node, input);
     } else if (s instanceof Statements.ClassData) {
-      found = new ClassDataStatement().runSyntax(node, {scope, filename: this.filename});
+      found = new ClassDataStatement().runSyntax(node, input);
     } else {
       throw new Error("ClassAttribute, unexpected node, 1, " + this.filename);
     }
@@ -221,7 +220,7 @@ export class Attributes implements IAttributes {
       throw new Error("ClassAttribute, unexpected node, " + this.filename);
     }
 
-    scope.addIdentifier(found);
+    input.scope.addIdentifier(found);
 
     return new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
   }
