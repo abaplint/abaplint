@@ -62,14 +62,14 @@ export class Source {
         {
           const method = new BuiltIn().searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), input);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return StringType.get();
         }
         case "XSDBOOL":
         {
           const method = new BuiltIn().searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), input);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"});
         }
         case "REDUCE":
@@ -113,7 +113,7 @@ export class Source {
         case "CONV":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), input);
+          const bodyType = new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
           if (new TypeUtils(input.scope).isAssignable(foundType, bodyType) === false) {
             throw new Error("CONV: Types not compatible");
           }

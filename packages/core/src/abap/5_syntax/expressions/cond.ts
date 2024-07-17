@@ -4,11 +4,7 @@ import {SyntaxInput} from "../_syntax_input";
 import {Compare} from "./compare";
 
 export class Cond {
-  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
-    if (node === undefined) {
-      throw new Error("Cond, expected node input");
-    }
-
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): void {
     for (const t of node.findDirectExpressions(Expressions.CondSub)) {
       const c = t.findDirectExpression(Expressions.Cond);
       if (c) {
