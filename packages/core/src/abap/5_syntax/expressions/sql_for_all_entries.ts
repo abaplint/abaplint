@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {Source} from "./source";
 import {VoidType, TableType} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SQLForAllEntries {
 
@@ -17,7 +17,9 @@ export class SQLForAllEntries {
         return;
       }
       if (!(type instanceof TableType)) {
-        throw new Error("FAE parameter must be table type");
+        const message = "FAE parameter must be table type";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
 
       const name = s.concatTokens().replace("[]", "");

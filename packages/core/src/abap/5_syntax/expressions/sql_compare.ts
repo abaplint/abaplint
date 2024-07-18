@@ -4,7 +4,7 @@ import {ExpressionNode, StatementNode} from "../../nodes";
 import {CharacterType, IntegerType, NumericType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {DatabaseTableSource} from "./database_table";
 import {Dynamic} from "./dynamic";
 import {Source} from "./source";
@@ -46,7 +46,9 @@ export class SQLCompare {
             !(intype instanceof VoidType) &&
             !(intype instanceof UnknownType) &&
             !(intype instanceof TableType)) {
-          throw new Error("IN, not a table");
+          const message = "IN, not a table";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
     }

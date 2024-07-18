@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class StringTemplate {
   public runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
@@ -15,10 +15,14 @@ export class StringTemplate {
       const s = templateSource.findDirectExpression(Expressions.Source);
       const type = new Source().runSyntax(s, input, ret);
       if (type === undefined) {
-        throw new Error("No target type determined");
+        const message = "No target type determined";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       } else if ((typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false)
           || type instanceof StructureType) {
-        throw new Error("String template, not character like, " + type.constructor.name);
+        const message = "String template, not character like, " + type.constructor.name;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
 
       const format = templateSource.findDirectExpression(Expressions.StringTemplateFormatting);
@@ -27,7 +31,8 @@ export class StringTemplate {
         new Source().runSyntax(formatSource, input);
       }
 
-      if (formatConcat?.includes("ALPHA = ")
+      if (format
+          && formatConcat?.includes("ALPHA = ")
           && !(type instanceof UnknownType)
           && !(type instanceof VoidType)
           && !(type instanceof StringType)
@@ -36,7 +41,9 @@ export class StringTemplate {
           && !(type instanceof NumericGenericType)
           && !(type instanceof NumericType)
           && !(type instanceof AnyType)) {
-        throw new Error("Cannot apply ALPHA to this type");
+        const message = "Cannot apply ALPHA to this type";
+        input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     }
 

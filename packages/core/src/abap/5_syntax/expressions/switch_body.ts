@@ -1,17 +1,21 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {AbstractType} from "../../types/basic/_abstract_type";
+import {VoidType} from "../../types/basic";
 
 export class SwitchBody {
-  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput) {
+  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): AbstractType | undefined {
     if (node === undefined) {
       return;
     }
 
     const thenSource = node.findExpressionAfterToken("THEN");
     if (!(thenSource?.get() instanceof Expressions.Source)) {
-      throw new Error("SwitchBody, unexpected");
+      const message = "SwitchBody, unexpected";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
     const type = new Source().runSyntax(thenSource, input);
 
