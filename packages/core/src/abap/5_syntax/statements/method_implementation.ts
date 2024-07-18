@@ -4,7 +4,7 @@ import {ObjectOriented} from "../_object_oriented";
 import {ScopeType} from "../_scope_type";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -16,12 +16,16 @@ export class MethodImplementation implements StatementSyntax {
 
     const classDefinition = input.scope.findClassDefinition(className);
     if (classDefinition === undefined) {
-      throw new Error("Class definition for \"" + className + "\" not found");
+      const message = "Class definition for \"" + className + "\" not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const {method: methodDefinition} = helper.searchMethodName(classDefinition, methodName);
     if (methodDefinition === undefined) {
-      throw new Error("Method definition \"" + methodName + "\" not found");
+      const message = "Method definition \"" + methodName + "\" not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const start = node.getFirstToken().getStart();

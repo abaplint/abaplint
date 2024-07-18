@@ -7,6 +7,7 @@ export class SourceField {
   public runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[]): AbstractType {
     const token = node.getFirstToken();
     const name = token.getStr();
+
     const found = input.scope.findVariable(name);
     if (found === undefined) {
       // TODOSYNTAX, catch in method_source

@@ -7,19 +7,21 @@ import {Position} from "../../../position";
 import {BuiltIn} from "../_builtin";
 import {ScopeType} from "../_scope_type";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ClassImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const helper = new ObjectOriented(input.scope);
 
     const className = helper.findClassName(node);
+
     input.scope.push(ScopeType.ClassImplementation, className, node.getFirstToken().getStart(), input.filename);
 
     const classDefinition = input.scope.findClassDefinition(className);
     if (classDefinition === undefined) {
-      // TODOSYNTAX hmm
-      throw new Error("Class definition for \"" + className + "\" not found");
+      const message = "Class definition for \"" + className + "\" not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     for (const t of classDefinition.getTypeDefinitions().getAll()) {

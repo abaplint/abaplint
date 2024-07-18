@@ -497,7 +497,9 @@ export class SyntaxLogic {
         || s instanceof Statements.EndInterface) {
       this.scope.pop(node.getLastToken().getEnd());
     } else if (s instanceof Statements.EndMethod) {
-      this.scope.pop(node.getLastToken().getEnd());
+      if (this.scope.getType() === ScopeType.Method) {
+        this.scope.pop(node.getLastToken().getEnd());
+      }
       if (this.scope.getType() === ScopeType.MethodInstance) {
         this.scope.pop(node.getLastToken().getEnd());
       }
