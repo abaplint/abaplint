@@ -49,6 +49,9 @@ export class DoubleSpace extends ABAPRule {
 
   public setConfig(conf: DoubleSpaceConf) {
     this.conf = conf;
+    if (this.conf.skipKeywords === undefined) {
+      this.conf.skipKeywords = new DoubleSpaceConf().skipKeywords;
+    }
   }
 
   public runParsed(file: ABAPFile) {
@@ -183,7 +186,7 @@ export class DoubleSpace extends ABAPRule {
       if (prev instanceof TokenNodeRegex
           || upper === "("
           || upper === ")"
-          || this.getConfig().skipKeywords?.some(e => e.toUpperCase() === upper)) {
+          || this.getConfig().skipKeywords.some(e => e.toUpperCase() === upper)) {
         // not a keyword, continue
         prev = n;
         continue;
