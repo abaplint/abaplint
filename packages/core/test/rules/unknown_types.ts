@@ -2234,4 +2234,20 @@ DATA da_vgbel LIKE xlips-vgbel.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("interfaces and data aliases", () => {
+    const abap = `
+INTERFACE lif.
+  DATA foo TYPE i.
+ENDINTERFACE.
+
+INTERFACE liiii.
+  INTERFACES lif.
+  ALIASES bar FOR lif~foo.
+  DATA moo LIKE bar.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -1,5 +1,5 @@
 import {testRule, testRuleFix} from "./_utils";
-import {DoubleSpace} from "../../src/rules";
+import {DoubleSpace, DoubleSpaceConf} from "../../src/rules";
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -56,6 +56,14 @@ your_var_2    = 0.`, cnt: 0},
 ];
 
 testRule(tests, DoubleSpace);
+
+const testsSkips = [
+  {abap: `WRITE  bar.`, cnt: 0},
+];
+const skipConf = new DoubleSpaceConf();
+skipConf.skipKeywords = ["write"];
+testRule(testsSkips, DoubleSpace, skipConf);
+
 
 const fixes = [
   // after colon

@@ -45,7 +45,7 @@ export class AttributeChain {
     }
     if (context === undefined) {
       const message = "Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"";
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      input.issues.push(syntaxIssue(input, nameToken, message));
       return new VoidType(CheckSyntaxKey);
     }
     for (const t of type) {

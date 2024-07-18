@@ -69,7 +69,7 @@ export class Data {
         }
         if (!(found instanceof Basic.StructureType)) {
           const message = "not structured, " + typeName;
-          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          input.issues.push(syntaxIssue(input, typeToken!, message));
           return new TypedIdentifier(name, input.filename, new Basic.VoidType(CheckSyntaxKey));
         }
         for (const c of found.getComponents()) {

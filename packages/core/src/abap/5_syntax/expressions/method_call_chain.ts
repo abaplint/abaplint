@@ -59,7 +59,7 @@ export class MethodCallChain {
         } else {
           if (previous && previous.getFirstToken().getStr() === "=>" && method?.isStatic() === false) {
             const message = "Method \"" + methodName + "\" not static";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            input.issues.push(syntaxIssue(input, methodToken!, message));
             return new VoidType(CheckSyntaxKey);
           }
           const extra: IReferenceExtras = {
@@ -79,7 +79,7 @@ export class MethodCallChain {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
           const message = "Method \"" + methodName + "\" not found, methodCallChain";
-          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          input.issues.push(syntaxIssue(input, methodToken!, message));
           return new VoidType(CheckSyntaxKey);
         } else if (method) {
           const ret = method.getParameters().getReturning()?.getType();

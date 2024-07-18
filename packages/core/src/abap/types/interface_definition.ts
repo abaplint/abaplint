@@ -93,7 +93,9 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     this.typeDefinitions = this.attributes.getTypes();
 
     this.aliases = new Aliases(node, this.filename, input.scope);
+
     // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
+    // this adds the aliased types to scope?
     for (const a of this.aliases.getAll()) {
       const [objName, fieldName] = a.getComponent().split("~");
       const idef = input.scope.findInterfaceDefinition(objName);
@@ -113,10 +115,6 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
       }
     }
 
-    this.methodDefinitions = new MethodDefinitions(node, input);
-    if (this.methodDefinitions.getByName("CONSTRUCTOR") !== undefined) {
-      throw new Error("Interfaces cannot have constructor methods");
-    }
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
@@ -138,6 +136,11 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
           throw new Error("Interface " + name + " unknown");
         }
       }
+    }
+
+    this.methodDefinitions = new MethodDefinitions(node, input);
+    if (this.methodDefinitions.getByName("CONSTRUCTOR") !== undefined) {
+      throw new Error("Interfaces cannot have constructor methods");
     }
 
   }

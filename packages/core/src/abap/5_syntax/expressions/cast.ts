@@ -53,7 +53,7 @@ export class Cast {
       } else if (tt === undefined) {
         // todo, this should be an UnknownType instead?
         const message = "Type \"" + typeName + "\" not found in scope, Cast";
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        input.issues.push(syntaxIssue(input, typeExpression.getFirstToken(), message));
         return new VoidType(CheckSyntaxKey);
       }
     }

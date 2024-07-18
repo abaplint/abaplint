@@ -14,6 +14,8 @@ import {ABAPFile} from "../abap/abap_file";
 export class DoubleSpaceConf extends BasicRuleConfig {
   /** Check for double space after keywords */
   public keywords: boolean = true;
+  /** list of keywords to skip, case insensitive */
+  public skipKeywords?: string[] = ["CHANGING", "EXPORTING", "OTHERS"];
   /** Check for double space after start parenthesis */
   public startParen: boolean = true;
   /** Check for double space before end parenthesis */
@@ -47,6 +49,9 @@ export class DoubleSpace extends ABAPRule {
 
   public setConfig(conf: DoubleSpaceConf) {
     this.conf = conf;
+    if (this.conf.skipKeywords === undefined) {
+      this.conf.skipKeywords = new DoubleSpaceConf().skipKeywords;
+    }
   }
 
   public runParsed(file: ABAPFile) {
@@ -181,9 +186,7 @@ export class DoubleSpace extends ABAPRule {
       if (prev instanceof TokenNodeRegex
           || upper === "("
           || upper === ")"
-          || upper === "CHANGING"
-          || upper === "EXPORTING"
-          || upper === "OTHERS") {
+          || this.getConfig().skipKeywords!.some(e => e.toUpperCase() === upper)) {
         // not a keyword, continue
         prev = n;
         continue;
