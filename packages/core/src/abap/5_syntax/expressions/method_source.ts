@@ -29,7 +29,7 @@ export class MethodSource {
       throw new AssertError("MethodSource, first child expected");
     }
 
-    let context: AbstractType | IMethodDefinition | undefined = this.findTop(first, input);
+    let context: AbstractType | IMethodDefinition | undefined = this.findTop(first, input, children);
     if (context === undefined) {
       context = input.scope.findVariable("me")?.getType();
       children.unshift(first);
@@ -133,7 +133,7 @@ export class MethodSource {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, input: SyntaxInput): AbstractType | undefined {
+  private findTop(first: INode, input: SyntaxInput, children: any[]): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       // todo, refactor this part to new expression handler,
       const token = first.getFirstToken();
@@ -150,12 +150,8 @@ export class MethodSource {
       }
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
-    } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceField) {
-      try {
-        return new SourceField().runSyntax(first, input, ReferenceType.DataReadReference);
-      } catch {
-        return undefined;
-      }
+    } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceField && children.length > 0) {
+      return new SourceField().runSyntax(first, input, ReferenceType.DataReadReference);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceFieldSymbol) {
       return new SourceFieldSymbol().runSyntax(first, input);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dynamic) {

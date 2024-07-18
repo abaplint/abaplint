@@ -1,18 +1,24 @@
 import {ExpressionNode} from "../../nodes";
+import {VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SourceField {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[]): AbstractType {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[],
+                   error = true): AbstractType | undefined {
     const token = node.getFirstToken();
     const name = token.getStr();
 
     const found = input.scope.findVariable(name);
     if (found === undefined) {
-      // TODOSYNTAX, catch in method_source
-      throw new Error("\"" + name + "\" not found, findTop");
+      const message = "\"" + name + "\" not found, findTop";
+      if (error === true) {
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      }
+      return new VoidType(CheckSyntaxKey);
     }
+
     if (type) {
       input.scope.addReference(token, found, type, input.filename);
     }

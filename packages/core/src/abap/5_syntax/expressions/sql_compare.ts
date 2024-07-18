@@ -1,13 +1,14 @@
 import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {CharacterType, IntegerType, NumericType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {CharacterType, IntegerType, NumericType, StructureType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CurrentScope} from "../_current_scope";
-import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {SyntaxInput} from "../_syntax_input";
 import {DatabaseTableSource} from "./database_table";
 import {Dynamic} from "./dynamic";
 import {Source} from "./source";
+import {SQLIn} from "./sql_in";
 import {SQLSource} from "./sql_source";
 
 export class SQLCompare {
@@ -22,11 +23,11 @@ export class SQLCompare {
       return;
     }
 
-    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
       new Source().runSyntax(s, input);
     }
 
-    for (const s of node.findAllExpressions(Expressions.SQLSource)) {
+    for (const s of node.findDirectExpressions(Expressions.SQLSource)) {
       for (const child of s.getChildren()) {
         if (child instanceof ExpressionNode) {
           token = child.getFirstToken();
@@ -38,19 +39,8 @@ export class SQLCompare {
     }
 
     const sqlin = node.findDirectExpression(Expressions.SQLIn);
-    if (sqlin && sqlin.getChildren().length === 2) {
-      const insource = node.findFirstExpression(Expressions.SQLSource);
-      if (insource) {
-        const intype = new SQLSource().runSyntax(insource, input);
-        if (intype &&
-            !(intype instanceof VoidType) &&
-            !(intype instanceof UnknownType) &&
-            !(intype instanceof TableType)) {
-          const message = "IN, not a table";
-          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return;
-        }
-      }
+    if (sqlin) {
+      new SQLIn().runSyntax(sqlin, input);
     }
 
     const fieldName = node.findDirectExpression(Expressions.SQLFieldName)?.concatTokens();

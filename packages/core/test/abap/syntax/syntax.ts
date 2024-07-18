@@ -3025,7 +3025,9 @@ ENDCLASS.`;
   });
 
   it("DESCRIBE, variables not defined, expect error", () => {
-    const abap = `DESCRIBE FIELD act TYPE type1.`;
+    const abap = `
+    DATA type1 TYPE i.
+    DESCRIBE FIELD act TYPE type1.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });

@@ -12,10 +12,10 @@ import {SyntaxInput} from "../_syntax_input";
 export class Describe implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
-    for (const s of node.findAllExpressions(Expressions.Source)) {
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, input);
     }
-    for (const s of node.findAllExpressions(Expressions.FieldChain)) {
+    for (const s of node.findDirectExpressions(Expressions.FieldChain)) {
       new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
     }
 

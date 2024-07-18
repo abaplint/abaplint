@@ -19,7 +19,7 @@ export class Write implements StatementSyntax {
       second = node.getChildren()[2];
     }
 
-    for (const s of node.findAllExpressions(Expressions.Source)) {
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
       const type = new Source().runSyntax(s, input);
       if (s === second
           && new TypeUtils(input.scope).isCharLike(type) === false
@@ -30,7 +30,7 @@ export class Write implements StatementSyntax {
       }
     }
 
-    for (const s of node.findAllExpressions(Expressions.SimpleFieldChain2)) {
+    for (const s of node.findDirectExpression(Expressions.WriteOffsetLength)?.findDirectExpressions(Expressions.SimpleFieldChain2) || []) {
       new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
     }
 
