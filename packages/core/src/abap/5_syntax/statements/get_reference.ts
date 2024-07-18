@@ -5,7 +5,7 @@ import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {AnyType, DataReference} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class GetReference implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -17,7 +17,9 @@ export class GetReference implements StatementSyntax {
 // todo: error if inline field symbol
     if (inline) {
       if (type instanceof AnyType) {
-        throw new Error("GET REFERENCE generic and inline declaration not possible");
+        const message = "GET REFERENCE generic and inline declaration not possible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       new InlineData().runSyntax(inline, input, type ? new DataReference(type) : undefined);
     } else if (target) {

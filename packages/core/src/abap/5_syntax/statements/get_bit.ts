@@ -7,7 +7,7 @@ import {IntegerType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class GetBit implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -18,7 +18,9 @@ export class GetBit implements StatementSyntax {
     }
 
     if (lastType && new TypeUtils(input.scope).isHexLike(lastType) === false) {
-      throw new Error("Input must be byte-like");
+      const message = "Input must be byte-like";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {

@@ -3,7 +3,8 @@ import {StatementNode} from "../../nodes";
 import {IStructureComponent, StructureType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class IncludeType {
   public runSyntax(node: StatementNode, input: SyntaxInput): IStructureComponent[] | VoidType {
@@ -11,7 +12,7 @@ export class IncludeType {
 
     const iname = node.findFirstExpression(Expressions.TypeName);
     if (iname === undefined) {
-      throw new Error("IncludeType, unexpected node structure");
+      throw new AssertError("IncludeType, unexpected node structure");
     }
     const name = iname.getFirstToken().getStr();
 
@@ -53,7 +54,9 @@ export class IncludeType {
     } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
       return new VoidType(name);
     } else {
-      throw new Error("IncludeType, type not found \"" + iname.concatTokens() + "\"");
+      const message = "IncludeType, type not found \"" + iname.concatTokens() + "\"";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
     return components;

@@ -5,7 +5,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
 import {TypeUtils} from "../_type_utils";
 import {IntegerType} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Do implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -16,7 +16,9 @@ export class Do implements StatementSyntax {
       const type = new Source().runSyntax(s, input);
       if (s === afterDo
           && new TypeUtils(input.scope).isAssignable(type, IntegerType.get()) === false) {
-        throw new Error("DO TIMES must be numeric");
+        const message = "DO TIMES must be numeric";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 

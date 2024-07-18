@@ -9,7 +9,7 @@ import {AnyType, CharacterType, DataReference, StringType, TableType, UnknownTyp
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InsertInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -24,7 +24,9 @@ export class InsertInternal implements StatementSyntax {
         && !(targetType instanceof AnyType)
         && !(targetType instanceof UnknownType)
         && targetType !== undefined) {
-      throw new Error("INSERT target must be a table");
+      const message = "INSERT target must be a table";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (targetType instanceof TableType
         && node.findDirectTokenByText("LINES") === undefined) {
       targetType = targetType.getRowType();
@@ -41,7 +43,9 @@ export class InsertInternal implements StatementSyntax {
         && !(sourceType instanceof VoidType)
         && !(sourceType instanceof AnyType)
         && !(sourceType instanceof UnknownType)) {
-      throw new Error("INSERT target must be a table");
+      const message = "INSERT target must be a table";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const afterAssigning = node.findExpressionAfterToken("ASSIGNING");
@@ -56,10 +60,14 @@ export class InsertInternal implements StatementSyntax {
 
     if (node.findDirectTokenByText("INITIAL") === undefined) {
       if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType) === false) {
-        throw new Error("Types not compatible");
+        const message = "Types not compatible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       } else if (sourceType instanceof CharacterType && targetType instanceof StringType) {
         // yea, well, INSERT doesnt convert the values automatically, like everything else?
-        throw new Error("Types not compatible");
+        const message = "Types not compatible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
