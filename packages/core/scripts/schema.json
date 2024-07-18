@@ -1055,6 +1055,13 @@
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         },
+        "skipKeywords": {
+          "description": "list of keywords to skip, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "startParen": {
           "description": "Check for double space after start parenthesis",
           "type": "boolean"

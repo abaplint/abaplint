@@ -15,7 +15,7 @@ export class DoubleSpaceConf extends BasicRuleConfig {
   /** Check for double space after keywords */
   public keywords: boolean = true;
   /** list of keywords to skip, case insensitive */
-  public skipKeywords: string[] = ["CHANGING", "EXPORTING", "OTHERS"];
+  public skipKeywords?: string[] = ["CHANGING", "EXPORTING", "OTHERS"];
   /** Check for double space after start parenthesis */
   public startParen: boolean = true;
   /** Check for double space before end parenthesis */
@@ -183,7 +183,7 @@ export class DoubleSpace extends ABAPRule {
       if (prev instanceof TokenNodeRegex
           || upper === "("
           || upper === ")"
-          || this.getConfig().skipKeywords.some(e => e.toUpperCase() === upper)) {
+          || this.getConfig().skipKeywords?.some(e => e.toUpperCase() === upper)) {
         // not a keyword, continue
         prev = n;
         continue;
