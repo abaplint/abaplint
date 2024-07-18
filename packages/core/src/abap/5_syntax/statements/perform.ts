@@ -5,12 +5,13 @@ import {ReferenceType} from "../_reference";
 import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class Perform implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     if (!(node.get() instanceof Statements.Perform)) {
-      throw new Error("checkPerform unexpected node type");
+      throw new AssertError("checkPerform unexpected node type");
     }
 
     ////////////////////////////
@@ -52,7 +53,9 @@ export class Perform implements StatementSyntax {
 
     const found = input.scope.findFormDefinition(name);
     if (found === undefined) {
-      throw new Error("FORM definition \"" + name + "\" not found");
+      const message = "FORM definition \"" + name + "\" not found";
+      input.issues.push(syntaxIssue(input, expr.getFirstToken(), message));
+      return;
     }
 
     input.scope.addReference(expr.getFirstToken(), found, ReferenceType.FormReference, input.filename);

@@ -5,14 +5,16 @@ import {UnknownType, TableType, StructureType, CharacterType, VoidType, TableKey
 import {BasicTypes} from "../basic_types";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SelectOption implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
 
     if (nameToken && nameToken.getStr().length > 8) {
-      throw new Error("Select-option name too long, " + nameToken.getStr());
+      const message = "Select-option name too long, " + nameToken.getStr();
+      input.issues.push(syntaxIssue(input, nameToken, message));
+      return;
     }
 
     for(const d of node.findDirectExpressions(Expressions.Dynamic)) {

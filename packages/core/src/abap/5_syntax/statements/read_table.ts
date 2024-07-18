@@ -9,7 +9,7 @@ import {ComponentCompareSimple} from "../expressions/component_compare_simple";
 import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ReadTable implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -23,9 +23,13 @@ export class ReadTable implements StatementSyntax {
     const sourceType = firstSource ? new Source().runSyntax(firstSource, input) : undefined;
 
     if (sourceType === undefined) {
-      throw new Error("No source type determined, read table");
+      const message = "No source type determined, read table";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (!(sourceType instanceof TableType) && !(sourceType instanceof VoidType)) {
-      throw new Error("Read table, not a table type");
+      const message = "Read table, not a table type";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     let rowType: AbstractType = sourceType;
@@ -42,7 +46,9 @@ export class ReadTable implements StatementSyntax {
     if (indexSource) {
       const indexType = new Source().runSyntax(indexSource, input);
       if (new TypeUtils(input.scope).isAssignable(indexType, IntegerType.get()) === false) {
-        throw new Error("READ TABLE, INDEX must be simple");
+        const message = "READ TABLE, INDEX must be simple";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
@@ -50,7 +56,9 @@ export class ReadTable implements StatementSyntax {
     if (fromSource) {
       const fromType = new Source().runSyntax(fromSource, input);
       if (new TypeUtils(input.scope).isAssignable(fromType, rowType) === false) {
-        throw new Error("READ TABLE, FROM must be compatible");
+        const message = "READ TABLE, FROM must be compatible";
+        input.issues.push(syntaxIssue(input, fromSource.getFirstToken(), message));
+        return;
       }
     }
 
@@ -62,7 +70,9 @@ export class ReadTable implements StatementSyntax {
       const type = new Source().runSyntax(s, input);
       if (s === afterKey) {
         if (type instanceof StringType || type instanceof TableType || type instanceof ObjectReferenceType) {
-          throw new Error("Key cannot be string or table or reference");
+          const message = "Key cannot be string or table or reference";
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+          return;
         }
       }
     }
@@ -83,7 +93,9 @@ export class ReadTable implements StatementSyntax {
       } else if (t) {
         const targetType = new Target().runSyntax(t, input);
         if (new TypeUtils(input.scope).isAssignable(rowType, targetType) === false) {
-          throw new Error("Incompatible types");
+          const message = "Incompatible types";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
     }
@@ -91,7 +103,9 @@ export class ReadTable implements StatementSyntax {
     if (target === undefined && concat.includes(" TRANSPORTING NO FIELDS ") === false) {
       // if sourceType is void, assume its with header
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {
-        throw new Error("READ TABLE, define INTO or TRANSPORTING NO FIELDS");
+        const message = "READ TABLE, define INTO or TRANSPORTING NO FIELDS";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
@@ -101,7 +115,9 @@ export class ReadTable implements StatementSyntax {
         && !(rowType instanceof UnknownType)
         && !(rowType instanceof AnyType)) {
       if (!(rowType instanceof StructureType)) {
-        throw new Error("READ TABLE, source not structured");
+        const message = "READ TABLE, source not structured";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       for (const t of transporting?.findDirectExpressions(Expressions.FieldSub) || []) {
         const field = t.concatTokens();
@@ -110,7 +126,9 @@ export class ReadTable implements StatementSyntax {
           continue;
         }
         if (rowType.getComponentByName(field) === undefined) {
-          throw new Error("READ TABLE, field " + field + " not found in source");
+          const message = "READ TABLE, field " + field + " not found in source";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
     }

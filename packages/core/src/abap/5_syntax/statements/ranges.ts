@@ -5,6 +5,7 @@ import {StructureType, TableType, CharacterType, TableKeyType} from "../../types
 import {BasicTypes} from "../basic_types";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class Ranges implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput) {
@@ -12,7 +13,7 @@ export class Ranges implements StatementSyntax {
 
     const typeExpression = node.findFirstExpression(Expressions.FieldSub);
     if (typeExpression === undefined) {
-      throw new Error("Ranges, unexpected node");
+      throw new AssertError("Ranges, unexpected node");
     }
 
     const found = new BasicTypes(input).parseType(typeExpression);

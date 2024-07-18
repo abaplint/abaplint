@@ -9,7 +9,7 @@ import {RaiseWith} from "../expressions/raise_with";
 import {ObjectOriented} from "../_object_oriented";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "../expressions/method_parameters";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Raise implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -21,7 +21,7 @@ export class Raise implements StatementSyntax {
 
     const classTok = node.findDirectExpression(Expressions.ClassName)?.getFirstToken();
     const className = classTok?.getStr();
-    if (className) {
+    if (classTok && className) {
       const found = input.scope.existsObject(className);
       if (found?.id) {
         input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename);
@@ -33,7 +33,9 @@ export class Raise implements StatementSyntax {
         input.scope.addReference(classTok, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         method = new VoidType(className);
       } else {
-        throw new Error("RAISE, unknown class " + className);
+        const message = "RAISE, unknown class " + className;
+        input.issues.push(syntaxIssue(input, classTok, message));
+        return;
       }
 
       if (method === undefined) {
@@ -50,7 +52,9 @@ export class Raise implements StatementSyntax {
         const def = input.scope.findObjectDefinition(type.getIdentifierName());
         method = helper.searchMethodName(def, "CONSTRUCTOR")?.method;
       } else if (type !== undefined) {
-        throw new Error("RAISE EXCEPTION, must be object reference, got " + type.constructor.name);
+        const message = "RAISE EXCEPTION, must be object reference, got " + type.constructor.name;
+        input.issues.push(syntaxIssue(input, c.getFirstToken(), message));
+        return;
       }
     }
 

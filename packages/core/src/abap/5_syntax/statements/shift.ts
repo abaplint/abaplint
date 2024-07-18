@@ -4,7 +4,7 @@ import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Shift implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -15,17 +15,23 @@ export class Shift implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.Target);
     if (target === undefined) {
-      throw new Error("Shift, Target not found");
+      const message = "Shift, Target not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const targetType = new Target().runSyntax(target, input);
     if (node.concatTokens().toUpperCase().includes(" IN BYTE MODE")) {
       if (new TypeUtils(input.scope).isHexLike(targetType) === false) {
-        throw new Error("Shift, Target not hex like");
+        const message = "Shift, Target not hex like";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     } else {
       if (new TypeUtils(input.scope).isCharLike(targetType) === false) {
-        throw new Error("Shift, Target not char like");
+        const message = "Shift, Target not char like";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
