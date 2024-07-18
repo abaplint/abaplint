@@ -11,7 +11,7 @@ import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -35,24 +35,34 @@ export class Loop implements StatementSyntax {
 
     const concat = node.concatTokens().toUpperCase();
     if (sourceType === undefined) {
-      throw new Error("No source type determined");
+      const message = "No source type determined";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (sourceType instanceof UnknownType) {
-      throw new Error("Loop, not a table type, " + sourceType.getError());
+      const message = "Loop, not a table type, " + sourceType.getError();
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (sourceType instanceof TableType
         && target === undefined
         && sourceType.isWithHeader() === false
         && node.getChildren().length === 4) {
-      throw new Error("Loop, no header line");
+      const message = "Loop, no header line";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (!(sourceType instanceof TableType)
         && !(sourceType instanceof AnyType)
         && !(sourceType instanceof DataType)
         && !(sourceType instanceof VoidType)
         && concat.startsWith("LOOP AT GROUP ") === false) {
-      throw new Error("Loop, not a table type");
+      const message = "Loop, not a table type";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (loopTarget === undefined
         && sourceType instanceof TableType
         && sourceType.isWithHeader() === false) {
-      throw new Error("Loop, no header");
+      const message = "Loop, no header";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const targetConcat = loopTarget?.concatTokens().toUpperCase();
@@ -67,7 +77,9 @@ export class Loop implements StatementSyntax {
     if (targetConcat
         && targetConcat.startsWith("TRANSPORTING ")
         && node.findDirectTokenByText("WHERE") === undefined) {
-      throw new Error("Loop, TRANSPORTING NO FIELDS only with WHERE");
+      const message = "Loop, TRANSPORTING NO FIELDS only with WHERE";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const inline = target?.findDirectExpression(Expressions.InlineData);

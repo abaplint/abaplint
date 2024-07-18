@@ -6,7 +6,7 @@ import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Move implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -29,7 +29,9 @@ export class Move implements StatementSyntax {
     const source = node.findDirectExpression(Expressions.Source);
     const sourceType = source ? new Source().runSyntax(source, input, targetType) : undefined;
     if (sourceType === undefined) {
-      throw new Error("No source type determined");
+      const message = "No source type determined";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     if (inline) {
@@ -39,10 +41,14 @@ export class Move implements StatementSyntax {
 
     if (node.findDirectTokenByText("?=")) {
       if (new TypeUtils(input.scope).isCastable(sourceType, targetType) === false) {
-        throw new Error("Incompatible types");
+        const message = "Incompatible types";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     } else if (new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
-      throw new Error("Incompatible types");
+      const message = "Incompatible types";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
   }
 }

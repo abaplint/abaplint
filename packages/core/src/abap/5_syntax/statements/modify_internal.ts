@@ -6,7 +6,7 @@ import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {ComponentCond} from "../expressions/component_cond";
 import {AnyType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ModifyInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -30,15 +30,21 @@ export class ModifyInternal implements StatementSyntax {
             && node.findDirectTokenByText("INDEX")
             && targetType.isWithHeader() === false) {
           // MODIFY TABLE INDEX
-          throw new Error("Table does not have header line");
+          const message = "Table does not have header line";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       } else if (targetType instanceof StructureType) {
         // it might originate from a TABLES statement
         if (target.concatTokens().toUpperCase() !== targetType.getDDICName()) {
-          throw new Error("Not an internal table");
+          const message = "Not an internal table";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       } else {
-        throw new Error("Not an internal table");
+        const message = "Not an internal table";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 

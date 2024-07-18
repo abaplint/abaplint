@@ -5,7 +5,7 @@ import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {Version} from "../../../version";
 import {TableType} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MoveCorresponding implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -13,7 +13,9 @@ export class MoveCorresponding implements StatementSyntax {
     const s = node.findDirectExpression(Expressions.Source);
     const t = node.findDirectExpression(Expressions.SimpleTarget);
     if (s === undefined || t === undefined) {
-      throw new Error("MoveCorresponding, source or target not found");
+      const message = "MoveCorresponding, source or target not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const sourceType = new Source().runSyntax(s, input);
@@ -21,9 +23,13 @@ export class MoveCorresponding implements StatementSyntax {
 
     if (input.scope.getVersion() < Version.v740sp05 && input.scope.getVersion() !== Version.Cloud) {
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {
-        throw new Error("MOVE-CORRESPONDING with tables possible from v740sp05");
+        const message = "MOVE-CORRESPONDING with tables possible from v740sp05";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       } else if (targetType instanceof TableType && targetType.isWithHeader() === false) {
-        throw new Error("MOVE-CORRESPONDING with tables possible from v740sp05");
+        const message = "MOVE-CORRESPONDING with tables possible from v740sp05";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
   }
