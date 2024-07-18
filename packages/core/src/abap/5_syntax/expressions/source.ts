@@ -23,7 +23,8 @@ import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 /*
 * Type interference, valid scenarios:
@@ -115,7 +116,9 @@ export class Source {
           const foundType = this.determineType(node, input, targetType);
           const bodyType = new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
           if (new TypeUtils(input.scope).isAssignable(foundType, bodyType) === false) {
-            throw new Error("CONV: Types not compatible");
+            const message = "CONV: Types not compatible";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
           this.addIfInferred(node, input, foundType);
           return foundType;
@@ -186,7 +189,9 @@ export class Source {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
         context = new MethodCallChain().runSyntax(first, input, targetType);
         if (context === undefined) {
-          throw new Error("Method has no RETURNING value");
+          const message = "Method has no RETURNING value";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
         context = new FieldChain().runSyntax(first, input, type);
@@ -222,7 +227,9 @@ export class Source {
             && !(context instanceof XGenericType)
             && !(context instanceof XSequenceType)
             && !(context instanceof UnknownType)) {
-          throw new Error("Operator only valid for XSTRING or HEX");
+          const message = "Operator only valid for XSTRING or HEX";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
         if (hexNext === false) {
           hexExpected = false;
@@ -300,7 +307,7 @@ export class Source {
     const typeName = typeToken?.getStr();
 
     if (typeExpression === undefined) {
-      throw new Error("determineType, child TypeNameOrInfer not found");
+      throw new AssertError("determineType, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
       return targetType;
     }
@@ -317,7 +324,9 @@ export class Source {
           return found;
         }
       } else if (found === undefined) {
-        throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
+        const message = "Type \"" + typeName + "\" not found in scope, VALUE";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
       return found;
     }

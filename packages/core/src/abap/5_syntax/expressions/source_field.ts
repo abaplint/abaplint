@@ -1,13 +1,15 @@
 import {ExpressionNode} from "../../nodes";
+import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput} from "../_syntax_input";
 
 export class SourceField {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[]) {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[]): AbstractType {
     const token = node.getFirstToken();
     const name = token.getStr();
     const found = input.scope.findVariable(name);
     if (found === undefined) {
+      // TODOSYNTAX, catch in method_source
       throw new Error("\"" + name + "\" not found, findTop");
     }
     if (type) {
