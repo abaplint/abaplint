@@ -14,7 +14,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {SQLOrderBy} from "./sql_order_by";
 import {Dynamic} from "./dynamic";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -26,16 +26,20 @@ export class Select {
     const from = node.findDirectExpression(Expressions.SQLFrom);
     const dbSources = from ? new SQLFrom().runSyntax(from, input) : [];
     if (from === undefined) {
-      throw new Error(`Missing FROM`);
+      const message = `Missing FROM`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const fields = this.findFields(node, input);
     if (fields.length === 0
         && node.findDirectExpression(Expressions.SQLFieldListLoop) === undefined) {
-      throw new Error(`fields missing`);
+      const message = `fields missing`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
-    this.checkFields(fields, dbSources, input.scope);
+    this.checkFields(fields, dbSources, input, node);
 
     this.handleInto(node, input, fields, dbSources);
 
@@ -63,7 +67,9 @@ export class Select {
           if (found) {
             input.scope.addReference(nameToken.getFirstToken(), found, ReferenceType.DataWriteReference, input.filename);
           } else {
-            throw new Error(`Target variable ${nameToken.concatTokens()} not found in scope`);
+            const message = `Target variable ${nameToken.concatTokens()} not found in scope`;
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
           }
         }
       }
@@ -119,7 +125,9 @@ export class Select {
       const isDynamic = fields.length === 1 && fields[0].expression.findDirectExpression(Expressions.Dynamic) !== undefined;
       const targets = intoList.findDirectExpressions(Expressions.SQLTarget);
       if (targets.length !== fields.length && isDynamic !== true) {
-        throw new Error(`number of fields selected vs list does not match`);
+        const message = `number of fields selected vs list does not match`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
 
       for (let i = 0; i < targets.length; i++) {
@@ -129,7 +137,9 @@ export class Select {
         const inline = target.findFirstExpression(Expressions.InlineData);
         if (inline) {
           if (isDynamic) {
-            throw new Error(`dynamic field list, inlining not possible`);
+            const message = `dynamic field list, inlining not possible`;
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
           }
 
           let type: AbstractType = new VoidType("SELECT_todo");
@@ -156,7 +166,7 @@ export class Select {
     }
   }
 
-  private checkFields(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
+  private checkFields(fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput, node: ExpressionNode) {
     if (dbSources.length > 1) {
       return;
     }
@@ -167,12 +177,14 @@ export class Select {
       return;
     }
 
-    const type = first.parseType(scope.getRegistry());
+    const type = first.parseType(input.scope.getRegistry());
     if (type instanceof VoidType || type instanceof UnknownType) {
       return;
     }
     if (!(type instanceof StructureType)) {
-      throw new Error("checkFields, expected structure, " + type.constructor.name);
+      const message = "checkFields, expected structure, " + type.constructor.name;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     for (const field of fields) {
@@ -181,7 +193,9 @@ export class Select {
       }
 
       if (isSimple.test(field.code) && type.getComponentByName(field.code) === undefined) {
-        throw new Error(`checkFields, field ${field.code} not found`);
+        const message = `checkFields, field ${field.code} not found`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
   }
