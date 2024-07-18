@@ -1,18 +1,18 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {InlineData} from "../expressions/inline_data";
 import {StringType, StructureType, IntegerType, TableType, TableKeyType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Find implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     const rfound = node.findExpressionAfterToken("RESULTS");
@@ -27,32 +27,32 @@ export class Find implements StatementSyntax {
         {name: "SUBMATCHES", type: new TableType(sub, {withHeader: false, keyType: TableKeyType.default})},
       ], "MATCH_RESULT", "MATCH_RESULT");
       if (node.concatTokens().toUpperCase().startsWith("FIND FIRST")) {
-        this.inline(rfound, scope, filename, type);
+        this.inline(rfound, input, type);
       } else {
-        this.inline(rfound, scope, filename, new TableType(type, {withHeader: false, keyType: TableKeyType.default}, "MATCH_RESULT_TAB"));
+        this.inline(rfound, input, new TableType(type, {withHeader: false, keyType: TableKeyType.default}, "MATCH_RESULT_TAB"));
       }
     }
 
     const ofound = node.findExpressionsAfterToken("OFFSET");
     for (const o of ofound) {
       if (o.get() instanceof Expressions.Target) {
-        this.inline(o, scope, filename, IntegerType.get());
+        this.inline(o, input, IntegerType.get());
       }
     }
 
     const lfound = node.findExpressionAfterToken("LINE");
     if (lfound && lfound.get() instanceof Expressions.Target) {
-      this.inline(lfound, scope, filename, IntegerType.get());
+      this.inline(lfound, input, IntegerType.get());
     }
 
     const cfound = node.findExpressionAfterToken("COUNT");
     if (cfound && cfound.get() instanceof Expressions.Target) {
-      this.inline(cfound, scope, filename, IntegerType.get());
+      this.inline(cfound, input, IntegerType.get());
     }
 
     const lnfound = node.findExpressionAfterToken("LENGTH");
     if (lnfound && lnfound.get() instanceof Expressions.Target) {
-      this.inline(lnfound, scope, filename, IntegerType.get());
+      this.inline(lnfound, input, IntegerType.get());
     }
 
     if (node.findDirectTokenByText("SUBMATCHES")) {
@@ -64,9 +64,9 @@ export class Find implements StatementSyntax {
         }
         const inline = t?.findDirectExpression(Expressions.InlineData);
         if (inline) {
-          new InlineData().runSyntax(inline, scope, filename, StringType.get());
+          new InlineData().runSyntax(inline, input, StringType.get());
         } else {
-          new Target().runSyntax(t, scope, filename);
+          new Target().runSyntax(t, input);
         }
       }
     }
@@ -74,12 +74,12 @@ export class Find implements StatementSyntax {
 
 /////////////////////
 
-  private inline(node: ExpressionNode, scope: CurrentScope, filename: string, type: AbstractType): void {
+  private inline(node: ExpressionNode, input: SyntaxInput, type: AbstractType): void {
     const inline = node.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, type);
+      new InlineData().runSyntax(inline, input, type);
     } else {
-      new Target().runSyntax(node, scope, filename);
+      new Target().runSyntax(node, input);
     }
   }
 

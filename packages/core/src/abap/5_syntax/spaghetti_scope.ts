@@ -6,6 +6,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope} from "./_spaghetti_scope";
 import {ReferenceType} from "./_reference";
+import {AssertError} from "./assert_error";
 
 abstract class ScopeData {
   private readonly data: IScopeData;
@@ -65,7 +66,7 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
 
   public calcCoverage(): {start: Position, end: Position} {
     if (this.identifier.end === undefined) {
-      throw new Error("internal error, caclCoverage");
+      throw new AssertError("internal error, caclCoverage");
     }
     return {start: this.identifier.start, end: this.identifier.end};
   }

@@ -1,5 +1,4 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {For} from "./for";
 import {Source} from "./source";
@@ -9,12 +8,12 @@ import {UnknownType} from "../../types/basic/unknown_type";
 import {ReduceNext} from "./reduce_next";
 import {Let} from "./let";
 import {ScopeType} from "../_scope_type";
+import {SyntaxInput} from "../_syntax_input";
 
 export class ReduceBody {
   public runSyntax(
     node: ExpressionNode | undefined,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     targetType: AbstractType | undefined): AbstractType | undefined {
 
     if (node === undefined) {
@@ -24,23 +23,23 @@ export class ReduceBody {
     let scoped = false;
     const letNode = node.findDirectExpression(Expressions.Let);
     if (letNode) {
-      scoped = new Let().runSyntax(letNode, scope, filename);
+      scoped = new Let().runSyntax(letNode, input);
     }
 
     let first: AbstractType | undefined = undefined;
     for (const i of node.findDirectExpressions(Expressions.InlineFieldDefinition)) {
       if (scoped === false) {
-        scope.push(ScopeType.Let, "LET", node.getFirstToken().getStart(), filename);
+        input.scope.push(ScopeType.Let, "LET", node.getFirstToken().getStart(), input.filename);
         scoped = true;
       }
 
       let foundType = targetType;
       const source = i.findDirectExpression(Expressions.Source);
       if (source) {
-        foundType = new Source().runSyntax(source, scope, filename, targetType);
+        foundType = new Source().runSyntax(source, input, targetType);
       }
 
-      const found = new InlineFieldDefinition().runSyntax(i, scope, filename, foundType);
+      const found = new InlineFieldDefinition().runSyntax(i, input, foundType);
       if (found && first === undefined) {
         first = found;
       }
@@ -48,26 +47,26 @@ export class ReduceBody {
 
     let forScopes = 0;
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
-      const scoped = new For().runSyntax(forNode, scope, filename);
+      const scoped = new For().runSyntax(forNode, input);
       if (scoped === true) {
         forScopes++;
       }
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.ReduceNext)) {
-      new ReduceNext().runSyntax(s, scope, filename);
+      new ReduceNext().runSyntax(s, input);
     }
 
     if (scoped === true) {
-      scope.pop(node.getLastToken().getEnd());
+      input.scope.pop(node.getLastToken().getEnd());
     }
 
     for (let i = 0; i < forScopes; i++) {
-      scope.pop(node.getLastToken().getEnd());
+      input.scope.pop(node.getLastToken().getEnd());
     }
 
     if (first) {

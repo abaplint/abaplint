@@ -1,12 +1,12 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
+import {SyntaxInput} from "../_syntax_input";
 
 export class MessageSource {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string) {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput) {
     for (const f of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(f, scope, filename);
+      new Source().runSyntax(f, input);
     }
 
     if (node.getFirstToken().getStr().toUpperCase() === "ID") {
@@ -20,14 +20,14 @@ export class MessageSource {
       }
       if (id?.startsWith("'") && number) {
         const messageClass = id.substring(1, id.length - 1).toUpperCase();
-        scope.getMSAGReferences().addUsing(filename, node.getFirstToken(), messageClass, number);
+        input.scope.getMSAGReferences().addUsing(input.filename, node.getFirstToken(), messageClass, number);
       }
     } else {
       const typeAndNumber = node.findDirectExpression(Expressions.MessageTypeAndNumber)?.concatTokens();
       const messageNumber = typeAndNumber?.substring(1);
       const messageClass = node.findDirectExpression(Expressions.MessageClass)?.concatTokens().toUpperCase();
       if (messageNumber && messageClass) {
-        scope.getMSAGReferences().addUsing(filename, node.getFirstToken(), messageClass, messageNumber);
+        input.scope.getMSAGReferences().addUsing(input.filename, node.getFirstToken(), messageClass, messageNumber);
       }
     }
   }

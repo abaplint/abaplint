@@ -1,13 +1,13 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Cond} from "../expressions/cond";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Check implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(s, scope, filename);
+      new Cond().runSyntax(s, input);
     }
   }
 }

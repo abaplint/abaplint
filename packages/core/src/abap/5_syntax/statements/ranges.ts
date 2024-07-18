@@ -1,21 +1,22 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {StructureType, TableType, CharacterType, TableKeyType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class Ranges implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string) {
+  public runSyntax(node: StatementNode, input: SyntaxInput) {
     const nameToken = node.findFirstExpression(Expressions.SimpleName)?.getFirstToken();
 
     const typeExpression = node.findFirstExpression(Expressions.FieldSub);
     if (typeExpression === undefined) {
-      throw new Error("Ranges, unexpected node");
+      throw new AssertError("Ranges, unexpected node");
     }
 
-    const found = new BasicTypes(filename, scope).parseType(typeExpression);
+    const found = new BasicTypes(input).parseType(typeExpression);
     if (found && nameToken) {
       const structure = new StructureType([
         {name: "sign", type: new CharacterType(1)},
@@ -24,8 +25,8 @@ export class Ranges implements StatementSyntax {
         {name: "high", type: found},
       ]);
       const type = new TableType(structure, {withHeader: true, keyType: TableKeyType.default});
-      const id = new TypedIdentifier(nameToken, filename, type);
-      scope.addIdentifier(id);
+      const id = new TypedIdentifier(nameToken, input.filename, type);
+      input.scope.addIdentifier(id);
     }
   }
 }

@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
@@ -11,9 +10,10 @@ import {StatementSyntax} from "../_statement_syntax";
 import {IClassDefinition} from "../../types/_class_definition";
 import {ObjectOriented} from "../_object_oriented";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class CreateObject implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     let cdef: IClassDefinition | undefined = undefined;
 
@@ -22,75 +22,91 @@ export class CreateObject implements StatementSyntax {
     if (type && type.get() instanceof Expressions.ClassName) {
       const token = type.getFirstToken();
       const name = token.getStr();
-      cdef = scope.findClassDefinition(name);
+      cdef = input.scope.findClassDefinition(name);
       if (cdef) {
-        scope.addReference(token, cdef, ReferenceType.ObjectOrientedReference, filename);
+        input.scope.addReference(token, cdef, ReferenceType.ObjectOrientedReference, input.filename);
         if (cdef.isAbstract() === true) {
-          throw new Error(cdef.getName() + " is abstract, cannot be instantiated");
+          const message = cdef.getName() + " is abstract, cannot be instantiated";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
-      } else if (scope.getDDIC().inErrorNamespace(name) === false) {
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, {ooName: name, ooType: "CLAS"});
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name, ooType: "CLAS"});
       } else {
-        throw new Error("TYPE \"" + name + "\" not found");
+        const message = "TYPE \"" + name + "\" not found";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
     // just recurse
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     let first = true;
     for (const t of node.findAllExpressions(Expressions.Target)) {
-      const found = new Target().runSyntax(t, scope, filename);
+      const found = new Target().runSyntax(t, input);
       if (first === true) {
         first = false;
         if (found instanceof VoidType) {
           continue;
         } else if (found instanceof UnknownType) {
-          throw new Error("Target type unknown, " + t.concatTokens());
+          const message = "Target type unknown, " + t.concatTokens();
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         } else if (!(found instanceof ObjectReferenceType)
             && !(found instanceof AnyType)
             && !(found instanceof DataType)
             && !(found instanceof GenericObjectReferenceType)) {
-          throw new Error("Target must be an object reference, " + t.concatTokens());
+          const message = "Target must be an object reference, " + t.concatTokens();
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         } else if (found instanceof GenericObjectReferenceType && type === undefined) {
-          throw new Error("Generic type, cannot be instantiated");
+          const message = "Generic type, cannot be instantiated";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         } else if (found instanceof ObjectReferenceType) {
           const id = found.getIdentifier();
           if (id instanceof InterfaceDefinition && type === undefined) {
-            throw new Error("Interface reference, cannot be instantiated");
+            const message = "Interface reference, cannot be instantiated";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
           } else if (found instanceof ObjectReferenceType
               && type === undefined
-              && scope.findInterfaceDefinition(found.getQualifiedName())) {
-            throw new Error("Interface reference, cannot be instantiated");
+              && input.scope.findInterfaceDefinition(found.getQualifiedName())) {
+            const message = "Interface reference, cannot be instantiated";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
           } else if (id instanceof ClassDefinition && cdef === undefined) {
             cdef = id;
           }
           if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
-            throw new Error(id.getName() + " is abstract, cannot be instantiated");
+            const message = id.getName() + " is abstract, cannot be instantiated";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
           }
         }
       }
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(t, scope, filename);
+      new Dynamic().runSyntax(t, input);
     }
 
-    this.validateParameters(cdef, node, scope, filename);
+    this.validateParameters(cdef, node, input);
   }
 
-  private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, scope: CurrentScope, filename: string) {
+  private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, input: SyntaxInput): void {
     if (cdef === undefined) {
       const sources = node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.Source);
       for (const s of sources || []) {
-        new Source().runSyntax(s, scope, filename);
+        new Source().runSyntax(s, input);
       }
       return;
     }
 
-    const methodDef = new ObjectOriented(scope).searchMethodName(cdef, "CONSTRUCTOR");
+    const methodDef = new ObjectOriented(input.scope).searchMethodName(cdef, "CONSTRUCTOR");
     const methodParameters = methodDef.method?.getParameters();
 
     const allImporting = methodParameters?.getImporting() || [];
@@ -103,7 +119,7 @@ export class CreateObject implements StatementSyntax {
       }
 
       const source = p.findDirectExpression(Expressions.Source);
-      const sourceType = new Source().runSyntax(source, scope, filename);
+      const sourceType = new Source().runSyntax(source, input);
 
       const calculated = source?.findFirstExpression(Expressions.MethodCallChain) !== undefined
         || source?.findFirstExpression(Expressions.StringTemplate) !== undefined
@@ -111,16 +127,22 @@ export class CreateObject implements StatementSyntax {
 
       const found = allImporting?.find(p => p.getName().toUpperCase() === name);
       if (found === undefined) {
-        throw new Error(`constructor parameter "${name}" does not exist`);
-      } else if (new TypeUtils(scope).isAssignableStrict(sourceType, found.getType(), calculated) === false) {
-        throw new Error(`constructor parameter "${name}" type not compatible`);
+        const message = `constructor parameter "${name}" does not exist`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, found.getType(), calculated) === false) {
+        const message = `constructor parameter "${name}" type not compatible`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
 
       requiredImporting.delete(name);
     }
 
     for (const r of requiredImporting.values()) {
-      throw new Error(`constructor parameter "${r}" must be supplied`);
+      const message = `constructor parameter "${r}" must be supplied`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
   }
 }

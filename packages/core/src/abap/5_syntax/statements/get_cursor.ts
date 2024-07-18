@@ -1,14 +1,14 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class GetCursor implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const t of node.findAllExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, scope, filename);
+      new Target().runSyntax(t, input);
     }
 
   }

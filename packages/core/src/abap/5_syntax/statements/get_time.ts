@@ -1,20 +1,20 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {InlineData} from "../expressions/inline_data";
 import {PackedType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class GetTime implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const target = node.findDirectExpression(Expressions.Target);
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, new PackedType(8, 0));
+      new InlineData().runSyntax(inline, input, new PackedType(8, 0));
     } else if (target) {
-      new Target().runSyntax(target, scope, filename);
+      new Target().runSyntax(target, input);
     }
 
   }

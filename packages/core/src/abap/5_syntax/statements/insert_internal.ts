@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {InlineFS} from "../expressions/inline_fs";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
@@ -10,21 +9,24 @@ import {AnyType, CharacterType, DataReference, StringType, TableType, UnknownTyp
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InsertInternal implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     let targetType: AbstractType | undefined;
     const t = node.findDirectExpression(Expressions.Target);
     if (t) {
-      targetType = new Target().runSyntax(t, scope, filename);
+      targetType = new Target().runSyntax(t, input);
     }
     if (!(targetType instanceof TableType)
         && !(targetType instanceof VoidType)
         && !(targetType instanceof AnyType)
         && !(targetType instanceof UnknownType)
         && targetType !== undefined) {
-      throw new Error("INSERT target must be a table");
+      const message = "INSERT target must be a table";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (targetType instanceof TableType
         && node.findDirectTokenByText("LINES") === undefined) {
       targetType = targetType.getRowType();
@@ -34,32 +36,38 @@ export class InsertInternal implements StatementSyntax {
     if (source === undefined) {
       source = node.findDirectExpression(Expressions.Source);
     }
-    const sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : targetType;
+    const sourceType = source ? new Source().runSyntax(source, input, targetType) : targetType;
 
     if (targetType === undefined
         && !(sourceType instanceof TableType)
         && !(sourceType instanceof VoidType)
         && !(sourceType instanceof AnyType)
         && !(sourceType instanceof UnknownType)) {
-      throw new Error("INSERT target must be a table");
+      const message = "INSERT target must be a table";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const afterAssigning = node.findExpressionAfterToken("ASSIGNING");
     if (afterAssigning?.get() instanceof Expressions.FSTarget) {
       const inlinefs = afterAssigning?.findDirectExpression(Expressions.InlineFS);
       if (inlinefs) {
-        new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
+        new InlineFS().runSyntax(inlinefs, input, sourceType);
       } else {
-        new FSTarget().runSyntax(afterAssigning, scope, filename, sourceType);
+        new FSTarget().runSyntax(afterAssigning, input, sourceType);
       }
     }
 
     if (node.findDirectTokenByText("INITIAL") === undefined) {
-      if (new TypeUtils(scope).isAssignableStrict(sourceType, targetType) === false) {
-        throw new Error("Types not compatible");
+      if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType) === false) {
+        const message = "Types not compatible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       } else if (sourceType instanceof CharacterType && targetType instanceof StringType) {
         // yea, well, INSERT doesnt convert the values automatically, like everything else?
-        throw new Error("Types not compatible");
+        const message = "Types not compatible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
@@ -67,9 +75,9 @@ export class InsertInternal implements StatementSyntax {
     if (afterInto?.get() instanceof Expressions.Target && sourceType) {
       const inline = afterInto.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(afterInto, scope, filename, new DataReference(sourceType));
+        new InlineData().runSyntax(afterInto, input, new DataReference(sourceType));
       } else {
-        new Target().runSyntax(afterInto, scope, filename);
+        new Target().runSyntax(afterInto, input);
       }
     }
 
@@ -77,7 +85,7 @@ export class InsertInternal implements StatementSyntax {
       if (s === source) {
         continue;
       }
-      new Source().runSyntax(s, scope, filename, targetType);
+      new Source().runSyntax(s, input, targetType);
     }
 
   }

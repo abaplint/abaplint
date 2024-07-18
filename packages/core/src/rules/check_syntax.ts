@@ -6,6 +6,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
 import {RuleTag, IRuleMetadata, IRule} from "./_irule";
 import {Severity} from "../severity";
+import {CheckSyntaxKey} from "../abap/5_syntax/_syntax_input";
 
 export class CheckSyntaxConf extends BasicRuleConfig {
 }
@@ -16,7 +17,7 @@ export class CheckSyntax implements IRule {
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "check_syntax",
+      key: CheckSyntaxKey,
       title: "Check syntax",
       shortDescription: `Enables syntax check and variable resolution`,
       tags: [RuleTag.Syntax],

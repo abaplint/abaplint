@@ -1,20 +1,20 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {StructureType, CharacterType, IntegerType, TableType, TableKeyType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Controls implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     const name = node.findDirectExpression(Expressions.NamespaceSimpleName);
     const token = name?.getFirstToken();
 
     if (node.findDirectTokenByText("TABSTRIP") && token) {
       const type = new StructureType([{name: "ACTIVETAB", type: new CharacterType(132)}]);
-      const id = new TypedIdentifier(token, filename, type);
-      scope.addIdentifier(id);
+      const id = new TypedIdentifier(token, input.filename, type);
+      input.scope.addIdentifier(id);
     }
 
     if (node.findDirectTokenByText("TABLEVIEW") && token) {
@@ -39,8 +39,8 @@ export class Controls implements StatementSyntax {
         {name: "COLS", type: new TableType(cols, {withHeader: false, keyType: TableKeyType.default})},
         {name: "INVISIBLE", type: new CharacterType(1)},
       ]);
-      const id = new TypedIdentifier(token, filename, type);
-      scope.addIdentifier(id);
+      const id = new TypedIdentifier(token, input.filename, type);
+      input.scope.addIdentifier(id);
     }
 
   }

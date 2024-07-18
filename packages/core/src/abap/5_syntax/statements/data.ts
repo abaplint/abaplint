@@ -1,26 +1,29 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {DataDefinition} from "../expressions/data_definition";
 import {UnknownType} from "../../types/basic/unknown_type";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {VoidType} from "../../types/basic";
 
 export class Data {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier | undefined {
 
     const name = node.findFirstExpression(Expressions.DefinitionName);
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
-      const id = new DataDefinition().runSyntax(dd, scope, filename);
+      const id = new DataDefinition().runSyntax(dd, input);
       if (id?.getType().isGeneric() === true
           && id?.getType().containsVoid() === false) {
-        throw new Error("DATA definition cannot be generic, " + name?.concatTokens());
+        const message = "DATA definition cannot be generic, " + name?.concatTokens();
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new TypedIdentifier(id.getToken(), input.filename, new VoidType(CheckSyntaxKey));
       }
       return id;
     }
 
     if (name) {
-      return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType("data, fallback"));
+      return new TypedIdentifier(name.getFirstToken(), input.filename, new UnknownType("data, fallback"));
     }
 
     return undefined;

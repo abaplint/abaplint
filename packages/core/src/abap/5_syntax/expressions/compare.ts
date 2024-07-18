@@ -1,23 +1,23 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "./source";
 import {MethodCallChain} from "./method_call_chain";
 import {SourceFieldSymbol} from "./source_field_symbol";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Compare {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): void {
 
     for (const t of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(t, scope, filename);
+      new Source().runSyntax(t, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.SourceFieldSymbol)) {
-      new SourceFieldSymbol().runSyntax(t, scope, filename);
+      new SourceFieldSymbol().runSyntax(t, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.MethodCallChain)) {
-      new MethodCallChain().runSyntax(t, scope, filename);
+      new MethodCallChain().runSyntax(t, input);
     }
 
   }

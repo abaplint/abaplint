@@ -1,5 +1,4 @@
 import {ExpressionNode, TokenNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType, ObjectReferenceType} from "../../types/basic";
@@ -14,23 +13,25 @@ import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {ClassDefinition} from "../../types/class_definition";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodCallChain {
   public runSyntax(
     node: ExpressionNode,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     targetType?: AbstractType): AbstractType | undefined {
 
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
     const children = node.getChildren().slice();
 
     const first = children.shift();
     if (first === undefined) {
-      throw new Error("MethodCallChain, first child expected");
+      const message = "MethodCallChain, first child expected";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
 
-    let context: AbstractType | undefined = this.findTop(first, scope, targetType, filename);
+    let context: AbstractType | undefined = this.findTop(first, input, targetType);
     if (first.get() instanceof Expressions.MethodCall) {
       children.unshift(first);
     }
@@ -47,35 +48,39 @@ export class MethodCallChain {
         const className = context instanceof ObjectReferenceType ? context.getIdentifierName() : undefined;
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
         const methodName = methodToken?.getStr();
-        const def = scope.findObjectDefinition(className);
+        const def = input.scope.findObjectDefinition(className);
         // eslint-disable-next-line prefer-const
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
         if (method === undefined && current === first) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
           if (method) {
-            scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename);
+            input.scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, input.filename);
           }
         } else {
           if (previous && previous.getFirstToken().getStr() === "=>" && method?.isStatic() === false) {
-            throw new Error("Method \"" + methodName + "\" not static");
+            const message = "Method \"" + methodName + "\" not static";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
           const extra: IReferenceExtras = {
             ooName: foundDef?.getName(),
             ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
-          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, extra);
+          input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);
         }
         if (methodName?.includes("~")) {
           const name = methodName.split("~")[0];
-          const idef = scope.findInterfaceDefinition(name);
+          const idef = input.scope.findInterfaceDefinition(name);
           if (idef) {
-            scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, filename);
+            input.scope.addReference(methodToken, idef, ReferenceType.ObjectOrientedReference, input.filename);
           }
         }
 
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
-          throw new Error("Method \"" + methodName + "\" not found, methodCallChain");
+          const message = "Method \"" + methodName + "\" not found, methodCallChain";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         } else if (method) {
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;
@@ -83,14 +88,14 @@ export class MethodCallChain {
 
         const param = current.findDirectExpression(Expressions.MethodCallParam);
         if (param && method) {
-          new MethodCallParam().runSyntax(param, scope, method, filename);
+          new MethodCallParam().runSyntax(param, input, method);
         } else if (param && context instanceof VoidType) {
-          new MethodCallParam().runSyntax(param, scope, context, filename);
+          new MethodCallParam().runSyntax(param, input, context);
         }
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
-        context = new ComponentName().runSyntax(context, current);
+        context = new ComponentName().runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope, filename);
+        context = new AttributeName().runSyntax(context, current, input);
       }
 
       previous = current;
@@ -101,28 +106,30 @@ export class MethodCallChain {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType | undefined {
+  private findTop(first: INode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const token = first.getFirstToken();
       const className = token.getStr();
-      const classDefinition = scope.findObjectDefinition(className);
-      if (classDefinition === undefined && scope.getDDIC().inErrorNamespace(className) === false) {
+      const classDefinition = input.scope.findObjectDefinition(className);
+      if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
-        scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, filename, extra);
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         return new VoidType(className);
       } else if (classDefinition === undefined) {
-        throw new Error("Class " + className + " not found");
+        const message = "Class " + className + " not found";
+        input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
-      scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, filename);
+      input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
+      return new FieldChain().runSyntax(first, input, ReferenceType.DataReadReference);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
-      return new NewObject().runSyntax(first, scope, targetType, filename);
+      return new NewObject().runSyntax(first, input, targetType);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {
-      return new Cast().runSyntax(first, scope, targetType, filename);
+      return new Cast().runSyntax(first, input, targetType);
     } else {
-      const meType = scope.findVariable("me")?.getType();
+      const meType = input.scope.findVariable("me")?.getType();
       if (meType) {
         return meType;
       }

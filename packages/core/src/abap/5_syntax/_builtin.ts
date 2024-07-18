@@ -41,11 +41,11 @@ export class BuiltInMethod extends Identifier implements IMethodDefinition, IMet
   }
 
   public getOptional(): readonly string[] {
-    throw new Error("BuiltInMethod->Method not implemented.");
+    throw new Error("BuiltInMethod->Method not implemented");
   }
 
   public getAll(): readonly TypedIdentifier[] {
-    throw new Error("BuiltInMethod->getAll, Method not implemented.");
+    throw new Error("BuiltInMethod->getAll, Method not implemented");
   }
 
   public getImporting(): readonly TypedIdentifier[] {

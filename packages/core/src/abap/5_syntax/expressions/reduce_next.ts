@@ -1,21 +1,21 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
 import {Target} from "./target";
+import {SyntaxInput} from "../_syntax_input";
 
 export class ReduceNext {
-  public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
     if (node === undefined) {
       return;
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.SimpleTarget)) {
-      new Target().runSyntax(s, scope, filename);
+      new Target().runSyntax(s, input);
     }
   }
 }

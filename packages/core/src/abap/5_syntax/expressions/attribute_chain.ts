@@ -3,48 +3,53 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType} from "../../types/basic/void_type";
 import {ObjectReferenceType} from "../../types/basic/object_reference_type";
 import {ObjectOriented} from "../_object_oriented";
-import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AttributeName} from "../../2_statements/expressions";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeChain {
   public runSyntax(
     inputContext: AbstractType | undefined,
     node: INode,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     type: ReferenceType[]): AbstractType | undefined {
 
     if (inputContext instanceof VoidType) {
       return inputContext;
     } else if (!(inputContext instanceof ObjectReferenceType)) {
-      throw new Error("Not an object reference(AttributeChain)");
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), "Not an object reference(AttributeChain)"));
+      return new VoidType(CheckSyntaxKey);
     }
 
     const children = node.getChildren().slice();
     const first = children[0];
     if (!(first.get() instanceof AttributeName)) {
-      throw new Error("AttributeChain, unexpected first child");
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), "AttributeChain, unexpected first child"));
+      return new VoidType(CheckSyntaxKey);
     }
 
-    const def = scope.findObjectDefinition(inputContext.getIdentifierName());
+    const def = input.scope.findObjectDefinition(inputContext.getIdentifierName());
     if (def === undefined) {
-      throw new Error("Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)");
+      const message = "Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
     const nameToken = first.getFirstToken();
     const name = nameToken.getStr();
-    const helper = new ObjectOriented(scope);
+    const helper = new ObjectOriented(input.scope);
 
     let context: TypedIdentifier | undefined = helper.searchAttributeName(def, name);
     if (context === undefined) {
       context = helper.searchConstantName(def, name);
     }
     if (context === undefined) {
-      throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
+      const message = "Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return new VoidType(CheckSyntaxKey);
     }
     for (const t of type) {
-      scope.addReference(nameToken, context, t, filename);
+      input.scope.addReference(nameToken, context, t, input.filename);
     }
 
 // todo, loop, handle ArrowOrDash, ComponentName, TableExpression

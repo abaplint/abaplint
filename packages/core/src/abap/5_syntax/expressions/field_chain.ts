@@ -1,5 +1,4 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
@@ -15,13 +14,13 @@ import {Dereference as DereferenceExpression} from "../../2_statements/expressio
 import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SourceField} from "./source_field";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class FieldChain {
 
   public runSyntax(
     node: ExpressionNode,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
     if (node.getFirstChild()?.get() instanceof Expressions.SourceField
@@ -30,10 +29,10 @@ export class FieldChain {
       const concat = node.concatTokens();
       const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
       const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
-      const found = scope.findVariable(concat.replace(offset, "").replace(length, ""));
+      const found = input.scope.findVariable(concat.replace(offset, "").replace(length, ""));
       if (found) {
         if (refType) {
-          scope.addReference(node.getFirstToken(), found, refType, filename);
+          input.scope.addReference(node.getFirstToken(), found, refType, input.filename);
         }
         // this is not completely correct, but will work, dashes in names is a mess anyhow
         return found.getType();
@@ -42,7 +41,7 @@ export class FieldChain {
 
     let context: AbstractType | undefined = undefined;
     const children = node.getChildren();
-    context = this.findTop(children[0], scope, filename, refType);
+    context = this.findTop(children[0], input, refType);
 
     for (let i = 1; i < children.length; i++) {
       const current = children[i];
@@ -51,10 +50,14 @@ export class FieldChain {
       }
 
       if (current.get() instanceof DashW) {
-        throw new Error("Ending with dash");
+        const message = "Ending with dash";
+        input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       } else if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {
-          throw new Error("Not a structure, type unknown, FieldChain");
+          const message = "Not a structure, type unknown, FieldChain";
+          input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         } else if (!(context instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader())
             && !(context instanceof VoidType)) {
@@ -63,45 +66,53 @@ export class FieldChain {
             for (let j = 0; j < i; j++) {
               contextName += children[j].concatTokens();
             }
-            if (scope.isAllowHeaderUse(contextName)) {
+            if (input.scope.isAllowHeaderUse(contextName)) {
               // FOR ALL ENTRIES workaround
               context = context.getRowType();
               if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
                 context = new StructureType([{name: "TABLE_LINE", type: context}]);
               }
             } else {
-              throw new Error("Table without header, cannot access fields, " + contextName);
+              const message = "Table without header, cannot access fields, " + contextName;
+              input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+              return new VoidType(CheckSyntaxKey);
             }
           } else {
-            throw new Error("Not a structure, FieldChain");
+            const message = "Not a structure, FieldChain";
+            input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+            return new VoidType(CheckSyntaxKey);
           }
         }
       } else if (current.get() instanceof InstanceArrow) {
         if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
-          throw new Error("Not an object reference, field chain");
+          const message = "Not an object reference, field chain";
+          input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
       } else if (current.get() instanceof DereferenceExpression) {
-        context = new Dereference().runSyntax(context);
+        context = new Dereference().runSyntax(current, context, input);
       } else if (current.get() instanceof Expressions.ComponentName) {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
         }
-        context = new ComponentName().runSyntax(context, current);
+        context = new ComponentName().runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {
-          throw new Error("Table expression, expected table");
+          const message = "Table expression, expected table";
+          input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
-        new TableExpression().runSyntax(current, scope, filename);
+        new TableExpression().runSyntax(current, input);
         if (!(context instanceof VoidType)) {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope, filename, refType);
+        context = new AttributeName().runSyntax(context, current, input, refType);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
-        const offset = new FieldOffset().runSyntax(current, scope, filename);
+        const offset = new FieldOffset().runSyntax(current, input);
         if (offset) {
           if (context instanceof CharacterType) {
             context = new CharacterType(context.getLength() - offset);
@@ -110,7 +121,7 @@ export class FieldChain {
           }
         }
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
-        const length = new FieldLength().runSyntax(current, scope, filename);
+        const length = new FieldLength().runSyntax(current, input);
         if (length) {
           if (context instanceof CharacterType) {
             context = new CharacterType(length);
@@ -129,8 +140,7 @@ export class FieldChain {
 
   private findTop(
     node: INode | undefined,
-    scope: CurrentScope,
-    filename: string,
+    input: SyntaxInput,
     type: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
 
     if (node === undefined) {
@@ -139,26 +149,28 @@ export class FieldChain {
 
     if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceFieldSymbol) {
-      return new SourceFieldSymbol().runSyntax(node, scope, filename);
+      return new SourceFieldSymbol().runSyntax(node, input);
     } else if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceField) {
-      return new SourceField().runSyntax(node, scope, filename, type);
+      return new SourceField().runSyntax(node, input, type);
     } else if (node.get() instanceof Expressions.ClassName) {
       const classTok = node.getFirstToken();
       const classNam = classTok.getStr();
       if (classNam.toUpperCase() === "OBJECT") {
         return new GenericObjectReferenceType();
       }
-      const found = scope.existsObject(classNam);
+      const found = input.scope.existsObject(classNam);
       if (found?.id) {
-        scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, filename);
+        input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename);
         return new ObjectReferenceType(found.id);
-      } else if (scope.getDDIC().inErrorNamespace(classNam) === false) {
-        scope.addReference(classTok, undefined,
-                           ReferenceType.ObjectOrientedVoidReference, filename, {ooName: classNam.toUpperCase()});
+      } else if (input.scope.getDDIC().inErrorNamespace(classNam) === false) {
+        input.scope.addReference(classTok, undefined,
+                                 ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: classNam.toUpperCase()});
         return new VoidType(classNam);
       } else {
-        throw new Error("Unknown class " + classNam);
+        const message = "Unknown class " + classNam;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
     }
 

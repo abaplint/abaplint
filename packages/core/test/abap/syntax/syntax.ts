@@ -296,15 +296,16 @@ field = zcl_global_class=>method( ).`;
     expect(issues.length).to.equals(1);
   });
 
-  it("program, class definition not found, two methods should give single error", () => {
-    const abap = "CLASS lcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD moo.\n" +
-      "  ENDMETHOD.\n" +
-      "  METHOD bar.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.\n";
+  it("program, class definition not found", () => {
+    const abap = `
+CLASS lcl_foobar IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
+    expect(issues.length).to.equals(3);
   });
 
   it("locals impl, class definition, one method", () => {
@@ -328,12 +329,13 @@ field = zcl_global_class=>method( ).`;
       "CLASS lcl_foobar DEFINITION.\n" +
       "  PUBLIC SECTION.\n" +
       "ENDCLASS.\n";
-    const impl = "CLASS lcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD method1.\n" +
-      "  ENDMETHOD.\n" +
-      "  METHOD method2.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.\n";
+    const impl = `
+CLASS lcl_foobar IMPLEMENTATION.
+  METHOD method1.
+  ENDMETHOD.
+  METHOD method2.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
       {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
@@ -493,7 +495,7 @@ ENDCLASS.
     expect(issues.length).to.equals(0);
   });
 
-  it("class, simple, one error for method not found", () => {
+  it("class, simple, method not found", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
       "    METHODS hello.\n" +
@@ -504,7 +506,7 @@ ENDCLASS.
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const issues = runClass(abap);
-    expect(issues.length).to.equals(1);
+    expect(issues.length).to.equals(2);
   });
 
   it("class, variable foobar not found", () => {
@@ -554,17 +556,17 @@ ENDCLASS.
   });
 
   it("class, method not found, must push scope", () => {
-    const abap =
-      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD hello.\n" +
-      "    WRITE foobar.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.";
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD hello.
+    WRITE foobar.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runClass(abap);
-    expect(issues.length).to.equals(1);
+    expect(issues.length).to.equals(2);
   });
 
   it("class, attribute", () => {
@@ -3023,7 +3025,9 @@ ENDCLASS.`;
   });
 
   it("DESCRIBE, variables not defined, expect error", () => {
-    const abap = `DESCRIBE FIELD act TYPE type1.`;
+    const abap = `
+    DATA type1 TYPE i.
+    DESCRIBE FIELD act TYPE type1.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
@@ -6365,7 +6369,7 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(2);
     expect(issues[0].getMessage()).to.contain(`NOT_VALID`);
   });
 
@@ -10592,7 +10596,7 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("no cascasing syntax errors.", () => {
+  it("no cascading syntax errors", () => {
     const abap = `
 DATA foo TYPE i.
 
@@ -10602,7 +10606,6 @@ DATA END OF bar.
 
 CLEAR bar.`;
     const issues = runProgram(abap);
-    console.dir(issues);
     expect(issues.length).to.equal(1);
   });
 

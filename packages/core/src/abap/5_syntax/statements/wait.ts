@@ -1,19 +1,19 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
 import {Cond} from "../expressions/cond";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Wait implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(t, scope, filename);
+      new Cond().runSyntax(t, input);
     }
 
   }

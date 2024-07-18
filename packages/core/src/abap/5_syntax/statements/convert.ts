@@ -1,28 +1,28 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {InlineData} from "../expressions/inline_data";
 import {TimeType, DateType, PackedType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class Convert implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
 // todo, the source must be of a specific type
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     const timeTarget = node.findExpressionAfterToken("TIME");
     if (timeTarget?.get() instanceof Expressions.Target) {
       const inline = timeTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, new TimeType());
+        new InlineData().runSyntax(inline, input, new TimeType());
       } else {
-        new Target().runSyntax(timeTarget, scope, filename);
+        new Target().runSyntax(timeTarget, input);
       }
     }
 
@@ -30,9 +30,9 @@ export class Convert implements StatementSyntax {
     if (dateTarget?.get() instanceof Expressions.Target) {
       const inline = dateTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, new DateType());
+        new InlineData().runSyntax(inline, input, new DateType());
       } else {
-        new Target().runSyntax(dateTarget, scope, filename);
+        new Target().runSyntax(dateTarget, input);
       }
     }
 
@@ -40,9 +40,9 @@ export class Convert implements StatementSyntax {
     if (stampTarget?.get() instanceof Expressions.Target) {
       const inline = stampTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, scope, filename, new PackedType(8, 4));
+        new InlineData().runSyntax(inline, input, new PackedType(8, 4));
       } else {
-        new Target().runSyntax(stampTarget, scope, filename);
+        new Target().runSyntax(stampTarget, input);
       }
     }
 

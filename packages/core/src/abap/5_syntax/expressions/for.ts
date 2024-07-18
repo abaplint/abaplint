@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {InlineFieldDefinition} from "./inline_field_definition";
 import {Source} from "./source";
 import {InlineLoopDefinition} from "./inline_loop_definition";
@@ -11,9 +10,10 @@ import {VoidType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {ReferenceType} from "../_reference";
 import {Let} from "./let";
+import {SyntaxInput} from "../_syntax_input";
 
 export class For {
-  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): boolean {
+  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): boolean {
     let scoped = false;
     const inlineLoop = node.findDirectExpressions(Expressions.InlineLoopDefinition);
     const inlineField = node.findDirectExpressions(Expressions.InlineFieldDefinition);
@@ -25,39 +25,39 @@ export class For {
       || groupsToken !== undefined;
     if (addScope) {
       // this scope is popped in parent expressions
-      scope.push(ScopeType.For, "FOR", node.getFirstToken().getStart(), filename);
+      input.scope.push(ScopeType.For, "FOR", node.getFirstToken().getStart(), input.filename);
       scoped = true;
     }
 
     for (const s of inlineLoop) {
-      new InlineLoopDefinition().runSyntax(s, scope, filename);
+      new InlineLoopDefinition().runSyntax(s, input);
     }
 
     for (const f of inlineField) {
-      new InlineFieldDefinition().runSyntax(f, scope, filename);
+      new InlineFieldDefinition().runSyntax(f, input);
     }
 
     if (groupsToken !== undefined) {
       const type = new VoidType("todoGroupBy");
-      const identifier = new TypedIdentifier(groupsToken, filename, type, [IdentifierMeta.InlineDefinition]);
-      scope.addIdentifier(identifier);
-      scope.addReference(groupsToken, identifier, ReferenceType.DataWriteReference, filename);
+      const identifier = new TypedIdentifier(groupsToken, input.filename, type, [IdentifierMeta.InlineDefinition]);
+      input.scope.addIdentifier(identifier);
+      input.scope.addReference(groupsToken, identifier, ReferenceType.DataWriteReference, input.filename);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(s, scope, filename);
+      new ComponentCond().runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(s, scope, filename);
+      new Cond().runSyntax(s, input);
     }
 
     if (lett) {
-      new Let().runSyntax(lett, scope, filename, true);
+      new Let().runSyntax(lett, input, true);
     }
 
     return scoped;

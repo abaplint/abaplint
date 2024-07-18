@@ -1,6 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {ComponentCompare} from "../expressions/component_compare";
@@ -9,12 +8,13 @@ import {StatementSyntax} from "../_statement_syntax";
 import {ILookupResult} from "../../../ddic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TableType} from "../../types/basic";
+import {SyntaxInput} from "../_syntax_input";
 
 export class DeleteInternal implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, scope, filename);
+      new Source().runSyntax(s, input);
     }
 
     let targetType: AbstractType | undefined = undefined;
@@ -23,13 +23,13 @@ export class DeleteInternal implements StatementSyntax {
       let tabl: ILookupResult | undefined = undefined;
       if (node.getChildren().length === 5 && node.getChildren()[2].concatTokens().toUpperCase() === "FROM") {
         // it might be a database table
-        tabl = scope.getDDIC()?.lookupTableOrView(target.concatTokens());
+        tabl = input.scope.getDDIC()?.lookupTableOrView(target.concatTokens());
         if (tabl) {
-          scope.getDDICReferences().addUsing(scope.getParentObj(), {object: tabl.object});
+          input.scope.getDDICReferences().addUsing(input.scope.getParentObj(), {object: tabl.object});
         }
       }
       if (tabl === undefined) {
-        targetType = new Target().runSyntax(target, scope, filename);
+        targetType = new Target().runSyntax(target, input);
         if (targetType instanceof TableType) {
           targetType = targetType.getRowType();
         }
@@ -37,11 +37,11 @@ export class DeleteInternal implements StatementSyntax {
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      new ComponentCompare().runSyntax(t, scope, filename, targetType);
+      new ComponentCompare().runSyntax(t, input, targetType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, scope, filename, targetType);
+      new ComponentCond().runSyntax(t, input, targetType);
     }
 
   }

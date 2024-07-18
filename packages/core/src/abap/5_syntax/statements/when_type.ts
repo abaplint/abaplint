@@ -1,14 +1,14 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class WhenType implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const nameToken = node.findFirstExpression(Expressions.ClassName)?.getFirstToken();
     if (nameToken === undefined) {
       return undefined;
@@ -16,11 +16,13 @@ export class WhenType implements StatementSyntax {
 
     let type: AbstractType | undefined = undefined;
     const className = nameToken.getStr();
-    const found = scope.findObjectDefinition(className);
-    if (found === undefined && scope.getDDIC().inErrorNamespace(className) === false) {
+    const found = input.scope.findObjectDefinition(className);
+    if (found === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
       type = new VoidType(className);
     } else if (found === undefined) {
-      throw new Error("Class " + className + " not found");
+      const message = "Class " + className + " not found";
+      input.issues.push(syntaxIssue(input, nameToken, message));
+      return;
     } else {
       type = new ObjectReferenceType(found);
     }
@@ -28,9 +30,9 @@ export class WhenType implements StatementSyntax {
     const target = node?.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, type);
+      new InlineData().runSyntax(inline, input, type);
     } else if (target) {
-      new Target().runSyntax(target, scope, filename);
+      new Target().runSyntax(target, input);
     }
   }
 }

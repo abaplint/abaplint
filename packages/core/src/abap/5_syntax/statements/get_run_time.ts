@@ -1,21 +1,21 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {InlineData} from "../expressions/inline_data";
 import {IntegerType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
+import {SyntaxInput} from "../_syntax_input";
 
 export class GetRunTime implements StatementSyntax {
-  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
+  public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     const target = node.findDirectExpression(Expressions.Target);
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, IntegerType.get());
+      new InlineData().runSyntax(inline, input, IntegerType.get());
     } else if (target) {
-      new Target().runSyntax(target, scope, filename);
+      new Target().runSyntax(target, input);
     }
 
   }

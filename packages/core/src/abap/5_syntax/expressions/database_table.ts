@@ -1,12 +1,12 @@
 import {DataDefinition, Table, View} from "../../../objects";
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export type DatabaseTableSource = Table | DataDefinition | View | undefined;
 
 export class DatabaseTable {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): DatabaseTableSource {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): DatabaseTableSource {
     const token = node.getFirstToken();
     const name = token.getStr();
     if (name === "(") {
@@ -14,14 +14,15 @@ export class DatabaseTable {
       return undefined;
     }
 
-    const found = scope.getDDIC().lookupTableOrView2(name);
-    if (found === undefined && scope.getDDIC().inErrorNamespace(name) === true) {
-      throw new Error("Database table or view \"" + name + "\" not found");
+    const found = input.scope.getDDIC().lookupTableOrView2(name);
+    if (found === undefined && input.scope.getDDIC().inErrorNamespace(name) === true) {
+      const message = "Database table or view \"" + name + "\" not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     } else if (found === undefined) {
-      scope.addReference(token, undefined, ReferenceType.TableVoidReference, filename);
+      input.scope.addReference(token, undefined, ReferenceType.TableVoidReference, input.filename);
     } else {
-      scope.addReference(token, found.getIdentifier(), ReferenceType.TableReference, filename);
-      scope.getDDICReferences().addUsing(scope.getParentObj(), {object: found, token: token, filename: filename});
+      input.scope.addReference(token, found.getIdentifier(), ReferenceType.TableReference, input.filename);
+      input.scope.getDDICReferences().addUsing(input.scope.getParentObj(), {object: found, token: token, filename: input.filename});
     }
 
     return found;

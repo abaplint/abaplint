@@ -1,15 +1,15 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
+import {SyntaxInput} from "../_syntax_input";
 import {FieldChain} from "./field_chain";
 
 export class FieldLength {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): number | undefined {
+  public runSyntax(node: ExpressionNode, input: SyntaxInput): number | undefined {
 
     const field = node.findDirectExpression(Expressions.SimpleFieldChain2);
     if (field) {
-      new FieldChain().runSyntax(field, scope, filename, ReferenceType.DataReadReference);
+      new FieldChain().runSyntax(field, input, ReferenceType.DataReadReference);
       return undefined;
     } else {
       const children = node.getChildren();

@@ -4,7 +4,6 @@ import {StatementNode, ExpressionNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import * as Types from "../types/basic";
-import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
@@ -17,14 +16,13 @@ import {ClassDefinition, InterfaceDefinition} from "../types";
 import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
+import {SyntaxInput} from "./_syntax_input";
 
 export class BasicTypes {
-  private readonly filename: string;
-  private readonly scope: CurrentScope;
+  private readonly input: SyntaxInput;
 
-  public constructor(filename: string, scope: CurrentScope) {
-    this.filename = filename;
-    this.scope = scope;
+  public constructor(input: SyntaxInput) {
+    this.input = input;
   }
 
   public lookupQualifiedName(name: string | undefined): TypedIdentifier | undefined {
@@ -33,7 +31,7 @@ export class BasicTypes {
       return undefined;
     }
 
-    const found = this.scope.findType(name);
+    const found = this.input.scope.findType(name);
     if (found) {
       return found;
     }
@@ -42,7 +40,7 @@ export class BasicTypes {
       const split = name.split("=>");
       const ooName = split[0];
       const typeName = split[1];
-      const oo = this.scope.findObjectDefinition(ooName);
+      const oo = this.input.scope.findObjectDefinition(ooName);
       if (oo) {
         if (typeName.includes("-")) {
           const split = typeName.split("-");
@@ -70,7 +68,7 @@ export class BasicTypes {
       const split = name.split("-");
       const typeName = split[0];
       const fieldName = split[1];
-      const type = this.scope.findType(typeName);
+      const type = this.input.scope.findType(typeName);
       if (type) {
         const stru = type.getType();
         if (stru instanceof StructureType) {
@@ -85,18 +83,18 @@ export class BasicTypes {
       }
     }
 
-    const lookup = this.scope.getDDIC().lookupNoVoid(name);
+    const lookup = this.input.scope.getDDIC().lookupNoVoid(name);
     const id = lookup?.object?.getIdentifier();
     if (id && lookup?.type) {
       return new TypedIdentifier(id.getToken(), id.getFilename(), lookup.type);
     }
 
-    const builtin = this.scope.getDDIC().lookupBuiltinType(name);
+    const builtin = this.input.scope.getDDIC().lookupBuiltinType(name);
     if (builtin) {
       return new TypedIdentifier(new TokenIdentifier(new Position(1, 1), name), BuiltIn.filename, builtin);
     }
 
-    const type = this.scope.findTypePoolType(name);
+    const type = this.input.scope.findTypePoolType(name);
     if (type) {
       return type;
     }
@@ -131,12 +129,12 @@ export class BasicTypes {
 
     let type: AbstractType | undefined = undefined;
     if (children[1] && ( children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
-      type = new FieldChain().runSyntax(chain, this.scope, this.filename, ReferenceType.TypeReference);
+      type = new FieldChain().runSyntax(chain, this.input, ReferenceType.TypeReference);
     } else {
       const name = children.shift()!.getFirstToken().getStr();
-      let found = this.scope.findVariable(name);
+      let found = this.input.scope.findVariable(name);
 
-      const full = this.scope.findVariable(fullName); // workaround for eg "sy-repid"
+      const full = this.input.scope.findVariable(fullName); // workaround for eg "sy-repid"
       if (full) {
         children = [];
         found = full;
@@ -145,20 +143,20 @@ export class BasicTypes {
       type = found?.getType();
 
       if (found === undefined) {
-        found = this.scope.findExtraLikeType(name);
+        found = this.input.scope.findExtraLikeType(name);
         type = found?.getType();
       }
 
       if (found) {
-        this.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
+        this.input.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.input.filename);
       }
 
       if (type === undefined) {
-        type = this.scope.getDDIC().lookupNoVoid(name)?.type;
+        type = this.input.scope.getDDIC().lookupNoVoid(name)?.type;
       }
 
-      if (type === undefined && this.scope.isOO() === false && this.scope.getDDIC().inErrorNamespace(name) === false) {
-        this.scope.addReference(chain.getChildren()[0].getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
+      if (type === undefined && this.input.scope.isOO() === false && this.input.scope.getDDIC().inErrorNamespace(name) === false) {
+        this.input.scope.addReference(chain.getChildren()[0].getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
         return new Types.VoidType(name);
       }
 
@@ -232,41 +230,41 @@ export class BasicTypes {
     }
 
     const chainText = typeName.concatTokens().toUpperCase();
-    const f = this.scope.getDDIC().lookupBuiltinType(chainText, length, decimals, qualifiedName);
+    const f = this.input.scope.getDDIC().lookupBuiltinType(chainText, length, decimals, qualifiedName);
     if (f !== undefined) {
       return f;
     }
 
-    const typ = this.scope.findType(chainText);
+    const typ = this.input.scope.findType(chainText);
     if (typ) {
       const token = typeName.getFirstToken();
 
       if (chainText.includes("~")) {
         const name = chainText.split("~")[0];
-        const idef = this.scope.findInterfaceDefinition(name);
+        const idef = this.input.scope.findInterfaceDefinition(name);
         if (idef) {
-          this.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooType: "INTF", ooName: name});
+          this.input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.input.filename, {ooType: "INTF", ooName: name});
         }
       }
 
-      this.scope.addReference(token, typ, ReferenceType.TypeReference, this.filename);
+      this.input.scope.addReference(token, typ, ReferenceType.TypeReference, this.input.filename);
       return typ.getType();
     }
 
-    const type = this.scope.findTypePoolType(chainText)?.getType();
+    const type = this.input.scope.findTypePoolType(chainText)?.getType();
     if (type) {
 //      this.scope.addReference(typeName.getFirstToken(), type, ReferenceType.TypeReference, this.filename);
       return type;
     }
 
-    const ddic = this.scope.getDDIC().lookup(chainText);
+    const ddic = this.input.scope.getDDIC().lookup(chainText);
     if (ddic) {
-      this.scope.getDDICReferences().addUsing(this.scope.getParentObj(),
-                                              {object: ddic.object, token: typeName.getFirstToken(), filename: this.filename});
+      this.input.scope.getDDICReferences().addUsing(this.input.scope.getParentObj(),
+                                                    {object: ddic.object, token: typeName.getFirstToken(), filename: this.input.filename});
       if (ddic.type instanceof TypedIdentifier) {
-        this.scope.addReference(typeName.getFirstToken(), ddic.type, ReferenceType.TypeReference, this.filename);
+        this.input.scope.addReference(typeName.getFirstToken(), ddic.type, ReferenceType.TypeReference, this.input.filename);
       } else if (ddic.type instanceof VoidType) {
-        this.scope.addReference(typeName.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
+        this.input.scope.addReference(typeName.getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
       }
 
       return this.cloneType(ddic.type, qualifiedName);
@@ -290,13 +288,13 @@ export class BasicTypes {
 
     let qualifiedName: string | undefined = undefined;
     if (node.get() instanceof Statements.Type) {
-      if (this.scope.isTypePool() === true) {
+      if (this.input.scope.isTypePool() === true) {
         qualifiedName = name.getStr();
       } else {
         qualifiedName = ( qualifiedNamePrefix || "" ) + name.getStr();
-        if (this.scope.getType() === ScopeType.ClassDefinition
-            || this.scope.getType() === ScopeType.Interface) {
-          qualifiedName = this.scope.getName() + "=>" + qualifiedName;
+        if (this.input.scope.getType() === ScopeType.ClassDefinition
+            || this.input.scope.getType() === ScopeType.Interface) {
+          qualifiedName = this.input.scope.getName() + "=>" + qualifiedName;
         }
       }
     } else if (qualifiedNamePrefix) {
@@ -305,7 +303,7 @@ export class BasicTypes {
 
     const found = this.parseType(node, qualifiedName);
     if (found) {
-      return new TypedIdentifier(name, this.filename, found);
+      return new TypedIdentifier(name, this.input.filename, found);
     }
 
     return undefined;
@@ -451,10 +449,10 @@ export class BasicTypes {
     } else if (typename && (text.startsWith("TYPE TABLE FOR CREATE ")
         || text.startsWith("TYPE TABLE FOR UPDATE "))) {
       const name = typename.concatTokens();
-      const type = this.scope.getDDIC().lookupDDLS(name)?.type;
+      const type = this.input.scope.getDDIC().lookupDDLS(name)?.type;
       if (type) {
         return new Types.TableType(new VoidType("RapTodo"), options);
-      } else if (this.scope.getDDIC().inErrorNamespace(name)) {
+      } else if (this.input.scope.getDDIC().inErrorNamespace(name)) {
         return new Types.UnknownType(`DDLS ${name} not found`);
       } else {
         return new Types.VoidType(name);
@@ -617,9 +615,9 @@ export class BasicTypes {
     const chainText = expr.concatTokens().toUpperCase();
     if (chainText.includes("-")) {
       // workaround for stuff like "sy-repid"
-      const built = this.scope.findType(chainText);
+      const built = this.input.scope.findType(chainText);
       if (built) {
-        this.scope.addReference(expr.getFirstToken(), built, ReferenceType.TypeReference, this.filename);
+        this.input.scope.addReference(expr.getFirstToken(), built, ReferenceType.TypeReference, this.input.filename);
         return built.getType();
       }
     } else if (chainText.includes("=>") === false && chainText.includes("-") === false) {
@@ -645,34 +643,36 @@ export class BasicTypes {
       const className = split[0];
 
     // the prefix might be itself
-      if ((this.scope.getType() === ScopeType.Interface
-          || this.scope.getType() === ScopeType.ClassDefinition)
-          && this.scope.getName().toUpperCase() === className.toUpperCase()) {
-        const foundId = this.scope.findType(subs[0]);
+      if ((this.input.scope.getType() === ScopeType.Interface
+          || this.input.scope.getType() === ScopeType.ClassDefinition)
+          && this.input.scope.getName().toUpperCase() === className.toUpperCase()) {
+        const foundId = this.input.scope.findType(subs[0]);
         foundType = foundId?.getType();
         if (foundType === undefined) {
           return new Types.UnknownType("Could not resolve type " + chainText);
         }
         const token = expr.getChildren()[2]?.getFirstToken();
         if (token) {
-          this.scope.addReference(token, foundId, ReferenceType.TypeReference, this.filename);
+          this.input.scope.addReference(token, foundId, ReferenceType.TypeReference, this.input.filename);
         }
       } else {
     // lookup in local and global scope
-        const obj = this.scope.findObjectDefinition(className);
-        if (obj === undefined && this.scope.getDDIC().inErrorNamespace(className) === false) {
-          this.scope.addReference(expr.getFirstToken(), undefined,
-                                  ReferenceType.ObjectOrientedVoidReference, this.filename, {ooName: className.toUpperCase()});
+        const obj = this.input.scope.findObjectDefinition(className);
+        if (obj === undefined && this.input.scope.getDDIC().inErrorNamespace(className) === false) {
+          this.input.scope.addReference(
+            expr.getFirstToken(), undefined,
+            ReferenceType.ObjectOrientedVoidReference, this.input.filename, {ooName: className.toUpperCase()});
           return new Types.VoidType(className);
         } else if (obj === undefined) {
           return new Types.UnknownType("Could not resolve top " + className + ", resolveTypeChain");
         }
         const type = obj instanceof ClassDefinition ? "CLAS" : "INTF";
 
-        this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename,
-                                {ooType: type, ooName: className});
+        this.input.scope.addReference(
+          expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.input.filename,
+          {ooType: type, ooName: className});
 
-        const byName = new ObjectOriented(this.scope).searchTypeName(obj, subs[0]);
+        const byName = new ObjectOriented(this.input.scope).searchTypeName(obj, subs[0]);
         foundType = byName?.getType();
         if (byName === undefined || foundType === undefined) {
           return new Types.UnknownType(subs[0] + " not found in class or interface");
@@ -680,18 +680,18 @@ export class BasicTypes {
 
         const token = expr.getChildren()[2]?.getFirstToken();
         if (token) {
-          this.scope.addReference(token, byName, ReferenceType.TypeReference, this.filename);
+          this.input.scope.addReference(token, byName, ReferenceType.TypeReference, this.input.filename);
         }
       }
     } else if (className && chainText.includes("->")) {
-      const varVar = this.scope.findVariable(className);
+      const varVar = this.input.scope.findVariable(className);
       const foo = varVar?.getType();
       if (foo instanceof ObjectReferenceType) {
         const typeName = subs[0];
         let id = foo.getIdentifier();
 
         if (!(id instanceof ClassDefinition || id instanceof InterfaceDefinition)) {
-          const found = this.scope.findObjectDefinition(foo.getIdentifierName());
+          const found = this.input.scope.findObjectDefinition(foo.getIdentifierName());
           if (found) {
             id = found;
           } else {
@@ -701,16 +701,17 @@ export class BasicTypes {
 
         if (id instanceof ClassDefinition || id instanceof InterfaceDefinition) {
           const type = id instanceof ClassDefinition ? "CLAS" : "INTF";
-          this.scope.addReference(expr.getFirstToken(), id, ReferenceType.ObjectOrientedReference, this.filename,
-                                  {ooType: type, ooName: id.getName()});
-          const byName = new ObjectOriented(this.scope).searchTypeName(id, typeName);
+          this.input.scope.addReference(
+            expr.getFirstToken(), id, ReferenceType.ObjectOrientedReference, this.input.filename,
+            {ooType: type, ooName: id.getName()});
+          const byName = new ObjectOriented(this.input.scope).searchTypeName(id, typeName);
           foundType = byName?.getType();
           if (byName === undefined || foundType === undefined) {
             return new Types.UnknownType(typeName + " not found in class or interface");
           }
           const token = expr.getChildren()[2]?.getFirstToken();
           if (token) {
-            this.scope.addReference(token, byName, ReferenceType.TypeReference, this.filename);
+            this.input.scope.addReference(token, byName, ReferenceType.TypeReference, this.input.filename);
           }
         } else {
           return new Types.UnknownType("Not an object reference, " + className + ", " + id.constructor.name);
@@ -721,19 +722,20 @@ export class BasicTypes {
         return new Types.UnknownType("Not an object reference, " + className + ", " + foo.constructor.name);
       }
     } else {
-      const found = this.scope.findType(subs[0]);
+      const found = this.input.scope.findType(subs[0]);
       foundType = found?.getType();
       if (foundType === undefined) {
-        const typePoolType = this.scope.findTypePoolType(subs[0])?.getType();
+        const typePoolType = this.input.scope.findTypePoolType(subs[0])?.getType();
         if (typePoolType) {
 //          this.scope.addReference(typeName.getFirstToken(), typePoolType, ReferenceType.TypeReference, this.filename);
           foundType = typePoolType;
         }
 
         if (foundType === undefined) {
-          const f = this.scope.getDDIC().lookupTableOrView(subs[0]);
-          this.scope.getDDICReferences().addUsing(this.scope.getParentObj(),
-                                                  {object: f.object, filename: this.filename, token: expr.getFirstToken()});
+          const f = this.input.scope.getDDIC().lookupTableOrView(subs[0]);
+          this.input.scope.getDDICReferences().addUsing(
+            this.input.scope.getParentObj(),
+            {object: f.object, filename: this.input.filename, token: expr.getFirstToken()});
           if (f.type instanceof TypedIdentifier) {
             foundType = f.type.getType();
           } else {
@@ -742,13 +744,13 @@ export class BasicTypes {
         }
 
       } else {
-        this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
+        this.input.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.input.filename);
       }
-      if (foundType === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
-        this.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
+      if (foundType === undefined && this.input.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
+        this.input.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
         return new Types.VoidType(subs[0]);
       } else if (foundType instanceof Types.VoidType) {
-        this.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
+        this.input.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
         return foundType;
       } else if (foundType === undefined) {
         return new Types.UnknownType("Unknown type " + subs[0]);
@@ -783,48 +785,49 @@ export class BasicTypes {
     const firstToken = firstNode.getFirstToken();
     const firstName = firstToken.getStr();
     if (firstNode.get() instanceof Expressions.Field) {
-      const found = this.scope.findVariable(firstName);
+      const found = this.input.scope.findVariable(firstName);
       const val = found?.getValue();
       if (typeof val === "string") {
-        this.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.filename);
+        this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
         return val;
       } else if (found?.getType() instanceof StructureType) {
-        this.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.filename);
+        this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
       }
       return undefined;
     } else if (firstNode.get() instanceof Expressions.ClassName
-        && firstName.toLowerCase() === this.scope.getName().toLowerCase()
-        && (this.scope.getType() === ScopeType.Interface
-        || this.scope.getType() === ScopeType.ClassDefinition)) {
+        && firstName.toLowerCase() === this.input.scope.getName().toLowerCase()
+        && (this.input.scope.getType() === ScopeType.Interface
+        || this.input.scope.getType() === ScopeType.ClassDefinition)) {
       const children = expr.getChildren();
       const token = children[2]?.getFirstToken();
-      const found = this.scope.findVariable(token.getStr());
+      const found = this.input.scope.findVariable(token.getStr());
       const val = found?.getValue();
       if (typeof val === "string") {
-        this.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.filename);
+        this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
         return val;
       }
       return undefined;
     } else if (firstNode.get() instanceof Expressions.ClassName) {
-      const obj = this.scope.findObjectDefinition(firstName);
+      const obj = this.input.scope.findObjectDefinition(firstName);
       if (obj === undefined) {
-        if (this.scope.existsObject(firstName) !== undefined) {
+        if (this.input.scope.existsObject(firstName) !== undefined) {
           return undefined;
-        } else if (this.scope.getDDIC().inErrorNamespace(firstName) === true) {
+        } else if (this.input.scope.getDDIC().inErrorNamespace(firstName) === true) {
           throw new Error("resolveConstantValue, not found: " + firstName);
         } else {
-          this.scope.addReference(firstNode.getFirstToken(), undefined,
-                                  ReferenceType.ObjectOrientedVoidReference, this.filename, {ooName: firstName.toUpperCase()});
+          this.input.scope.addReference(
+            firstNode.getFirstToken(), undefined,
+            ReferenceType.ObjectOrientedVoidReference, this.input.filename, {ooName: firstName.toUpperCase()});
           return undefined;
         }
       }
       const children = expr.getChildren();
       const token = children[2]?.getFirstToken();
       const attr = token.getStr();
-      const c = new ObjectOriented(this.scope).searchConstantName(obj, attr);
+      const c = new ObjectOriented(this.input.scope).searchConstantName(obj, attr);
       if (c instanceof ClassConstant) {
-        this.scope.addReference(firstToken, obj, ReferenceType.ObjectOrientedReference, this.filename);
-        this.scope.addReference(token, c, ReferenceType.DataReadReference, this.filename);
+        this.input.scope.addReference(firstToken, obj, ReferenceType.ObjectOrientedReference, this.input.filename);
+        this.input.scope.addReference(token, c, ReferenceType.DataReadReference, this.input.filename);
         const val = c.getValue();
         if (typeof val === "string") {
           return val;
@@ -853,10 +856,11 @@ export class BasicTypes {
       if (name.toUpperCase() === "OBJECT") {
         return new Types.GenericObjectReferenceType();
       }
-      const search = this.scope.existsObject(name);
+      const search = this.input.scope.existsObject(name);
       if (search?.id) {
-        this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename,
-                                {ooType: search.ooType, ooName: name});
+        this.input.scope.addReference(
+          chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.input.filename,
+          {ooType: search.ooType, ooName: name});
         return new Types.ObjectReferenceType(search.id, {qualifiedName: name, RTTIName: search.RTTIName});
       }
     }
@@ -868,11 +872,11 @@ export class BasicTypes {
       return new Types.DataReference(new Types.DataType());
     }
 
-    if (this.scope.isBadiDef(name) === true) {
+    if (this.input.scope.isBadiDef(name) === true) {
       return new Types.VoidType(name);
     }
 
-    if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
+    if (this.input.scope.getDDIC()?.inErrorNamespace(name) === false) {
 //      this.scope.addReference(chain.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
       return new Types.VoidType(name);
     }
