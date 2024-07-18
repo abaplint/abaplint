@@ -31,20 +31,20 @@ export class ComponentChain {
         if (concat === "-") {
           if (!(context instanceof StructureType)) {
             const message = "ComponentChain, not a structure";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
             return new VoidType(CheckSyntaxKey);
 
           }
         } else if (concat === "=>") {
           if (!(context instanceof ObjectReferenceType)) {
             const message = "ComponentChain, not a reference";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
             return new VoidType(CheckSyntaxKey);
           }
         } else if (concat === "->") {
           if (!(context instanceof ObjectReferenceType) && !(context instanceof DataReference)) {
             const message = "ComponentChain, not a reference";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
             return new VoidType(CheckSyntaxKey);
           }
         }
@@ -62,7 +62,7 @@ export class ComponentChain {
           context = context.getComponentByName(name);
           if (context === undefined) {
             const message = "Component \"" + name + "\" not found in structure";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
             return new VoidType(CheckSyntaxKey);
           }
         } else if (context instanceof ObjectReferenceType) {
@@ -70,7 +70,7 @@ export class ComponentChain {
           const def = input.scope.findObjectDefinition(id.getName());
           if (def === undefined) {
             const message = id.getName() + " not found in scope";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
             return new VoidType(CheckSyntaxKey);
           }
 
@@ -80,7 +80,7 @@ export class ComponentChain {
           context = found?.getType();
           if (context === undefined) {
             const message = "Attribute \"" + name + "\" not found";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
             return new VoidType(CheckSyntaxKey);
           } else {
             const extra: IReferenceExtras = {
@@ -90,7 +90,7 @@ export class ComponentChain {
           }
         } else {
           const message = "ComponentChain, not a structure, " + context?.constructor.name;
-          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
           return new VoidType(CheckSyntaxKey);
         }
       }
