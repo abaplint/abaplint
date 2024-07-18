@@ -7,6 +7,7 @@ import {IStructureComponent} from "../../types/basic";
 import * as Basic from "../../types/basic";
 import {Constant} from "../statements/constant";
 import {SyntaxInput} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class Constants {
   public runSyntax(node: StructureNode, input: SyntaxInput):
@@ -14,7 +15,7 @@ export class Constants {
 
     const name = node.findFirstExpression(Expressions.DefinitionName)?.getFirstToken();
     if (name === undefined) {
-      throw new Error("Constants, structure, unexpected node");
+      throw new AssertError("Constants, structure, unexpected node");
     }
 
     const components: IStructureComponent[] = [];

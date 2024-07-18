@@ -5,7 +5,7 @@ import {InlineData} from "../expressions/inline_data";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class WhenType implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -20,7 +20,9 @@ export class WhenType implements StatementSyntax {
     if (found === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
       type = new VoidType(className);
     } else if (found === undefined) {
-      throw new Error("Class " + className + " not found");
+      const message = "Class " + className + " not found";
+      input.issues.push(syntaxIssue(input, nameToken, message));
+      return;
     } else {
       type = new ObjectReferenceType(found);
     }

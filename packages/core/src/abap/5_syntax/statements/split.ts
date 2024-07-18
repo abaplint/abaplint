@@ -6,7 +6,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Split implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -24,14 +24,18 @@ export class Split implements StatementSyntax {
           if (!(targetType instanceof TableType)
               && !(targetType instanceof UnknownType)
               && !(targetType instanceof VoidType)) {
-            throw new Error("Into must be table typed");
+            const message = "Into must be table typed";
+            input.issues.push(syntaxIssue(input, target.getFirstToken(), message));
+            return;
           }
           if (targetType instanceof TableType) {
             targetType = targetType.getRowType();
           }
         }
         if (new TypeUtils(input.scope).isCharLikeStrict(targetType) === false) {
-          throw new Error("Incompatible, target not character like");
+          const message = "Incompatible, target not character like";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
     }

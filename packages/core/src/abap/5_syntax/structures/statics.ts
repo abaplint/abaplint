@@ -6,7 +6,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import * as Basic from "../../types/basic";
 import {IStructureComponent} from "../../types/basic";
 import {Static} from "../statements/static";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 // todo, this is much like DATA, refactor?
 export class Statics {
@@ -55,7 +55,9 @@ export class Statics {
           return new TypedIdentifier(name, input.filename, new Basic.UnknownType("unknown type, " + typeName));
         }
         if (!(found instanceof Basic.StructureType)) {
-          throw new Error("not structured, " + typeName);
+          const message = "not structured, " + typeName;
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new TypedIdentifier(name, input.filename, new Basic.VoidType(CheckSyntaxKey));
         }
         for (const c of found.getComponents()) {
           components.push(c);

@@ -8,6 +8,7 @@ import {ReferenceType} from "../_reference";
 import {EnumType} from "../../types/basic/enum_type";
 import {ScopeType} from "../_scope_type";
 import {SyntaxInput} from "../_syntax_input";
+import {AssertError} from "../assert_error";
 
 export class TypeEnum {
   public runSyntax(node: StructureNode, input: SyntaxInput): {values: TypedIdentifier[], types: TypedIdentifier[]} {
@@ -15,12 +16,12 @@ export class TypeEnum {
     const types: TypedIdentifier[] = [];
 
     if (!(node.get() instanceof Structures.TypeEnum)) {
-      throw new Error("TypeEnum, unexpected type");
+      throw new AssertError("TypeEnum, unexpected type");
     }
 
     const begin = node.findDirectStatement(Statements.TypeEnumBegin);
     if (begin === undefined) {
-      throw new Error("TypeEnum, unexpected type, begin");
+      throw new AssertError("TypeEnum, unexpected type, begin");
     }
 
     for (const type of node.findDirectStatements(Statements.Type)) {

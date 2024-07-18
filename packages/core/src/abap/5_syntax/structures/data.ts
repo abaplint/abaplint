@@ -7,7 +7,7 @@ import * as Basic from "../../types/basic";
 import {IStructureComponent} from "../../types/basic";
 import {Data as DataSyntax} from "../statements/data";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Data {
   public runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
@@ -68,7 +68,9 @@ export class Data {
           return new TypedIdentifier(name, input.filename, new Basic.UnknownType("unknown type, " + typeName));
         }
         if (!(found instanceof Basic.StructureType)) {
-          throw new Error("not structured, " + typeName);
+          const message = "not structured, " + typeName;
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return new TypedIdentifier(name, input.filename, new Basic.VoidType(CheckSyntaxKey));
         }
         for (const c of found.getComponents()) {
           components.push(c);

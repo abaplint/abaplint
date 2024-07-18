@@ -7,7 +7,7 @@ import {Dynamic} from "../expressions/dynamic";
 import {TypeUtils} from "../_type_utils";
 import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Write implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -24,7 +24,9 @@ export class Write implements StatementSyntax {
       if (s === second
           && new TypeUtils(input.scope).isCharLike(type) === false
           && new TypeUtils(input.scope).isHexLike(type) === false) {
-        throw new Error("Source not character like");
+        const message = "Source not character like";
+        input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        return;
       }
     }
 
