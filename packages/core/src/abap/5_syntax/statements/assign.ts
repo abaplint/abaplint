@@ -7,7 +7,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Dynamic} from "../expressions/dynamic";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -23,7 +23,9 @@ export class Assign implements StatementSyntax {
       const name = firstAssign.concatTokens();
       const found = input.scope.findClassDefinition(name) || input.scope.findVariable(name);
       if (found === undefined && input.scope.getDDIC().inErrorNamespace(name) && name.startsWith("(") === false) {
-        throw new Error(name + " not found, dynamic");
+        const message = name + " not found, dynamic";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       sourceType = new VoidType("Dynamic");
     } else {
@@ -35,7 +37,9 @@ export class Assign implements StatementSyntax {
       const componentSource = sources[sources.length - 2];
       const componentType = new Source().runSyntax(componentSource, input);
       if (new TypeUtils(input.scope).isAssignable(componentType, new CharacterType(30)) === false) {
-        throw new Error("component name must be charlike");
+        const message = "component name must be charlike";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 

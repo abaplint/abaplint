@@ -6,7 +6,7 @@ import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Catch implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -22,11 +22,15 @@ export class Catch implements StatementSyntax {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
       } else {
-        throw new Error("CATCH, unknown class " + className);
+        const message = "CATCH, unknown class " + className;
+        input.issues.push(syntaxIssue(input, token, message));
+        return;
       }
 
       if (names.has(className)) {
-        throw new Error("Duplicate class name in CATCH: " + className);
+        const message = "Duplicate class name in CATCH: " + className;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       names.add(className);
     }

@@ -8,7 +8,7 @@ import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 // todo: issue error for short APPEND if the source is without header line
 export class Append implements StatementSyntax {
@@ -24,7 +24,9 @@ export class Append implements StatementSyntax {
     const fsTarget = node.findExpressionAfterToken("ASSIGNING");
     if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
       if (!(targetType instanceof TableType) && !(targetType instanceof VoidType)) {
-        throw new Error("APPEND to non table type");
+        const message = "APPEND to non table type";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
       new FSTarget().runSyntax(fsTarget, input, rowType);
@@ -33,7 +35,9 @@ export class Append implements StatementSyntax {
     const dataTarget = node.findExpressionAfterToken("INTO");
     if (dataTarget && node.concatTokens().toUpperCase().includes(" REFERENCE INTO DATA(")) {
       if (!(targetType instanceof TableType) && !(targetType instanceof VoidType)) {
-        throw new Error("APPEND to non table type");
+        const message = "APPEND to non table type";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
       new InlineData().runSyntax(dataTarget, input, new DataReference(rowType));
@@ -48,7 +52,9 @@ export class Append implements StatementSyntax {
           && !(targetType instanceof TableType)
           && dataTarget !== target
           && !(targetType instanceof VoidType)) {
-        throw new Error("Append, target not a table type");
+        const message = "Append, target not a table type";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
 
       let rowType: AbstractType | undefined = undefined;
@@ -68,11 +74,15 @@ export class Append implements StatementSyntax {
           targetType = targetType.getRowType();
         }
         if (new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
-          throw new Error("Incompatible types");
+          const message = "Incompatible types";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       } else {
         if (new TypeUtils(input.scope).isAssignable(sourceType, rowType) === false) {
-          throw new Error("Incompatible types");
+          const message = "Incompatible types";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
     }

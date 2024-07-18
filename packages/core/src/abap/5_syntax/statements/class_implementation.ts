@@ -18,6 +18,7 @@ export class ClassImplementation implements StatementSyntax {
 
     const classDefinition = input.scope.findClassDefinition(className);
     if (classDefinition === undefined) {
+      // TODOSYNTAX hmm
       throw new Error("Class definition for \"" + className + "\" not found");
     }
 

@@ -6,7 +6,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
 import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
   public runSyntax(
@@ -39,7 +39,9 @@ export class ValueBody {
       const fieldname = s.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
       if (fieldname) {
         if (fields.has(fieldname)) {
-          throw new Error("Duplicate field assignment");
+          const message = "Duplicate field assignment";
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+          return new VoidType(CheckSyntaxKey);
         }
         fields.add(fieldname);
       }
@@ -56,7 +58,9 @@ export class ValueBody {
           && !(targetType instanceof AnyType)
           && targetType !== undefined
           && !(targetType instanceof VoidType)) {
-        throw new Error("Value, not a table type");
+        const message = "Value, not a table type";
+        input.issues.push(syntaxIssue(input, foo.getFirstToken(), message));
+        return new VoidType(CheckSyntaxKey);
       }
       let rowType: AbstractType | undefined = targetType;
       if (targetType instanceof TableType) {

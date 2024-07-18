@@ -4,7 +4,7 @@ import {MethodSource} from "../expressions/method_source";
 import {MethodCallBody} from "../expressions/method_call_body";
 import {VoidType} from "../../types/basic/void_type";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Call implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -18,7 +18,9 @@ export class Call implements StatementSyntax {
 
     const methodSource = children[2] as ExpressionNode;
     if (methodSource === undefined) {
-      throw new Error("Call, child MethodSource not found");
+      const message = "Call, child MethodSource not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
     const methodDef = new MethodSource().runSyntax(methodSource, input);
 

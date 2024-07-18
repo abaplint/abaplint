@@ -3,7 +3,8 @@ import {StatementNode} from "../../nodes";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {DataDefinition} from "../expressions/data_definition";
 import {UnknownType} from "../../types/basic/unknown_type";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {VoidType} from "../../types/basic";
 
 export class ClassData {
   public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier | undefined {
@@ -15,7 +16,9 @@ export class ClassData {
       }
       if (found?.getType().isGeneric() === true
           && found?.getType().containsVoid() === false) {
-        throw new Error("DATA definition cannot be generic, " + found.getName());
+        const message = "DATA definition cannot be generic, " + found.getName();
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return new TypedIdentifier(found.getToken(), input.filename, new VoidType(CheckSyntaxKey));
       }
       const meta = [...found.getMeta(), IdentifierMeta.Static];
       return new TypedIdentifier(found.getToken(), input.filename, found.getType(), meta, found.getValue());

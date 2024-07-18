@@ -6,7 +6,7 @@ import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
 import {Version} from "../../../version";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class CallFunction implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -20,7 +20,9 @@ export class CallFunction implements StatementSyntax {
         && node.findDirectExpression(Expressions.Destination) === undefined) {
       const functionName = name?.concatTokens().replace(/'/g, "");
       if (input.scope.findFunctionModule(functionName) === undefined) {
-        throw new Error(`Function module "${functionName}" not found/released`);
+        const message = `Function module "${functionName}" not found/released`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
