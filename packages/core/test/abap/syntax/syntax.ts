@@ -10596,7 +10596,7 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("no cascasing syntax errors.", () => {
+  it("no cascading syntax errors", () => {
     const abap = `
 DATA foo TYPE i.
 
