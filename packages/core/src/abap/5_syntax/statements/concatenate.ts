@@ -6,7 +6,7 @@ import {StringType, TableType, UnknownType, VoidType, XStringType} from "../../t
 import {InlineData} from "../expressions/inline_data";
 import {StatementSyntax} from "../_statement_syntax";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Concatenate implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -25,7 +25,9 @@ export class Concatenate implements StatementSyntax {
       const type = new Target().runSyntax(target, input);
       const compatible = byteMode ? new TypeUtils(input.scope).isHexLike(type) : new TypeUtils(input.scope).isCharLikeStrict(type);
       if (compatible === false) {
-        throw new Error("Target type not compatible");
+        const message = "Target type not compatible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
@@ -33,7 +35,9 @@ export class Concatenate implements StatementSyntax {
       for (const s of node.findDirectExpressions(Expressions.Source)) {
         const type = new Source().runSyntax(s, input);
         if (!(type instanceof UnknownType) && !(type instanceof VoidType) && !(type instanceof TableType)) {
-          throw new Error("Source must be an internal table");
+          const message = "Source must be an internal table";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
       }
     }
@@ -42,7 +46,9 @@ export class Concatenate implements StatementSyntax {
       const type = new Source().runSyntax(s, input);
       const compatible = byteMode ? new TypeUtils(input.scope).isHexLike(type) : new TypeUtils(input.scope).isCharLikeStrict(type);
       if (compatible === false) {
-        throw new Error("Source type not compatible");
+        const message = "Source type not compatible";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
