@@ -15,7 +15,8 @@ export class AttributeName {
     context: AbstractType | undefined,
     node: INode,
     input: SyntaxInput,
-    type?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
+    type?: ReferenceType | ReferenceType[] | undefined,
+    error = true): AbstractType | undefined {
 
     if (context instanceof VoidType) {
       return context;
@@ -39,8 +40,11 @@ export class AttributeName {
         found = helper.searchConstantName(def, name);
       }
       if (found === undefined) {
-        // TODOSYNTAX: there is a catch in method_source
-        throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
+        const message = "Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"";
+        if (error === true) {
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        }
+        return new VoidType(CheckSyntaxKey);
       }
       if (type) {
         input.scope.addReference(token, found, type, input.filename);

@@ -75,14 +75,13 @@ export class MethodSource {
       } else if (current.get() instanceof Expressions.AttributeName
           || current.get() instanceof Expressions.SourceField) {
 
-        try {
-          if (context instanceof AbstractType) {
-            const attr = new AttributeName().runSyntax(context, current, input, ReferenceType.DataReadReference);
+        if (context instanceof AbstractType) {
+          const attr = new AttributeName().runSyntax(context, current, input, ReferenceType.DataReadReference, false);
+          const isSyntaxError = attr instanceof VoidType && attr.getVoided() === CheckSyntaxKey;
+          if (isSyntaxError === false) {
             context = attr;
             continue;
           }
-        } catch {
-          // ignore
         }
 
         // try looking for method name
