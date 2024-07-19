@@ -97,6 +97,9 @@ export class Config implements IConfiguration {
     }
     if (this.config.syntax.globalConstants === undefined) {
       this.config.syntax.globalConstants = [];
+    } else {
+      // remove duplicates,
+      this.config.syntax.globalConstants = [...new Set(this.config.syntax.globalConstants)];
     }
     if (this.config.global.skipIncludesWithoutMain === undefined) {
       this.config.global.skipIncludesWithoutMain = false;
