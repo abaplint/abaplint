@@ -114,6 +114,17 @@ DATA: BEGIN OF blah ##NEEDED,
     expect(issues.length).to.equal(0);
   });
 
+  it("nothing after", async () => {
+    const abap = `
+SELECT name1, upper( name1 ) as upper
+  FROM ardc
+  WHERE length( name ) = 1
+  INTO TABLE @DATA(itab)
+  UP TO 10 ROWS  ##SUBRC_OK.`;
+    const issues = await findIssues(abap, "zfoobar.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
   it("CLASS DATA", async () => {
     const abap = `
 CLASS lcl DEFINITION.
