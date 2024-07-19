@@ -136,7 +136,7 @@ DATA: BEGIN OF blah ##NEEDED,
       return [];
     }
 
-    const concat = next.concatTokens().toUpperCase();
+    const concat = next?.concatTokens().toUpperCase() || "";
     if (concat.includes(" SY-SUBRC")) {
       const message = "SUBRC_OK can be removed as sy-subrc is checked";
       const fix = EditHelper.deleteToken(file, p);
