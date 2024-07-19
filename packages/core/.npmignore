@@ -10,6 +10,7 @@ build/*.tsbuildinfo
 build/scripts/*
 build/src/**/*.d.ts
 build/test/*
+build/adhoc/*
 build/tsdoc-metadata.json
 circular.txt
 coverage/
