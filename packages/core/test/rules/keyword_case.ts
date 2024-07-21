@@ -84,8 +84,8 @@ SELECT mandt, mtext
 
   {abap: `SELECT mwskz AS tax_code,
     CASE shkzg
-      WHEN 'H' THEN ABS( fwste )
-      WHEN 'S' THEN ABS( fwste ) * -1
+      WHEN 'H' THEN abs( fwste )
+      WHEN 'S' THEN abs( fwste ) * -1
     END AS tax_amount_dc
 FROM bset
 WHERE bukrs = @is_doc_key-company_code
@@ -104,6 +104,13 @@ INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`, cnt: 0},
 
   {abap: `data: foo TYPE i, boo TYPE i.`, cnt: 1},
   {abap: `READ TABLE lt_trkorr INDEX 1 TRANSPORTING trkorr INTO ls_trkorr.`, cnt: 0},
+
+  {abap: `
+SELECT name1, upper( name1 ) AS upper
+  FROM adrc
+  WHERE length( name ) > 2
+  INTO TABLE @DATA(itab)
+  UP TO 10 ROWS.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
