@@ -2234,7 +2234,7 @@ DATA da_vgbel LIKE xlips-vgbel.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("interfaces and data aliases", () => {
+  it.only("interfaces and data aliases", () => {
     const abap = `
 INTERFACE lif.
   DATA foo TYPE i.
