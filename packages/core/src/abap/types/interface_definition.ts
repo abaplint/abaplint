@@ -87,7 +87,28 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
 /////////////////
 
+  private checkInterfacesExists(input: SyntaxInput, node: StructureNode) {
+    for (const i of node.findAllStatements(Statements.InterfaceDef)) {
+      const token = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken();
+      const name = token?.getStr();
+      if (name) {
+        this.implementing.push({name, partial: false});
+
+        const idef = input.scope.findInterfaceDefinition(name);
+        if (idef) {
+          input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+        } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+          input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
+        } else {
+          throw new Error("Interface " + name + " unknown");
+        }
+      }
+    }
+  }
+
   private parse(input: SyntaxInput, node: StructureNode) {
+    this.checkInterfacesExists(input, node);
+
     // todo, proper sequencing, the statements should be processed line by line
     this.attributes = new Attributes(node, input);
     this.typeDefinitions = this.attributes.getTypes();
@@ -119,23 +140,6 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
       this.events.push(new EventDefinition(e, Visibility.Public, input));
-    }
-
-    for (const i of node.findAllStatements(Statements.InterfaceDef)) {
-      const token = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken();
-      const name = token?.getStr();
-      if (name) {
-        this.implementing.push({name, partial: false});
-
-        const idef = input.scope.findInterfaceDefinition(name);
-        if (idef) {
-          input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
-        } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
-          input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
-        } else {
-          throw new Error("Interface " + name + " unknown");
-        }
-      }
     }
 
     this.methodDefinitions = new MethodDefinitions(node, input);
