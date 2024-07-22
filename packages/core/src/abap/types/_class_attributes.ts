@@ -2,6 +2,7 @@ import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {Visibility} from "../4_file_information/visibility";
 import {ITypeDefinitions} from "./_type_definitions";
+import {Alias} from "./alias";
 
 export interface IAttributes {
   getStatic(): readonly ClassAttribute[];
@@ -13,5 +14,6 @@ export interface IAttributes {
 
   getConstants(): readonly ClassConstant[];
   getAll(): readonly ClassAttribute[];
+  getAliases(): readonly Alias[];
   getTypes(): ITypeDefinitions;
 }

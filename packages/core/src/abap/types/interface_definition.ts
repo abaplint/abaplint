@@ -13,7 +13,6 @@ import {IEventDefinition} from "./_event_definition";
 import {EventDefinition} from "./event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {MethodDefinitions} from "./method_definitions";
-import {Aliases} from "./aliases";
 import {ReferenceType} from "../5_syntax/_reference";
 import {ClassConstant} from "./class_constant";
 import {TypedIdentifier} from "./_typed_identifier";
@@ -29,7 +28,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   private methodDefinitions: IMethodDefinitions;
   private readonly events: IEventDefinition[];
   private readonly globalValue: boolean;
-  private aliases: Alias[];
+  private aliases: readonly Alias[];
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.Interface)) {
@@ -113,7 +112,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     this.attributes = new Attributes(node, input);
     this.typeDefinitions = this.attributes.getTypes();
 
-    this.aliases = [...new Aliases(node, this.filename, input.scope).getAll()];
+    this.aliases = this.attributes.getAliases();
 
     // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
     // this adds the aliased types to scope?

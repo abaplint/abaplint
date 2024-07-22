@@ -49,6 +49,10 @@ export class Attributes implements IAttributes {
     return this.static;
   }
 
+  public getAliases() {
+    return this.aliases;
+  }
+
   public getAll(): readonly ClassAttribute[] {
     let res: ClassAttribute[] = [];
     res = res.concat(this.static);

@@ -17,6 +17,6 @@ export interface IInterfaceDefinition extends Identifier {
   getEvents(): readonly IEventDefinition[];
   isGlobal(): boolean;
   getSuperClass(): string | undefined;
-  getAliases(): Alias[];
+  getAliases(): readonly Alias[];
   getImplementing(): readonly IImplementing[];
 }
