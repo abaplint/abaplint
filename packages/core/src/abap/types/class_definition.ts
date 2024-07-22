@@ -6,7 +6,6 @@ import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import {Attributes} from "./class_attributes";
 import {Identifier} from "../4_file_information/_identifier";
-import {Aliases} from "./aliases";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IClassDefinition} from "./_class_definition";
 import {TypeDefinitions} from "./type_definitions";
@@ -58,14 +57,13 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.friends = this.findFriends(def, input);
 
     this.parse(input, node);
-    this.aliases = [...new Aliases(node, this.filename, input.scope).getAll()];
 
     const helper = new ObjectOriented(input.scope);
     helper.fromSuperClassesAndInterfaces(this);
-    helper.addAliasedTypes(this.aliases);
 
     this.attributes = new Attributes(node, input);
     this.types = this.attributes.getTypes();
+    this.aliases = this.attributes.getAliases();
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {

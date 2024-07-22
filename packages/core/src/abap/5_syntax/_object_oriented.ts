@@ -10,7 +10,6 @@ import {ClassConstant} from "../types/class_constant";
 import {IEventDefinition} from "../types/_event_definition";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Visibility} from "../4_file_information/visibility";
-import {Alias} from "../types/alias";
 
 // todo, think some of the public methods can be made private
 // todo: changet this class to static? for performance
@@ -64,19 +63,6 @@ export class ObjectOriented {
       const def = this.scope.findClassDefinition(superName);
       if (def) {
         this.addAliasedAttributes(def);
-      }
-    }
-  }
-
-  public addAliasedTypes(aliases: Alias[]): void {
-    for (const alias of aliases) {
-      const comp = alias.getComponent();
-      const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
-      if (idef) {
-        const found = idef.getTypeDefinitions()!.getByName(comp.split("~")[1]);
-        if (found) {
-          this.scope.addTypeNamed(alias.getName(), found);
-        }
       }
     }
   }

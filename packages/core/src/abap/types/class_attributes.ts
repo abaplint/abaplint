@@ -196,7 +196,7 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Statements.ClassData) {
           this.static.push(this.parseAttribute(c, visibility, input));
         } else if (ctyp instanceof Statements.Aliases) {
-          this.parseAliases(c, visibility, input);
+          this.parseAlias(c, visibility, input);
         } else if (ctyp instanceof Statements.Constant) {
           const found = new ConstantStatement().runSyntax(c, input);
           if (found) {
@@ -215,18 +215,23 @@ export class Attributes implements IAttributes {
     }
   }
 
-  private parseAliases(node: StatementNode, visibility: Visibility, input: SyntaxInput) {
-    const name = node.findFirstExpression(Expressions.SimpleName)!.getFirstToken();
+  private parseAlias(node: StatementNode, visibility: Visibility, input: SyntaxInput) {
+    const aliasName = node.findFirstExpression(Expressions.SimpleName)!.getFirstToken();
     const compToken = node.findFirstExpression(Expressions.Field)!.getFirstToken();
     const compName = compToken.getStr();
 
-    this.aliases.push(new Alias(name, visibility, compName, this.filename));
+    this.aliases.push(new Alias(aliasName, visibility, compName, this.filename));
 
     if (compName.includes("~")) {
       const name = compName.split("~")[0];
       const idef = input.scope.findInterfaceDefinition(name);
       if (idef) {
         input.scope.addReference(compToken, idef, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+
+        const found = idef.getTypeDefinitions()!.getByName(compName.split("~")[1]);
+        if (found) {
+          input.scope.addTypeNamed(aliasName.getStr(), found);
+        }
       }
     }
   }
