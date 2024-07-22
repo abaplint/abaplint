@@ -228,9 +228,14 @@ export class Attributes implements IAttributes {
       if (idef) {
         input.scope.addReference(compToken, idef, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
 
-        const found = idef.getTypeDefinitions()!.getByName(compName.split("~")[1]);
-        if (found) {
-          input.scope.addTypeNamed(aliasName.getStr(), found);
+        const foundType = idef.getTypeDefinitions()!.getByName(compName.split("~")[1]);
+        if (foundType) {
+          input.scope.addTypeNamed(aliasName.getStr(), foundType);
+        }
+
+        const foundAttribute = idef.getAttributes().findByName(compName.split("~")[1]);
+        if (foundAttribute) {
+          input.scope.addNamedIdentifier(aliasName.getStr(), foundAttribute);
         }
       }
     }

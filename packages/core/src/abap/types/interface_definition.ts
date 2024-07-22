@@ -14,9 +14,6 @@ import {EventDefinition} from "./event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {MethodDefinitions} from "./method_definitions";
 import {ReferenceType} from "../5_syntax/_reference";
-import {ClassConstant} from "./class_constant";
-import {TypedIdentifier} from "./_typed_identifier";
-import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {SyntaxInput} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 
@@ -116,6 +113,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
     // this adds the aliased types to scope?
+    /*
     for (const a of this.aliases) {
       const [objName, fieldName] = a.getComponent().split("~");
       const idef = input.scope.findInterfaceDefinition(objName);
@@ -134,6 +132,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
         }
       }
     }
+    */
 
 
     const events = node.findAllStatements(Statements.Events);

@@ -2156,7 +2156,7 @@ ENDINTERFACE.
 
 WRITE if_sub=>bar.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
   it("Table with header line", () => {
