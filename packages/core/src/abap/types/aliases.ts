@@ -4,12 +4,11 @@ import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {Visibility} from "../4_file_information/visibility";
-import {IAliases} from "./_aliases";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {ReferenceType} from "../5_syntax/_reference";
 
 // todo: delete this class
-export class Aliases implements IAliases {
+export class Aliases {
   private readonly aliases: Alias[];
   private readonly filename: string;
 
