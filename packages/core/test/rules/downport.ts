@@ -5773,4 +5773,16 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it.only("SELECT, pragma on its own line", async () => {
+    const abap = `
+DATA tab TYPE voidedd.
+SELECT foo, bar
+  FROM voided
+  INTO CORRESPONDING FIELDS OF TABLE @tab
+  ##SUBRC_OK.`;
+    const expected = `
+sdfsdf`;
+    testFix(abap, expected);
+  });
+
 });
