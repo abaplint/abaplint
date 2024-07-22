@@ -10,7 +10,6 @@ import {ClassConstant} from "../types/class_constant";
 import {IEventDefinition} from "../types/_event_definition";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Visibility} from "../4_file_information/visibility";
-import {IAliases} from "../types/_aliases";
 
 // todo, think some of the public methods can be made private
 // todo: changet this class to static? for performance
@@ -49,7 +48,7 @@ export class ObjectOriented {
   }
 
   public addAliasedAttributes(classDefinition: IClassDefinition): void {
-    for (const alias of classDefinition.getAliases().getAll()) {
+    for (const alias of classDefinition.getAliases()) {
       const comp = alias.getComponent();
       const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
@@ -64,19 +63,6 @@ export class ObjectOriented {
       const def = this.scope.findClassDefinition(superName);
       if (def) {
         this.addAliasedAttributes(def);
-      }
-    }
-  }
-
-  public addAliasedTypes(aliases: IAliases): void {
-    for (const alias of aliases.getAll()) {
-      const comp = alias.getComponent();
-      const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
-      if (idef) {
-        const found = idef.getTypeDefinitions()!.getByName(comp.split("~")[1]);
-        if (found) {
-          this.scope.addTypeNamed(alias.getName(), found);
-        }
       }
     }
   }
@@ -100,7 +86,7 @@ export class ObjectOriented {
   private findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition):
   {method: IMethodDefinition, def: IInterfaceDefinition} | undefined {
 
-    for (const a of def.getAliases().getAll()) {
+    for (const a of def.getAliases()) {
       if (a.getName().toUpperCase() === methodName.toUpperCase()) {
         const comp = a.getComponent();
         const res = this.findMethodInInterface(comp.split("~")[0], comp.split("~")[1]);
@@ -159,7 +145,7 @@ export class ObjectOriented {
       return found;
     }
 
-    for (const a of def.getAliases()?.getAll() || []) {
+    for (const a of def.getAliases() || []) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {
         const comp = a.getComponent();
         const res = this.searchEvent(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
@@ -193,7 +179,7 @@ export class ObjectOriented {
       }
     }
 
-    for (const a of def.getAliases()?.getAll() || []) {
+    for (const a of def.getAliases() || []) {
       if (a.getName().toUpperCase() === upper) {
         const comp = a.getComponent();
         const res = this.searchAttributeName(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
@@ -263,7 +249,7 @@ export class ObjectOriented {
       }
     }
 
-    for (const a of def.getAliases().getAll()) {
+    for (const a of def.getAliases()) {
       if (a.getName().toUpperCase() === upper) {
         const comp = a.getComponent();
         const res = this.searchConstantName(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);

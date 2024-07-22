@@ -1,5 +1,6 @@
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
 import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../nodes";
@@ -17,6 +18,8 @@ import {TypeDefinitions} from "./type_definitions";
 import {Types} from "../5_syntax/structures/types";
 import {Type} from "../5_syntax/statements/type";
 import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {ReferenceType} from "../5_syntax/_reference";
+import {Alias} from "./alias";
 
 export class Attributes implements IAttributes {
   private readonly static: ClassAttribute[];
@@ -25,13 +28,15 @@ export class Attributes implements IAttributes {
   private readonly types: TypeDefinitions;
   private readonly tlist: {type: TypedIdentifier, visibility: Visibility}[];
   private readonly filename: string;
+  private readonly aliases: Alias[];
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     this.static = [];
     this.instance = [];
     this.constants = [];
-    this.filename = input.filename;
+    this.aliases = [];
     this.tlist = [];
+    this.filename = input.filename;
     this.parse(node, input);
     this.types = new TypeDefinitions(this.tlist);
   }
@@ -42,6 +47,10 @@ export class Attributes implements IAttributes {
 
   public getStatic(): ClassAttribute[] {
     return this.static;
+  }
+
+  public getAliases() {
+    return this.aliases;
   }
 
   public getAll(): readonly ClassAttribute[] {
@@ -186,6 +195,8 @@ export class Attributes implements IAttributes {
           this.instance.push(this.parseAttribute(c, visibility, input));
         } else if (ctyp instanceof Statements.ClassData) {
           this.static.push(this.parseAttribute(c, visibility, input));
+        } else if (ctyp instanceof Statements.Aliases) {
+          this.parseAlias(c, visibility, input);
         } else if (ctyp instanceof Statements.Constant) {
           const found = new ConstantStatement().runSyntax(c, input);
           if (found) {
@@ -199,6 +210,32 @@ export class Attributes implements IAttributes {
             input.scope.addType(res);
             this.tlist.push({type: res, visibility});
           }
+        }
+      }
+    }
+  }
+
+  private parseAlias(node: StatementNode, visibility: Visibility, input: SyntaxInput) {
+    const aliasName = node.findFirstExpression(Expressions.SimpleName)!.getFirstToken();
+    const compToken = node.findFirstExpression(Expressions.Field)!.getFirstToken();
+    const compName = compToken.getStr();
+
+    this.aliases.push(new Alias(aliasName, visibility, compName, this.filename));
+
+    if (compName.includes("~")) {
+      const name = compName.split("~")[0];
+      const idef = input.scope.findInterfaceDefinition(name);
+      if (idef) {
+        input.scope.addReference(compToken, idef, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+
+        const foundType = idef.getTypeDefinitions()!.getByName(compName.split("~")[1]);
+        if (foundType) {
+          input.scope.addTypeNamed(aliasName.getStr(), foundType);
+        }
+
+        const foundAttribute = idef.getAttributes().findByName(compName.split("~")[1]);
+        if (foundAttribute) {
+          input.scope.addNamedIdentifier(aliasName.getStr(), foundAttribute);
         }
       }
     }

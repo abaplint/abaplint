@@ -6,7 +6,6 @@ import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import {Attributes} from "./class_attributes";
 import {Identifier} from "../4_file_information/_identifier";
-import {Aliases} from "./aliases";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IClassDefinition} from "./_class_definition";
 import {TypeDefinitions} from "./type_definitions";
@@ -15,12 +14,12 @@ import {EventDefinition} from "./event_definition";
 import {Visibility} from "../4_file_information/visibility";
 import {IEventDefinition} from "./_event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
-import {IAliases} from "./_aliases";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
 import {ReferenceType} from "../5_syntax/_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {Alias} from "./alias";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly methodDefs: MethodDefinitions;
@@ -35,7 +34,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly finalValue: boolean;
   private readonly globalValue: boolean;
   private readonly sharedMemory: boolean;
-  private aliases: IAliases;
+  private readonly aliases: Alias[];
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -61,10 +60,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     const helper = new ObjectOriented(input.scope);
     helper.fromSuperClassesAndInterfaces(this);
-    helper.addAliasedTypes(this.aliases);
 
     this.attributes = new Attributes(node, input);
     this.types = this.attributes.getTypes();
+    this.aliases = this.attributes.getAliases();
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
@@ -121,7 +120,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return this.implementing;
   }
 
-  public getAliases(): IAliases {
+  public getAliases() {
     return this.aliases;
   }
 
@@ -166,7 +165,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
         }
         names.add(name);
       }
-      for (const a of cdef?.getAliases().getAll() || []) {
+      for (const a of cdef?.getAliases() || []) {
         names.add(a.getName().toUpperCase());
       }
       sup = cdef?.getSuperClass();
@@ -221,8 +220,6 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedUnknownReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
       }
     }
-
-    this.aliases = new Aliases(inputNode, this.filename, input.scope);
   }
 
 }

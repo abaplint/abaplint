@@ -13,13 +13,9 @@ import {IEventDefinition} from "./_event_definition";
 import {EventDefinition} from "./event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {MethodDefinitions} from "./method_definitions";
-import {IAliases} from "./_aliases";
-import {Aliases} from "./aliases";
 import {ReferenceType} from "../5_syntax/_reference";
-import {ClassConstant} from "./class_constant";
-import {TypedIdentifier} from "./_typed_identifier";
-import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {Alias} from "./alias";
 
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
@@ -29,7 +25,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   private methodDefinitions: IMethodDefinitions;
   private readonly events: IEventDefinition[];
   private readonly globalValue: boolean;
-  private aliases: IAliases;
+  private aliases: readonly Alias[];
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.Interface)) {
@@ -57,7 +53,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     return this.implementing;
   }
 
-  public getAliases(): IAliases {
+  public getAliases() {
     return this.aliases;
   }
 
@@ -87,16 +83,38 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
 /////////////////
 
+  private checkInterfacesExists(input: SyntaxInput, node: StructureNode) {
+    for (const i of node.findAllStatements(Statements.InterfaceDef)) {
+      const token = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken();
+      const name = token?.getStr();
+      if (name) {
+        this.implementing.push({name, partial: false});
+
+        const idef = input.scope.findInterfaceDefinition(name);
+        if (idef) {
+          input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
+        } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+          input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
+        } else {
+          throw new Error("Interface " + name + " unknown");
+        }
+      }
+    }
+  }
+
   private parse(input: SyntaxInput, node: StructureNode) {
+    this.checkInterfacesExists(input, node);
+
     // todo, proper sequencing, the statements should be processed line by line
     this.attributes = new Attributes(node, input);
     this.typeDefinitions = this.attributes.getTypes();
 
-    this.aliases = new Aliases(node, this.filename, input.scope);
+    this.aliases = this.attributes.getAliases();
 
     // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
     // this adds the aliased types to scope?
-    for (const a of this.aliases.getAll()) {
+    /*
+    for (const a of this.aliases) {
       const [objName, fieldName] = a.getComponent().split("~");
       const idef = input.scope.findInterfaceDefinition(objName);
       if (idef) {
@@ -114,28 +132,12 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
         }
       }
     }
+    */
 
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
       this.events.push(new EventDefinition(e, Visibility.Public, input));
-    }
-
-    for (const i of node.findAllStatements(Statements.InterfaceDef)) {
-      const token = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken();
-      const name = token?.getStr();
-      if (name) {
-        this.implementing.push({name, partial: false});
-
-        const idef = input.scope.findInterfaceDefinition(name);
-        if (idef) {
-          input.scope.addReference(token, idef, ReferenceType.ObjectOrientedReference, this.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
-        } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
-          input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, this.filename);
-        } else {
-          throw new Error("Interface " + name + " unknown");
-        }
-      }
     }
 
     this.methodDefinitions = new MethodDefinitions(node, input);
