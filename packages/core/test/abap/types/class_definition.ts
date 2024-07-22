@@ -101,7 +101,7 @@ describe("Types, class_definition", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
     const def = run(reg);
     expect(def).to.not.equal(undefined);
-    const aliases = def!.getAliases().getAll();
+    const aliases = def!.getAliases();
     expect(aliases.length).to.equal(1);
     expect(aliases[0].getName()).to.equal("cache_asset");
     expect(aliases[0].getVisibility()).to.equal(Visibility.Public);

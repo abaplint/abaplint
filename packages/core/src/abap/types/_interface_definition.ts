@@ -3,7 +3,7 @@ import {IAttributes} from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
 import {IEventDefinition} from "./_event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
-import {IAliases} from "./_aliases";
+import {Alias} from "./alias";
 
 export interface IImplementing {
   name: string;
@@ -17,6 +17,6 @@ export interface IInterfaceDefinition extends Identifier {
   getEvents(): readonly IEventDefinition[];
   isGlobal(): boolean;
   getSuperClass(): string | undefined;
-  getAliases(): IAliases;
+  getAliases(): Alias[];
   getImplementing(): readonly IImplementing[];
 }

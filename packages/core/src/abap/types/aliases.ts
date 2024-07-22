@@ -8,6 +8,7 @@ import {IAliases} from "./_aliases";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {ReferenceType} from "../5_syntax/_reference";
 
+// todo: delete this class
 export class Aliases implements IAliases {
   private readonly aliases: Alias[];
   private readonly filename: string;
