@@ -35,7 +35,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly finalValue: boolean;
   private readonly globalValue: boolean;
   private readonly sharedMemory: boolean;
-  private aliases: Alias[];
+  private readonly aliases: Alias[];
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -58,6 +58,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.friends = this.findFriends(def, input);
 
     this.parse(input, node);
+    this.aliases = [...new Aliases(node, this.filename, input.scope).getAll()];
 
     const helper = new ObjectOriented(input.scope);
     helper.fromSuperClassesAndInterfaces(this);
@@ -221,8 +222,6 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedUnknownReference, input.filename, {ooName: name.toUpperCase(), ooType: "INTF"});
       }
     }
-
-    this.aliases = [...new Aliases(inputNode, this.filename, input.scope).getAll()];
   }
 
 }
