@@ -156,7 +156,7 @@ export class StatementParser {
               continue; // probably punctuation
             }
             const s = this.categorizeStatement(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(second)));
-            if (!(s.get() instanceof Unknown)) {
+            if (!(s.get() instanceof Unknown) && !(s.get() instanceof Empty)) {
               result.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(first)));
               statement = s;
               break;
