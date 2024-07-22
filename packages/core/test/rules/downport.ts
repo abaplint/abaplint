@@ -5773,7 +5773,7 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
-  it.only("SELECT, pragma on its own line", async () => {
+  it("SELECT, pragma on its own line", async () => {
     const abap = `
 DATA tab TYPE voidedd.
 SELECT foo, bar
@@ -5781,7 +5781,11 @@ SELECT foo, bar
   INTO CORRESPONDING FIELDS OF TABLE @tab
   ##SUBRC_OK.`;
     const expected = `
-sdfsdf`;
+DATA tab TYPE voidedd.
+SELECT foo bar
+  FROM voided
+  INTO CORRESPONDING FIELDS OF TABLE tab
+  ##SUBRC_OK.`;
     testFix(abap, expected);
   });
 
