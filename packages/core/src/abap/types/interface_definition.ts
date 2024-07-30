@@ -16,6 +16,7 @@ import {MethodDefinitions} from "./method_definitions";
 import {ReferenceType} from "../5_syntax/_reference";
 import {SyntaxInput} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
+import {ObjectOriented} from "../5_syntax/_object_oriented";
 
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
@@ -105,35 +106,14 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   private parse(input: SyntaxInput, node: StructureNode) {
     this.checkInterfacesExists(input, node);
 
+    const helper = new ObjectOriented(input.scope);
+    helper.fromInterfaces(this);
+
     // todo, proper sequencing, the statements should be processed line by line
     this.attributes = new Attributes(node, input);
     this.typeDefinitions = this.attributes.getTypes();
 
     this.aliases = this.attributes.getAliases();
-
-    // todo, cleanup aliases, vs "object_oriented.ts" vs "class_implementation.ts"
-    // this adds the aliased types to scope?
-    /*
-    for (const a of this.aliases) {
-      const [objName, fieldName] = a.getComponent().split("~");
-      const idef = input.scope.findInterfaceDefinition(objName);
-      if (idef) {
-        const foundType = idef.getTypeDefinitions().getByName(fieldName);
-        if (foundType) {
-          input.scope.addTypeNamed(a.getName(), foundType);
-        } else {
-          const foundField = idef.getAttributes().findByName(fieldName);
-          if (foundField && foundField instanceof ClassConstant) {
-            const token = new TokenIdentifier(a.getStart(), a.getName());
-            const id = new TypedIdentifier(token, input.filename, foundField.getType());
-            const constant = new ClassConstant(id, Visibility.Public, foundField.getValue());
-            input.scope.addIdentifier(constant);
-          }
-        }
-      }
-    }
-    */
-
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {

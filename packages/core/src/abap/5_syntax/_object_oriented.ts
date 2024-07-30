@@ -388,9 +388,9 @@ export class ObjectOriented {
   }
 
   // returns list of interfaces implemented
-  private fromInterfaces(classDefinition: IClassDefinition, skip?: string[]): string[] {
+  public fromInterfaces(definition: IInterfaceDefinition, skip?: string[]): string[] {
     const ignore: string[] = [];
-    for (const i of classDefinition.getImplementing()) {
+    for (const i of definition.getImplementing()) {
       ignore.push(...this.fromInterfaceByName(i.name, ignore.concat(skip || [])));
     }
     return ignore;

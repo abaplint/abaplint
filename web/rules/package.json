@@ -12,7 +12,7 @@
   "devDependencies": {
     "@abaplint/core": "^2.112.6",
     "@abaplint/monaco": "^2.112.6",
-    "@types/node": "^20.14.11",
+    "@types/node": "^22.0.0",
     "fuse.js": "^7.0.0",
     "monaco-editor": "^0.48.0",
     "buffer": "^6.0.3",
