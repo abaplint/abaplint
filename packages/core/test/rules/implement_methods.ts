@@ -64,6 +64,20 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("normal class, method implemented, upper case", async () => {
+    const contents =
+    `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+       PUBLIC SECTION.
+         METHODS foobar.
+     ENDCLASS.
+     CLASS zcl_foobar IMPLEMENTATION.
+       METHOD FOOBAR.
+       ENDMETHOD.
+      ENDCLASS.`;
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("abstract method", async () => {
     const contents =
     `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -160,6 +174,24 @@ describe("Rules, implement_methods", () => {
       ENDCLASS.
       CLASS zcl_foo IMPLEMENTATION.
         METHOD zif_bar~foobar.
+        ENDMETHOD.
+      ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zcl_foo.clas.abap", contents: clas},
+      {filename: "zif_bar.intf.abap", contents: intf}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("implement methods from interface, implemented, upper case", async () => {
+    const intf = `INTERFACE zif_bar PUBLIC.
+        METHODS: foobar.
+      ENDINTERFACE.\n`;
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES: zif_bar.
+      ENDCLASS.
+      CLASS zcl_foo IMPLEMENTATION.
+        METHOD ZIF_BAR~FOOBAR.
         ENDMETHOD.
       ENDCLASS.`;
     const issues = await runMulti([
