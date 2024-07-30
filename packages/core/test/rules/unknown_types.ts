@@ -2250,7 +2250,7 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("interfaces and types", () => {
+  it("interfaces and types", () => {
     const abap = `
 INTERFACE zlif1.
   TYPES foo TYPE i.
