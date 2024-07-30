@@ -2250,4 +2250,19 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.only("interfaces and types", () => {
+    const abap = `
+INTERFACE zlif1.
+  TYPES foo TYPE i.
+ENDINTERFACE.
+
+INTERFACE lif2.
+  INTERFACES zlif1.
+  METHODS bar IMPORTING val TYPE zlif1~foo.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
