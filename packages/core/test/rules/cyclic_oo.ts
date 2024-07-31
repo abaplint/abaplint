@@ -62,4 +62,28 @@ describe("Rule: cyclic oo", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("via constant value", async () => {
+    const zbar = `
+interface zif_fetch_destination public.
+
+  types destination_type type string.
+
+  constants:
+    begin of destination_types,
+      url type destination_type value zif_fetch_destination_url=>type,
+    end of destination_types.
+endinterface.`;
+    const zfoo = `
+interface zif_fetch_destination_url public.
+  interfaces zif_fetch_destination.
+
+  constants type type zif_fetch_destination~destination_type value 'URL'.
+endinterface.`;
+    const issues = await runSingle([
+      new MemoryFile("zif_fetch_destination_url.intf.abap", zfoo),
+      new MemoryFile("zif_fetch_destination.intf.abap", zbar),
+    ]);
+    expect(issues.length).to.equal(1);
+  });
+
 });

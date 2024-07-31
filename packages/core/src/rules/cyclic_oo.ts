@@ -30,7 +30,7 @@ export class CyclicOO implements IRule {
     return {
       key: "cyclic_oo",
       title: "Cyclic OO",
-      shortDescription: `Finds cyclic OO references`,
+      shortDescription: `Finds cyclic/circular OO references`,
       extendedInformation: `Runs for global INTF + CLAS objects
 
 Objects must be without syntax errors for this rule to take effect
