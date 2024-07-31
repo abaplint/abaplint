@@ -12,6 +12,7 @@ export * from "./cds_case";
 export * from "./cds_cast";
 export * from "./cds_composition";
 export * from "./cds_condition";
+export * from "./cds_having";
 export * from "./cds_define_abstract";
 export * from "./cds_define_custom";
 export * from "./cds_define_projection";
