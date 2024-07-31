@@ -1931,7 +1931,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds cyclic OO references\nhttps://rules.abaplint.org/cyclic_oo"
+              "description": "Finds cyclic/circular OO references\nhttps://rules.abaplint.org/cyclic_oo"
             },
             "cyclomatic_complexity": {
               "anyOf": [
@@ -3790,7 +3790,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds cyclic OO references\nhttps://rules.abaplint.org/cyclic_oo"
+              "description": "Finds cyclic/circular OO references\nhttps://rules.abaplint.org/cyclic_oo"
             },
             "cyclomatic_complexity": {
               "anyOf": [

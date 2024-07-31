@@ -690,4 +690,31 @@ define view YINVOICES
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("extend view entity", () => {
+    const cds = `
+extend view entity zfoobar with
+{
+  employ.zztitle_zem,
+  employ.zzcountry_zem
+}
+`;
+    const file = new MemoryFile("zfoobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view", () => {
+    const cds = `
+@AbapCatalog.sqlViewAppendName: 'ZESLSDCITM'
+@EndUserText.label: 'Sales document item addit. fields'
+extend view I_SalesDocumentItem with ZE_SalesDocItem
+  {
+    vbkd.bstdk as PurchaseOrderByCustomerDate,
+    vbak.bstnk as PurchaseOrderByCustomer2
+  }`;
+    const file = new MemoryFile("ze_salesdocitem.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
