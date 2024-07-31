@@ -690,4 +690,17 @@ define view YINVOICES
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("extend view entity", () => {
+    const cds = `
+extend view entity zfoobar with
+{
+  employ.zztitle_zem,
+  employ.zzcountry_zem
+}
+`;
+    const file = new MemoryFile("zfoobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
