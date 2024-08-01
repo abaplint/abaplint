@@ -52,7 +52,7 @@ export class ClassicExceptionsOverlap extends ABAPRule {
     for (const p of struc.findAllExpressions(Expressions.ParameterListExceptions)) {
       const set = new Set<string>();
       for (const e of p.findAllExpressions(Expressions.ParameterException)) {
-        const text = e.findDirectExpression(Expressions.SimpleName)?.concatTokens().toUpperCase();
+        const text = e.findDirectExpression(Expressions.Integer)?.concatTokens().toUpperCase();
         if (text === undefined) {
           continue;
         }

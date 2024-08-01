@@ -72,6 +72,14 @@ EXCEPTIONS
   `assert_true( xsdbool( not->negated_expression IS INSTANCE OF cl_blah ) ).`,
   `CALL METHOD env=>instance->go_server->encode.`,
   `CALL METHOD zcl_class=>method( ).`,
+
+  `go_mr_api->get(
+    exporting
+      i_url              = i_url
+    exceptions
+      parameter_missing  = /foo/cx_mime_repo=>rc-parameter_missing
+      permission_failure = /foo/cx_mime_repo=>rc-permission_failure
+      others             = /foo/cx_mime_repo=>rc-others ).`,
 ];
 
 statementType(tests, "CALL", Statements.Call);
