@@ -39,5 +39,10 @@ export class CallFunction implements StatementSyntax {
     for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
       new Source().runSyntax(s, input);
     }
+
+    const exceptions = node.findFirstExpression(Expressions.ParameterException);
+    for (const s of exceptions?.findAllExpressions(Expressions.SimpleFieldChain) || []) {
+      new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
+    }
   }
 }

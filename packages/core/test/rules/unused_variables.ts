@@ -1532,4 +1532,34 @@ clear sdf.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("call function, exception constant", async () => {
+    const abap = `
+CONSTANTS bar TYPE i VALUE 2.
+CALL FUNCTION 'SDF'
+  EXCEPTIONS
+    foo = bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("call method, exception constant", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar EXCEPTIONS foo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM call.
+  CONSTANTS bar TYPE i VALUE 2.
+  lcl=>bar( EXCEPTIONS foo = bar ).
+ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

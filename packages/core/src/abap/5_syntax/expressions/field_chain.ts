@@ -153,6 +153,9 @@ export class FieldChain {
     } else if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceField) {
       return new SourceField().runSyntax(node, input, type);
+    } else if (node instanceof ExpressionNode
+        && node.get() instanceof Expressions.Field) {
+      return new SourceField().runSyntax(node, input, type);
     } else if (node.get() instanceof Expressions.ClassName) {
       const classTok = node.getFirstToken();
       const classNam = classTok.getStr();
