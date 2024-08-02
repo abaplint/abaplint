@@ -10,6 +10,8 @@ import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
+import {FieldChain} from "./field_chain";
+import {ReferenceType} from "../_reference";
 
 interface IListItemT {
   name: string;
@@ -55,7 +57,14 @@ export class MethodParameters {
           this.checkReceiving(children.shift()!, input, method);
           break;
         case "EXCEPTIONS":
-          children.shift(); // todo, old style exceptions
+          {
+            // todo, old style exceptions
+            const node = children.shift()! as ExpressionNode;
+            const exceptions = node.findFirstExpression(Expressions.ParameterException);
+            for (const s of exceptions?.findAllExpressions(Expressions.SimpleFieldChain) || []) {
+              new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
+            }
+          }
           break;
         default:
           throw new AssertError("MethodParameters, unexpected token, " + name);
