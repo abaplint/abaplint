@@ -1,3 +1,5 @@
+export * from "./abap_query_functional_area";
+export * from "./abap_query_query";
 export * from "./activation_variant";
 export * from "./api_release_state";
 export * from "./application_job_catalog_entry";

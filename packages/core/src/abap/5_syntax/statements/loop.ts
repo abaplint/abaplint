@@ -35,8 +35,11 @@ export class Loop implements StatementSyntax {
 
     const concat = node.concatTokens().toUpperCase();
     if (sourceType === undefined) {
-      const message = "No source type determined";
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      // if its a dynpro table control loop, then dont issue error
+      if (concat !== "LOOP.") {
+        const message = "No source type determined";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      }
       return;
     } else if (sourceType instanceof UnknownType) {
       const message = "Loop, not a table type, " + sourceType.getError();

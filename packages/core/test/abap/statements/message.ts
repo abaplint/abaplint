@@ -34,6 +34,8 @@ const tests = [
   "message E001(0A) with 'FATAL' raising FATAL_ERROR.",
   "MESSAGE e019 RAISING tree_not-allowed.",
   "MESSAGE ID '00' TYPE 'E' NUMBER '000'.",
+  "MESSAGE e014(foo/bar) WITH TEXT-e03.", // yea, well, this should not give a syntax error, even tho the namespace is obviously wrong
+  "MESSAGE e014(foo/bar/moo/boo) WITH TEXT-e03.",
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);

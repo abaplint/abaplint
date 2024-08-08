@@ -20,6 +20,11 @@ const cases = [
   PUBLIC SECTION.
     INCLUDE zasdfd IF FOUND.
 ENDCLASS.`},
+  {abap: `CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    INCLUDE zasdfd.
+    METHODS moo.
+ENDCLASS.`},
 ];
 
 structureType(cases, new ClassDefinition());

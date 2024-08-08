@@ -22,6 +22,7 @@ export class SectionContents implements IStructure {
                     sta(Statements.TypePools),
                     sta(Statements.InterfaceLoad),
                     sta(Statements.ClassDefinitionLoad),
+                    sta(Statements.Include),
                     sub(Types),
                     sub(Constants),
                     sub(TypeEnum),

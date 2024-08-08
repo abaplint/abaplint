@@ -41,7 +41,7 @@ export class StringTemplate {
           && !(type instanceof NumericGenericType)
           && !(type instanceof NumericType)
           && !(type instanceof AnyType)) {
-        const message = "Cannot apply ALPHA to this type";
+        const message = `Cannot apply ALPHA to this type (${type.constructor.name})`;
         input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
         return new VoidType(CheckSyntaxKey);
       }
