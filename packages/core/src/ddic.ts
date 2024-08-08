@@ -343,6 +343,7 @@ export class DDIC {
     switch (text) {
       case "DEC":      // 1 <= len <= 31
       case "D16F":     // 1 <= len <= 31
+      case "D16D":
       case "D34F":     // 1 <= len <= 31
       case "DF16_DEC": // 1 <= len <= 31
       case "DF34_DEC": // 1 <= len <= 31

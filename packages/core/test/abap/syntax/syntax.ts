@@ -10609,6 +10609,14 @@ CLEAR bar.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("loop at nothing(dynpro table control?), no error expected", () => {
+    const abap = `
+LOOP.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
