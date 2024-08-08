@@ -37,7 +37,7 @@ export * from "./private_section";
 export * from "./protected_section";
 export * from "./provide";
 export * from "./public_section";
-export * from "./section_section";
+export * from "./section_contents";
 export * from "./select";
 export * from "./statics";
 export * from "./test_injection";
