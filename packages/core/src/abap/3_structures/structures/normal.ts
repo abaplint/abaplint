@@ -22,6 +22,7 @@ export class Normal implements IStructure {
                sub(Structures.Loop),
                sta(Statements.Append),
                sub(Structures.Try),
+               sub(Structures.OnChange),
                sta(Statements.ReadTable),
                sta(Statements.Assert),
                sta(Statements.Return),
