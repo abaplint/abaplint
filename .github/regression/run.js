@@ -14,11 +14,10 @@ const repos = [
   "abapGit/CI",
   "abapGit/performance-test",
   "abapify/assert",
-  /*
   "abapify/fetch-cloud",
   "abapify/fetch-legacy",
-  */
   "abapify/fetch",
+  "abapify/otel",
   "abapify/throw",
   "abapinho/abapTimeMachine",
   "abaplint/abaplint-sci-client",
