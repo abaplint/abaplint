@@ -10617,6 +10617,31 @@ ENDLOOP.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.only("interfaces and me", () => {
+    const abap = `
+INTERFACE zif_otel_has_attributes.
+  DATA attributes TYPE REF TO object.
+ENDINTERFACE.
+
+INTERFACE zif_otel_span_event.
+  INTERFACES zif_otel_has_attributes.
+ENDINTERFACE.
+
+CLASS lcl_span_event DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_otel_span_event.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_span_event IMPLEMENTATION.
+  METHOD constructor.
+    CLEAR me->zif_otel_has_attributes~attributes.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
