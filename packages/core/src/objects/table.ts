@@ -32,6 +32,7 @@ export class Table extends AbstractObject {
     tableCategory?: TableCategory | undefined,
     dataClass?: string,
     enhancementCategory?: EnhancementCategory,
+    description?: string,
     fields: {
       FIELDNAME: string,
       ROLLNAME?: string,
@@ -52,8 +53,11 @@ export class Table extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+
+    return this.parsedData?.description;
   }
 
   public getAllowedNaming(): IAllowedNaming {
@@ -292,6 +296,7 @@ export class Table extends AbstractObject {
 
 // table category
     this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS;
+    this.parsedData.description = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.DDTEXT;
     this.parsedData.dataClass = parsed.abapGit["asx:abap"]["asx:values"]?.DD09L?.TABART;
 
 // fields
