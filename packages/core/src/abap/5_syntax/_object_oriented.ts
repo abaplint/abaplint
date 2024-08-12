@@ -191,7 +191,7 @@ export class ObjectOriented {
 
     if (name.includes("~")) {
       const interfaceName = upper.split("~")[0];
-      if (this.fromInterfaces(def).some((a) => a.toUpperCase() === interfaceName)) {
+      if (this.listInterfacesRecursive(def).includes(interfaceName)) {
         return this.searchAttributeName(this.scope.findInterfaceDefinition(interfaceName), name.split("~")[1]);
       }
     }
@@ -388,6 +388,21 @@ export class ObjectOriented {
   }
 
   /** returns list of interfaces implemented, recursive */
+  public listInterfacesRecursive(definition: IInterfaceDefinition): string[] {
+    const list: string[] = [];
+    for (const i of definition.getImplementing()) {
+      const upper = i.name.toUpperCase();
+      list.push(upper);
+
+      const def = this.scope.findInterfaceDefinition(upper);
+      if (def) {
+        list.push(...this.listInterfacesRecursive(def));
+      }
+    }
+
+    return [...new Set(list)];
+  }
+
   public fromInterfaces(definition: IInterfaceDefinition, skip?: string[]): string[] {
     const ignore: string[] = [];
     for (const i of definition.getImplementing()) {

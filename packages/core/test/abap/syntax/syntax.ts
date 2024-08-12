@@ -10617,7 +10617,7 @@ ENDLOOP.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("interfaces and me", () => {
+  it("interfaces and me", () => {
     const abap = `
 INTERFACE zif_otel_has_attributes.
   DATA attributes TYPE i.
@@ -10640,7 +10640,6 @@ CLASS lcl_span_event IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    console.dir(issues[0]?.getMessage());
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
