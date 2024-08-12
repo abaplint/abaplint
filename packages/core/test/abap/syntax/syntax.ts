@@ -10617,10 +10617,10 @@ ENDLOOP.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("interfaces and me", () => {
+  it.only("interfaces and me", () => {
     const abap = `
 INTERFACE zif_otel_has_attributes.
-  DATA attributes TYPE REF TO object.
+  DATA attributes TYPE i.
 ENDINTERFACE.
 
 INTERFACE zif_otel_span_event.
@@ -10636,9 +10636,11 @@ ENDCLASS.
 CLASS lcl_span_event IMPLEMENTATION.
   METHOD constructor.
     CLEAR me->zif_otel_has_attributes~attributes.
+    me->zif_otel_has_attributes~attributes = 2.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
+    console.dir(issues[0]?.getMessage());
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 

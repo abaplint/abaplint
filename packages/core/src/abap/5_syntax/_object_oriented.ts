@@ -389,11 +389,11 @@ export class ObjectOriented {
 
   /** returns list of interfaces implemented, recursive */
   public fromInterfaces(definition: IInterfaceDefinition, skip?: string[]): string[] {
-    const list: string[] = [];
+    const ignore: string[] = [];
     for (const i of definition.getImplementing()) {
-      list.push(...this.fromInterfaceByName(i.name, list.concat(skip || [])));
+      ignore.push(...this.fromInterfaceByName(i.name, ignore.concat(skip || [])));
     }
-    return list;
+    return ignore;
   }
 
 }

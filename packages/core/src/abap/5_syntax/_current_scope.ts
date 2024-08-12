@@ -149,7 +149,7 @@ export class CurrentScope {
     }
     const upper = name.toUpperCase();
     if (this.current.getData().vars[upper] !== undefined) {
-      // console.dir(new Error().stack);
+//      console.dir(new Error().stack);
       throw new Error(`Variable name "${name}" already defined`);
     } else if (this.isOO() && this.current.getData().types[upper] !== undefined) {
       throw new Error(`"${name}" already defined`);
@@ -168,6 +168,7 @@ export class CurrentScope {
 
     const upper = name.toUpperCase();
     if (parent.getData().vars[upper] !== undefined) {
+//      console.dir(new Error().stack);
       throw new Error(`Variable name "${name}" already defined`);
     } else if (this.isOO() && parent.getData().types[upper] !== undefined) {
       throw new Error(`"${name}" already defined`);
