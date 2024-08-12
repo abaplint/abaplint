@@ -191,7 +191,7 @@ export class ObjectOriented {
 
     if (name.includes("~")) {
       const interfaceName = upper.split("~")[0];
-      if (def.getImplementing().some((a) => a.name.toUpperCase() === interfaceName)) {
+      if (this.fromInterfaces(def).some((a) => a.toUpperCase() === interfaceName)) {
         return this.searchAttributeName(this.scope.findInterfaceDefinition(interfaceName), name.split("~")[1]);
       }
     }
@@ -387,13 +387,13 @@ export class ObjectOriented {
     return ignore;
   }
 
-  // returns list of interfaces implemented
+  /** returns list of interfaces implemented, recursive */
   public fromInterfaces(definition: IInterfaceDefinition, skip?: string[]): string[] {
-    const ignore: string[] = [];
+    const list: string[] = [];
     for (const i of definition.getImplementing()) {
-      ignore.push(...this.fromInterfaceByName(i.name, ignore.concat(skip || [])));
+      list.push(...this.fromInterfaceByName(i.name, list.concat(skip || [])));
     }
-    return ignore;
+    return list;
   }
 
 }

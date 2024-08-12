@@ -10617,7 +10617,7 @@ ENDLOOP.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("interfaces and me", () => {
+  it("interfaces and me", () => {
     const abap = `
 INTERFACE zif_otel_has_attributes.
   DATA attributes TYPE REF TO object.
