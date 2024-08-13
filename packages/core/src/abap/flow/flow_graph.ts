@@ -15,6 +15,10 @@ export class FlowGraph {
     return this.startNode;
   }
 
+  public getLabel(): string {
+    return this.label;
+  }
+
   public getEnd(): string {
     return this.endNode;
   }
