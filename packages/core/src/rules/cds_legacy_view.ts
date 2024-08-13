@@ -18,7 +18,6 @@ export class CDSLegacyView implements IRule {
       key: "cds_legacy_view",
       title: "CDS Legacy View",
       shortDescription: `Identify CDS Legacy Views`,
-      // eslint-disable-next-line max-len
       extendedInformation: `Use DEFINE VIEW ENTITY instead of DEFINE VIEW
 
 https://blogs.sap.com/2021/10/16/a-new-generation-of-cds-views-how-to-migrate-your-cds-views-to-cds-view-entities/

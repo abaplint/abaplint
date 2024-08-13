@@ -12,7 +12,7 @@ export class CharacterType extends AbstractType {
   }
 
   public cloneType(input: {qualifiedName?: string, ddicName?: string, derivedFromConstant?: boolean}) {
-    const clone = {...this.getAbstractTypeData()} || {};
+    const clone = {...this.getAbstractTypeData()};
     if (input.qualifiedName) {
       clone.qualifiedName = input.qualifiedName;
     }
