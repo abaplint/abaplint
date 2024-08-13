@@ -175,6 +175,7 @@ export class StatementFlow {
       || type instanceof Structures.With
       || type instanceof Structures.Provide
       || type instanceof Structures.Select
+      || type instanceof Structures.LoopAtScreen
       || type instanceof Structures.Do) {
       const loopName = this.buildName(n.getFirstStatement()!);
       const sub = this.traverseBody(this.findBody(n), {...context, loopStart: loopName, loopEnd: graph.getEnd()});
@@ -183,6 +184,26 @@ export class StatementFlow {
       graph.addGraph(loopName, sub);
       graph.addEdge(sub.getEnd(), loopName);
       graph.addEdge(loopName, graph.getEnd());
+    } else if (type instanceof Structures.Data
+        || type instanceof Structures.Types) {
+// these doesnt affect control flow, so just take the first statement
+      const statement = n.getFirstStatement()!;
+      const name = this.buildName(statement);
+      graph.addEdge(current, name);
+      graph.addEdge(name, graph.getEnd());
+
+    } else if (type instanceof Structures.AtFirst
+        || type instanceof Structures.AtLast
+        || type instanceof Structures.At
+        || type instanceof Structures.OnChange) {
+      const name = this.buildName(n.getFirstStatement()!);
+
+      const body = this.traverseBody(this.findBody(n), context);
+      graph.addEdge(current, name);
+      graph.addGraph(name, body);
+      graph.addEdge(body.getEnd(), graph.getEnd());
+      graph.addEdge(current, graph.getEnd());
+
     } else if (type instanceof Structures.Try) {
       const tryName = this.buildName(n.getFirstStatement()!);
 

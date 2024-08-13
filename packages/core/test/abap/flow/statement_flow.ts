@@ -447,4 +447,15 @@ ENDTRY.`;
 "Data:3,16" -> "end#1";`);
   });
 
+  it("DATA BEGIN OF", async () => {
+    const abap = `
+    DATA: BEGIN OF bar,
+            moo TYPE i,
+          END OF bar.`;
+
+    const res2 = await buildFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "DataBegin:3,11";
+"DataBegin:3,11" -> "end#1";`);
+  });
+
 });
