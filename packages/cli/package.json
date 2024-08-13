@@ -7,7 +7,7 @@
         "abaplint": "abaplint"
     },
     "scripts": {
-        "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
+        "lint": "eslint src/**/*.ts test/**/*.ts",
         "compile": "tsc",
         "test": "npm run compile && mocha && npm run lint && npm run webpack",
         "webpack": "webpack --progress",
@@ -47,7 +47,7 @@
         "@types/progress": "^2.0.7",
         "chai": "^4.5.0",
         "chalk": "^5.3.0",
-        "eslint": "^8.57.0",
+        "eslint": "^9.9.0",
         "glob": "^7.2.3",
         "json5": "^2.2.3",
         "memfs": "=4.9.3",
