@@ -31,7 +31,7 @@ export default [...fixupConfigRules(compat.extends(
 
         parserOptions: {
             project: "tsconfig.eslint.json",
-            tsconfigRootDir: "C:\\Users\\Lars\\git\\abaplint",
+            tsconfigRootDir: __dirname,
         },
     },
 
