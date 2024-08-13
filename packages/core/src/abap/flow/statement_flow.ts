@@ -192,6 +192,18 @@ export class StatementFlow {
       graph.addEdge(current, name);
       graph.addEdge(name, graph.getEnd());
 
+    } else if (type instanceof Structures.AtFirst
+        || type instanceof Structures.AtLast
+        || type instanceof Structures.At
+        || type instanceof Structures.OnChange) {
+      const name = this.buildName(n.getFirstStatement()!);
+
+      const body = this.traverseBody(this.findBody(n), context);
+      graph.addEdge(current, name);
+      graph.addGraph(name, body);
+      graph.addEdge(body.getEnd(), graph.getEnd());
+      graph.addEdge(current, graph.getEnd());
+
     } else if (type instanceof Structures.Try) {
       const tryName = this.buildName(n.getFirstStatement()!);
 
