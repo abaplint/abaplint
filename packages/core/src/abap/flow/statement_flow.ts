@@ -33,20 +33,21 @@ export class StatementFlow {
 
   public build(stru: StructureNode): FlowGraph[] {
     const ret: FlowGraph[] = [];
-    const forms = stru.findAllStructures(Structures.Form);
-    for (const f of forms) {
-      const formName = "FORM " + f.findFirstExpression(Expressions.FormName)?.concatTokens();
+    const structures = stru.findAllStructuresMulti([Structures.Form, Structures.Method, Structures.FunctionModule]);
+    for (const s of structures) {
+      let name = "";
+      if (s.get() instanceof Structures.Form) {
+        name = "FORM " + s.findFirstExpression(Expressions.FormName)?.concatTokens();
+      } else if (s.get() instanceof Structures.Method) {
+        name = "METHOD " + s.findFirstExpression(Expressions.MethodName)?.concatTokens();
+      } else if (s.get() instanceof Structures.FunctionModule) {
+        name = "FUNCTION " + s.findFirstExpression(Expressions.Field)?.concatTokens();
+      } else {
+        throw new Error("StatementFlow, unknown structure");
+      }
       this.counter = 1;
-      const graph = this.traverseBody(this.findBody(f), {procedureEnd: "end#1"});
-      graph.setLabel(formName);
-      ret.push(graph);
-    }
-    const methods = stru.findAllStructures(Structures.Method);
-    for (const f of methods) {
-      const methodName = "METHOD " + f.findFirstExpression(Expressions.MethodName)?.concatTokens();
-      this.counter = 1;
-      const graph = this.traverseBody(this.findBody(f), {procedureEnd: "end#1"});
-      graph.setLabel(methodName);
+      const graph = this.traverseBody(this.findBody(s), {procedureEnd: "end#1"});
+      graph.setLabel(name);
       ret.push(graph);
     }
     return ret.map(f => f.reduce());
