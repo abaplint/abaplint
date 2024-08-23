@@ -1,5 +1,5 @@
 import {seq, optPrio, Expression, altPrio} from "../combi";
-import {TypeName, Default, FieldChain} from ".";
+import {TypeName, Default, FieldChain, LOBHandle} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Type extends Expression {
@@ -13,7 +13,7 @@ export class Type extends Expression {
 
     const type = altPrio(seq("LINE OF", typeType),
                          seq("REF TO", typeType),
-                         typeType);
+                         seq(typeType, optPrio(LOBHandle)));
 
     const ret = altPrio(seq("LIKE", like), seq("TYPE", type));
 

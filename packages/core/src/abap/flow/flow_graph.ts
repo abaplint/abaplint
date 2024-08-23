@@ -1,5 +1,11 @@
+export enum FLOW_EDGE_TYPE {
+  true = "true",
+  false = "false",
+  undefined = "undefined",
+}
+
 export class FlowGraph {
-  private edges: {[from: string]: {[to: string]: boolean}};
+  private edges: {[from: string]: {[to: string]: FLOW_EDGE_TYPE}};
   private readonly startNode: string;
   private readonly endNode: string;
   private label: string;
@@ -23,11 +29,11 @@ export class FlowGraph {
     return this.endNode;
   }
 
-  public addEdge(from: string, to: string) {
+  public addEdge(from: string, to: string, type: FLOW_EDGE_TYPE) {
     if (this.edges[from] === undefined) {
       this.edges[from] = {};
     }
-    this.edges[from][to] = true;
+    this.edges[from][to] = type;
   }
 
   public removeEdge(from: string, to: string) {
@@ -41,10 +47,10 @@ export class FlowGraph {
   }
 
   public listEdges() {
-    const list: {from: string, to: string}[] = [];
+    const list: {from: string, to: string, type: FLOW_EDGE_TYPE}[] = [];
     for (const from of Object.keys(this.edges)) {
       for (const to of Object.keys(this.edges[from])) {
-        list.push({from, to});
+        list.push({from, to, type: this.edges[from][to]});
       }
     }
     return list;
@@ -77,12 +83,12 @@ export class FlowGraph {
   }
 
   /** return value: end node of to graph */
-  public addGraph(from: string, to: FlowGraph): string {
+  public addGraph(from: string, to: FlowGraph, type: FLOW_EDGE_TYPE): string {
     if (to.hasEdges() === false) {
       return from;
     }
-    this.addEdge(from, to.getStart());
-    to.listEdges().forEach(e => this.addEdge(e.from, e.to));
+    this.addEdge(from, to.getStart(), type);
+    to.listEdges().forEach(e => this.addEdge(e.from, e.to, e.type));
     return to.getEnd();
   }
 
@@ -93,7 +99,8 @@ export class FlowGraph {
   public toTextEdges(): string {
     let graph = "";
     for (const l of this.listEdges()) {
-      graph += `"${l.from}" -> "${l.to}";\n`;
+      const label = l.type === FLOW_EDGE_TYPE.undefined ? "" : ` [label="${l.type}"]`;
+      graph += `"${l.from}" -> "${l.to}"${label};\n`;
     }
     return graph.trim();
   }
@@ -113,24 +120,24 @@ ${this.toTextEdges()}
 }`;
   }
 
-  public listSources(node: string): string[] {
-    const set = new Set<string>();
+  public listSources(node: string): {name: string, type: FLOW_EDGE_TYPE}[] {
+    const set: {name: string, type: FLOW_EDGE_TYPE}[] = [];
     for (const l of this.listEdges()) {
       if (node === l.to) {
-        set.add(l.from);
+        set.push({name: l.from, type: l.type});
       }
     }
-    return Array.from(set.values());
+    return set;
   }
 
-  public listTargets(node: string): string[] {
-    const set = new Set<string>();
+  public listTargets(node: string): {name: string, type: FLOW_EDGE_TYPE}[] {
+    const set: {name: string, type: FLOW_EDGE_TYPE}[] = [];
     for (const l of this.listEdges()) {
       if (node === l.from) {
-        set.add(l.to);
+        set.push({name: l.to, type: l.type});
       }
     }
-    return Array.from(set.values());
+    return set;
   }
 
   /** removes all nodes containing "#" that have one in-going and one out-going edge */
@@ -144,21 +151,31 @@ ${this.toTextEdges()}
       if (sources.length > 0 && targets.length > 0) {
         // hash node in the middle of the graph
         for (const s of sources) {
-          this.removeEdge(s, node);
+          this.removeEdge(s.name, node);
         }
         for (const t of targets) {
-          this.removeEdge(node, t);
+          this.removeEdge(node, t.name);
         }
         for (const s of sources) {
           for (const t of targets) {
-            this.addEdge(s, t);
+            let type = FLOW_EDGE_TYPE.undefined;
+            if (s.type !== FLOW_EDGE_TYPE.undefined) {
+              type = s.type;
+            }
+            if (t.type !== FLOW_EDGE_TYPE.undefined) {
+              if (type !== FLOW_EDGE_TYPE.undefined) {
+                throw new Error("reduce: cannot merge, different edge types");
+              }
+              type = t.type;
+            }
+            this.addEdge(s.name, t.name, type);
           }
         }
       }
 
       if (node.startsWith("end#") && sources.length === 0) {
         for (const t of targets) {
-          this.removeEdge(node, t);
+          this.removeEdge(node, t.name);
         }
       }
     }
