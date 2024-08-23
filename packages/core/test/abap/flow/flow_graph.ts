@@ -10,9 +10,9 @@ describe("FlowGraph", () => {
     expect(graph.listNodes()).to.deep.equal(["from", "to"]);
 
     expect(graph.listSources("from")).to.deep.equal([]);
-    expect(graph.listTargets("from")).to.deep.equal(["to"]);
+    expect(graph.listTargets("from")).to.deep.equal([{name: "to", type: FLOW_EDGE_TYPE.undefined}]);
 
-    expect(graph.listSources("to")).to.deep.equal(["from"]);
+    expect(graph.listSources("to")).to.deep.equal([{name: "from", type: FLOW_EDGE_TYPE.undefined}]);
     expect(graph.listTargets("to")).to.deep.equal([]);
 
     graph.setLabel("hello world");

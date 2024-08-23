@@ -120,24 +120,24 @@ ${this.toTextEdges()}
 }`;
   }
 
-  public listSources(node: string): string[] {
-    const set = new Set<string>();
+  public listSources(node: string): {name: string, type: FLOW_EDGE_TYPE}[] {
+    const set: {name: string, type: FLOW_EDGE_TYPE}[] = [];
     for (const l of this.listEdges()) {
       if (node === l.to) {
-        set.add(l.from);
+        set.push({name: l.from, type: l.type});
       }
     }
-    return Array.from(set.values());
+    return set;
   }
 
-  public listTargets(node: string): string[] {
-    const set = new Set<string>();
+  public listTargets(node: string): {name: string, type: FLOW_EDGE_TYPE}[] {
+    const set: {name: string, type: FLOW_EDGE_TYPE}[] = [];
     for (const l of this.listEdges()) {
       if (node === l.from) {
-        set.add(l.to);
+        set.push({name: l.to, type: l.type});
       }
     }
-    return Array.from(set.values());
+    return set;
   }
 
   /** removes all nodes containing "#" that have one in-going and one out-going edge */
@@ -151,21 +151,21 @@ ${this.toTextEdges()}
       if (sources.length > 0 && targets.length > 0) {
         // hash node in the middle of the graph
         for (const s of sources) {
-          this.removeEdge(s, node);
+          this.removeEdge(s.name, node);
         }
         for (const t of targets) {
-          this.removeEdge(node, t);
+          this.removeEdge(node, t.name);
         }
         for (const s of sources) {
           for (const t of targets) {
-            this.addEdge(s, t, FLOW_EDGE_TYPE.undefined);
+            this.addEdge(s.name, t.name, FLOW_EDGE_TYPE.undefined);
           }
         }
       }
 
       if (node.startsWith("end#") && sources.length === 0) {
         for (const t of targets) {
-          this.removeEdge(node, t);
+          this.removeEdge(node, t.name);
         }
       }
     }
