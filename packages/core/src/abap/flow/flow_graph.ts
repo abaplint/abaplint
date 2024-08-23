@@ -158,7 +158,17 @@ ${this.toTextEdges()}
         }
         for (const s of sources) {
           for (const t of targets) {
-            this.addEdge(s.name, t.name, FLOW_EDGE_TYPE.undefined);
+            let type = FLOW_EDGE_TYPE.undefined;
+            if (s.type !== FLOW_EDGE_TYPE.undefined) {
+              type = s.type;
+            }
+            if (t.type !== FLOW_EDGE_TYPE.undefined) {
+              if (type !== FLOW_EDGE_TYPE.undefined) {
+                throw new Error("reduce: cannot merge, different edge types");
+              }
+              type = t.type;
+            }
+            this.addEdge(s.name, t.name, type);
           }
         }
       }

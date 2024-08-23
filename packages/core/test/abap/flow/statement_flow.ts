@@ -45,9 +45,8 @@ describe("statement_flow", () => {
     ENDIF.`;
 
     const res2 = await buildFORM(abap);
-//    console.log(res2[0].toDigraph());
-    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Write:4,7";
-"If:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Write:4,7" [label="true"];
+"If:3,5" -> "end#1" [label="false"];
 "start#1" -> "If:3,5";
 "Write:4,7" -> "end#1";`);
   });
@@ -61,8 +60,8 @@ describe("statement_flow", () => {
     ENDIF.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Else:5,5";
-"If:3,5" -> "Write:4,7";
+    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Else:5,5" [label="false"];
+"If:3,5" -> "Write:4,7" [label="true"];
 "start#1" -> "If:3,5";
 "Write:4,7" -> "end#1";
 "Else:5,5" -> "Data:6,7";
@@ -81,8 +80,8 @@ describe("statement_flow", () => {
 
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "ElseIf:5,5";
-"If:3,5" -> "Write:4,7";
-"ElseIf:5,5" -> "Else:7,5";
+"If:3,5" -> "Write:4,7" [label="true"];
+"ElseIf:5,5" -> "Else:7,5" [label="false"];
 "ElseIf:5,5" -> "Data:6,7";
 "start#1" -> "If:3,5";
 "Write:4,7" -> "end#1";
@@ -139,8 +138,8 @@ describe("statement_flow", () => {
     ENDIF.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Return:4,7";
-"If:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Return:4,7" [label="true"];
+"If:3,5" -> "end#1" [label="false"];
 "Return:4,7" -> "end#1";
 "start#1" -> "If:3,5";`);
   });
@@ -153,8 +152,8 @@ describe("statement_flow", () => {
     DATA bar.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Write:4,7";
-"If:3,5" -> "Data:6,5";
+    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Write:4,7" [label="true"];
+"If:3,5" -> "Data:6,5" [label="false"];
 "Data:6,5" -> "end#1";
 "start#1" -> "If:3,5";
 "Write:4,7" -> "Data:6,5";`);
@@ -185,8 +184,8 @@ describe("statement_flow", () => {
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Add:4,7";
 "Loop:3,5" -> "end#1";
-"If:5,7" -> "Write:6,9";
-"If:5,7" -> "Loop:3,5";
+"If:5,7" -> "Write:6,9" [label="true"];
+"If:5,7" -> "Loop:3,5" [label="false"];
 "start#1" -> "Loop:3,5";
 "Add:4,7" -> "If:5,7";
 "Write:6,9" -> "Loop:3,5";`);
@@ -200,8 +199,8 @@ describe("statement_flow", () => {
     ENDIF.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Exit:4,7";
-"If:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Exit:4,7" [label="true"];
+"If:3,5" -> "end#1" [label="false"];
 "Exit:4,7" -> "end#1";
 "start#1" -> "If:3,5";`);
   });
@@ -214,8 +213,8 @@ describe("statement_flow", () => {
     ENDIF.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Return:4,7";
-"If:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Return:4,7" [label="true"];
+"If:3,5" -> "end#1" [label="false"];
 "Return:4,7" -> "end#1";
 "start#1" -> "If:3,5";`);
   });
@@ -241,8 +240,8 @@ describe("statement_flow", () => {
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
 "Loop:3,5" -> "If:4,7";
-"If:4,7" -> "Exit:5,9";
-"If:4,7" -> "Loop:3,5";
+"If:4,7" -> "Exit:5,9" [label="true"];
+"If:4,7" -> "Loop:3,5" [label="false"];
 "start#1" -> "Loop:3,5";
 "Exit:5,9" -> "end#1";`);
   });
@@ -258,8 +257,8 @@ describe("statement_flow", () => {
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
 "Loop:3,5" -> "If:4,7";
-"If:4,7" -> "Continue:5,9";
-"If:4,7" -> "Loop:3,5";
+"If:4,7" -> "Continue:5,9" [label="true"];
+"If:4,7" -> "Loop:3,5" [label="false"];
 "Continue:5,9" -> "Loop:3,5";
 "start#1" -> "Loop:3,5";`);
   });
@@ -275,8 +274,8 @@ describe("statement_flow", () => {
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
 "Loop:3,5" -> "If:4,7";
-"If:4,7" -> "Return:5,9";
-"If:4,7" -> "Loop:3,5";
+"If:4,7" -> "Return:5,9" [label="true"];
+"If:4,7" -> "Loop:3,5" [label="false"];
 "Return:5,9" -> "end#1";
 "start#1" -> "Loop:3,5";`);
   });
