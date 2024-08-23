@@ -99,7 +99,7 @@ export class FlowGraph {
   public toTextEdges(): string {
     let graph = "";
     for (const l of this.listEdges()) {
-      const type = l.type === FLOW_EDGE_TYPE.undefined ? "" : l.type;
+      const type = l.type === FLOW_EDGE_TYPE.undefined ? "" : l.type + "-";
       graph += `"${l.from}" -${type}> "${l.to}";\n`;
     }
     return graph.trim();

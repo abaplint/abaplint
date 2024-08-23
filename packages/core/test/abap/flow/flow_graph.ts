@@ -29,4 +29,11 @@ edge [fontname = "helvetica"];
     expect(graph.listEdges()).to.deep.equal([]);
   });
 
+  it("toTextEdges", async () => {
+    const graph = new FlowGraph(1);
+    graph.addEdge("from", "to", FLOW_EDGE_TYPE.true);
+
+    expect(graph.toTextEdges()).to.equal(`"from" -true-> "to";`);
+  });
+
 });
