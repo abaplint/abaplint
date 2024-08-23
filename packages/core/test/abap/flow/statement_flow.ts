@@ -18,6 +18,19 @@ async function buildFORM(abap: string) {
   return new StatementFlow().build(stru!);
 }
 
+async function run(abap: string) {
+  const reg = new Registry();
+  reg.addFile(new MemoryFile("zstatement_flow.prog.abap", abap));
+  await reg.parseAsync();
+  const issues = reg.findIssues().filter(i => i.getKey() === "parser_error");
+  expect(issues[0]?.getMessage()).to.equal(undefined);
+  const obj = reg.getFirstObject()! as ABAPObject;
+  const file = obj.getABAPFiles()[0] as ABAPFile | undefined;
+  const stru = file?.getStructure();
+  expect(stru).to.not.equal(undefined);
+  return new StatementFlow().build(stru!);
+}
+
 describe("statement_flow", () => {
   it("WRITE", async () => {
     const abap = `WRITE 'hello'.`;
@@ -456,6 +469,25 @@ ENDTRY.`;
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "DataBegin:3,11";
 "DataBegin:3,11" -> "end#1";`);
+  });
+
+  it("local class", async () => {
+    const abap = `
+class lcl definition.
+  public section.
+    methods foo.
+endclass.
+
+class lcl implementation.
+  method foo.
+    write 'bar'.
+  endmethod.
+endclass.`;
+
+    const res2 = await run(abap);
+    expect(res2[0].getLabel()).to.equal("METHOD foo, CLASS lcl");
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:9,5";
+"Write:9,5" -> "end#1";`);
   });
 
 });
