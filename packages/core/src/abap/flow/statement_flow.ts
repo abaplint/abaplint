@@ -98,12 +98,12 @@ export class StatementFlow {
           current = name;
           if (firstChild.get() instanceof Statements.Check) {
             if (context.loopStart) {
-              graph.addEdge(name, context.loopStart, FLOW_EDGE_TYPE.undefined);
+              graph.addEdge(name, context.loopStart, FLOW_EDGE_TYPE.false);
             } else {
-              graph.addEdge(name, context.procedureEnd, FLOW_EDGE_TYPE.undefined);
+              graph.addEdge(name, context.procedureEnd, FLOW_EDGE_TYPE.false);
             }
           } else if (firstChild.get() instanceof Statements.Assert) {
-            graph.addEdge(name, context.procedureEnd, FLOW_EDGE_TYPE.undefined);
+            graph.addEdge(name, context.procedureEnd, FLOW_EDGE_TYPE.false);
           } else if (firstChild.get() instanceof Statements.Continue && context.loopStart) {
             graph.addEdge(name, context.loopStart, FLOW_EDGE_TYPE.undefined);
             return graph;
@@ -182,9 +182,9 @@ export class StatementFlow {
       const sub = this.traverseBody(this.findBody(n), {...context, loopStart: loopName, loopEnd: graph.getEnd()});
 
       graph.addEdge(current, loopName, FLOW_EDGE_TYPE.undefined);
-      graph.addGraph(loopName, sub, FLOW_EDGE_TYPE.undefined);
+      graph.addGraph(loopName, sub, FLOW_EDGE_TYPE.true);
       graph.addEdge(sub.getEnd(), loopName, FLOW_EDGE_TYPE.undefined);
-      graph.addEdge(loopName, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
+      graph.addEdge(loopName, graph.getEnd(), FLOW_EDGE_TYPE.false);
     } else if (type instanceof Structures.Data
         || type instanceof Structures.Types) {
 // these doesnt affect control flow, so just take the first statement

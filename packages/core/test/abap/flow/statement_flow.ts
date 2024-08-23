@@ -99,7 +99,7 @@ describe("statement_flow", () => {
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:3,5";
 "Write:3,5" -> "Check:4,5";
-"Check:4,5" -> "end#1";
+"Check:4,5" -> "end#1" [label="false"];
 "Check:4,5" -> "Write:5,5";
 "Write:5,5" -> "end#1";`);
   });
@@ -113,7 +113,7 @@ describe("statement_flow", () => {
     const res2 = await buildFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "Write:3,5";
 "Write:3,5" -> "Assert:4,5";
-"Assert:4,5" -> "end#1";
+"Assert:4,5" -> "end#1" [label="false"];
 "Assert:4,5" -> "Write:5,5";
 "Write:5,5" -> "end#1";`);
   });
@@ -166,8 +166,8 @@ describe("statement_flow", () => {
     ENDLOOP.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Write:4,7";
-"Loop:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Write:4,7" [label="true"];
+"Loop:3,5" -> "end#1" [label="false"];
 "start#1" -> "Loop:3,5";
 "Write:4,7" -> "Loop:3,5";`);
   });
@@ -182,8 +182,8 @@ describe("statement_flow", () => {
     ENDLOOP.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Add:4,7";
-"Loop:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Add:4,7" [label="true"];
+"Loop:3,5" -> "end#1" [label="false"];
 "If:5,7" -> "Write:6,9" [label="true"];
 "If:5,7" -> "Loop:3,5" [label="false"];
 "start#1" -> "Loop:3,5";
@@ -238,8 +238,8 @@ describe("statement_flow", () => {
     ENDLOOP.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
-"Loop:3,5" -> "If:4,7";
+    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1" [label="false"];
+"Loop:3,5" -> "If:4,7" [label="true"];
 "If:4,7" -> "Exit:5,9" [label="true"];
 "If:4,7" -> "Loop:3,5" [label="false"];
 "start#1" -> "Loop:3,5";
@@ -255,8 +255,8 @@ describe("statement_flow", () => {
     ENDLOOP.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
-"Loop:3,5" -> "If:4,7";
+    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1" [label="false"];
+"Loop:3,5" -> "If:4,7" [label="true"];
 "If:4,7" -> "Continue:5,9" [label="true"];
 "If:4,7" -> "Loop:3,5" [label="false"];
 "Continue:5,9" -> "Loop:3,5";
@@ -272,8 +272,8 @@ describe("statement_flow", () => {
     ENDLOOP.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1";
-"Loop:3,5" -> "If:4,7";
+    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "end#1" [label="false"];
+"Loop:3,5" -> "If:4,7" [label="true"];
 "If:4,7" -> "Return:5,9" [label="true"];
 "If:4,7" -> "Loop:3,5" [label="false"];
 "Return:5,9" -> "end#1";
@@ -287,8 +287,8 @@ describe("statement_flow", () => {
     ENDDO.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Do:3,5" -> "Write:4,7";
-"Do:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"Do:3,5" -> "Write:4,7" [label="true"];
+"Do:3,5" -> "end#1" [label="false"];
 "start#1" -> "Do:3,5";
 "Write:4,7" -> "Do:3,5";`);
   });
@@ -300,8 +300,8 @@ describe("statement_flow", () => {
     ENDWHILE.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"While:3,5" -> "Write:4,7";
-"While:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"While:3,5" -> "Write:4,7" [label="true"];
+"While:3,5" -> "end#1" [label="false"];
 "start#1" -> "While:3,5";
 "Write:4,7" -> "While:3,5";`);
   });
@@ -313,13 +313,13 @@ describe("statement_flow", () => {
     ENDSELECT.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"SelectLoop:3,5" -> "Write:4,7";
-"SelectLoop:3,5" -> "end#1";
+    expect(res2[0].toTextEdges()).to.equal(`"SelectLoop:3,5" -> "Write:4,7" [label="true"];
+"SelectLoop:3,5" -> "end#1" [label="false"];
 "start#1" -> "SelectLoop:3,5";
 "Write:4,7" -> "SelectLoop:3,5";`);
   });
 
-  it("Basic CASE loop", async () => {
+  it("Basic CASE", async () => {
     const abap = `
 CASE foobar.
   WHEN 1.
@@ -414,8 +414,8 @@ ENDTRY.`;
     WRITE bar.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Exit:4,7";
-"Loop:3,5" -> "Write:7,5";
+    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Exit:4,7" [label="true"];
+"Loop:3,5" -> "Write:7,5" [label="false"];
 "Write:7,5" -> "end#1";
 "start#1" -> "Loop:3,5";
 "Exit:4,7" -> "Write:7,5";`);
@@ -430,8 +430,8 @@ ENDTRY.`;
     WRITE bar.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Continue:4,7";
-"Loop:3,5" -> "Write:7,5";
+    expect(res2[0].toTextEdges()).to.equal(`"Loop:3,5" -> "Continue:4,7" [label="true"];
+"Loop:3,5" -> "Write:7,5" [label="false"];
 "Continue:4,7" -> "Loop:3,5";
 "Write:7,5" -> "end#1";
 "start#1" -> "Loop:3,5";`);
