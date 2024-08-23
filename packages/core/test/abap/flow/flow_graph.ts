@@ -6,7 +6,7 @@ describe("FlowGraph", () => {
   it("test1", async () => {
     const graph = new FlowGraph(1);
     graph.addEdge("from", "to", FLOW_EDGE_TYPE.undefined);
-    expect(graph.listEdges()).to.deep.equal([{from: "from", to: "to"}]);
+    expect(graph.listEdges()).to.deep.equal([{from: "from", to: "to", type: FLOW_EDGE_TYPE.undefined}]);
     expect(graph.listNodes()).to.deep.equal(["from", "to"]);
 
     expect(graph.listSources("from")).to.deep.equal([]);

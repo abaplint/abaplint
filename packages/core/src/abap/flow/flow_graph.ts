@@ -47,10 +47,10 @@ export class FlowGraph {
   }
 
   public listEdges() {
-    const list: {from: string, to: string}[] = [];
+    const list: {from: string, to: string, type: FLOW_EDGE_TYPE}[] = [];
     for (const from of Object.keys(this.edges)) {
       for (const to of Object.keys(this.edges[from])) {
-        list.push({from, to});
+        list.push({from, to, type: this.edges[from][to]});
       }
     }
     return list;
@@ -99,7 +99,8 @@ export class FlowGraph {
   public toTextEdges(): string {
     let graph = "";
     for (const l of this.listEdges()) {
-      graph += `"${l.from}" -> "${l.to}";\n`;
+      const type = l.type === FLOW_EDGE_TYPE.undefined ? "" : l.type;
+      graph += `"${l.from}" -${type}> "${l.to}";\n`;
     }
     return graph.trim();
   }
