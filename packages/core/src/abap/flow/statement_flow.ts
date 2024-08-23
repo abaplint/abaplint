@@ -33,15 +33,19 @@ export class StatementFlow {
 
   public build(stru: StructureNode): FlowGraph[] {
     const ret: FlowGraph[] = [];
-    const structures = stru.findAllStructuresMulti([Structures.Form, Structures.Method, Structures.FunctionModule]);
+    const structures = stru.findAllStructuresMulti([Structures.Form, Structures.ClassImplementation, Structures.FunctionModule]);
     for (const s of structures) {
       let name = "";
       if (s.get() instanceof Structures.Form) {
         name = "FORM " + s.findFirstExpression(Expressions.FormName)?.concatTokens();
         ret.push(this.run(s, name));
-      } else if (s.get() instanceof Structures.Method) {
-        name = "METHOD " + s.findFirstExpression(Expressions.MethodName)?.concatTokens();
-        ret.push(this.run(s, name));
+      } else if (s.get() instanceof Structures.ClassImplementation) {
+        const className = s.findFirstExpression(Expressions.ClassName)?.concatTokens();
+        for (const method of s.findDirectStructures(Structures.Method)) {
+          const methodName = method.findFirstExpression(Expressions.MethodName)?.concatTokens();
+          name = "METHOD " + methodName + ", CLASS " + className;
+          ret.push(this.run(method, name));
+        }
       } else if (s.get() instanceof Structures.FunctionModule) {
         name = "FUNCTION " + s.findFirstExpression(Expressions.Field)?.concatTokens();
         ret.push(this.run(s, name));
