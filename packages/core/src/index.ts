@@ -59,7 +59,7 @@ import {SkipLogic} from "./skip_logic";
 import {Diagnostics} from "./lsp/diagnostics";
 import {LSPEdit} from "./lsp/_edit";
 import {StatementFlow} from "./abap/flow/statement_flow";
-import {FlowGraph} from "./abap/flow/flow_graph";
+import {FlowGraph, FLOW_EDGE_TYPE} from "./abap/flow/flow_graph";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -73,7 +73,7 @@ export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityS
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
-  MacroCall, MacroContent, NativeSQL, StatementFlow, FlowGraph,
+  MacroCall, MacroContent, NativeSQL, StatementFlow, FlowGraph, FLOW_EDGE_TYPE,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,

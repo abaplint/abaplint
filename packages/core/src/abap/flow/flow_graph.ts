@@ -1,5 +1,11 @@
+export enum FLOW_EDGE_TYPE {
+  true = "true",
+  false = "false",
+  undefined = "undefined",
+}
+
 export class FlowGraph {
-  private edges: {[from: string]: {[to: string]: boolean}};
+  private edges: {[from: string]: {[to: string]: FLOW_EDGE_TYPE}};
   private readonly startNode: string;
   private readonly endNode: string;
   private label: string;
@@ -23,11 +29,11 @@ export class FlowGraph {
     return this.endNode;
   }
 
-  public addEdge(from: string, to: string) {
+  public addEdge(from: string, to: string, type: FLOW_EDGE_TYPE) {
     if (this.edges[from] === undefined) {
       this.edges[from] = {};
     }
-    this.edges[from][to] = true;
+    this.edges[from][to] = type;
   }
 
   public removeEdge(from: string, to: string) {
@@ -77,12 +83,12 @@ export class FlowGraph {
   }
 
   /** return value: end node of to graph */
-  public addGraph(from: string, to: FlowGraph): string {
+  public addGraph(from: string, to: FlowGraph, type: FLOW_EDGE_TYPE): string {
     if (to.hasEdges() === false) {
       return from;
     }
-    this.addEdge(from, to.getStart());
-    to.listEdges().forEach(e => this.addEdge(e.from, e.to));
+    this.addEdge(from, to.getStart(), type);
+    to.listEdges().forEach(e => this.addEdge(e.from, e.to, type));
     return to.getEnd();
   }
 
@@ -151,7 +157,7 @@ ${this.toTextEdges()}
         }
         for (const s of sources) {
           for (const t of targets) {
-            this.addEdge(s, t);
+            this.addEdge(s, t, FLOW_EDGE_TYPE.undefined);
           }
         }
       }
