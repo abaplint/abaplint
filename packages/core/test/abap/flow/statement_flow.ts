@@ -79,10 +79,10 @@ describe("statement_flow", () => {
     ENDIF.`;
 
     const res2 = await buildFORM(abap);
-    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "ElseIf:5,5";
+    expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "ElseIf:5,5" [label="false"];
 "If:3,5" -> "Write:4,7" [label="true"];
 "ElseIf:5,5" -> "Else:7,5" [label="false"];
-"ElseIf:5,5" -> "Data:6,7";
+"ElseIf:5,5" -> "Data:6,7" [label="true"];
 "start#1" -> "If:3,5";
 "Write:4,7" -> "end#1";
 "Data:6,7" -> "end#1";

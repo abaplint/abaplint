@@ -154,8 +154,8 @@ export class StatementFlow {
 
         const elseIfName = this.buildName(elseifst);
         const sub = this.traverseBody(this.findBody(e), context);
-        graph.addEdge(current, elseIfName, FLOW_EDGE_TYPE.undefined);
-        graph.addGraph(elseIfName, sub, FLOW_EDGE_TYPE.undefined);
+        graph.addEdge(current, elseIfName, FLOW_EDGE_TYPE.false);
+        graph.addGraph(elseIfName, sub, FLOW_EDGE_TYPE.true);
         graph.addEdge(sub.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
         current = elseIfName;
       }
