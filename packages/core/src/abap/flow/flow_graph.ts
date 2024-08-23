@@ -88,7 +88,7 @@ export class FlowGraph {
       return from;
     }
     this.addEdge(from, to.getStart(), type);
-    to.listEdges().forEach(e => this.addEdge(e.from, e.to, type));
+    to.listEdges().forEach(e => this.addEdge(e.from, e.to, e.type));
     return to.getEnd();
   }
 

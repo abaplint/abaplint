@@ -142,7 +142,7 @@ export class StatementFlow {
       const ifName = this.buildName(n.findDirectStatement(Statements.If)!);
       const sub = this.traverseBody(this.findBody(n), context);
       graph.addEdge(current, ifName, FLOW_EDGE_TYPE.undefined);
-      graph.addGraph(ifName, sub, FLOW_EDGE_TYPE.undefined);
+      graph.addGraph(ifName, sub, FLOW_EDGE_TYPE.true);
       graph.addEdge(sub.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
       current = ifName;
 
@@ -169,7 +169,7 @@ export class StatementFlow {
         graph.addGraph(elseName, sub, FLOW_EDGE_TYPE.undefined);
         graph.addEdge(sub.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
       } else {
-        graph.addEdge(ifName, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
+        graph.addEdge(ifName, graph.getEnd(), FLOW_EDGE_TYPE.false);
       }
     } else if (type instanceof Structures.Loop
       || type instanceof Structures.While
