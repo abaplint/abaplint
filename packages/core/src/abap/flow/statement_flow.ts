@@ -38,22 +38,28 @@ export class StatementFlow {
       let name = "";
       if (s.get() instanceof Structures.Form) {
         name = "FORM " + s.findFirstExpression(Expressions.FormName)?.concatTokens();
+        ret.push(this.run(s, name));
       } else if (s.get() instanceof Structures.Method) {
         name = "METHOD " + s.findFirstExpression(Expressions.MethodName)?.concatTokens();
+        ret.push(this.run(s, name));
       } else if (s.get() instanceof Structures.FunctionModule) {
         name = "FUNCTION " + s.findFirstExpression(Expressions.Field)?.concatTokens();
+        ret.push(this.run(s, name));
       } else {
         throw new Error("StatementFlow, unknown structure");
       }
-      this.counter = 1;
-      const graph = this.traverseBody(this.findBody(s), {procedureEnd: "end#1"});
-      graph.setLabel(name);
-      ret.push(graph);
     }
     return ret.map(f => f.reduce());
   }
 
 ////////////////////
+
+  private run(s: StructureNode, name: string): FlowGraph {
+    this.counter = 1;
+    const graph = this.traverseBody(this.findBody(s), {procedureEnd: "end#1"});
+    graph.setLabel(name);
+    return graph;
+  }
 
   private findBody(f: StructureNode): readonly (StatementNode | StructureNode)[] {
     return f.findDirectStructure(Structures.Body)?.getChildren() || [];
