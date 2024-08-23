@@ -22,6 +22,17 @@ import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 // TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
 // TODO: RAISE
 
+const FLOW_EVENTS = [
+  Statements.StartOfSelection,
+  Statements.AtSelectionScreen,
+  Statements.AtLineSelection,
+  Statements.AtUserCommand,
+  Statements.EndOfSelection,
+  Statements.Initialization,
+  Statements.TopOfPage,
+  Statements.EndOfPage,
+];
+
 interface IContext {
   procedureEnd: string;
   loopStart?: string;
