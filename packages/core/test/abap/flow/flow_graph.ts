@@ -33,7 +33,7 @@ edge [fontname = "helvetica"];
     const graph = new FlowGraph(1);
     graph.addEdge("from", "to", FLOW_EDGE_TYPE.true);
 
-    expect(graph.toTextEdges()).to.equal(`"from" -true-> "to";`);
+    expect(graph.toTextEdges()).to.equal(`"from" -> "to" [label="true"];`);
   });
 
 });

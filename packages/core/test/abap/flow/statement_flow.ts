@@ -45,6 +45,7 @@ describe("statement_flow", () => {
     ENDIF.`;
 
     const res2 = await buildFORM(abap);
+//    console.log(res2[0].toDigraph());
     expect(res2[0].toTextEdges()).to.equal(`"If:3,5" -> "Write:4,7";
 "If:3,5" -> "end#1";
 "start#1" -> "If:3,5";
