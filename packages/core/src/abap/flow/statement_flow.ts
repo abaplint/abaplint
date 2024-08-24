@@ -22,6 +22,17 @@ import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 // TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
 // TODO: RAISE
 
+const FLOW_EVENTS = [
+  Statements.StartOfSelection,
+  Statements.AtSelectionScreen,
+  Statements.AtLineSelection,
+  Statements.AtUserCommand,
+  Statements.EndOfSelection,
+  Statements.Initialization,
+  Statements.TopOfPage,
+  Statements.EndOfPage,
+];
+
 interface IContext {
   procedureEnd: string;
   loopStart?: string;
@@ -33,9 +44,10 @@ export class StatementFlow {
 
   public build(stru: StructureNode): FlowGraph[] {
     const ret: FlowGraph[] = [];
+    let name = "";
+
     const structures = stru.findAllStructuresMulti([Structures.Form, Structures.ClassImplementation, Structures.FunctionModule]);
     for (const s of structures) {
-      let name = "";
       if (s.get() instanceof Structures.Form) {
         name = "FORM " + s.findFirstExpression(Expressions.FormName)?.concatTokens();
         ret.push(this.run(s, name));
@@ -53,10 +65,45 @@ export class StatementFlow {
         throw new Error("StatementFlow, unknown structure");
       }
     }
+
+    // find the top level events
+    let inFlow = false;
+    let collected: (StatementNode | StructureNode)[] = [];
+    for (const s of stru.getChildren() || []) {
+      if (FLOW_EVENTS.some(f => s.get() instanceof f)) {
+        if (inFlow === true) {
+          ret.push(this.runEvent(collected, name));
+        }
+        collected = [];
+        inFlow = true;
+        name = s.concatTokens();
+      } else if (s.get() instanceof Structures.Normal) {
+        collected.push(s);
+      } else {
+        if (inFlow === true) {
+          ret.push(this.runEvent(collected, name));
+          inFlow = false;
+        }
+        collected = [];
+      }
+    }
+    if (inFlow === true) {
+      ret.push(this.runEvent(collected, name));
+      inFlow = false;
+      collected = [];
+    }
+
     return ret.map(f => f.reduce());
   }
 
 ////////////////////
+
+  private runEvent(s: (StatementNode | StructureNode)[], name: string) {
+    this.counter = 1;
+    const graph = this.traverseBody(s, {procedureEnd: "end#1"});
+    graph.setLabel(name);
+    return graph;
+  }
 
   private run(s: StructureNode, name: string): FlowGraph {
     this.counter = 1;
