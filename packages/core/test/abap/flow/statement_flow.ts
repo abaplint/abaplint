@@ -490,7 +490,7 @@ endclass.`;
 "Write:9,5" -> "end#1";`);
   });
 
-  it.only("START-OF-SELECTION event", async () => {
+  it("START-OF-SELECTION event", async () => {
     const abap = `
 REPORT zfoo.
 
@@ -499,9 +499,9 @@ START-OF-SELECTION.
 
     const res = await runRaw(abap);
     expect(res.length).to.equal(1);
-    expect(res[0].getLabel()).to.equal("METHOD foo, CLASS lcl");
-    expect(res[0].toTextEdges()).to.equal(`"start#1" -> "Write:9,5";
-"Write:9,5" -> "end#1";`);
+    expect(res[0].getLabel()).to.equal("START-OF-SELECTION.");
+    expect(res[0].toTextEdges()).to.equal(`"start#1" -> "Write:5,3";
+"Write:5,3" -> "end#1";`);
   });
 
 });
