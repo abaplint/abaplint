@@ -63,6 +63,7 @@ export * from "./identical_descriptions";
 export * from "./identical_form_names";
 export * from "./if_in_if";
 export * from "./implement_methods";
+export * from "./implicit_start_of_selection";
 export * from "./in_statement_indentation";
 export * from "./indentation";
 export * from "./inline_data_old_versions";

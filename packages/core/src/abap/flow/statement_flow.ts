@@ -6,6 +6,7 @@ import {FLOW_EDGE_TYPE, FlowGraph} from "./flow_graph";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IObject} from "../../objects/_iobject";
 import {Program} from "../../objects";
+import {SELECTION_EVENTS} from "./selection_events";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
@@ -23,17 +24,6 @@ import {Program} from "../../objects";
 
 // TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
 // TODO: RAISE
-
-const FLOW_EVENTS = [
-  Statements.StartOfSelection,
-  Statements.AtSelectionScreen,
-  Statements.AtLineSelection,
-  Statements.AtUserCommand,
-  Statements.EndOfSelection,
-  Statements.Initialization,
-  Statements.TopOfPage,
-  Statements.EndOfPage,
-];
 
 interface IContext {
   procedureEnd: string;
@@ -73,7 +63,7 @@ export class StatementFlow {
       let inFlow = false;
       let collected: (StatementNode | StructureNode)[] = [];
       for (const s of stru.getChildren() || []) {
-        if (FLOW_EVENTS.some(f => s.get() instanceof f)) {
+        if (SELECTION_EVENTS.some(f => s.get() instanceof f)) {
           if (inFlow === true) {
             ret.push(this.runEvent(collected, name));
           }
