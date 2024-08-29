@@ -7,6 +7,8 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 import {Program} from "../objects";
+import {StatementNode, StructureNode} from "../abap/nodes";
+import {SELECTION_EVENTS} from "../abap/flow/selection_events";
 
 export class ImplicitStartOfSelectionConf extends BasicRuleConfig {
 }
@@ -52,7 +54,49 @@ START-OF-SELECTION.
       return [];
     }
 
-// todo
+    let inEvent = false;
+    let collected: (StatementNode | StructureNode)[] = [];
+    for (const s of stru.getChildren() || []) {
+      if (SELECTION_EVENTS.some(f => s.get() instanceof f)) {
+        if (inEvent === false && collected.length > 0) {
+          // implicit START-OF-SELECTION
+          let first = collected[0];
+          if (first instanceof StructureNode) {
+            first = first.getFirstStatement()!;
+          }
+          issues.push(Issue.atStatement(file, first, "Implicit START-OF-SELECTION", this.getMetadata().key, this.getConfig().severity));
+        }
+
+        collected = [];
+        inEvent = true;
+      } else if (s.get() instanceof Structures.Normal) {
+        const stru = s as StructureNode;
+        // ignore declaration stuff
+        if (stru.getFirstStatement()?.get() instanceof Statements.Data
+            || stru.getFirstStatement()?.get() instanceof Statements.DataBegin
+            || stru.getFirstStatement()?.get() instanceof Statements.Constant
+            || stru.getFirstStatement()?.get() instanceof Statements.Parameter
+            || stru.getFirstStatement()?.get() instanceof Statements.SelectionScreen
+            || stru.getFirstStatement()?.get() instanceof Statements.ConstantBegin) {
+          continue;
+        }
+        collected.push(s);
+      } else {
+        if (inEvent === true) {
+          inEvent = false;
+        }
+        collected = [];
+      }
+    }
+
+    if (inEvent === false && collected.length > 0) {
+      // implicit START-OF-SELECTION
+      let first = collected[0];
+      if (first instanceof StructureNode) {
+        first = first.getFirstStatement()!;
+      }
+      issues.push(Issue.atStatement(file, first, "Implicit START-OF-SELECTION", this.getMetadata().key, this.getConfig().severity));
+    }
 
     return issues;
   }

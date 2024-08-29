@@ -60,28 +60,28 @@ export class StatementFlow {
 
     if (obj instanceof Program) {
       // find the top level events
-      let inFlow = false;
+      let inEvent = false;
       let collected: (StatementNode | StructureNode)[] = [];
       for (const s of stru.getChildren() || []) {
         if (SELECTION_EVENTS.some(f => s.get() instanceof f)) {
-          if (inFlow === true) {
+          if (inEvent === true) {
             ret.push(this.runEvent(collected, name));
           }
           collected = [];
-          inFlow = true;
+          inEvent = true;
           name = s.concatTokens();
         } else if (s.get() instanceof Structures.Normal) {
           collected.push(s);
         } else {
-          if (inFlow === true) {
+          if (inEvent === true) {
             ret.push(this.runEvent(collected, name));
-            inFlow = false;
+            inEvent = false;
           }
           collected = [];
         }
       }
 
-      if (inFlow === true) {
+      if (inEvent === true) {
         ret.push(this.runEvent(collected, name));
       } else if (collected.length > 0) {
         // implicit START-OF-SELECTION

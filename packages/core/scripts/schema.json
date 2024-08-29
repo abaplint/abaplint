@@ -2291,6 +2291,17 @@
               ],
               "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
             },
+            "implicit_start_of_selection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplicitStartOfSelectionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
+            },
             "in_statement_indentation": {
               "anyOf": [
                 {
@@ -4161,6 +4172,17 @@
               ],
               "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
             },
+            "implicit_start_of_selection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplicitStartOfSelectionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
+            },
             "in_statement_indentation": {
               "anyOf": [
                 {
@@ -5561,6 +5583,23 @@
       "type": "object"
     },
     "ImplementMethodsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ImplicitStartOfSelectionConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

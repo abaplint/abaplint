@@ -65,6 +65,7 @@ import {IdenticalDescriptionsConf} from "../src/rules/identical_descriptions";
 import {IdenticalFormNamesConf} from "../src/rules/identical_form_names";
 import {IfInIfConf} from "../src/rules/if_in_if";
 import {ImplementMethodsConf} from "../src/rules/implement_methods";
+import {ImplicitStartOfSelectionConf} from "../src/rules/implicit_start_of_selection";
 import {InStatementIndentationConf} from "../src/rules/in_statement_indentation";
 import {IndentationConf} from "../src/rules/indentation";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
@@ -248,6 +249,7 @@ export interface IConfig {
     "identical_form_names"?: IdenticalFormNamesConf | boolean,
     "if_in_if"?: IfInIfConf | boolean,
     "implement_methods"?: ImplementMethodsConf | boolean,
+    "implicit_start_of_selection"?: ImplicitStartOfSelectionConf | boolean,
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
@@ -420,6 +422,7 @@ export interface IConfig {
     "identical_form_names"?: IdenticalFormNamesConf | boolean,
     "if_in_if"?: IfInIfConf | boolean,
     "implement_methods"?: ImplementMethodsConf | boolean,
+    "implicit_start_of_selection"?: ImplicitStartOfSelectionConf | boolean,
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
