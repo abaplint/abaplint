@@ -1,14 +1,13 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 import {Program} from "../objects";
 import {StatementNode, StructureNode} from "../abap/nodes";
-import {SELECTION_EVENTS} from "../abap/flow/selection_events";
+import {DECLARATION_STUFF, SELECTION_EVENTS} from "../abap/flow/selection_events";
 
 export class ImplicitStartOfSelectionConf extends BasicRuleConfig {
 }
@@ -72,12 +71,7 @@ START-OF-SELECTION.
       } else if (s.get() instanceof Structures.Normal) {
         const stru = s as StructureNode;
         // ignore declaration stuff
-        if (stru.getFirstStatement()?.get() instanceof Statements.Data
-            || stru.getFirstStatement()?.get() instanceof Statements.DataBegin
-            || stru.getFirstStatement()?.get() instanceof Statements.Constant
-            || stru.getFirstStatement()?.get() instanceof Statements.Parameter
-            || stru.getFirstStatement()?.get() instanceof Statements.SelectionScreen
-            || stru.getFirstStatement()?.get() instanceof Statements.ConstantBegin) {
+        if (DECLARATION_STUFF.some(d => stru.getFirstStatement()?.get() instanceof d)) {
           continue;
         }
         collected.push(s);

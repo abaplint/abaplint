@@ -10,3 +10,12 @@ export const SELECTION_EVENTS = [
   Statements.TopOfPage,
   Statements.EndOfPage,
 ];
+
+export const DECLARATION_STUFF = [
+  Statements.Data,
+  Statements.DataBegin,
+  Statements.Constant,
+  Statements.Parameter,
+  Statements.SelectionScreen,
+  Statements.ConstantBegin,
+];
