@@ -4,8 +4,8 @@ import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {FLOW_EDGE_TYPE, FlowGraph} from "./flow_graph";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
-import { IObject } from "../../objects/_iobject";
-import { Program } from "../../objects";
+import {IObject} from "../../objects/_iobject";
+import {Program} from "../../objects";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
