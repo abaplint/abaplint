@@ -39,12 +39,20 @@ ENDFORM.`);
     expect(issues.length).to.equal(1);
   });
 
-  it("issue", async () => {
+  it("ok", async () => {
     const issues = await findIssues(`REPORT zfoo.
 START-OF-SELECTION.
   PERFORM sdf.
   COMMIT WORK.`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("multiple", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+START-OF-SELECTION.
+END-OF-SELECTION.
+TOP-OF-PAGE.`);
+    expect(issues.length).to.equal(3);
   });
 
 });

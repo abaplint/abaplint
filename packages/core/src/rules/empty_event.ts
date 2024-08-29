@@ -59,6 +59,10 @@ START-OF-SELECTION.
     let children: (StatementNode | StructureNode)[] = [];
     for (const s of stru.getChildren() || []) {
       if (SELECTION_EVENTS.some(f => s.get() instanceof f)) {
+        if (currentEvent !== undefined && children.length === 0) {
+          issues.push(Issue.atStatement(file, currentEvent, "Empty event", this.getMetadata().key, this.getConfig().severity));
+        }
+
         children = [];
         currentEvent = s as StatementNode;
       } else if (s.get() instanceof Structures.Normal) {
@@ -75,7 +79,6 @@ START-OF-SELECTION.
 
     if (currentEvent !== undefined && children.length === 0) {
       issues.push(Issue.atStatement(file, currentEvent, "Empty event", this.getMetadata().key, this.getConfig().severity));
-
     }
 
     return issues;
