@@ -27,7 +27,7 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapstart-of-selectio
       tags: [RuleTag.SingleFile],
       badExample: `REPORT zfoo.
 WRITE 'hello'.`,
-      goodExample: `REPORT zfoo.
+      goodExample: `
 START-OF-SELECTION.
   WRITE 'hello'.`,
     };

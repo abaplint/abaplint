@@ -23,12 +23,11 @@ export class EmptyEvent extends ABAPRule {
       shortDescription: `Empty selection screen or list processing event block`,
       extendedInformation: ``,
       tags: [RuleTag.SingleFile],
-      badExample: `REPORT zfoo.
-START-OF-SELECTION.
-  PERFORM sdf.
-  COMMIT WORK.
+      badExample: `
+INITIALIZATION.
+  WRITE 'hello'.
 END-OF-SELECTION.`,
-      goodExample: `REPORT zfoo.
+      goodExample: `
 START-OF-SELECTION.
   PERFORM sdf.
   COMMIT WORK.`,
@@ -59,6 +58,10 @@ START-OF-SELECTION.
     let children: (StatementNode | StructureNode)[] = [];
     for (const s of stru.getChildren() || []) {
       if (SELECTION_EVENTS.some(f => s.get() instanceof f)) {
+        if (currentEvent !== undefined && children.length === 0) {
+          issues.push(Issue.atStatement(file, currentEvent, "Empty event", this.getMetadata().key, this.getConfig().severity));
+        }
+
         children = [];
         currentEvent = s as StatementNode;
       } else if (s.get() instanceof Structures.Normal) {
@@ -69,13 +72,17 @@ START-OF-SELECTION.
         }
         children.push(s);
       } else {
+        if (currentEvent !== undefined && children.length === 0) {
+          issues.push(Issue.atStatement(file, currentEvent, "Empty event", this.getMetadata().key, this.getConfig().severity));
+        }
+
         children = [];
+        currentEvent = undefined;
       }
     }
 
     if (currentEvent !== undefined && children.length === 0) {
       issues.push(Issue.atStatement(file, currentEvent, "Empty event", this.getMetadata().key, this.getConfig().severity));
-
     }
 
     return issues;

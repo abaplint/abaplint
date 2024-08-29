@@ -19,25 +19,25 @@ export class AddTestAttributes extends ABAPRule {
       title: "Add test attributes for tests classes with test methods",
       shortDescription: `Add test attributes DURATION and RISK LEVEL for tests classes with test methods`,
       tags: [RuleTag.SingleFile],
-      badExample: `CLASS ltcl_test DEFINITION FINAL FOR TESTING.
+      badExample: `CLASS ltcl_test1 DEFINITION FINAL FOR TESTING.
   PUBLIC SECTION.
   PROTECTED SECTION.
   PRIVATE SECTION.
     METHODS test FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
-CLASS ltcl_test IMPLEMENTATION.
+CLASS ltcl_test1 IMPLEMENTATION.
   METHOD test.
   ENDMETHOD.
 ENDCLASS.`,
-      goodExample: `CLASS ltcl_test DEFINITION FINAL FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
+      goodExample: `CLASS ltcl_test2 DEFINITION FINAL FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
   PUBLIC SECTION.
   PROTECTED SECTION.
   PRIVATE SECTION.
     METHODS test FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
-CLASS ltcl_test IMPLEMENTATION.
+CLASS ltcl_test2 IMPLEMENTATION.
   METHOD test.
   ENDMETHOD.
 ENDCLASS.`,
