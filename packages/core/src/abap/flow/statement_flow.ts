@@ -87,10 +87,12 @@ export class StatementFlow {
         collected = [];
       }
     }
+
     if (inFlow === true) {
       ret.push(this.runEvent(collected, name));
-      inFlow = false;
-      collected = [];
+    } else if (collected.length > 0) {
+      // implicit START-OF-SELECTION
+      ret.push(this.runEvent(collected, "START-OF-SELECTION."));
     }
 
     return ret.map(f => f.reduce());
