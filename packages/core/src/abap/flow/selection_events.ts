@@ -15,6 +15,8 @@ export const DECLARATION_STUFF = [
   Statements.Data,
   Statements.DataBegin,
   Statements.Constant,
+  Statements.Tables,
+  Statements.Include, // this is not super correct, but anyhow
   Statements.Parameter,
   Statements.SelectionScreen,
   Statements.ConstantBegin,
