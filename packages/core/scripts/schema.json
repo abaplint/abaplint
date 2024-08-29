@@ -1143,6 +1143,23 @@
       },
       "type": "object"
     },
+    "EmptyEventConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "EmptyLineinStatementConf": {
       "additionalProperties": false,
       "properties": {
@@ -2059,6 +2076,17 @@
                 }
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
+            },
+            "empty_event": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyEventConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -3940,6 +3968,17 @@
                 }
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
+            },
+            "empty_event": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyEventConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
             },
             "empty_line_in_statement": {
               "anyOf": [
