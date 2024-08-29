@@ -504,4 +504,38 @@ START-OF-SELECTION.
 "Write:5,3" -> "end#1";`);
   });
 
+  it("implicit START-OF-SELECTION", async () => {
+    const abap = `
+REPORT zfoo.
+
+PARAMETERS bar TYPE i.
+
+FORM foo.
+ENDFORM.
+
+IF 1 = 2.
+ENDIF.
+PERFORM foo.
+`;
+
+    const res = await runRaw(abap);
+    expect(res.length).to.equal(2);
+    expect(res[0].getLabel()).to.equal("FORM foo");
+    expect(res[1].getLabel()).to.equal("START-OF-SELECTION.");
+    expect(res[1].toTextEdges()).to.equal(`"If:9,1" -> "Perform:11,1" [label="true"];
+"Perform:11,1" -> "end#1";
+"start#1" -> "If:9,1";`);
+  });
+
+  it("empty START-OF-SELECTION", async () => {
+    const abap = `
+REPORT zfoo.
+
+START-OF-SELECTION.`;
+
+    const res = await runRaw(abap);
+    expect(res.length).to.equal(1);
+    expect(res[0].getLabel()).to.equal("START-OF-SELECTION.");
+  });
+
 });
