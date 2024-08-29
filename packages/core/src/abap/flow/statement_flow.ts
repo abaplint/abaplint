@@ -4,6 +4,9 @@ import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {FLOW_EDGE_TYPE, FlowGraph} from "./flow_graph";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
+import {IObject} from "../../objects/_iobject";
+import {Program} from "../../objects";
+import {SELECTION_EVENTS} from "./selection_events";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
@@ -22,17 +25,6 @@ import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 // TODO: handling static exceptions(only static), refactor some logic from UncaughtException to common file
 // TODO: RAISE
 
-const FLOW_EVENTS = [
-  Statements.StartOfSelection,
-  Statements.AtSelectionScreen,
-  Statements.AtLineSelection,
-  Statements.AtUserCommand,
-  Statements.EndOfSelection,
-  Statements.Initialization,
-  Statements.TopOfPage,
-  Statements.EndOfPage,
-];
-
 interface IContext {
   procedureEnd: string;
   loopStart?: string;
@@ -42,7 +34,7 @@ interface IContext {
 export class StatementFlow {
   private counter = 0;
 
-  public build(stru: StructureNode): FlowGraph[] {
+  public build(stru: StructureNode, obj: IObject): FlowGraph[] {
     const ret: FlowGraph[] = [];
     let name = "";
 
@@ -66,33 +58,35 @@ export class StatementFlow {
       }
     }
 
-    // find the top level events
-    let inFlow = false;
-    let collected: (StatementNode | StructureNode)[] = [];
-    for (const s of stru.getChildren() || []) {
-      if (FLOW_EVENTS.some(f => s.get() instanceof f)) {
-        if (inFlow === true) {
-          ret.push(this.runEvent(collected, name));
+    if (obj instanceof Program) {
+      // find the top level events
+      let inEvent = false;
+      let collected: (StatementNode | StructureNode)[] = [];
+      for (const s of stru.getChildren() || []) {
+        if (SELECTION_EVENTS.some(f => s.get() instanceof f)) {
+          if (inEvent === true) {
+            ret.push(this.runEvent(collected, name));
+          }
+          collected = [];
+          inEvent = true;
+          name = s.concatTokens();
+        } else if (s.get() instanceof Structures.Normal) {
+          collected.push(s);
+        } else {
+          if (inEvent === true) {
+            ret.push(this.runEvent(collected, name));
+            inEvent = false;
+          }
+          collected = [];
         }
-        collected = [];
-        inFlow = true;
-        name = s.concatTokens();
-      } else if (s.get() instanceof Structures.Normal) {
-        collected.push(s);
-      } else {
-        if (inFlow === true) {
-          ret.push(this.runEvent(collected, name));
-          inFlow = false;
-        }
-        collected = [];
       }
-    }
 
-    if (inFlow === true) {
-      ret.push(this.runEvent(collected, name));
-    } else if (collected.length > 0) {
-      // implicit START-OF-SELECTION
-      ret.push(this.runEvent(collected, "START-OF-SELECTION."));
+      if (inEvent === true) {
+        ret.push(this.runEvent(collected, name));
+      } else if (collected.length > 0) {
+        // implicit START-OF-SELECTION
+        ret.push(this.runEvent(collected, "START-OF-SELECTION."));
+      }
     }
 
     return ret.map(f => f.reduce());

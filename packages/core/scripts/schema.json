@@ -39,6 +39,23 @@
       ],
       "type": "object"
     },
+    "AddTestAttributesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AlignParametersConf": {
       "additionalProperties": false,
       "properties": {
@@ -1126,6 +1143,23 @@
       },
       "type": "object"
     },
+    "EmptyEventConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "EmptyLineinStatementConf": {
       "additionalProperties": false,
       "properties": {
@@ -1581,6 +1615,17 @@
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
+            "add_test_attributes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AddTestAttributesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
+            },
             "align_parameters": {
               "anyOf": [
                 {
@@ -2032,6 +2077,17 @@
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
             },
+            "empty_event": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyEventConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
+            },
             "empty_line_in_statement": {
               "anyOf": [
                 {
@@ -2262,6 +2318,17 @@
                 }
               ],
               "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
+            },
+            "implicit_start_of_selection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplicitStartOfSelectionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -3440,6 +3507,17 @@
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
+            "add_test_attributes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AddTestAttributesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
+            },
             "align_parameters": {
               "anyOf": [
                 {
@@ -3891,6 +3969,17 @@
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
             },
+            "empty_event": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyEventConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
+            },
             "empty_line_in_statement": {
               "anyOf": [
                 {
@@ -4121,6 +4210,17 @@
                 }
               ],
               "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
+            },
+            "implicit_start_of_selection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplicitStartOfSelectionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -5522,6 +5622,23 @@
       "type": "object"
     },
     "ImplementMethodsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ImplicitStartOfSelectionConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

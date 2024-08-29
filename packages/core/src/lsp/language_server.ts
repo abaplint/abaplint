@@ -162,11 +162,15 @@ export class LanguageServer {
     if (file === undefined) {
       return "file not found";
     }
+    const obj = this.reg.findObjectForFile(file);
+    if (obj === undefined) {
+      return "obj not found";
+    }
     const stru = file.getStructure();
     if (stru === undefined) {
       return "empty structure";
     }
-    const graphs = new StatementFlow().build(stru);
+    const graphs = new StatementFlow().build(stru, obj);
     const wiz = graphs.map(g => g.toDigraph());
     return JSON.stringify(wiz);
   }

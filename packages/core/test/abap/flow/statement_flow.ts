@@ -15,7 +15,7 @@ async function runFORM(abap: string) {
   const file = obj.getABAPFiles()[0] as ABAPFile | undefined;
   const stru = file?.getStructure();
   expect(stru).to.not.equal(undefined);
-  return new StatementFlow().build(stru!);
+  return new StatementFlow().build(stru!, reg.getFirstObject()!);
 }
 
 async function runRaw(abap: string) {
@@ -28,7 +28,7 @@ async function runRaw(abap: string) {
   const file = obj.getABAPFiles()[0] as ABAPFile | undefined;
   const stru = file?.getStructure();
   expect(stru).to.not.equal(undefined);
-  return new StatementFlow().build(stru!);
+  return new StatementFlow().build(stru!, reg.getFirstObject()!);
 }
 
 describe("statement_flow", () => {

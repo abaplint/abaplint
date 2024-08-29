@@ -2,6 +2,7 @@
 import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintAppSettings} from "../src/_config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
+import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AlignParametersConf} from "../src/rules/align_parameters";
 import {AlignPseudoCommentsConf} from "../src/rules/align_pseudo_comments";
 import {AlignTypeExpressionsConf} from "../src/rules/align_type_expressions";
@@ -43,6 +44,7 @@ import {DoubleSpaceConf} from "../src/rules/double_space";
 import {DownportConf} from "../src/rules/downport";
 import {DynproChecksConf} from "../src/rules/dynpro_checks";
 import {EasyToFindMessagesConf} from "../src/rules/easy_to_find_messages";
+import {EmptyEventConf} from "../src/rules/empty_event";
 import {EmptyLineinStatementConf} from "../src/rules/empty_line_in_statement";
 import {EmptyStatementConf} from "../src/rules/empty_statement";
 import {EmptyStructureConf} from "../src/rules/empty_structure";
@@ -64,6 +66,7 @@ import {IdenticalDescriptionsConf} from "../src/rules/identical_descriptions";
 import {IdenticalFormNamesConf} from "../src/rules/identical_form_names";
 import {IfInIfConf} from "../src/rules/if_in_if";
 import {ImplementMethodsConf} from "../src/rules/implement_methods";
+import {ImplicitStartOfSelectionConf} from "../src/rules/implicit_start_of_selection";
 import {InStatementIndentationConf} from "../src/rules/in_statement_indentation";
 import {IndentationConf} from "../src/rules/indentation";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
@@ -184,6 +187,7 @@ export interface IConfig {
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "add_test_attributes"?: AddTestAttributesConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
@@ -225,6 +229,7 @@ export interface IConfig {
     "downport"?: DownportConf | boolean,
     "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
+    "empty_event"?: EmptyEventConf | boolean,
     "empty_line_in_statement"?: EmptyLineinStatementConf | boolean,
     "empty_statement"?: EmptyStatementConf | boolean,
     "empty_structure"?: EmptyStructureConf | boolean,
@@ -246,6 +251,7 @@ export interface IConfig {
     "identical_form_names"?: IdenticalFormNamesConf | boolean,
     "if_in_if"?: IfInIfConf | boolean,
     "implement_methods"?: ImplementMethodsConf | boolean,
+    "implicit_start_of_selection"?: ImplicitStartOfSelectionConf | boolean,
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
@@ -355,6 +361,7 @@ export interface IConfig {
   targetRules?: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "add_test_attributes"?: AddTestAttributesConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
@@ -396,6 +403,7 @@ export interface IConfig {
     "downport"?: DownportConf | boolean,
     "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
+    "empty_event"?: EmptyEventConf | boolean,
     "empty_line_in_statement"?: EmptyLineinStatementConf | boolean,
     "empty_statement"?: EmptyStatementConf | boolean,
     "empty_structure"?: EmptyStructureConf | boolean,
@@ -417,6 +425,7 @@ export interface IConfig {
     "identical_form_names"?: IdenticalFormNamesConf | boolean,
     "if_in_if"?: IfInIfConf | boolean,
     "implement_methods"?: ImplementMethodsConf | boolean,
+    "implicit_start_of_selection"?: ImplicitStartOfSelectionConf | boolean,
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
