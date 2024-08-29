@@ -47,6 +47,18 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, try", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+
+START-OF-SELECTION.
+  TRY.
+  ENDTRY.
+
+FORM foo.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   it("multiple", async () => {
     const issues = await findIssues(`REPORT zfoo.
 START-OF-SELECTION.

@@ -72,7 +72,12 @@ START-OF-SELECTION.
         }
         children.push(s);
       } else {
+        if (currentEvent !== undefined && children.length === 0) {
+          issues.push(Issue.atStatement(file, currentEvent, "Empty event", this.getMetadata().key, this.getConfig().severity));
+        }
+
         children = [];
+        currentEvent = undefined;
       }
     }
 
