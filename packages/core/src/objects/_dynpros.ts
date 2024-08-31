@@ -7,6 +7,8 @@ export type DynproField = {
 };
 export type DynproHeader = {
   number: string,
+  description: string,
+  nextScreen: string,
   fields: DynproField[],
 };
 export type DynproList = DynproHeader[];
@@ -26,6 +28,8 @@ export function parseDynpros(parsed: any): DynproList {
       }
       dynpros.push({
         number: d.HEADER.SCREEN,
+        description: d.HEADER.DESCRIPT,
+        nextScreen: d.HEADER.NEXTSCREEN,
         fields: fields,
       });
     }
