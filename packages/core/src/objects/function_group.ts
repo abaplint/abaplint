@@ -3,18 +3,24 @@ import {FunctionModuleDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
 import {XMLParser} from "fast-xml-parser";
 import {ABAPFile} from "../abap/abap_file";
+import {DynproList, parseDynpros} from "./_dynpros";
 
 export class FunctionGroup extends ABAPObject {
   private includes: string[] | undefined = undefined;
   private modules: FunctionModuleDefinition[] | undefined = undefined;
+  private description: string | undefined = undefined;
+  private dynpros: DynproList | undefined = undefined;
 
   public getType(): string {
     return "FUGR";
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    if (this.description === undefined) {
+      this.parseXML();
+    }
+
+    return this.description;
   }
 
   public setDirty() {
@@ -28,6 +34,13 @@ export class FunctionGroup extends ABAPObject {
       maxLength: 26,
       allowNamespace: true,
     };
+  }
+
+  public getDynpros(): DynproList {
+    if (this.dynpros === undefined) {
+      this.parseXML();
+    }
+    return this.dynpros || [];
   }
 
   public getSequencedFiles(): readonly ABAPFile[] {
@@ -154,6 +167,9 @@ export class FunctionGroup extends ABAPObject {
     if (parsed === undefined) {
       return;
     }
+
+    this.description = parsed.abapGit["asx:abap"]["asx:values"]?.AREAT;
+    this.dynpros = parseDynpros(parsed);
 
     // INCLUDES
     const includes = parsed.abapGit["asx:abap"]["asx:values"]?.INCLUDES;
