@@ -1,18 +1,6 @@
 import {ABAPObject} from "./_abap_object";
 import {ABAPFile} from "../abap/abap_file";
-import {xmlToArray} from "../xml_utils";
-
-export type DynproField = {
-  name: string,
-  type: string,
-  length: number,
-};
-export type DynproHeader = {
-  number: string,
-  fields: DynproField[],
-};
-export type DynproList = DynproHeader[];
-
+import {DynproList, parseDynpros} from "./_dynpros";
 
 export class Program extends ABAPObject {
   private parsedXML: {
@@ -83,24 +71,7 @@ export class Program extends ABAPObject {
       return;
     }
 
-    const dynpros: DynproList = [];
-    const xmlDynpros = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DYNPROS;
-    if (xmlDynpros !== undefined) {
-      for (const d of xmlToArray(xmlDynpros.item)) {
-        const fields: DynproField[] = [];
-        for (const f of xmlToArray(d.FIELDS?.RPY_DYFATC)) {
-          fields.push({
-            name: f.NAME,
-            type: f.TYPE,
-            length: f.LENGTH,
-          });
-        }
-        dynpros.push({
-          number: d.HEADER.SCREEN,
-          fields: fields,
-        });
-      }
-    }
+    const dynpros = parseDynpros(parsed);
 
     this.parsedXML = {
       isInclude: file ? file.getRaw().includes("<SUBC>I</SUBC>") : false,
