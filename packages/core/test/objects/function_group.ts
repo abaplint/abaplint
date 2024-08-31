@@ -81,6 +81,8 @@ describe("Funcion Group, parse main xml", () => {
     expect(modules.length).to.equal(1);
     expect(modules[0].getName()).to.equal("ZAGTEST_FUNCTION_MODULE");
     expect(modules[0].getParameters().length).to.equal(1);
+
+    expect(fugr.getDescription()).to.equal("test");
   });
 
   it("test, getIncludes", async () => {

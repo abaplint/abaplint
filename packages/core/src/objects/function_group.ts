@@ -7,14 +7,18 @@ import {ABAPFile} from "../abap/abap_file";
 export class FunctionGroup extends ABAPObject {
   private includes: string[] | undefined = undefined;
   private modules: FunctionModuleDefinition[] | undefined = undefined;
+  private description: string | undefined = undefined;
 
   public getType(): string {
     return "FUGR";
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    if (this.description === undefined) {
+      this.parseXML();
+    }
+
+    return this.description;
   }
 
   public setDirty() {
@@ -154,6 +158,8 @@ export class FunctionGroup extends ABAPObject {
     if (parsed === undefined) {
       return;
     }
+
+    this.description = parsed.abapGit["asx:abap"]["asx:values"]?.AREAT;
 
     // INCLUDES
     const includes = parsed.abapGit["asx:abap"]["asx:values"]?.INCLUDES;
