@@ -50,7 +50,7 @@ export class Program extends ABAPObject {
 
   public getDynpros(): DynproList {
     this.parseXML();
-    return this.parsedXML!.dynpros;
+    return this.parsedXML!.dynpros || [];
   }
 
 ////////////////////////////
