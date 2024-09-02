@@ -17,6 +17,8 @@ export class FullyTypeITabs extends ABAPRule {
       key: "fully_type_itabs",
       title: "Fully type internal tables",
       shortDescription: `No implict table types or table keys`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-the-right-table-type
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-default-key`,
       badExample: `DATA lt_foo TYPE TABLE OF ty.
 DATA lt_bar TYPE STANDARD TABLE OF ty.`,
       goodExample: `DATA lt_foo TYPE STANDARD TABLE OF ty WITH EMPTY KEY.`,
