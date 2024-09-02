@@ -38,7 +38,8 @@ export class StatementFlow {
     const ret: FlowGraph[] = [];
     let name = "";
 
-    const structures = stru.findAllStructuresMulti([Structures.Form, Structures.ClassImplementation, Structures.FunctionModule]);
+    const structures = stru.findAllStructuresMulti([
+      Structures.Form, Structures.ClassImplementation, Structures.FunctionModule, Structures.Module]);
     for (const s of structures) {
       if (s.get() instanceof Structures.Form) {
         name = "FORM " + s.findFirstExpression(Expressions.FormName)?.concatTokens();
@@ -52,6 +53,9 @@ export class StatementFlow {
         }
       } else if (s.get() instanceof Structures.FunctionModule) {
         name = "FUNCTION " + s.findFirstExpression(Expressions.Field)?.concatTokens();
+        ret.push(this.run(s, name));
+      } else if (s.get() instanceof Structures.Module) {
+        name = s.getFirstStatement()!.concatTokens().toUpperCase();
         ret.push(this.run(s, name));
       } else {
         throw new Error("StatementFlow, unknown structure");

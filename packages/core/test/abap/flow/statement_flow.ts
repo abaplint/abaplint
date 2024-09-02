@@ -538,4 +538,17 @@ START-OF-SELECTION.`;
     expect(res[0].getLabel()).to.equal("START-OF-SELECTION.");
   });
 
+  it("MODULE", async () => {
+    const abap = `
+REPORT zfoo.
+
+MODULE foo INPUT.
+  WRITE 'hello'.
+ENDMODULE.`;
+
+    const res = await runRaw(abap);
+    expect(res.length).to.equal(1);
+    expect(res[0].getLabel()).to.equal("MODULE FOO INPUT.");
+  });
+
 });
