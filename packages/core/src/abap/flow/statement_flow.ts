@@ -243,6 +243,7 @@ export class StatementFlow {
       graph.addEdge(sub.getEnd(), loopName, FLOW_EDGE_TYPE.undefined);
       graph.addEdge(loopName, graph.getEnd(), FLOW_EDGE_TYPE.false);
     } else if (type instanceof Structures.Data
+        || type instanceof Structures.Constants
         || type instanceof Structures.Types) {
 // these doesnt affect control flow, so just take the first statement
       const statement = n.getFirstStatement()!;
