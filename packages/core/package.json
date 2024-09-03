@@ -53,7 +53,7 @@
         "@microsoft/api-extractor": "^7.47.7",
         "@types/chai": "^4.3.19",
         "@types/mocha": "^10.0.7",
-        "@types/node": "^22.5.1",
+        "@types/node": "^22.5.2",
         "chai": "^4.5.0",
         "eslint": "^9.9.1",
         "mocha": "^10.7.3",
@@ -63,7 +63,7 @@
         "typescript": "^5.5.4"
     },
     "dependencies": {
-        "fast-xml-parser": "^4.4.1",
+        "fast-xml-parser": "^4.5.0",
         "json5": "^2.2.3",
         "vscode-languageserver-types": "^3.17.5"
     }
