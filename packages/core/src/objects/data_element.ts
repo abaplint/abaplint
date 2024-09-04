@@ -12,6 +12,12 @@ export class DataElement extends AbstractObject {
     domname?: string,
     datatype?: string,
     leng?: string,
+    texts?: {
+      short?: string,
+      medium?: string,
+      long?: string,
+      heading?: string,
+    }
     decimals?: string} | undefined = undefined;
 
   public getType(): string {
@@ -19,6 +25,7 @@ export class DataElement extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
+    this.parse();
     return this.parsedXML?.description;
   }
 
@@ -37,6 +44,11 @@ export class DataElement extends AbstractObject {
   public getDomainName(): string | undefined {
     this.parse();
     return this.parsedXML?.domname;
+  }
+
+  public getTexts() {
+    this.parse();
+    return this.parsedXML?.texts;
   }
 
   public parseType(reg: IRegistry): AbstractType {
@@ -96,6 +108,12 @@ export class DataElement extends AbstractObject {
       datatype: dd04v?.DATATYPE,
       leng: dd04v?.LENG,
       decimals: dd04v?.DECIMALS,
+      texts: {
+        short: dd04v?.SCRTEXT_S,
+        medium: dd04v?.SCRTEXT_M,
+        long: dd04v?.SCRTEXT_L,
+        heading: dd04v?.REPTEXT,
+      },
     };
 
     const end = Date.now();
