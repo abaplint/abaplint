@@ -8,6 +8,7 @@ export const SELECTION_EVENTS = [
   Statements.EndOfSelection,
   Statements.Initialization,
   Statements.TopOfPage,
+  Statements.LoadOfProgram,
   Statements.EndOfPage,
 ];
 

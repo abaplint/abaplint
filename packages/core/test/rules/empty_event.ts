@@ -67,4 +67,10 @@ TOP-OF-PAGE.`);
     expect(issues.length).to.equal(3);
   });
 
+  it("load of program", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+LOAD-OF-PROGRAM.`);
+    expect(issues.length).to.equal(1);
+  });
+
 });
