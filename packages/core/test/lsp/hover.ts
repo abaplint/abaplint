@@ -1543,4 +1543,23 @@ foobar.`;
     expect(hover?.value).to.contain("Macro Call");
   });
 
+  it("hover DATA in include", () => {
+    const main = new MemoryFile("zfoobar.prog.abap", `REPORT zfoobar.
+INCLUDE zinclude.`);
+    const incl = new MemoryFile("zinclude.prog.abap", `FORM foo.
+DATA foo TYPE i.
+ENDFORM.`);
+    const inclxml = new MemoryFile("zinclude.prog.xml", "<SUBC>I</SUBC>");
+
+    const reg = new Registry();
+    reg.addFile(main);
+    reg.addFile(incl);
+    reg.addFile(inclxml);
+    reg.parse();
+
+    const hover = new Hover(reg).find(buildPosition(incl, 1, 6));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("foo");
+  });
+
 });

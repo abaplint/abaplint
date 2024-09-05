@@ -57,4 +57,21 @@ endclass.`);
     }
   });
 
+  it("find issues for include file", () => {
+    const main = new MemoryFile("zfoobar.prog.abap", `REPORT zfoobar.
+INCLUDE zinclude.`);
+    const incl = new MemoryFile("zinclude.prog.abap", "asdf.");
+    const inclxml = new MemoryFile("zinclude.prog.xml", "<SUBC>I</SUBC>");
+
+    const registry = new Registry();
+    registry.addFile(main);
+    registry.addFile(incl);
+    registry.addFile(inclxml);
+    registry.parse();
+
+    const issues = new Diagnostics(registry).find({uri: incl.getFilename()});
+    expect(issues.length).to.equal(1);
+    expect(issues[0].code).to.equal("parser_error");
+  });
+
 });
