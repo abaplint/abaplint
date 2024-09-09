@@ -5,6 +5,7 @@ import {Hover} from "../../src/lsp/hover";
 import {IFile} from "../../src/files/_ifile";
 import {ITextDocumentPositionParams} from "../../src/lsp/_interfaces";
 import {MemoryFile} from "../../src/files/memory_file";
+import {Config} from "../../src";
 
 function buildPosition(file: IFile, row: number, column: number): ITextDocumentPositionParams {
   return {
@@ -1562,7 +1563,7 @@ ENDFORM.`);
     expect(hover?.value).to.contain("foo");
   });
 
-  it.only("hover method calls, not resolved classes", () => {
+  it("hover method calls, not resolved classes", () => {
     const main = new MemoryFile("zfoobar.prog.abap", `FORM run.
   DATA ref TYPE REF TO zcl_mc.
   CREATE OBJECT ref.
@@ -1570,15 +1571,19 @@ ENDFORM.`);
   zcl_mc=>static( ).
 ENDFORM.`);
 
-    const reg = new Registry();
+    const config = Config.getDefault().get();
+    config.syntax.errorNamespace = "$^";
+    const none = new Config(JSON.stringify(config));
+
+    const reg = new Registry(none);
     reg.addFile(main);
     reg.parse();
 
-    const hover1 = new Hover(reg).find(buildPosition(main, 3, 15));
+    const hover1 = new Hover(reg).find(buildPosition(main, 3, 14));
     expect(hover1).to.not.equal(undefined);
     expect(hover1?.value).to.contain("zcl_mc");
 
-    const hover2 = new Hover(reg).find(buildPosition(main, 4, 15));
+    const hover2 = new Hover(reg).find(buildPosition(main, 4, 14));
     expect(hover2).to.not.equal(undefined);
     expect(hover2?.value).to.contain("zcl_mc");
   });
