@@ -1562,4 +1562,21 @@ ENDFORM.`);
     expect(hover?.value).to.contain("foo");
   });
 
+  it.only("hover method calls, not resolved classes", () => {
+    const main = new MemoryFile("zfoobar.prog.abap", `FORM run.
+  DATA ref TYPE REF TO zcl_mc.
+  CREATE OBJECT ref.
+  ref->instance( ).
+  zcl_mc=>static( ).
+ENDFORM.`);
+
+    const reg = new Registry();
+    reg.addFile(main);
+    reg.parse();
+
+    const hover = new Hover(reg).find(buildPosition(main, 3, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zcl_mc");
+  });
+
 });
