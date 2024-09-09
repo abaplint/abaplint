@@ -1574,9 +1574,13 @@ ENDFORM.`);
     reg.addFile(main);
     reg.parse();
 
-    const hover = new Hover(reg).find(buildPosition(main, 3, 10));
-    expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("zcl_mc");
+    const hover1 = new Hover(reg).find(buildPosition(main, 3, 15));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain("zcl_mc");
+
+    const hover2 = new Hover(reg).find(buildPosition(main, 4, 15));
+    expect(hover2).to.not.equal(undefined);
+    expect(hover2?.value).to.contain("zcl_mc");
   });
 
 });
