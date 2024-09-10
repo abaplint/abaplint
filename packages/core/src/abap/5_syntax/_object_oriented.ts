@@ -10,6 +10,8 @@ import {ClassConstant} from "../types/class_constant";
 import {IEventDefinition} from "../types/_event_definition";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Visibility} from "../4_file_information/visibility";
+import {IReferenceExtras} from "./_reference";
+import {ClassDefinition} from "../types";
 
 // todo, think some of the public methods can be made private
 // todo: changet this class to static? for performance
@@ -96,6 +98,20 @@ export class ObjectOriented {
       }
     }
     return undefined;
+  }
+
+  public methodReferenceExtras(foundDef: IInterfaceDefinition | IClassDefinition | undefined,
+                               ooName: string | undefined): IReferenceExtras {
+    if (foundDef === undefined) {
+      return {
+        ooName: ooName,
+        ooType: undefined,
+      };
+    }
+    return {
+      ooName: foundDef?.getName(),
+      ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF",
+    };
   }
 
   public findClassName(node: StatementNode): string {

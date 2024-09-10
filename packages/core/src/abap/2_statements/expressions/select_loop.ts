@@ -34,7 +34,7 @@ export class SelectLoop extends Expression {
                      SQLForAllEntries,
                      alt(tab, into, packTab));
 
-    const strict = seq(SQLFrom, ver(Version.v750, SQLFields), where, into, SQLUpTo);
+    const strict = seq(SQLFrom, ver(Version.v750, SQLFields), optPrio(seq(where, into, SQLUpTo)));
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict),

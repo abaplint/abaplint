@@ -12,7 +12,6 @@ import {SourceField} from "./source_field";
 import {Dash, InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {AttributeName} from "./attribute_name";
 import {ComponentName} from "./component_name";
-import {ClassDefinition} from "../../types";
 import {Version} from "../../../version";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
@@ -99,9 +98,7 @@ export class MethodSource {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return new VoidType(CheckSyntaxKey);
         } else if (method) {
-          const extra: IReferenceExtras = {
-            ooName: foundDef?.getName(),
-            ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
+          const extra = helper.methodReferenceExtras(foundDef, className);
           input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);
 
           context = method;

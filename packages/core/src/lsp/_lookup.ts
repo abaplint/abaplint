@@ -14,12 +14,13 @@ import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {Class, Interface} from "../objects";
+import {Class, Interface, Program} from "../objects";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {ABAPFile} from "../abap/abap_file";
 import {IMethodDefinition} from "..";
 import {FormDefinition} from "../abap/types";
 import {MacroCall} from "../abap/2_statements/statements/_statement";
+import {IncludeGraph} from "../utils/include_graph";
 
 export interface LSPLookupResult {
   /** in markdown */
@@ -46,7 +47,18 @@ export class LSPLookup {
       return {hover: "Function Module " + fm};
     }
 
-    const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(
+    let main = obj;
+    if (obj instanceof Program && obj.isInclude()) {
+      // todo: this is slow
+      const ig = new IncludeGraph(reg);
+      const mains = ig.listMainForInclude(cursor.identifier.getFilename());
+      if (mains.length === 1) {
+        // yea, well, or it has to be a popup
+        main = reg.findObjectForFile(reg.getFileByName(mains[0])!) as ABAPObject || obj;
+      }
+    }
+
+    const bottomScope = new SyntaxLogic(reg, main).run().spaghetti.lookupPosition(
       cursor.identifier.getStart(),
       cursor.identifier.getFilename());
     if (bottomScope === undefined) {
