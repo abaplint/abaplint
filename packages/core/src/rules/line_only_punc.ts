@@ -5,7 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {EditHelper} from "../edit_helper";
+import {EditHelper, IEdit} from "../edit_helper";
 import {DDIC} from "../ddic";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -67,7 +67,7 @@ https://docs.abapopenchecks.org/checks/16/`,
 
         // merge punc into previous row
         let rowContent = rows[i].trim();
-        // if reported row contains a paranthesis, prefix with space if needed
+        // if reported row contains parentheses, prefix with space if needed
         if (rowContent.length > 1 && !rows[i - 1].endsWith(" ") && !rows[i - 1].endsWith(" \r")) {
           rowContent = " " + rowContent;
         }
@@ -77,7 +77,11 @@ https://docs.abapopenchecks.org/checks/16/`,
         }
         const startPos = new Position(i, rows[i - 1].length + 1 + offset);
         const endPos = new Position(i + 1, rows[i].length + 1);
-        const fix = EditHelper.replaceRange(file, startPos, endPos, rowContent);
+        let fix: IEdit | undefined = EditHelper.replaceRange(file, startPos, endPos, rowContent);
+
+        if (rows[i - 1] === undefined || rows[i - 1].indexOf("*") === 0 || rows[i - 1].includes(`"`)) {
+          fix = undefined;
+        }
 
         const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);

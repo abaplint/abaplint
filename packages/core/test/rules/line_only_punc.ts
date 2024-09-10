@@ -11,6 +11,12 @@ const tests = [
   {abap: "*  ", cnt: 0},
   {abap: "* comment", cnt: 0},
   {abap: "\" comment", cnt: 0},
+  {abap: `WRITE 2
+* comment
+.\n`, cnt: 1, fix: false},
+  {abap: `WRITE 2
+" comment
+.\n`, cnt: 1, fix: false},
 ];
 
 testRule(tests, LineOnlyPunc);
