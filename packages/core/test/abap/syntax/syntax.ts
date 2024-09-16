@@ -10643,7 +10643,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("magic selection screen variables", () => {
+  it("magic selection screen variables", () => {
     const abap = `
 SELECT-OPTIONS s_devc FOR tadir-devclass.
 PARAMETERS p_size TYPE i DEFAULT 100 OBLIGATORY.
