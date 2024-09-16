@@ -28,8 +28,9 @@ Only works if the target version is 740sp05 or above`,
       badExample: `DELETE foo FROM bar.
 MODIFY foo FROM bar.`,
       goodExample: `DELETE foo FROM @bar.
-MODIFY TABLE foo FROM bar.
-MODIFY zfoo FROM @wa.`,
+DELETE TABLE itab FROM 2.
+MODIFY zfoo FROM @wa.
+MODIFY TABLE foo FROM bar.`,
     };
   }
 
