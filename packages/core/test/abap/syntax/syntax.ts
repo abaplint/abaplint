@@ -10643,6 +10643,18 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("magic selection screen variables", () => {
+    const abap = `
+SELECT-OPTIONS s_devc FOR tadir-devclass.
+PARAMETERS p_size TYPE i DEFAULT 100 OBLIGATORY.
+
+START-OF-SELECTION.
+  %_s_devc_%_app_%-text = 'Hello'.
+  %_p_size_%_app_%-text = 'World'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
