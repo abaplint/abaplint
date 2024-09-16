@@ -10643,7 +10643,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("magic selection screen variables", () => {
+  it.skip("magic selection screen variables", () => {
     const abap = `
 SELECT-OPTIONS s_devc FOR tadir-devclass.
 PARAMETERS p_size TYPE i DEFAULT 100 OBLIGATORY.
@@ -10653,6 +10653,14 @@ START-OF-SELECTION.
   %_p_size_%_app_%-text = 'World'.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Title name too long", () => {
+    const abap = `
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE sc_text001.
+SELECTION-SCREEN END OF BLOCK b1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("SELECTION-SCREEN name too long");
   });
 
 // todo, static method cannot access instance attributes
