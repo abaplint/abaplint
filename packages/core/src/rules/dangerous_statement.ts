@@ -21,6 +21,7 @@ export class DangerousStatementConf extends BasicRuleConfig {
   public generateSubroutine: boolean = true;
   public deleteReport: boolean = true;
   public deleteTextpool: boolean = true;
+  public insertTextpool: boolean = true;
   public deleteDynpro: boolean = true;
   public exportDynpro: boolean = true;
   /** Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY */
@@ -78,6 +79,8 @@ dynamic SQL can potentially create SQL injection problems`,
         message = "DELETE REPORT";
       } else if (this.conf.deleteTextpool && statement instanceof Statements.DeleteTextpool) {
         message = "DELETE TEXTPOOL";
+      } else if (this.conf.insertTextpool && statement instanceof Statements.InsertTextpool) {
+        message = "INSERT TEXTPOOL";
       } else if (this.conf.deleteDynpro && statement instanceof Statements.DeleteDynpro) {
         message = "DELETE DYNPRO";
       } else if (this.conf.exportDynpro && statement instanceof Statements.ExportDynpro) {
