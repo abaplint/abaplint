@@ -146,4 +146,46 @@ ENDCLASS.    `);
     const syntax = reg.findIssues().filter(i => i.getKey() === "check_syntax");
     expect(syntax.length).to.equal(0);
   });
+
+  it.only("after fixing, there should be no syntax errors, rm methods", async () => {
+    const clas = new MemoryFile("zcl_bar.clas.abap", `
+CLASS zcl_bar DEFINITION PUBLIC.
+  PRIVATE SECTION.
+    METHODS:
+      bar
+        IMPORTING foo TYPE i,
+      run.
+ENDCLASS.
+
+CLASS zcl_bar IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.`);
+    const reg = new Registry().addFile(clas);
+
+    const config = reg.getConfig().get();
+    config.syntax.version = Version.v702;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
+    reg.parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[clas.getFilename()] = clas.getRaw();
+    const mockFS = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
+
+    await applyFixes(reg, mockFS);
+    const result = mockFS.readFileSync(clas.getFilename(), {encoding: "utf-8"});
+
+    const expected = `
+CLASS zcl_bar DEFINITION PUBLIC.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS zcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+
+    expect(expected).to.equal(result);
+  });
 });
