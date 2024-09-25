@@ -181,6 +181,7 @@ Skips:
 
       let fix: IEdit | undefined = undefined;
       if (i.visibility === Visibility.Private
+          || i.isFinal === true
           || (i.visibility === Visibility.Protected && this.hasSubClass(obj) === false)) {
         const implementation = this.findMethodImplementation(i, file);
         if (implementation !== undefined) {
