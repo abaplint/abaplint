@@ -77,6 +77,7 @@ export class UnusedMethods implements IRule {
       extendedInformation: `Checks private and protected methods.
 
 Unused methods are not reported if the object contains parser or syntax errors.
+Quick fixes only appears for private methods or projected methods where the class doesnt have any subclasses.
 
 Skips:
 * methods FOR TESTING
@@ -178,12 +179,16 @@ Skips:
         continue;
       }
 
-      const implementation = this.findMethodImplementation(i, file);
       let fix: IEdit | undefined = undefined;
-      if (implementation !== undefined) {
-        const fix1 = EditHelper.deleteStatement(file, statement);
-        const fix2 = EditHelper.deleteRange(file, implementation.getFirstToken().getStart(), implementation.getLastToken().getEnd());
-        fix = EditHelper.merge(fix1, fix2);
+      if (i.visibility === Visibility.Private
+          || i.isFinal === true
+          || (i.visibility === Visibility.Protected && this.hasSubClass(obj) === false)) {
+        const implementation = this.findMethodImplementation(i, file);
+        if (implementation !== undefined) {
+          const fix1 = EditHelper.deleteStatement(file, statement);
+          const fix2 = EditHelper.deleteRange(file, implementation.getFirstToken().getStart(), implementation.getLastToken().getEnd());
+          fix = EditHelper.merge(fix1, fix2);
+        }
       }
 
       const message = "Method \"" + i.identifier.getName() + "\" not used";
@@ -191,6 +196,25 @@ Skips:
     }
 
     return issues;
+  }
+
+  private hasSubClass(obj: ABAPObject): boolean {
+    if (!(obj instanceof Class)) {
+      return false;
+    }
+
+    if (obj.getDefinition()?.isFinal() === true) {
+      return false;
+    }
+
+    for (const r of this.reg.getObjects()) {
+      if (r instanceof Class
+          && r.getDefinition()?.getSuperClass()?.toUpperCase() === obj.getName().toUpperCase()) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private findMethodImplementation(method: InfoMethodDefinition, file: ABAPFile): StructureNode | undefined {

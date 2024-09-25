@@ -95,11 +95,11 @@ export class ApplyFixes {
             for (const list1 of e[file1]) {
               for (const list2 of edit[file2]) {
                 if (list2.range.start.getRow() <= list1.range.start.getRow()
-                  && list2.range.end.getRow() >= list1.range.start.getRow()) {
+                    && list2.range.end.getRow() >= list1.range.start.getRow()) {
                   return true;
                 }
-                if (list2.range.start.getRow() <= list1.range.start.getRow()
-                  && list2.range.end.getRow() >= list1.range.end.getRow()) {
+                if (list2.range.start.getRow() <= list1.range.end.getRow()
+                    && list2.range.end.getRow() >= list1.range.end.getRow()) {
                   return true;
                 }
               }
@@ -126,6 +126,21 @@ export class ApplyFixes {
       appliedIssues.push(i);
       edits.push(edit);
     }
+
+    /*
+    if (edits.length > 0) {
+      console.log("EDITS:");
+      for (const e of edits) {
+        for (const filename of Object.keys(e)) {
+          console.log("\t" + filename);
+          for (const i of e[filename]) {
+            console.dir(i.range);
+            console.dir(i.newText);
+          }
+        }
+      }
+    }
+    */
 
     const changed = applyEditList(reg, edits);
 
