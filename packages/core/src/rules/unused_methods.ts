@@ -77,6 +77,7 @@ export class UnusedMethods implements IRule {
       extendedInformation: `Checks private and protected methods.
 
 Unused methods are not reported if the object contains parser or syntax errors.
+Quick fixes only appears for private methods.
 
 Skips:
 * methods FOR TESTING
@@ -178,12 +179,14 @@ Skips:
         continue;
       }
 
-      const implementation = this.findMethodImplementation(i, file);
       let fix: IEdit | undefined = undefined;
-      if (implementation !== undefined) {
-        const fix1 = EditHelper.deleteStatement(file, statement);
-        const fix2 = EditHelper.deleteRange(file, implementation.getFirstToken().getStart(), implementation.getLastToken().getEnd());
-        fix = EditHelper.merge(fix1, fix2);
+      if (i.visibility === Visibility.Private) {
+        const implementation = this.findMethodImplementation(i, file);
+        if (implementation !== undefined) {
+          const fix1 = EditHelper.deleteStatement(file, statement);
+          const fix2 = EditHelper.deleteRange(file, implementation.getFirstToken().getStart(), implementation.getLastToken().getEnd());
+          fix = EditHelper.merge(fix1, fix2);
+        }
       }
 
       const message = "Method \"" + i.identifier.getName() + "\" not used";
