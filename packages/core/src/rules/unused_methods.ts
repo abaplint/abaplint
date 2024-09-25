@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
-import {IRule, IRuleMetadata} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
@@ -82,7 +82,7 @@ Skips:
 * methods that are redefined
 * INCLUDEs
 `,
-      tags: [],
+      tags: [RuleTag.Quickfix],
       pragma: "##CALLED",
       pseudoComment: "EC CALLED",
     };
@@ -174,8 +174,10 @@ Skips:
         continue;
       }
 
+      const fix = EditHelper.deleteStatement(file, statement);
+
       const message = "Method \"" + i.identifier.getName() + "\" not used";
-      issues.push(Issue.atIdentifier(i.identifier, message, this.getMetadata().key, this.conf.severity));
+      issues.push(Issue.atIdentifier(i.identifier, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
     return issues;

@@ -56,6 +56,7 @@ ENDCLASS.`;
     const expected = `
 CLASS lcl_bar DEFINITION.
   PRIVATE SECTION.
+${" ".repeat(4)}
 ENDCLASS.
 
 CLASS lcl_bar IMPLEMENTATION.
