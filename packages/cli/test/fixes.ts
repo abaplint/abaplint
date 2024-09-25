@@ -147,7 +147,7 @@ ENDCLASS.    `);
     expect(syntax.length).to.equal(0);
   });
 
-  it.only("after fixing, there should be no syntax errors, rm methods", async () => {
+  it("after fixing, there should be no syntax errors, rm methods", async () => {
     const clas = new MemoryFile("zcl_bar.clas.abap", `
 CLASS zcl_bar DEFINITION PUBLIC.
   PRIVATE SECTION.
@@ -181,9 +181,12 @@ ENDCLASS.`);
     const expected = `
 CLASS zcl_bar DEFINITION PUBLIC.
   PRIVATE SECTION.
+
 ENDCLASS.
 
 CLASS zcl_bar IMPLEMENTATION.
+
+
 ENDCLASS.`;
 
     expect(expected).to.equal(result);
