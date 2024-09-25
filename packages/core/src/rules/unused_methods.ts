@@ -12,10 +12,13 @@ import {Identifier} from "../abap/4_file_information/_identifier";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
-import {EditHelper} from "../edit_helper";
+import {EditHelper, IEdit} from "../edit_helper";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {ABAPFile} from "../abap/abap_file";
+import {StructureNode} from "../abap/nodes";
+import * as Structures from "../abap/3_structures/structures";
+import * as Expressions from "../abap/2_statements/expressions";
 
 export class UnusedMethodsConf extends BasicRuleConfig {
 }
@@ -32,6 +35,7 @@ class WorkArea {
   }
 
   public removeIfExists(id: Identifier) {
+    // todo: optimize
     for (let i = 0; i < this.list.length; i++) {
       if (id.equals(this.list[i].identifier)) {
         this.list.splice(i, 1);
@@ -174,13 +178,35 @@ Skips:
         continue;
       }
 
-      const fix = EditHelper.deleteStatement(file, statement);
+      const implementation = this.findMethodImplementation(i, file);
+      let fix: IEdit | undefined = undefined;
+      if (implementation !== undefined) {
+        const fix1 = EditHelper.deleteStatement(file, statement);
+        const fix2 = EditHelper.deleteRange(file, implementation.getFirstToken().getStart(), implementation.getLastToken().getEnd());
+        fix = EditHelper.merge(fix1, fix2);
+      }
 
       const message = "Method \"" + i.identifier.getName() + "\" not used";
       issues.push(Issue.atIdentifier(i.identifier, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
     return issues;
+  }
+
+  private findMethodImplementation(method: InfoMethodDefinition, file: ABAPFile): StructureNode | undefined {
+    for (const classImplementation of file.getStructure()?.findAllStructures(Structures.ClassImplementation) || []) {
+      // todo, this will break if there are class implemtations with the same method names
+      // const className = classImplementation.findFirstExpression(Expressions.ClassName)?.concatTokens().toUpperCase();
+      for (const methodImplementation of classImplementation.findAllStructures(Structures.Method)) {
+        const methodName = methodImplementation.findFirstExpression(Expressions.MethodName)?.concatTokens().toUpperCase() || "";
+        if (methodName !== method.name.toUpperCase()) {
+          continue;
+        }
+        return methodImplementation;
+      }
+    }
+
+    return undefined;
   }
 
   private suppressedbyPseudo(statement: StatementNode | undefined, file: ABAPFile): boolean {
