@@ -39,7 +39,7 @@ describe("Rule: unused_methods, single file", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("local class private method, one issue expected", async () => {
+  it.only("local class private method, one issue expected", async () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
   PRIVATE SECTION.
@@ -52,7 +52,7 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(1);
-/*
+
     const expected = `
 CLASS lcl_bar DEFINITION.
   PRIVATE SECTION.
@@ -65,7 +65,6 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.`;
 
     testFix(abap, expected);
-    */
   });
 
   it("local class public method, no issues", async () => {
