@@ -56,12 +56,9 @@ ENDCLASS.`;
     const expected = `
 CLASS lcl_bar DEFINITION.
   PRIVATE SECTION.
-    METHODS: method1.
 ENDCLASS.
 
 CLASS lcl_bar IMPLEMENTATION.
-  METHOD method1.
-  ENDMETHOD.
 ENDCLASS.`;
 
     testFix(abap, expected);
