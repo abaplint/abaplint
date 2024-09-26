@@ -1,5 +1,16 @@
 import {testRule, testRuleFixSingle} from "./_utils";
+import {expect} from "chai";
 import {Indentation, IndentationConf} from "../../src/rules/indentation";
+import {MemoryFile, Registry} from "../../src";
+import {applyEditList} from "../../src/edit_helper";
+
+async function run(file: MemoryFile){
+  const reg = new Registry().addFile(file);
+  await reg.parseAsync();
+
+  const issues = new Indentation().initialize(reg).run(reg.getFirstObject()!);
+  return {reg, issues};
+}
 
 const tests = [
   {abap: "add 2 to lv_foo.", cnt: 0},
@@ -246,6 +257,27 @@ ENDIF.`, `
 IF foo = bar.
   WRITE 'hello'.
 ENDIF.`);
+  });
+
+  it("Chained statement", async () => {
+    const filename = "foo.prog.abap";
+    const abap = `
+FORM foo.
+DATA: foo TYPE i,
+moo TYPE i,
+bar TYPE i.
+ENDFORM.`;
+    const result = await run(new MemoryFile(filename, abap));
+    const edits = [];
+    for (const i of result.issues) {
+      const edit = i.getDefaultFix();
+      if (edit) {
+        edits.push(edit);
+      }
+    }
+    applyEditList(result.reg, edits);
+    const foo = result.reg.getFileByName(filename);
+    expect(foo?.getRaw()).to.contain("\n  DATA: foo");
   });
 
 });
