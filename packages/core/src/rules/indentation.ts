@@ -13,7 +13,7 @@ import {Position} from "../position";
 import {VirtualPosition} from "../virtual_position";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
-import { StatementNode } from "../abap/nodes";
+import {StatementNode} from "../abap/nodes";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
