@@ -5789,7 +5789,7 @@ SELECT foo bar
     testFix(abap, expected);
   });
 
-  it.only("SELECT, outline @DATA, table, AS", async () => {
+  it("SELECT, outline @DATA, table, AS", async () => {
     const abap = `FORM bar.
   SELECT werks AS bar, werks AS foo FROM t001w INTO TABLE @DATA(lt_t001w).
 ENDFORM.`;
