@@ -891,14 +891,19 @@ ${indentation}`);
       return undefined;
     }
     let fieldDefinitions = "";
-    for (const f of fieldList.findAllExpressions(Expressions.SQLFieldName)) {
-      let fieldName = f.concatTokens();
+    for (const f of fieldList.findAllExpressions(Expressions.SQLField)) {
+      let fieldName = f.findFirstExpression(Expressions.SQLFieldName)?.concatTokens();
+      if (fieldName === undefined) {
+        continue;
+      }
       if (fieldName.includes("~")) {
         const split = fieldName.split("~");
         tableName = split[0];
         fieldName = split[1];
       }
-      fieldDefinitions += indentation + "        " + fieldName + " TYPE " + tableName + "-" + fieldName + ",\n";
+      const typeName = tableName + "-" + fieldName;
+      fieldName = f.findFirstExpression(Expressions.SQLAsName)?.concatTokens() || fieldName;
+      fieldDefinitions += indentation + "        " + fieldName + " TYPE " + typeName + ",\n";
     }
 
     const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
