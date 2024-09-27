@@ -5789,13 +5789,18 @@ SELECT foo bar
     testFix(abap, expected);
   });
 
-  it.skip("SELECT, outline @DATA, table, AS", async () => {
+  it.only("SELECT, outline @DATA, table, AS", async () => {
     const abap = `FORM bar.
   SELECT werks AS bar, werks AS foo FROM t001w INTO TABLE @DATA(lt_t001w).
 ENDFORM.`;
 
     const expected = `FORM bar.
-todo
+  TYPES: BEGIN OF temp1,
+          bar TYPE t001w-werks,
+          foo TYPE t001w-werks,
+        END OF temp1.
+  DATA lt_t001w TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+  SELECT werks AS bar, werks AS foo FROM t001w INTO TABLE @lt_t001w.
 ENDFORM.`;
 
     testFix(abap, expected);
