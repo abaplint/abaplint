@@ -5789,4 +5789,16 @@ SELECT foo bar
     testFix(abap, expected);
   });
 
+  it.skip("SELECT, outline @DATA, table, AS", async () => {
+    const abap = `FORM bar.
+  SELECT werks AS bar, werks AS foo FROM t001w INTO TABLE @DATA(lt_t001w).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+todo
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
 });

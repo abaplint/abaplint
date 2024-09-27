@@ -51,9 +51,9 @@
     "homepage": "https://abaplint.org",
     "devDependencies": {
         "@microsoft/api-extractor": "^7.47.9",
-        "@types/chai": "^4.3.19",
+        "@types/chai": "^4.3.20",
         "@types/mocha": "^10.0.8",
-        "@types/node": "^22.7.0",
+        "@types/node": "^22.7.3",
         "chai": "^4.5.0",
         "eslint": "^9.11.1",
         "mocha": "^10.7.3",
