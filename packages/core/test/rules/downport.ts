@@ -5806,4 +5806,21 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.only("SELECT, outline @DATA, table, aliased tables", async () => {
+    const abap = `FORM bar.
+  SELECT FROM wbcrossi AS xref
+    LEFT OUTER JOIN tadir AS using ON using~obj_name = xref~master
+    LEFT OUTER JOIN tadir AS used ON used~obj_name = xref~include
+    FIELDS using~devclass AS from_pkg,
+           master AS from_name,
+           used~devclass AS to_pkg,
+           name AS to_name
+    INTO TABLE @DATA(itab).
+ENDFORM.`;
+
+    const expected = `sdf`;
+
+    testFix(abap, expected);
+  });
+
 });
