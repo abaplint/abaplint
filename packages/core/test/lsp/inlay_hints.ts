@@ -90,7 +90,7 @@ DATA(val) = VALUE ty_top-field( subfield = VALUE #( ( foo = 2 ) ) ).`);
     const found = new InlayHints(reg).list({uri: filename});
     expect(found.length).to.equal(2);
     expect(found[0].label).to.include("TYPE STANDARD TABLE OF ty_sub");
-    expect(found[1].label).to.include("TYPE ty_top-field")
+    expect(found[1].label).to.include("TYPE ty_top-field");
   });
 
   it("Subfield inferred, in class", () => {
@@ -115,18 +115,17 @@ DATA(val) = VALUE lcl=>ty_top-field( subfield = VALUE #( ( foo = 2 ) ) ).`);
     const found = new InlayHints(reg).list({uri: filename});
     expect(found.length).to.equal(2);
     expect(found[0].label).to.include("TYPE STANDARD TABLE OF lcl=>ty_sub");
-    expect(found[1].label).to.include("TYPE lcl=>ty_top-field")
+    expect(found[1].label).to.include("TYPE lcl=>ty_top-field");
   });
 
-  
   it("Inline Data", () => {
     const file = new MemoryFile(
       filename,
       `DATA(val) = 4.`
     )
-    const reg = new Registry().addFiles([file]).parse()
-    const found = new InlayHints(reg).list({ uri: filename })
-    expect(found.length).to.equal(1)
-    expect(found[0].label).to.equal("TYPE i")
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(1);
+    expect(found[0].label).to.equal("TYPE i");
   })
 });
