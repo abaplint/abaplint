@@ -122,10 +122,10 @@ DATA(val) = VALUE lcl=>ty_top-field( subfield = VALUE #( ( foo = 2 ) ) ).`);
     const file = new MemoryFile(
       filename,
       `DATA(val) = 4.`
-    )
+    );
     const reg = new Registry().addFiles([file]).parse();
     const found = new InlayHints(reg).list({uri: filename});
     expect(found.length).to.equal(1);
     expect(found[0].label).to.equal("TYPE i");
-  })
+  });
 });
