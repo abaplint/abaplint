@@ -64,10 +64,13 @@ export class InlayHints {
 
   private findImplicitReferences(node: ISpaghettiScopeNode): IReference[] {
     const ret: IReference[] = [];
-
+    
     for (const r of node.getData().references) {
-      if (r.referenceType === ReferenceType.InferredType) {
-        ret.push(r);
+      if (
+        r.referenceType === ReferenceType.InferredType ||
+        r.referenceType === ReferenceType.DataWriteReference
+      ) {
+        ret.push(r)
       }
     }
 
