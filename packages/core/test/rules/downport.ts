@@ -5806,7 +5806,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it.only("SELECT, outline @DATA, table, aliased tables", async () => {
+  it("SELECT, outline @DATA, table, aliased tables", async () => {
     const abap = `FORM bar.
   SELECT FROM wbcrossi AS xref
     LEFT OUTER JOIN tadir AS using ON using~obj_name = xref~master
@@ -5819,7 +5819,21 @@ ENDFORM.`;
 ENDFORM.`;
 
     const expected = `FORM bar.
-sdf
+  TYPES: BEGIN OF temp1,
+          from_pkg TYPE tadir-devclass,
+          from_name TYPE tadir-master,
+          to_pkg TYPE tadir-devclass,
+          to_name TYPE tadir-name,
+        END OF temp1.
+  DATA itab TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+  SELECT FROM wbcrossi AS xref
+    LEFT OUTER JOIN tadir AS using ON using~obj_name = xref~master
+    LEFT OUTER JOIN tadir AS used ON used~obj_name = xref~include
+    FIELDS using~devclass AS from_pkg,
+           master AS from_name,
+           used~devclass AS to_pkg,
+           name AS to_name
+    INTO TABLE @itab.
 ENDFORM.`;
 
     testFix(abap, expected);
