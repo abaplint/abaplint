@@ -5818,7 +5818,9 @@ ENDFORM.`;
     INTO TABLE @DATA(itab).
 ENDFORM.`;
 
-    const expected = `sdf`;
+    const expected = `FORM bar.
+sdf
+ENDFORM.`;
 
     testFix(abap, expected);
   });
