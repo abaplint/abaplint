@@ -201,10 +201,17 @@ export async function run(arg: Arguments) {
       if (config.get().global.files === undefined) {
         throw "Error: Update abaplint configuration file to latest format";
       }
-      const files = (arg.file)
-        ? FileOperations.loadFileNames(base + arg.file)
-        : FileOperations.loadFileNames(base + config.get().global.files);
-      loaded = await FileOperations.loadFiles(arg.compress, files, progress);
+      if (arg.file) {
+        const files = FileOperations.loadFileNames(base + arg.file);
+        loaded = await FileOperations.loadFiles(arg.compress, files, progress);
+      } else {
+        const configFiles = config.get().global.files;
+        const filesList = Array.isArray(configFiles) ? configFiles : [configFiles];
+        for (const l of filesList) {
+          const files = FileOperations.loadFileNames(base + l);
+          loaded.push(...await FileOperations.loadFiles(arg.compress, files, progress));
+        }
+      }
       deps = await loadDependencies(config, arg.compress, progress, base);
 
       reg = new Registry(config);

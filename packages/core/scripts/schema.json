@@ -5414,8 +5414,18 @@
           "uniqueItems": true
         },
         "files": {
-          "description": "input files, glob format",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "input files, glob format"
         },
         "noIssues": {
           "description": "list of files to not report any issues for, case insensitive regex",
