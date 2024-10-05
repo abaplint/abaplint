@@ -940,6 +940,9 @@
           "description": "Detects INSERT REPORT",
           "type": "boolean"
         },
+        "insertTextpool": {
+          "type": "boolean"
+        },
         "kernelCall": {
           "description": "Detects kernel calls",
           "type": "boolean"
@@ -963,6 +966,7 @@
         "generateSubroutine",
         "deleteReport",
         "deleteTextpool",
+        "insertTextpool",
         "deleteDynpro",
         "exportDynpro",
         "dynamicSQL"
@@ -3373,7 +3377,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused methods\nhttps://rules.abaplint.org/unused_methods"
+              "description": "Checks for unused methods\nTags: Quickfix\nhttps://rules.abaplint.org/unused_methods"
             },
             "unused_types": {
               "anyOf": [
@@ -5265,7 +5269,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused methods\nhttps://rules.abaplint.org/unused_methods"
+              "description": "Checks for unused methods\nTags: Quickfix\nhttps://rules.abaplint.org/unused_methods"
             },
             "unused_types": {
               "anyOf": [
@@ -5410,8 +5414,18 @@
           "uniqueItems": true
         },
         "files": {
-          "description": "input files, glob format",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "input files, glob format"
         },
         "noIssues": {
           "description": "list of files to not report any issues for, case insensitive regex",

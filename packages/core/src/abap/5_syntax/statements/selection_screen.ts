@@ -3,13 +3,19 @@ import {StatementNode} from "../../nodes";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {CharacterType, StructureType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SelectionScreen implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput) {
 
     const field = node.findFirstExpression(Expressions.InlineField);
     if (field === undefined) {
+      return;
+    }
+
+    if (field.getFirstToken().getStr().length > 8) {
+      const message = "SELECTION-SCREEN name too long, " + field.getFirstToken().getStr();
+      input.issues.push(syntaxIssue(input, field.getFirstToken(), message));
       return;
     }
 

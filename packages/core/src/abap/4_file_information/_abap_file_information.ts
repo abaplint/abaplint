@@ -38,6 +38,7 @@ export interface InfoMethodDefinition {
   isEventHandler: boolean,
   isForTesting: boolean,
   isAbstract: boolean,
+  isFinal: boolean,
   visibility: Visibility,
   parameters: InfoMethodParameter[],
   exceptions: string[],

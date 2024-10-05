@@ -22,7 +22,7 @@ export class RenameGlobalClass implements ObjectRenamer {
 
     const main = obj.getMainABAPFile();
     if (main === undefined) {
-      throw new Error("Main file not found");
+      throw new Error(`Main file not found, ${obj.getType()} ${obj.getName()}`);
     }
 
     let changes: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[] = [];

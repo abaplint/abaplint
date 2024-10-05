@@ -13,6 +13,7 @@ import {Position} from "../position";
 import {VirtualPosition} from "../virtual_position";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
+import {StatementNode} from "../abap/nodes";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -90,6 +91,7 @@ ENDCLASS.`,
 
     const expected = new Indent(indentOpts).getExpectedIndents(file);
     const ret: Issue[] = [];
+    let previous: StatementNode | undefined = undefined;
 
     for (const statement of file.getStatements()) {
       const position = statement.getFirstToken().getStart();
@@ -125,6 +127,13 @@ ENDCLASS.`,
         }
       }
 
+      // only apply for the first statement in a chain
+      if (statement.getColon() !== undefined
+          && previous?.getColon() !== undefined
+          && statement.getColon()!.getStart().equals(previous.getColon()!.getStart())) {
+        continue;
+      }
+
       if (indent && indent > 0 && indent !== position.getCol()) {
         const expected = indent - 1;
         const fix = EditHelper.replaceRange(file, new Position(position.getRow(), 1), position, " ".repeat(expected));
@@ -135,6 +144,8 @@ ENDCLASS.`,
           break;
         }
       }
+
+      previous = statement;
     }
 
     return ret;
