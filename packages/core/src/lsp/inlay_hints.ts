@@ -66,7 +66,10 @@ export class InlayHints {
     const ret: IReference[] = [];
 
     for (const r of node.getData().references) {
-      if (r.referenceType === ReferenceType.InferredType) {
+      if (
+        r.referenceType === ReferenceType.InferredType ||
+        r.referenceType === ReferenceType.DataWriteReference
+      ) {
         ret.push(r);
       }
     }
