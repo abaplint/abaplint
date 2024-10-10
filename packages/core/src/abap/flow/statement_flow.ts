@@ -5,7 +5,7 @@ import * as Expressions from "../2_statements/expressions";
 import {FLOW_EDGE_TYPE, FlowGraph} from "./flow_graph";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IObject} from "../../objects/_iobject";
-import {Program} from "../../objects";
+import {FunctionGroup, Program} from "../../objects";
 import {SELECTION_EVENTS} from "./selection_events";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
@@ -62,7 +62,7 @@ export class StatementFlow {
       }
     }
 
-    if (obj instanceof Program) {
+    if (obj instanceof Program || obj instanceof FunctionGroup) {
       // find the top level events
       let inEvent = false;
       let collected: (StatementNode | StructureNode)[] = [];
