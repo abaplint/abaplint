@@ -87,7 +87,8 @@ export class StatementFlow {
 
       if (inEvent === true) {
         ret.push(this.runEvent(collected, name));
-      } else if (collected.length > 0) {
+      } else if (collected.length > 0
+          && !(obj instanceof FunctionGroup)) {
         // implicit START-OF-SELECTION
         ret.push(this.runEvent(collected, "START-OF-SELECTION."));
       }
