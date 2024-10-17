@@ -551,7 +551,7 @@ ENDMODULE.`;
     expect(res[0].getLabel()).to.equal("MODULE FOO INPUT.");
   });
 
-  it.skip("CATCH SYSTEM-EXCEPTIONS", async () => {
+  it("CATCH SYSTEM-EXCEPTIONS", async () => {
     const abap = `
 REPORT zfoo.
 
@@ -560,8 +560,9 @@ CATCH SYSTEM-EXCEPTIONS move_cast_error = 1.
 ENDCATCH.`;
 
     const res = await runRaw(abap);
-    expect(res.length).to.equal(1);
-    expect(res[0].getLabel()).to.equal("MODULE FOO INPUT.");
+    expect(res[0].toTextEdges()).to.equal(`"start#1" -> "CatchSystemExceptions:4,1";
+"CatchSystemExceptions:4,1" -> "Move:5,3";
+"Move:5,3" -> "end#1";`);
   });
 
 });
