@@ -10,6 +10,7 @@ import {IParseResult} from "./_iobject";
 export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   definitionName: string | undefined;
+  description: string | undefined;
   fields: {key: boolean, name: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
@@ -43,8 +44,8 @@ export class DataDefinition extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    this.parse();
+    return this.parsedData?.description;
   }
 
   public parseType(reg: IRegistry): AbstractType {
@@ -85,6 +86,7 @@ export class DataDefinition extends AbstractObject {
     this.parsedData = {
       sqlViewName: undefined,
       definitionName: undefined,
+      description: this.findDescription(),
       fields: [],
       sources: [],
       relations: [],
@@ -126,6 +128,13 @@ export class DataDefinition extends AbstractObject {
     if (match) {
       this.parsedData!.sqlViewName = match[1].toUpperCase();
     }
+  }
+  private findDescription(): string | undefined {
+    const match = this.findSourceFile()?.getRaw().match(/@EndUserText\.label: '([\w ]+)'/);
+    if (match) {
+      return match[1];
+    }
+    return undefined;
   }
 
   private findFieldNames(tree: ExpressionNode) {
