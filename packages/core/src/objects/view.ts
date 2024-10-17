@@ -114,8 +114,10 @@ export class View extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    return this.parsedData?.header.DDTEXT;
   }
 
 ///////////////
