@@ -14,6 +14,7 @@ export class View extends AbstractObject {
   private parsedData: {
     header: {
       VIEWCLASS: string,
+      DDTEXT: string,
     },
     fields: {
       VIEWFIELD: string,
@@ -113,8 +114,10 @@ export class View extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    return this.parsedData?.header.DDTEXT;
   }
 
 ///////////////
@@ -123,6 +126,7 @@ export class View extends AbstractObject {
     this.parsedData = {
       header: {
         VIEWCLASS: "",
+        DDTEXT: "",
       },
       fields: [],
       join: [],
@@ -136,6 +140,7 @@ export class View extends AbstractObject {
     const header = parsed.abapGit["asx:abap"]["asx:values"]?.DD25V;
     this.parsedData.header = {
       VIEWCLASS: header?.VIEWCLASS || "",
+      DDTEXT: header?.DDTEXT || "",
     };
 
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;

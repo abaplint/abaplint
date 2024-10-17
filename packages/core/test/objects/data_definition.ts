@@ -47,6 +47,7 @@ define view ZAG_UNIT_TEST
     if (type instanceof StructureType) {
       expect(type.getComponents().length).to.equal(3);
     }
+    expect(ddls.getDescription()).to.equal("Hello World");
   });
 
   it("Get fields", async () => {

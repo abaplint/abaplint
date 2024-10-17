@@ -281,6 +281,14 @@ export class StatementFlow {
         graph.addEdge(catchBody.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
       }
 // TODO, handle CLEANUP
+    } else if (type instanceof Structures.CatchSystemExceptions) {
+// TODO: this is not completely correct
+      const catchName = this.buildName(n.getFirstStatement()!);
+      const body = this.traverseBody(this.findBody(n), context);
+
+      graph.addEdge(current, catchName, FLOW_EDGE_TYPE.undefined);
+      graph.addGraph(catchName, body, FLOW_EDGE_TYPE.undefined);
+      graph.addEdge(body.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
     } else if (type instanceof Structures.Case) {
       const caseName = this.buildName(n.getFirstStatement()!);
       graph.addEdge(current, caseName, FLOW_EDGE_TYPE.undefined);

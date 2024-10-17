@@ -551,4 +551,18 @@ ENDMODULE.`;
     expect(res[0].getLabel()).to.equal("MODULE FOO INPUT.");
   });
 
+  it("CATCH SYSTEM-EXCEPTIONS", async () => {
+    const abap = `
+REPORT zfoo.
+
+CATCH SYSTEM-EXCEPTIONS move_cast_error = 1.
+  lo_tabl_descr ?= lo_type_descr.
+ENDCATCH.`;
+
+    const res = await runRaw(abap);
+    expect(res[0].toTextEdges()).to.equal(`"start#1" -> "CatchSystemExceptions:4,1";
+"CatchSystemExceptions:4,1" -> "Move:5,3";
+"Move:5,3" -> "end#1";`);
+  });
+
 });
