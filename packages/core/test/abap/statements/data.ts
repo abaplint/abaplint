@@ -100,6 +100,7 @@ const tests = [
   `DATA ls_event  TYPE STRUCTURE FOR EVENT /foo/bar~send.`,
   `DATA range_ko LIKE RANGE OF structure_ref->field.`,
   `DATA wa TYPE zotel_spans WRITER FOR COLUMNS data.`,
+  `DATA gt TYPE RANGE OF /foo/bar VALUE IS INITIAL.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

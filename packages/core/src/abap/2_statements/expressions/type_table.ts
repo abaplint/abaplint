@@ -23,8 +23,8 @@ export class TypeTable extends Expression {
                          opt(FieldChain),
                          opt(per(header, initial, plusPrio(TypeTableKey))));
 
-    const rangeType = seq("RANGE OF", TypeName, optPrio(header), optPrio(initial));
-    const rangeLike = seq("RANGE OF", FieldChain, optPrio(header), optPrio(initial));
+    const rangeType = seq("RANGE OF", TypeName, optPrio(header), optPrio(initial), optPrio("VALUE IS INITIAL"));
+    const rangeLike = seq("RANGE OF", FieldChain, optPrio(header), optPrio(initial), optPrio("VALUE IS INITIAL"));
 
     // a maximum of 15 secondary table keys can be defined
     // "WITH" is not allowed as a field name in keys
