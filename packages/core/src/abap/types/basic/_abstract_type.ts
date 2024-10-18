@@ -27,6 +27,10 @@ export abstract class AbstractType {
     return this.data?.RTTIName;
   }
 
+  public getDescription(): string | undefined {
+    return this.data?.description;
+  }
+
   public getConversionExit(): string | undefined {
     return this.data?.conversionExit;
   }
