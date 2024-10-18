@@ -341,7 +341,7 @@ DATA(left) = SWITCH #( bottle - 1
     expect(hover?.value).to.contain("c LENGTH 6");
   });
 
-  it("Hover data element", () => {
+  it.only("Hover data element", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -372,7 +372,7 @@ DATA foo TYPE zddic.`;
     const hoverVariable = new Hover(reg).find(buildPosition(file, 1, 6));
     expect(hoverVariable).to.not.equal(undefined, "variable");
     expect(hoverVariable?.value).to.contain("ZDDIC");
-//    console.dir(hoverVariable);
+    expect(hoverVariable?.value).to.contain("testing test1");
 
     const hoverDDIC = new Hover(reg).find(buildPosition(file, 1, 15));
     expect(hoverDDIC).to.not.equal(undefined, "ddic");
