@@ -152,7 +152,12 @@ export class TableType extends AbstractObject {
       if (this.parsedXML.datatype === undefined) {
         type = new Types.UnknownType("Table Type, empty DATATYPE" + this.getName(), this.getName());
       } else {
-        const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
+        const row = ddic.textToType({
+          text: this.parsedXML.datatype,
+          length: this.parsedXML.leng,
+          decimals: this.parsedXML.decimals,
+          infoText: this.getName(),
+        });
         type = new Types.TableType(row, tableOptions, this.getName());
       }
     } else {

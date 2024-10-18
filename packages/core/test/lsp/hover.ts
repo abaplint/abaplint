@@ -353,6 +353,11 @@ DATA(left) = SWITCH #( bottle - 1
         <DATATYPE>CHAR</DATATYPE>
         <LENG>000002</LENG>
         <OUTPUTLEN>000002</OUTPUTLEN>
+        <DDTEXT>testing test1</DDTEXT>
+        <REPTEXT>testing test2</REPTEXT>
+        <SCRTEXT_S>testing test3</SCRTEXT_S>
+        <SCRTEXT_M>testing test4</SCRTEXT_M>
+        <SCRTEXT_L>testing test5</SCRTEXT_L>
        </DD04V>
       </asx:values>
      </asx:abap>
@@ -367,6 +372,7 @@ DATA foo TYPE zddic.`;
     const hoverVariable = new Hover(reg).find(buildPosition(file, 1, 6));
     expect(hoverVariable).to.not.equal(undefined, "variable");
     expect(hoverVariable?.value).to.contain("ZDDIC");
+    expect(hoverVariable?.value).to.contain("testing test2");
 
     const hoverDDIC = new Hover(reg).find(buildPosition(file, 1, 15));
     expect(hoverDDIC).to.not.equal(undefined, "ddic");

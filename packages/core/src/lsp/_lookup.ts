@@ -223,6 +223,9 @@ export class LSPLookup {
     if (variable.getType().getDDICName() !== undefined) {
       value += "\n\nDDIC Name: ```" + variable.getType().getDDICName() + "```";
     }
+    if (variable.getType().getDescription() !== undefined) {
+      value += "\n\nDescription: " + variable.getType().getDescription();
+    }
 
     return value;
   }

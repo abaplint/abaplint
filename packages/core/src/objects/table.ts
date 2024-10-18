@@ -232,7 +232,12 @@ export class Table extends AbstractObject {
         const length = field.LENG ? field.LENG : field.INTLEN;
         components.push({
           name: field.FIELDNAME,
-          type: ddic.textToType(datatype, length, field.DECIMALS, this.getName() + "-" + field.FIELDNAME)});
+          type: ddic.textToType({
+            text: datatype,
+            length: length,
+            decimals: field.DECIMALS,
+            infoText: this.getName() + "-" + field.FIELDNAME,
+          })});
       } else {
         components.push({
           name: field.FIELDNAME,
