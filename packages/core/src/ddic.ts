@@ -336,12 +336,18 @@ export class DDIC {
       infoText: string,
       qualifiedName?: string,
       conversionExit?: string,
-      ddicName?: string
+      ddicName?: string,
+      description?: string,
     }): AbstractType {
 
 // todo: support short strings, and length of different integers, NUMC vs CHAR, min/max length
 
-    const extra = {qualifiedName: input.qualifiedName, conversionExit: input.conversionExit, ddicName: input.ddicName};
+    const extra = {
+      qualifiedName: input.qualifiedName,
+      conversionExit: input.conversionExit,
+      ddicName: input.ddicName,
+      description: input.description,
+    };
 
     switch (input.text) {
       case "DEC":      // 1 <= len <= 31

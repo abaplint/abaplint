@@ -4,6 +4,7 @@ export type AbstractTypeData = {
   derivedFromConstant?: boolean,
   ddicName?: string,
   RTTIName?: string,
+  description?: string,
 };
 
 export abstract class AbstractType {

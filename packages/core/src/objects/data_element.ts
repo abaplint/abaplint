@@ -83,6 +83,7 @@ export class DataElement extends AbstractObject {
             qualifiedName: this.getName(),
             conversionExit: undefined,
             ddicName: this.getName(),
+            description: this.parsedXML.texts?.heading,
           })};
         }
       }
