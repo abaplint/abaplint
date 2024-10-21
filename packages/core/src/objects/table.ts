@@ -46,6 +46,7 @@ export class Table extends AbstractObject {
       GROUPNAME?: string,
       CHECKTABLE?: string,
       REFTYPE?: string,
+      DDTEXT?: string,
     }[]} | undefined;
 
   public getType(): string {
@@ -237,6 +238,7 @@ export class Table extends AbstractObject {
             length: length,
             decimals: field.DECIMALS,
             infoText: this.getName() + "-" + field.FIELDNAME,
+            description: field.DDTEXT,
           })});
       } else {
         components.push({
@@ -320,6 +322,7 @@ export class Table extends AbstractObject {
         GROUPNAME: field.GROUPNAME,
         CHECKTABLE: field.CHECKTABLE,
         REFTYPE: field.REFTYPE,
+        DDTEXT: field.DDTEXT,
       });
     }
   }
