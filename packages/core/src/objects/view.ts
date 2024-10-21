@@ -19,7 +19,9 @@ export class View extends AbstractObject {
     fields: {
       VIEWFIELD: string,
       TABNAME: string,
-      FIELDNAME: string}[],
+      FIELDNAME: string,
+      KEYFLAG: string,
+    }[],
     join: {
       LTAB: string,
       LFIELD: string,
@@ -113,6 +115,20 @@ export class View extends AbstractObject {
     return new Types.StructureType(components, this.getName());
   }
 
+  public listKeys(): string[] {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+
+    const ret: string[] = [];
+    for (const p of this.parsedData?.fields || []) {
+      if (p.KEYFLAG === "X") {
+        ret.push(p.FIELDNAME);
+      }
+    }
+    return ret;
+  }
+
   public getDescription(): string | undefined {
     if (this.parsedData === undefined) {
       this.parseXML();
@@ -149,6 +165,7 @@ export class View extends AbstractObject {
         VIEWFIELD: field.VIEWFIELD,
         TABNAME: field.TABNAME,
         FIELDNAME: field.FIELDNAME,
+        KEYFLAG: field.KEYFLAG,
       });
     }
 
