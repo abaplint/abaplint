@@ -14,6 +14,9 @@ const tests = [
   {c: "VALUE #( )",                       r: new Expressions.Source(),          e: true},
   {c: "VALUE #( VALUE #( ) )",            r: new Expressions.Source(),          e: true},
   {c: "VALUE #( foo = VALUE #( ) )",      r: new Expressions.Source(),          e: true},
+  {c: "CONV #( 'DEFAULT')",               r: new Expressions.Source(),          e: true},
+  {c: "CONV #('DEFAULT' )",               r: new Expressions.Source(),          e: true},
+  {c: "CONV #('DEFAULT')",                r: new Expressions.Source(),          e: true},
   {c: "value #( ( foo = 1 bar = 2 boo = value #( ( value #( ( moo = 3 loo = 4 ) ) ) ) ) )", r: new Expressions.Source(), e: true},
   {c: `value #(
     foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4

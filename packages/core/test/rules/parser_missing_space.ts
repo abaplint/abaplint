@@ -34,6 +34,7 @@ const tests = [
   {abap: "cl_abap_unit_assert=>assert_initial( cut->parse( `Portable Network Graphics` ) ).", cnt: 0},
   {abap: "DATA(ls_foo) = VALUE foo( tknum = '0000000001').", cnt: 1},
   {abap: "DATA(ls_foo) = VALUE foo( tknum = '0000000001' ).", cnt: 0},
+  {abap: "foo = CONV #('DEFAULT' ).", cnt: 1},
 ];
 
 testRule(tests, ParserMissingSpace);
