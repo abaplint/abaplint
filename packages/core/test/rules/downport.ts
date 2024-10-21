@@ -5839,4 +5839,19 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.only("ALPHA IN", async () => {
+    const abap = `
+TYPES ty_char TYPE c LENGTH 24.
+DATA iv_aufnr TYPE c LENGTH 12.
+DATA temp1 TYPE ty_char.
+temp1 = |{ sy-mandt }{ iv_aufnr ALPHA = IN }|.
+DATA objname LIKE temp1.
+objname = temp1.`;
+
+    const expected = `
+todo`;
+
+    testFix(abap, expected);
+  });
+
 });
