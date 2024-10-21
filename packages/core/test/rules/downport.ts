@@ -1153,7 +1153,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
     input  = ls_line-no
   IMPORTING
     output = temp1.
-asdf = temp1.`;
+asdf = |{ temp1 }|.`;
 
     testFix(abap, expected);
   });
@@ -1171,7 +1171,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
     input  = iv_in
   IMPORTING
     output = temp1.
-rv_out = condense( temp1 ).`;
+rv_out = condense( |{ temp1 }| ).`;
 
     testFix(abap, expected);
   });
@@ -5003,7 +5003,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
     input  = foo
   IMPORTING
     output = temp1.
-str = condense( temp1 ) && condense( |{ foo ALPHA = OUT }| ).`;
+str = condense( |{ temp1 }| ) && condense( |{ foo ALPHA = OUT }| ).`;
     // hmm, this doesnt work in next step
     testFix(abap, expected);
   });
@@ -5020,7 +5020,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
     input  = foo
   IMPORTING
     output = temp1.
-str = |sdfsd| && condense( temp1 ).`;
+str = |sdfsd| && condense( |{ temp1 }| ).`;
     // hmm, this doesnt work in next step
     testFix(abap, expected);
   });
@@ -5839,7 +5839,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it.only("ALPHA IN", async () => {
+  it("ALPHA IN", async () => {
     const abap = `
 TYPES ty_char TYPE c LENGTH 24.
 DATA iv_aufnr TYPE c LENGTH 12.
@@ -5849,7 +5849,18 @@ DATA objname LIKE temp1.
 objname = temp1.`;
 
     const expected = `
-todo`;
+TYPES ty_char TYPE c LENGTH 24.
+DATA iv_aufnr TYPE c LENGTH 12.
+DATA temp1 TYPE ty_char.
+DATA temp2 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+  EXPORTING
+    input  = iv_aufnr
+  IMPORTING
+    output = temp2.
+temp1 = |{ sy-mandt }{ temp2 }|.
+DATA objname LIKE temp1.
+objname = temp1.`;
 
     testFix(abap, expected);
   });

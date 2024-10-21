@@ -1960,22 +1960,12 @@ ${indentation}${uniqueName}`;
     }
 
     for (const child of high.findAllExpressionsRecursive(Expressions.StringTemplateSource)) {
-      console.dir(child.concatTokens());
       const formatting = child.findDirectExpression(Expressions.StringTemplateFormatting)?.concatTokens().toUpperCase();
-      console.dir(formatting);
       if (formatting === undefined
           || formatting?.startsWith("ALPHA = ") === false) {
         continue;
       }
-/*
-      const templateTokens = child.getChildren();
-      if (templateTokens.length !== 3
-          || templateTokens[0].getFirstToken().getStr() !== "|{"
-          || templateTokens[2].getFirstToken().getStr() !== "}|") {
-        continue;
-      }
-*/
-      const templateSource = child.findDirectExpression(Expressions.StringTemplateSource);
+
       let functionName = "";
       switch (formatting) {
         case "ALPHA = IN":
@@ -1989,7 +1979,7 @@ ${indentation}${uniqueName}`;
       }
 
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
-      const source = templateSource?.findDirectExpression(Expressions.Source)?.concatTokens();
+      const source = child.findDirectExpression(Expressions.Source)?.concatTokens();
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
 
       const code = `DATA ${uniqueName} TYPE string.
