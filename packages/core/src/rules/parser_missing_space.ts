@@ -245,13 +245,24 @@ This rule makes sure the spaces are consistently required across the language.`,
       return undefined;
     }
 
-    const nextLast = children[children.length - 2];
-    const last = children[children.length - 1];
+    if (children.length >= 4
+        && children[0].getStr().toUpperCase() === "CONV") {
+      const first = children[2];
+      const second = children[3];
+      if (first.getRow() === second.getRow()
+          && first.getCol() + 1 === second.getStart().getCol()) {
+        return second.getStart();
+      }
+    }
 
-    if (nextLast.getStr().startsWith("'")
-        && nextLast.getRow() === last.getRow()
-        && nextLast.getEnd().getCol() === last.getStart().getCol()) {
-      return last.getEnd();
+    {
+      const nextLast = children[children.length - 2];
+      const last = children[children.length - 1];
+      if (nextLast.getStr().startsWith("'")
+          && nextLast.getRow() === last.getRow()
+          && nextLast.getEnd().getCol() === last.getStart().getCol()) {
+        return last.getEnd();
+      }
     }
 
     return undefined;
