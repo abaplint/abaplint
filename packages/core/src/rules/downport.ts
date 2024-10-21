@@ -1954,22 +1954,28 @@ ${indentation}${uniqueName}`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Expand operator", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  // must be very simple string templates, like "|{ ls_line-no ALPHA = IN }|"
   private stringTemplateAlpha(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
     }
 
-    for (const child of high.findAllExpressionsRecursive(Expressions.StringTemplate)) {
+    for (const child of high.findAllExpressionsRecursive(Expressions.StringTemplateSource)) {
+      console.dir(child.concatTokens());
+      const formatting = child.findDirectExpression(Expressions.StringTemplateFormatting)?.concatTokens().toUpperCase();
+      console.dir(formatting);
+      if (formatting === undefined
+          || formatting?.startsWith("ALPHA = ") === false) {
+        continue;
+      }
+/*
       const templateTokens = child.getChildren();
       if (templateTokens.length !== 3
           || templateTokens[0].getFirstToken().getStr() !== "|{"
           || templateTokens[2].getFirstToken().getStr() !== "}|") {
         continue;
       }
-
+*/
       const templateSource = child.findDirectExpression(Expressions.StringTemplateSource);
-      const formatting = templateSource?.findDirectExpression(Expressions.StringTemplateFormatting)?.concatTokens();
       let functionName = "";
       switch (formatting) {
         case "ALPHA = IN":
