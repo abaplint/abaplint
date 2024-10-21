@@ -1954,22 +1954,18 @@ ${indentation}${uniqueName}`;
     return Issue.atToken(lowFile, high.getFirstToken(), "Expand operator", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  // must be very simple string templates, like "|{ ls_line-no ALPHA = IN }|"
   private stringTemplateAlpha(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
     }
 
-    for (const child of high.findAllExpressionsRecursive(Expressions.StringTemplate)) {
-      const templateTokens = child.getChildren();
-      if (templateTokens.length !== 3
-          || templateTokens[0].getFirstToken().getStr() !== "|{"
-          || templateTokens[2].getFirstToken().getStr() !== "}|") {
+    for (const child of high.findAllExpressionsRecursive(Expressions.StringTemplateSource)) {
+      const formatting = child.findDirectExpression(Expressions.StringTemplateFormatting)?.concatTokens().toUpperCase();
+      if (formatting === undefined
+          || formatting?.startsWith("ALPHA = ") === false) {
         continue;
       }
 
-      const templateSource = child.findDirectExpression(Expressions.StringTemplateSource);
-      const formatting = templateSource?.findDirectExpression(Expressions.StringTemplateFormatting)?.concatTokens();
       let functionName = "";
       switch (formatting) {
         case "ALPHA = IN":
@@ -1983,7 +1979,7 @@ ${indentation}${uniqueName}`;
       }
 
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
-      const source = templateSource?.findDirectExpression(Expressions.Source)?.concatTokens();
+      const source = child.findDirectExpression(Expressions.Source)?.concatTokens();
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
 
       const code = `DATA ${uniqueName} TYPE string.

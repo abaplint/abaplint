@@ -179,7 +179,7 @@ export class DataDefinition extends AbstractObject {
 
   private findSourcesAndRelations(tree: ExpressionNode) {
     for (const e of tree.findAllExpressions(CDSSource)) {
-      const name = e.getFirstToken().getStr();
+      const name = e.getFirstChild()?.concatTokens().toUpperCase().replace(/ /g, "") || "ERROR";
       const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
       this.parsedData!.sources.push({name, as});
     }

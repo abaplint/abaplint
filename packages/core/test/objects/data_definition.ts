@@ -233,4 +233,23 @@ define root view entity /foo/b_ar001 as projection on /foo/b_ar001 {
     const parsed = ddls.parseType(reg) as StructureType;
     expect(parsed.getComponents().length).to.equal(3);
   });
+
+  it("get source", async () => {
+    const source = `
+define view /FOO/GL_BAR
+  as select from /foo/gl_foo
+{
+  key bukrs      as CompanyCode,
+  key valid_from as ValidFrom
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("#dbf#gl_i_emt_rem.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const sources = ddls.listSources();
+    expect(sources?.length).to.equal(1);
+    expect(sources![0].name).to.equal("/FOO/GL_FOO");
+  });
 });
