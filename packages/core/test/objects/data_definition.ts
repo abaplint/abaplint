@@ -243,7 +243,7 @@ define view /FOO/GL_BAR
   key valid_from as ValidFrom
 }`;
     const reg = new Registry().addFiles([
-      new MemoryFile("#dbf#gl_i_emt_rem.ddls.asddls", source),
+      new MemoryFile("#foo#gl_bar.ddls.asddls", source),
     ]);
     await reg.parseAsync();
     const ddls = reg.getFirstObject()! as DataDefinition;
@@ -251,5 +251,24 @@ define view /FOO/GL_BAR
     const sources = ddls.listSources();
     expect(sources?.length).to.equal(1);
     expect(sources![0].name).to.equal("/FOO/GL_FOO");
+    expect(sources![0].as).to.equal(undefined);
+  });
+
+  it("get source, as'ed", async () => {
+    const source = `
+define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
+  a.field1,
+  a.field2
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zag_unit_test.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const sources = ddls.listSources();
+    expect(sources?.length).to.equal(1);
+    expect(sources![0].name).to.equal("ZAG_NO_DTEL");
+    expect(sources![0].as).to.equal("A");
   });
 });
