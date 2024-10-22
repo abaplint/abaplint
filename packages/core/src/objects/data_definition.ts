@@ -148,7 +148,7 @@ export class DataDefinition extends AbstractObject {
     for (const e of expr?.findDirectExpressions(CDSElement) || []) {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
-        const list = e.findDirectExpressions(CDSName);
+        const list = e.findAllExpressions(CDSName);
         if (e.concatTokens().toUpperCase().includes(" REDIRECTED TO ")) {
           found = list[0];
         } else {
@@ -180,7 +180,7 @@ export class DataDefinition extends AbstractObject {
   private findSourcesAndRelations(tree: ExpressionNode) {
     for (const e of tree.findAllExpressions(CDSSource)) {
       const name = e.getFirstChild()?.concatTokens().toUpperCase().replace(/ /g, "") || "ERROR";
-      const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
+      const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.concatTokens().toUpperCase();
       this.parsedData!.sources.push({name, as});
     }
 

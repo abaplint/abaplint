@@ -26,6 +26,7 @@ export * from "./cds_join";
 export * from "./cds_name";
 export * from "./cds_parameters_select";
 export * from "./cds_parameters";
+export * from "./cds_prefixed_name";
 export * from "./cds_provider_contract";
 export * from "./cds_relation";
 export * from "./cds_select";

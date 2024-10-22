@@ -1,4 +1,4 @@
-import {CDSElement, CDSAs, CDSParametersSelect, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving} from ".";
+import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving} from ".";
 import {Expression, seq, str, plus, star, opt} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
@@ -11,9 +11,11 @@ export class CDSSelect extends Expression {
 
     const elements = seq(str("{"), plus(CDSElement), star(seq(",", CDSElement)), str("}"));
 
-    return seq("SELECT", opt(distinct), opt(fields), "FROM", CDSSource,
-               opt(CDSParametersSelect),
-               opt(CDSAs),
+    return seq("SELECT",
+               opt(distinct),
+               opt(fields),
+               "FROM",
+               CDSSource,
                star(CDSJoin),
                star(CDSComposition),
                star(CDSAssociation),
