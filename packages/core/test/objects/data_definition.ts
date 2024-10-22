@@ -270,5 +270,10 @@ define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
     expect(sources?.length).to.equal(1);
     expect(sources![0].name).to.equal("ZAG_NO_DTEL");
     expect(sources![0].as).to.equal("A");
+
+    const parsed = ddls.parseType(reg) as StructureType | undefined;
+    expect(parsed).to.be.instanceof(StructureType);
+    expect(parsed?.getComponentByName("FIELD1")).to.not.equal(undefined);
+    expect(parsed?.getComponentByName("FIELD2")).to.not.equal(undefined);
   });
 });
