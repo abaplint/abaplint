@@ -122,29 +122,29 @@ export class TableType extends AbstractObject {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
     } else if (this.parsedXML.rowkind === "S") {
       const lookup = ddic.lookupTableOrView(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "E") {
       const lookup = ddic.lookupDataElement(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "L") {
       const lookup = ddic.lookupTableType(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype === "OBJECT") {
-      type = new Types.TableType(new GenericObjectReferenceType(), tableOptions, this.getName());
+      type = new Types.TableType(new GenericObjectReferenceType(), tableOptions, this.getName(), this.getDescription());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype === "DATA") {
-      type = new Types.TableType(new DataReference(new Types.DataType()), tableOptions, this.getName());
+      type = new Types.TableType(new DataReference(new Types.DataType()), tableOptions, this.getName(), this.getDescription());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
       const lookup = ddic.lookupObject(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
@@ -158,7 +158,7 @@ export class TableType extends AbstractObject {
           decimals: this.parsedXML.decimals,
           infoText: this.getName(),
         });
-        type = new Types.TableType(row, tableOptions, this.getName());
+        type = new Types.TableType(row, tableOptions, this.getName(), this.getDescription());
       }
     } else {
       type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName(), this.getName());
