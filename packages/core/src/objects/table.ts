@@ -259,7 +259,7 @@ export class Table extends AbstractObject {
     }
 
     reg.getDDICReferences().setUsing(this, references);
-    return new Types.StructureType(components, this.getName(), this.getName());
+    return new Types.StructureType(components, this.getName(), this.getName(), this.getDescription());
   }
 
   public getTableCategory(): TableCategory | undefined {

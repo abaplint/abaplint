@@ -25,7 +25,7 @@ describe("Object: DDLS - Data Definition", () => {
 @AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
 @AbapCatalog.compiler.compareFilter: true
 @AccessControl.authorizationCheck: #CHECK
-@EndUserText.label: 'Hello World'
+@EndUserText.label: 'Hello World,.:'
 define view ZAG_UNIT_TEST
   as select from tadir
 {
@@ -47,7 +47,7 @@ define view ZAG_UNIT_TEST
     if (type instanceof StructureType) {
       expect(type.getComponents().length).to.equal(3);
     }
-    expect(ddls.getDescription()).to.equal("Hello World");
+    expect(ddls.getDescription()).to.equal("Hello World,.:");
   });
 
   it("Get fields", async () => {
