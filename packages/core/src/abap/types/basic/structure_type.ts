@@ -11,10 +11,11 @@ export class StructureType extends AbstractType {
   private readonly indexed: {[index: string]: AbstractType};
   private readonly components: IStructureComponent[];
 
-  public constructor(components: IStructureComponent[], qualifiedName?: string, ddicName?: string) {
+  public constructor(components: IStructureComponent[], qualifiedName?: string, ddicName?: string, description?: string) {
     super({
       qualifiedName: qualifiedName,
       ddicName: ddicName,
+      description: description,
     });
     if (components.length === 0) {
       throw new Error("Structure does not contain any components");
