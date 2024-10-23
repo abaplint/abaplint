@@ -130,7 +130,7 @@ export class DataDefinition extends AbstractObject {
     }
   }
   private findDescription(): string | undefined {
-    const match = this.findSourceFile()?.getRaw().match(/@EndUserText\.label: '([\w ]+)'/);
+    const match = this.findSourceFile()?.getRaw().match(/@EndUserText\.label: '([\w,.: ]+)'/);
     if (match) {
       return match[1];
     }
