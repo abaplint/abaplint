@@ -124,7 +124,7 @@ export class DataDefinition extends AbstractObject {
 //////////
 
   private findSQLViewName(): void {
-    const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '(\w+)'/);
+    const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '([\w/]+)'/);
     if (match) {
       this.parsedData!.sqlViewName = match[1].toUpperCase();
     }
