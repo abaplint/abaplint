@@ -79,7 +79,7 @@ define view ZAG_UNIT_TEST
 
   it("Get fields, associations are not fields", async () => {
     const source = `
-@AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
+@AbapCatalog.sqlViewName: '/FOO/BAR'
 @AbapCatalog.compiler.compareFilter: true
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'Hello World'
@@ -104,6 +104,8 @@ define view ZAG_UNIT_TEST
     if (type instanceof StructureType) {
       expect(type.getComponents().length).to.equal(3);
     }
+
+    expect(ddls.getSQLViewName()).to.equal("/FOO/BAR");
   });
 
   it("Get get field names", async () => {
