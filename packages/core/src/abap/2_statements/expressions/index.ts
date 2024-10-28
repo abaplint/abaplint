@@ -148,6 +148,7 @@ export * from "./simple_source2";
 export * from "./simple_source3";
 export * from "./simple_source4";
 export * from "./simple_target";
+export * from "./source_field_symbol_chain";
 export * from "./source_field_symbol";
 export * from "./source_field";
 export * from "./source";
