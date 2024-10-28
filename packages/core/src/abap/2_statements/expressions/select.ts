@@ -26,7 +26,7 @@ export class Select extends Expression {
                      bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints);
 
     const permSingle = per(SQLFrom, altPrio(SQLIntoStructure, SQLIntoList), where, SQLClient,
-                           bypass, fields, DatabaseConnection, SQLHints);
+                           bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints);
 
     const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
 

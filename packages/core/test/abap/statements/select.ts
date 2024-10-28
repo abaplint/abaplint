@@ -391,6 +391,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      appending table @join.`,
 
   `SELECT object FROM tadir WHERE @( strlen( 'asd' ) ) = 2 INTO TABLE @DATA(TEST).`,
+
+  `SELECT SINGLE MAX( field )
+     FROM /foo/gl_bar
+     INTO @sdfsdf
+     GROUP BY field.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
