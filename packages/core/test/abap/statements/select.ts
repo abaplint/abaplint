@@ -391,6 +391,24 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      appending table @join.`,
 
   `SELECT object FROM tadir WHERE @( strlen( 'asd' ) ) = 2 INTO TABLE @DATA(TEST).`,
+
+  `SELECT SINGLE MAX( field )
+     FROM /foo/gl_bar
+     INTO @sdfsdf
+     GROUP BY field.`,
+
+  `SELECT *
+     FROM /foo/bar
+     WHERE fieldname = ( ( SELECT MAX( fieldname ) FROM /moo/foo ) )
+     INTO CORRESPONDING FIELDS OF TABLE @/foo/cl_clas=>gt.`,
+
+  `SELECT gla, \\_skat-txt50, indi
+    FROM /foo/bar
+    WHERE indi = @abap_false
+    AND \\_skat-spras = @sy-langu
+    AND field         = 'FOO'
+    ORDER BY gla ASCENDING
+    INTO TABLE @lt.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
