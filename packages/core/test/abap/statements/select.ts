@@ -396,6 +396,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      FROM /foo/gl_bar
      INTO @sdfsdf
      GROUP BY field.`,
+
+  `SELECT *
+     FROM /foo/bar
+     WHERE fieldname = ( ( SELECT MAX( fieldname ) FROM /moo/foo ) )
+     INTO CORRESPONDING FIELDS OF TABLE @/foo/cl_clas=>gt.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

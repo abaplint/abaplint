@@ -7,6 +7,7 @@ import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
 export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const subSelect = seq("(", Select, ")");
+    const subSelectDouble = seq("(", "(", Select, ")", ")");
 
     const between = seq("BETWEEN", SQLSource, "AND", SQLSource);
 
@@ -16,7 +17,7 @@ export class SQLCompare extends Expression {
 
     const source = new SQLSource();
 
-    const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), subSelect);
+    const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), altPrio(subSelect, subSelectDouble));
 
     const arith = ver(Version.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)));
 
