@@ -333,6 +333,8 @@ export class StatementFlow {
       if (othersFound === false) {
         graph.addEdge(caseName, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
       }
+    } else if (type instanceof Structures.Define) {
+      // do nothing
     } else {
       console.dir("StatementFlow,todo, " + n.get().constructor.name);
     }
