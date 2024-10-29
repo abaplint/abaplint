@@ -63,7 +63,7 @@ export class DataElement extends AbstractObject {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
           lookup = {type: new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName())};
         } else {
-          lookup = ddic.lookupDomain(this.parsedXML.domname, this.getName());
+          lookup = ddic.lookupDomain(this.parsedXML.domname, this.getName(), this.getDescription());
         }
       } else if (this.parsedXML.refkind === "R") {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {

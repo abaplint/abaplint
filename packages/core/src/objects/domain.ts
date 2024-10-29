@@ -47,7 +47,7 @@ export class Domain extends AbstractObject {
     super.setDirty();
   }
 
-  public parseType(reg: IRegistry, dataElement?: string): AbstractType {
+  public parseType(reg: IRegistry, dataElement?: string, description?: string): AbstractType {
     // dont cache the DOMA parsed type, they are cached on DTEL level
     // also note that the type carries the name of the DTEL
     if (this.parsedXML === undefined) {
@@ -65,6 +65,7 @@ export class Domain extends AbstractObject {
       qualifiedName: dataElement,
       conversionExit: this.parsedXML.conversionExit,
       ddicName: dataElement,
+      description: description,
     });
   }
 
