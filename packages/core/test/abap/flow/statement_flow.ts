@@ -565,4 +565,17 @@ ENDCATCH.`;
 "Move:5,3" -> "end#1";`);
   });
 
+  it("define", async () => {
+    const abap = `
+DEFINE _wri.
+  WRITE 2.
+END-OF-DEFINITION.
+_wri.`;
+
+    const res2 = await runFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "MacroCall:6,1";
+"MacroCall:6,1" -> "Write:6,1";
+"Write:6,1" -> "end#1";`);
+  });
+
 });
