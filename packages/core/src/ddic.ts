@@ -227,10 +227,10 @@ export class DDIC {
     }
   }
 
-  public lookupDomain(name: string, dataElement?: string): ILookupResult {
+  public lookupDomain(name: string, dataElement?: string, description?: string): ILookupResult {
     const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
-      return {type: found.parseType(this.reg, dataElement), object: found};
+      return {type: found.parseType(this.reg, dataElement, description), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
       return {type: new Types.UnknownType(name + ", lookupDomain"), object: undefined};
     } else {
