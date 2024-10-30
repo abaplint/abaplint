@@ -262,10 +262,60 @@ define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
   a.field1,
   a.field2
 }`;
+
     const reg = new Registry().addFiles([
       new MemoryFile("zag_unit_test.ddls.asddls", source),
     ]);
+
+    reg.addFile(new MemoryFile("zag_no_dtel.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZAG_NO_DTEL</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZAG_NO_DTEL</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL1</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+     <MASK>  CHAR</MASK>
+     <DDTEXT>hello</DDTEXT>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+     <MASK>  CHAR</MASK>
+     <DDTEXT>world</DDTEXT>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`));
+
     await reg.parseAsync();
+
     const ddls = reg.getFirstObject()! as DataDefinition;
     expect(ddls).to.not.equal(undefined);
     const sources = ddls.listSources();
@@ -275,7 +325,9 @@ define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
 
     const parsed = ddls.parseType(reg) as StructureType | undefined;
     expect(parsed).to.be.instanceof(StructureType);
-    expect(parsed?.getComponentByName("FIELD1")).to.not.equal(undefined);
+    const field1 = parsed?.getComponentByName("FIELD1");
+    expect(field1).to.not.equal(undefined);
+    expect(field1?.getDescription()).to.equal("hello");
     expect(parsed?.getComponentByName("FIELD2")).to.not.equal(undefined);
   });
 });
