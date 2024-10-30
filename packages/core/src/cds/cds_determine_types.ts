@@ -10,13 +10,14 @@ export class CDSDetermineTypes {
       return new VoidType("DDLS:todo");
     } else {
       const components: IStructureComponent[] = [];
+
       for (const f of parsedData?.fields || []) {
         components.push({
           name: f.name,
           type: new VoidType("DDLS:fieldname"),
         });
       }
-      return new StructureType(components);
+      return new StructureType(components, parsedData.definitionName, parsedData.definitionName, parsedData.description);
     }
   }
 
