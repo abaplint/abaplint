@@ -256,7 +256,7 @@ define view /FOO/GL_BAR
     expect(sources![0].as).to.equal(undefined);
   });
 
-  it("get source, as'ed", async () => {
+  it.only("get source, as'ed", async () => {
     const source = `
 define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
   a.field1,

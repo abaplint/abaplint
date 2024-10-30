@@ -11,7 +11,7 @@ export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   definitionName: string | undefined;
   description: string | undefined;
-  fields: {key: boolean, name: string, annotations: string[]}[];
+  fields: {key: boolean, name: string, prefix: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
   relations: {name: string, as: string | undefined}[];
@@ -145,7 +145,9 @@ export class DataDefinition extends AbstractObject {
     if (expr === undefined) {
       expr = tree.findFirstExpression(CDSDefineProjection);
     }
+
     for (const e of expr?.findDirectExpressions(CDSElement) || []) {
+      let prefix = "";
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
         const list = e.findAllExpressions(CDSName);
@@ -153,11 +155,15 @@ export class DataDefinition extends AbstractObject {
           found = list[0];
         } else {
           found = list[list.length - 1];
+          if (list.length > 1) {
+            prefix = list[0].concatTokens();
+          }
         }
       }
       if (found === undefined) {
         continue;
       }
+
       const name = found?.concatTokens();
       if (this.parsedData?.associations.some(a =>
         a.name.toUpperCase() === name.toUpperCase() || a.as?.toUpperCase() === name.toUpperCase())) {
@@ -172,6 +178,7 @@ export class DataDefinition extends AbstractObject {
       this.parsedData!.fields.push({
         name: name,
         annotations: annotations,
+        prefix: prefix,
         key: e.findDirectTokenByText("KEY") !== undefined,
       });
     }

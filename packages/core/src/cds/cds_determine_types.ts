@@ -12,6 +12,8 @@ export class CDSDetermineTypes {
       const components: IStructureComponent[] = [];
 
       for (const f of parsedData?.fields || []) {
+        console.dir(f);
+
         components.push({
           name: f.name,
           type: new VoidType("DDLS:fieldname"),
