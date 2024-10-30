@@ -256,7 +256,7 @@ define view /FOO/GL_BAR
     expect(sources![0].as).to.equal(undefined);
   });
 
-  it.only("get source, as'ed", async () => {
+  it("get source, as'ed", async () => {
     const source = `
 define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
   a.field1,
@@ -325,7 +325,9 @@ define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
 
     const parsed = ddls.parseType(reg) as StructureType | undefined;
     expect(parsed).to.be.instanceof(StructureType);
-    expect(parsed?.getComponentByName("FIELD1")).to.not.equal(undefined);
+    const field1 = parsed?.getComponentByName("FIELD1");
+    expect(field1).to.not.equal(undefined);
+    expect(field1?.getDescription()).to.equal("hello");
     expect(parsed?.getComponentByName("FIELD2")).to.not.equal(undefined);
   });
 });
