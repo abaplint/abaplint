@@ -10,6 +10,7 @@ const tests = [
   "scroll list forward.",
   "SCROLL LIST TO FIRST PAGE INDEX SY-LSIND.",
   "SCROLL LIST INDEX sy-lsind TO COLUMN sy-staco.",
+  "SCROLL LIST RIGHT INDEX zsdfsd.",
 ];
 
 statementType(tests, "SCROLL LIST", Statements.ScrollList);

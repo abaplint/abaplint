@@ -19,8 +19,8 @@ export class CallFunction implements IStatement {
 
     const options = per(starting, update, background, Destination, calling, performing, separate, keeping);
 
-    const dynamic = seq("PARAMETER-TABLE", Source,
-                        opt(seq("EXCEPTION-TABLE", Source)));
+    const ex = seq("EXCEPTION-TABLE", Source);
+    const dynamic = alt(seq("PARAMETER-TABLE", Source, opt(ex)), ex);
 
     const call = seq("CALL",
                      altPrio("FUNCTION", verNot(Version.Cloud, "CUSTOMER-FUNCTION")),

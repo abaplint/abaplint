@@ -101,6 +101,9 @@ const tests = [
   `DATA range_ko LIKE RANGE OF structure_ref->field.`,
   `DATA wa TYPE zotel_spans WRITER FOR COLUMNS data.`,
   `DATA gt TYPE RANGE OF /foo/bar VALUE IS INITIAL.`,
+  `DATA & TYPE c VALUE '&'.`,
+  `DATA &sdf TYPE c VALUE '&'.`,
+  `DATA &/sdfsd/bar TYPE c VALUE '&'.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

@@ -409,6 +409,13 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     AND field         = 'FOO'
     ORDER BY gla ASCENDING
     INTO TABLE @lt.`,
+
+  `SELECT foo bar FROM ksml
+    INTO TABLE lt
+    GROUP BY foo bar
+    HAVING count( * ) > 1.`,
+
+  `SELECT SINGLE * FROM t100 WHERE 'A' = t100~arbgb INTO @DATA(sdf).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

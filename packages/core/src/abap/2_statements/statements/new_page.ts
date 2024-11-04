@@ -19,6 +19,8 @@ export class NewPage implements IStatement {
     const keep = seq("KEEP IN SPOOL", Source);
     const layout = seq("LAYOUT", Source);
     const listAuth = seq("LIST AUTHORITY", Source);
+    const department = seq("DEPARTMENT", Source);
+    const receiver = seq("RECEIVER", Source);
     const dataset = seq("LIST DATASET", Source);
     const name = seq("LIST NAME", Source);
     const newList = seq("NEW LIST IDENTIFICATION", Source);
@@ -35,9 +37,11 @@ export class NewPage implements IStatement {
                             coverPage,
                             newList,
                             keep,
+                            department,
                             name,
                             layout,
                             destination,
+                            receiver,
                             coverText,
                             archive,
                             "NEW-SECTION",
