@@ -15,7 +15,10 @@ export class CDSDetermineTypes {
 
       for (const f of parsedData?.fields || []) {
         if (f.prefix !== "") {
-          const source = parsedData.sources.find((s) => s.as?.toUpperCase() === f.prefix.toUpperCase());
+          let source = parsedData.sources.find((s) => s.as?.toUpperCase() === f.prefix.toUpperCase());
+          if (source?.name === undefined) {
+            source = parsedData.sources.find((s) => s.name.toUpperCase() === f.prefix.toUpperCase());
+          }
           if (source?.name === undefined) {
             components.push({
               name: f.name,
