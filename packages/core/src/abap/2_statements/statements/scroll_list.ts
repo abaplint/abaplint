@@ -19,6 +19,7 @@ export class ScrollList implements IStatement {
     const ret = seq("SCROLL LIST",
                     per(index,
                         alt(to, "BACKWARD", "FORWARD"),
+                        alt("LEFT", "RIGHT"),
                         column,
                         line));
 
