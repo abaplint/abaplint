@@ -34,10 +34,14 @@ export class CDSFunction extends Expression {
 
     const mod = seq("MOD", "(", input, ",", input, ")");
 
+    const left = seq("LEFT", "(", input, ",", input, ")");
+    const right = seq("RIGHT", "(", input, ",", input, ")");
+
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
                    tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
-                   dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod);
+                   dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
+                   left, right);
   }
 }
