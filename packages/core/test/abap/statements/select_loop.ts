@@ -105,11 +105,11 @@ const tests = [
   INTO @DATA(lv_exists).`,
 
   `SELECT FROM zsdfsd
-        FIELDS val
-        WHERE activ    EQ @abap_true
-        ORDER BY PRIMARY KEY
-        INTO @DATA(lv_crmode)
-        UP TO 1 ROWS.`,
+      FIELDS val
+      WHERE activ    EQ @abap_true
+      ORDER BY PRIMARY KEY
+      INTO @DATA(lv_crmode)
+      UP TO 1 ROWS.`,
 
   `SELECT FROM vbpa
       FIELDS *
