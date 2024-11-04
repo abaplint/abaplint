@@ -6,7 +6,7 @@ import {CDSInteger} from "./cds_integer";
 export class CDSCondition extends Expression {
   public getRunnable(): IStatementRunnable {
     const name = seq(CDSName, opt(seq(".", alt(CDSName, CDSString))));
-    const left = alt(name, CDSFunction);
+    const left = alt(name, CDSFunction, CDSString);
     const compare = seq(left, alt("=", seq("!", "="), seq("<", ">"), "<", ">", seq(">", "="), seq("<", "="), "LIKE", "NOT LIKE"), alt(left, CDSInteger, CDSFunction, CDSString));
     const is = seq(left, "IS", optPrio("NOT"), altPrio("INITIAL", "NULL"));
     const condition = alt(compare, is);
