@@ -717,4 +717,16 @@ extend view I_SalesDocumentItem with ZE_SalesDocItem
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("non seven bit ascii", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+@EndUserText.label: 'Äsdfsdf'
+define view zhvamfoocust as select from zhvam_cust {
+  key foo as sdfdsf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
