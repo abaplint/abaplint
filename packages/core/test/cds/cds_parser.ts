@@ -729,4 +729,19 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("join", () => {
+    const cds = `define view zI_CDS
+  as select from a
+    left outer join b
+      on a.f1 = b.f1
+        and not b.f2 = 'X'
+{
+  key a.foo
+}`;
+    const file = new MemoryFile("zi_cds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

@@ -9,7 +9,7 @@ export class CDSCondition extends Expression {
     const left = alt(name, CDSFunction, CDSString);
     const compare = seq(left, alt("=", seq("!", "="), seq("<", ">"), "<", ">", seq(">", "="), seq("<", "="), "LIKE", "NOT LIKE"), alt(left, CDSInteger, CDSFunction, CDSString));
     const is = seq(left, "IS", optPrio("NOT"), altPrio("INITIAL", "NULL"));
-    const condition = alt(compare, is);
+    const condition = seq(optPrio("NOT"), alt(compare, is));
     const paren = seq("(", CDSCondition, ")");
     return seq(alt(condition, paren), star(seq(alt("AND", "OR"), alt(condition, paren))));
   }

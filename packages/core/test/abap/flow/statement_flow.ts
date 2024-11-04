@@ -578,4 +578,15 @@ _wri.`;
 "Write:6,1" -> "end#1";`);
   });
 
+  it("statics", async () => {
+    const abap = `
+STATICS: BEGIN OF foo,
+           bar TYPE i,
+         END OF foo.`;
+
+    const res2 = await runFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "StaticBegin:3,10";
+"StaticBegin:3,10" -> "end#1";`);
+  });
+
 });
