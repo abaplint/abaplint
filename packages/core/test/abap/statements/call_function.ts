@@ -285,6 +285,9 @@ const tests = [
 STARTING NEW TASK lr_task->mv_id
 DESTINATION IN GROUP DEFAULT
 CALLING mr_th_manager->receive_result ON END OF TASK.`,
+
+  `CALL FUNCTION foo-bar
+      EXCEPTION-TABLE gt_excptab.`,
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);
