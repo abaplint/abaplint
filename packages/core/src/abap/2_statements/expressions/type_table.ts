@@ -48,10 +48,12 @@ export class TypeTable extends Expression {
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
     const oldLike = seq(opt("REF TO"), FieldChain, alt(seq(occurs, opt(header)), header));
 
+    const typeLine = seq("LINE OF", TypeName, occurs, header);
+
     const ret = altPrio(
       seq(occurs, opt(header)),
       seq("LIKE", alt(oldLike, likeType, rangeLike)),
-      seq("TYPE", alt(oldType, typetable, rangeType, derived)));
+      seq("TYPE", alt(oldType, typetable, rangeType, typeLine, derived)));
 
     return ret;
   }

@@ -104,6 +104,7 @@ const tests = [
   `DATA & TYPE c VALUE '&'.`,
   `DATA &sdf TYPE c VALUE '&'.`,
   `DATA &/sdfsd/bar TYPE c VALUE '&'.`,
+  `DATA sdf TYPE LINE OF sdfsdf OCCURS 0 WITH HEADER LINE.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
