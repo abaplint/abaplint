@@ -719,7 +719,7 @@ extend view I_SalesDocumentItem with ZE_SalesDocItem
 
   it("non seven bit ascii", () => {
     const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
-@EndUserText.label: 'Äsdfsdf'
+@EndUserText.label: 'Äsdfsdf0123'
 define view zhvamfoocust as select from zhvam_cust {
   key foo as sdfdsf
 }`;
