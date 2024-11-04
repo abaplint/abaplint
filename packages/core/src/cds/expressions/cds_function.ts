@@ -19,6 +19,16 @@ export class CDSFunction extends Expression {
     const bintohex = seq("BINTOHEX", "(", input, ")");
     const hextobin = seq("HEXTOBIN", "(", input, ")");
 
+    const upper = seq("UPPER", "(", input, ")");
+    const lower = seq("LOWER", "(", input, ")");
+
+    const abs = seq("ABS", "(", input, ")");
+    const ceil = seq("CEIL", "(", input, ")");
+    const floor = seq("FLOOR", "(", input, ")");
+    const round = seq("ROUND", "(", input, ",", input, ")");
+    const div = seq("DIV", "(", input, ",", input, ")");
+    const division = seq("DIVISION", "(", input, ",", input, ")");
+
     const tstmp_to_dats = seq("TSTMP_TO_DATS", "(", input, ",", input, ",", input, ",", input, ")");
     const tstmp_to_tims = seq("TSTMP_TO_TIMS", "(", input, ",", input, ",", input, ",", input, ")");
     const tstmp_to_dst = seq("TSTMP_TO_DST", "(", input, ",", input, ",", input, ",", input, ")");
@@ -38,6 +48,7 @@ export class CDSFunction extends Expression {
     const right = seq("RIGHT", "(", input, ",", input, ")");
 
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
+                   upper, lower, abs, ceil, floor, round, div, division,
                    concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
                    tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
