@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
-import {StructureType} from "../../src/abap/types/basic";
+import {StructureType, VoidType} from "../../src/abap/types/basic";
 
 describe("Object: DDLS - Data Definition", () => {
 
@@ -329,5 +329,27 @@ define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
     expect(field1).to.not.equal(undefined);
     expect(field1?.getDescription()).to.equal("hello");
     expect(parsed?.getComponentByName("FIELD2")).to.not.equal(undefined);
+  });
+
+  it("prefixed, without as", async () => {
+    const source = `
+define view entity ZI_FIPosition
+  as select from I_JournalEntryItem
+    inner join   I_Ledger as _Ledger on  _Ledger.IsLeadingLedger = 'X'
+                                     and _Ledger.Ledger          = I_JournalEntryItem.Ledger
+  {
+    key I_JournalEntryItem.SourceLedger,
+    key I_JournalEntryItem.CompanyCode
+  }`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_fiposition.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    const components = parsed.getComponents();
+    expect(components.length).to.equal(2);
+    expect(components[0].type).to.be.instanceof(VoidType);
   });
 });
