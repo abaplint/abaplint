@@ -9,6 +9,7 @@ import {SQLFieldListLoop} from "./sql_field_list_loop";
 import {SQLUpTo} from "./sql_up_to";
 import {Version} from "../../../version";
 
+// note: SELECT loops are matched before single statement SELECTs
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
     const where = seq("WHERE", SQLCond);
@@ -34,7 +35,7 @@ export class SelectLoop extends Expression {
                      SQLForAllEntries,
                      alt(tab, into, packTab));
 
-    const strict = seq(SQLFrom, ver(Version.v750, SQLFields), optPrio(seq(where, into, SQLUpTo)));
+    const strict = seq(SQLFrom, ver(Version.v750, SQLFields), optPrio(seq(where, optPrio(SQLOrderBy), into, SQLUpTo)));
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict),

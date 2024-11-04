@@ -103,6 +103,21 @@ const tests = [
    AND uname      = @iv_uname
    AND logout_ts  = @space
   INTO @DATA(lv_exists).`,
+
+  `SELECT FROM zsdfsd
+      FIELDS val
+      WHERE activ    EQ @abap_true
+      ORDER BY PRIMARY KEY
+      INTO @DATA(lv_crmode)
+      UP TO 1 ROWS.`,
+
+  `SELECT FROM vbpa
+      FIELDS *
+      WHERE vbeln EQ @ms_vbrk-vbeln
+      AND parvw EQ @sdfsdf
+      ORDER BY posnr ASCENDING
+      INTO @sdfsdf
+      UP TO 1 ROWS.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
