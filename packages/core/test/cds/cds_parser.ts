@@ -273,6 +273,20 @@ define view zhvamfoocust as select from I_asdfsd {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("CASE function, num values", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from I_asdfsd {
+     case substring('sdf', 1, 2)
+       when 'YY' then 1
+       else  2
+       end as sdf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("compare operators, without preceding or trailing spaces", () => {
     const cds = `
 @AbapCatalog.sqlViewName: 'ZSDF'

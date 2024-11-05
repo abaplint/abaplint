@@ -352,4 +352,42 @@ define view entity ZI_FIPosition
     expect(components.length).to.equal(2);
     expect(components[0].type).to.be.instanceof(VoidType);
   });
+
+  it("associations", async () => {
+    const source = `
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Header'
+@Metadata.ignorePropagatedAnnotations: true
+@ObjectModel.usageType:{
+    serviceQuality: #A,
+    sizeCategory: #S,
+    dataClass: #MIXED
+}
+define view entity ZI_Header
+  as select from I_JournalEntry
+  association [0..1] to ZI_BillingDocument as _BillingDocument on  $projection.ReferenceDocumentType     = 'VBRK'
+                                                               and $projection.OriginalReferenceDocument = _BillingDocument.BillingDocument
+  {
+    key CompanyCode,
+    key FiscalYear,
+    key AccountingDocument,
+        OriginalReferenceDocument,
+        _BillingDocument.BillingDocument,
+        _JournalEntryItem
+
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_header.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    const components = parsed.getComponents();
+    // all components void
+    for (const component of components) {
+      expect(component.type).to.be.instanceof(VoidType);
+    }
+  });
 });
