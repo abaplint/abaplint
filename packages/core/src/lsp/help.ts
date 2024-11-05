@@ -8,7 +8,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {DumpScope} from "./dump_scope";
 import {ABAPFile} from "../abap/abap_file";
-import { VirtualPosition } from "../virtual_position";
+import {VirtualPosition} from "../virtual_position";
 
 export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
