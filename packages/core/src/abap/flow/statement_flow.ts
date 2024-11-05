@@ -135,7 +135,7 @@ export class StatementFlow {
     let extra = "";
     const tStart = token?.getStart();
     if (tStart instanceof VirtualPosition) {
-      extra += "," + tStart.vrow;
+      extra += "$" + tStart.vrow;
       extra += "," + tStart.vcol;
     }
 
