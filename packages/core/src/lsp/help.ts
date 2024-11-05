@@ -8,6 +8,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {DumpScope} from "./dump_scope";
 import {ABAPFile} from "../abap/abap_file";
+import { VirtualPosition } from "../virtual_position";
 
 export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
@@ -215,13 +216,26 @@ export class Help {
   }
 
   private static tokens(file: ABAPFile) {
-    let inner = "<table><tr><td><b>String</b></td><td><b>Type</b></td><td><b>Row</b></td><td><b>Column</b></td></tr>";
+    let inner = `<table><tr><td><b>String</b></td><td><b>Type</b></td>
+    <td><b>Row</b></td><td><b>Column</b></td>
+    <td><b>vRow</b></td><td><b>vColumn</b></td>
+    </tr>`;
     for (const token of file.getTokens()) {
-      inner = inner + "<tr><td><tt>" +
+      const tStart = token.getStart();
+
+      inner += "<tr><td><tt>" +
         this.escape(token.getStr()) + "</tt></td><td>" +
         token.constructor.name + "</td><td align=\"right\">" +
-        token.getRow() + "</td><td align=\"right\">" +
-        token.getCol() + "</td></tr>";
+        tStart.getRow() + "</td><td align=\"right\">" +
+        tStart.getCol() + "</td>";
+
+      if (tStart instanceof VirtualPosition) {
+        inner += `<td>${tStart.vcol}</td><td>${tStart.vrow}</td>`;
+      } else {
+        inner += "<td></td><td></td>";
+      }
+
+      inner += "</tr>";
     }
     inner = inner + "</table>";
     return inner;
