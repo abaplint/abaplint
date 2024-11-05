@@ -7,6 +7,7 @@ import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IObject} from "../../objects/_iobject";
 import {FunctionGroup, Program} from "../../objects";
 import {SELECTION_EVENTS} from "./selection_events";
+import {VirtualPosition} from "../../virtual_position";
 
 // Levels: top, FORM, METHOD, FUNCTION-MODULE, (MODULE, AT, END-OF-*, GET, START-OF-SELECTION, TOP-OF-PAGE)
 //
@@ -117,6 +118,7 @@ export class StatementFlow {
     return f.findDirectStructure(Structures.Body)?.getChildren() || [];
   }
 
+  // note: it must handle macros and chained statements
   private buildName(statement: StatementNode): string {
     let token: AbstractToken | undefined = undefined;
     const colon = statement.getColon();
@@ -130,12 +132,19 @@ export class StatementFlow {
         }
       }
     }
+    let extra = "";
+    const tStart = token?.getStart();
+    if (tStart instanceof VirtualPosition) {
+      extra += "," + tStart.vrow;
+      extra += "," + tStart.vcol;
+    }
+
     if (token === undefined) {
       return "tokenError";
     }
     return statement.get().constructor.name +
       ":" + token.getRow() +
-      "," + token.getCol();
+      "," + token.getCol() + extra;
   }
 
   private traverseBody(children: readonly (StatementNode | StructureNode)[], context: IContext): FlowGraph {

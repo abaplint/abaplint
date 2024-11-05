@@ -574,8 +574,8 @@ _wri.`;
 
     const res2 = await runFORM(abap);
     expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "MacroCall:6,1";
-"MacroCall:6,1" -> "Write:6,1";
-"Write:6,1" -> "end#1";`);
+"MacroCall:6,1" -> "Write:6,1,1,1";
+"Write:6,1,1,1" -> "end#1";`);
   });
 
   it("statics", async () => {
