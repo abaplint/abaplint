@@ -15,9 +15,19 @@ export class CDSDetermineTypes {
 
       for (const f of parsedData?.fields || []) {
         if (f.prefix !== "") {
-          let source = parsedData.sources.find((s) => s.as?.toUpperCase() === f.prefix.toUpperCase());
+          const prefixUpper = f.prefix.toUpperCase();
+          let source = parsedData.sources.find((s) => s.as?.toUpperCase() === prefixUpper);
           if (source?.name === undefined) {
-            source = parsedData.sources.find((s) => s.name.toUpperCase() === f.prefix.toUpperCase());
+            source = parsedData.sources.find((s) => s.name.toUpperCase() === prefixUpper);
+          }
+          if (source?.name === undefined
+              && (parsedData.associations.find((s) => s.name.toUpperCase() === prefixUpper)
+              || parsedData.associations.find((s) => s.as?.toUpperCase() === prefixUpper))) {
+            components.push({
+              name: f.name,
+              type: new VoidType("DDLS:association"),
+            });
+            continue;
           }
           if (source?.name === undefined) {
             components.push({
