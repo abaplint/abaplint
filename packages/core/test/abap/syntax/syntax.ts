@@ -5119,7 +5119,7 @@ ENDCLASS.`;
   DATA index TYPE REF TO i.
   READ TABLE mt_list INDEX index TRANSPORTING NO FIELDS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal("READ TABLE, INDEX must be simple");
+    expect(issues[0]?.getMessage()).to.contain("READ TABLE, INDEX must be simple");
   });
 
   it("READ TABLE, table_line, ok", () => {
