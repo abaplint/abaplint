@@ -118,6 +118,17 @@ const tests = [
       ORDER BY posnr ASCENDING
       INTO @sdfsdf
       UP TO 1 ROWS.`,
+
+  `SELECT @abap_true FROM edimsg
+      INTO @DATA(l_exist)
+      UP TO 1 ROWS
+      WHERE mestyp = @i_message_type
+      ORDER BY PRIMARY KEY.`,
+
+  `SELECT FROM sdffds
+    FIELDS *
+    WHERE sdf EQ @lv_sdfsd
+    INTO CORRESPONDING FIELDS OF @sdfsdf.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

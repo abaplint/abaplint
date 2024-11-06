@@ -105,6 +105,7 @@ const tests = [
   `DATA &sdf TYPE c VALUE '&'.`,
   `DATA &/sdfsd/bar TYPE c VALUE '&'.`,
   `DATA sdf TYPE LINE OF sdfsdf OCCURS 0 WITH HEADER LINE.`,
+  `DATA ?trans TYPE trkorr.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

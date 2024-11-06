@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, per, optPrio} from "../combi";
+import {verNot, str, seq, opt, per} from "../combi";
 import {Source, ReportName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -13,7 +13,7 @@ export class Program implements IStatement {
     const line = seq("LINE-COUNT", Source);
     const options = per(message, size, heading, line);
 
-    const ret = seq("PROGRAM", optPrio(ReportName), opt(options));
+    const ret = seq("PROGRAM", opt(ReportName), opt(options));
 
     return verNot(Version.Cloud, ret);
   }

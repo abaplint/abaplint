@@ -36,6 +36,7 @@ const tests = [
   "PARAMETERS %blah RADIOBUTTON GROUP func MODIF ID old DEFAULT 'X'.",
   "PARAMETERS p_foo LIKE moo-boo-loo MODIF ID foo.",
   "PARAMETERS p_sel TYPE char10 OBLIGATORY AS LISTBOX VISIBLE LENGTH 15 DEFAULT 'BAR' USER-COMMAND ukey.",
+  "PARAMETERS ?trans TYPE trkorr.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);
