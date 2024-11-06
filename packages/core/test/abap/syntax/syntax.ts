@@ -10663,6 +10663,28 @@ SELECTION-SCREEN END OF BLOCK b1.`;
     expect(issues[0]?.getMessage()).to.contain("SELECTION-SCREEN name too long");
   });
 
+  it.only("Variable not already defined", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_not_found.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD zif_not_found~foo.
+    DATA dat TYPE i.
+  ENDMETHOD.
+
+  METHOD zif_not_found~bar.
+    DATA dat TYPE i.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    for (const issue of issues) {
+      expect(issue.getMessage()).to.not.contain("already defined");
+    }
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
