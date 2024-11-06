@@ -416,6 +416,12 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     HAVING count( * ) > 1.`,
 
   `SELECT SINGLE * FROM t100 WHERE 'A' = t100~arbgb INTO @DATA(sdf).`,
+
+  `SELECT
+     abs( cast( wrbtr as fltp ) / cast( menge as fltp ) ) as price
+     FROM sdfsdf
+     INTO TABLE @sdf.`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);

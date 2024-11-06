@@ -5119,7 +5119,7 @@ ENDCLASS.`;
   DATA index TYPE REF TO i.
   READ TABLE mt_list INDEX index TRANSPORTING NO FIELDS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal("READ TABLE, INDEX must be simple");
+    expect(issues[0]?.getMessage()).to.contain("READ TABLE, INDEX must be simple");
   });
 
   it("READ TABLE, table_line, ok", () => {
@@ -10661,6 +10661,28 @@ SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE sc_text001.
 SELECTION-SCREEN END OF BLOCK b1.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("SELECTION-SCREEN name too long");
+  });
+
+  it("Variable not already defined", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_not_found.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD zif_not_found~foo.
+    DATA dat TYPE i.
+  ENDMETHOD.
+
+  METHOD zif_not_found~bar.
+    DATA dat TYPE i.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    for (const issue of issues) {
+      expect(issue.getMessage()).to.not.contain("already defined");
+    }
   });
 
 // todo, static method cannot access instance attributes

@@ -22,19 +22,21 @@ export class MethodImplementation implements StatementSyntax {
     }
 
     const {method: methodDefinition} = helper.searchMethodName(classDefinition, methodName);
-    if (methodDefinition === undefined) {
-      const message = "Method definition \"" + methodName + "\" not found";
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
-    }
 
     const start = node.getFirstToken().getStart();
-    if (methodDefinition.isStatic() === false) {
+    if (methodDefinition?.isStatic() === false) {
       input.scope.push(ScopeType.MethodInstance, methodName, start, input.filename);
       input.scope.addList(classDefinition.getAttributes().getInstance());
     }
 
     input.scope.push(ScopeType.Method, methodName, start, input.filename);
+
+    // note: the scope must be pushed before returning
+    if (methodDefinition === undefined) {
+      const message = "Method definition \"" + methodName + "\" not found";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    }
 
     input.scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, input.filename);
     input.scope.addList(methodDefinition.getParameters().getAll());
