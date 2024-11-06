@@ -124,6 +124,11 @@ const tests = [
       UP TO 1 ROWS
       WHERE mestyp = @i_message_type
       ORDER BY PRIMARY KEY.`,
+
+  `SELECT FROM sdffds
+    FIELDS *
+    WHERE sdf EQ @lv_sdfsd
+    INTO CORRESPONDING FIELDS OF @sdfsdf.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
