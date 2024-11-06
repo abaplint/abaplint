@@ -1,8 +1,9 @@
-import {seq, ver, Expression, optPrio, opt, alt, star} from "../combi";
-import {SQLFieldName, Dynamic, SQLField, SQLAsName, Constant} from ".";
+import {seq, ver, Expression, optPrio, opt, alt, star, tok} from "../combi";
+import {SQLFieldName, Dynamic, SQLField, SQLAsName, Constant, SimpleFieldChain} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLPath} from "./sql_path";
+import {WAt} from "../../1_lexer/tokens";
 
 // loop must include one field from the database table
 export class SQLFieldListLoop extends Expression {
@@ -10,7 +11,8 @@ export class SQLFieldListLoop extends Expression {
     const comma = opt(ver(Version.v740sp05, ","));
     const as = seq("AS", SQLAsName);
     const someField = seq(SQLField, comma);
-    const fieldList = seq(star(someField), alt(SQLFieldName, SQLPath, Constant), optPrio(as), comma, star(someField));
+    const abap = ver(Version.v740sp05, seq(tok(WAt), SimpleFieldChain));
+    const fieldList = seq(star(someField), alt(SQLFieldName, abap, SQLPath, Constant), optPrio(as), comma, star(someField));
 
     const fields = alt("*", Dynamic, fieldList);
     return fields;
