@@ -10663,7 +10663,7 @@ SELECTION-SCREEN END OF BLOCK b1.`;
     expect(issues[0]?.getMessage()).to.contain("SELECTION-SCREEN name too long");
   });
 
-  it.only("Variable not already defined", () => {
+  it("Variable not already defined", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
