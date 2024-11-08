@@ -1,5 +1,5 @@
 import {seq, per, alt, Expression, optPrio, altPrio, ver} from "../combi";
-import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLFields, SQLIntoList} from ".";
+import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLIntoList} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
 import {SQLHaving} from "./sql_having";
@@ -8,6 +8,7 @@ import {SQLHints} from "./sql_hints";
 import {SQLFieldListLoop} from "./sql_field_list_loop";
 import {SQLUpTo} from "./sql_up_to";
 import {Version} from "../../../version";
+import {SQLFieldsLoop} from "./sql_fields_loop";
 
 // note: SELECT loops are matched before single statement SELECTs
 export class SelectLoop extends Expression {
@@ -35,7 +36,7 @@ export class SelectLoop extends Expression {
                      SQLForAllEntries,
                      alt(tab, into, packTab));
 
-    const strict = seq(SQLFrom, ver(Version.v750, SQLFields), optPrio(seq(where, optPrio(SQLOrderBy), into, optPrio(SQLUpTo))));
+    const strict = seq(SQLFrom, ver(Version.v750, SQLFieldsLoop), optPrio(seq(where, optPrio(SQLOrderBy), into, optPrio(SQLUpTo))));
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict),
