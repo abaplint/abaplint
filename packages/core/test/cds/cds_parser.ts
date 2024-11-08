@@ -758,7 +758,7 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
-  it.only("parse it, dont crash", () => {
+  it("parse it, dont crash", () => {
     const cds = `@AbapCatalog.sqlViewName: 'ZADCOSET_ITRSCO'
 @AbapCatalog.preserveKey: true
 @AccessControl.authorizationCheck: #NOT_REQUIRED
