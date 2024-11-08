@@ -422,6 +422,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      FROM sdfsdf
      INTO TABLE @sdf.`,
 
+  `SELECT FROM table
+      FIELDS SUM( qty )
+      WHERE foo <> 'A'
+      INTO @DATA(total).`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
