@@ -52,6 +52,9 @@ const tests = [
     REPORTED DATA(lt_dat)
     MAPPED DATA(lt_map)
     FAILED DATA(lt_failed).`,
+
+  `MODIFY ENTITIES OF /DMO/FSA_R_RootTP IN LOCAL MODE ENTITY Root
+    EXECUTE calcTotalPieces FROM CORRESPONDING #( roots ).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

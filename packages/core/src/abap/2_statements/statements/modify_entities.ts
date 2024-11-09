@@ -20,10 +20,10 @@ export class ModifyEntities implements IStatement {
                   opt("IN LOCAL MODE"),
                   "ENTITY", SimpleName,
                   operation,
-                  per(seq("FAILED", Target),
-                      seq("RESULT", Target),
-                      seq("MAPPED", Target),
-                      seq("REPORTED", Target)));
+                  optPrio(per(seq("FAILED", Target),
+                              seq("RESULT", Target),
+                              seq("MAPPED", Target),
+                              seq("REPORTED", Target))));
     return ver(Version.v754, s);
   }
 
