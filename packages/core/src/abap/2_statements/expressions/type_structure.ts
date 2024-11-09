@@ -6,9 +6,10 @@ export class TypeStructure extends Expression {
   public getRunnable(): IStatementRunnable {
     // todo, add version,
     const hier = seq("HIERARCHY", NamespaceSimpleName);
+    const create = seq("CREATE", NamespaceSimpleName);
     const evt = seq("EVENT", EventName);
 
-    return seq("TYPE STRUCTURE FOR", altPrio(hier, evt));
+    return seq("TYPE STRUCTURE FOR", altPrio(hier, evt, create));
   }
 
 }
