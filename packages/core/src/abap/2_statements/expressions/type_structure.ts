@@ -7,9 +7,10 @@ export class TypeStructure extends Expression {
     // todo, add version,
     const hier = seq("HIERARCHY", NamespaceSimpleName);
     const create = seq("CREATE", NamespaceSimpleName);
+    const update = seq("UPDATE", NamespaceSimpleName);
     const evt = seq("EVENT", EventName);
 
-    return seq("TYPE STRUCTURE FOR", altPrio(hier, evt, create));
+    return seq("TYPE STRUCTURE FOR", altPrio(hier, evt, create, update));
   }
 
 }

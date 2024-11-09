@@ -107,6 +107,7 @@ const tests = [
   `DATA sdf TYPE LINE OF sdfsdf OCCURS 0 WITH HEADER LINE.`,
   `DATA ?trans TYPE trkorr.`,
   `DATA create_rapbo_line TYPE STRUCTURE FOR CREATE ZDMO_R_RAPG_ProjectTP.`,
+  `DATA update_field TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_FieldTP.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
