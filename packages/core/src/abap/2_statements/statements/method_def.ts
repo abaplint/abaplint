@@ -34,10 +34,13 @@ export class MethodDef implements IStatement {
       seq("FOR DELETE", TypeName),
       seq("FOR UPDATE", TypeName));
 
+    const forRead = seq("FOR READ", alt(TypeName, EntityAssociation), optPrio(full), result, optPrio(link));
+    const forfunction = seq("FOR FUNCTION", TypeName, result);
+
     const behavior = altPrio(
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, modify),
-      seq("READ IMPORTING", MethodParamName, "FOR READ", alt(TypeName, EntityAssociation), optPrio(full), result, optPrio(link)),
+      seq("READ IMPORTING", MethodParamName, altPrio(forRead, forfunction)),
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, result),
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR CREATE", TypeName, MethodParamName, "FOR UPDATE", TypeName, MethodParamName, "FOR DELETE", TypeName),
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR READ", TypeName, result),
@@ -45,6 +48,7 @@ export class MethodDef implements IStatement {
       seq("DETERMINE", alt("ON MODIFY", "ON SAVE"), "IMPORTING", MethodParamName, "FOR", TypeName),
       seq("GLOBAL AUTHORIZATION IMPORTING REQUEST", MethodParamName, "FOR", TypeName, result),
       seq("INSTANCE AUTHORIZATION IMPORTING", MethodParamName, "REQUEST", MethodParamName, "FOR", TypeName, result),
+      seq("INSTANCE FEATURES IMPORTING", MethodParamName, "REQUEST", MethodParamName, "FOR", TypeName, result),
     );
 
 // todo, this is only from version something

@@ -129,6 +129,15 @@ const tests = [
     FIELDS *
     WHERE sdf EQ @lv_sdfsd
     INTO CORRESPONDING FIELDS OF @sdfsdf.`,
+
+  `SELECT FROM ekkn AS e
+     INNER JOIN ekko AS k ON e~ebeln EQ k~ebeln
+     INNER JOIN vbkd AS v ON k~ebeln EQ v~bstkd
+     FIELDS e~vbeln
+     FOR ALL ENTRIES IN @mt_lips
+     WHERE v~vbeln EQ @mt_lips-vgbel
+     INTO @DATA(sdf)
+     UP TO 1 ROWS.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

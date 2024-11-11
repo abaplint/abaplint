@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, altPrio, optPrio, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
-import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
+import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName, FieldSub} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -35,7 +35,7 @@ export class SelectionScreen implements IStatement {
 
     const visible = seq("VISIBLE LENGTH", reg(/^\d+$/));
 
-    const commentOpt = per(seq("FOR FIELD", Field), modif, visible);
+    const commentOpt = per(seq("FOR FIELD", FieldSub), modif, visible);
 
     const position = seq(opt(reg(/^\/?[\d\w]+$/)),
                          altPrio(tok(ParenLeft), tok(WParenLeft)),
