@@ -463,9 +463,10 @@ export class TypeUtils {
           && source instanceof StructureType
           && this.isCharLike(source)) {
         return true;
+      } else if (source instanceof StructureType) {
+        return this.isCharLikeStrict(source);
       } else if (source instanceof DataReference
           || source instanceof ObjectReferenceType
-          || source instanceof StructureType
           || source instanceof GenericObjectReferenceType) {
         return false;
       }
