@@ -10700,7 +10700,7 @@ READ TABLE tab INTO row INDEX e_row.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("Structure to int, ok", () => {
+  it("Structure to int, ok", () => {
     const abap = `
 DATA: BEGIN OF e_row,
         field1 TYPE c LENGTH 10,
