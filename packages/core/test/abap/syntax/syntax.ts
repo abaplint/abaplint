@@ -10685,6 +10685,21 @@ ENDCLASS.`;
     }
   });
 
+  it.only("READ TABLE, yea this is allowed", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA row LIKE LINE OF tab.
+
+DATA: BEGIN OF e_row,
+        field1 TYPE c LENGTH 10,
+        field2 TYPE n LENGTH 20,
+      END OF e_row.
+
+READ TABLE tab INTO row INDEX e_row.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
