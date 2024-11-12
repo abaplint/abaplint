@@ -28,8 +28,7 @@ export class ReadTable implements IStatement {
                      using,
                      comparing,
                      "CASTING",
-                     "TRANSPORTING ALL FIELDS",
-                     seq("TRANSPORTING", TransportingFields),
+                     seq("TRANSPORTING", altPrio("ALL FIELDS", "NO FIELDS", TransportingFields)),
                      "BINARY SEARCH");
 
     return seq("READ TABLE",
