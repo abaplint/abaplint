@@ -8,6 +8,7 @@ const tests = [
   "BREAK sy-uname.",
   "BREAK sy-anything.",
   "BREAK-POINT lv_logtxt.",
+  "BREAK foo-gül.",
 ];
 
 statementType(tests, "BREAK-POINT", Statements.Break);
