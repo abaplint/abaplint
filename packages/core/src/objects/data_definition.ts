@@ -76,6 +76,18 @@ export class DataDefinition extends AbstractObject {
     return this.parserError;
   }
 
+  public listKeys(): string[] {
+    this.parse();
+
+    const ret: string[] = [];
+    for (const field of this.parsedData?.fields || []) {
+      if (field.key === true) {
+        ret.push(field.name);
+      }
+    }
+    return ret;
+  }
+
   public parse(): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};

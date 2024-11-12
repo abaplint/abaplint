@@ -389,5 +389,7 @@ define view entity ZI_Header
     for (const component of components) {
       expect(component.type).to.be.instanceof(VoidType);
     }
+
+    expect(ddls.listKeys().length).to.equal(3);
   });
 });
