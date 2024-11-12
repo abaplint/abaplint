@@ -10685,7 +10685,7 @@ ENDCLASS.`;
     }
   });
 
-  it.only("READ TABLE, yea this is allowed", () => {
+  it("READ TABLE, yea this is allowed", () => {
     const abap = `
 DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA row LIKE LINE OF tab.
@@ -10696,6 +10696,18 @@ DATA: BEGIN OF e_row,
       END OF e_row.
 
 READ TABLE tab INTO row INDEX e_row.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it.only("Structure to int, ok", () => {
+    const abap = `
+DATA: BEGIN OF e_row,
+        field1 TYPE c LENGTH 10,
+        field2 TYPE n LENGTH 20,
+      END OF e_row.
+DATA int TYPE i.
+int = e_row.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
