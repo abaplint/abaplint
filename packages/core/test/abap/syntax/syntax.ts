@@ -10736,7 +10736,11 @@ CLASS lcl_foobar definition inheriting from zcl_foo final.
 ENDCLASS.`;
     const impl = `
 CLASS lcl_foobar IMPLEMENTATION.
-ENDCLASS.`;
+ENDCLASS.
+
+data ref type ref to lcl_foobar.
+ref->method( ).
+write ref->attr.`;
     const issues = runMulti([
       {filename: "zcl_sdfsdf.clas.abap", contents: cls},
       {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
