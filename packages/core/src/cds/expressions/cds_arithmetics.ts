@@ -12,6 +12,7 @@ export class CDSArithmetics extends Expression {
     const operatorValue = seq(operator, val);
     const paren = seq("(", val, plus(operatorValue), ")");
     const noParen = seq(val, plus(operatorValue));
-    return altPrio(paren, noParen);
+    // todo: this is pretty bad, it needs a rewrite
+    return altPrio(seq(paren, plus(operatorValue)), paren, noParen);
   }
 }
