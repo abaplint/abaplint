@@ -88,7 +88,7 @@ export class ObjectOriented {
   private findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition):
   {method: IMethodDefinition, def: IInterfaceDefinition} | undefined {
 
-    for (const a of def.getAliases()) {
+    for (const a of def.getAliases() || []) {
       if (a.getName().toUpperCase() === methodName.toUpperCase()) {
         const comp = a.getComponent();
         const res = this.findMethodInInterface(comp.split("~")[0], comp.split("~")[1]);
@@ -189,9 +189,12 @@ export class ObjectOriented {
     }
 
     const upper = name.toUpperCase();
-    for (const a of def.getAttributes().getAll()) {
-      if (a.getName().toUpperCase() === upper) {
-        return a;
+    const attr = def.getAttributes();
+    if (attr) {
+      for (const a of attr.getAll()) {
+        if (a.getName().toUpperCase() === upper) {
+          return a;
+        }
       }
     }
 
@@ -335,7 +338,12 @@ export class ObjectOriented {
   }
 
   public findMethod(def: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
-    for (const method of def.getMethodDefinitions().getAll()) {
+    const defs = def.getMethodDefinitions();
+    if (defs === undefined) {
+      return undefined;
+    }
+
+    for (const method of defs.getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         if (method.isRedefinition()) {
           return this.findMethodInSuper(def, methodName);

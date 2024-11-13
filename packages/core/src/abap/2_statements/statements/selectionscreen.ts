@@ -83,7 +83,7 @@ export class SelectionScreen implements IStatement {
     const incl = seq("INCLUDE BLOCKS", BlockName);
 
     const tabbed = seq("BEGIN OF TABBED BLOCK",
-                       InlineField,
+                       BlockName,
                        "FOR",
                        Integer,
                        "LINES",

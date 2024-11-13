@@ -10736,7 +10736,11 @@ CLASS lcl_foobar definition inheriting from zcl_foo final.
 ENDCLASS.`;
     const impl = `
 CLASS lcl_foobar IMPLEMENTATION.
-ENDCLASS.`;
+ENDCLASS.
+
+data ref type ref to lcl_foobar.
+ref->method( ).
+write ref->attr.`;
     const issues = runMulti([
       {filename: "zcl_sdfsdf.clas.abap", contents: cls},
       {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
@@ -10744,6 +10748,26 @@ ENDCLASS.`;
     for (const issue of issues) {
       expect(issue.getMessage()).to.not.contain("getAll");
     }
+  });
+
+  it("selection screen block name length okay", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selection FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selection.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("selection screen block name length more than 30", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selectionaaassss FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selectionaaasss.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("too long");
   });
 
 // todo, static method cannot access instance attributes
