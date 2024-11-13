@@ -101,7 +101,7 @@ export class SelectionScreenNaming extends ABAPRule {
       return statNode.findFirstExpression(FieldSub);
     } else if (statNode.get() instanceof SelectionScreen) {
       let ret = statNode.findFirstExpression(InlineField);
-      if (ret === undefined) {
+      if (ret === undefined && statNode.concatTokens().toUpperCase().includes(" BEGIN OF TABBED BLOCK")) {
         ret = statNode.findFirstExpression(BlockName);
       }
       return ret;
