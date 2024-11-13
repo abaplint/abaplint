@@ -851,4 +851,45 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("division and arithmetics", () => {
+    const cds = `define view zsdfds as select from zaaaa {
+  key mandt,
+  key hello,
+      division((value * amount), 1000, 2) as total
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("count and group", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  tab.field2,
+  count(*) as counter
+} group by tab.field1, mseg.field2
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("unit_conversion", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  unit_conversion(
+    quantity => tab.brgew,
+    source_unit => tab.gewei,
+    target_unit => cast('KG' as abap.unit) ) as weight_kg
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

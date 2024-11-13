@@ -19,6 +19,7 @@ export * from "./cds_define_view";
 export * from "./cds_element";
 export * from "./cds_extend_view";
 export * from "./cds_function";
+export * from "./cds_function_input";
 export * from "./cds_group_by";
 export * from "./cds_having";
 export * from "./cds_integer";
