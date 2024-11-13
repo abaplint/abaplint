@@ -851,4 +851,17 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("division and arithmetics", () => {
+    const cds = `define view zsdfds as select from zaaaa {
+  key mandt,
+  key hello,
+      division((value * amount), 1000, 2) as total
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

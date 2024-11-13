@@ -8,6 +8,9 @@ export class CDSArithmetics extends Expression {
     const name = seq(CDSName, opt(seq(".", CDSName)));
     const val = alt(CDSInteger, name, CDSFunction, CDSCase, CDSCast, CDSString);
     const operator = altPrio("+", "-", "*", "/");
-    return seq(val, operator, val);
+
+    const paren = seq("(", val, operator, val, ")");
+    const noParen = seq(val, operator, val);
+    return altPrio(paren, noParen);
   }
 }
