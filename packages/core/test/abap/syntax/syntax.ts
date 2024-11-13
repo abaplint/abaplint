@@ -10723,7 +10723,7 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("no undefined getAll", () => {
+  it("no undefined getAll", () => {
     const cls = `
 class zcl_sdfsdf definition public final create public.
   public section.

@@ -50,7 +50,7 @@ export class ObjectOriented {
   }
 
   public addAliasedAttributes(classDefinition: IClassDefinition): void {
-    for (const alias of classDefinition.getAliases()) {
+    for (const alias of classDefinition.getAliases() || []) {
       const comp = alias.getComponent();
       const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
