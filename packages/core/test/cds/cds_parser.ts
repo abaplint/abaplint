@@ -904,4 +904,16 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("more arithmetics 2", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  division(p_terms.payterm1_value, 100, 4) * head_pos.bill_amount as payterm1_amount
+}
+  `;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
