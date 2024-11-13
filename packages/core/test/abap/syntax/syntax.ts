@@ -10750,6 +10750,26 @@ write ref->attr.`;
     }
   });
 
+  it("selection screen block name length okay", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selection FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selection.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("selection screen block name length more than 30", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selectionaaassss FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selectionaaasss.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("too long");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
