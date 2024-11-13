@@ -27,7 +27,7 @@ export class CDSFunction extends Expression {
     const floor = seq("FLOOR", "(", input, ")");
     const round = seq("ROUND", "(", input, ",", input, ")");
     const div = seq("DIV", "(", input, ",", input, ")");
-    const division = seq("DIVISION", "(", input, ",", input, ")");
+    const division = seq("DIVISION", "(", input, ",", input, ",", input, ")");
 
     const tstmp_to_dats = seq("TSTMP_TO_DATS", "(", input, ",", input, ",", input, ",", input, ")");
     const tstmp_to_tims = seq("TSTMP_TO_TIMS", "(", input, ",", input, ",", input, ",", input, ")");
