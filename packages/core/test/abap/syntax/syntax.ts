@@ -10723,6 +10723,29 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("no undefined getAll", () => {
+    const cls = `
+class zcl_sdfsdf definition public final create public.
+  public section.
+ENDCLASS.
+CLASS zcl_sdfsdf IMPLEMENTATION.
+ENDCLASS.`;
+    const def = `
+CLASS lcl_foobar definition inheriting from zcl_foo final.
+  PUBLIC SECTION.
+ENDCLASS.`;
+    const impl = `
+CLASS lcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: cls},
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    for (const issue of issues) {
+      expect(issue.getMessage()).to.not.contain("getAll");
+    }
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
