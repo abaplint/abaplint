@@ -47,12 +47,19 @@ export class CDSFunction extends Expression {
     const left = seq("LEFT", "(", input, ",", input, ")");
     const right = seq("RIGHT", "(", input, ",", input, ")");
 
+    const conversionInput = seq(CDSName, "=", ">", input);
+    const conversionInputs = seq(conversionInput, starPrio(seq(",", conversionInput)));
+    const unitConversion = seq("UNIT_CONVERSION", "(", conversionInputs, ")");
+    const currencyConversion = seq("CURRENCY_CONVERSION", "(", conversionInputs, ")");
+    const decimalShift = seq("DECIMAL_SHIFT", "(", conversionInputs, ")");
+
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,
                    concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
                    tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
-                   left, right);
+                   left, right,
+                   unitConversion, currencyConversion, decimalShift);
   }
 }

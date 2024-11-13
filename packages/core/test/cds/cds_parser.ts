@@ -877,4 +877,19 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("unit_conversion", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  unit_conversion(
+    quantity => tab.brgew,
+    source_unit => tab.gewei,
+    target_unit => cast('KG' as abap.unit) ) as weight_kg
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
