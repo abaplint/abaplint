@@ -10712,6 +10712,17 @@ int = e_row.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("select loop, fields", () => {
+    const abap = `
+DATA target TYPE voided.
+DATA var TYPE i.
+SELECT FROM voided FIELDS field1, field2 WHERE val = @var INTO CORRESPONDING FIELDS OF @target.
+
+ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

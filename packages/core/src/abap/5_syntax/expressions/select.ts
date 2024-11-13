@@ -34,7 +34,7 @@ export class Select {
     const fields = this.findFields(node, input);
     if (fields.length === 0
         && node.findDirectExpression(Expressions.SQLFieldListLoop) === undefined) {
-      const message = `fields missing`;
+      const message = `SELECT: fields missing`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
     }
@@ -240,7 +240,7 @@ export class Select {
 
     expr = node.findFirstExpression(Expressions.SQLFieldList);
     if (expr === undefined) {
-      expr = node.findDirectExpression(Expressions.SQLFieldListLoop);
+      expr = node.findFirstExpression(Expressions.SQLFieldListLoop);
     }
 
     if (expr?.getFirstChild()?.get() instanceof Expressions.Dynamic) {
