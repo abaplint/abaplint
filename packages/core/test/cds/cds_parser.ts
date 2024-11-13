@@ -892,4 +892,16 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("more arithmetics", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  (1 - division(head_pos.net_sales, head_pos.kzwi1, 4)) * 100
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
