@@ -74,4 +74,15 @@ INCLUDE zinclude.`);
     expect(issues[0].code).to.equal("parser_error");
   });
 
+  it("DDLS diagnostics", () => {
+    const main = new MemoryFile("zfoobar.ddls.asddls", `dsf`);
+
+    const registry = new Registry();
+    registry.addFile(main);
+    registry.parse();
+
+    const issues = new Diagnostics(registry).find({uri: main.getFilename()});
+    expect(issues.length).to.equal(1);
+  });
+
 });

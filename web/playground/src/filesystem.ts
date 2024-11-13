@@ -32,6 +32,17 @@ ENDLOOP.
 FORM foo.
   DATA boo TYPE i.
 ENDFORM.`);
+    this.addFile("zfoo.ddls.asddls",
+                 `@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Hello World,.:'
+define view entity zfoo
+  as select from tadir
+{
+  pgmid,
+  object,
+  obj_name
+}`);
 
     return this.reg;
   }
