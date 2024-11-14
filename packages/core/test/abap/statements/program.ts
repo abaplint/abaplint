@@ -8,6 +8,7 @@ const tests = [
   "PROGRAM zbar LINE-COUNT 70.",
   "PROGRAM.",
   "PROGRAM NO STANDARD PAGE HEADING.",
+  "PROGRAM  SAPMYMOO MESSAGE-ID Y>.",
 ];
 
 statementType(tests, "PROGRAM", Statements.Program);

@@ -426,7 +426,6 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
       FIELDS SUM( qty )
       WHERE foo <> 'A'
       INTO @DATA(total).`,
-
 ];
 
 statementType(tests, "SELECT", Statements.Select);

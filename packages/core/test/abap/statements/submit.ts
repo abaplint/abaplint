@@ -53,6 +53,7 @@ const tests = [
   "SUBMIT zprog WITH p_foo EQ lv_foo SIGN 'I' WITH p_bar EQ lv_bar SIGN 'I' AND RETURN.",
   "SUBMIT zfoobar VIA JOB lv_job NUMBER lv_number USER lv_user LANGUAGE lv_language AND RETURN.",
   "SUBMIT zfoobar WITH rang-low EQ low AND RETURN.",
+  `submit zffoo# with record = tbtco and return.`,
 
   /* todo
   `SUBMIT zsdfsd
