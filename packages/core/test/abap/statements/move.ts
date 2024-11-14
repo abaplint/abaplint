@@ -313,6 +313,11 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   `FINAL(dat) = 2.`,
   `?moo = 5.`,
   `lv_temp = lv_temp+(w_init).`,
+
+  `DATA(lv) = SWITCH #( me->var->get( )
+      WHEN zif_bar=>moo-sl
+        OR zif_bar=>moo-su THEN dsf-bar
+      ELSE THROW zcx_bar( MESSAGE e022 ) ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);
