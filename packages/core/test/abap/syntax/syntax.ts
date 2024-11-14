@@ -10770,8 +10770,15 @@ END OF BLOCK tb_selectionaaasss.`;
     expect(issues[0]?.getMessage()).to.contain("too long");
   });
 
-// todo, static method cannot access instance attributes
-// todo, can a private method access protected attributes?
-// todo, readonly fields(constants + enums + attributes flagged read-only)
+  it("selection screen block name length more than 30", () => {
+    const abap = `
+DATA lv_tss TYPE fdsfds.
+DATA cvfdsfds TYPE fdsfds.
+SELECT SINGLE ( fieldname ) FROM voided
+  WHERE tss = @lv_tss
+  INTO @cvfdsfds.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 });

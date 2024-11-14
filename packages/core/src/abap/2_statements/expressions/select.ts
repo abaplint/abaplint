@@ -1,11 +1,9 @@
-import {seq, per, str, Expression, altPrio, optPrio, ver, tok} from "../combi";
+import {seq, per, str, Expression, altPrio, optPrio, ver} from "../combi";
 import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields, SQLIntoList} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
 import {SQLIntoStructure} from "./sql_into_structure";
-import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
-import {SQLFieldName} from "./sql_field_name";
 import {SQLUpTo} from "./sql_up_to";
 
 export class Select extends Expression {
@@ -28,9 +26,7 @@ export class Select extends Expression {
     const permSingle = per(SQLFrom, altPrio(SQLIntoStructure, SQLIntoList), where, SQLClient,
                            bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints);
 
-    const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
-
-    const fieldList = optPrio(altPrio(SQLFieldList, paren));
+    const fieldList = optPrio(SQLFieldList);
 
     const single = seq("SINGLE", optPrio("FOR UPDATE"), fieldList, permSingle);
 

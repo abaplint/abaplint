@@ -50,7 +50,7 @@ export class DataDefinition extends AbstractObject {
 
   public parseType(reg: IRegistry): AbstractType {
     this.parse();
-    return new CDSDetermineTypes().parseType(reg, this.parsedData!);
+    return new CDSDetermineTypes().parseType(reg, this.parsedData!, this.getName());
   }
 
   public getParsedData() {

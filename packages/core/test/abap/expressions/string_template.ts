@@ -11,6 +11,7 @@ const tests = [
   {c: "|{ condense( iv_fnam ) }({ iv_index ALIGN = RIGHT PAD = '0' WIDTH = len })|", r: new Expressions.StringTemplate(), e: true},
   {c: "|sdf{sdf }|", r: new Expressions.StringTemplate(), e: false},
   {c: "|sdf{ sdf}|", r: new Expressions.StringTemplate(), e: false},
+  {c: "|{ l_max NUMBER = (cl_abap_format=>n_user) }|", r: new Expressions.StringTemplate(), e: true},
 ];
 
 describe("Test expression, StringTemplate", () => {
