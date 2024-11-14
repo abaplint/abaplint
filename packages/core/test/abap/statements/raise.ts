@@ -21,15 +21,22 @@ const tests = [
   "RAISE SHORTDUMP TYPE /foo/bar MESSAGE e401(/foo/bar) WITH iv_table.",
   "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZZZ' NUMBER '001' WITH |23234|.",
   "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZZZ' NUMBER '001' WITH |23234| && |sdf|.",
+
   `RAISE EXCEPTION TYPE zcxsdfsd MESSAGE e003(zsdfsdf)
     WITH lx_error->get_text( )
     EXPORTING previous = lx_error.`,
+
   `RAISE EXCEPTION TYPE zcxsdfsd MESSAGE e006
     WITH
       'Hello'(001)
       'VALUE'
       CONV symsgv( lo->get_text( ) )
       space.`,
+
+  `RAISE EXCEPTION TYPE zcx_foo
+     MESSAGE e100 WITH COND #( WHEN moo-boo IS INITIAL
+                               THEN lo_typedescr->get_relative_name( )
+                               ELSE ls_ddic-sdf ).`,
 ];
 
 statementType(tests, "RAISE", Statements.Raise);
