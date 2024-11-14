@@ -27,6 +27,7 @@ const tests = [
   "DESCRIBE LIST INDEX lv_index PAGE lv_page TOP-LINES lv_top FIRST-LINE lv_first.",
   "DESCRIBE LIST INDEX 1 PAGE 1 LINE-SIZE size.",
   "DESCRIBE LIST INDEX 1 PAGE page TOP-LINES top.",
+  "DESCRIBE LIST NUMBER OF PAGES tot INDEX 0.",
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);

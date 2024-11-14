@@ -37,6 +37,7 @@ export class Describe implements IStatement {
                          mode);
 
     const lines = seq("NUMBER OF LINES", Target);
+    const pages = seq("NUMBER OF PAGES", Target);
     const line = seq("LINE", Source);
     const page = seq("PAGE", Source);
     const index = seq("INDEX", Source);
@@ -44,7 +45,7 @@ export class Describe implements IStatement {
     const lineSize = seq("LINE-SIZE", Target);
     const first = seq("FIRST-LINE", Target);
 
-    const list = seq("LIST", per(lines, index, line, page, top, first, lineSize));
+    const list = seq("LIST", per(lines, pages, index, line, page, top, first, lineSize));
 
     const ret = seq("DESCRIBE", altPrio(table, field, distance, list));
 
