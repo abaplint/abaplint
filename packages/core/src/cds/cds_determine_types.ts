@@ -5,7 +5,7 @@ import {ParsedDataDefinition} from "../objects";
 
 export class CDSDetermineTypes {
 
-  public parseType(reg: IRegistry, parsedData: ParsedDataDefinition): AbstractType {
+  public parseType(reg: IRegistry, parsedData: ParsedDataDefinition, ddlsName: string): AbstractType {
     const ddic = new DDIC(reg);
 
     if (parsedData?.fields.length === 0) {
@@ -32,7 +32,7 @@ export class CDSDetermineTypes {
           if (source?.name === undefined) {
             components.push({
               name: f.name,
-              type: new UnknownType("CDS parser error, unknown source"),
+              type: new UnknownType("CDS parser error, unknown source, " + ddlsName),
             });
             continue;
           }
@@ -73,7 +73,7 @@ export class CDSDetermineTypes {
         } else {
           components.push({
             name: f.name,
-            type: new VoidType("DDLS:fieldname"),
+            type: new VoidType("DDLS:fieldname:" + ddlsName),
           });
         }
       }
