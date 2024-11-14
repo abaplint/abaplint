@@ -1,6 +1,6 @@
-import {Expression, seq, opt} from "../combi";
+import {Expression, seq, opt, alt} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
-import {SimpleSource1} from ".";
+import {SimpleSource1, Source} from ".";
 
 export class RaiseWith extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -9,6 +9,12 @@ export class RaiseWith extends Expression {
                     opt(SimpleSource1),
                     opt(SimpleSource1),
                     opt(SimpleSource1));
-    return wit;
+    // todo: I guess this is from version something?
+    const witComplex = seq("WITH",
+                           Source,
+                           opt(Source),
+                           opt(Source),
+                           opt(Source));
+    return alt(wit, witComplex);
   }
 }
