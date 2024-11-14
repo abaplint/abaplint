@@ -368,6 +368,10 @@ export class TypeUtils {
   }
 
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+    if (source === undefined || target === undefined) {
+      return true;
+    }
+
 /*
     console.dir(source);
     console.dir(target);
