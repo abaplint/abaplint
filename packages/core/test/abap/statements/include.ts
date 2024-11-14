@@ -7,6 +7,7 @@ const tests = [
   "INCLUDE <%_bar>.",
   "INCLUDE ZFOOOO-BAR.", // yes, this is allowed, but not for new programs
   "INCLUDE zabapgit_gui_router.",
+  "INCLUDE LZ--AA01.",
 ];
 
 statementType(tests, "INCLUDE", Statements.Include);
