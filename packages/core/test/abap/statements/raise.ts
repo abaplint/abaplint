@@ -24,6 +24,12 @@ const tests = [
   `RAISE EXCEPTION TYPE zcxsdfsd MESSAGE e003(zsdfsdf)
     WITH lx_error->get_text( )
     EXPORTING previous = lx_error.`,
+  `RAISE EXCEPTION TYPE zcxsdfsd MESSAGE e006
+    WITH
+      'Hello'(001)
+      'VALUE'
+      CONV symsgv( lo->get_text( ) )
+      space.`,
 ];
 
 statementType(tests, "RAISE", Statements.Raise);
