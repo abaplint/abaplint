@@ -60,7 +60,7 @@ export class MethodDef implements IStatement {
 
     const ret = seq(altPrio("CLASS-METHODS", "METHODS"),
                     MethodName,
-                    alt(seq(optPrio(Abstract), EventHandler),
+                    alt(seq(optPrio(Abstract), optPrio(def), EventHandler),
                         parameters,
                         testing,
                         seq("FOR", alt(tableFunction, ddl, behavior)),

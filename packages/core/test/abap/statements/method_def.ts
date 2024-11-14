@@ -126,6 +126,12 @@ const tests = [
   `METHODS get_auth FOR INSTANCE AUTHORIZATION IMPORTING keys REQUEST requested_authorizations FOR ent RESULT result.`,
   `METHODS get_instance_features FOR INSTANCE FEATURES IMPORTING keys REQUEST requested_features FOR Project RESULT result.`,
   `METHODS GetDefaultsForChild FOR READ IMPORTING keys FOR FUNCTION Root~GetDefaultsForChild RESULT result.`,
+
+  `methods ON_POPUP_NEEDED default ignore
+    for event POPUP_NEEDED of zif_sdfds
+    importing
+      !ljlkja
+      !safdsf .`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
