@@ -34,7 +34,7 @@ export class Describe implements IStatement {
                          Source,
                          "INTO",
                          Target,
-                         mode);
+                         opt(mode));
 
     const lines = seq("NUMBER OF LINES", Target);
     const pages = seq("NUMBER OF PAGES", Target);
