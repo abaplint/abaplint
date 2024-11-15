@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, altPrio, per, regex as reg} from "../combi";
-import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName, SimpleSource1} from "../expressions";
+import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName, SimpleSource1, DatabaseTable} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -19,6 +19,7 @@ export class Parameter implements IStatement {
     const length = seq("LENGTH", Constant);
     const match = seq("MATCHCODE OBJECT", Field);
     const decimals = seq("DECIMALS", Source);
+    const forTable = seq("FOR TABLE", DatabaseTable);
 
     const perm = per(type,
                      def,
@@ -32,6 +33,7 @@ export class Parameter implements IStatement {
                      modif,
                      listbox,
                      visible,
+                     forTable,
                      "VALUE CHECK",
                      "NO-DISPLAY",
                      "AS CHECKBOX",
