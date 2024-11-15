@@ -52,7 +52,7 @@ export class TypeTable extends Expression {
 
     const ret = altPrio(
       seq(occurs, opt(header)),
-      seq("LIKE", alt(oldLike, likeType, rangeLike)),
+      seq("LIKE", alt(oldLike, likeType, rangeLike, typeLine)),
       seq("TYPE", alt(oldType, typetable, rangeType, typeLine, derived)));
 
     return ret;
