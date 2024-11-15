@@ -913,14 +913,19 @@ class AlternativePriority implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
+    let result: Result[] = [];
 
     for (const sequ of this.list) {
 //      console.log(seq.toStr());
       const temp = sequ.run(r);
 
       if (temp.length > 0) {
-        result.push(...temp);
+        if (temp.length > 1000) {
+          // avoid stack overflow
+          result = result.concat(temp);
+        } else {
+          result.push(...temp);
+        }
         break;
       }
     }
