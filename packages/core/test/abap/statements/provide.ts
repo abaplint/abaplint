@@ -28,6 +28,9 @@ FIELDS amt_perc
 FIELDS *          FROM lt_9745   INTO ls_9745   VALID lv_flag4 BOUNDS begda AND endda
 BETWEEN <p9745>-begda AND <p9745>-endda.`,
 
+  `PROVIDE zfoo FROM p0007
+     BETWEEN pn-begda AND pn-endda
+     WHERE p0007-zfoo = '1'.`,
 ];
 
 statementType(tests, "PROVIDE", Statements.Provide);
