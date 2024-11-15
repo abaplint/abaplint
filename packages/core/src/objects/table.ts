@@ -129,9 +129,10 @@ export class Table extends AbstractObject {
         if (lookup.object) {
           references.push({object: lookup.object});
         }
-      } else if (field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP") { // incude or append structure
+      } else if (field.FIELDNAME === ".INCLUDE"
+          || field.FIELDNAME.startsWith(".INCLU-")) {
         if (field.PRECFIELD === undefined) {
-          return new Types.UnknownType("Table, parser error, PRECFIELD undefined");
+          return new Types.UnknownType("Table, parser error, PRECFIELD undefined, " + this.getName());
         }
         const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         let found = lookup.type;
@@ -159,6 +160,7 @@ export class Table extends AbstractObject {
         } else {
           components.push({name: field.FIELDNAME, type: found});
         }
+        /*
       } else if (comptype === "S" && field.FIELDNAME.startsWith(".INCLU-")) {
         const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         if (lookup.object) {
@@ -176,6 +178,7 @@ export class Table extends AbstractObject {
         } else if (found instanceof Types.UnknownType) {
           return found;
         }
+          */
       } else if (comptype === "S") {
         const lookup = ddic.lookupTableOrView(field.ROLLNAME);
         components.push({name: field.FIELDNAME, type: lookup.type});

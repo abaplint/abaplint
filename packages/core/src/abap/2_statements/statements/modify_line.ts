@@ -8,7 +8,7 @@ export class ModifyLine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const form = seq(alt("INVERSE", "INPUT"),
+    const form = seq(alt("INVERSE", "INPUT", "COLOR"),
                      "=",
                      Source);
 
@@ -20,7 +20,7 @@ export class ModifyLine implements IStatement {
     const page = seq("OF PAGE", Source);
     const ocp = str("OF CURRENT PAGE");
     const lineFormat = seq("LINE FORMAT",
-                           alt("INPUT OFF", "INVERSE", "RESET", "INTENSIFIED"));
+                           per("INPUT OFF", "INVERSE", "RESET", "INTENSIFIED", "COLOR COL_NORMAL"));
     const onOff = alt("ON", "OFF");
     const intensified = seq("INTENSIFIED", onOff);
 

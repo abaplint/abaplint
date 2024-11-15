@@ -7,7 +7,7 @@ import {SQLArithmetics} from "./sql_arithmetics";
 
 export class SQLAggregation extends Expression {
   public getRunnable(): IStatementRunnable {
-    const f = seq(optPrio("DISTINCT"), altPrio(SQLArithmetics, Dynamic, SQLFunction, SQLCase));
+    const f = seq(optPrio("DISTINCT"), altPrio(SQLCase, SQLArithmetics, Dynamic, SQLFunction));
     const fparen = seq("(", Field, ")");
     const count = seq("COUNT", altPrio(tok(ParenLeft), tok(ParenLeftW)), optPrio("DISTINCT"), altPrio("*", Field, fparen), ")");
     const max = seq("MAX", altPrio(tok(ParenLeft), tok(ParenLeftW)), f, ")");
