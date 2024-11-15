@@ -129,9 +129,10 @@ export class Table extends AbstractObject {
         if (lookup.object) {
           references.push({object: lookup.object});
         }
-      } else if (field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP") { // incude or append structure
+      } else if (field.FIELDNAME === ".INCLUDE"
+          || field.FIELDNAME.startsWith(".INCLU-")) {
         if (field.PRECFIELD === undefined) {
-          return new Types.UnknownType("Table, parser error, PRECFIELD undefined");
+          return new Types.UnknownType("Table, parser error, PRECFIELD undefined, " + this.getName());
         }
         const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         let found = lookup.type;

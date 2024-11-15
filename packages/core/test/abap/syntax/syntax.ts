@@ -10789,7 +10789,7 @@ SELECT SINGLE ( fieldname ) FROM voided
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only(".INCLUDE grouped", () => {
+  it(".INCLUDE grouped", () => {
     const abap = `
 REPORT zfoo.
 
