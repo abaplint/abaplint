@@ -10781,4 +10781,12 @@ SELECT SINGLE ( fieldname ) FROM voided
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RAISE with MESSAGE CONV", () => {
+    const abap = `
+    DATA var TYPE string.
+    RAISE EXCEPTION TYPE cx_something MESSAGE e074 WITH CONV char6( var ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
