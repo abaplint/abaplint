@@ -32,7 +32,7 @@ export class TypeTable extends Expression {
                                        alt(opt(per(header, initial, plusPrio(TypeTableKey))),
                                            seq(plus(TypeTableKey), optPrio(initial)))));
 
-    const occurs = seq("OCCURS", Integer);
+    const occurs = seq("OCCURS", altPrio(Integer, FieldChain));
 
     const derived = ver(Version.v754, seq("TABLE FOR", altPrio(
       "ACTION IMPORT",

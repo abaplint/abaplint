@@ -34,6 +34,7 @@ const tests = [
   `TYPES ty1 TYPE STANDARD TABLE OF i WITH EMPTY KEY WITHOUT FURTHER SECONDARY KEYS.`,
   `TYPES ty2 TYPE STANDARD TABLE OF i WITH EMPTY KEY WITH FURTHER SECONDARY KEYS.`,
   `types ty TYPE STRUCTURE FOR HIERARCHY /foo/bar.`,
+  `TYPES t_prot TYPE s_prot OCCURS fix_row.`,
 ];
 
 statementType(tests, "TYPE", Statements.Type);
