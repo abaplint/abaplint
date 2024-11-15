@@ -426,6 +426,19 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
       FIELDS SUM( qty )
       WHERE foo <> 'A'
       INTO @DATA(total).`,
+
+  `SELECT vbelv, posnv,
+    SUM( CASE vbtyp_n
+       WHEN @zif=>ord
+       THEN rfmng
+       WHEN @zif=>ret
+       THEN field
+       ELSE 0
+       END ) AS qty
+     FROM vbfa
+     WHERE vbelv EQ @ref
+     GROUP BY vbelv, posnv
+     INTO TABLE @DATA(lt_rows).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
