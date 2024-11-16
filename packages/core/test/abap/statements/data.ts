@@ -110,6 +110,9 @@ const tests = [
   `DATA update_field TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_FieldTP.`,
   `DATA test_key TYPE STRUCTURE FOR ACTION IMPORT zdmo_r_rapg_projecttp~check_allowed_combinations_det.`,
   `DATA lt LIKE LINE OF tab OCCURS 1 WITH HEADER LINE.`,
+  `DATA line? TYPE i.`,
+  `DATA li?ne TYPE i.`,
+  `DATA ?line TYPE i.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
