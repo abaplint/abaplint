@@ -26,6 +26,7 @@ const tests = [
   `MODIFY LINE line LINE FORMAT  COLOR COL_NEGATIVE
                     FIELD FORMAT foo-flg_sel INPUT OFF
                     FIELD VALUE  foo-flg_sel FROM SPACE.`,
+  `MODIFY CURRENT LINE LINE FORMAT COLOR 2.`,
 ];
 
 statementType(tests, "MODIFY LINE", Statements.ModifyLine);
