@@ -5,6 +5,7 @@ const tests = [
   "INFOTYPES 1000.",
   "INFOTYPES 0001 NAME p0001.",
   "INFOTYPES 0001 OCCURS 2.",
+  "INFOTYPES 2001 mode n.",
 ];
 
 statementType(tests, "INFOTYPES", Statements.Infotypes);

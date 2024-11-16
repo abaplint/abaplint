@@ -4,7 +4,7 @@ import {Dash, DashW} from "../../1_lexer/tokens";
 
 export class DefinitionName extends Expression {
   public getRunnable(): IStatementRunnable {
-    const r = reg(/^&|&?((\w*\/\w+\/)|(\w*\/\w+\/)?[\w\*$%]+)$/);
+    const r = reg(/^&|&?((\w*\/\w+\/)|(\w*\/\w+\/)?[\w\*$%\?]+)$/);
 
     return seq(r, starPrio(seq(tok(Dash), optPrio(r))), optPrio(tok(DashW)));
   }

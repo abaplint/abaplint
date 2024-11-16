@@ -59,6 +59,15 @@ const tests = [
           RECEIVER                sdfasdf-prrec
           DEPARTMENT              sdfasdf-prabt
           NO DIALOG.`,
+
+  `NEW-PAGE NO-TITLE
+     NO-HEADING
+     PRINT ON KEEP IN SPOOL 'X'
+              IMMEDIATELY 'X'
+              NO DIALOG
+              DESTINATION target
+              COPIES bar
+              LIST NAME foo.`,
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);

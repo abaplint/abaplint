@@ -10,7 +10,7 @@ export class Infotypes implements IStatement {
     const occurs = seq("OCCURS", Constant);
     const name = seq("NAME", Field);
 
-    const ret = seq("INFOTYPES", Constant, optPrio(occurs), optPrio(name));
+    const ret = seq("INFOTYPES", Constant, optPrio(occurs), optPrio(name), optPrio("MODE N"));
 
     return verNot(Version.Cloud, ret);
   }
