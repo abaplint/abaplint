@@ -35,7 +35,10 @@ export class SelectionScreen implements IStatement {
 
     const visible = seq("VISIBLE LENGTH", reg(/^\d+$/));
 
-    const commentOpt = per(seq("FOR FIELD", FieldSub), modif, visible);
+    const ldbId = seq("ID", reg(/^\w+$/));
+    const ldb = seq("FOR FIELD", FieldSub, optPrio(ldbId));
+
+    const commentOpt = per(ldb, modif, visible);
 
     const position = seq(opt(reg(/^\/?[\d\w]+$/)),
                          altPrio(tok(ParenLeft), tok(WParenLeft)),
