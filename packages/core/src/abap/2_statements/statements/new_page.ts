@@ -16,6 +16,7 @@ export class NewPage implements IStatement {
     const coverText = seq("COVER TEXT", Source);
     const coverPage = seq("SAP COVER PAGE", Source);
     const immediately = seq("IMMEDIATELY", Source);
+    const copies = seq("COPIES", Source);
     const keep = seq("KEEP IN SPOOL", Source);
     const layout = seq("LAYOUT", Source);
     const listAuth = seq("LIST AUTHORITY", Source);
@@ -42,6 +43,7 @@ export class NewPage implements IStatement {
                             layout,
                             destination,
                             receiver,
+                            copies,
                             coverText,
                             archive,
                             "NEW-SECTION",
