@@ -31,6 +31,15 @@ BETWEEN <p9745>-begda AND <p9745>-endda.`,
   `PROVIDE zfoo FROM p0007
      BETWEEN pn-begda AND pn-endda
      WHERE p0007-zfoo = '1'.`,
+
+  `provide fields objps apact pldat
+            from   foo
+            into   bar
+            valid  val
+            bounds start and slut
+          where objps = l_seqnr and
+                apact = '011'
+          between l_begda and l_begda.`,
 ];
 
 statementType(tests, "PROVIDE", Statements.Provide);
