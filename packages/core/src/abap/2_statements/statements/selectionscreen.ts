@@ -81,7 +81,8 @@ export class SelectionScreen implements IStatement {
     const posIntegers = reg(/^(0?[1-9]|[1234567][0-9]|8[0-3])$/);
 
     const pos = seq("POSITION",
-                    altPrio(posIntegers, posSymbols));
+                    altPrio(posIntegers, posSymbols),
+                    opt(seq("FOR TABLE", Field)));
 
     const incl = seq("INCLUDE BLOCKS", BlockName);
 

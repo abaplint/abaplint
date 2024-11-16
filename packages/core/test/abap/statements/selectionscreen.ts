@@ -53,6 +53,7 @@ const tests = [
   `SELECTION-SCREEN TAB (20) nam USER-COMMAND push1 DEFAULT PROGRAM zfoobar SCREEN 1.`,
   `SELECTION-SCREEN COMMENT 1(20) foo FOR FIELD ?foo.`,
   `SELECTION-SCREEN COMMENT (15) TEXT-001 FOR FIELD p_foo ID 002.`,
+  `SELECTION-SCREEN POSITION 33 FOR TABLE tab.`,
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);
