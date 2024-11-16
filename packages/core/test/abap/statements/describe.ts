@@ -14,6 +14,7 @@ const tests = [
   "DESCRIBE FIELD cv_data LENGTH lv_length IN CHARACTER MODE.",
   "describe field <item> type typ.",
   "DESCRIBE DISTANCE BETWEEN lv_foo AND lv_bar INTO ld_shift IN CHARACTER MODE.",
+  `DESCRIBE DISTANCE BETWEEN foo-boo AND  foo-moo INTO field-offset.`,
   "describe field e_field edit mask l_mask.",
   "describe field <fs> type l_typ components l_num.",
   "describe list number of lines lv_lines.",

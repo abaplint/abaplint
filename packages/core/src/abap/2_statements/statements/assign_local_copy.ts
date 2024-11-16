@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt} from "../combi";
+import {verNot, seq, alt} from "../combi";
 import {TargetFieldSymbol, Source, Dynamic} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -8,9 +8,12 @@ export class AssignLocalCopy implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
+    const init = seq("INITIAL", alt(Source, Dynamic));
+    const iline = seq("INITIAL LINE OF", alt(Source, Dynamic));
+    const main = seq("MAIN TABLE FIELD", Dynamic);
+
     const ret = seq("ASSIGN LOCAL COPY OF",
-                    opt(seq("INITIAL", opt("LINE OF"))),
-                    alt(Source, Dynamic),
+                    alt(init, iline, main, Source),
                     "TO",
                     TargetFieldSymbol);
 

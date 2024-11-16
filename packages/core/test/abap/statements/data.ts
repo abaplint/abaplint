@@ -109,6 +109,7 @@ const tests = [
   `DATA create_rapbo_line TYPE STRUCTURE FOR CREATE ZDMO_R_RAPG_ProjectTP.`,
   `DATA update_field TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_FieldTP.`,
   `DATA test_key TYPE STRUCTURE FOR ACTION IMPORT zdmo_r_rapg_projecttp~check_allowed_combinations_det.`,
+  `DATA lt LIKE LINE OF tab OCCURS 1 WITH HEADER LINE.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

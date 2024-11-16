@@ -318,6 +318,8 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
       WHEN zif_bar=>moo-sl
         OR zif_bar=>moo-su THEN dsf-bar
       ELSE THROW zcx_bar( MESSAGE e022 ) ).`,
+
+  `MOVE foo TO bar PERCENTAGE len.`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

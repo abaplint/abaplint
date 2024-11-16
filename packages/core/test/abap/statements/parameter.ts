@@ -37,6 +37,7 @@ const tests = [
   "PARAMETERS p_foo LIKE moo-boo-loo MODIF ID foo.",
   "PARAMETERS p_sel TYPE char10 OBLIGATORY AS LISTBOX VISIBLE LENGTH 15 DEFAULT 'BAR' USER-COMMAND ukey.",
   "PARAMETERS ?trans TYPE trkorr.",
+  `PARAMETERS ldb_abc NO-DISPLAY DEFAULT 'X' FOR TABLE tab.`,
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

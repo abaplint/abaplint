@@ -32,7 +32,7 @@ export class TypeTable extends Expression {
                                        alt(opt(per(header, initial, plusPrio(TypeTableKey))),
                                            seq(plus(TypeTableKey), optPrio(initial)))));
 
-    const occurs = seq("OCCURS", Integer);
+    const occurs = seq("OCCURS", altPrio(Integer, FieldChain));
 
     const derived = ver(Version.v754, seq("TABLE FOR", altPrio(
       "ACTION IMPORT",
@@ -52,7 +52,7 @@ export class TypeTable extends Expression {
 
     const ret = altPrio(
       seq(occurs, opt(header)),
-      seq("LIKE", alt(oldLike, likeType, rangeLike)),
+      seq("LIKE", alt(oldLike, likeType, rangeLike, typeLine)),
       seq("TYPE", alt(oldType, typetable, rangeType, typeLine, derived)));
 
     return ret;

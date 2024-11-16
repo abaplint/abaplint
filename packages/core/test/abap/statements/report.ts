@@ -17,6 +17,8 @@ const tests = [
   "REPORT zxxsdfsd//sdfs.",
   "REPORT zxxs/dfsd//sdf/s.",
   "REPORT foo-bar.",
+  `REPORT zmoo MESSAGE-ID W+.`,
+  `REPORT zmoo LINE-SIZE 200 NO STANDARD PAGE HEADING MESSAGE-ID Y<.`,
 ];
 
 statementType(tests, "REPORT", Statements.Report);

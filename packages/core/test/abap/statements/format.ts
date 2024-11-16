@@ -17,6 +17,7 @@ const tests = [
   "FORMAT COLOR COL_NEGATIVE INVERSE INTENSIFIED.",
   "FORMAT HOTSPOT.",
   "FORMAT COLOR COL_HEADING.",
+  `FORMAT INTENSIFIED INPUT.`,
 ];
 
 statementType(tests, "FORMAT", Statements.Format);
