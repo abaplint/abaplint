@@ -12,8 +12,11 @@ export class PrintControl implements IStatement {
     const line = seq("LINE", Source);
     const position = seq("POSITION", Source);
     const size = seq("SIZE", Source);
+    const cpi = seq("CPI", Source);
+    const lpi = seq("LPI", Source);
+    const font = seq("FONT", Source);
 
-    const ret = seq("PRINT-CONTROL", per(index, func, line, position, size));
+    const ret = seq("PRINT-CONTROL", per(index, func, line, position, size, cpi, lpi, font));
 
     return verNot(Version.Cloud, ret);
   }
