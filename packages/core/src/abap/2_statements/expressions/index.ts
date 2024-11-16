@@ -173,6 +173,7 @@ export * from "./sql_fields";
 export * from "./sql_for_all_entries";
 export * from "./sql_from_source";
 export * from "./sql_from";
+export * from "./provide_field_name";
 export * from "./sql_function_input";
 export * from "./sql_function";
 export * from "./sql_group_by";
