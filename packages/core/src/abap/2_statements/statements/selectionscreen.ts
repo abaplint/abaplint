@@ -98,6 +98,8 @@ export class SelectionScreen implements IStatement {
     const param = seq("INCLUDE PARAMETERS", Field);
     const iso = seq("INCLUDE SELECT-OPTIONS", Field);
 
+    const exclude = seq("EXCLUDE", alt("IDS", "PARAMETERS"), reg(/^\w+$/));
+
     const ret = seq("SELECTION-SCREEN",
                     altPrio(comment,
                             func,
@@ -115,7 +117,8 @@ export class SelectionScreen implements IStatement {
                             endLine,
                             param,
                             beginScreen,
-                            endScreen));
+                            endScreen,
+                            exclude));
 
     return verNot(Version.Cloud, ret);
   }
