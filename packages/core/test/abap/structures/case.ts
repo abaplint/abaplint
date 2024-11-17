@@ -9,6 +9,9 @@ const cases = [
   {abap: "CASE moo. WHEN 2. WRITE 'foo'. WRITE 'bar'. ENDCASE."},
   {abap: "CASE moo. WHEN 2. WHEN 3. ENDCASE."},
   {abap: "CASE sdfsd. INCLUDE zsdfsdf. ENDCASE."},
+  {abap: `CASE sdfsd.
+    WRITE 'hello'.
+  ENDCASE.`}, // yea, well, ABAP developers
 ];
 
 structureType(cases, new Case());
