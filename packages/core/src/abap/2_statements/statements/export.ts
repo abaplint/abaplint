@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
 import {seq, alt, altPrio, opt, regex, per, plus, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
-import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol} from "../expressions";
+import {Target, Source, Dynamic, ParameterS, FieldSub, NamespaceSimpleName, FieldSymbol, Constant} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 // todo, cloud, split?
@@ -29,7 +29,7 @@ export class Export implements IStatement {
     const left = alt(FieldSub, FieldSymbol);
 
     const source = alt(plus(altPrio(ParameterS, seq(left, from), left)),
-                       Dynamic);
+                       Dynamic, Constant);
 
     const compression = seq("COMPRESSION", alt("ON", "OFF"));
     const hint = seq("CODE PAGE HINT", Source);
