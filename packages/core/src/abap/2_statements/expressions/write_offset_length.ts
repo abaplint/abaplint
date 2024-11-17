@@ -8,7 +8,7 @@ export class WriteOffsetLength extends Expression {
 
     const post = seq(alt(SimpleFieldChain2, reg(/^[\d]+$/), reg(/^\*$/)), alt(tok(ParenRightW), tok(ParenRight)));
     const wlength = seq(tok(WParenLeft), post);
-    const length = seq(tok(ParenLeft), post);
+    const length = seq(alt(tok(WParenLeft), tok(ParenLeft)), post);
 
     const complex = alt(wlength,
                         seq(alt(SimpleFieldChain2, reg(/^\/?[\w\d]+$/), "/"), opt(length)));

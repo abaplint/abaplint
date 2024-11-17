@@ -43,9 +43,10 @@ export class Describe implements IStatement {
     const index = seq("INDEX", Source);
     const top = seq("TOP-LINES", Target);
     const lineSize = seq("LINE-SIZE", Target);
+    const lineCount = seq("LINE-COUNT", Target);
     const first = seq("FIRST-LINE", Target);
 
-    const list = seq("LIST", per(lines, pages, index, line, page, top, first, lineSize));
+    const list = seq("LIST", per(lines, pages, index, line, page, top, first, lineSize, lineCount));
 
     const ret = seq("DESCRIBE", altPrio(table, field, distance, list));
 

@@ -93,12 +93,15 @@ export class SelectionScreen implements IStatement {
                        "LINES",
                        optPrio("NO INTERVALS"));
 
-    const uline = seq("ULINE", opt(position));
+    const uline = seq("ULINE", opt(position), opt(modif));
 
     const param = seq("INCLUDE PARAMETERS", Field);
     const iso = seq("INCLUDE SELECT-OPTIONS", Field);
 
     const exclude = seq("EXCLUDE", alt("IDS", "PARAMETERS"), reg(/^\w+$/));
+
+    const beginVersion = seq("BEGIN OF VERSION", reg(/^\w+$/), TextElement);
+    const endVersion = seq("END OF VERSION", reg(/^\w+$/));
 
     const ret = seq("SELECTION-SCREEN",
                     altPrio(comment,
@@ -118,7 +121,9 @@ export class SelectionScreen implements IStatement {
                             param,
                             beginScreen,
                             endScreen,
-                            exclude));
+                            exclude,
+                            beginVersion,
+                            endVersion,));
 
     return verNot(Version.Cloud, ret);
   }
