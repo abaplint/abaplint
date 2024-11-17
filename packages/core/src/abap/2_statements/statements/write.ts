@@ -56,7 +56,7 @@ export class Write implements IStatement {
 
     const ret = seq("WRITE", alt("AT /",
                                  seq(opt(WriteOffsetLength),
-                                     altPrio(Source, Dynamic, "/"),
+                                     alt(Source, Dynamic, "/"),
                                      opt(options))));
 
     return verNot(Version.Cloud, ret);
