@@ -80,6 +80,7 @@ export class Indent {
       } else if (type instanceof Statements.StartOfSelection
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.AtLineSelection
+        || type instanceof Statements.AtPF
         || type instanceof Statements.Initialization
         || type instanceof Statements.AtUserCommand
         || type instanceof Statements.TopOfPage

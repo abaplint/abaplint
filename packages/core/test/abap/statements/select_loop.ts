@@ -138,6 +138,13 @@ const tests = [
      WHERE v~vbeln EQ @mt_lips-vgbel
      INTO @DATA(sdf)
      UP TO 1 ROWS.`,
+
+  `SELECT SUM( field )
+         INTO sum
+         FROM ztab
+         WHERE matnr = matnr
+         AND   werks = werks
+         GROUP BY matnr.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

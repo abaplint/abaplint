@@ -4,6 +4,7 @@ export const SELECTION_EVENTS = [
   Statements.StartOfSelection,
   Statements.AtSelectionScreen,
   Statements.AtLineSelection,
+  Statements.AtPF,
   Statements.AtUserCommand,
   Statements.EndOfSelection,
   Statements.Initialization,

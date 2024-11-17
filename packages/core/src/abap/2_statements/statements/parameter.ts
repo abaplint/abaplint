@@ -19,7 +19,7 @@ export class Parameter implements IStatement {
     const length = seq("LENGTH", Constant);
     const match = seq("MATCHCODE OBJECT", Field);
     const decimals = seq("DECIMALS", Source);
-    const forTable = seq("FOR TABLE", DatabaseTable);
+    const forTable = seq("FOR TABLE", DatabaseTable, opt("VALUE-REQUEST"));
 
     const perm = per(type,
                      def,
