@@ -52,6 +52,7 @@ export class Write implements IStatement {
                         seq("INVERSE", opt(onOff)),
                         Color,
                         seq("CURRENCY", Source),
+                        "RESET",
                         "NO-SIGN");
 
     const ret = seq("WRITE", alt("AT /",
