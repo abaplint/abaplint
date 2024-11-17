@@ -21,6 +21,7 @@ export class Any implements IStructure {
                     sta(Statements.SelectOption),
                     sta(Statements.AtSelectionScreen),
                     sta(Statements.AtLineSelection),
+                    sta(Statements.AtPF),
                     sta(Statements.AtUserCommand),
                     sta(Statements.StartOfSelection),
                     sta(Statements.EndOfSelection),
