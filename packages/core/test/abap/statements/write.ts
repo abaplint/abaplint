@@ -79,6 +79,9 @@ const tests = [
   "WRITE AT / 'sdf'.",
   `WRITE (variable) TO var-txt(len).`,
   `WRITE (var) TO dr-txt LEFT-JUSTIFIED.`,
+  `WRITE / <pnumber>.`,
+  `WRITE / (10) moo.`,
+  `WRITE / (10) <pnumber>.`,
 ];
 
 statementType(tests, "WRITE", Statements.Write);
