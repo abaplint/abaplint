@@ -18,7 +18,7 @@ export class Import implements IStatement {
                         tok(ParenRightW));
 
     const buffer = seq("DATA BUFFER", Source);
-    const memory = seq("MEMORY ID", Source);
+    const memory = seq("MEMORY", opt(seq("ID", Source)));
     const table = seq("INTERNAL TABLE", Source);
     const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(dto, client, id));
     const database = seq("DATABASE", cluster, per(dto, client, id, using));
