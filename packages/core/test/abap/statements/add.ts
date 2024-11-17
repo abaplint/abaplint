@@ -7,6 +7,7 @@ const tests = [
   "add 2 to\r\n lv_foo.",
   "add zcl_class=>c_diagonal to lo_foo->mode.",
   "ADD sdf-dsf THEN sdf-dsf UNTIL sdf-dsf GIVING sdf-sdf.",
+  `ADD sdfsd THEN sdfsd UNTIL sdfsd TO sdfds.`,
 ];
 
 statementType(tests, "ADD", Statements.Add);
