@@ -58,6 +58,7 @@ const tests = [
   `SELECTION-SCREEN EXCLUDE PARAMETERS foobar.`,
   `SELECTION-SCREEN BEGIN OF VERSION 001 text-a01.`,
   `SELECTION-SCREEN END   OF VERSION 002.`,
+  `SELECTION-SCREEN ULINE MODIF ID fk1.`,
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);

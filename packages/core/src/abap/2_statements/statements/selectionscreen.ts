@@ -93,7 +93,7 @@ export class SelectionScreen implements IStatement {
                        "LINES",
                        optPrio("NO INTERVALS"));
 
-    const uline = seq("ULINE", opt(position));
+    const uline = seq("ULINE", opt(position), opt(modif));
 
     const param = seq("INCLUDE PARAMETERS", Field);
     const iso = seq("INCLUDE SELECT-OPTIONS", Field);
