@@ -19,6 +19,7 @@ export class CorrespondingBody extends Expression {
       Source,
       optPrio(discarding),
       optPrio(mapping),
+      optPrio("CHANGING CONTROL"),
       optPrio(seq("EXCEPT", alt(plus(Field), "*"))),
     );
   }
