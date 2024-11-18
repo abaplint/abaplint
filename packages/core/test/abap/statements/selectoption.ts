@@ -28,6 +28,7 @@ const tests = [
   "select-options date for <fs_booking>-date.",
   "SELECT-OPTIONS s_ghi FOR gs_dummy-ghi MODIF ID rt*.",
   "SELECT-OPTIONS foo-bar FOR foobar-asdf.",
+  `SELECT-OPTIONS &matnr FOR mara-matnr.`,
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);
