@@ -10969,4 +10969,21 @@ DATA: moo TYPE c LENGTH 10,
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("table key stuff", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         afield TYPE fieldname,
+         sfield TYPE fieldname,
+         stab   TYPE tabname,
+       END OF ty.
+
+TYPES tt TYPE HASHED TABLE OF ty
+       WITH UNIQUE KEY primary_key ALIAS api COMPONENTS afield
+       WITH NON-UNIQUE SORTED KEY std COMPONENTS sfield.
+
+DATA foo TYPE tt.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
