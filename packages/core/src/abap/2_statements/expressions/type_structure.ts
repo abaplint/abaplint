@@ -9,9 +9,10 @@ export class TypeStructure extends Expression {
     const create = seq("CREATE", alt(NamespaceSimpleName, EntityAssociation));
     const update = seq("UPDATE", NamespaceSimpleName);
     const action = seq("ACTION IMPORT", SourceField);
+    const permissionsRequest = seq("PERMISSIONS REQUEST", SourceField);
     const evt = seq("EVENT", EventName);
 
-    return seq("TYPE STRUCTURE FOR", altPrio(hier, evt, create, update, action));
+    return seq("TYPE STRUCTURE FOR", altPrio(hier, evt, create, update, action, permissionsRequest));
   }
 
 }

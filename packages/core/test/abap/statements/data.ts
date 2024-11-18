@@ -115,6 +115,7 @@ const tests = [
   `DATA ?line TYPE i.`,
   `DATA create_rapbonode_cba_line TYPE STRUCTURE FOR CREATE ZDMO_R_RAPG_ProjectTP\\_Node.`,
   `DATA create_rapbonode_cba TYPE TABLE FOR CREATE ZDMO_R_RAPG_ProjectTP\\_Node.`,
+  `DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST zfoobar.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
