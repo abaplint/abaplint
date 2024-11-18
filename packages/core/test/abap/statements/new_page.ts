@@ -68,6 +68,8 @@ const tests = [
               DESTINATION target
               COPIES bar
               LIST NAME foo.`,
+
+  `NEW-PAGE NO-TOPOFPAGE.`,
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);

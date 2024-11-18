@@ -31,6 +31,7 @@ export class NewPage implements IStatement {
                             alt("NO-TITLE", "WITH-TITLE"),
                             alt("NO-HEADING", "WITH-HEADING"),
                             "NO DIALOG",
+                            "NO-TOPOFPAGE",
                             parameters,
                             listAuth,
                             immediately,

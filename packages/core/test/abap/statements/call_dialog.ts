@@ -16,6 +16,8 @@ const tests = [
   "    field1 from value\n" +
   "    field2 from 'FOO'.",
 
+  `CALL DIALOG gi_var-field
+     EXPORTING psps.`,
 ];
 
 statementType(tests, "CALL DIALOG", Statements.CallDialog);

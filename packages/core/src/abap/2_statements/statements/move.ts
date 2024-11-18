@@ -15,7 +15,7 @@ export class Move implements IStatement {
                      altPrio(
                        seq("EXACT", Source, "TO", Target),
                        seq(Source, altPrio("?TO", "TO"), Target)),
-                     opt(seq("PERCENTAGE", Source)));
+                     opt(seq("PERCENTAGE", Source, opt(alt("LEFT", "RIGHT")))));
 
 
     const calcAssign = ver(Version.v754,

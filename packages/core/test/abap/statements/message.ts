@@ -36,6 +36,8 @@ const tests = [
   "MESSAGE ID '00' TYPE 'E' NUMBER '000'.",
   "MESSAGE e014(foo/bar) WITH TEXT-e03.", // yea, well, this should not give a syntax error, even tho the namespace is obviously wrong
   "MESSAGE e014(foo/bar/moo/boo) WITH TEXT-e03.",
+  `message e100(c+).`,
+  `message e100(c+) raising INCONSISTENT_INPUT.`,
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);

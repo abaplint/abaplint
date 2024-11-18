@@ -320,6 +320,7 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
       ELSE THROW zcx_bar( MESSAGE e022 ) ).`,
 
   `MOVE foo TO bar PERCENTAGE len.`,
+  `MOVE foo-moo TO bar PERCENTAGE 100 RIGHT.`,
   `lt_root_create = CORRESPONDING #( roots CHANGING CONTROL EXCEPT DeleteHidden UpdateHidden ValidTo ).`,
 ];
 
