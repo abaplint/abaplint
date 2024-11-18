@@ -10955,4 +10955,18 @@ CONCATENATE '1' p_table+1(3) INTO scr.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("INCLUDE header lined table", () => {
+    const abap = `
+DATA: BEGIN OF itab OCCURS 0,
+        field TYPE c LENGTH 2,
+      END OF itab.
+
+DATA: BEGIN OF foobar OCCURS 0.
+        INCLUDE STRUCTURE itab.
+DATA: moo TYPE c LENGTH 10,
+      END OF foobar.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

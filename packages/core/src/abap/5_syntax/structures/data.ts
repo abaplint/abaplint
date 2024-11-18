@@ -67,6 +67,9 @@ export class Data {
         if (found instanceof Basic.UnknownType) {
           return new TypedIdentifier(name, input.filename, new Basic.UnknownType("unknown type, " + typeName));
         }
+        if (found instanceof Basic.TableType && found.isWithHeader()) {
+          found = found.getRowType();
+        }
         if (!(found instanceof Basic.StructureType)) {
           const message = "not structured, " + typeName;
           input.issues.push(syntaxIssue(input, typeToken!, message));
