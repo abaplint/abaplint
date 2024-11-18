@@ -12,7 +12,7 @@ import {IAllowedNaming} from "./_iobject";
 
 export enum EnhancementCategory {
   NotClassified = "0",
-  CannotBeEhanced = "1",
+  CannotBeEnhanced = "1",
   Character = "2",
   CharacterOrNumeric = "3",
   Deep = "4",
@@ -146,8 +146,12 @@ export class Table extends AbstractObject {
           if (field.GROUPNAME !== undefined) {
             components.push({name: field.GROUPNAME, type: found});
           }
-          for (const c of found.getComponents()) {
-            components.push({name: c.name, type: c.type});
+
+          if (field.FIELDNAME.startsWith(".INCLU-") === false
+              || field.FIELDNAME === ".INCLU--AP") {
+            for (const c of found.getComponents()) {
+              components.push({name: c.name, type: c.type});
+            }
           }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {

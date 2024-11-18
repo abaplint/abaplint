@@ -141,7 +141,7 @@ describe("Table, parse XML", () => {
     }
     expect(fields.getComponents().length).to.equal(4);
     expect(tabl.getTableCategory()).to.equal(TableCategory.Transparent);
-    expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEhanced);
+    expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEnhanced);
     expect(tabl.getDescription()).to.equal("testing");
   });
 
