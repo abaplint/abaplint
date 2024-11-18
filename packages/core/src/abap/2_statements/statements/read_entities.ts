@@ -17,7 +17,7 @@ export class ReadEntities implements IStatement {
                   "ENTITY", SimpleName,
                   opt(seq("BY", AssociationName)),
                   alt(fields, from, all),
-                  "RESULT", Target,
+                  optPrio(seq("RESULT", Target)),
                   optPrio(seq("LINK", Target)),
                   optPrio(seq("FAILED", Target)),
                   optPrio(seq("REPORTED", Target)));
