@@ -10946,4 +10946,13 @@ WRITE foo-steps1-bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Parameters length", () => {
+    const abap = `
+DATA scr(4) TYPE c.
+PARAMETERS p_table(4) TYPE c OBLIGATORY DEFAULT 'AAAA'.
+CONCATENATE '1' p_table+1(3) INTO scr.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

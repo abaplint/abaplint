@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, altPrio, per, regex as reg} from "../combi";
-import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName, SimpleSource1, DatabaseTable} from "../expressions";
+import {Source, Constant, FieldChain, Dynamic, Field, FieldSub, RadioGroupName, Modif, TypeName, SimpleSource1, DatabaseTable, ConstantFieldLength} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -41,7 +41,7 @@ export class Parameter implements IStatement {
 
     const ret = seq(para,
                     FieldSub,
-                    opt(FieldLength),
+                    opt(ConstantFieldLength),
                     opt(perm));
 
     return verNot(Version.Cloud, ret);
