@@ -1,5 +1,5 @@
 import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio, plus, ver} from "../combi";
-import {Constant, TypeName, Integer} from ".";
+import {Constant, TypeName, Integer, EntityAssociation} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
 import {TypeTableKey} from "./type_table_key";
@@ -43,7 +43,7 @@ export class TypeTable extends Expression {
       "LOCK",
       "READ RESULT",
       "UPDATE",
-    ), TypeName));
+    ), alt(TypeName, EntityAssociation)));
 
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
     const oldLike = seq(opt("REF TO"), FieldChain, alt(seq(occurs, opt(header)), header));
