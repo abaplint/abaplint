@@ -2265,4 +2265,22 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("table key stuff", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         afield TYPE fieldname,
+         sfield TYPE fieldname,
+         stab   TYPE tabname,
+       END OF ty.
+
+TYPES tt TYPE HASHED TABLE OF ty
+       WITH UNIQUE KEY primary_key ALIAS api COMPONENTS afield
+       WITH NON-UNIQUE SORTED KEY std COMPONENTS sfield.
+
+DATA foo TYPE tt.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

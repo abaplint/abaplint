@@ -119,7 +119,7 @@ export class StatementFlow {
   }
 
   // note: it must handle macros and chained statements
-  private buildName(statement: StatementNode): string {
+  public static buildName(statement: StatementNode): string {
     let token: AbstractToken | undefined = undefined;
     const colon = statement.getColon();
     if (colon === undefined) {
@@ -160,7 +160,7 @@ export class StatementFlow {
       if (c.get() instanceof Structures.Normal) {
         const firstChild = c.getFirstChild(); // "Normal" only has one child
         if (firstChild instanceof StatementNode) {
-          const name = this.buildName(firstChild);
+          const name = StatementFlow.buildName(firstChild);
           graph.addEdge(current, name, FLOW_EDGE_TYPE.undefined);
           current = name;
           if (firstChild.get() instanceof Statements.Check) {
@@ -206,7 +206,7 @@ export class StatementFlow {
 
     const type = n.get();
     if (type instanceof Structures.If) {
-      const ifName = this.buildName(n.findDirectStatement(Statements.If)!);
+      const ifName = StatementFlow.buildName(n.findDirectStatement(Statements.If)!);
       const sub = this.traverseBody(this.findBody(n), context);
       graph.addEdge(current, ifName, FLOW_EDGE_TYPE.undefined);
       graph.addGraph(ifName, sub, FLOW_EDGE_TYPE.true);
@@ -219,7 +219,7 @@ export class StatementFlow {
           continue;
         }
 
-        const elseIfName = this.buildName(elseifst);
+        const elseIfName = StatementFlow.buildName(elseifst);
         const sub = this.traverseBody(this.findBody(e), context);
         graph.addEdge(current, elseIfName, FLOW_EDGE_TYPE.false);
         graph.addGraph(elseIfName, sub, FLOW_EDGE_TYPE.true);
@@ -230,7 +230,7 @@ export class StatementFlow {
       const els = n.findDirectStructure(Structures.Else);
       const elsest = els?.findDirectStatement(Statements.Else);
       if (els && elsest) {
-        const elseName = this.buildName(elsest);
+        const elseName = StatementFlow.buildName(elsest);
         const sub = this.traverseBody(this.findBody(els), context);
         graph.addEdge(current, elseName, FLOW_EDGE_TYPE.false);
         graph.addGraph(elseName, sub, FLOW_EDGE_TYPE.undefined);
@@ -245,7 +245,7 @@ export class StatementFlow {
       || type instanceof Structures.Select
       || type instanceof Structures.LoopAtScreen
       || type instanceof Structures.Do) {
-      const loopName = this.buildName(n.getFirstStatement()!);
+      const loopName = StatementFlow.buildName(n.getFirstStatement()!);
       const sub = this.traverseBody(this.findBody(n), {...context, loopStart: loopName, loopEnd: graph.getEnd()});
 
       graph.addEdge(current, loopName, FLOW_EDGE_TYPE.undefined);
@@ -258,7 +258,7 @@ export class StatementFlow {
         || type instanceof Structures.Types) {
 // these doesnt affect control flow, so just take the first statement
       const statement = n.getFirstStatement()!;
-      const name = this.buildName(statement);
+      const name = StatementFlow.buildName(statement);
       graph.addEdge(current, name, FLOW_EDGE_TYPE.undefined);
       graph.addEdge(name, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
 
@@ -266,7 +266,7 @@ export class StatementFlow {
         || type instanceof Structures.AtLast
         || type instanceof Structures.At
         || type instanceof Structures.OnChange) {
-      const name = this.buildName(n.getFirstStatement()!);
+      const name = StatementFlow.buildName(n.getFirstStatement()!);
 
       const body = this.traverseBody(this.findBody(n), context);
       graph.addEdge(current, name, FLOW_EDGE_TYPE.undefined);
@@ -275,7 +275,7 @@ export class StatementFlow {
       graph.addEdge(current, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
 
     } else if (type instanceof Structures.Try) {
-      const tryName = this.buildName(n.getFirstStatement()!);
+      const tryName = StatementFlow.buildName(n.getFirstStatement()!);
 
       const body = this.traverseBody(this.findBody(n), context);
       graph.addEdge(current, tryName, FLOW_EDGE_TYPE.undefined);
@@ -283,7 +283,7 @@ export class StatementFlow {
       graph.addEdge(body.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
 
       for (const c of n.findDirectStructures(Structures.Catch)) {
-        const catchName = this.buildName(c.getFirstStatement()!);
+        const catchName = StatementFlow.buildName(c.getFirstStatement()!);
         const catchBody = this.traverseBody(this.findBody(c), context);
 // TODO: this does not take exceptions into account
         graph.addEdge(body.getEnd(), catchName, FLOW_EDGE_TYPE.undefined);
@@ -293,14 +293,14 @@ export class StatementFlow {
 // TODO, handle CLEANUP
     } else if (type instanceof Structures.CatchSystemExceptions) {
 // TODO: this is not completely correct
-      const catchName = this.buildName(n.getFirstStatement()!);
+      const catchName = StatementFlow.buildName(n.getFirstStatement()!);
       const body = this.traverseBody(this.findBody(n), context);
 
       graph.addEdge(current, catchName, FLOW_EDGE_TYPE.undefined);
       graph.addGraph(catchName, body, FLOW_EDGE_TYPE.undefined);
       graph.addEdge(body.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
     } else if (type instanceof Structures.Case) {
-      const caseName = this.buildName(n.getFirstStatement()!);
+      const caseName = StatementFlow.buildName(n.getFirstStatement()!);
       graph.addEdge(current, caseName, FLOW_EDGE_TYPE.undefined);
       let othersFound = false;
       for (const w of n.findDirectStructures(Structures.When)) {
@@ -311,7 +311,7 @@ export class StatementFlow {
         if (first.get() instanceof Statements.WhenOthers) {
           othersFound = true;
         }
-        const firstName = this.buildName(first);
+        const firstName = StatementFlow.buildName(first);
 
         const sub = this.traverseBody(this.findBody(w), context);
         graph.addEdge(caseName, firstName, FLOW_EDGE_TYPE.undefined);
@@ -322,7 +322,7 @@ export class StatementFlow {
         graph.addEdge(caseName, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
       }
     } else if (type instanceof Structures.CaseType) {
-      const caseName = this.buildName(n.getFirstStatement()!);
+      const caseName = StatementFlow.buildName(n.getFirstStatement()!);
       graph.addEdge(current, caseName, FLOW_EDGE_TYPE.undefined);
       let othersFound = false;
       for (const w of n.findDirectStructures(Structures.WhenType)) {
@@ -333,7 +333,7 @@ export class StatementFlow {
         if (first.get() instanceof Statements.WhenOthers) {
           othersFound = true;
         }
-        const firstName = this.buildName(first);
+        const firstName = StatementFlow.buildName(first);
 
         const sub = this.traverseBody(this.findBody(w), context);
         graph.addEdge(caseName, firstName, FLOW_EDGE_TYPE.undefined);
