@@ -255,6 +255,7 @@ export class StatementFlow {
     } else if (type instanceof Structures.Data
         || type instanceof Structures.Constants
         || type instanceof Structures.Statics
+        || type instanceof Structures.ExecSQL
         || type instanceof Structures.Types) {
 // these doesnt affect control flow, so just take the first statement
       const statement = n.getFirstStatement()!;

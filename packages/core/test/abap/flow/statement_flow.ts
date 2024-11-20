@@ -589,4 +589,15 @@ STATICS: BEGIN OF foo,
 "StaticBegin:3,10" -> "end#1";`);
   });
 
+  it("exec sql", async () => {
+    const abap = `
+EXEC SQL.
+  ALTER FOO BAR
+ENDEXEC.`;
+
+    const res2 = await runFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "ExecSQL:3,1";
+"ExecSQL:3,1" -> "end#1";`);
+  });
+
 });
