@@ -37,6 +37,8 @@ const tests = [
   `TYPES t_prot TYPE s_prot OCCURS fix_row.`,
   `TYPES line# TYPE i.`,
   `TYPES li#ne TYPE i.`,
+  `TYPES tt_failed_root TYPE TABLE FOR FAILED EARLY /dmo/fsa_r_roottp\\\\root.`,
+  `TYPES tt_reported_root TYPE TABLE FOR REPORTED EARLY /dmo/fsa_r_roottp\\\\root.`,
 ];
 
 statementType(tests, "TYPE", Statements.Type);
