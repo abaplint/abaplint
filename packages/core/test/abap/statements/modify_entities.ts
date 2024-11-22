@@ -55,6 +55,13 @@ const tests = [
 
   `MODIFY ENTITIES OF /DMO/FSA_R_RootTP IN LOCAL MODE ENTITY Root
     EXECUTE calcTotalPieces FROM CORRESPONDING #( roots ).`,
+
+  `MODIFY ENTITY ZDMO_R_RAPG_ProjectTP
+    EXECUTE Activate
+    FROM VALUE #( ( %key-RapboUUID = my_rapnodeuuid ) )
+    MAPPED DATA(mapped_active)
+    FAILED DATA(failed_active)
+    REPORTED DATA(reported_active).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

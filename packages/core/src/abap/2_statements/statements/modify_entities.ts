@@ -16,15 +16,25 @@ export class ModifyEntities implements IStatement {
       seq("EXECUTE", SimpleName, "FROM", Source),
       seq("CREATE", optPrio("AUTO FILL CID"), fieldsWith));
 
-    const s = seq("MODIFY ENTITIES OF", NamespaceSimpleName,
-                  opt("IN LOCAL MODE"),
-                  "ENTITY", SimpleName,
-                  operation,
-                  optPrio(per(seq("FAILED", Target),
-                              seq("RESULT", Target),
-                              seq("MAPPED", Target),
-                              seq("REPORTED", Target))));
-    return ver(Version.v754, s);
+    const failed = seq("FAILED", Target);
+    const result = seq("RESULT", Target);
+    const mapped = seq("MAPPED", Target);
+    const reported = seq("REPORTED", Target);
+    const from = seq("FROM", Source);
+    const execute = seq("EXECUTE", NamespaceSimpleName);
+
+    const entities = seq("ENTITIES OF", NamespaceSimpleName,
+                         opt("IN LOCAL MODE"),
+                         "ENTITY", SimpleName,
+                         operation,
+                         optPrio(per(failed,
+                                     result,
+                                     mapped,
+                                     reported)));
+
+    const entity = seq("ENTITY", NamespaceSimpleName, execute, from, mapped, failed, reported);
+
+    return ver(Version.v754, seq("MODIFY", alt(entities, entity)));
   }
 
 }
