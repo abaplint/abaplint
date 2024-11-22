@@ -15,6 +15,8 @@ const tests = [
   RESPONSE OF /foo/bar
   FAILED DATA(failed)
   REPORTED DATA(reported).`,
+
+  `COMMIT ENTITIES RESPONSES FAILED DATA(commit_failed) REPORTED DATA(commit_reported).`,
 ];
 
 statementType(tests, "COMMIT ENTITIES", Statements.CommitEntities);
