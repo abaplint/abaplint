@@ -13,7 +13,14 @@ export class TypeStructure extends Expression {
     const permissionsRequest = seq("PERMISSIONS REQUEST", NamespaceSimpleName);
     const evt = seq("EVENT", EventName);
 
-    return seq("TYPE STRUCTURE FOR", altPrio(hier, evt, create, update, action, permissionsRequest, readResult));
+    const failedEarly = seq("FAILED EARLY", NamespaceSimpleName);
+    const mappedEarly = seq("MAPPED EARLY", NamespaceSimpleName);
+    const reportedEarly = seq("REPORTED EARLY", NamespaceSimpleName);
+
+    const structure = seq("STRUCTURE FOR", altPrio(hier, evt, create, update, action, permissionsRequest, readResult));
+    const response = seq("RESPONSE FOR", altPrio(failedEarly, mappedEarly, reportedEarly));
+
+    return seq("TYPE", altPrio(structure, response));
   }
 
 }

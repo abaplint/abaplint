@@ -39,6 +39,9 @@ const tests = [
   `TYPES li#ne TYPE i.`,
   `TYPES tt_failed_root TYPE TABLE FOR FAILED EARLY /dmo/fsa_r_roottp\\\\root.`,
   `TYPES tt_reported_root TYPE TABLE FOR REPORTED EARLY /dmo/fsa_r_roottp\\\\root.`,
+  `TYPES t_failed TYPE RESPONSE FOR FAILED EARLY ZDMO_R_RAPG_ProjectTP.`,
+  `TYPES t_mapped TYPE RESPONSE FOR MAPPED EARLY ZDMO_R_RAPG_ProjectTP.`,
+  `TYPES t_reported TYPE RESPONSE FOR REPORTED EARLY ZDMO_R_RAPG_ProjectTP.  `,
 ];
 
 statementType(tests, "TYPE", Statements.Type);
