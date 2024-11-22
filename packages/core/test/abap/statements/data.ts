@@ -118,7 +118,7 @@ const tests = [
   `DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST zfoobar.`,
   `DATA update_line TYPE STRUCTURE FOR UPDATE zDMO_R_RAPG_ProjectTP\\\\Project .`,
   `DATA lt_chart_create TYPE TABLE FOR CREATE /dmo/fsa_r_roottp\\\\root\\_chart.`,
-//  `DATA draft_keys TYPE TABLE FOR DETERMINATION zDMO_R_RAPG_ProjectTP\\\\Node~SetRepositoryObjectNames_det.`,
+  `DATA draft_keys TYPE TABLE FOR DETERMINATION zDMO_R_RAPG_ProjectTP\\\\Node~SetRepositoryObjectNames_det.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
