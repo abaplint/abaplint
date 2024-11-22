@@ -3,6 +3,6 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class EntityAssociation extends Expression {
   public getRunnable(): IStatementRunnable {
-    return reg(/^\w+(\\_|\\\\)\w+$/);
+    return reg(/^[\/\w]+(\\_|\\\\)[\_\w\\~]+$/);
   }
 }

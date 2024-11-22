@@ -39,8 +39,11 @@ export class TypeTable extends Expression {
       "ACTION RESULT",
       "CREATE",
       "EVENT",
+      "REPORTED EARLY",
+      "FAILED EARLY",
       "FAILED",
       "LOCK",
+      "DETERMINATION",
       "READ RESULT",
       "UPDATE",
     ), alt(TypeName, EntityAssociation)));
