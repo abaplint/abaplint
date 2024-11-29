@@ -197,6 +197,19 @@ LOOP AT tab INTO row.
   ENDAT.
 ENDLOOP.`, cnt: 0},
 
+  {abap: `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_dummy FOR TABLE FUNCTION sdfs.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_dummy BY DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY.
+    RETURN
+      SELECT dummy FROM sys.dummy;
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

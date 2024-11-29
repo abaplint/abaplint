@@ -1,6 +1,6 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, ver, regex as reg, optPrio} from "../combi";
+import {seq, alt, altPrio, ver, optPrio} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -20,7 +20,7 @@ export class MethodDef implements IStatement {
     const testing = seq(optPrio(Abstract), "FOR TESTING", optPrio(altPrio(MethodDefRaising, MethodDefExceptions)));
 
 // todo, this is only from version something
-    const tableFunction = seq("TABLE FUNCTION", reg(/^\w+?$/));
+    const tableFunction = seq("TABLE FUNCTION", NamespaceSimpleName);
 // todo, this is only from version something
     const ddl = "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED";
 

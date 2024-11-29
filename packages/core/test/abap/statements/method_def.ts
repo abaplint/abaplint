@@ -75,6 +75,7 @@ const tests = [
   "methods name exporting !out type %_C_POINTER.",
   "METHODS run IMPORTING parameter TYPE zif_definitions~ty_type.",
   "CLASS-METHODS foo FOR TABLE FUNCTION bar.",
+  "CLASS-METHODS foo FOR TABLE FUNCTION /foo/bar.",
   "class-methods run importing it_list like gt_list[].",
 
   `METHODS get_uri_query_parameter
