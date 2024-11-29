@@ -13,7 +13,7 @@ const tests = [
      REQUEST permission_request
      RESULT DATA(permission_result)
      FAILED DATA(failed_permission_result)
-     REPORTED DATA(reported_permission_result).`
+     REPORTED DATA(reported_permission_result).`,
 ];
 
 statementType(tests, "GET PERMISSIONS", Statements.GetPermissions);
