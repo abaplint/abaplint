@@ -14,6 +14,7 @@ import {VirtualPosition} from "../virtual_position";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
 import {StatementNode} from "../abap/nodes";
+import {NativeSQL} from "../abap/2_statements/statements/_statement";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -125,6 +126,10 @@ ENDCLASS.`,
         } else if (skip === true) {
           continue;
         }
+      }
+
+      if (statement.get() instanceof NativeSQL) {
+        continue;
       }
 
       // only apply for the first statement in a chain
