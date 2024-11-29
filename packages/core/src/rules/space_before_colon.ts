@@ -50,9 +50,14 @@ export class SpaceBeforeColon extends ABAPRule {
         continue;
       }
 
-      let prev = statement.getTokens()[0];
+      // todo: this can be more smart, performance wise
+      const tokens = [...statement.getTokens()];
+      tokens.push(colon);
+      tokens.sort((a, b) => a.getStart().isAfter(b.getStart()) ? 1 : -1 );
 
-      for (const token of file.getTokens()) {
+      let prev = tokens[0];
+
+      for (const token of tokens) {
         if (token.getStr() === ":" && !prev) {
           const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
           issues.push(issue);
