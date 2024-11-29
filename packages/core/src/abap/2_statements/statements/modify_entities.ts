@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {alt, opt, optPrio, per, plus, seq, ver} from "../combi";
+import {alt, opt, optPrio, per, plus, plusPrio, seq, ver} from "../combi";
 import {NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -25,8 +25,7 @@ export class ModifyEntities implements IStatement {
 
     const entities = seq("ENTITIES OF", NamespaceSimpleName,
                          opt("IN LOCAL MODE"),
-                         "ENTITY", SimpleName,
-                         operation,
+                         plusPrio(seq("ENTITY", SimpleName, operation)),
                          optPrio(per(failed,
                                      result,
                                      mapped,

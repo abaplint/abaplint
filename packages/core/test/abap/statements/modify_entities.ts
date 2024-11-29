@@ -62,6 +62,21 @@ const tests = [
     MAPPED DATA(mapped_active)
     FAILED DATA(failed_active)
     REPORTED DATA(reported_active).`,
+
+  `MODIFY ENTITIES OF zfoobar IN LOCAL MODE
+    ENTITY Project
+      UPDATE FIELDS (
+                      boname
+                      ADTLink
+                      SAPObjectType
+                     ) WITH update_bo
+    ENTITY Node
+      UPDATE FIELDS (
+                      parententityname
+                      cdsiview
+                      SAPObjectType
+                      ) WITH update
+    REPORTED DATA(update_reported).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
