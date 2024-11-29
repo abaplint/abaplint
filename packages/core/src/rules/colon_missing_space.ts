@@ -5,6 +5,7 @@ import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {Comment, NativeSQL} from "../abap/2_statements/statements/_statement";
 
 export class ColonMissingSpaceConf extends BasicRuleConfig {
 }
@@ -39,19 +40,31 @@ export class ColonMissingSpace extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    const tokens = file.getTokens();
+    for (const statement of file.getStatements()) {
+      const colon = statement.getColon();
+      if (colon === undefined
+          || statement.get() instanceof NativeSQL
+          || statement.get() instanceof Comment) {
+        continue;
+      }
 
-    for (let i = 0; i < tokens.length; i++) {
-      const token = tokens[i];
-      if (token.getStr() === ":"
-          && tokens[i + 1] !== undefined
-          && tokens[i + 1].getRow() === token.getRow()
-          && tokens[i + 1].getCol() === token.getCol() + 1) {
-        const start = token.getStart();
-        const end = new Position(start.getRow(), start.getCol() + 1);
-        const fix = EditHelper.insertAt(file, end, " ");
-        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
-        issues.push(issue);
+      // todo: this can be more smart, performance wise
+      const tokens = [...statement.getTokens()];
+      tokens.push(colon);
+      tokens.sort((a, b) => a.getStart().isAfter(b.getStart()) ? 1 : -1 );
+
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        if (token.getStr() === ":"
+            && tokens[i + 1] !== undefined
+            && tokens[i + 1].getRow() === token.getRow()
+            && tokens[i + 1].getCol() === token.getCol() + 1) {
+          const start = token.getStart();
+          const end = new Position(start.getRow(), start.getCol() + 1);
+          const fix = EditHelper.insertAt(file, end, " ");
+          const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
+          issues.push(issue);
+        }
       }
     }
 
