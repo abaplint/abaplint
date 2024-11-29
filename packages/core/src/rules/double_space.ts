@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight} from "../abap/1_lexer/tokens";
 import {TokenNode, StatementNode, TokenNodeRegex} from "../abap/nodes";
-import {Unknown, MacroContent, MacroCall} from "../abap/2_statements/statements/_statement";
+import {Unknown, MacroContent, MacroCall, NativeSQL} from "../abap/2_statements/statements/_statement";
 import {Events, MethodDef} from "../abap/2_statements/statements";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
@@ -58,6 +58,9 @@ export class DoubleSpace extends ABAPRule {
     let issues: Issue[] = [];
 
     for (const s of file.getStatements()) {
+      if (s.get() instanceof NativeSQL) {
+        continue;
+      }
 
       if (this.conf.keywords === true
           && !(s.get() instanceof Unknown)
