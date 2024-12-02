@@ -26,6 +26,7 @@ export class NewObject {
       const clas = input.scope.findClassDefinition(targetType.getIdentifierName());
       if (clas) {
         input.scope.addReference(typeToken, clas, ReferenceType.InferredType, input.filename);
+        input.scope.addReference(typeToken, clas, ReferenceType.ConstructorReference, input.filename);
       } else {
         const intf = input.scope.findInterfaceDefinition(targetType.getIdentifierName());
         if (intf) {
@@ -51,6 +52,7 @@ export class NewObject {
       const objDefinition = input.scope.findObjectDefinition(typeName);
       if (objDefinition) {
         input.scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, input.filename);
+        input.scope.addReference(typeToken, objDefinition, ReferenceType.ConstructorReference, input.filename);
         const objref = new ObjectReferenceType(objDefinition);
         const clas = input.scope.findClassDefinition(objref.getIdentifierName());
         if (clas?.isAbstract() === true) {

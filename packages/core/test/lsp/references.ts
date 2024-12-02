@@ -170,7 +170,7 @@ START-OF-SELECTION.
     expect(found.length).to.equal(1);
   });
 
-  it.only("find reference to constructor method, NEW referenced", async () => {
+  it("find reference to constructor method, NEW referenced", async () => {
     const file = new MemoryFile("foobar.prog.abap", `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -187,7 +187,7 @@ START-OF-SELECTION.
   foo = NEW lcl( ).`);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    const found = new References(reg).references(buildPosition(file, 0, 7));
+    const found = new References(reg).references(buildPosition(file, 7, 10));
     expect(found.length).to.equal(1);
   });
 
@@ -208,7 +208,7 @@ START-OF-SELECTION.
   foo = NEW #( ).`);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    const found = new References(reg).references(buildPosition(file, 1, 13));
+    const found = new References(reg).references(buildPosition(file, 7, 10));
     expect(found.length).to.equal(1);
   });
 
