@@ -25,6 +25,7 @@ export class CreateObject implements StatementSyntax {
       cdef = input.scope.findClassDefinition(name);
       if (cdef) {
         input.scope.addReference(token, cdef, ReferenceType.ObjectOrientedReference, input.filename);
+        input.scope.addReference(token, cdef, ReferenceType.ConstructorReference, input.filename);
         if (cdef.isAbstract() === true) {
           const message = cdef.getName() + " is abstract, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -44,48 +45,49 @@ export class CreateObject implements StatementSyntax {
       new Source().runSyntax(s, input);
     }
 
-    let first = true;
-    for (const t of node.findAllExpressions(Expressions.Target)) {
+    for (const t of node.findDirectExpression(Expressions.ParameterListExceptions)?.findAllExpressions(Expressions.Target) || []) {
+      new Target().runSyntax(t, input);
+    }
+
+    const t = node.findDirectExpression(Expressions.Target);
+    if (t) {
       const found = new Target().runSyntax(t, input);
-      if (first === true) {
-        first = false;
-        if (found instanceof VoidType) {
-          continue;
-        } else if (found instanceof UnknownType) {
-          const message = "Target type unknown, " + t.concatTokens();
+      if (found instanceof VoidType) {
+        // do nothing
+      } else if (found instanceof UnknownType) {
+        const message = "Target type unknown, " + t.concatTokens();
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (!(found instanceof ObjectReferenceType)
+          && !(found instanceof AnyType)
+          && !(found instanceof DataType)
+          && !(found instanceof GenericObjectReferenceType)) {
+        const message = "Target must be an object reference, " + t.concatTokens();
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (found instanceof GenericObjectReferenceType && type === undefined) {
+        const message = "Generic type, cannot be instantiated";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (found instanceof ObjectReferenceType) {
+        const id = found.getIdentifier();
+        if (id instanceof InterfaceDefinition && type === undefined) {
+          const message = "Interface reference, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
-        } else if (!(found instanceof ObjectReferenceType)
-            && !(found instanceof AnyType)
-            && !(found instanceof DataType)
-            && !(found instanceof GenericObjectReferenceType)) {
-          const message = "Target must be an object reference, " + t.concatTokens();
+        } else if (found instanceof ObjectReferenceType
+            && type === undefined
+            && input.scope.findInterfaceDefinition(found.getQualifiedName())) {
+          const message = "Interface reference, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
-        } else if (found instanceof GenericObjectReferenceType && type === undefined) {
-          const message = "Generic type, cannot be instantiated";
+        } else if (id instanceof ClassDefinition && cdef === undefined) {
+          cdef = id;
+        }
+        if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
+          const message = id.getName() + " is abstract, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
-        } else if (found instanceof ObjectReferenceType) {
-          const id = found.getIdentifier();
-          if (id instanceof InterfaceDefinition && type === undefined) {
-            const message = "Interface reference, cannot be instantiated";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-            return;
-          } else if (found instanceof ObjectReferenceType
-              && type === undefined
-              && input.scope.findInterfaceDefinition(found.getQualifiedName())) {
-            const message = "Interface reference, cannot be instantiated";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-            return;
-          } else if (id instanceof ClassDefinition && cdef === undefined) {
-            cdef = id;
-          }
-          if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
-            const message = id.getName() + " is abstract, cannot be instantiated";
-            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-            return;
-          }
         }
       }
     }
@@ -93,6 +95,8 @@ export class CreateObject implements StatementSyntax {
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(t, input);
     }
+
+    input.scope.addReference(t?.getFirstToken(), cdef, ReferenceType.ConstructorReference, input.filename);
 
     this.validateParameters(cdef, node, input);
   }

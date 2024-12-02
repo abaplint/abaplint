@@ -20,6 +20,13 @@ CLASS zcl_abap_spatial_amdp IMPLEMENTATION.
 
   ENDMETHOD.
 ENDCLASS.`},
+  {abap: `
+CLASS lcl_global_func IMPLEMENTATION.
+  METHOD get_dummy BY DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY.
+    RETURN
+      SELECT dummy FROM "SYS".dummy WHERE dummy = :var;
+  ENDMETHOD.
+ENDCLASS.`},
 ];
 
 structureType(cases, new ClassImplementation());

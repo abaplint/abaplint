@@ -199,12 +199,16 @@ export class StatementParser {
         if (type instanceof Statements.EndExec
             || type instanceof Statements.EndMethod) {
           sql = false;
-        } else if (!(type instanceof Comment)) {
+        } else {
           wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(this.tokensToNodes(statement.getTokens()));
+          if (statement.concatTokens().toUpperCase().endsWith("ENDMETHOD.")) {
+            // yea, this is not completely correct
+            wa.statements[i] = new StatementNode(new Statements.EndMethod()).setChildren(this.tokensToNodes(statement.getTokens()));
+            sql = false;
+          }
         }
       }
     }
-
   }
 
 // for each statement, run statement matchers to figure out which kind of statement it is
