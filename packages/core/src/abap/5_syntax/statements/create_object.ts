@@ -25,7 +25,7 @@ export class CreateObject implements StatementSyntax {
       cdef = input.scope.findClassDefinition(name);
       if (cdef) {
         input.scope.addReference(token, cdef, ReferenceType.ObjectOrientedReference, input.filename);
-        input.scope.addReference(token, cdef, ReferenceType.ConstructorReference, input.filename);
+        input.scope.addReference(token, cdef, ReferenceType.ConstructorReference, input.filename, {ooName: cdef.getName()});
         if (cdef.isAbstract() === true) {
           const message = cdef.getName() + " is abstract, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -96,7 +96,8 @@ export class CreateObject implements StatementSyntax {
       new Dynamic().runSyntax(t, input);
     }
 
-    input.scope.addReference(t?.getFirstToken(), cdef, ReferenceType.ConstructorReference, input.filename);
+    input.scope.addReference(t?.getFirstToken(), cdef, ReferenceType.ConstructorReference, input.filename,
+                             {ooName: cdef?.getName()});
 
     this.validateParameters(cdef, node, input);
   }
