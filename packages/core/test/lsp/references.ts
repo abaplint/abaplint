@@ -128,4 +128,88 @@ foobar.`;
     expect(found.length).to.equal(1);
   });
 
+  it("find reference to constructor method, create object", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lcl.
+  CREATE OBJECT foo.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 7, 10));
+    expect(found.length).to.equal(1);
+  });
+
+  it("find reference to constructor method, create object TYPE", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO voided.
+  CREATE OBJECT foo TYPE lcl.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 7, 10));
+    expect(found.length).to.equal(1);
+  });
+
+  it.only("find reference to constructor method, NEW referenced", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lcl.
+  foo = NEW lcl( ).`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 0, 7));
+    expect(found.length).to.equal(1);
+  });
+
+  it("find reference to constructor method, NEW inferred", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO lcl.
+  foo = NEW #( ).`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 1, 13));
+    expect(found.length).to.equal(1);
+  });
+
 });
