@@ -20,6 +20,7 @@ import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
 
+import {DeleteMemory} from "./statements/delete_memory";
 import {Perform} from "./statements/perform";
 import {Type} from "./statements/type";
 import {Constant} from "./statements/constant";
@@ -278,6 +279,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new ModifyInternal());
   addToMap(new ReadTextpool());
   addToMap(new EditorCall());
+  addToMap(new DeleteMemory());
 }
 
 // -----------------------------------

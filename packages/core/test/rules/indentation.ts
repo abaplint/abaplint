@@ -210,6 +210,18 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`, cnt: 0},
 
+  {abap: `CLASS lcl_global_func DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_amdp_marker_hdb.
+    CLASS-METHODS get_dummy FOR TABLE FUNCTION /test/abc.
+ENDCLASS.
+
+CLASS lcl_global_func IMPLEMENTATION.
+  METHOD get_dummy BY DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY.
+    RETURN
+      SELECT dummy FROM "SYS".dummy WHERE dummy = :var;
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, Indentation);

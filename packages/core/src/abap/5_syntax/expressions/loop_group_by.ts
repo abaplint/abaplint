@@ -6,6 +6,7 @@ import {InlineData} from "./inline_data";
 import {FSTarget} from "./fstarget";
 import {Target} from "./target";
 import {SyntaxInput} from "../_syntax_input";
+import {Source} from "./source";
 
 export class LoopGroupBy {
   public runSyntax(node: ExpressionNode, input: SyntaxInput): void {
@@ -18,8 +19,13 @@ export class LoopGroupBy {
         new Target().runSyntax(t, input);
       }
     }
+
     for (const t of node.findAllExpressions(Expressions.FSTarget)) {
       new FSTarget().runSyntax(t, input, new VoidType("todoGroupBy"));
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.Source)) {
+      new Source().runSyntax(t, input, new VoidType("todoGroupBy"));
     }
 
     for (const c of node.findDirectExpressions(Expressions.LoopGroupByComponent)) {

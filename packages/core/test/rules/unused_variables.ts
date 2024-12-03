@@ -1562,4 +1562,22 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("delete memory", async () => {
+    const abap = `
+DATA memid TYPE voided.
+DELETE FROM MEMORY ID memid.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("LOOP GROUP BY", async () => {
+    const abap = `
+DATA objects TYPE voided.
+LOOP AT objects INTO DATA(grp) GROUP BY grp-devclass INTO DATA(package).
+  WRITE package.
+ENDLOOP.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
