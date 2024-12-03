@@ -206,8 +206,8 @@ export class StatementParser {
             const tokens = statement.getTokens();
             const startTokens = this.tokensToNodes(tokens.slice(tokens.length - 2, tokens.length));
             const endTokens = this.tokensToNodes(tokens.slice(0, tokens.length - 2));
-            wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(startTokens);
-            const item = new StatementNode(new Statements.EndMethod()).setChildren(endTokens);
+            wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(endTokens);
+            const item = new StatementNode(new Statements.EndMethod()).setChildren(startTokens);
             wa.statements.splice(i + 1, 0, item);
             sql = false;
           }

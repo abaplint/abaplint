@@ -22,7 +22,7 @@ CLASS lcl_global_func IMPLEMENTATION.
     RETURN
       SELECT dummy FROM "SYS".dummy WHERE dummy = :var;
   ENDMETHOD.
-ENDCLASS.`, cnt: 0, only: true},
+ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, InStatementIndentation);
