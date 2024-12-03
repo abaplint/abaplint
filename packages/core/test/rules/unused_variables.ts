@@ -1562,4 +1562,12 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.only("delete memory", async () => {
+    const abap = `
+DATA memid TYPE voided.
+DELETE FROM MEMORY ID memid.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
