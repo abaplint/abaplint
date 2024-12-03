@@ -6,7 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
-import {Unknown, Comment} from "../abap/2_statements/statements/_statement";
+import {Unknown, Comment, NativeSQL} from "../abap/2_statements/statements/_statement";
 import {EditHelper} from "../edit_helper";
 import {Position} from "../position";
 import {ABAPFile} from "../abap/abap_file";
@@ -28,7 +28,7 @@ export class InStatementIndentation extends ABAPRule {
       title: "In-statement indentation",
       shortDescription: "Checks alignment within statements which span multiple lines.",
       extendedInformation: `Lines following the first line should be indented once (2 spaces).
-      
+
 For block declaration statements, lines after the first should be indented an additional time (default: +2 spaces)
 to distinguish them better from code within the block.`,
       badExample: `IF 1 = 1
@@ -72,7 +72,9 @@ ENDIF.`,
     }
 
     for (const s of file.getStatements()) {
-      if (s.get() instanceof Comment || s.get() instanceof Unknown) {
+      if (s.get() instanceof Comment
+          || s.get() instanceof Unknown
+          || s.get() instanceof NativeSQL) {
         continue;
       }
 

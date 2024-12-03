@@ -201,9 +201,14 @@ export class StatementParser {
           sql = false;
         } else {
           wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(this.tokensToNodes(statement.getTokens()));
+
           if (statement.concatTokens().toUpperCase().endsWith("ENDMETHOD.")) {
-            // yea, this is not completely correct
-            wa.statements[i] = new StatementNode(new Statements.EndMethod()).setChildren(this.tokensToNodes(statement.getTokens()));
+            const tokens = statement.getTokens();
+            const startTokens = this.tokensToNodes(tokens.slice(tokens.length - 2, tokens.length));
+            const endTokens = this.tokensToNodes(tokens.slice(0, tokens.length - 2));
+            wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(startTokens);
+            const item = new StatementNode(new Statements.EndMethod()).setChildren(endTokens);
+            wa.statements.splice(i + 1, 0, item);
             sql = false;
           }
         }
