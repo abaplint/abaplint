@@ -10,7 +10,7 @@ export class StringTemplateFormatting extends Expression {
     // https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapcompute_string_format_options.htm
     const alphaOptions = altPrio("OUT", "RAW", "IN", Source);
 
-    const alignOptions = altPrio("LEFT", "RIGHT", "CENTER", Source);
+    const alignOptions = altPrio("LEFT", "RIGHT", "CENTER", Source, Dynamic);
 
     const dateTimeOptions = altPrio("RAW", "ISO", "USER", "ENVIRONMENT", Source, Dynamic);
 
