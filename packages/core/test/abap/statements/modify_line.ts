@@ -27,6 +27,8 @@ const tests = [
                     FIELD FORMAT foo-flg_sel INPUT OFF
                     FIELD VALUE  foo-flg_sel FROM SPACE.`,
   `MODIFY CURRENT LINE LINE FORMAT COLOR 2.`,
+  `MODIFY CURRENT LINE LINE FORMAT INTENSIFIED OFF.`,
+  `MODIFY LINE sy-index LINE FORMAT INTENSIFIED OFF.`,
 ];
 
 statementType(tests, "MODIFY LINE", Statements.ModifyLine);

@@ -12,12 +12,14 @@ export class ReadEntities implements IStatement {
     const fields = seq("FIELDS", tok(WParenLeftW), plus(SimpleName), tok(WParenRightW), "WITH", Source);
     const all = seq("ALL FIELDS WITH", Source);
 
+    const entity = seq("ENTITY", SimpleName,
+                       opt(seq("BY", AssociationName)),
+                       alt(fields, from, all),
+                       optPrio(seq("RESULT", Target)));
+
     const s = seq("READ ENTITIES OF", NamespaceSimpleName,
                   opt("IN LOCAL MODE"),
-                  "ENTITY", SimpleName,
-                  opt(seq("BY", AssociationName)),
-                  alt(fields, from, all),
-                  optPrio(seq("RESULT", Target)),
+                  plus(entity),
                   optPrio(seq("LINK", Target)),
                   optPrio(seq("FAILED", Target)),
                   optPrio(seq("REPORTED", Target)));
