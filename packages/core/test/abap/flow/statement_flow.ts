@@ -600,4 +600,17 @@ ENDEXEC.`;
 "ExecSQL:3,1" -> "end#1";`);
   });
 
+  it("enhancement section", async () => {
+    const abap = `
+ENHANCEMENT-SECTION sdfsdf SPOTS sdfsdf.
+  foo = bar.
+END-ENHANCEMENT-SECTION.`;
+
+    const res2 = await runFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"EnhancementSection:3,1" -> "Move:4,3" [label="true"];
+"EnhancementSection:3,1" -> "end#1" [label="false"];
+"start#1" -> "EnhancementSection:3,1";
+"Move:4,3" -> "EnhancementSection:3,1";`);
+  });
+
 });

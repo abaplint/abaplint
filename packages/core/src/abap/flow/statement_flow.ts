@@ -243,6 +243,7 @@ export class StatementFlow {
       || type instanceof Structures.With
       || type instanceof Structures.Provide
       || type instanceof Structures.Select
+      || type instanceof Structures.EnhancementSection
       || type instanceof Structures.LoopAtScreen
       || type instanceof Structures.Do) {
       const loopName = StatementFlow.buildName(n.getFirstStatement()!);
