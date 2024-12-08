@@ -353,6 +353,7 @@ export class DDIC {
       case "DEC":      // 1 <= len <= 31
       case "D16F":     // 1 <= len <= 31
       case "D16D":
+      case "D34D":
       case "D34F":     // 1 <= len <= 31
       case "DF16_DEC": // 1 <= len <= 31
       case "DF34_DEC": // 1 <= len <= 31
@@ -374,6 +375,7 @@ export class DDIC {
         return new Types.CharacterType(5, extra);
       case "UNIT":  // 2 <= len <= 3
         return new Types.CharacterType(3, extra);
+      case "UTCL":
       case "UTCLONG":
         return new Types.CharacterType(27, extra);
       case "NUMC": // 1 <= len <= 255
@@ -433,7 +435,7 @@ export class DDIC {
       case "VARC":
         return new Types.UnknownType(input.text + " is an obsolete data type", input.infoText);
       default:
-        return new Types.UnknownType(input.text + " unknown", input.infoText);
+        return new Types.UnknownType(input.text + " unknown basic ddic type", input.infoText);
     }
   }
 
