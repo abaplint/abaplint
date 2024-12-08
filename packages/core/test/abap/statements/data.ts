@@ -120,6 +120,7 @@ const tests = [
   `DATA lt_chart_create TYPE TABLE FOR CREATE /dmo/fsa_r_roottp\\\\root\\_chart.`,
   `DATA draft_keys TYPE TABLE FOR DETERMINATION zDMO_R_RAPG_ProjectTP\\\\Node~SetRepositoryObjectNames_det.`,
   `DATA rapbo TYPE STRUCTURE FOR READ RESULT ZDMO_R_RAPG_ProjectTP\\\\node\\_Project .`,
+  `data sdf type sdf boxed.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
