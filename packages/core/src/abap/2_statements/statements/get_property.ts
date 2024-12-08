@@ -14,6 +14,7 @@ export class GetProperty implements IStatement {
                     "=",
                     Source,
                     opt("NO FLUSH"),
+                    opt("QUEUEONLY"),
                     opt(OLEExporting));
 
     return verNot(Version.Cloud, ret);
