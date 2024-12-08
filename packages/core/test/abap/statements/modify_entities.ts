@@ -77,6 +77,21 @@ const tests = [
                       SAPObjectType
                       ) WITH update
     REPORTED DATA(update_reported).`,
+
+  `MODIFY ENTITIES OF /DMO/FSA_R_RootTP IN LOCAL MODE
+      ENTITY Root
+        CREATE
+          FROM lt_root_create
+        CREATE BY \\_Child
+          FROM lt_child_create
+        CREATE BY \\_Chart
+          AUTO FILL CID WITH lt_chart_create
+      ENTITY Child
+        CREATE BY \\_Grandchild
+          AUTO FILL CID WITH lt_grandchild_create
+      MAPPED mapped
+      REPORTED reported
+      FAILED failed.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
