@@ -209,7 +209,12 @@ export async function run(arg: Arguments) {
         const filesList = Array.isArray(configFiles) ? configFiles : [configFiles];
         for (const l of filesList) {
           const files = FileOperations.loadFileNames(base + l);
-          loaded.push(...await FileOperations.loadFiles(arg.compress, files, progress));
+          const temp = await FileOperations.loadFiles(arg.compress, files, progress);
+          if (loaded.length === 0) {
+            loaded = temp;
+          } else {
+            loaded = loaded.concat(temp);
+          }
         }
       }
       deps = await loadDependencies(config, arg.compress, progress, base);
