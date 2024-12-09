@@ -18,6 +18,7 @@ const tests = [
   "FORMAT HOTSPOT.",
   "FORMAT COLOR COL_HEADING.",
   `FORMAT INTENSIFIED INPUT.`,
+  `FORMAT COLOR INTENSIFIED OFF.`,
 ];
 
 statementType(tests, "FORMAT", Statements.Format);

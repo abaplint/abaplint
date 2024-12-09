@@ -439,6 +439,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      WHERE vbelv EQ @ref
      GROUP BY vbelv, posnv
      INTO TABLE @DATA(lt_rows).`,
+
+  `SELECT * FROM ztab APPENDING TABLE result
+     FOR ALL ENTRIES IN tab
+     WHERE matnr = tab-matnr
+     %_HINTS HDB lv_hint.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
