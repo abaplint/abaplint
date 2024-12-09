@@ -14,7 +14,7 @@ export class Leave implements IStatement {
                             opt("AND SKIP FIRST SCREEN"));
 
     const ret = seq("LEAVE",
-                    opt(alt("TO CURRENT TRANSACTION",
+                    opt(alt(seq("TO CURRENT TRANSACTION", opt("AND SKIP FIRST SCREEN")),
                             seq(opt("TO"), "LIST-PROCESSING", opt(retu)),
                             "LIST-PROCESSING",
                             "SCREEN",
