@@ -7,6 +7,6 @@ export class FieldSymbol extends Expression {
 // todo, this only allows one dash in the name
     const dashes = seq(reg(/^<[\w\/%$\*]+$/), tok(Dash), reg(/^[\w\/%$\*]+>$/));
 
-    return altPrio(reg(/^<[\w\/%$\*]+>$/), dashes);
+    return altPrio(reg(/^<[\w\/%$\*\?]+>$/), dashes);
   }
 }
