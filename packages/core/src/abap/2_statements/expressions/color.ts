@@ -17,6 +17,6 @@ export class Color extends Expression {
     const value = alt(eq, altPrio("ON", "OFF", altPrio(integers, texts)));
     const toggle = altPrio("ON", "OFF");
 
-    return seq("COLOR", value, opt(toggle));
+    return seq("COLOR", opt(seq(value, opt(toggle))));
   }
 }
