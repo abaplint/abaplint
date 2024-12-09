@@ -11,6 +11,7 @@ const tests = [
   "SCROLL LIST TO FIRST PAGE INDEX SY-LSIND.",
   "SCROLL LIST INDEX sy-lsind TO COLUMN sy-staco.",
   "SCROLL LIST RIGHT INDEX zsdfsd.",
+  "SCROLL LIST INDEX sy-lsind RIGHT BY n PLACES.",
 ];
 
 statementType(tests, "SCROLL LIST", Statements.ScrollList);
