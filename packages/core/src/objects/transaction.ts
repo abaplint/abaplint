@@ -4,6 +4,7 @@ export class Transaction extends AbstractObject {
   private parsedXML: {
     description?: string,
     programName?: string,
+    cinfo?: string,
   } | undefined;
 
   public getType(): string {
@@ -20,6 +21,11 @@ export class Transaction extends AbstractObject {
       maxLength: 20,
       allowNamespace: true,
     };
+  }
+
+  public getCInfo(): string | undefined {
+    this.parse();
+    return this.parsedXML?.cinfo;
   }
 
   public getProgramName(): string | undefined {
@@ -48,6 +54,7 @@ export class Transaction extends AbstractObject {
 
     this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].TSTCT?.TTEXT;
     this.parsedXML.programName = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.PGMNA;
+    this.parsedXML.cinfo = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.CINFO;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
