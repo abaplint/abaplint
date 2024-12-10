@@ -1,11 +1,13 @@
 import {ABAPObject} from "./_abap_object";
 import {ABAPFile} from "../abap/abap_file";
 import {DynproList, parseDynpros} from "./_dynpros";
+import {xmlToArray, unescape} from "../xml_utils";
 
 export class Program extends ABAPObject {
   private parsedXML: {
     isInclude: boolean,
     isModulePool: boolean,
+    description: string | undefined,
     dynpros: DynproList,
   } | undefined;
 
@@ -22,8 +24,8 @@ export class Program extends ABAPObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    this.parseXML();
+    return this.parsedXML?.description;
   }
 
   public getAllowedNaming() {
@@ -66,9 +68,17 @@ export class Program extends ABAPObject {
       this.parsedXML = {
         isInclude: false,
         isModulePool: false,
+        description: undefined,
         dynpros: [],
       };
       return;
+    }
+
+    let description = "";
+    for (const t of xmlToArray(parsed.abapGit?.["asx:abap"]["asx:values"]?.TPOOL?.item)) {
+      if (t?.ID === "R") {
+        description = t.ENTRY ? unescape(t.ENTRY) : "";
+      }
     }
 
     const dynpros = parseDynpros(parsed);
@@ -77,6 +87,7 @@ export class Program extends ABAPObject {
       isInclude: file ? file.getRaw().includes("<SUBC>I</SUBC>") : false,
       isModulePool: file ? file.getRaw().includes("<SUBC>M</SUBC>") : false,
       dynpros: dynpros,
+      description: description,
     };
   }
 }

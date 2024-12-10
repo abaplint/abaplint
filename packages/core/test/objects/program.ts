@@ -110,6 +110,8 @@ describe("Program, isInclude", () => {
     expect(texts["001"]).to.equal("hello world 1");
     expect(texts["ABC"]).to.equal("hello world 2");
     expect(texts["bar"]).to.equal(undefined);
+
+    expect(prog.getDescription()).to.equal("Program ZFOOBAR");
   });
 
   it("invalid xml for texts", async () => {
