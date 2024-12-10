@@ -17,7 +17,7 @@ const repos = [
   "abapify/fetch-cloud",
 //  "abapify/fetch-legacy",
   "abapify/fetch",
-  "abapify/otel",
+//  "abapify/otel",
   "abapify/throw",
   "abapinho/abapTimeMachine",
   "abaplint/abaplint-sci-client",
