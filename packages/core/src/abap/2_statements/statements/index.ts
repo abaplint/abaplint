@@ -278,6 +278,7 @@ export * from "./endfunction";
 export * from "./retry";
 export * from "./authority_check";
 export * from "./set_parameter";
+export * from "./field";
 export * from "./get_cursor";
 export * from "./call_kernel";
 export * from "./call_transaction";
