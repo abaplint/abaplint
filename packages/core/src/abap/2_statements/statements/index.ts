@@ -290,6 +290,7 @@ export * from "./data_end";
 export * from "./type_begin";
 export * from "./process_after_input";
 export * from "./process_before_output";
+export * from "./process_on_value_request";
 export * from "./type_end";
 export * from "./raise_event";
 export * from "./cleanup";

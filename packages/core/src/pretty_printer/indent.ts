@@ -87,6 +87,7 @@ export class Indent {
         || type instanceof Statements.AtUserCommand
         || type instanceof Statements.ProcessAfterInput
         || type instanceof Statements.ProcessBeforeOutput
+        || type instanceof Statements.ProcessOnValueRequest
         || type instanceof Statements.TopOfPage
         || type instanceof Statements.Get
         || type instanceof Statements.EndOfSelection
@@ -147,6 +148,7 @@ export class Indent {
         || type instanceof Statements.Catch
         || type instanceof Statements.ProcessAfterInput
         || type instanceof Statements.ProcessBeforeOutput
+        || type instanceof Statements.ProcessOnValueRequest
         || type instanceof Statements.Define
         || type instanceof Statements.When
         || type instanceof Statements.WhenType
