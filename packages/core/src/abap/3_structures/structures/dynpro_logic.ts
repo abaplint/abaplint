@@ -6,7 +6,7 @@ import {IStructureRunnable} from "./_structure_runnable";
 export class DynproLogic implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const pai = star(alt(sta(Statements.Module), sta(Statements.CallSubscreen)));
+    const pai = star(alt(sta(Statements.Module), sta(Statements.Field), sta(Statements.CallSubscreen)));
     const pbo = star(alt(sta(Statements.Module), sta(Statements.Field), sta(Statements.CallSubscreen)));
     const pov = star(sta(Statements.Field));
 
