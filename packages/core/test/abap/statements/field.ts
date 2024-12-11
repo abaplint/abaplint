@@ -4,7 +4,7 @@ import * as Statements from "../../../src/abap/2_statements/statements";
 const tests = [
   "FIELD sdfds MODULE sdfs ON INPUT.",
   "FIELD sdfds MODULE sdfs.",
-  "field go_binding_popup->gv_manual_binding module sdfsd on request.",
+  "field go->gv module sdfsd on request.",
 ];
 
 statementType(tests, "FIELD", Statements.Field);
