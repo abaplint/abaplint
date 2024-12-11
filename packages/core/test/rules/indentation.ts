@@ -305,4 +305,16 @@ ENDFORM.`;
     expect(foo?.getRaw()).to.contain("\n  DATA: foo");
   });
 
+  it("dnpro logic", async () => {
+    const filename = "zindentation.fugr.screen_0500.abap";
+    const abap = `
+PROCESS BEFORE OUTPUT.
+  MODULE status_0100.
+
+PROCESS AFTER INPUT.
+  MODULE user_command_0100.`;
+    const result = await run(new MemoryFile(filename, abap));
+    expect(result.issues.length).to.equal(0);
+  });
+
 });
