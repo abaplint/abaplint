@@ -10,6 +10,7 @@ export * from "./catch";
 export * from "./class_data";
 export * from "./class_definition";
 export * from "./class_global";
+export * from "./chain";
 export * from "./class_implementation";
 export * from "./cleanup";
 export * from "./constants";
