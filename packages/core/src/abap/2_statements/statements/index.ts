@@ -304,6 +304,8 @@ export * from "./end_test_seam";
 export * from "./delete_memory";
 export * from "./provide";
 export * from "./endexec";
+export * from "./chain";
+export * from "./end_chain";
 export * from "./call_subscreen";
 export * from "./sort_dataset";
 export * from "./get_permissions";
