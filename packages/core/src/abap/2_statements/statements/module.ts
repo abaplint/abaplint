@@ -9,7 +9,7 @@ export class Module implements IStatement {
   public getMatcher(): IStatementRunnable {
     const ret = seq("MODULE",
                     FormName,
-                    opt(alt("INPUT", "OUTPUT")));
+                    opt(alt("INPUT", "OUTPUT", "ON CHAIN-REQUEST")));
 
     return verNot(Version.Cloud, ret);
   }
