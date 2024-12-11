@@ -122,4 +122,17 @@ ENDCLASS.`;
     new ABAPParser(defaultVersion, []).parse(files);
   });
 
+  it("parsing, dynpro logic", async () => {
+    const abap = `
+PROCESS BEFORE OUTPUT.
+  MODULE status_0100.
+
+PROCESS AFTER INPUT.
+  MODULE user_command_0100.`;
+
+    const files = [new MemoryFile("zfoobar.fugr.screen_0500.abap", abap)];
+
+    new ABAPParser(defaultVersion, []).parse(files);
+  });
+
 });
