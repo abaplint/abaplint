@@ -632,7 +632,7 @@ Make sure to test the downported code, it might not always be completely correct
 
 //////////////////////////////////////////
 
-  /** removes @'s */
+  /** removes @'s and commas */
   private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
@@ -678,7 +678,7 @@ Make sure to test the downported code, it might not always be completely correct
       }
     }
 
-    for (const fieldList of high.findAllExpressionsMulti([Expressions.SQLFieldList, Expressions.SQLFieldListLoop], true)) {
+    for (const fieldList of high.findAllExpressionsMulti([Expressions.SQLFieldList, Expressions.SQLFieldListLoop, Expressions.SQLOrderBy], true)) {
       for (const token of fieldList.getDirectTokens()) {
         if (token.getStr() === ",") {
           addFix(token);

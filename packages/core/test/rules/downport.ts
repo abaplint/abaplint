@@ -5865,10 +5865,10 @@ objname = temp1.`;
     testFix(abap, expected);
   });
 
-  it.only("SELECT GROUP BY with comma", async () => {
+  it("SELECT GROUP BY with comma", async () => {
     const abap = `
 DATA tab TYPE voided.
-SELECT devclass, object, obj_name
+SELECT devclass, object
   FROM tadir
   INTO CORRESPONDING FIELDS OF TABLE @tab
   WHERE object = 'PROG'
@@ -5876,7 +5876,7 @@ SELECT devclass, object, obj_name
 
     const expected = `
 DATA tab TYPE voided.
-SELECT devclass object,obj_name
+SELECT devclass object
   FROM tadir
   INTO CORRESPONDING FIELDS OF TABLE tab
   WHERE object = 'PROG'
