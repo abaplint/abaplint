@@ -5865,4 +5865,24 @@ objname = temp1.`;
     testFix(abap, expected);
   });
 
+  it.only("SELECT GROUP BY with comma", async () => {
+    const abap = `
+DATA tab TYPE voided.
+SELECT devclass, object, obj_name
+  FROM tadir
+  INTO CORRESPONDING FIELDS OF TABLE @tab
+  WHERE object = 'PROG'
+  ORDER BY devclass, object.`;
+
+    const expected = `
+DATA tab TYPE voided.
+SELECT devclass object,obj_name
+  FROM tadir
+  INTO CORRESPONDING FIELDS OF TABLE tab
+  WHERE object = 'PROG'
+  ORDER BY devclass object.`;
+
+    testFix(abap, expected);
+  });
+
 });
