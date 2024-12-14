@@ -1580,4 +1580,13 @@ ENDLOOP.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("EXACT", async () => {
+    const abap = `
+DATA remainder TYPE i.
+DATA result TYPE i.
+result = floor( EXACT #( remainder / 2 ) ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
