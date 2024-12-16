@@ -157,7 +157,12 @@ export class Source {
           return foundType;
         }
         case "EXACT":
-          return this.determineType(node, input, targetType);
+        {
+          const foundType = this.determineType(node, input, targetType);
+          new Source().runSyntax(node.findDirectExpression(Expressions.Source), input, foundType);
+          this.addIfInferred(node, input, foundType);
+          return foundType;
+        }
         case "VALUE":
         {
           const foundType = this.determineType(node, input, targetType);
