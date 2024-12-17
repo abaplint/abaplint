@@ -1,36 +1,36 @@
 /* eslint-disable max-len */
-import * as Statements from "../abap/2_statements/statements";
-import * as Expressions from "../abap/2_statements/expressions";
-import * as Structures from "../abap/3_structures/structures";
-import {BasicRuleConfig} from "./_basic_rule_config";
-import {Issue} from "../issue";
-import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {Unknown} from "../abap/2_statements/statements/_statement";
-import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
-import {IEdit, EditHelper} from "../edit_helper";
-import {Position} from "../position";
-import {VirtualPosition} from "../virtual_position";
-import {ABAPFile} from "../abap/abap_file";
+import * as crypto from "crypto";
 import {IRegistry} from "../_iregistry";
-import {IObject} from "../objects/_iobject";
-import {ABAPObject} from "../objects/_abap_object";
-import {Version} from "../version";
-import {Registry} from "../registry";
-import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
+import {At, ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
+import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../abap/2_statements/statements";
+import {ElseIf} from "../abap/2_statements/statements";
+import {Unknown} from "../abap/2_statements/statements/_statement";
+import * as Structures from "../abap/3_structures/structures";
+import {BuiltIn} from "../abap/5_syntax/_builtin";
 import {ReferenceType} from "../abap/5_syntax/_reference";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
+import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ABAPFile} from "../abap/abap_file";
+import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AnyType, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
-import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
-import {At, ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../abap/1_lexer/tokens";
-import {IncludeGraph} from "../utils/include_graph";
+import {EditHelper, IEdit} from "../edit_helper";
+import {Issue} from "../issue";
 import {Program} from "../objects";
-import {BuiltIn} from "../abap/5_syntax/_builtin";
-import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {ElseIf} from "../abap/2_statements/statements";
-import * as crypto from "crypto";
+import {ABAPObject} from "../objects/_abap_object";
+import {IObject} from "../objects/_iobject";
+import {Position} from "../position";
+import {Registry} from "../registry";
+import {IncludeGraph} from "../utils/include_graph";
+import {Version} from "../version";
+import {VirtualPosition} from "../virtual_position";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
@@ -2030,9 +2030,19 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     }
 
-    const sourceName = node.findDirectExpression(Expressions.SimpleSource2)?.concatTokens();
+    const source = node.findDirectExpression(Expressions.SimpleSource2);
+    if (source === undefined) {
+      return undefined;
+    }
+    const sourceName = source?.concatTokens();
     if (sourceName === undefined) {
       return undefined;
+    }
+
+    let foundType: TypedIdentifier | undefined = undefined;
+    const spag = highSyntax.spaghetti.lookupPosition(source.getFirstToken().getStart(), lowFile.getFilename());
+    if (spag) {
+      foundType = spag.findVariable(source.concatTokens());
     }
 
     const concat = node.concatTokens().toUpperCase();
@@ -2059,7 +2069,12 @@ ${indentation}    output = ${uniqueName}.\n`;
     const fsTarget = node.findDirectExpression(Expressions.LoopTarget)?.findDirectExpression(Expressions.FSTarget)?.findDirectExpression(Expressions.InlineFS);
     if (fsTarget) {
       const targetName = fsTarget.findDirectExpression(Expressions.TargetFieldSymbol)?.concatTokens() || "DOWNPORT_ERROR";
-      const code = `FIELD-SYMBOLS ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
+      let type = `LIKE LINE OF ${sourceName}`;
+      const f = foundType?.getType();
+      if (f instanceof TableType && f.getRowType() instanceof AnyType) {
+        type = "TYPE ANY";
+      }
+      const code = `FIELD-SYMBOLS ${targetName} ${type}.\n${indentation}`;
       const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
       const fix2 = EditHelper.replaceRange(lowFile, fsTarget.getFirstToken().getStart(), fsTarget.getLastToken().getEnd(), targetName);
       const fix = EditHelper.merge(fix2, fix1);

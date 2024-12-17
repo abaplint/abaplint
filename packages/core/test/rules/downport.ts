@@ -5885,4 +5885,21 @@ SELECT devclass object
     testFix(abap, expected);
   });
 
+  it("any table, generic", async () => {
+    const abap = `
+  FIELD-SYMBOLS <itab> TYPE ANY TABLE.
+  LOOP AT <itab> ASSIGNING FIELD-SYMBOL(<row>).
+    RETURN.
+  ENDLOOP.`;
+
+    const expected = `
+  FIELD-SYMBOLS <itab> TYPE ANY TABLE.
+  FIELD-SYMBOLS <row> TYPE ANY.
+  LOOP AT <itab> ASSIGNING <row>.
+    RETURN.
+  ENDLOOP.`;
+
+    testFix(abap, expected);
+  });
+
 });
