@@ -63,7 +63,7 @@
         "typescript": "^5.7.2"
     },
     "dependencies": {
-        "fast-xml-parser": "^4.5.0",
+        "fast-xml-parser": "^4.5.1",
         "json5": "^2.2.3",
         "vscode-languageserver-types": "^3.17.5"
     }
