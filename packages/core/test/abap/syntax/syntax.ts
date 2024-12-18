@@ -10984,7 +10984,7 @@ START-OF-SELECTION.
     WHERE object = obj-objtype AND obj_name = obj-objname
     INTO package.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("strict escape");
+    expect(issues[0]?.getMessage()).to.contain("must be escaped with @ in strict mode");
   });
 
 });

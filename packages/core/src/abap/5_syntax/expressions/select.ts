@@ -98,8 +98,40 @@ export class Select {
       new SQLOrderBy().runSyntax(s, input);
     }
 
+    if (this.isStrictMode(node)) {
+      this.strictModeChecks(node, input);
+    }
+
     if (input.scope.getType() === ScopeType.OpenSQL) {
       input.scope.pop(node.getLastToken().getEnd());
+    }
+  }
+
+  // there are multiple rules, but gotta start somewhere
+  private isStrictMode(node: ExpressionNode) {
+    const into = node.findDirectExpressionsMulti([Expressions.SQLIntoList, Expressions.SQLIntoStructure, Expressions.SQLIntoTable])[0];
+    const where = node.findDirectExpression(Expressions.SQLCond);
+
+    // INTO is after WHERE
+    if (into && where && into.getFirstToken().getStart().isAfter(where.getFirstToken().getStart())) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private strictModeChecks(node: ExpressionNode, input: SyntaxInput) {
+
+    const sources = node.findAllExpressions(Expressions.SQLSource);
+    for (const source of sources) {
+      const first = source.getFirstChild();
+      if (first?.get() instanceof Expressions.SQLAliasField) {
+        continue;
+      } else if (first?.getFirstToken().getStr() === "@") {
+        continue;
+      }
+      const message = `SELECT: "${source.concatTokens()}" must be escaped with @ in strict mode`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     }
   }
 
