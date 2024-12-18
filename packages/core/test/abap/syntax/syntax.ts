@@ -10969,7 +10969,7 @@ DATA: moo TYPE c LENGTH 10,
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("strict mode must escape variables", () => {
+  it("strict mode must escape variables", () => {
     const abap = `
 TYPES: BEGIN OF type,
          objtype TYPE c LENGTH 10,
