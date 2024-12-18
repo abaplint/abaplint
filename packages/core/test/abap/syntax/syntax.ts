@@ -10969,4 +10969,22 @@ DATA: moo TYPE c LENGTH 10,
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("strict mode must escape variables", () => {
+    const abap = `
+TYPES: BEGIN OF type,
+         objtype TYPE c LENGTH 10,
+         objname TYPE c LENGTH 10,
+       END OF type.
+DATA obj TYPE type.
+DATA package TYPE tadir-devclass.
+
+START-OF-SELECTION.
+  SELECT SINGLE devclass
+    FROM tadir
+    WHERE object = obj-objtype AND obj_name = obj-objname
+    INTO package.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("strict escape");
+  });
+
 });
