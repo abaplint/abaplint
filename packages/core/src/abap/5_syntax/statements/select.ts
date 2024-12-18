@@ -7,6 +7,7 @@ import {SyntaxInput} from "../_syntax_input";
 export class Select implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
+    // for UNION statements there are multiple select parts
     const selects = node.findDirectExpressions(Expressions.Select);
     for (let i = 0; i < selects.length; i++) {
       const last = i === selects.length - 1;
