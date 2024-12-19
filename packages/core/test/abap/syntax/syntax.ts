@@ -10987,4 +10987,22 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("must be escaped with @ in strict mode");
   });
 
+  it("strict mode must escape variables, constants", () => {
+    const abap = `
+TYPES: BEGIN OF type,
+         objtype TYPE c LENGTH 10,
+         objname TYPE c LENGTH 10,
+       END OF type.
+DATA obj TYPE type.
+DATA package TYPE tadir-devclass.
+
+START-OF-SELECTION.
+  SELECT SINGLE devclass
+    FROM tadir
+    WHERE object = 'SDF' AND obj_name = 'SDF'
+    INTO package.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

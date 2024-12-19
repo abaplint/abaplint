@@ -129,6 +129,8 @@ export class Select {
         continue;
       } else if (first?.getFirstToken().getStr() === "@") {
         continue;
+      } else if (first?.getChildren()[0].get() instanceof Expressions.Constant) {
+        continue;
       }
       const message = `SELECT: "${source.concatTokens()}" must be escaped with @ in strict mode`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
