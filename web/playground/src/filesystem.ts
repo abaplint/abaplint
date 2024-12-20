@@ -17,8 +17,8 @@ export class FileSystem {
 
     this.addFile("abaplint.json", JSON.stringify(Config.getDefault().get(), undefined, 2));
     this.addFile(
-      "zfoobar.prog.abap",
-      `REPORT zfoobar.
+      "zfoo.prog.abap",
+      `REPORT zfoo.
  WRITE 'Hello World'.
 
 DATA moo TYPE i VALUE 2.
@@ -43,6 +43,12 @@ define view entity zfoo
   object,
   obj_name
 }`);
+    this.addFile("zfoo.prog.screen_0100.abap",
+                 `PROCESS BEFORE OUTPUT.
+  MODULE status_0100.
+
+PROCESS AFTER INPUT.
+  MODULE user_command_0100.`);
 
     return this.reg;
   }

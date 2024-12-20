@@ -98,8 +98,60 @@ export class Select {
       new SQLOrderBy().runSyntax(s, input);
     }
 
+    if (this.isStrictMode(node)) {
+      this.strictModeChecks(node, input);
+    }
+
     if (input.scope.getType() === ScopeType.OpenSQL) {
       input.scope.pop(node.getLastToken().getEnd());
+    }
+  }
+
+  // there are multiple rules, but gotta start somewhere
+  private isStrictMode(node: ExpressionNode) {
+    const into = node.findDirectExpressionsMulti([Expressions.SQLIntoList, Expressions.SQLIntoStructure, Expressions.SQLIntoTable])[0];
+    const where = node.findDirectExpression(Expressions.SQLCond);
+
+    // INTO is after WHERE
+    if (into && where && into.getFirstToken().getStart().isAfter(where.getFirstToken().getStart())) {
+      return true;
+    }
+
+    // FIELDS is used
+    if (node.findFirstExpression(Expressions.SQLFields)) {
+      return true;
+    }
+
+    // any field is escaped with @
+    for (const source of node.findAllExpressions(Expressions.SQLSource)) {
+      if (source.getFirstToken().getStr() === "@") {
+        return true;
+      }
+    }
+
+    // comma used in FROM
+    const fieldList = node.findFirstExpression(Expressions.SQLFieldList);
+    if (fieldList && fieldList.findDirectTokenByText(",")) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private strictModeChecks(node: ExpressionNode, input: SyntaxInput) {
+
+    const sources = node.findAllExpressions(Expressions.SQLSource);
+    for (const source of sources) {
+      const first = source.getFirstChild();
+      if (first?.get() instanceof Expressions.SQLAliasField) {
+        continue;
+      } else if (first?.getFirstToken().getStr() === "@") {
+        continue;
+      } else if (first?.getChildren()[0].get() instanceof Expressions.Constant) {
+        continue;
+      }
+      const message = `SELECT: "${source.concatTokens()}" must be escaped with @ in strict mode`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     }
   }
 

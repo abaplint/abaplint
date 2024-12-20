@@ -1078,7 +1078,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("SELECT, basic remove , and @", async () => {
+  it("SELECT, basic remove comma and @", async () => {
     const abap = `FORM bar.
   DATA: BEGIN OF ls_t001w,
           werks TYPE t001w-werks,
@@ -4471,13 +4471,15 @@ DATA(x) = temp1.`;
   it("SELECT, complex @ value", async () => {
     const abap = `
 SELECT SINGLE FROM z2ui5_t_draft
+INTO @ls_db
 FIELDS *
-WHERE uuid = @( client->get_val( ) ) INTO @ls_db.`;
+WHERE uuid = @( client->get_val( ) ).`;
     const expected = `
 DATA(temp1) = client->get_val( ).
 SELECT SINGLE FROM z2ui5_t_draft
+INTO @ls_db
 FIELDS *
-WHERE uuid = @temp1 INTO @ls_db.`;
+WHERE uuid = @temp1.`;
     testFix(abap, expected);
   });
 
@@ -5898,6 +5900,26 @@ SELECT devclass object
   LOOP AT <itab> ASSIGNING <row>.
     RETURN.
   ENDLOOP.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, basic remove comma and @, move INTO", async () => {
+    const abap = `FORM bar.
+  DATA: BEGIN OF ls_t100,
+          arbgb TYPE t100-arbgb,
+          msgnr TYPE t100-msgnr,
+        END OF ls_t100.
+  SELECT SINGLE arbgb, msgnr FROM t100 WHERE arbgb = '123' INTO @ls_t100.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA: BEGIN OF ls_t100,
+          arbgb TYPE t100-arbgb,
+          msgnr TYPE t100-msgnr,
+        END OF ls_t100.
+  SELECT SINGLE arbgb, msgnr FROM t100 INTO @ls_t100 WHERE arbgb = '123' .
+ENDFORM.`;
 
     testFix(abap, expected);
   });

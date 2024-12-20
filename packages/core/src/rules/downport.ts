@@ -469,6 +469,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.downportSQLMoveInto(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSQLExtras(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -631,6 +636,44 @@ Make sure to test the downported code, it might not always be completely correct
   }
 
 //////////////////////////////////////////
+
+  /** move INTO from after WHERE to after FROM */
+  private downportSQLMoveInto(low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+
+    const where = high.findFirstExpression(Expressions.SQLCond);
+    if (where === undefined) {
+      return undefined;
+    }
+
+    let into = high.findFirstExpression(Expressions.SQLIntoList);
+    if (into === undefined) {
+      into = high.findFirstExpression(Expressions.SQLIntoStructure);
+    }
+    if (into === undefined) {
+      into = high.findFirstExpression(Expressions.SQLIntoTable);
+    }
+    if (into === undefined) {
+      return undefined;
+    }
+
+    if (where.getLastToken().getEnd().isBefore(into.getFirstToken().getStart()) === false) {
+      return undefined;
+    }
+
+    const from = high.findFirstExpression(Expressions.SQLFrom);
+    if (from === undefined) {
+      return undefined;
+    }
+
+    const fix1 = EditHelper.insertAt(lowFile, from.getLastToken().getEnd(), ` ` + into.concatTokens());
+    const fix2 = EditHelper.deleteRange(lowFile, into.getFirstToken().getStart(), into.getLastToken().getEnd());
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, low.getFirstToken(), "SQL, move INTO", this.getMetadata().key, this.conf.severity, fix);
+  }
 
   /** removes @'s and commas */
   private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
