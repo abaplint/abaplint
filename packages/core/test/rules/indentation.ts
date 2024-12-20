@@ -305,7 +305,7 @@ ENDFORM.`;
     expect(foo?.getRaw()).to.contain("\n  DATA: foo");
   });
 
-  it("dnpro logic", async () => {
+  it("dynpro logic", async () => {
     const filename = "zindentation.fugr.screen_0500.abap";
     const abap = `
 PROCESS BEFORE OUTPUT.
