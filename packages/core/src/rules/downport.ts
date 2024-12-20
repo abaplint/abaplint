@@ -644,7 +644,7 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     // note: SQLCond is also used in JOIN(FROM) conditions
-    const where = high.findFirstExpression(Expressions.Select)?.findFirstExpression(Expressions.SQLCond);
+    const where = high.findFirstExpression(Expressions.Select)?.findDirectExpression(Expressions.SQLCond);
     if (where === undefined) {
       return undefined;
     }
