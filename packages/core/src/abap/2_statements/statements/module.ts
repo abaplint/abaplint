@@ -11,7 +11,7 @@ export class Module implements IStatement {
 
     const ret = seq("MODULE",
                     FormName,
-                    opt(alt("INPUT", "OUTPUT", "ON CHAIN-REQUEST", "ON CHAIN-INPUT", sw)));
+                    opt(alt("INPUT", "OUTPUT", "ON CHAIN-REQUEST", "ON CHAIN-INPUT", "AT EXIT-COMMAND", sw)));
 
     return verNot(Version.Cloud, ret);
   }
