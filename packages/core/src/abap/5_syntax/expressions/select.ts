@@ -117,6 +117,24 @@ export class Select {
       return true;
     }
 
+    // FIELDS is used
+    if (node.findFirstExpression(Expressions.SQLFields)) {
+      return true;
+    }
+
+    // any field is escaped with @
+    for (const source of node.findAllExpressions(Expressions.SQLSource)) {
+      if (source.getFirstToken().getStr() === "@") {
+        return true;
+      }
+    }
+
+    // comma used in FROM
+    const fieldList = node.findFirstExpression(Expressions.SQLFieldList);
+    if (fieldList && fieldList.findDirectTokenByText(",")) {
+      return true;
+    }
+
     return false;
   }
 

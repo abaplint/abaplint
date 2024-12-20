@@ -2576,7 +2576,7 @@ TYPES: BEGIN OF ty_type,
        END OF ty_type.
 DATA: lt_fae TYPE STANDARD TABLE OF ty_type.
 SELECT column FROM table INTO TABLE @DATA(lt_results)
-  FOR ALL ENTRIES IN lt_fae
+  FOR ALL ENTRIES IN @lt_fae
   WHERE column = @lt_fae-field.
 
 DELETE TABLE lt_results FROM 10.`;
