@@ -34,7 +34,8 @@ function main(): void {
   dock.addWidget(new WelcomeWidget());
   FileSystem.openFile("file:///abaplint.json");
   FileSystem.openFile("file:///zfoo.ddls.asddls");
-  FileSystem.openFile("file:///zfoobar.prog.abap");
+  FileSystem.openFile("file:///zfoo.prog.screen_0100.abap");
+  FileSystem.openFile("file:///zfoo.prog.abap");
 
   const left = new BoxPanel({direction: "top-to-bottom", spacing: 0});
   left.id = "left";
