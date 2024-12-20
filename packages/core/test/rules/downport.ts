@@ -1078,7 +1078,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("SELECT, basic remove , and @", async () => {
+  it("SELECT, basic remove comma and @", async () => {
     const abap = `FORM bar.
   DATA: BEGIN OF ls_t001w,
           werks TYPE t001w-werks,
@@ -5898,6 +5898,27 @@ SELECT devclass object
   LOOP AT <itab> ASSIGNING <row>.
     RETURN.
   ENDLOOP.`;
+
+    testFix(abap, expected);
+  });
+
+  it.only("SELECT, basic remove comma and @, move INTO", async () => {
+    const abap = `FORM bar.
+  DATA: BEGIN OF ls_t100,
+          arbgb TYPE t100-arbgb,
+          msgnr TYPE t100-msgnr,
+        END OF ls_t100.
+  SELECT SINGLE arbgb, msgnr FROM t100 WHERE arbgb = '123' INTO @ls_t100.
+ENDFORM.`;
+
+    const expected = `
+FORM bar.
+  DATA: BEGIN OF ls_t100,
+          arbgb TYPE t100-arbgb,
+          msgnr TYPE t100-msgnr,
+        END OF ls_t100.
+  SELECT SINGLE arbgb msgnr FROM t100 INTO ls_t100 WHERE arbgb = '123'.
+ENDFORM.`;
 
     testFix(abap, expected);
   });
