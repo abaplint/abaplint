@@ -60,6 +60,7 @@ export class Indent {
         || type instanceof Statements.EndModule
         || type instanceof Statements.EndSelect
         || type instanceof Statements.EndMethod
+        || type instanceof Statements.EndChain
         || type instanceof Statements.EndAt
         || type instanceof Statements.Else
         || type instanceof Statements.EndExec
@@ -161,6 +162,7 @@ export class Indent {
         || type instanceof Statements.Else
         || type instanceof Statements.ElseIf
         || type instanceof Statements.MethodImplementation
+        || type instanceof Statements.Chain
         || type instanceof Statements.TestInjection
         || type instanceof Statements.TestSeam
         || (this.options.selectionScreenBlockIndentation === true

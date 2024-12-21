@@ -317,4 +317,18 @@ PROCESS AFTER INPUT.
     expect(result.issues.length).to.equal(0);
   });
 
+  it("dynpro logic", async () => {
+    const filename = "zindentation.fugr.screen_0500.abap";
+    const abap = `
+PROCESS BEFORE OUTPUT.
+  MODULE pbo_1001.
+
+PROCESS AFTER INPUT.
+  CHAIN.
+    FIELD test.
+  ENDCHAIN.`;
+    const result = await run(new MemoryFile(filename, abap));
+    expect(result.issues.length).to.equal(0);
+  });
+
 });
