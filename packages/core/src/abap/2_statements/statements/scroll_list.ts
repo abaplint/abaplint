@@ -16,9 +16,11 @@ export class ScrollList implements IStatement {
                        "LAST PAGE",
                        seq("PAGE", Source)));
 
+    const pages = seq(Source, "PAGES");
+
     const ret = seq("SCROLL LIST",
                     per(index,
-                        alt(to, "BACKWARD", "FORWARD"),
+                        seq(alt(to, "BACKWARD", "FORWARD"), opt(pages)),
                         seq(alt("LEFT", "RIGHT"), opt(seq("BY", Source, "PLACES"))),
                         column,
                         line));
