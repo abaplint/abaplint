@@ -22,7 +22,7 @@ export class Assign implements IStatement {
                     AssignSource,
                     "TO",
                     FSTarget,
-                    opt(altPrio(casting, obsoleteType)),
+                    opt(altPrio(casting, obsoleteType, decimals)),
                     opt(range),
                     opt(ver(Version.v757, "ELSE UNASSIGN")));
 

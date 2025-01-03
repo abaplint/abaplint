@@ -73,7 +73,9 @@ export abstract class ABAPObject extends AbstractObject {
     }
     // uri fallback,
     for (const file of this.getABAPFiles()) {
-      if (file.getFilename().endsWith(".abap")) {
+      if (file.getFilename().includes(".prog.screen_")) {
+        continue;
+      } else if (file.getFilename().endsWith(".abap")) {
         return file;
       }
     }

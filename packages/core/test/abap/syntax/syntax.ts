@@ -11005,4 +11005,15 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("dont cascade the unknown error", () => {
+    const abap = `
+DATA files TYPE zunknown.
+LOOP AT files ASSIGNING FIELD-SYMBOL(<file>).
+  WRITE <file>-name.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Loop, not a table type");
+  });
+
 });
