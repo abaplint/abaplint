@@ -14,7 +14,7 @@ export class CallOLE implements IStatement {
                     Source,
                     opt(rc),
                     opt("NO FLUSH"),
-                    opt("QUEUEONLY"),
+                    opt("QUEUE-ONLY"),
                     opt(OLEExporting));
 
     return verNot(Version.Cloud, ret);
