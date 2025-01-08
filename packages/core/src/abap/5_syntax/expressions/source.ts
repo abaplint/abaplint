@@ -129,9 +129,10 @@ export class Source {
           const s = new Source().runSyntax(node.findDirectExpression(Expressions.Source), input);
           if (foundType === undefined && s) {
             return new DataReference(s);
-          } else {
-            return foundType;
+          } else if (foundType) {
+            return new DataReference(foundType);
           }
+          return undefined;
         }
         case "FILTER":
         {
@@ -333,6 +334,7 @@ export class Source {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return new VoidType(CheckSyntaxKey);
       }
+
       return found;
     }
 

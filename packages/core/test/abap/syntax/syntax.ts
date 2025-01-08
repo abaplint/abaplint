@@ -11016,4 +11016,13 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.contain("Loop, not a table type");
   });
 
+  it("refs and cond i", () => {
+    const abap = `
+DATA(int) = 2.
+DATA(int_ref) = COND #( WHEN 1 = 2 THEN REF i( int ) ELSE REF i( int ) ).
+int_ref->* = 3.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
