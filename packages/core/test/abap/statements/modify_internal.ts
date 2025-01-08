@@ -25,6 +25,7 @@ const tests = [
   "MODIFY <lt_tab> FROM <lt_source>.",
   "MODIFY shlp-fielddescr FROM wa TRANSPORTING mask+4(1) WHERE fieldname = 'FOO'.",
 //  "MODIFY sdfsd INDEX sy-tabix USING KEY key FROM ls_sdf TRANSPORTING tra.",
+  `MODIFY sdf FROM sdsf USING KEY loop_key TRANSPORTING sort.`,
 ];
 
 statementType(tests, "MODIFY", Statements.ModifyInternal);
