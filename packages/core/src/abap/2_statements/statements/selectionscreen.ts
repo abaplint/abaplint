@@ -123,7 +123,8 @@ export class SelectionScreen implements IStatement {
                             endScreen,
                             exclude,
                             beginVersion,
-                            endVersion,));
+                            endVersion,
+                            def));
 
     return verNot(Version.Cloud, ret);
   }
