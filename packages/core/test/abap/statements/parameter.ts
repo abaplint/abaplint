@@ -39,6 +39,8 @@ const tests = [
   "PARAMETERS ?trans TYPE trkorr.",
   `PARAMETERS ldb_abc NO-DISPLAY DEFAULT 'X' FOR TABLE tab.`,
   `PARAMETERS dy_bar LIKE foo-bar FOR TABLE tab VALUE-REQUEST.`,
+  `PARAMETERS sdf RADIOBUTTON GROUP a DEFAULT 'X' USER-COMMAND ?.`,
+  `PARAMETERS sdf RADIOBUTTON GROUP a USER-COMMAND /0.`,
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);
