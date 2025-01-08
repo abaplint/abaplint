@@ -11,6 +11,7 @@ const tests = [
   "COMMUNICATION ACCEPT ID c.",
   "COMMUNICATION RECEIVE ID id BUFFER buffer LENGTH length DATAINFO datainfo STATUSINFO statusinfo RECEIVED received.",
   `COMMUNICATION DEALLOCATE ID id RETURNCODE rc.`,
+  `COMMUNICATION ALLOCATE ID id RETURNCODE rc.`,
 ];
 
 statementType(tests, "COMMUNICATION", Statements.Communication);
