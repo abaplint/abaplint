@@ -10,6 +10,7 @@ const tests = [
   "COMMUNICATION RECEIVE ID c BUFFER input DATAINFO dinf STATUSINFO sinf RECEIVED rlen.",
   "COMMUNICATION ACCEPT ID c.",
   "COMMUNICATION RECEIVE ID id BUFFER buffer LENGTH length DATAINFO datainfo STATUSINFO statusinfo RECEIVED received.",
+  `COMMUNICATION DEALLOCATE ID id RETURNCODE rc.`,
 ];
 
 statementType(tests, "COMMUNICATION", Statements.Communication);

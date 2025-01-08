@@ -9,10 +9,11 @@ export class Communication implements IStatement {
   public getMatcher(): IStatementRunnable {
     const length = seq("LENGTH", Target);
 
+    const returncode = seq("RETURNCODE", Source);
     const init = seq("INIT ID", Source, "DESTINATION", Target);
     const allocate = seq("ALLOCATE ID", Source);
     const send = seq("SEND ID", Source, "BUFFER", Target, opt(length));
-    const deallocate = seq("DEALLOCATE ID", Source);
+    const deallocate = seq("DEALLOCATE ID", Source, opt(returncode));
     const accept = seq("ACCEPT ID", Source);
 
     const receive = seq("RECEIVE ID",
