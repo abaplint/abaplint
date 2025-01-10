@@ -11025,4 +11025,34 @@ int_ref->* = 3.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("charlike structure vs simple", () => {
+    const abap = `
+REPORT zfoo.
+
+CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS calc
+      IMPORTING
+        !iv_input TYPE simple.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD calc.
+    ASSERT 0 = 0.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+
+  DATA:
+    BEGIN OF struct,
+      a TYPE c LENGTH 1,
+      b TYPE c LENGTH 3,
+    END OF struct.
+
+  lcl_test=>calc( struct ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
