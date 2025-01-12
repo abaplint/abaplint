@@ -8,7 +8,7 @@ export class Submit implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const sign = seq("SIGN", Source);
-    const eq = alt("=", "EQ", "IN", "NE", "CP", "GE", "LE", "INCL");
+    const eq = alt("=", "EQ", "IN", "NE", "CP", "GE", "LE", "INCL", "GT", "LT");
     const compare = seq(eq, Source);
     const between = seq("BETWEEN", Source, "AND", Source);
     const selectionTable = seq("WITH SELECTION-TABLE", Source);

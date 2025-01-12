@@ -13,7 +13,7 @@ export class Parameter implements IStatement {
     const type = seq(altPrio("TYPE", "LIKE"), altPrio(TypeName, Dynamic));
     const memory = seq("MEMORY ID", SimpleSource1);
     const listbox = str("AS LISTBOX");
-    const cmd = seq("USER-COMMAND", reg(/^\w+$/));
+    const cmd = seq("USER-COMMAND", reg(/^[\w\?\/]+$/));
     const modif = seq("MODIF ID", Modif);
     const visible = seq("VISIBLE LENGTH", Constant);
     const length = seq("LENGTH", Constant);
