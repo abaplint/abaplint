@@ -444,6 +444,12 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      FOR ALL ENTRIES IN tab
      WHERE matnr = tab-matnr
      %_HINTS HDB lv_hint.`,
+
+  `SELECT b~/foo/bar, b~mc_name1
+      FROM /foo/moo AS a
+      INNER JOIN but000 AS b ON a~code = b~partner
+      WHERE period IN @lr_uniqueid
+      INTO TABLE @DATA(lt_tab).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
