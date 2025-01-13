@@ -34,6 +34,10 @@ export class SQLFunction extends Expression {
     const uuid = ver(Version.v754, seq(reg(/^uuid$/i), tok(ParenLeftW), tok(WParenRightW)));
     const concat_with_space = ver(Version.v750, seq(reg(/^concat_with_space$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, commaParam, tok(WParenRightW)));
 
-    return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace, length, lower, upper, round, concat_with_space);
+    const ltrim = ver(Version.v750, seq(reg(/^ltrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, commaParam, tok(WParenRightW)));
+    const rtrim = ver(Version.v750, seq(reg(/^rtrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, commaParam, tok(WParenRightW)));
+
+    return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace,
+                   length, lower, upper, round, concat_with_space, ltrim, rtrim);
   }
 }
