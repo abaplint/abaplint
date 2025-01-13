@@ -11,6 +11,6 @@ export class CDSCondition extends Expression {
     const is = seq(left, "IS", optPrio("NOT"), altPrio("INITIAL", "NULL"));
     const condition = seq(optPrio("NOT"), alt(compare, is));
     const paren = seq("(", CDSCondition, ")");
-    return seq(alt(condition, paren), starPrio(seq(altPrio("AND", "OR"), altPrio(condition, paren))));
+    return seq(altPrio(condition, paren), starPrio(seq(altPrio("AND", "OR"), altPrio(condition, paren))));
   }
 }
