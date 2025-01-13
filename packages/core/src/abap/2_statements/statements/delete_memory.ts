@@ -11,7 +11,7 @@ export class DeleteMemory implements IStatement {
 
     const id = seq("ID", Source);
     const client = seq("CLIENT", Source);
-    const shared = seq("SHARED", altPrio("MEMORY", "BUFFER"), Field, "(", regex(/^\w+$/), ")", optPrio(client), id);
+    const shared = seq("SHARED", altPrio("MEMORY", "BUFFER"), Field, "(", regex(/^[\w%]+$/), ")", optPrio(client), id);
 
     const ret = seq("DELETE FROM", alt(memory, shared));
 
