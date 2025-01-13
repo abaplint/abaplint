@@ -11,6 +11,7 @@ const tests = [
                               #3 = P3
                               #4 = P4.`,
   `GET PROPERTY OF foo-bar PROPERTY = val->moo-obj NO FLUSH QUEUE-ONLY.`,
+  `GET PROPERTY OF foo-bar 'foo' = l_foo NO FLUSH QUEUEONLY.`,
 ];
 
 statementType(tests, "GET PROPERTY", Statements.GetProperty);
