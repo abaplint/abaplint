@@ -450,6 +450,12 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
       INNER JOIN but000 AS b ON a~code = b~partner
       WHERE period IN @lr_uniqueid
       INTO TABLE @DATA(lt_tab).`,
+
+  `SELECT COUNT(*) FROM /foo/bar AS A
+      INNER JOIN moo AS B
+        ON B~AABB = A~/foo/val
+        INTO target
+        WHERE B~SPRAS IN moo.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
