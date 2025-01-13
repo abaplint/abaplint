@@ -5,11 +5,11 @@ import {CDSInteger} from "./cds_integer";
 
 export class CDSCondition extends Expression {
   public getRunnable(): IStatementRunnable {
-    const name = seq(CDSName, optPrio(seq(".", alt(CDSName, CDSString))));
-    const left = alt(name, CDSFunction, CDSString);
-    const compare = seq(left, alt("=", seq("!", "="), seq("<", ">"), "<", ">", seq(">", "="), seq("<", "="), "LIKE", "NOT LIKE"), alt(left, CDSInteger, CDSFunction, CDSString));
+    const name = seq(CDSName, optPrio(seq(".", altPrio(CDSString, CDSName))));
+    const left = altPrio(CDSString, CDSFunction, name);
+    const compare = seq(left, alt("=", seq("!", "="), seq("<", ">"), "<", ">", seq(">", "="), seq("<", "="), "LIKE", "NOT LIKE"), alt(left, CDSInteger));
     const is = seq(left, "IS", optPrio("NOT"), altPrio("INITIAL", "NULL"));
-    const condition = seq(optPrio("NOT"), alt(compare, is));
+    const condition = seq(optPrio("NOT"), altPrio(compare, is));
     const paren = seq("(", CDSCondition, ")");
     return seq(altPrio(condition, paren), starPrio(seq(altPrio("AND", "OR"), altPrio(condition, paren))));
   }
