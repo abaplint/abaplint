@@ -15,7 +15,7 @@ export class Export implements IStatement {
 
     const cluster = seq(NamespaceSimpleName,
                         tok(ParenLeft),
-                        regex(/^[\w$%\^]{2}$/),
+                        regex(/^[\w$%\^~]{2}$/),
                         tok(ParenRightW));
 
     const buffer = seq("DATA BUFFER", Target);

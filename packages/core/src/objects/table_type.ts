@@ -186,6 +186,9 @@ export class TableType extends AbstractObject {
     }
 
     const values = parsed.abapGit["asx:abap"]["asx:values"];
+    if (values === undefined) {
+      return;
+    }
 
     const dd40v = values.DD40V;
     this.parsedXML.rowtype = dd40v.ROWTYPE ? dd40v.ROWTYPE : "";

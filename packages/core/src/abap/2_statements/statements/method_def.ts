@@ -53,7 +53,7 @@ export class MethodDef implements IStatement {
 
 // todo, this is only from version something
     const amdp = seq(
-      "AMDP OPTIONS CDS SESSION CLIENT CURRENT",
+      "AMDP OPTIONS", optPrio("READ-ONLY"), "CDS SESSION CLIENT CURRENT",
       optPrio(MethodDefImporting),
       optPrio(MethodDefExporting),
       optPrio(MethodDefRaising));

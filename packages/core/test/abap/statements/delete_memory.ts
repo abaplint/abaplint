@@ -7,6 +7,7 @@ const tests = [
   "DELETE FROM SHARED MEMORY indx(aa) CLIENT '100' ID 'foobar'.",
   "DELETE FROM SHARED BUFFER indx(ZZ) ID 'FOO'.",
   `DELETE FROM SHARED BUFFER indx(00) ID gc_foo.`,
+  `DELETE FROM SHARED BUFFER moos(%L) ID ID.`,
 ];
 
 statementType(tests, "DELETE FROM MEMORY", Statements.DeleteMemory);
