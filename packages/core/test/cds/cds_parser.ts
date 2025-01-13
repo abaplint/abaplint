@@ -916,7 +916,7 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
-  it.skip("large join", () => {
+  it("large join", () => {
     const cds = `
 define view /FOO/BAR
  as select from zfoo as c1
