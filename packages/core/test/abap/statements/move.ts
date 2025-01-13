@@ -323,6 +323,7 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   `MOVE foo-moo TO bar PERCENTAGE 100 RIGHT.`,
   `lt_root_create = CORRESPONDING #( roots CHANGING CONTROL EXCEPT DeleteHidden UpdateHidden ValidTo ).`,
   `lv_min = |{ cl_foobar=>gc_min_value SIGN = LEFT ALIGN = (cl_abap_format=>a_left) NUMBER = USER }|.`,
+  `MOVE <fs>-field+40() TO adr-name2.`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

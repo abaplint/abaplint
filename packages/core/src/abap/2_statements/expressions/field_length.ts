@@ -9,7 +9,7 @@ export class FieldLength extends Expression {
                        altPrio(reg(/^\d+$/), SimpleFieldChain2));
 
     const length = seq(tok(ParenLeft),
-                       altPrio(normal, "*"),
+                       optPrio(altPrio(normal, "*")),
                        tok(ParenRightW));
 
     return length;
