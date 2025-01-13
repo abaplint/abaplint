@@ -916,4 +916,67 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it.skip("large join", () => {
+    const cds = `
+define view /FOO/BAR
+ as select from zfoo as c1
+ inner join zfoo as c2
+ on c1.atnam = 'ASDF'
+ and c2.atnam =  'ASDF'
+ inner join zfoo as c3
+ on c3.atnam = 'ES1'
+ inner join zfoo as c4
+ on c4.atnam = 'ES2'
+ inner join zfoo as c5
+ on c5.atnam = 'ASDF'
+ inner join zfoo as c6
+ on c6.atnam = 'ASDF'
+ inner join zfoo as c7
+ on c7.atnam = 'ASDF'
+ inner join zfoo as c8
+ on c8.atnam = 'ASDF'
+ inner join zfoo as c9
+ on c9.atnam = 'ASDF'
+ inner join zfoo as c10
+ on c10.atnam = 'ASDF'
+ inner join zfoo as c11
+ on c11.atnam = 'ASDF'
+ inner join zfoo as c12
+ on c12.atnam = 'ASDF'
+ inner join zfoo as c13
+ on c13.atnam = 'ASDF'
+ inner join zfoo as c14
+ on c14.atnam = 'ASDF'
+ inner join zfoo as c15
+ on c15.atnam = 'ASDF'
+ inner join zfoo as c16
+ on c16.atnam = 'ASDF'
+  inner join zfoo as c17
+ on c17.atnam = 'ASDF'
+  inner join zfoo as c18
+ on c18.atnam = 'ASDF'
+  inner join zfoo as c19
+ on c19.atnam = 'ASDF'
+   inner join zfoo as c20
+ on c20.atnam = 'ASDF'
+   inner join zfoo as c21
+ on c21.atnam = 'ASDF'
+   inner join zfoo as c22
+ on c22.atnam = 'ASDF'
+ inner join zfoo as c23
+ on c23.atnam = 'ASDF'
+ inner join zfoo as c24
+ on c24.atnam = 'ASDF'
+{
+  c1.a1 as a1,
+  c1.a2 as a2,
+  c2.a3 as a3
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
