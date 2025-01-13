@@ -10,7 +10,7 @@ export class ModifyLine implements IStatement {
     const onOff = alt("ON", "OFF");
     const eq = seq("=", Source);
 
-    const form = seq(alt("INVERSE", "INPUT", "COLOR", "HOTSPOT"), alt(eq, onOff));
+    const form = seq(alt("INVERSE", "INPUT", "COLOR", "HOTSPOT"), opt(alt(eq, onOff)));
 
     const from = seq("FROM", Source);
     const value = seq("FIELD VALUE", plus(seq(Source, optPrio(from))));
