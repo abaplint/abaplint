@@ -32,7 +32,7 @@ export class SQLFunction extends Expression {
     const round = ver(Version.v750, seq(reg(/^round$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
     const upper = ver(Version.v751, seq(reg(/^upper$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
     const uuid = ver(Version.v754, seq(reg(/^uuid$/i), tok(ParenLeftW), tok(WParenRightW)));
-    const concat_with_space = ver(Version.v750, seq(reg(/^uuid$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, commaParam, tok(WParenRightW)));
+    const concat_with_space = ver(Version.v750, seq(reg(/^concat_with_space$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, commaParam, tok(WParenRightW)));
 
     return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace, length, lower, upper, round, concat_with_space);
   }
