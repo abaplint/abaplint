@@ -56,7 +56,7 @@ describe("Rule: local_testclass_consistency", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it.only("X in xml, but no testclasses", async () => {
+  it("X in xml, but no testclasses", async () => {
     const xml = new MemoryFile("zcl_abapgit_testing_test.clas.xml", `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -69,7 +69,7 @@ describe("Rule: local_testclass_consistency", () => {
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
-    <WITH_UNIT_TESTS>nope, not set</WITH_UNIT_TESTS>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
    </VSEOCLASS>
   </asx:values>
  </asx:abap>
@@ -88,7 +88,6 @@ describe("Rule: local_testclass_consistency", () => {
     endmethod.
   ENDCLASS.`);
     const issues = await findIssues([xml, main]);
-    console.dir(issues);
     expect(issues.length).to.equal(1);
   });
 
