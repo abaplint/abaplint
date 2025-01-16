@@ -37,6 +37,7 @@ export * from "./on_change";
 export * from "./private_section";
 export * from "./process_after_input";
 export * from "./process_before_output";
+export * from "./process_on_value_request";
 export * from "./protected_section";
 export * from "./provide";
 export * from "./public_section";
