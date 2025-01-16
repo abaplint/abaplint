@@ -36,4 +36,22 @@ ENDCLASS.
     expect(help).to.not.equal(undefined);
   });
 
+  it("CDS", () => {
+    const source = `
+define view ZAG_UNIT_TEST
+  as select from tadir
+  association [0..*] to zsdfdsfds as _assoc on _User.BusinessRoleUUID = $projection.BusinessRoleUUID
+{
+  tadir.pgmid,
+  tadir.object,
+  tadir.obj_name,
+  _assoc
+}`;
+    const file = new MemoryFile("zag_unit_test.ddls.asddls", source);
+    const reg = new Registry().addFile(file).parse();
+
+    const help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0, 2));
+    expect(help).to.include("Data definition");
+  });
+
 });
