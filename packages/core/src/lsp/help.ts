@@ -9,16 +9,28 @@ import {ABAPObject} from "../objects/_abap_object";
 import {DumpScope} from "./dump_scope";
 import {ABAPFile} from "../abap/abap_file";
 import {VirtualPosition} from "../virtual_position";
+import {DataDefinition} from "../objects";
+import {IObject} from "../objects/_iobject";
 
 export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
 
-    const file = LSPUtils.getABAPFile(reg, textDocument.uri);
-    if (file === undefined) {
-      return "file not found";
-    } else {
-      return this.dumpABAP(file, reg, textDocument, position);
+    const abapFile = LSPUtils.getABAPFile(reg, textDocument.uri);
+    if (abapFile !== undefined) {
+      return this.dumpABAP(abapFile, reg, textDocument, position);
     }
+
+    const file = reg.getFileByName(textDocument.uri);
+    if (file === undefined) {
+      return "File not found: " + textDocument.uri;
+    }
+
+    const obj = reg.findObjectForFile(file) as IObject;
+    if (obj instanceof DataDefinition) {
+      return "Data definition, dump todo";
+    }
+
+    return "Unhandled object type: " + obj.getType();
   }
 
 /////////////////////////////////////////////////

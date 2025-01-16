@@ -392,4 +392,36 @@ define view entity ZI_Header
 
     expect(ddls.listKeys().length).to.equal(3);
   });
+
+  it("association via voided", async () => {
+    const source = `
+define view entity ZI_FIPositionBseg
+  as select from I_OperationalAcctgDocItem
+  {
+    key CompanyCode,
+    key AccountingDocument,
+    key FiscalYear,
+    key AccountingDocumentItem,
+        ChartOfAccounts,
+        AssetClass,
+
+        _ClearingAccountingDocument.DocumentDate as DocumentDateHeader,
+        _ClearingAccountingDocument.TaxReportingDate,
+        _SalesDoc.SalesDocumentDate
+
+}`;
+    const reg = new Registry().addFiles([new MemoryFile("zi_header.ddls.asddls", source)]);
+
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    const components = parsed.getComponents();
+    // all components void
+    for (const component of components) {
+      expect(component.type).to.be.instanceof(VoidType);
+    }
+
+    expect(ddls.listKeys().length).to.equal(4);
+  });
 });

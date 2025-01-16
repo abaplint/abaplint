@@ -30,6 +30,13 @@ export class CDSDetermineTypes {
             continue;
           }
           if (source?.name === undefined) {
+            if (prefixUpper.startsWith("_")) {
+              components.push({
+                name: f.name,
+                type: new VoidType("DDLS:association"),
+              });
+              continue;
+            }
             components.push({
               name: f.name,
               type: new UnknownType("CDS parser error, unknown source, " + ddlsName),
