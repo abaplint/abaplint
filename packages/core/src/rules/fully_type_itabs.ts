@@ -38,7 +38,7 @@ DATA lt_bar TYPE STANDARD TABLE OF ty.`,
     const issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
-      if (!(statement.get() instanceof Statements.Data)) {
+      if (!(statement.get() instanceof Statements.Data || statement.get() instanceof Statements.Type)) {
         continue;
       }
 

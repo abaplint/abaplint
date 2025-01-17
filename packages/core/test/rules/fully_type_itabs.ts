@@ -37,6 +37,13 @@ describe("Rule: fully_type_itabs", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("specify table type", async () => {
+    const abap = `TYPES lt_foo TYPE TABLE OF ty.`;
+    const file = new MemoryFile("zidentical_cond.prog.abap", abap);
+    const issues = await run(file);
+    expect(issues.length).to.equal(1);
+  });
+
   it("specify table key", async () => {
     const abap = `DATA lt_bar TYPE STANDARD TABLE OF ty.`;
     const file = new MemoryFile("zidentical_cond.prog.abap", abap);
