@@ -51,7 +51,7 @@ define view ZAG_UNIT_TEST
     const reg = new Registry().addFile(file).parse();
 
     const help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0, 2));
-    expect(help).to.include("Data definition");
+    expect(help).to.include("DDLS");
   });
 
 });

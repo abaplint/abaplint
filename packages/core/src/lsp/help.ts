@@ -41,7 +41,9 @@ export class Help {
     content += obj.getDescription() + "\n";
     content += obj.getParsingIssues().map(i => i.getMessage()).join("<br>\n");
     content += `<hr>\n`;
-    content += `<pre>` + JSON.stringify(obj.getParsedData(), null, 2) + "</pre>\n";
+    const parsed = obj.getParsedData();
+    delete parsed?.tree;
+    content += `<pre>` + JSON.stringify(parsed, null, 2) + "</pre>\n";
     content += `<hr>\n`;
     content += `<pre>` + obj.parseType(reg).toText(0) + "</pre>\n";
     content += `<hr>\n`;
