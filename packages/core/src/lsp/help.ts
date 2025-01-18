@@ -37,7 +37,7 @@ export class Help {
 
   private static dumpDDLS(obj: DataDefinition, reg: IRegistry): string {
     let content = "";
-    content += "<h1>" + obj.getType + " " + obj.getName() + "</h1>\n";
+    content += "<h1>" + obj.getType() + " " + obj.getName() + "</h1>\n";
     content += obj.getDescription() + "\n";
     content += obj.getParsingIssues().map(i => i.getMessage()).join("<br>\n");
     content += `<hr>\n`;
