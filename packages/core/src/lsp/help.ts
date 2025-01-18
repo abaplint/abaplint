@@ -27,13 +27,26 @@ export class Help {
 
     const obj = reg.findObjectForFile(file) as IObject;
     if (obj instanceof DataDefinition) {
-      return "Data definition, dump todo";
+      return this.dumpDDLS(obj, reg);
     }
 
     return "Unhandled object type: " + obj.getType();
   }
 
 /////////////////////////////////////////////////
+
+  private static dumpDDLS(obj: DataDefinition, reg: IRegistry): string {
+    let content = "";
+    content += "<h1>" + obj.getType + " " + obj.getName() + "</h1>\n";
+    content += obj.getDescription() + "\n";
+    content += obj.getParsingIssues().map(i => i.getMessage()).join("<br>\n");
+    content += `<hr>\n`;
+    content += `<pre>` + JSON.stringify(obj.getParsedData(), null, 2) + "</pre>\n";
+    content += `<hr>\n`;
+    content += `<pre>` + obj.parseType(reg).toText(0) + "</pre>\n";
+    content += `<hr>\n`;
+    return content;
+  }
 
   private static dumpABAP(file: ABAPFile, reg: IRegistry, textDocument: LServer.TextDocumentIdentifier,
                           position: LServer.Position): string {
