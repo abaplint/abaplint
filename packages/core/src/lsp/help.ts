@@ -11,6 +11,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {VirtualPosition} from "../virtual_position";
 import {DataDefinition} from "../objects";
 import {IObject} from "../objects/_iobject";
+import {CDSLexer} from "../cds/cds_lexer";
 
 export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
@@ -47,6 +48,17 @@ export class Help {
     content += `<hr>\n`;
     content += `<pre>` + obj.parseType(reg).toText(0) + "</pre>\n";
     content += `<hr>\n`;
+
+    const file = obj.findSourceFile();
+    if (file) {
+      const tokens = CDSLexer.run(file);
+      content += `<h3>Tokens</h3>\n<pre>\n`;
+      for (const t of tokens) {
+        content += JSON.stringify(t) + "\n";
+      }
+      content += `</pre>\n`;
+    }
+
     return content;
   }
 
