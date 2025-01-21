@@ -121,6 +121,7 @@ const tests = [
   `DATA draft_keys TYPE TABLE FOR DETERMINATION zDMO_R_RAPG_ProjectTP\\\\Node~SetRepositoryObjectNames_det.`,
   `DATA rapbo TYPE STRUCTURE FOR READ RESULT ZDMO_R_RAPG_ProjectTP\\\\node\\_Project .`,
   `data sdf type sdf boxed.`,
+  `DATA t_name TYPE STANDARD TABLE OF string VALUE IS INITIAL.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
