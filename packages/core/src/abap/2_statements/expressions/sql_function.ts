@@ -9,10 +9,11 @@ export class SQLFunction extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const castTypes = altPrio(
-      seq("CHAR", tok(ParenLeftW), Integer, tok(WParenRightW)),
+      seq("CHAR", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
       seq("DEC", tok(ParenLeftW), Integer, ",", Integer, tok(WParenRightW)),
       "FLTP",
-      "NUMC",
+      seq("NUMC", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
+      "INT2",
       "INT8");
 
     const commaParam = seq(",", SQLFunctionInput);
