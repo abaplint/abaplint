@@ -15,6 +15,7 @@ const tests = [
   "SHIFT bytes BY places PLACES RIGHT IN BYTE MODE.",
   "SHIFT r_json RIGHT CIRCULAR.",
   "SHIFT lv_field UP TO '-'.",
+//  `SHIFT moo-result_/foo/bar LEFT.`,
 ];
 
 statementType(tests, "SHIFT", Statements.Shift);
