@@ -979,4 +979,21 @@ define view /FOO/BAR
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("define table function", () => {
+    const cds = `
+@EndUserText.label: 'Foobar'
+define table function ymoofunc with parameters p_anp : zanp, p_prevanp : zprevanp
+returns {
+  mandt : abap.clnt;
+  foods : zmmooo;
+  moods : abap.char( 50 );
+}
+implemented by method zcl_bar=>dsffdsfd;
+`;
+    const file = new MemoryFile("ymoofunc.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
