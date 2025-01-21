@@ -30,7 +30,7 @@ export class TypeTable extends Expression {
     // "WITH" is not allowed as a field name in keys
     const typetable = alt(generic, seq(normal1,
                                        alt(opt(per(header, initial, plusPrio(TypeTableKey))),
-                                           seq(plus(TypeTableKey), optPrio(initial)))));
+                                           seq(plus(TypeTableKey), optPrio(initial))), optPrio("VALUE IS INITIAL")));
 
     const occurs = seq("OCCURS", altPrio(Integer, FieldChain));
 
