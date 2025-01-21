@@ -86,14 +86,14 @@ export class FunctionGroup extends ABAPObject {
         if (namespaced) {
           search = search.replace(/\//g, "#");
         }
-        if ((i.startsWith("L") || namespaced) && f.getFilename().includes(search.toLowerCase())) {
+        if ((i.startsWith("L") || namespaced) && f.getFilename().includes(search.toLowerCase() + ".")) {
           ret.push({file: f, name: i});
         }
 
         // fix for URL encoded? Uris
         if (namespaced) {
           search = i.replace(/\//g, "%23");
-          if (f.getFilename().includes(search.toLowerCase())) {
+          if (f.getFilename().includes(search.toLowerCase() + ".")) {
             ret.push({file: f, name: i});
           }
         }
