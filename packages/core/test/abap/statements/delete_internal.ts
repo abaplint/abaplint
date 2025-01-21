@@ -27,6 +27,7 @@ const tests = [
   `DELETE ADJACENT DUPLICATES FROM li_tab COMPARING field+4(8).`,
   `DELETE ADJACENT DUPLICATES FROM lt_chck USING KEY s00 COMPARING ALL FIELDS.`,
 //  `DELETE TABLE <lt_data> WITH TABLE KEY (dynamic) COMPONENTS (dynamic) = lr_key->key.`,
+  `DELETE ADJACENT DUPLICATES FROM tab COMPARING table_line->mv_string.`,
 ];
 
 statementType(tests, "DELETE", Statements.DeleteInternal);
