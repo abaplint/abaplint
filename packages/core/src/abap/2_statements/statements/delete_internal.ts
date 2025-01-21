@@ -12,9 +12,9 @@ export class DeleteInternal implements IStatement {
     const keyName = altPrio(SimpleName, Dynamic);
     const using = seq("USING KEY", keyName);
 
-    const from = optPrio(seq("FROM", Source));
+    const from = seq("FROM", Source);
 
-    const fromTo = seq(from,
+    const fromTo = seq(optPrio(from),
                        optPrio(seq("TO", Source)));
 
     const where = seq("WHERE", alt(ComponentCond, Dynamic));
@@ -25,7 +25,7 @@ export class DeleteInternal implements IStatement {
 
     const table = seq("TABLE",
                       Target,
-                      alt(per(index, using), from, key));
+                      alt(per(index, using), seq(optPrio(from), optPrio(using)), key));
 
     const other = seq(Target,
                       alt(per(index, using), fromTo, key), opt(where));
