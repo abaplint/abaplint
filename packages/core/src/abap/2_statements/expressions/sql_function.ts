@@ -11,8 +11,8 @@ export class SQLFunction extends Expression {
     const castTypes = altPrio(
       seq("CHAR", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
       seq("DEC", tok(ParenLeftW), Integer, ",", Integer, tok(WParenRightW)),
-      "FLTP",
       seq("NUMC", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
+      "FLTP",
       "INT2",
       "INT8");
 
