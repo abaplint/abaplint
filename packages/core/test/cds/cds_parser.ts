@@ -1027,4 +1027,21 @@ define root custom entity /foo/bar
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("view parameter annotation", () => {
+    const cds = `
+define view moo with parameters
+@Environment.systemField: #SYSTEM_DATE
+p_system_date : syst_datum
+
+as select from ztab as a
+{
+key a.objid as Obj,
+    a.mc_stext as Text
+};
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
