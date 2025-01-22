@@ -52,7 +52,7 @@
         "json5": "^2.2.3",
         "memfs": "^4.17.0",
         "minimist": "^1.2.8",
-        "mocha": "^11.0.1",
+        "mocha": "^11.1.0",
         "progress": "^2.0.3",
         "typescript": "^5.7.3",
         "webpack": "^5.97.1",
