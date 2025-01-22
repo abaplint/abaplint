@@ -996,4 +996,52 @@ implemented by method zcl_bar=>dsffdsfd;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("allstars", () => {
+    const cds = `define view zsdfds as select from tab {
+*
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("annotation slash", () => {
+    const cds = `
+define root custom entity /foo/bar
+{
+  key Werks     : /moo/de_werks;
+  @Semantics.businessDate.from/to
+  Group         : /moo/de_group;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("shorthand", () => {
+    const cds = `define view moo as select * from bar;`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("view parameter annotation", () => {
+    const cds = `
+define view moo with parameters
+@Environment.systemField: #SYSTEM_DATE
+p_system_date : syst_datum
+
+as select from ztab as a
+{
+key a.objid as Obj,
+    a.mc_stext as Text
+};
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
