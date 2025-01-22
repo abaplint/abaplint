@@ -1020,4 +1020,11 @@ define root custom entity /foo/bar
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("shorthand", () => {
+    const cds = `define view moo as select * from bar;`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
