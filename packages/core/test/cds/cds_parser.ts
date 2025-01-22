@@ -996,4 +996,15 @@ implemented by method zcl_bar=>dsffdsfd;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("allstars", () => {
+    const cds = `define view zsdfds as select from tab {
+*
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
