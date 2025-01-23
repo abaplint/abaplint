@@ -49,20 +49,19 @@ v755 and up`,
       return [];
     }
 
-    if (o.getType() !== "DDLS") {
+    if (o.getType() !== "DDLS" || !(o instanceof DataDefinition)) {
       return [];
     }
 
-    if (o instanceof DataDefinition) {
-      const tree = o.getTree();
-      if (tree === undefined) {
-        return []; // parser error
-      }
-      if (tree.get() instanceof CDSDefineView && tree.findDirectTokenByText("ENTITY") === undefined) {
-        const file = o.findSourceFile();
-        if (file) {
-          issues.push(Issue.atRow(file, 1, "CDS Legacy View", this.getMetadata().key, this.getConfig().severity));
-        }
+    const tree = o.getTree();
+    if (tree === undefined) {
+      return []; // parser error
+    }
+
+    if (tree.get() instanceof CDSDefineView && tree.findDirectTokenByText("ENTITY") === undefined) {
+      const file = o.findSourceFile();
+      if (file) {
+        issues.push(Issue.atRow(file, 1, "CDS Legacy View", this.getMetadata().key, this.getConfig().severity));
       }
     }
 
