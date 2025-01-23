@@ -41,6 +41,16 @@ export class CDSFunction extends Expression {
 
     const mod = seq("MOD", "(", CDSFunctionInput, ",", CDSFunctionInput, ")");
 
+    const replace = seq("REPLACE", "(", CDSFunctionInput, ",", CDSFunctionInput, ",", CDSFunctionInput, ")");
+
+    const lpad = seq("LPAD", "(", CDSFunctionInput, ",", CDSFunctionInput, ",", CDSFunctionInput, ")");
+    const rpad = seq("RPAD", "(", CDSFunctionInput, ",", CDSFunctionInput, ",", CDSFunctionInput, ")");
+    const instr = seq("INSTR", "(", CDSFunctionInput, ",", CDSFunctionInput, ")");
+    const length = seq("LENGTH", "(", CDSFunctionInput, ")");
+
+    const ltrim = seq("LTRIM", "(", CDSFunctionInput, ",", CDSFunctionInput, ")");
+    const rtrim = seq("RTRIM", "(", CDSFunctionInput, ",", CDSFunctionInput, ")");
+
     const left = seq("LEFT", "(", CDSFunctionInput, ",", CDSFunctionInput, ")");
     const right = seq("RIGHT", "(", CDSFunctionInput, ",", CDSFunctionInput, ")");
 
@@ -56,7 +66,7 @@ export class CDSFunction extends Expression {
                    tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
-                   left, right,
+                   left, right, lpad, rpad, instr, length, ltrim, rtrim, replace,
                    unitConversion, currencyConversion, decimalShift);
   }
 }
