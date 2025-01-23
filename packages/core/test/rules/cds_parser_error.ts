@@ -28,4 +28,11 @@ define view zhvamfoocust as select from zhvam_cust {
     expect(issues.length).to.equal(1);
   });
 
+  it("empty file", async () => {
+    const cds = ``;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("empty file");
+  });
+
 });
