@@ -5,6 +5,7 @@ import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {DataDefinition} from "../objects";
+import {CDSDefineView} from "../cds/expressions";
 
 export class CDSLegacyViewConf extends BasicRuleConfig {
 }
@@ -57,7 +58,7 @@ v755 and up`,
       if (tree === undefined) {
         return []; // parser error
       }
-      if (tree.findDirectTokenByText("ENTITY") === undefined) {
+      if (tree.get() instanceof CDSDefineView && tree.findDirectTokenByText("ENTITY") === undefined) {
         const file = o.findSourceFile();
         if (file) {
           issues.push(Issue.atRow(file, 1, "CDS Legacy View", this.getMetadata().key, this.getConfig().severity));
