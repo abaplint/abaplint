@@ -7,8 +7,8 @@ export class CDSCase extends Expression {
     const name = seq(CDSName, optPrio(seq(".", CDSName)));
     const value = altPrio(CDSFunction, CDSString, CDSCase, CDSCast, CDSArithmetics, name);
     const thenValue = altPrio(seq("(", value, ")"), value);
-    const simple = seq(altPrio(CDSFunction, name), plusPrio(seq("WHEN", value, "THEN", thenValue)), "ELSE", value);
-    const complex = seq(plusPrio(seq("WHEN", CDSCondition, "THEN", thenValue)), optPrio(seq("ELSE", value)));
-    return seq("CASE", altPrio(complex, simple), "END");
+    const simple = seq(altPrio(CDSFunction, name), plusPrio(seq("WHEN", value, "THEN", thenValue)));
+    const complex = plusPrio(seq("WHEN", CDSCondition, "THEN", thenValue));
+    return seq("CASE", altPrio(complex, simple), optPrio(seq("ELSE", value)), "END");
   }
 }
