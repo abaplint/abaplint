@@ -19,4 +19,28 @@ export class VirtualPosition extends Position {
     const casted: VirtualPosition = p as VirtualPosition;
     return super.equals(this) && this.vrow === casted.vrow && this.vcol === casted.vcol;
   }
+
+  public isAfter(p: Position | VirtualPosition): boolean {
+    if (p instanceof VirtualPosition) {
+      if (this.getRow() > p.getRow()) {
+        return true;
+      }
+
+      if (this.getRow() === p.getRow() && this.getCol() > p.getCol()) {
+        return true;
+      }
+
+      if (this.getRow() === p.getRow() && this.getCol() === p.getCol() && this.vrow > p.vrow) {
+        return true;
+      }
+
+      if (this.getRow() === p.getRow() && this.getCol() === p.getCol() && this.vrow === p.vrow && this.vcol > p.vcol) {
+        return true;
+      }
+
+      return false;
+    } else {
+      return super.isAfter(p);
+    }
+  }
 }
