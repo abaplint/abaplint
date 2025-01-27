@@ -22,4 +22,5 @@ export const DECLARATION_STUFF = [
   Statements.Parameter,
   Statements.SelectionScreen,
   Statements.ConstantBegin,
+  Statements.Define,
 ];

@@ -11055,4 +11055,34 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("charlike structure vs simple", () => {
+    const abap = `
+    DATA ta TYPE voided.
+    select foo bar up to 3 rows
+       into (ta-foo, ta-bar) from voided
+        where moo = 'VALUE'.
+    endselect.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, strict mode in macro", () => {
+    const abap = `
+DATA ta   TYPE voided.
+DATA stru TYPE voided.
+
+DEFINE _macro.
+  select val1 val2 up to 3 rows
+      into (ta-val1, ta-val2) from mooo
+      where field1 = stru-sdf and
+            field2 = stru-sdfds.
+  endselect.
+END-OF-DEFINITION.
+
+START-OF-SELECTION.
+  _macro.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

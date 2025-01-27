@@ -35,6 +35,7 @@ const tests = [
   "export *zfoobar-field to memory.",
   `EXPORT 'BAR' TO MEMORY ID 'FOO'.`,
   `EXPORT moo1 FROM lv_moo1 TO DATABASE indx(~a) ID lv_id.`,
+  `EXPORT ok-code = ok-code TO MEMORY ID 'OK-CODE'.`,
 ];
 
 statementType(tests, "EXPORT", Statements.Export);
