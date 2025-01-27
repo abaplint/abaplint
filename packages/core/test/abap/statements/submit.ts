@@ -62,6 +62,14 @@ const tests = [
   WITH bar IN moo
   AND RETURN.`,
   */
+
+  /*
+  `SUBMIT zmoo VIA SELECTION-SCREEN
+    WITH  p_werks  = go->werk
+    WITH SELECTION-TABLE lt_seltab
+    WITH  p_name   = space
+    WITH  p_print  = 'ZMOO'`,
+  */
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);
