@@ -51,4 +51,15 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, DEFINE", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+
+DEFINE _foo.
+END-OF-DEFINITION.
+
+START-OF-SELECTION.
+  _foo.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });

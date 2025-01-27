@@ -11055,4 +11055,14 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("charlike structure vs simple", () => {
+    const abap = `
+    select foo bar up to 3 rows
+       into (ta-foo, ta-bar) from voided
+        where moo = 'VALUE'.
+    endselect.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
