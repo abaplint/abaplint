@@ -7,10 +7,10 @@ import {IStatementRunnable} from "../statement_runnable";
 export class ModifyLine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
+    const onOff = alt("ON", "OFF");
+    const eq = seq("=", Source);
 
-    const form = seq(alt("INVERSE", "INPUT"),
-                     "=",
-                     Source);
+    const form = seq(alt("INVERSE", "INPUT", "COLOR", "HOTSPOT"), opt(alt(eq, onOff)));
 
     const from = seq("FROM", Source);
     const value = seq("FIELD VALUE", plus(seq(Source, optPrio(from))));
@@ -19,10 +19,10 @@ export class ModifyLine implements IStatement {
     const index = seq("INDEX", Source);
     const page = seq("OF PAGE", Source);
     const ocp = str("OF CURRENT PAGE");
-    const lineFormat = seq("LINE FORMAT",
-                           alt("INPUT OFF", "INVERSE", "RESET", "INTENSIFIED"));
-    const onOff = alt("ON", "OFF");
     const intensified = seq("INTENSIFIED", onOff);
+    const intensifiedOpt = seq("INTENSIFIED", opt(onOff));
+    const lineFormat = seq("LINE FORMAT",
+                           per("INPUT OFF", "INVERSE", "RESET", intensifiedOpt, Color));
 
     const options = per(index, value, format, page, lineFormat, lineValue, ocp, intensified, Color);
 

@@ -52,6 +52,46 @@ const tests = [
     REPORTED DATA(lt_dat)
     MAPPED DATA(lt_map)
     FAILED DATA(lt_failed).`,
+
+  `MODIFY ENTITIES OF /DMO/FSA_R_RootTP IN LOCAL MODE ENTITY Root
+    EXECUTE calcTotalPieces FROM CORRESPONDING #( roots ).`,
+
+  `MODIFY ENTITY ZDMO_R_RAPG_ProjectTP
+    EXECUTE Activate
+    FROM VALUE #( ( %key-RapboUUID = my_rapnodeuuid ) )
+    MAPPED DATA(mapped_active)
+    FAILED DATA(failed_active)
+    REPORTED DATA(reported_active).`,
+
+  `MODIFY ENTITIES OF zfoobar IN LOCAL MODE
+    ENTITY Project
+      UPDATE FIELDS (
+                      boname
+                      ADTLink
+                      SAPObjectType
+                     ) WITH update_bo
+    ENTITY Node
+      UPDATE FIELDS (
+                      parententityname
+                      cdsiview
+                      SAPObjectType
+                      ) WITH update
+    REPORTED DATA(update_reported).`,
+
+  `MODIFY ENTITIES OF /DMO/FSA_R_RootTP IN LOCAL MODE
+      ENTITY Root
+        CREATE
+          FROM lt_root_create
+        CREATE BY \\_Child
+          FROM lt_child_create
+        CREATE BY \\_Chart
+          AUTO FILL CID WITH lt_chart_create
+      ENTITY Child
+        CREATE BY \\_Grandchild
+          AUTO FILL CID WITH lt_grandchild_create
+      MAPPED mapped
+      REPORTED reported
+      FAILED failed.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

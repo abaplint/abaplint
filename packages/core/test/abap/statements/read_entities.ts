@@ -52,6 +52,20 @@ const tests = [
     RESULT DATA(lt_tab)
     FAILED DATA(lt_failed)
     REPORTED DATA(lt_reported).`,
+
+  `READ ENTITIES OF ZDMO_R_RAPG_ProjectTP
+    IN LOCAL MODE ENTITY Node BY \\_Project
+    FROM CORRESPONDING #( rapbo_nodes )
+    LINK DATA(rapbo_nodes_links).`,
+
+  `READ ENTITIES OF /DMO/FSA_R_RootTP
+      ENTITY Root
+        FIELDS ( StringProperty ) WITH CORRESPONDING #( keys )
+        RESULT DATA(roots)
+      ENTITY Root BY \\_Child
+        ALL FIELDS WITH CORRESPONDING #( keys )
+        RESULT DATA(children)
+      FAILED DATA(read_failed).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);

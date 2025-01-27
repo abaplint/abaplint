@@ -1,7 +1,7 @@
 export function xmlToArray(data: any): any[] {
   if (data === undefined) {
     return [];
-  } else if (data.length) { // input data is an Array
+  } else if (Array.isArray(data)) {
     return data;
   } else {
     return [data];

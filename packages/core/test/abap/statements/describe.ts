@@ -14,6 +14,7 @@ const tests = [
   "DESCRIBE FIELD cv_data LENGTH lv_length IN CHARACTER MODE.",
   "describe field <item> type typ.",
   "DESCRIBE DISTANCE BETWEEN lv_foo AND lv_bar INTO ld_shift IN CHARACTER MODE.",
+  `DESCRIBE DISTANCE BETWEEN foo-boo AND  foo-moo INTO field-offset.`,
   "describe field e_field edit mask l_mask.",
   "describe field <fs> type l_typ components l_num.",
   "describe list number of lines lv_lines.",
@@ -27,6 +28,8 @@ const tests = [
   "DESCRIBE LIST INDEX lv_index PAGE lv_page TOP-LINES lv_top FIRST-LINE lv_first.",
   "DESCRIBE LIST INDEX 1 PAGE 1 LINE-SIZE size.",
   "DESCRIBE LIST INDEX 1 PAGE page TOP-LINES top.",
+  "DESCRIBE LIST NUMBER OF PAGES tot INDEX 0.",
+  `DESCRIBE LIST PAGE sy-cpage LINE-COUNT l_cnt LINE-SIZE l_lin.`,
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);

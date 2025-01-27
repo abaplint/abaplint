@@ -116,7 +116,7 @@ export class Source {
           const foundType = this.determineType(node, input, targetType);
           const bodyType = new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
           if (new TypeUtils(input.scope).isAssignable(foundType, bodyType) === false) {
-            const message = "CONV: Types not compatible";
+            const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return new VoidType(CheckSyntaxKey);
           }
@@ -129,9 +129,10 @@ export class Source {
           const s = new Source().runSyntax(node.findDirectExpression(Expressions.Source), input);
           if (foundType === undefined && s) {
             return new DataReference(s);
-          } else {
-            return foundType;
+          } else if (foundType) {
+            return new DataReference(foundType);
           }
+          return undefined;
         }
         case "FILTER":
         {
@@ -157,7 +158,12 @@ export class Source {
           return foundType;
         }
         case "EXACT":
-          return this.determineType(node, input, targetType);
+        {
+          const foundType = this.determineType(node, input, targetType);
+          new Source().runSyntax(node.findDirectExpression(Expressions.Source), input, foundType);
+          this.addIfInferred(node, input, foundType);
+          return foundType;
+        }
         case "VALUE":
         {
           const foundType = this.determineType(node, input, targetType);
@@ -328,6 +334,7 @@ export class Source {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return new VoidType(CheckSyntaxKey);
       }
+
       return found;
     }
 

@@ -193,6 +193,10 @@ export class RenamerHelper {
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       for (const r of node.getData().references) {
+        if (r.referenceType === ReferenceType.ConstructorReference) {
+          continue;
+        }
+
         if (r.resolved?.equals(identifier)
             && r.referenceType !== ReferenceType.InferredType
             && !(r.position.getStart() instanceof VirtualPosition)) {

@@ -39,7 +39,7 @@ import {Empty, Unknown, Comment, MacroCall, MacroContent, NativeSQL} from "./aba
 import {applyEditSingle, applyEditList, IEdit} from "./edit_helper";
 import {IClassDefinition} from "./abap/types/_class_definition";
 import {IInterfaceDefinition} from "./abap/types/_interface_definition";
-import {ReferenceType} from "./abap/5_syntax/_reference";
+import {IReference, IReferenceExtras, ReferenceType} from "./abap/5_syntax/_reference";
 import {IObject} from "./objects/_iobject";
 import {BuiltIn} from "./abap/5_syntax/_builtin";
 import {ABAPFile} from "./abap/abap_file";
@@ -58,6 +58,8 @@ import {CyclomaticComplexityStats} from "./utils/cyclomatic_complexity_stats";
 import {SkipLogic} from "./skip_logic";
 import {Diagnostics} from "./lsp/diagnostics";
 import {LSPEdit} from "./lsp/_edit";
+import {StatementFlow} from "./abap/flow/statement_flow";
+import {FlowGraph, FLOW_EDGE_TYPE} from "./abap/flow/flow_graph";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -65,13 +67,14 @@ import {LSPEdit} from "./lsp/_edit";
 // file used to build typings, index.d.ts
 export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
+  IReferenceExtras, IReference,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile, SkipLogic,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
-  MacroCall, MacroContent, NativeSQL,
+  MacroCall, MacroContent, NativeSQL, StatementFlow, FlowGraph, FLOW_EDGE_TYPE,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,

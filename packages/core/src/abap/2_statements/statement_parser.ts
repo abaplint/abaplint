@@ -199,12 +199,21 @@ export class StatementParser {
         if (type instanceof Statements.EndExec
             || type instanceof Statements.EndMethod) {
           sql = false;
-        } else if (!(type instanceof Comment)) {
+        } else {
           wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(this.tokensToNodes(statement.getTokens()));
+
+          if (statement.concatTokens().toUpperCase().endsWith("ENDMETHOD.")) {
+            const tokens = statement.getTokens();
+            const startTokens = this.tokensToNodes(tokens.slice(tokens.length - 2, tokens.length));
+            const endTokens = this.tokensToNodes(tokens.slice(0, tokens.length - 2));
+            wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(endTokens);
+            const item = new StatementNode(new Statements.EndMethod()).setChildren(startTokens);
+            wa.statements.splice(i + 1, 0, item);
+            sql = false;
+          }
         }
       }
     }
-
   }
 
 // for each statement, run statement matchers to figure out which kind of statement it is

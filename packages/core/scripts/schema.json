@@ -39,6 +39,23 @@
       ],
       "type": "object"
     },
+    "AddTestAttributesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AlignParametersConf": {
       "additionalProperties": false,
       "properties": {
@@ -923,6 +940,9 @@
           "description": "Detects INSERT REPORT",
           "type": "boolean"
         },
+        "insertTextpool": {
+          "type": "boolean"
+        },
         "kernelCall": {
           "description": "Detects kernel calls",
           "type": "boolean"
@@ -946,6 +966,7 @@
         "generateSubroutine",
         "deleteReport",
         "deleteTextpool",
+        "insertTextpool",
         "deleteDynpro",
         "exportDynpro",
         "dynamicSQL"
@@ -1110,6 +1131,23 @@
       "type": "object"
     },
     "EasyToFindMessagesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "EmptyEventConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -1581,6 +1619,17 @@
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
+            "add_test_attributes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AddTestAttributesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
+            },
             "align_parameters": {
               "anyOf": [
                 {
@@ -2032,6 +2081,17 @@
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
             },
+            "empty_event": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyEventConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
+            },
             "empty_line_in_statement": {
               "anyOf": [
                 {
@@ -2262,6 +2322,17 @@
                 }
               ],
               "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
+            },
+            "implicit_start_of_selection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplicitStartOfSelectionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -3306,7 +3377,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused methods\nhttps://rules.abaplint.org/unused_methods"
+              "description": "Checks for unused methods\nTags: Quickfix\nhttps://rules.abaplint.org/unused_methods"
             },
             "unused_types": {
               "anyOf": [
@@ -3440,6 +3511,17 @@
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
+            "add_test_attributes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AddTestAttributesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
+            },
             "align_parameters": {
               "anyOf": [
                 {
@@ -3891,6 +3973,17 @@
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
             },
+            "empty_event": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyEventConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
+            },
             "empty_line_in_statement": {
               "anyOf": [
                 {
@@ -4121,6 +4214,17 @@
                 }
               ],
               "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
+            },
+            "implicit_start_of_selection": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplicitStartOfSelectionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -5165,7 +5269,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused methods\nhttps://rules.abaplint.org/unused_methods"
+              "description": "Checks for unused methods\nTags: Quickfix\nhttps://rules.abaplint.org/unused_methods"
             },
             "unused_types": {
               "anyOf": [
@@ -5310,8 +5414,18 @@
           "uniqueItems": true
         },
         "files": {
-          "description": "input files, glob format",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "input files, glob format"
         },
         "noIssues": {
           "description": "list of files to not report any issues for, case insensitive regex",
@@ -5522,6 +5636,23 @@
       "type": "object"
     },
     "ImplementMethodsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ImplicitStartOfSelectionConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

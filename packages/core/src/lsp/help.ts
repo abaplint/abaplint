@@ -8,19 +8,59 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {DumpScope} from "./dump_scope";
 import {ABAPFile} from "../abap/abap_file";
+import {VirtualPosition} from "../virtual_position";
+import {DataDefinition} from "../objects";
+import {IObject} from "../objects/_iobject";
+import {CDSLexer} from "../cds/cds_lexer";
 
 export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
 
-    const file = LSPUtils.getABAPFile(reg, textDocument.uri);
-    if (file === undefined) {
-      return "file not found";
-    } else {
-      return this.dumpABAP(file, reg, textDocument, position);
+    const abapFile = LSPUtils.getABAPFile(reg, textDocument.uri);
+    if (abapFile !== undefined) {
+      return this.dumpABAP(abapFile, reg, textDocument, position);
     }
+
+    const file = reg.getFileByName(textDocument.uri);
+    if (file === undefined) {
+      return "File not found: " + textDocument.uri;
+    }
+
+    const obj = reg.findObjectForFile(file) as IObject;
+    if (obj instanceof DataDefinition) {
+      return this.dumpDDLS(obj, reg);
+    }
+
+    return "Unhandled object type: " + obj.getType();
   }
 
 /////////////////////////////////////////////////
+
+  private static dumpDDLS(obj: DataDefinition, reg: IRegistry): string {
+    let content = "";
+    content += "<h1>" + obj.getType() + " " + obj.getName() + "</h1>\n";
+    content += obj.getDescription() + "\n";
+    content += obj.getParsingIssues().map(i => i.getMessage()).join("<br>\n");
+    content += `<hr>\n`;
+    const parsed = obj.getParsedData();
+    delete parsed?.tree;
+    content += `<pre>` + JSON.stringify(parsed, null, 2) + "</pre>\n";
+    content += `<hr>\n`;
+    content += `<pre>` + obj.parseType(reg).toText(0) + "</pre>\n";
+    content += `<hr>\n`;
+
+    const file = obj.findSourceFile();
+    if (file) {
+      const tokens = CDSLexer.run(file);
+      content += `<h3>Tokens</h3>\n<pre>\n`;
+      for (const t of tokens) {
+        content += JSON.stringify(t) + "\n";
+      }
+      content += `</pre>\n`;
+    }
+
+    return content;
+  }
 
   private static dumpABAP(file: ABAPFile, reg: IRegistry, textDocument: LServer.TextDocumentIdentifier,
                           position: LServer.Position): string {
@@ -215,13 +255,26 @@ export class Help {
   }
 
   private static tokens(file: ABAPFile) {
-    let inner = "<table><tr><td><b>String</b></td><td><b>Type</b></td><td><b>Row</b></td><td><b>Column</b></td></tr>";
+    let inner = `<table><tr><td><b>String</b></td><td><b>Type</b></td>
+    <td><b>Row</b></td><td><b>Column</b></td>
+    <td><b>vRow</b></td><td><b>vColumn</b></td>
+    </tr>`;
     for (const token of file.getTokens()) {
-      inner = inner + "<tr><td><tt>" +
+      const tStart = token.getStart();
+
+      inner += "<tr><td><tt>" +
         this.escape(token.getStr()) + "</tt></td><td>" +
         token.constructor.name + "</td><td align=\"right\">" +
-        token.getRow() + "</td><td align=\"right\">" +
-        token.getCol() + "</td></tr>";
+        tStart.getRow() + "</td><td align=\"right\">" +
+        tStart.getCol() + "</td>";
+
+      if (tStart instanceof VirtualPosition) {
+        inner += `<td>${tStart.vcol}</td><td>${tStart.vrow}</td>`;
+      } else {
+        inner += "<td></td><td></td>";
+      }
+
+      inner += "</tr>";
     }
     inner = inner + "</table>";
     return inner;

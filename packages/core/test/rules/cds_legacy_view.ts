@@ -31,6 +31,19 @@ define view entity zhvamfoocust as select from zhvam_cust {
     expect(issues.length).to.equal(0);
   });
 
+  it("table function, ok", async () => {
+    const cds = `@EndUserText.label: 'Foobar'
+define table function ymoofunc with parameters p_anp : zanp, p_prevanp : zprevanp
+returns {
+  mandt : abap.clnt;
+  foods : zmmooo;
+  moods : abap.char( 50 );
+}
+implemented by method zcl_bar=>dsffdsfd;`;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(0);
+  });
+
   it("error", async () => {
     const cds = `parser error`;
     const issues = await findIssues(cds);

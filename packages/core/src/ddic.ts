@@ -227,10 +227,10 @@ export class DDIC {
     }
   }
 
-  public lookupDomain(name: string, dataElement?: string): ILookupResult {
+  public lookupDomain(name: string, dataElement?: string, description?: string): ILookupResult {
     const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
-      return {type: found.parseType(this.reg, dataElement), object: found};
+      return {type: found.parseType(this.reg, dataElement, description), object: found};
     } else if (this.reg.inErrorNamespace(name)) {
       return {type: new Types.UnknownType(name + ", lookupDomain"), object: undefined};
     } else {
@@ -329,63 +329,75 @@ export class DDIC {
     }
   }
 
-  public textToType(
-    text: string | undefined,
-    length: string | undefined,
-    decimals: string | undefined,
-    infoText: string,
-    qualifiedName?: string,
-    conversionExit?: string,
-    ddicName?: string): AbstractType {
+  public textToType(input: {
+      text: string | undefined,
+      length: string | undefined,
+      decimals: string | undefined,
+      infoText: string,
+      qualifiedName?: string,
+      conversionExit?: string,
+      ddicName?: string,
+      description?: string,
+    }): AbstractType {
 
 // todo: support short strings, and length of different integers, NUMC vs CHAR, min/max length
 
-    switch (text) {
+    const extra = {
+      qualifiedName: input.qualifiedName,
+      conversionExit: input.conversionExit,
+      ddicName: input.ddicName,
+      description: input.description,
+    };
+
+    switch (input.text) {
       case "DEC":      // 1 <= len <= 31
       case "D16F":     // 1 <= len <= 31
+      case "D16D":
+      case "D34D":
       case "D34F":     // 1 <= len <= 31
       case "DF16_DEC": // 1 <= len <= 31
       case "DF34_DEC": // 1 <= len <= 31
       case "CURR":     // 1 <= len <= 31
       case "QUAN":     // 1 <= len <= 31
-        if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length, " + infoText, infoText);
-        } else if (decimals === undefined) {
-          return new Types.PackedType(parseInt(length, 10), 0, {qualifiedName, conversionExit, ddicName});
+        if (input.length === undefined) {
+          return new Types.UnknownType(input.text + " unknown length, " + input.infoText, input.infoText);
+        } else if (input.decimals === undefined) {
+          return new Types.PackedType(parseInt(input.length, 10), 0, extra);
         }
-        return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10), {qualifiedName, conversionExit, ddicName});
+        return new Types.PackedType(parseInt(input.length, 10), parseInt(input.decimals, 10), extra);
       case "ACCP":
-        return new Types.CharacterType(6, {qualifiedName, conversionExit, ddicName}); // YYYYMM
+        return new Types.CharacterType(6, extra); // YYYYMM
       case "LANG":
-        return new Types.CharacterType(1, {qualifiedName, conversionExit, ddicName});
+        return new Types.CharacterType(1, extra);
       case "CLNT":
-        return new Types.CharacterType(3, {qualifiedName, conversionExit, ddicName});
+        return new Types.CharacterType(3, extra);
       case "CUKY":
-        return new Types.CharacterType(5, {qualifiedName, conversionExit, ddicName});
+        return new Types.CharacterType(5, extra);
       case "UNIT":  // 2 <= len <= 3
-        return new Types.CharacterType(3, {qualifiedName, conversionExit, ddicName});
+        return new Types.CharacterType(3, extra);
+      case "UTCL":
       case "UTCLONG":
-        return new Types.CharacterType(27, {qualifiedName, conversionExit, ddicName});
+        return new Types.CharacterType(27, extra);
       case "NUMC": // 1 <= len <= 255
-        if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length", infoText);
+        if (input.length === undefined) {
+          return new Types.UnknownType(input.text + " unknown length", input.infoText);
         }
-        return new Types.NumericType(parseInt(length, 10), qualifiedName);
+        return new Types.NumericType(parseInt(input.length, 10), input.qualifiedName);
       case "CHAR": // 1 <= len <= 30000 (1333 for table fields)
       case "LCHR": // 256 <= len <= 32000
-        if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length", infoText);
+        if (input.length === undefined) {
+          return new Types.UnknownType(input.text + " unknown length", input.infoText);
         }
-        return new Types.CharacterType(parseInt(length, 10), {qualifiedName, conversionExit, ddicName});
+        return new Types.CharacterType(parseInt(input.length, 10), extra);
       case "RAW":  // 1 <= len <= 32000
       case "LRAW": // 256 <= len <= 32000
-        if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length", infoText);
+        if (input.length === undefined) {
+          return new Types.UnknownType(input.text + " unknown length", input.infoText);
         }
-        return new Types.HexType(parseInt(length, 10), qualifiedName);
+        return new Types.HexType(parseInt(input.length, 10), input.qualifiedName);
       case "TIMN": // Native HANA
       case "TIMS":
-        return new Types.TimeType({qualifiedName: qualifiedName}); //HHMMSS
+        return new Types.TimeType({qualifiedName: input.qualifiedName}); //HHMMSS
       case "DECFLOAT16": // len = 16
       case "DECFLOAT34": // len = 34
       case "D16R":       // len = 16
@@ -393,37 +405,37 @@ export class DDIC {
       case "DF16_RAW":   // len = 16
       case "DF34_RAW":   // len = 34
       case "FLTP":       // len = 16
-        if (length === undefined) {
-          return new Types.UnknownType(text + " unknown length", infoText);
+        if (input.length === undefined) {
+          return new Types.UnknownType(input.text + " unknown length", input.infoText);
         }
-        return new Types.FloatingPointType(parseInt(length, 10), qualifiedName);
+        return new Types.FloatingPointType(parseInt(input.length, 10), input.qualifiedName);
       case "DATN": // Native HANA
       case "DATS":
-        return new Types.DateType({qualifiedName: qualifiedName}); //YYYYMMDD
+        return new Types.DateType({qualifiedName: input.qualifiedName}); //YYYYMMDD
       case "INT1":
       case "INT2":
       case "INT4":
-        return Types.IntegerType.get({qualifiedName: qualifiedName});
+        return Types.IntegerType.get({qualifiedName: input.qualifiedName});
       case "INT8":
-        return new Types.Integer8Type({qualifiedName: qualifiedName});
+        return new Types.Integer8Type({qualifiedName: input.qualifiedName});
       case "SSTR":    // 1 <= len <= 1333
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return Types.StringType.get({qualifiedName: qualifiedName});
+        return Types.StringType.get({qualifiedName: input.qualifiedName});
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":
-        return new Types.XStringType({qualifiedName: qualifiedName});
+        return new Types.XStringType({qualifiedName: input.qualifiedName});
       case "D16S":
       case "D34S":
       case "DF16_SCL":
       case "DF34_SCL":
       case "PREC":
       case "VARC":
-        return new Types.UnknownType(text + " is an obsolete data type", infoText);
+        return new Types.UnknownType(input.text + " is an obsolete data type", input.infoText);
       default:
-        return new Types.UnknownType(text + " unknown", infoText);
+        return new Types.UnknownType(input.text + " unknown basic ddic type", input.infoText);
     }
   }
 

@@ -45,6 +45,31 @@ const tests = [
   "  LAYOUT                  lv_layot\n" +
   "  SAP COVER PAGE          lv_cover_page\n" +
   "  NO DIALOG.",
+
+  `NEW-PAGE
+          PRINT ON
+          LINE-SIZE               132
+          DESTINATION             sdfsd
+          LIST NAME               proliadfsastn
+          IMMEDIATELY             sdfsd
+          NEW LIST IDENTIFICATION 'X'
+          KEEP IN SPOOL           'X'
+          LIST DATASET            'A100'
+          SAP COVER PAGE          sdfasdf-prsap
+          RECEIVER                sdfasdf-prrec
+          DEPARTMENT              sdfasdf-prabt
+          NO DIALOG.`,
+
+  `NEW-PAGE NO-TITLE
+     NO-HEADING
+     PRINT ON KEEP IN SPOOL 'X'
+              IMMEDIATELY 'X'
+              NO DIALOG
+              DESTINATION target
+              COPIES bar
+              LIST NAME foo.`,
+
+  `NEW-PAGE NO-TOPOFPAGE.`,
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);

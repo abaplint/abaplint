@@ -84,12 +84,14 @@ describe("View, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zag_unit_testv.view.xml", xml));
     await reg.parseAsync();
-    const tabl = reg.getFirstObject()! as View;
-    expect(tabl.getName()).to.equal("ZAG_UNIT_TESTV");
-    const structure = tabl.parseType(reg);
+    const view = reg.getFirstObject()! as View;
+    expect(view.getName()).to.equal("ZAG_UNIT_TESTV");
+    const structure = view.parseType(reg);
     expect(structure).to.be.instanceof(StructureType);
     const casted = structure as StructureType;
     expect(casted.getComponents().length).to.equal(4);
+
+    expect(view.listKeys().length).to.equal(3);
   });
 
   it("database view with 2 append views", async () => {

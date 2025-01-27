@@ -35,20 +35,21 @@ export class Loop implements StatementSyntax {
 
     const concat = node.concatTokens().toUpperCase();
     if (sourceType === undefined) {
-      const message = "No source type determined";
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
+      // if its a dynpro table control loop, then dont issue error
+      if (concat !== "LOOP.") {
+        const message = "No source type determined";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      }
     } else if (sourceType instanceof UnknownType) {
       const message = "Loop, not a table type, " + sourceType.getError();
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
+      sourceType = new VoidType("Loop, not a table type");
     } else if (sourceType instanceof TableType
         && target === undefined
         && sourceType.isWithHeader() === false
         && node.getChildren().length === 4) {
       const message = "Loop, no header line";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
     } else if (!(sourceType instanceof TableType)
         && !(sourceType instanceof AnyType)
         && !(sourceType instanceof DataType)
@@ -56,13 +57,11 @@ export class Loop implements StatementSyntax {
         && concat.startsWith("LOOP AT GROUP ") === false) {
       const message = "Loop, not a table type";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
     } else if (loopTarget === undefined
         && sourceType instanceof TableType
         && sourceType.isWithHeader() === false) {
       const message = "Loop, no header";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
     }
 
     const targetConcat = loopTarget?.concatTokens().toUpperCase();

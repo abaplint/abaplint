@@ -10,13 +10,13 @@ export class StringTemplateFormatting extends Expression {
     // https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapcompute_string_format_options.htm
     const alphaOptions = altPrio("OUT", "RAW", "IN", Source);
 
-    const alignOptions = altPrio("LEFT", "RIGHT", "CENTER", Source);
+    const alignOptions = altPrio("LEFT", "RIGHT", "CENTER", Source, Dynamic);
 
     const dateTimeOptions = altPrio("RAW", "ISO", "USER", "ENVIRONMENT", Source, Dynamic);
 
     const timeStampOptions = altPrio("SPACE", "ISO", "USER", "ENVIRONMENT", Source);
 
-    const numberOptions = altPrio("RAW", "USER", "ENVIRONMENT", Source);
+    const numberOptions = altPrio("RAW", "USER", "ENVIRONMENT", Source, Dynamic);
 
     const signOptions = altPrio("LEFT", "LEFTPLUS", "LEFTSPACE", "RIGHT", "RIGHTPLUS", "RIGHTSPACE", Source);
 

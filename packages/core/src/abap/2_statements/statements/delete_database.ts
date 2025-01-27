@@ -11,12 +11,12 @@ export class DeleteDatabase implements IStatement {
 
     const from = seq("FROM", DatabaseTable, optPrio(SQLClient), optPrio(DatabaseConnection), opt(where));
 
+    const fromSomething = seq("FROM", opt("TABLE"), SQLSourceSimple);
+
     const table = seq(DatabaseTable,
                       optPrio(SQLClient),
                       optPrio(DatabaseConnection),
-                      "FROM",
-                      opt("TABLE"),
-                      SQLSourceSimple);
+                      optPrio(fromSomething));
 
     const ret = seq("DELETE", altPrio(from, table));
 

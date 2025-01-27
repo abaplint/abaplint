@@ -15,7 +15,7 @@ export class Format implements IStatement {
                         seq("INVERSE", opt(value)),
                         seq("HOTSPOT", opt(value)),
                         seq("FRAMES", value),
-                        seq("INPUT", value),
+                        seq("INPUT", opt(value)),
                         Color);
 
     const ret = seq("FORMAT", options);

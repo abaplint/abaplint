@@ -36,6 +36,8 @@ export class StructureParser {
       return new Structures.ClassGlobal();
     } else if (filename.endsWith(".intf.abap")) {
       return new Structures.InterfaceGlobal();
+    } else if (filename.match(/\.screen\_\d+\.abap$/i)) {
+      return new Structures.DynproLogic();
     } else {
 // todo, add a special structure for TYPE-POOLS
       return new Structures.Any();

@@ -12,7 +12,6 @@ import {MethodCallParam} from "./method_call_param";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
-import {ClassDefinition} from "../../types/class_definition";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodCallChain {
@@ -62,9 +61,8 @@ export class MethodCallChain {
             input.issues.push(syntaxIssue(input, methodToken!, message));
             return new VoidType(CheckSyntaxKey);
           }
-          const extra: IReferenceExtras = {
-            ooName: foundDef?.getName(),
-            ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF"};
+          const voidedName = context instanceof VoidType ? context.getVoided() : undefined;
+          const extra = helper.methodReferenceExtras(foundDef, className || voidedName);
           input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);
         }
         if (methodName?.includes("~")) {

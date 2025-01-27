@@ -75,6 +75,7 @@ const tests = [
   "methods name exporting !out type %_C_POINTER.",
   "METHODS run IMPORTING parameter TYPE zif_definitions~ty_type.",
   "CLASS-METHODS foo FOR TABLE FUNCTION bar.",
+  "CLASS-METHODS foo FOR TABLE FUNCTION /foo/bar.",
   "class-methods run importing it_list like gt_list[].",
 
   `METHODS get_uri_query_parameter
@@ -90,6 +91,7 @@ const tests = [
     FOR DDL OBJECT
     OPTIONS CDS SESSION CLIENT REQUIRED.`,
   `CLASS-METHODS get_shortest_path AMDP OPTIONS CDS SESSION CLIENT current.`,
+  `METHODS moo AMDP OPTIONS READ-ONLY CDS SESSION CLIENT current.`,
   `METHODS /ui2/bar.`,
   `METHODS /ui2/foo_bar RETURNING VALUE(ro_/ui2/moo) TYPE REF TO /ui2/boo.`,
 
@@ -124,6 +126,14 @@ const tests = [
   `METHODS foo FOR MODIFY IMPORTING sdf FOR ACTION sdf~sdf.`,
   `METHODS sdf FOR GLOBAL AUTHORIZATION IMPORTING REQUEST sdf FOR sdf RESULT sdf.`,
   `METHODS get_auth FOR INSTANCE AUTHORIZATION IMPORTING keys REQUEST requested_authorizations FOR ent RESULT result.`,
+  `METHODS get_instance_features FOR INSTANCE FEATURES IMPORTING keys REQUEST requested_features FOR Project RESULT result.`,
+  `METHODS GetDefaultsForChild FOR READ IMPORTING keys FOR FUNCTION Root~GetDefaultsForChild RESULT result.`,
+
+  `methods ON_POPUP_NEEDED default ignore
+    for event POPUP_NEEDED of zif_sdfds
+    importing
+      !ljlkja
+      !safdsf .`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

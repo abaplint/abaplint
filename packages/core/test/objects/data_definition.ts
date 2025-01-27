@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
-import {StructureType} from "../../src/abap/types/basic";
+import {StructureType, VoidType} from "../../src/abap/types/basic";
 
 describe("Object: DDLS - Data Definition", () => {
 
@@ -25,7 +25,7 @@ describe("Object: DDLS - Data Definition", () => {
 @AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
 @AbapCatalog.compiler.compareFilter: true
 @AccessControl.authorizationCheck: #CHECK
-@EndUserText.label: 'Hello World'
+@EndUserText.label: 'Hello World,.:'
 define view ZAG_UNIT_TEST
   as select from tadir
 {
@@ -47,6 +47,7 @@ define view ZAG_UNIT_TEST
     if (type instanceof StructureType) {
       expect(type.getComponents().length).to.equal(3);
     }
+    expect(ddls.getDescription()).to.equal("Hello World,.:");
   });
 
   it("Get fields", async () => {
@@ -78,7 +79,7 @@ define view ZAG_UNIT_TEST
 
   it("Get fields, associations are not fields", async () => {
     const source = `
-@AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
+@AbapCatalog.sqlViewName: '/FOO/BAR'
 @AbapCatalog.compiler.compareFilter: true
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'Hello World'
@@ -103,6 +104,8 @@ define view ZAG_UNIT_TEST
     if (type instanceof StructureType) {
       expect(type.getComponents().length).to.equal(3);
     }
+
+    expect(ddls.getSQLViewName()).to.equal("/FOO/BAR");
   });
 
   it("Get get field names", async () => {
@@ -231,5 +234,194 @@ define root view entity /foo/b_ar001 as projection on /foo/b_ar001 {
     expect(ddls).to.not.equal(undefined);
     const parsed = ddls.parseType(reg) as StructureType;
     expect(parsed.getComponents().length).to.equal(3);
+  });
+
+  it("get source", async () => {
+    const source = `
+define view /FOO/GL_BAR
+  as select from /foo/gl_foo
+{
+  key bukrs      as CompanyCode,
+  key valid_from as ValidFrom
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("#foo#gl_bar.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const sources = ddls.listSources();
+    expect(sources?.length).to.equal(1);
+    expect(sources![0].name).to.equal("/FOO/GL_FOO");
+    expect(sources![0].as).to.equal(undefined);
+  });
+
+  it("get source, as'ed", async () => {
+    const source = `
+define view ZAG_UNIT_TEST as select from ZAG_NO_DTEL as a{
+  a.field1,
+  a.field2
+}`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zag_unit_test.ddls.asddls", source),
+    ]);
+
+    reg.addFile(new MemoryFile("zag_no_dtel.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZAG_NO_DTEL</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZAG_NO_DTEL</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL1</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+     <MASK>  CHAR</MASK>
+     <DDTEXT>hello</DDTEXT>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+     <MASK>  CHAR</MASK>
+     <DDTEXT>world</DDTEXT>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`));
+
+    await reg.parseAsync();
+
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const sources = ddls.listSources();
+    expect(sources?.length).to.equal(1);
+    expect(sources![0].name).to.equal("ZAG_NO_DTEL");
+    expect(sources![0].as).to.equal("A");
+
+    const parsed = ddls.parseType(reg) as StructureType | undefined;
+    expect(parsed).to.be.instanceof(StructureType);
+    const field1 = parsed?.getComponentByName("FIELD1");
+    expect(field1).to.not.equal(undefined);
+    expect(field1?.getDescription()).to.equal("hello");
+    expect(parsed?.getComponentByName("FIELD2")).to.not.equal(undefined);
+  });
+
+  it("prefixed, without as", async () => {
+    const source = `
+define view entity ZI_FIPosition
+  as select from I_JournalEntryItem
+    inner join   I_Ledger as _Ledger on  _Ledger.IsLeadingLedger = 'X'
+                                     and _Ledger.Ledger          = I_JournalEntryItem.Ledger
+  {
+    key I_JournalEntryItem.SourceLedger,
+    key I_JournalEntryItem.CompanyCode
+  }`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_fiposition.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    const components = parsed.getComponents();
+    expect(components.length).to.equal(2);
+    expect(components[0].type).to.be.instanceof(VoidType);
+  });
+
+  it("associations", async () => {
+    const source = `
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Header'
+@Metadata.ignorePropagatedAnnotations: true
+@ObjectModel.usageType:{
+    serviceQuality: #A,
+    sizeCategory: #S,
+    dataClass: #MIXED
+}
+define view entity ZI_Header
+  as select from I_JournalEntry
+  association [0..1] to ZI_BillingDocument as _BillingDocument on  $projection.ReferenceDocumentType     = 'VBRK'
+                                                               and $projection.OriginalReferenceDocument = _BillingDocument.BillingDocument
+  {
+    key CompanyCode,
+    key FiscalYear,
+    key AccountingDocument,
+        OriginalReferenceDocument,
+        _BillingDocument.BillingDocument,
+        _JournalEntryItem
+
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_header.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    const components = parsed.getComponents();
+    // all components void
+    for (const component of components) {
+      expect(component.type).to.be.instanceof(VoidType);
+    }
+
+    expect(ddls.listKeys().length).to.equal(3);
+  });
+
+  it("association via voided", async () => {
+    const source = `
+define view entity ZI_FIPositionBseg
+  as select from I_OperationalAcctgDocItem
+  {
+    key CompanyCode,
+    key AccountingDocument,
+    key FiscalYear,
+    key AccountingDocumentItem,
+        ChartOfAccounts,
+        AssetClass,
+
+        _ClearingAccountingDocument.DocumentDate as DocumentDateHeader,
+        _ClearingAccountingDocument.TaxReportingDate,
+        _SalesDoc.SalesDocumentDate
+
+}`;
+    const reg = new Registry().addFiles([new MemoryFile("zi_header.ddls.asddls", source)]);
+
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    const components = parsed.getComponents();
+    // all components void
+    for (const component of components) {
+      expect(component.type).to.be.instanceof(VoidType);
+    }
+
+    expect(ddls.listKeys().length).to.equal(4);
   });
 });

@@ -5,6 +5,7 @@ import {Hover} from "../../src/lsp/hover";
 import {IFile} from "../../src/files/_ifile";
 import {ITextDocumentPositionParams} from "../../src/lsp/_interfaces";
 import {MemoryFile} from "../../src/files/memory_file";
+import {Config} from "../../src";
 
 function buildPosition(file: IFile, row: number, column: number): ITextDocumentPositionParams {
   return {
@@ -352,6 +353,11 @@ DATA(left) = SWITCH #( bottle - 1
         <DATATYPE>CHAR</DATATYPE>
         <LENG>000002</LENG>
         <OUTPUTLEN>000002</OUTPUTLEN>
+        <DDTEXT>testing test1</DDTEXT>
+        <REPTEXT>testing test2</REPTEXT>
+        <SCRTEXT_S>testing test3</SCRTEXT_S>
+        <SCRTEXT_M>testing test4</SCRTEXT_M>
+        <SCRTEXT_L>testing test5</SCRTEXT_L>
        </DD04V>
       </asx:values>
      </asx:abap>
@@ -366,6 +372,7 @@ DATA foo TYPE zddic.`;
     const hoverVariable = new Hover(reg).find(buildPosition(file, 1, 6));
     expect(hoverVariable).to.not.equal(undefined, "variable");
     expect(hoverVariable?.value).to.contain("ZDDIC");
+    expect(hoverVariable?.value).to.contain("testing test2");
 
     const hoverDDIC = new Hover(reg).find(buildPosition(file, 1, 15));
     expect(hoverDDIC).to.not.equal(undefined, "ddic");
@@ -1541,6 +1548,50 @@ foobar.`;
     const hover = new Hover(reg).find(buildPosition(file, 4, 2));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("Macro Call");
+  });
+
+  it("hover DATA in include", () => {
+    const main = new MemoryFile("zfoobar.prog.abap", `REPORT zfoobar.
+INCLUDE zinclude.`);
+    const incl = new MemoryFile("zinclude.prog.abap", `FORM foo.
+DATA foo TYPE i.
+ENDFORM.`);
+    const inclxml = new MemoryFile("zinclude.prog.xml", "<SUBC>I</SUBC>");
+
+    const reg = new Registry();
+    reg.addFile(main);
+    reg.addFile(incl);
+    reg.addFile(inclxml);
+    reg.parse();
+
+    const hover = new Hover(reg).find(buildPosition(incl, 1, 6));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("foo");
+  });
+
+  it("hover method calls, not resolved classes", () => {
+    const main = new MemoryFile("zfoobar.prog.abap", `FORM run.
+  DATA ref TYPE REF TO zcl_mc.
+  CREATE OBJECT ref.
+  ref->instance( ).
+  zcl_mc=>static( ).
+ENDFORM.`);
+
+    const config = Config.getDefault().get();
+    config.syntax.errorNamespace = "$^";
+    const none = new Config(JSON.stringify(config));
+
+    const reg = new Registry(none);
+    reg.addFile(main);
+    reg.parse();
+
+    const hover1 = new Hover(reg).find(buildPosition(main, 3, 14));
+    expect(hover1).to.not.equal(undefined);
+    expect(hover1?.value).to.contain("zcl_mc");
+
+    const hover2 = new Hover(reg).find(buildPosition(main, 4, 14));
+    expect(hover2).to.not.equal(undefined);
+    expect(hover2?.value).to.contain("zcl_mc");
   });
 
 });

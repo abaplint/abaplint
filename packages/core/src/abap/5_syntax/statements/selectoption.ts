@@ -6,6 +6,7 @@ import {BasicTypes} from "../basic_types";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Identifier} from "../../1_lexer/tokens";
 
 export class SelectOption implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -15,6 +16,8 @@ export class SelectOption implements StatementSyntax {
       const message = "Select-option name too long, " + nameToken.getStr();
       input.issues.push(syntaxIssue(input, nameToken, message));
       return;
+    } else if (nameToken === undefined) {
+      return;
     }
 
     for(const d of node.findDirectExpressions(Expressions.Dynamic)) {
@@ -23,7 +26,7 @@ export class SelectOption implements StatementSyntax {
 
     const nameExpression = node.findFirstExpression(Expressions.FieldChain);
     let found = new BasicTypes(input).resolveLikeName(nameExpression);
-    if (found && nameToken) {
+    if (found) {
       if (found instanceof StructureType) {
         let length = 0;
         for (const c of found.getComponents()) {
@@ -46,12 +49,13 @@ export class SelectOption implements StatementSyntax {
       ]);
       input.scope.addIdentifier(
         new TypedIdentifier(nameToken, input.filename, new TableType(stru, {withHeader: true, keyType: TableKeyType.default})));
-      return;
-    }
-
-    if (nameToken) {
+    } else {
       input.scope.addIdentifier(
         new TypedIdentifier(nameToken, input.filename, new UnknownType("Select option, fallback")));
     }
+
+    const magicName = "%_" + nameToken.getStr() + "_%_app_%";
+    const magicToken = new Identifier(nameToken.getStart(), magicName);
+    input.scope.addIdentifier(new TypedIdentifier(magicToken, input.filename, new VoidType("SELECT-OPTION magic")));
   }
 }

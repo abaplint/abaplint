@@ -94,7 +94,7 @@ export class EditorWidget extends Widget {
         id: "abaplint.help",
         label: "ABAP Help",
         keybindings: [monaco.KeyCode.F1],
-        precondition: "editorLangId == 'abap'",
+        precondition: undefined,
         run: this.openHelp.bind(this),
       });
 

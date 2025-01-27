@@ -1,6 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
-import {LSPUtils} from "./_lsp_utils";
 import {Issue} from "../issue";
 import {Severity} from "../severity";
 
@@ -12,9 +11,7 @@ export class Diagnostics {
   }
 
   public findIssues(textDocument: LServer.TextDocumentIdentifier): readonly Issue[] {
-    this.reg.parse();
-
-    const file = LSPUtils.getABAPFile(this.reg, textDocument.uri); // todo, this sould also run for xml files
+    const file = this.reg.getFileByName(textDocument.uri);
     if (file === undefined) {
       return [];
     }
@@ -24,6 +21,7 @@ export class Diagnostics {
       return [];
     }
 
+    this.reg.parse();
     let issues = this.reg.findIssuesObject(obj);
     issues = issues.filter(i => i.getFilename() === file.getFilename());
     return issues;

@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {TypedIdentifier} from "../../types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {StatementSyntax} from "../_statement_syntax";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {ScopeType} from "../_scope_type";
@@ -15,7 +15,7 @@ export class Tables implements StatementSyntax {
 
     let name = nameToken.getStr();
     if (name.startsWith("*")) {
-      name = name.substr(1);
+      name = name.substring(1);
     }
 
     // lookupTableOrView will also give Unknown and Void
@@ -26,9 +26,10 @@ export class Tables implements StatementSyntax {
 
       if (input.scope.getType() === ScopeType.Form || input.scope.getType() === ScopeType.FunctionModule) {
         // hoist TABLES definitions to global scope
-        input.scope.addNamedIdentifierToParent(nameToken.getStr(), new TypedIdentifier(nameToken, input.filename, found.type));
+        input.scope.addNamedIdentifierToParent(nameToken.getStr(),
+                                               new TypedIdentifier(nameToken, input.filename, found.type, [IdentifierMeta.Tables]));
       } else {
-        input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, found.type));
+        input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, found.type, [IdentifierMeta.Tables]));
       }
       return;
     }

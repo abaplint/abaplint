@@ -391,6 +391,71 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      appending table @join.`,
 
   `SELECT object FROM tadir WHERE @( strlen( 'asd' ) ) = 2 INTO TABLE @DATA(TEST).`,
+
+  `SELECT SINGLE MAX( field )
+     FROM /foo/gl_bar
+     INTO @sdfsdf
+     GROUP BY field.`,
+
+  `SELECT *
+     FROM /foo/bar
+     WHERE fieldname = ( ( SELECT MAX( fieldname ) FROM /moo/foo ) )
+     INTO CORRESPONDING FIELDS OF TABLE @/foo/cl_clas=>gt.`,
+
+  `SELECT gla, \\_skat-txt50, indi
+    FROM /foo/bar
+    WHERE indi = @abap_false
+    AND \\_skat-spras = @sy-langu
+    AND field         = 'FOO'
+    ORDER BY gla ASCENDING
+    INTO TABLE @lt.`,
+
+  `SELECT foo bar FROM ksml
+    INTO TABLE lt
+    GROUP BY foo bar
+    HAVING count( * ) > 1.`,
+
+  `SELECT SINGLE * FROM t100 WHERE 'A' = t100~arbgb INTO @DATA(sdf).`,
+
+  `SELECT
+     abs( cast( wrbtr as fltp ) / cast( menge as fltp ) ) as price
+     FROM sdfsdf
+     INTO TABLE @sdf.`,
+
+  `SELECT FROM table
+      FIELDS SUM( qty )
+      WHERE foo <> 'A'
+      INTO @DATA(total).`,
+
+  `SELECT vbelv, posnv,
+    SUM( CASE vbtyp_n
+       WHEN @zif=>ord
+       THEN rfmng
+       WHEN @zif=>ret
+       THEN field
+       ELSE 0
+       END ) AS qty
+     FROM vbfa
+     WHERE vbelv EQ @ref
+     GROUP BY vbelv, posnv
+     INTO TABLE @DATA(lt_rows).`,
+
+  `SELECT * FROM ztab APPENDING TABLE result
+     FOR ALL ENTRIES IN tab
+     WHERE matnr = tab-matnr
+     %_HINTS HDB lv_hint.`,
+
+  `SELECT b~/foo/bar, b~mc_name1
+      FROM /foo/moo AS a
+      INNER JOIN but000 AS b ON a~code = b~partner
+      WHERE period IN @lr_uniqueid
+      INTO TABLE @DATA(lt_tab).`,
+
+  `SELECT COUNT(*) FROM /foo/bar AS A
+      INNER JOIN moo AS B
+        ON B~AABB = A~/foo/val
+        INTO target
+        WHERE B~SPRAS IN moo.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

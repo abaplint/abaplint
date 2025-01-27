@@ -4,6 +4,7 @@ export type AbstractTypeData = {
   derivedFromConstant?: boolean,
   ddicName?: string,
   RTTIName?: string,
+  description?: string,
 };
 
 export abstract class AbstractType {
@@ -24,6 +25,10 @@ export abstract class AbstractType {
 
   public getRTTIName(): string | undefined {
     return this.data?.RTTIName;
+  }
+
+  public getDescription(): string | undefined {
+    return this.data?.description;
   }
 
   public getConversionExit(): string | undefined {

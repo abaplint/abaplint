@@ -1,4 +1,3 @@
-/* eslint-disable default-case */
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {StatementNode, ExpressionNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";

@@ -5,6 +5,7 @@ import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {DataDefinition} from "../objects";
+import {CDSDefineView} from "../cds/expressions";
 
 export class CDSLegacyViewConf extends BasicRuleConfig {
 }
@@ -18,7 +19,6 @@ export class CDSLegacyView implements IRule {
       key: "cds_legacy_view",
       title: "CDS Legacy View",
       shortDescription: `Identify CDS Legacy Views`,
-      // eslint-disable-next-line max-len
       extendedInformation: `Use DEFINE VIEW ENTITY instead of DEFINE VIEW
 
 https://blogs.sap.com/2021/10/16/a-new-generation-of-cds-views-how-to-migrate-your-cds-views-to-cds-view-entities/
@@ -49,20 +49,19 @@ v755 and up`,
       return [];
     }
 
-    if (o.getType() !== "DDLS") {
+    if (o.getType() !== "DDLS" || !(o instanceof DataDefinition)) {
       return [];
     }
 
-    if (o instanceof DataDefinition) {
-      const tree = o.getTree();
-      if (tree === undefined) {
-        return []; // parser error
-      }
-      if (tree.findDirectTokenByText("ENTITY") === undefined) {
-        const file = o.findSourceFile();
-        if (file) {
-          issues.push(Issue.atRow(file, 1, "CDS Legacy View", this.getMetadata().key, this.getConfig().severity));
-        }
+    const tree = o.getTree();
+    if (tree === undefined) {
+      return []; // parser error
+    }
+
+    if (tree.get() instanceof CDSDefineView && tree.findDirectTokenByText("ENTITY") === undefined) {
+      const file = o.findSourceFile();
+      if (file) {
+        issues.push(Issue.atRow(file, 1, "CDS Legacy View", this.getMetadata().key, this.getConfig().severity));
       }
     }
 

@@ -9,7 +9,7 @@ describe("LSP, diagnostics", () => {
   it("find issues for file", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file).parse();
-    expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(2);
+    expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(3);
   });
 
   it("find issues for unknown file", () => {
@@ -55,6 +55,34 @@ endclass.`);
     for (const i of issues) {
       expect(i.message).to.not.contain("something_testclass");
     }
+  });
+
+  it("find issues for include file", () => {
+    const main = new MemoryFile("zfoobar.prog.abap", `REPORT zfoobar.
+INCLUDE zinclude.`);
+    const incl = new MemoryFile("zinclude.prog.abap", "asdf.");
+    const inclxml = new MemoryFile("zinclude.prog.xml", "<SUBC>I</SUBC>");
+
+    const registry = new Registry();
+    registry.addFile(main);
+    registry.addFile(incl);
+    registry.addFile(inclxml);
+    registry.parse();
+
+    const issues = new Diagnostics(registry).find({uri: incl.getFilename()});
+    expect(issues.length).to.equal(1);
+    expect(issues[0].code).to.equal("parser_error");
+  });
+
+  it("DDLS diagnostics", () => {
+    const main = new MemoryFile("zfoobar.ddls.asddls", `dsf`);
+
+    const registry = new Registry();
+    registry.addFile(main);
+    registry.parse();
+
+    const issues = new Diagnostics(registry).find({uri: main.getFilename()});
+    expect(issues.length).to.equal(1);
   });
 
 });

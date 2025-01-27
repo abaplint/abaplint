@@ -1,13 +1,13 @@
 import {seq, altPrio, tok, Expression, optPrio} from "../combi";
 import {ParenLeft, ParenLeftW} from "../../1_lexer/tokens";
-import {Field, SQLFunction} from ".";
+import {Field, SQLCase, SQLFunction} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Dynamic} from "./dynamic";
 import {SQLArithmetics} from "./sql_arithmetics";
 
 export class SQLAggregation extends Expression {
   public getRunnable(): IStatementRunnable {
-    const f = seq(optPrio("DISTINCT"), altPrio(SQLArithmetics, Dynamic, SQLFunction));
+    const f = seq(optPrio("DISTINCT"), altPrio(SQLCase, SQLArithmetics, Dynamic, SQLFunction));
     const fparen = seq("(", Field, ")");
     const count = seq("COUNT", altPrio(tok(ParenLeft), tok(ParenLeftW)), optPrio("DISTINCT"), altPrio("*", Field, fparen), ")");
     const max = seq("MAX", altPrio(tok(ParenLeft), tok(ParenLeftW)), f, ")");

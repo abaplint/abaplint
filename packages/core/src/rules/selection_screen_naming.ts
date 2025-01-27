@@ -4,7 +4,7 @@ import {NamingRuleConfig} from "./_naming_rule_config";
 import {Parameter, SelectOption, SelectionScreen} from "../abap/2_statements/statements";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {NameValidator} from "../utils/name_validator";
-import {FieldSub, InlineField} from "../abap/2_statements/expressions";
+import {BlockName, FieldSub, InlineField} from "../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
@@ -100,7 +100,11 @@ export class SelectionScreenNaming extends ABAPRule {
     } else if (statNode.get() instanceof SelectOption) {
       return statNode.findFirstExpression(FieldSub);
     } else if (statNode.get() instanceof SelectionScreen) {
-      return statNode.findFirstExpression(InlineField);
+      let ret = statNode.findFirstExpression(InlineField);
+      if (ret === undefined && statNode.concatTokens().toUpperCase().includes(" BEGIN OF TABBED BLOCK")) {
+        ret = statNode.findFirstExpression(BlockName);
+      }
+      return ret;
     } else {
       return undefined;
     }

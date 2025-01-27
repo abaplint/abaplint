@@ -273,6 +273,34 @@ define view zhvamfoocust as select from I_asdfsd {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("CASE function, parened", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from I_asdfsd {
+     (case substring('sdf', 1, 2)
+       when 'YY' then 'X'
+       else  ''
+       end ) as sdf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("CASE function, num values", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from I_asdfsd {
+     case substring('sdf', 1, 2)
+       when 'YY' then 1
+       else  2
+       end as sdf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("compare operators, without preceding or trailing spaces", () => {
     const cds = `
 @AbapCatalog.sqlViewName: 'ZSDF'
@@ -715,6 +743,319 @@ extend view I_SalesDocumentItem with ZE_SalesDocItem
     const file = new MemoryFile("ze_salesdocitem.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("non seven bit ascii", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+@EndUserText.label: 'Äsdfsdf0123'
+define view zhvamfoocust as select from zhvam_cust {
+  key foo as sdfdsf
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("join", () => {
+    const cds = `define view zI_CDS
+  as select from a
+    left outer join b
+      on a.f1 = b.f1
+        and not b.f2 = 'X'
+{
+  key a.foo
+}`;
+    const file = new MemoryFile("zi_cds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("parse it, dont crash", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZADCOSET_ITRSCO'
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Rep. obj. of Tr. Request for Code Search'
+
+define view ZADCOSET_I_TransportSrcCodObj
+  as select from e071  as TransportObject
+    inner join   tadir as Object on  TransportObject.pgmid    = Object.pgmid
+                                 and TransportObject.object   = Object.object
+                                 and TransportObject.obj_name = Object.obj_name
+{
+  key TransportObject.trkorr   as Request,
+  key TransportObject.pgmid    as ProgramId,
+  key TransportObject.object   as ObjectType,
+  key TransportObject.obj_name as ObjectName,
+      Object.devclass          as DevelopmentPackage,
+      Object.author            as Owner,
+      Object.created_on        as CreatedDate
+}
+where
+       TransportObject.obj_name not like '______________________________VC'
+  and  Object.pgmid             = 'R3TR'
+  and  Object.delflag           = ''
+  and(
+       Object.object            = 'CLAS'
+    or Object.object            = 'INTF'
+    or Object.object            = 'PROG'
+    or Object.object            = 'FUGR'
+    or Object.object            = 'TYPE'
+    or Object.object            = 'DDLS'
+    or Object.object            = 'DCLS'
+    or Object.object            = 'DDLX'
+    or Object.object            = 'BDEF'
+    or Object.object            = 'XSLT'
+  )
+
+union
+
+select from  e071                       as TransportObject
+  inner join tadir                      as Object on  TransportObject.pgmid    = Object.pgmid
+                                                  and TransportObject.object   = Object.object
+                                                  and TransportObject.obj_name = Object.obj_name
+  inner join ZADCOSET_I_SearchableTable as Tabl   on Object.obj_name = Tabl.ObjectName
+{
+  key TransportObject.trkorr   as Request,
+  key TransportObject.pgmid    as ProgramId,
+  key Tabl.ObjectType,
+  key TransportObject.obj_name as ObjectName,
+      Object.devclass          as DevelopmentPackage,
+      Object.author            as Owner,
+      Object.created_on        as CreatedDate
+
+}
+where
+      Object.pgmid   = 'R3TR'
+  and Object.delflag = ''
+  and Object.object  = 'TABL'
+
+union all
+
+select from e071 as TransportObject
+{
+  key TransportObject.trkorr   as Request,
+  key TransportObject.pgmid    as ProgramId,
+  key TransportObject.object   as ObjectType,
+  key TransportObject.obj_name as ObjectName,
+      ''                       as DevelopmentPackage,
+      ''                       as Owner,
+      cast( '' as abap.dats )  as CreatedDate
+}
+where
+  (
+         TransportObject.pgmid    = 'LIMU'
+    and(
+         TransportObject.object   = 'FUNC'
+      or TransportObject.object   = 'METH'
+      or TransportObject.object   = 'REPS'
+      or TransportObject.object   = 'CLSD'
+      or TransportObject.object   = 'CPUB'
+      or TransportObject.object   = 'CPRO'
+      or TransportObject.object   = 'CPRI'
+      or TransportObject.object   = 'CINC'
+    )
+  )
+  and    TransportObject.obj_name not like '______________________________VC'
+`;
+    const file = new MemoryFile("zadcoset_i_transportsrccodobj.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("division and arithmetics", () => {
+    const cds = `define view zsdfds as select from zaaaa {
+  key mandt,
+  key hello,
+      division((value * amount), 1000, 2) as total
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("count and group", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  tab.field2,
+  count(*) as counter
+} group by tab.field1, mseg.field2
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("unit_conversion", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  unit_conversion(
+    quantity => tab.brgew,
+    source_unit => tab.gewei,
+    target_unit => cast('KG' as abap.unit) ) as weight_kg
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("more arithmetics", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  (1 - division(head_pos.net_sales, head_pos.kzwi1, 4)) * 100
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("more arithmetics 2", () => {
+    const cds = `define view zsdfds as select from tab {
+  tab.field1,
+  division(p_terms.payterm1_value, 100, 4) * head_pos.bill_amount as payterm1_amount
+}
+  `;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("large join", () => {
+    const cds = `
+define view /FOO/BAR
+ as select from zfoo as c1
+ inner join zfoo as c2
+ on c1.atnam = 'ASDF'
+ and c2.atnam =  'ASDF'
+ inner join zfoo as c3
+ on c3.atnam = 'ES1'
+ inner join zfoo as c4
+ on c4.atnam = 'ES2'
+ inner join zfoo as c5
+ on c5.atnam = 'ASDF'
+ inner join zfoo as c6
+ on c6.atnam = 'ASDF'
+ inner join zfoo as c7
+ on c7.atnam = 'ASDF'
+ inner join zfoo as c8
+ on c8.atnam = 'ASDF'
+ inner join zfoo as c9
+ on c9.atnam = 'ASDF'
+ inner join zfoo as c10
+ on c10.atnam = 'ASDF'
+ inner join zfoo as c11
+ on c11.atnam = 'ASDF'
+ inner join zfoo as c12
+ on c12.atnam = 'ASDF'
+ inner join zfoo as c13
+ on c13.atnam = 'ASDF'
+ inner join zfoo as c14
+ on c14.atnam = 'ASDF'
+ inner join zfoo as c15
+ on c15.atnam = 'ASDF'
+ inner join zfoo as c16
+ on c16.atnam = 'ASDF'
+  inner join zfoo as c17
+ on c17.atnam = 'ASDF'
+  inner join zfoo as c18
+ on c18.atnam = 'ASDF'
+  inner join zfoo as c19
+ on c19.atnam = 'ASDF'
+   inner join zfoo as c20
+ on c20.atnam = 'ASDF'
+   inner join zfoo as c21
+ on c21.atnam = 'ASDF'
+   inner join zfoo as c22
+ on c22.atnam = 'ASDF'
+ inner join zfoo as c23
+ on c23.atnam = 'ASDF'
+ inner join zfoo as c24
+ on c24.atnam = 'ASDF'
+{
+  c1.a1 as a1,
+  c1.a2 as a2,
+  c2.a3 as a3
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define table function", () => {
+    const cds = `
+@EndUserText.label: 'Foobar'
+define table function ymoofunc with parameters p_anp : zanp, p_prevanp : zprevanp
+returns {
+  mandt : abap.clnt;
+  foods : zmmooo;
+  moods : abap.char( 50 );
+}
+implemented by method zcl_bar=>dsffdsfd;
+`;
+    const file = new MemoryFile("ymoofunc.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("allstars", () => {
+    const cds = `define view zsdfds as select from tab {
+*
+}
+`;
+    const file = new MemoryFile("zsdfds.ddls.asddls", cds);
+
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("annotation slash", () => {
+    const cds = `
+define root custom entity /foo/bar
+{
+  key Werks     : /moo/de_werks;
+  @Semantics.businessDate.from/to
+  Group         : /moo/de_group;
+}`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("shorthand", () => {
+    const cds = `define view moo as select * from bar;`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("view parameter annotation", () => {
+    const cds = `
+define view moo with parameters
+@Environment.systemField: #SYSTEM_DATE
+p_system_date : syst_datum
+
+as select from ztab as a
+{
+key a.objid as Obj,
+    a.mc_stext as Text
+};
+`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
   });
 
 });

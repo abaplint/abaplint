@@ -77,6 +77,11 @@ const tests = [
   "WRITE |{ bar DECIMALS = 0 ALIGN = RIGHT WIDTH = 15 }|.",
   "WRITE AT /.",
   "WRITE AT / 'sdf'.",
+  `WRITE (variable) TO var-txt(len).`,
+  `WRITE (var) TO dr-txt LEFT-JUSTIFIED.`,
+  `WRITE / <pnumber>.`,
+  `WRITE / (10) moo.`,
+  `WRITE / (10) <pnumber>.`,
 ];
 
 statementType(tests, "WRITE", Statements.Write);

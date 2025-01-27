@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
@@ -312,6 +311,19 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
 
   `DATA(x) = COND i( WHEN mo_server->ms_db-id_prev_app IS INITIAL THEN THROW _('CX_STACK_EMPTY - NO CALLING APP FOUND') ).`,
   `FINAL(dat) = 2.`,
+  `?moo = 5.`,
+  `lv_temp = lv_temp+(w_init).`,
+
+  `DATA(lv) = SWITCH #( me->var->get( )
+      WHEN zif_bar=>moo-sl
+        OR zif_bar=>moo-su THEN dsf-bar
+      ELSE THROW zcx_bar( MESSAGE e022 ) ).`,
+
+  `MOVE foo TO bar PERCENTAGE len.`,
+  `MOVE foo-moo TO bar PERCENTAGE 100 RIGHT.`,
+  `lt_root_create = CORRESPONDING #( roots CHANGING CONTROL EXCEPT DeleteHidden UpdateHidden ValidTo ).`,
+  `lv_min = |{ cl_foobar=>gc_min_value SIGN = LEFT ALIGN = (cl_abap_format=>a_left) NUMBER = USER }|.`,
+  `MOVE <fs>-field+40() TO adr-name2.`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

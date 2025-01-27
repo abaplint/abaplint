@@ -2576,7 +2576,7 @@ TYPES: BEGIN OF ty_type,
        END OF ty_type.
 DATA: lt_fae TYPE STANDARD TABLE OF ty_type.
 SELECT column FROM table INTO TABLE @DATA(lt_results)
-  FOR ALL ENTRIES IN lt_fae
+  FOR ALL ENTRIES IN @lt_fae
   WHERE column = @lt_fae-field.
 
 DELETE TABLE lt_results FROM 10.`;
@@ -5119,7 +5119,7 @@ ENDCLASS.`;
   DATA index TYPE REF TO i.
   READ TABLE mt_list INDEX index TRANSPORTING NO FIELDS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal("READ TABLE, INDEX must be simple");
+    expect(issues[0]?.getMessage()).to.contain("READ TABLE, INDEX must be simple");
   });
 
   it("READ TABLE, table_line, ok", () => {
@@ -10609,8 +10609,450 @@ CLEAR bar.`;
     expect(issues.length).to.equal(1);
   });
 
-// todo, static method cannot access instance attributes
-// todo, can a private method access protected attributes?
-// todo, readonly fields(constants + enums + attributes flagged read-only)
+  it("loop at nothing(dynpro table control?), no error expected", () => {
+    const abap = `
+LOOP.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("interfaces and me", () => {
+    const abap = `
+INTERFACE zif_otel_has_attributes.
+  DATA attributes TYPE i.
+ENDINTERFACE.
+
+INTERFACE zif_otel_span_event.
+  INTERFACES zif_otel_has_attributes.
+ENDINTERFACE.
+
+CLASS lcl_span_event DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_otel_span_event.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_span_event IMPLEMENTATION.
+  METHOD constructor.
+    CLEAR me->zif_otel_has_attributes~attributes.
+    me->zif_otel_has_attributes~attributes = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("magic selection screen variables", () => {
+    const abap = `
+SELECT-OPTIONS s_devc FOR tadir-devclass.
+PARAMETERS p_size TYPE i DEFAULT 100 OBLIGATORY.
+
+START-OF-SELECTION.
+  %_s_devc_%_app_%-text = 'Hello'.
+  %_p_size_%_app_%-text = 'World'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Title name too long", () => {
+    const abap = `
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE sc_text001.
+SELECTION-SCREEN END OF BLOCK b1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("SELECTION-SCREEN name too long");
+  });
+
+  it("Variable not already defined", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_not_found.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD zif_not_found~foo.
+    DATA dat TYPE i.
+  ENDMETHOD.
+
+  METHOD zif_not_found~bar.
+    DATA dat TYPE i.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    for (const issue of issues) {
+      expect(issue.getMessage()).to.not.contain("already defined");
+    }
+  });
+
+  it("READ TABLE, yea this is allowed", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA row LIKE LINE OF tab.
+
+DATA: BEGIN OF e_row,
+        field1 TYPE c LENGTH 10,
+        field2 TYPE n LENGTH 20,
+      END OF e_row.
+
+READ TABLE tab INTO row INDEX e_row.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Structure to int, ok", () => {
+    const abap = `
+DATA: BEGIN OF e_row,
+        field1 TYPE c LENGTH 10,
+        field2 TYPE n LENGTH 20,
+      END OF e_row.
+DATA int TYPE i.
+int = e_row.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("select loop, fields", () => {
+    const abap = `
+DATA target TYPE voided.
+DATA var TYPE i.
+SELECT FROM voided FIELDS field1, field2 WHERE val = @var INTO CORRESPONDING FIELDS OF @target.
+
+ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("no undefined getAll", () => {
+    const cls = `
+class zcl_sdfsdf definition public final create public.
+  public section.
+ENDCLASS.
+CLASS zcl_sdfsdf IMPLEMENTATION.
+ENDCLASS.`;
+    const def = `
+CLASS lcl_foobar definition inheriting from zcl_foo final.
+  PUBLIC SECTION.
+ENDCLASS.`;
+    const impl = `
+CLASS lcl_foobar IMPLEMENTATION.
+ENDCLASS.
+
+data ref type ref to lcl_foobar.
+ref->method( ).
+write ref->attr.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: cls},
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    for (const issue of issues) {
+      expect(issue.getMessage()).to.not.contain("getAll");
+    }
+  });
+
+  it("selection screen block name length okay", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selection FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selection.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("selection screen block name length more than 30", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selectionaaassss FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selectionaaasss.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("too long");
+  });
+
+  it("selection screen block name length more than 30", () => {
+    const abap = `
+DATA lv_tss TYPE fdsfds.
+DATA cvfdsfds TYPE fdsfds.
+SELECT SINGLE ( fieldname ) FROM voided
+  WHERE tss = @lv_tss
+  INTO @cvfdsfds.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("RAISE with MESSAGE CONV", () => {
+    const abap = `
+    DATA var TYPE string.
+    RAISE EXCEPTION TYPE cx_something MESSAGE e074 WITH CONV char6( var ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it(".INCLUDE grouped", () => {
+    const abap = `
+REPORT zfoo.
+
+DATA foo TYPE ztop.
+WRITE foo-steps1.
+WRITE foo-steps1-bar.`;
+    const ztop = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTOP</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <LANGDEP>X</LANGDEP>
+    <DDTEXT>top</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>.INCLU-1</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <PRECFIELD>ZSTEPS</PRECFIELD>
+     <MASK>      S</MASK>
+     <DDTEXT>char</DDTEXT>
+     <COMPTYPE>S</COMPTYPE>
+     <GROUPNAME>STEPS1</GROUPNAME>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const zsteps = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZSTEPS</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>char</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FOO</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000002</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000001</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>BAR</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000002</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000001</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = runMulti([
+      {filename: "ztop.tabl.xml", contents: ztop},
+      {filename: "zsteps.tabl.xml", contents: zsteps},
+      {filename: "zfoo.prog.abap", contents: abap}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it(".INCLUDE grouped, two times", () => {
+    const abap = `
+REPORT zfoo.
+
+DATA foo TYPE ztop.
+WRITE foo-steps1.
+WRITE foo-steps1-bar.`;
+    const ztop = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTOP</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <LANGDEP>X</LANGDEP>
+    <DDTEXT>top</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>.INCLU-1</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <PRECFIELD>ZSTEPS</PRECFIELD>
+     <MASK>      S</MASK>
+     <DDTEXT>char</DDTEXT>
+     <COMPTYPE>S</COMPTYPE>
+     <GROUPNAME>STEPS1</GROUPNAME>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>.INCLU-2</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <PRECFIELD>ZSTEPS</PRECFIELD>
+     <MASK>      S</MASK>
+     <DDTEXT>char</DDTEXT>
+     <COMPTYPE>S</COMPTYPE>
+     <GROUPNAME>STEPS2</GROUPNAME>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const zsteps = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZSTEPS</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>char</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FOO</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000002</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000001</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>BAR</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000002</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000001</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = runMulti([
+      {filename: "ztop.tabl.xml", contents: ztop},
+      {filename: "zsteps.tabl.xml", contents: zsteps},
+      {filename: "zfoo.prog.abap", contents: abap}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Parameters length", () => {
+    const abap = `
+DATA scr(4) TYPE c.
+PARAMETERS p_table(4) TYPE c OBLIGATORY DEFAULT 'AAAA'.
+CONCATENATE '1' p_table+1(3) INTO scr.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INCLUDE header lined table", () => {
+    const abap = `
+DATA: BEGIN OF itab OCCURS 0,
+        field TYPE c LENGTH 2,
+      END OF itab.
+
+DATA: BEGIN OF foobar OCCURS 0.
+        INCLUDE STRUCTURE itab.
+DATA: moo TYPE c LENGTH 10,
+      END OF foobar.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("strict mode must escape variables", () => {
+    const abap = `
+TYPES: BEGIN OF type,
+         objtype TYPE c LENGTH 10,
+         objname TYPE c LENGTH 10,
+       END OF type.
+DATA obj TYPE type.
+DATA package TYPE tadir-devclass.
+
+START-OF-SELECTION.
+  SELECT SINGLE devclass
+    FROM tadir
+    WHERE object = obj-objtype AND obj_name = obj-objname
+    INTO package.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("must be escaped with @ in strict mode");
+  });
+
+  it("strict mode must escape variables, constants", () => {
+    const abap = `
+TYPES: BEGIN OF type,
+         objtype TYPE c LENGTH 10,
+         objname TYPE c LENGTH 10,
+       END OF type.
+DATA obj TYPE type.
+DATA package TYPE tadir-devclass.
+
+START-OF-SELECTION.
+  SELECT SINGLE devclass
+    FROM tadir
+    WHERE object = 'SDF' AND obj_name = 'SDF'
+    INTO package.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("dont cascade the unknown error", () => {
+    const abap = `
+DATA files TYPE zunknown.
+LOOP AT files ASSIGNING FIELD-SYMBOL(<file>).
+  WRITE <file>-name.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Loop, not a table type");
+  });
+
+  it("refs and cond i", () => {
+    const abap = `
+DATA(int) = 2.
+DATA(int_ref) = COND #( WHEN 1 = 2 THEN REF i( int ) ELSE REF i( int ) ).
+int_ref->* = 3.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("charlike structure vs simple", () => {
+    const abap = `
+REPORT zfoo.
+
+CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS calc
+      IMPORTING
+        !iv_input TYPE simple.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD calc.
+    ASSERT 0 = 0.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+
+  DATA:
+    BEGIN OF struct,
+      a TYPE c LENGTH 1,
+      b TYPE c LENGTH 3,
+    END OF struct.
+
+  lcl_test=>calc( struct ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 
 });

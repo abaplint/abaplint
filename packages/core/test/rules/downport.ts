@@ -1078,7 +1078,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it("SELECT, basic remove , and @", async () => {
+  it("SELECT, basic remove comma and @", async () => {
     const abap = `FORM bar.
   DATA: BEGIN OF ls_t001w,
           werks TYPE t001w-werks,
@@ -1153,7 +1153,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
     input  = ls_line-no
   IMPORTING
     output = temp1.
-asdf = temp1.`;
+asdf = |{ temp1 }|.`;
 
     testFix(abap, expected);
   });
@@ -1171,7 +1171,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
     input  = iv_in
   IMPORTING
     output = temp1.
-rv_out = condense( temp1 ).`;
+rv_out = condense( |{ temp1 }| ).`;
 
     testFix(abap, expected);
   });
@@ -4471,13 +4471,15 @@ DATA(x) = temp1.`;
   it("SELECT, complex @ value", async () => {
     const abap = `
 SELECT SINGLE FROM z2ui5_t_draft
+INTO @ls_db
 FIELDS *
-WHERE uuid = @( client->get_val( ) ) INTO @ls_db.`;
+WHERE uuid = @( client->get_val( ) ).`;
     const expected = `
 DATA(temp1) = client->get_val( ).
 SELECT SINGLE FROM z2ui5_t_draft
+INTO @ls_db
 FIELDS *
-WHERE uuid = @temp1 INTO @ls_db.`;
+WHERE uuid = @temp1.`;
     testFix(abap, expected);
   });
 
@@ -5003,7 +5005,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
     input  = foo
   IMPORTING
     output = temp1.
-str = condense( temp1 ) && condense( |{ foo ALPHA = OUT }| ).`;
+str = condense( |{ temp1 }| ) && condense( |{ foo ALPHA = OUT }| ).`;
     // hmm, this doesnt work in next step
     testFix(abap, expected);
   });
@@ -5020,7 +5022,7 @@ CALL FUNCTION 'CONVERSION_EXIT_ALPHA_OUTPUT'
     input  = foo
   IMPORTING
     output = temp1.
-str = |sdfsd| && condense( temp1 ).`;
+str = |sdfsd| && condense( |{ temp1 }| ).`;
     // hmm, this doesnt work in next step
     testFix(abap, expected);
   });
@@ -5786,6 +5788,139 @@ SELECT foo bar
   FROM voided
   INTO CORRESPONDING FIELDS OF TABLE tab
   ##SUBRC_OK.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT, outline @DATA, table, AS", async () => {
+    const abap = `FORM bar.
+  SELECT werks AS bar, werks AS foo FROM t001w INTO TABLE @DATA(lt_t001w).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF temp1,
+          bar TYPE t001w-werks,
+          foo TYPE t001w-werks,
+        END OF temp1.
+  DATA lt_t001w TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+  SELECT werks AS bar, werks AS foo FROM t001w INTO TABLE @lt_t001w.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, outline @DATA, table, aliased tables", async () => {
+    const abap = `FORM bar.
+  SELECT FROM wbcrossi AS xref
+    LEFT OUTER JOIN tadir AS using ON using~obj_name = xref~master
+    LEFT OUTER JOIN tadir AS used ON used~obj_name = xref~include
+    FIELDS using~devclass AS from_pkg,
+           master AS from_name,
+           used~devclass AS to_pkg,
+           name AS to_name
+    INTO TABLE @DATA(itab).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF temp1,
+          from_pkg TYPE tadir-devclass,
+          from_name TYPE tadir-master,
+          to_pkg TYPE tadir-devclass,
+          to_name TYPE tadir-name,
+        END OF temp1.
+  DATA itab TYPE STANDARD TABLE OF temp1 WITH DEFAULT KEY.
+  SELECT FROM wbcrossi AS xref
+    LEFT OUTER JOIN tadir AS using ON using~obj_name = xref~master
+    LEFT OUTER JOIN tadir AS used ON used~obj_name = xref~include
+    FIELDS using~devclass AS from_pkg,
+           master AS from_name,
+           used~devclass AS to_pkg,
+           name AS to_name
+    INTO TABLE @itab.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("ALPHA IN", async () => {
+    const abap = `
+TYPES ty_char TYPE c LENGTH 24.
+DATA iv_aufnr TYPE c LENGTH 12.
+DATA temp1 TYPE ty_char.
+temp1 = |{ sy-mandt }{ iv_aufnr ALPHA = IN }|.
+DATA objname LIKE temp1.
+objname = temp1.`;
+
+    const expected = `
+TYPES ty_char TYPE c LENGTH 24.
+DATA iv_aufnr TYPE c LENGTH 12.
+DATA temp1 TYPE ty_char.
+DATA temp2 TYPE string.
+CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+  EXPORTING
+    input  = iv_aufnr
+  IMPORTING
+    output = temp2.
+temp1 = |{ sy-mandt }{ temp2 }|.
+DATA objname LIKE temp1.
+objname = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT GROUP BY with comma", async () => {
+    const abap = `
+DATA tab TYPE voided.
+SELECT devclass, object
+  FROM tadir
+  INTO CORRESPONDING FIELDS OF TABLE @tab
+  WHERE object = 'PROG'
+  ORDER BY devclass, object.`;
+
+    const expected = `
+DATA tab TYPE voided.
+SELECT devclass object
+  FROM tadir
+  INTO CORRESPONDING FIELDS OF TABLE tab
+  WHERE object = 'PROG'
+  ORDER BY devclass object.`;
+
+    testFix(abap, expected);
+  });
+
+  it("any table, generic", async () => {
+    const abap = `
+  FIELD-SYMBOLS <itab> TYPE ANY TABLE.
+  LOOP AT <itab> ASSIGNING FIELD-SYMBOL(<row>).
+    RETURN.
+  ENDLOOP.`;
+
+    const expected = `
+  FIELD-SYMBOLS <itab> TYPE ANY TABLE.
+  FIELD-SYMBOLS <row> TYPE ANY.
+  LOOP AT <itab> ASSIGNING <row>.
+    RETURN.
+  ENDLOOP.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, basic remove comma and @, move INTO", async () => {
+    const abap = `FORM bar.
+  DATA: BEGIN OF ls_t100,
+          arbgb TYPE t100-arbgb,
+          msgnr TYPE t100-msgnr,
+        END OF ls_t100.
+  SELECT SINGLE arbgb, msgnr FROM t100 WHERE arbgb = '123' INTO @ls_t100.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA: BEGIN OF ls_t100,
+          arbgb TYPE t100-arbgb,
+          msgnr TYPE t100-msgnr,
+        END OF ls_t100.
+  SELECT SINGLE arbgb, msgnr FROM t100 INTO @ls_t100 WHERE arbgb = '123' .
+ENDFORM.`;
+
     testFix(abap, expected);
   });
 

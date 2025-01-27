@@ -10,6 +10,8 @@ import {ClassConstant} from "../types/class_constant";
 import {IEventDefinition} from "../types/_event_definition";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Visibility} from "../4_file_information/visibility";
+import {IReferenceExtras} from "./_reference";
+import {ClassDefinition} from "../types";
 
 // todo, think some of the public methods can be made private
 // todo: changet this class to static? for performance
@@ -48,7 +50,7 @@ export class ObjectOriented {
   }
 
   public addAliasedAttributes(classDefinition: IClassDefinition): void {
-    for (const alias of classDefinition.getAliases()) {
+    for (const alias of classDefinition.getAliases() || []) {
       const comp = alias.getComponent();
       const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
@@ -86,7 +88,7 @@ export class ObjectOriented {
   private findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition):
   {method: IMethodDefinition, def: IInterfaceDefinition} | undefined {
 
-    for (const a of def.getAliases()) {
+    for (const a of def.getAliases() || []) {
       if (a.getName().toUpperCase() === methodName.toUpperCase()) {
         const comp = a.getComponent();
         const res = this.findMethodInInterface(comp.split("~")[0], comp.split("~")[1]);
@@ -96,6 +98,20 @@ export class ObjectOriented {
       }
     }
     return undefined;
+  }
+
+  public methodReferenceExtras(foundDef: IInterfaceDefinition | IClassDefinition | undefined,
+                               ooName: string | undefined): IReferenceExtras {
+    if (foundDef === undefined) {
+      return {
+        ooName: ooName,
+        ooType: undefined,
+      };
+    }
+    return {
+      ooName: foundDef?.getName(),
+      ooType: foundDef instanceof ClassDefinition ? "CLAS" : "INTF",
+    };
   }
 
   public findClassName(node: StatementNode): string {
@@ -173,9 +189,12 @@ export class ObjectOriented {
     }
 
     const upper = name.toUpperCase();
-    for (const a of def.getAttributes().getAll()) {
-      if (a.getName().toUpperCase() === upper) {
-        return a;
+    const attr = def.getAttributes();
+    if (attr) {
+      for (const a of attr.getAll()) {
+        if (a.getName().toUpperCase() === upper) {
+          return a;
+        }
       }
     }
 
@@ -191,7 +210,7 @@ export class ObjectOriented {
 
     if (name.includes("~")) {
       const interfaceName = upper.split("~")[0];
-      if (def.getImplementing().some((a) => a.name.toUpperCase() === interfaceName)) {
+      if (this.listInterfacesRecursive(def).includes(interfaceName)) {
         return this.searchAttributeName(this.scope.findInterfaceDefinition(interfaceName), name.split("~")[1]);
       }
     }
@@ -319,7 +338,12 @@ export class ObjectOriented {
   }
 
   public findMethod(def: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
-    for (const method of def.getMethodDefinitions().getAll()) {
+    const defs = def.getMethodDefinitions();
+    if (defs === undefined) {
+      return undefined;
+    }
+
+    for (const method of defs.getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         if (method.isRedefinition()) {
           return this.findMethodInSuper(def, methodName);
@@ -387,7 +411,22 @@ export class ObjectOriented {
     return ignore;
   }
 
-  // returns list of interfaces implemented
+  /** returns list of interfaces implemented, recursive */
+  public listInterfacesRecursive(definition: IInterfaceDefinition): string[] {
+    const list: string[] = [];
+    for (const i of definition.getImplementing()) {
+      const upper = i.name.toUpperCase();
+      list.push(upper);
+
+      const def = this.scope.findInterfaceDefinition(upper);
+      if (def) {
+        list.push(...this.listInterfacesRecursive(def));
+      }
+    }
+
+    return [...new Set(list)];
+  }
+
   public fromInterfaces(definition: IInterfaceDefinition, skip?: string[]): string[] {
     const ignore: string[] = [];
     for (const i of definition.getImplementing()) {

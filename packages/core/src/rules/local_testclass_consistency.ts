@@ -62,6 +62,17 @@ export class LocalTestclassConsistency extends ABAPRule {
       }
     }
 
+    if (file.getFilename() === obj.getMainABAPFile()?.getFilename()
+        && obj.getTestclassFile() === undefined
+        && obj.getXML()?.includes("<WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>") === true) {
+      const id = obj.getIdentifier();
+      if (id) {
+        const message = "Has <WITH_UNIT_TESTS> set in XML, but no testclasses";
+        const issue = Issue.atIdentifier(id, message, this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+    }
+
     return issues;
   }
 

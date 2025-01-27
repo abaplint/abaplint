@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
-import {Unknown, Comment, MacroContent, MacroCall, IStatement} from "../abap/2_statements/statements/_statement";
+import {Unknown, Comment, MacroContent, MacroCall, IStatement, NativeSQL} from "../abap/2_statements/statements/_statement";
 import {Identifier} from "../abap/1_lexer/tokens";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
@@ -49,6 +49,7 @@ class Skip {
   public skipStatement(statement: StatementNode): boolean {
     const get = statement.get();
     if (get instanceof Unknown
+      || get instanceof NativeSQL
       || get instanceof MacroContent
       || get instanceof MacroCall
       || statement.getFirstToken().getStart() instanceof VirtualPosition

@@ -1,5 +1,16 @@
 import {testRule, testRuleFixSingle} from "./_utils";
+import {expect} from "chai";
 import {Indentation, IndentationConf} from "../../src/rules/indentation";
+import {MemoryFile, Registry} from "../../src";
+import {applyEditList} from "../../src/edit_helper";
+
+async function run(file: MemoryFile){
+  const reg = new Registry().addFile(file);
+  await reg.parseAsync();
+
+  const issues = new Indentation().initialize(reg).run(reg.getFirstObject()!);
+  return {reg, issues};
+}
 
 const tests = [
   {abap: "add 2 to lv_foo.", cnt: 0},
@@ -186,6 +197,31 @@ LOOP AT tab INTO row.
   ENDAT.
 ENDLOOP.`, cnt: 0},
 
+  {abap: `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_dummy FOR TABLE FUNCTION sdfs.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_dummy BY DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY.
+    RETURN
+      SELECT dummy FROM sys.dummy;
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+
+  {abap: `CLASS lcl_global_func DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_amdp_marker_hdb.
+    CLASS-METHODS get_dummy FOR TABLE FUNCTION /test/abc.
+ENDCLASS.
+
+CLASS lcl_global_func IMPLEMENTATION.
+  METHOD get_dummy BY DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY.
+    RETURN
+      SELECT dummy FROM "SYS".dummy WHERE dummy = :var;
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, Indentation);
@@ -246,6 +282,53 @@ ENDIF.`, `
 IF foo = bar.
   WRITE 'hello'.
 ENDIF.`);
+  });
+
+  it("Chained statement", async () => {
+    const filename = "foo.prog.abap";
+    const abap = `
+FORM foo.
+DATA: foo TYPE i,
+moo TYPE i,
+bar TYPE i.
+ENDFORM.`;
+    const result = await run(new MemoryFile(filename, abap));
+    const edits = [];
+    for (const i of result.issues) {
+      const edit = i.getDefaultFix();
+      if (edit) {
+        edits.push(edit);
+      }
+    }
+    applyEditList(result.reg, edits);
+    const foo = result.reg.getFileByName(filename);
+    expect(foo?.getRaw()).to.contain("\n  DATA: foo");
+  });
+
+  it("dynpro logic", async () => {
+    const filename = "zindentation.fugr.screen_0500.abap";
+    const abap = `
+PROCESS BEFORE OUTPUT.
+  MODULE status_0100.
+
+PROCESS AFTER INPUT.
+  MODULE user_command_0100.`;
+    const result = await run(new MemoryFile(filename, abap));
+    expect(result.issues.length).to.equal(0);
+  });
+
+  it("dynpro logic", async () => {
+    const filename = "zindentation.fugr.screen_0500.abap";
+    const abap = `
+PROCESS BEFORE OUTPUT.
+  MODULE pbo_1001.
+
+PROCESS AFTER INPUT.
+  CHAIN.
+    FIELD test.
+  ENDCHAIN.`;
+    const result = await run(new MemoryFile(filename, abap));
+    expect(result.issues.length).to.equal(0);
   });
 
 });

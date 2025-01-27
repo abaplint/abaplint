@@ -46,7 +46,7 @@ export class ReadTable implements StatementSyntax {
     if (indexSource) {
       const indexType = new Source().runSyntax(indexSource, input);
       if (new TypeUtils(input.scope).isAssignable(indexType, IntegerType.get()) === false) {
-        const message = "READ TABLE, INDEX must be simple";
+        const message = "READ TABLE, INDEX must be simple, got " + indexType?.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }

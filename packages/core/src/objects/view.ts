@@ -14,11 +14,14 @@ export class View extends AbstractObject {
   private parsedData: {
     header: {
       VIEWCLASS: string,
+      DDTEXT: string,
     },
     fields: {
       VIEWFIELD: string,
       TABNAME: string,
-      FIELDNAME: string}[],
+      FIELDNAME: string,
+      KEYFLAG: string,
+    }[],
     join: {
       LTAB: string,
       LFIELD: string,
@@ -112,9 +115,25 @@ export class View extends AbstractObject {
     return new Types.StructureType(components, this.getName());
   }
 
+  public listKeys(): string[] {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+
+    const ret: string[] = [];
+    for (const p of this.parsedData?.fields || []) {
+      if (p.KEYFLAG === "X") {
+        ret.push(p.FIELDNAME);
+      }
+    }
+    return ret;
+  }
+
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    return this.parsedData?.header.DDTEXT;
   }
 
 ///////////////
@@ -123,6 +142,7 @@ export class View extends AbstractObject {
     this.parsedData = {
       header: {
         VIEWCLASS: "",
+        DDTEXT: "",
       },
       fields: [],
       join: [],
@@ -136,6 +156,7 @@ export class View extends AbstractObject {
     const header = parsed.abapGit["asx:abap"]["asx:values"]?.DD25V;
     this.parsedData.header = {
       VIEWCLASS: header?.VIEWCLASS || "",
+      DDTEXT: header?.DDTEXT || "",
     };
 
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
@@ -144,6 +165,7 @@ export class View extends AbstractObject {
         VIEWFIELD: field.VIEWFIELD,
         TABNAME: field.TABNAME,
         FIELDNAME: field.FIELDNAME,
+        KEYFLAG: field.KEYFLAG,
       });
     }
 

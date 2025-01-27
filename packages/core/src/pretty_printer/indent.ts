@@ -5,6 +5,7 @@ import {StatementNode} from "../abap/nodes/statement_node";
 import {IIndentationOptions} from "./indentation_options";
 import {VirtualPosition} from "../virtual_position";
 import {ABAPFile} from "../abap/abap_file";
+import {DynproLogic} from "../abap/3_structures/structures";
 
 // todo, will break if there is multiple statements per line?
 export class Indent {
@@ -46,6 +47,7 @@ export class Indent {
     const stack = new Stack();
     let indent: number = init;
     let parentIsEvent: boolean = false;
+    const isDynpro = file.getStructure()?.get() instanceof DynproLogic;
     let previousStatement: StatementNode | undefined = undefined;
 
     for (const statement of file.getStatements()) {
@@ -58,6 +60,7 @@ export class Indent {
         || type instanceof Statements.EndModule
         || type instanceof Statements.EndSelect
         || type instanceof Statements.EndMethod
+        || type instanceof Statements.EndChain
         || type instanceof Statements.EndAt
         || type instanceof Statements.Else
         || type instanceof Statements.EndExec
@@ -80,8 +83,12 @@ export class Indent {
       } else if (type instanceof Statements.StartOfSelection
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.AtLineSelection
+        || type instanceof Statements.AtPF
         || type instanceof Statements.Initialization
         || type instanceof Statements.AtUserCommand
+        || type instanceof Statements.ProcessAfterInput
+        || type instanceof Statements.ProcessBeforeOutput
+        || type instanceof Statements.ProcessOnValueRequest
         || type instanceof Statements.TopOfPage
         || type instanceof Statements.Get
         || type instanceof Statements.EndOfSelection
@@ -90,7 +97,7 @@ export class Indent {
         parentIsEvent = true;
       } else if (type instanceof Statements.Form
         || (type instanceof Statements.Include && parentIsEvent)
-        || type instanceof Statements.Module
+        || (type instanceof Statements.Module && isDynpro === false)
         || type instanceof Statements.ClassImplementation
         || type instanceof Statements.ClassDefinition) {
         indent = init;
@@ -130,7 +137,7 @@ export class Indent {
       ret.push(indent);
       if (type instanceof Statements.If
         || type instanceof Statements.While
-        || type instanceof Statements.Module
+        || (type instanceof Statements.Module && isDynpro === false)
         || type instanceof Statements.SelectLoop
         || type instanceof Statements.FunctionModule
         || type instanceof Statements.Interface
@@ -140,6 +147,9 @@ export class Indent {
         || type instanceof Statements.AtLast
         || type instanceof Statements.ExecSQL
         || type instanceof Statements.Catch
+        || type instanceof Statements.ProcessAfterInput
+        || type instanceof Statements.ProcessBeforeOutput
+        || type instanceof Statements.ProcessOnValueRequest
         || type instanceof Statements.Define
         || type instanceof Statements.When
         || type instanceof Statements.WhenType
@@ -152,6 +162,7 @@ export class Indent {
         || type instanceof Statements.Else
         || type instanceof Statements.ElseIf
         || type instanceof Statements.MethodImplementation
+        || type instanceof Statements.Chain
         || type instanceof Statements.TestInjection
         || type instanceof Statements.TestSeam
         || (this.options.selectionScreenBlockIndentation === true

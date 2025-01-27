@@ -347,6 +347,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         identifier: new Identifier(methodName, this.filename),
         isRedefinition: def.findDirectExpression(Expressions.Redefinition) !== undefined,
         isForTesting: def.concatTokens().toUpperCase().includes(" FOR TESTING"),
+        isFinal: def.concatTokens().toUpperCase().includes(" FINAL"),
         isAbstract: def.findDirectExpression(Expressions.Abstract) !== undefined,
         isEventHandler: def.findDirectExpression(Expressions.EventHandler) !== undefined,
         visibility,

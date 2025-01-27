@@ -52,11 +52,12 @@ export class Write implements IStatement {
                         seq("INVERSE", opt(onOff)),
                         Color,
                         seq("CURRENCY", Source),
+                        "RESET",
                         "NO-SIGN");
 
     const ret = seq("WRITE", alt("AT /",
                                  seq(opt(WriteOffsetLength),
-                                     altPrio(Source, Dynamic, "/"),
+                                     alt(Source, Dynamic, "/"),
                                      opt(options))));
 
     return verNot(Version.Cloud, ret);

@@ -6,6 +6,7 @@ const tests = [
   "TRANSFER <rawdata> TO p_back LENGTH bytes.",
   "TRANSFER l_data TO 'foobar.txt'.",
   "TRANSFER iv_text TO iv_path NO END OF LINE.",
+  `TRANSFER foo TO bar.`,
 ];
 
 statementType(tests, "TRANSFER", Statements.Transfer);

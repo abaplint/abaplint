@@ -12,7 +12,7 @@ import {IAllowedNaming} from "./_iobject";
 
 export enum EnhancementCategory {
   NotClassified = "0",
-  CannotBeEhanced = "1",
+  CannotBeEnhanced = "1",
   Character = "2",
   CharacterOrNumeric = "3",
   Deep = "4",
@@ -32,6 +32,7 @@ export class Table extends AbstractObject {
     tableCategory?: TableCategory | undefined,
     dataClass?: string,
     enhancementCategory?: EnhancementCategory,
+    description?: string,
     fields: {
       FIELDNAME: string,
       ROLLNAME?: string,
@@ -45,6 +46,7 @@ export class Table extends AbstractObject {
       GROUPNAME?: string,
       CHECKTABLE?: string,
       REFTYPE?: string,
+      DDTEXT?: string,
     }[]} | undefined;
 
   public getType(): string {
@@ -52,8 +54,11 @@ export class Table extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+
+    return this.parsedData?.description;
   }
 
   public getAllowedNaming(): IAllowedNaming {
@@ -124,9 +129,10 @@ export class Table extends AbstractObject {
         if (lookup.object) {
           references.push({object: lookup.object});
         }
-      } else if (field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP") { // incude or append structure
+      } else if (field.FIELDNAME === ".INCLUDE"
+          || field.FIELDNAME.startsWith(".INCLU-")) {
         if (field.PRECFIELD === undefined) {
-          return new Types.UnknownType("Table, parser error, PRECFIELD undefined");
+          return new Types.UnknownType("Table, parser error, PRECFIELD undefined, " + this.getName());
         }
         const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         let found = lookup.type;
@@ -140,8 +146,12 @@ export class Table extends AbstractObject {
           if (field.GROUPNAME !== undefined) {
             components.push({name: field.GROUPNAME, type: found});
           }
-          for (const c of found.getComponents()) {
-            components.push({name: c.name, type: c.type});
+
+          if (field.FIELDNAME.startsWith(".INCLU-") === false
+              || field.FIELDNAME === ".INCLU--AP") {
+            for (const c of found.getComponents()) {
+              components.push({name: c.name, type: c.type});
+            }
           }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {
@@ -154,6 +164,7 @@ export class Table extends AbstractObject {
         } else {
           components.push({name: field.FIELDNAME, type: found});
         }
+        /*
       } else if (comptype === "S" && field.FIELDNAME.startsWith(".INCLU-")) {
         const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         if (lookup.object) {
@@ -171,6 +182,7 @@ export class Table extends AbstractObject {
         } else if (found instanceof Types.UnknownType) {
           return found;
         }
+          */
       } else if (comptype === "S") {
         const lookup = ddic.lookupTableOrView(field.ROLLNAME);
         components.push({name: field.FIELDNAME, type: lookup.type});
@@ -228,7 +240,13 @@ export class Table extends AbstractObject {
         const length = field.LENG ? field.LENG : field.INTLEN;
         components.push({
           name: field.FIELDNAME,
-          type: ddic.textToType(datatype, length, field.DECIMALS, this.getName() + "-" + field.FIELDNAME)});
+          type: ddic.textToType({
+            text: datatype,
+            length: length,
+            decimals: field.DECIMALS,
+            infoText: this.getName() + "-" + field.FIELDNAME,
+            description: field.DDTEXT,
+          })});
       } else {
         components.push({
           name: field.FIELDNAME,
@@ -248,7 +266,7 @@ export class Table extends AbstractObject {
     }
 
     reg.getDDICReferences().setUsing(this, references);
-    return new Types.StructureType(components, this.getName(), this.getName());
+    return new Types.StructureType(components, this.getName(), this.getName(), this.getDescription());
   }
 
   public getTableCategory(): TableCategory | undefined {
@@ -292,6 +310,7 @@ export class Table extends AbstractObject {
 
 // table category
     this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS;
+    this.parsedData.description = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.DDTEXT;
     this.parsedData.dataClass = parsed.abapGit["asx:abap"]["asx:values"]?.DD09L?.TABART;
 
 // fields
@@ -310,6 +329,7 @@ export class Table extends AbstractObject {
         GROUPNAME: field.GROUPNAME,
         CHECKTABLE: field.CHECKTABLE,
         REFTYPE: field.REFTYPE,
+        DDTEXT: field.DDTEXT,
       });
     }
   }

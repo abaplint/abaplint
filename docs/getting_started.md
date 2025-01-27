@@ -29,7 +29,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     }
   ],
   "syntax": {
-    "version": "v755",
+    "version": "v758",
     "errorNamespace": "^(Z|Y|LCL_|TY_|LIF_)"
   },
   "rules": {

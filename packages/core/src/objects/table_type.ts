@@ -122,29 +122,29 @@ export class TableType extends AbstractObject {
       type = new Types.UnknownType("Table Type, parser error", this.getName());
     } else if (this.parsedXML.rowkind === "S") {
       const lookup = ddic.lookupTableOrView(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "E") {
       const lookup = ddic.lookupDataElement(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "L") {
       const lookup = ddic.lookupTableType(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype === "OBJECT") {
-      type = new Types.TableType(new GenericObjectReferenceType(), tableOptions, this.getName());
+      type = new Types.TableType(new GenericObjectReferenceType(), tableOptions, this.getName(), this.getDescription());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype === "DATA") {
-      type = new Types.TableType(new DataReference(new Types.DataType()), tableOptions, this.getName());
+      type = new Types.TableType(new DataReference(new Types.DataType()), tableOptions, this.getName(), this.getDescription());
     } else if (this.parsedXML.rowkind === "R" && this.parsedXML.rowtype !== undefined) {
       const lookup = ddic.lookupObject(this.parsedXML.rowtype);
-      type = new Types.TableType(lookup.type, tableOptions, this.getName());
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription());
       if (lookup.object) {
         references.push({object: lookup.object});
       }
@@ -152,8 +152,13 @@ export class TableType extends AbstractObject {
       if (this.parsedXML.datatype === undefined) {
         type = new Types.UnknownType("Table Type, empty DATATYPE" + this.getName(), this.getName());
       } else {
-        const row = ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
-        type = new Types.TableType(row, tableOptions, this.getName());
+        const row = ddic.textToType({
+          text: this.parsedXML.datatype,
+          length: this.parsedXML.leng,
+          decimals: this.parsedXML.decimals,
+          infoText: this.getName(),
+        });
+        type = new Types.TableType(row, tableOptions, this.getName(), this.getDescription());
       }
     } else {
       type = new Types.UnknownType("Table Type, unknown kind \"" + this.parsedXML.rowkind + "\"" + this.getName(), this.getName());
@@ -181,6 +186,9 @@ export class TableType extends AbstractObject {
     }
 
     const values = parsed.abapGit["asx:abap"]["asx:values"];
+    if (values === undefined) {
+      return;
+    }
 
     const dd40v = values.DD40V;
     this.parsedXML.rowtype = dd40v.ROWTYPE ? dd40v.ROWTYPE : "";

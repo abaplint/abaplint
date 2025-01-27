@@ -104,6 +104,7 @@ INTO CORRESPONDING FIELDS OF TABLE @lt_document_tax_data.`, cnt: 0},
 
   {abap: `data: foo TYPE i, boo TYPE i.`, cnt: 1},
   {abap: `READ TABLE lt_trkorr INDEX 1 TRANSPORTING trkorr INTO ls_trkorr.`, cnt: 0},
+  {abap: `READ TABLE tab INTO row TRANSPORTING NO FIELDS WITH KEY foo = bar.`, cnt: 0},
 
   {abap: `
 SELECT name1, upper( name1 ) AS upper
@@ -111,6 +112,19 @@ SELECT name1, upper( name1 ) AS upper
   WHERE length( name ) > 2
   INTO TABLE @DATA(itab)
   UP TO 10 ROWS.`, cnt: 0},
+
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get_dummy FOR TABLE FUNCTION sdfs.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_dummy BY DATABASE FUNCTION FOR HDB LANGUAGE SQLSCRIPT OPTIONS READ-ONLY.
+    RETURN
+      SELECT dummy FROM sys.dummy;
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+
 ];
 
 testRule(tests, KeywordCase);

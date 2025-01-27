@@ -12,6 +12,12 @@ export class DataElement extends AbstractObject {
     domname?: string,
     datatype?: string,
     leng?: string,
+    texts?: {
+      short?: string,
+      medium?: string,
+      long?: string,
+      heading?: string,
+    }
     decimals?: string} | undefined = undefined;
 
   public getType(): string {
@@ -19,6 +25,7 @@ export class DataElement extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
+    this.parse();
     return this.parsedXML?.description;
   }
 
@@ -39,6 +46,11 @@ export class DataElement extends AbstractObject {
     return this.parsedXML?.domname;
   }
 
+  public getTexts() {
+    this.parse();
+    return this.parsedXML?.texts;
+  }
+
   public parseType(reg: IRegistry): AbstractType {
     const references: IObjectAndToken[] = [];
 
@@ -51,7 +63,7 @@ export class DataElement extends AbstractObject {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
           lookup = {type: new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName())};
         } else {
-          lookup = ddic.lookupDomain(this.parsedXML.domname, this.getName());
+          lookup = ddic.lookupDomain(this.parsedXML.domname, this.getName(), this.getDescription());
         }
       } else if (this.parsedXML.refkind === "R") {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
@@ -63,8 +75,16 @@ export class DataElement extends AbstractObject {
         if (this.parsedXML.datatype === undefined || this.parsedXML.datatype === "") {
           lookup = {type: new Types.UnknownType("DATATYPE unexpectely empty in " + this.getName())};
         } else {
-          lookup = {type: ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals,
-                                          this.getName(), this.getName(), undefined, this.getName())};
+          lookup = {type: ddic.textToType({
+            text: this.parsedXML.datatype,
+            length: this.parsedXML.leng,
+            decimals: this.parsedXML.decimals,
+            infoText: this.getName(),
+            qualifiedName: this.getName(),
+            conversionExit: undefined,
+            ddicName: this.getName(),
+            description: this.parsedXML.texts?.heading,
+          })};
         }
       }
     }
@@ -96,6 +116,12 @@ export class DataElement extends AbstractObject {
       datatype: dd04v?.DATATYPE,
       leng: dd04v?.LENG,
       decimals: dd04v?.DECIMALS,
+      texts: {
+        short: dd04v?.SCRTEXT_S,
+        medium: dd04v?.SCRTEXT_M,
+        long: dd04v?.SCRTEXT_L,
+        heading: dd04v?.REPTEXT,
+      },
     };
 
     const end = Date.now();

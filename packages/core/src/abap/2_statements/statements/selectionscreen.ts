@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, altPrio, optPrio, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
-import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
+import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName, FieldSub} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -35,7 +35,10 @@ export class SelectionScreen implements IStatement {
 
     const visible = seq("VISIBLE LENGTH", reg(/^\d+$/));
 
-    const commentOpt = per(seq("FOR FIELD", Field), modif, visible);
+    const ldbId = seq("ID", reg(/^\w+$/));
+    const ldb = seq("FOR FIELD", FieldSub, optPrio(ldbId));
+
+    const commentOpt = per(ldb, modif, visible);
 
     const position = seq(opt(reg(/^\/?[\d\w]+$/)),
                          altPrio(tok(ParenLeft), tok(WParenLeft)),
@@ -78,21 +81,27 @@ export class SelectionScreen implements IStatement {
     const posIntegers = reg(/^(0?[1-9]|[1234567][0-9]|8[0-3])$/);
 
     const pos = seq("POSITION",
-                    altPrio(posIntegers, posSymbols));
+                    altPrio(posIntegers, posSymbols),
+                    opt(seq("FOR TABLE", Field)));
 
     const incl = seq("INCLUDE BLOCKS", BlockName);
 
     const tabbed = seq("BEGIN OF TABBED BLOCK",
-                       InlineField,
+                       BlockName,
                        "FOR",
                        Integer,
                        "LINES",
                        optPrio("NO INTERVALS"));
 
-    const uline = seq("ULINE", opt(position));
+    const uline = seq("ULINE", opt(position), opt(modif));
 
     const param = seq("INCLUDE PARAMETERS", Field);
     const iso = seq("INCLUDE SELECT-OPTIONS", Field);
+
+    const exclude = seq("EXCLUDE", alt("IDS", "PARAMETERS"), reg(/^\w+$/));
+
+    const beginVersion = seq("BEGIN OF VERSION", reg(/^\w+$/), TextElement);
+    const endVersion = seq("END OF VERSION", reg(/^\w+$/));
 
     const ret = seq("SELECTION-SCREEN",
                     altPrio(comment,
@@ -111,7 +120,11 @@ export class SelectionScreen implements IStatement {
                             endLine,
                             param,
                             beginScreen,
-                            endScreen));
+                            endScreen,
+                            exclude,
+                            beginVersion,
+                            endVersion,
+                            def));
 
     return verNot(Version.Cloud, ret);
   }

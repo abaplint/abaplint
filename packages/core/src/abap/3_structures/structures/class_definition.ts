@@ -13,7 +13,6 @@ export class ClassDefinition implements IStructure {
       opt(sta(Statements.SetExtendedCheck)),
       star(sta(Statements.TypePools)),
       opt(sub(PublicSection)),
-      star(sta(Statements.Include)),
       opt(sub(ProtectedSection)),
       opt(sub(PrivateSection)),
       opt(sta(Statements.SetExtendedCheck)));

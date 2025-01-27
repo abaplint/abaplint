@@ -12,7 +12,7 @@ export class Compare {
       new Source().runSyntax(t, input);
     }
 
-    for (const t of node.findDirectExpressions(Expressions.SourceFieldSymbol)) {
+    for (const t of node.findDirectExpressions(Expressions.SourceFieldSymbolChain)) {
       new SourceFieldSymbol().runSyntax(t, input);
     }
 

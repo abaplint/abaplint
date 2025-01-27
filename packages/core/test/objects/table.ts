@@ -141,7 +141,8 @@ describe("Table, parse XML", () => {
     }
     expect(fields.getComponents().length).to.equal(4);
     expect(tabl.getTableCategory()).to.equal(TableCategory.Transparent);
-    expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEhanced);
+    expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEnhanced);
+    expect(tabl.getDescription()).to.equal("testing");
   });
 
   it("test 2, empty enhancement category", async () => {
@@ -901,6 +902,139 @@ describe("Table, parse XML", () => {
     const fields = tabl.parseType(reg) as UnknownType | undefined;
     expect(fields).to.be.instanceof(UnknownType);
     expect(fields?.getError()).to.include("USER3");
+  });
+
+  it("description without DTEL", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zag_no_dtel.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZAG_NO_DTEL</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZAG_NO_DTEL</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL1</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+     <MASK>  CHAR</MASK>
+     <DDTEXT>hello</DDTEXT>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+     <MASK>  CHAR</MASK>
+     <DDTEXT>world</DDTEXT>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`));
+
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const fields = tabl.parseType(reg) as StructureType | undefined;
+    expect(fields).to.be.instanceof(StructureType);
+    const components = fields?.getComponents();
+    expect(components).to.not.equal(undefined);
+    expect(components![0].type.getDescription()).to.equal("hello");
+    expect(components![1].type.getDescription()).to.equal("world");
+  });
+
+  it("description DTEL + DOMA", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zag_test_tabl.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZAG_TEST_TABL</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>structure</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD</FIELDNAME>
+     <ROLLNAME>ZAG_TEST_DTEL</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`));
+
+    reg.addFile(new MemoryFile("zag_test_dtel.dtel.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZAG_TEST_DTEL</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>ZAG_TEST_DOMA</DOMNAME>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>DTEL</DDTEXT>
+    <REPTEXT>DTEL</REPTEXT>
+    <SCRTEXT_S>DTEL</SCRTEXT_S>
+    <SCRTEXT_M>DTEL</SCRTEXT_M>
+    <SCRTEXT_L>DTEL</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`));
+
+    reg.addFile(new MemoryFile("zag_test_doma.doma.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZAG_TEST_DOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <OUTPUTLEN>000001</OUTPUTLEN>
+    <DDTEXT>doma</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`));
+
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const fields = tabl.parseType(reg) as StructureType | undefined;
+    expect(fields).to.be.instanceof(StructureType);
+    const components = fields?.getComponents();
+    expect(components).to.not.equal(undefined);
+    expect(components![0].type.getDescription()).to.equal("DTEL");
   });
 
 });

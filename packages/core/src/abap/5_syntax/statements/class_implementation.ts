@@ -24,8 +24,11 @@ export class ClassImplementation implements StatementSyntax {
       return;
     }
 
-    for (const t of classDefinition.getTypeDefinitions().getAll()) {
-      input.scope.addType(t.type);
+    const types = classDefinition.getTypeDefinitions();
+    if (types !== undefined) {
+      for (const t of types.getAll()) {
+        input.scope.addType(t.type);
+      }
     }
 
     const sup = input.scope.findClassDefinition(classDefinition.getSuperClass());
@@ -39,10 +42,12 @@ export class ClassImplementation implements StatementSyntax {
     helper.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
     const classAttributes = classDefinition.getAttributes();
-    input.scope.addList(classAttributes.getConstants());
-    input.scope.addList(classAttributes.getStatic());
-    for (const i of classAttributes.getInstance()) {
-      input.scope.addExtraLikeType(i);
+    if (classAttributes !== undefined) {
+      input.scope.addList(classAttributes.getConstants());
+      input.scope.addList(classAttributes.getStatic());
+      for (const i of classAttributes.getInstance()) {
+        input.scope.addExtraLikeType(i);
+      }
     }
 
     helper.fromSuperClassesAndInterfaces(classDefinition);

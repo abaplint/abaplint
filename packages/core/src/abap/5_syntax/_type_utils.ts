@@ -306,6 +306,8 @@ export class TypeUtils {
           }
         }
         return true;
+      } else if (target instanceof SimpleType) {
+        return this.isCharLikeStrict(source);
       } else if (target instanceof CLikeType) {
         return this.isCharLikeStrict(source);
       } else if (target instanceof VoidType
@@ -368,6 +370,10 @@ export class TypeUtils {
   }
 
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+    if (source === undefined || target === undefined) {
+      return true;
+    }
+
 /*
     console.dir(source);
     console.dir(target);
@@ -463,9 +469,10 @@ export class TypeUtils {
           && source instanceof StructureType
           && this.isCharLike(source)) {
         return true;
+      } else if (source instanceof StructureType) {
+        return this.isCharLikeStrict(source);
       } else if (source instanceof DataReference
           || source instanceof ObjectReferenceType
-          || source instanceof StructureType
           || source instanceof GenericObjectReferenceType) {
         return false;
       }

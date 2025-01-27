@@ -1,5 +1,5 @@
 import {ver, seq, tok, altPrio, optPrio, regex, Expression, starPrio} from "../combi";
-import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, ParenRightW} from "../../1_lexer/tokens";
+import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, ParenRightW, ParenLeft} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
 import {Version} from "../../../version";
@@ -22,6 +22,7 @@ export class Source extends Expression {
 
     const rparen = tok(WParenRightW);
     const rparenNoSpace = altPrio(tok(ParenRightW), tok(WParenRightW));
+    const lparenNoSpace = altPrio(tok(ParenLeft), tok(ParenLeftW));
 
 // paren used for eg. "( 2 + 1 ) * 4"
     const paren = seq(tok(WParenLeftW),
@@ -56,7 +57,7 @@ export class Source extends Expression {
 
     const conv = ver(Version.v740sp02, seq("CONV",
                                            TypeNameOrInfer,
-                                           tok(ParenLeftW),
+                                           lparenNoSpace,
                                            ConvBody,
                                            rparenNoSpace,
                                            optPrio(after)));

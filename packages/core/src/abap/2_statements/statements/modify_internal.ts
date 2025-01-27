@@ -19,12 +19,12 @@ export class ModifyInternal implements IStatement {
 
     const options = alt(
       per(index, transporting),
-      seq(from, opt(per(index, transporting))),
+      seq(from, opt(per(index, transporting, using))),
       seq(per(index, transporting), from, opt(per(index, transporting))));
 
     const long = seq("MODIFY", opt("TABLE"), target, opt(options), opt(additions));
 
-    const simple = seq("MODIFY TABLE", target, from, opt(using));
+    const simple = seq("MODIFY TABLE", target, per(from, using));
 
     return alt(long, simple);
   }

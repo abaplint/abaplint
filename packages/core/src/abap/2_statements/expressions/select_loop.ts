@@ -1,5 +1,5 @@
 import {seq, per, alt, Expression, optPrio, altPrio, ver} from "../combi";
-import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLFields, SQLIntoList} from ".";
+import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLIntoList, SQLAggregation} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
 import {SQLHaving} from "./sql_having";
@@ -8,7 +8,9 @@ import {SQLHints} from "./sql_hints";
 import {SQLFieldListLoop} from "./sql_field_list_loop";
 import {SQLUpTo} from "./sql_up_to";
 import {Version} from "../../../version";
+import {SQLFieldsLoop} from "./sql_fields_loop";
 
+// note: SELECT loops are matched before single statement SELECTs
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
     const where = seq("WHERE", SQLCond);
@@ -34,10 +36,15 @@ export class SelectLoop extends Expression {
                      SQLForAllEntries,
                      alt(tab, into, packTab));
 
-    const strict = seq(SQLFrom, ver(Version.v750, SQLFields), where, into, SQLUpTo);
+    const strict = seq(SQLFrom,
+                       ver(Version.v750, SQLFieldsLoop),
+                       optPrio(SQLForAllEntries),
+                       optPrio(seq(where, optPrio(SQLOrderBy), into, optPrio(SQLUpTo))));
+
+    const aggr = seq(SQLAggregation, into, SQLFrom, where, SQLGroupBy);
 
     const ret = seq("SELECT",
-                    altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict),
+                    altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict, aggr),
                     optPrio(SQLHints));
 
     return ret;

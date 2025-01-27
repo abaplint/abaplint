@@ -32,8 +32,11 @@ export class TableType extends AbstractType {
   private readonly rowType: AbstractType;
   private readonly options: ITableOptions;
 
-  public constructor(rowType: AbstractType, options: ITableOptions, qualifiedName?: string) {
-    super({qualifiedName: qualifiedName});
+  public constructor(rowType: AbstractType, options: ITableOptions, qualifiedName?: string, description?: string) {
+    super({
+      qualifiedName: qualifiedName,
+      description: description,
+    });
     this.rowType = rowType;
     this.options = options;
     if (options.primaryKey?.type === TableAccessType.standard && options.primaryKey.isUnique === true) {

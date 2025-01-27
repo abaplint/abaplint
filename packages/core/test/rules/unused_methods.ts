@@ -3,6 +3,7 @@ import {UnusedMethods} from "../../src/rules";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
+import {testRuleFixSingle} from "./_utils";
 
 async function runSingle(abap: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
@@ -18,6 +19,10 @@ async function runMulti(files: MemoryFile[]): Promise<Issue[]> {
     issues = issues.concat(new UnusedMethods().initialize(reg).run(o));
   }
   return issues;
+}
+
+function testFix(input: string, expected: string) {
+  testRuleFixSingle(input, expected, new UnusedMethods());
 }
 
 describe("Rule: unused_methods, single file", () => {
@@ -47,6 +52,18 @@ CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(1);
+
+    const expected = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+${" ".repeat(4)}
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+${" ".repeat(2)}
+ENDCLASS.`;
+
+    testFix(abap, expected);
   });
 
   it("local class public method, no issues", async () => {

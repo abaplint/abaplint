@@ -14,12 +14,14 @@ export class TypeTableKey extends Expression {
 
     const further = seq(alt("WITHOUT", "WITH"), "FURTHER SECONDARY KEYS");
 
+    const alias = seq("ALIAS", Field);
+
     const key = seq("WITH",
                     opt(uniqueness),
                     altPrio(defaultKey, emptyKey,
                             seq(opt(alt("SORTED", "HASHED")),
                                 "KEY",
-                                alt(seq(Field, "COMPONENTS", components),
+                                alt(seq(Field, opt(alias), "COMPONENTS", components),
                                     components))),
                     optPrio(further),
                     optPrio("READ-ONLY"));

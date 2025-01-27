@@ -118,7 +118,11 @@ describe("Registry", () => {
   });
 
   it("Add and update", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nDATA hello TYPE i.\nWRITE hello.");
+    const file = new MemoryFile("zfoobar.prog.abap", `REPORT zfoobar.
+DATA hello TYPE i.
+
+START-OF-SELECTION.
+  WRITE hello.`);
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(0);
 
@@ -154,7 +158,7 @@ ENDINTERFACE.`;
   it("Double parse should give the same issues, rule", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
-    const expected = 2;
+    const expected = 3;
     expect(registry.findIssues().length).to.equal(expected);
     expect(registry.findIssues().length).to.equal(expected);
   });

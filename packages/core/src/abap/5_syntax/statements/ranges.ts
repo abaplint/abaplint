@@ -11,7 +11,7 @@ export class Ranges implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput) {
     const nameToken = node.findFirstExpression(Expressions.SimpleName)?.getFirstToken();
 
-    const typeExpression = node.findFirstExpression(Expressions.FieldSub);
+    const typeExpression = node.findFirstExpression(Expressions.SimpleFieldChain2);
     if (typeExpression === undefined) {
       throw new AssertError("Ranges, unexpected node");
     }

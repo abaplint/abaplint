@@ -10,7 +10,8 @@ import {IParseResult} from "./_iobject";
 export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   definitionName: string | undefined;
-  fields: {key: boolean, name: string, annotations: string[]}[];
+  description: string | undefined;
+  fields: {key: boolean, name: string, prefix: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
   relations: {name: string, as: string | undefined}[];
@@ -43,13 +44,13 @@ export class DataDefinition extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    this.parse();
+    return this.parsedData?.description;
   }
 
   public parseType(reg: IRegistry): AbstractType {
     this.parse();
-    return new CDSDetermineTypes().parseType(reg, this.parsedData!);
+    return new CDSDetermineTypes().parseType(reg, this.parsedData!, this.getName());
   }
 
   public getParsedData() {
@@ -75,6 +76,18 @@ export class DataDefinition extends AbstractObject {
     return this.parserError;
   }
 
+  public listKeys(): string[] {
+    this.parse();
+
+    const ret: string[] = [];
+    for (const field of this.parsedData?.fields || []) {
+      if (field.key === true) {
+        ret.push(field.name);
+      }
+    }
+    return ret;
+  }
+
   public parse(): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
@@ -85,6 +98,7 @@ export class DataDefinition extends AbstractObject {
     this.parsedData = {
       sqlViewName: undefined,
       definitionName: undefined,
+      description: this.findDescription(),
       fields: [],
       sources: [],
       relations: [],
@@ -122,10 +136,17 @@ export class DataDefinition extends AbstractObject {
 //////////
 
   private findSQLViewName(): void {
-    const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '(\w+)'/);
+    const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '([\w/]+)'/);
     if (match) {
       this.parsedData!.sqlViewName = match[1].toUpperCase();
     }
+  }
+  private findDescription(): string | undefined {
+    const match = this.findSourceFile()?.getRaw().match(/@EndUserText\.label: '([\w,.:-=#%&() ]+)'/);
+    if (match) {
+      return match[1];
+    }
+    return undefined;
   }
 
   private findFieldNames(tree: ExpressionNode) {
@@ -136,19 +157,25 @@ export class DataDefinition extends AbstractObject {
     if (expr === undefined) {
       expr = tree.findFirstExpression(CDSDefineProjection);
     }
+
     for (const e of expr?.findDirectExpressions(CDSElement) || []) {
+      let prefix = "";
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
-        const list = e.findDirectExpressions(CDSName);
+        const list = e.findAllExpressions(CDSName);
         if (e.concatTokens().toUpperCase().includes(" REDIRECTED TO ")) {
           found = list[0];
         } else {
           found = list[list.length - 1];
+          if (list.length > 1) {
+            prefix = list[0].concatTokens();
+          }
         }
       }
       if (found === undefined) {
         continue;
       }
+
       const name = found?.concatTokens();
       if (this.parsedData?.associations.some(a =>
         a.name.toUpperCase() === name.toUpperCase() || a.as?.toUpperCase() === name.toUpperCase())) {
@@ -163,6 +190,7 @@ export class DataDefinition extends AbstractObject {
       this.parsedData!.fields.push({
         name: name,
         annotations: annotations,
+        prefix: prefix,
         key: e.findDirectTokenByText("KEY") !== undefined,
       });
     }
@@ -170,8 +198,8 @@ export class DataDefinition extends AbstractObject {
 
   private findSourcesAndRelations(tree: ExpressionNode) {
     for (const e of tree.findAllExpressions(CDSSource)) {
-      const name = e.getFirstToken().getStr();
-      const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
+      const name = e.getFirstChild()?.concatTokens().toUpperCase().replace(/ /g, "") || "ERROR";
+      const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.concatTokens().toUpperCase();
       this.parsedData!.sources.push({name, as});
     }
 
