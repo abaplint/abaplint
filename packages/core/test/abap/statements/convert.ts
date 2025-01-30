@@ -15,6 +15,9 @@ const tests = [
   "convert date lv_date time lv_time daylight saving time 'X' into time stamp lv_tstmp time zone lv_tzone.",
 
   "CONVERT INVERTED-DATE lv_foo INTO DATE lv_bar.",
+
+  `CONVERT UTCLONG val INTO DATE DATA(dat) TIME DATA(tim) DAYLIGHT SAVING TIME DATA(dst) TIME ZONE 'EST'.`,
+  `CONVERT DATE dat TIME tim DAYLIGHT SAVING TIME 'X' TIME ZONE 'EST' INTO UTCLONG DATA(time_stamp).`,
 ];
 
 statementType(tests, "CONVERT", Statements.Convert);
