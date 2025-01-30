@@ -613,4 +613,16 @@ END-ENHANCEMENT-SECTION.`;
 "Move:4,3" -> "EnhancementSection:3,1";`);
   });
 
+  it("test seam", async () => {
+    const abap = `
+TEST-SEAM authorization_seam.
+  AUTHORITY-CHECK OBJECT 'SDFDS' ID 'SDFS' FIELD 'SDFDS'.
+END-TEST-SEAM.`;
+
+    const res2 = await runFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "TestSeam:3,1";
+"TestSeam:3,1" -> "AuthorityCheck:4,3";
+"AuthorityCheck:4,3" -> "end#1";`);
+  });
+
 });
