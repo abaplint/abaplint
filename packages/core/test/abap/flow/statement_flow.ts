@@ -625,4 +625,14 @@ END-TEST-SEAM.`;
 "AuthorityCheck:4,3" -> "end#1";`);
   });
 
+  it("test injection", async () => {
+    const abap = `
+TEST-INJECTION authorization_seam.
+  sy-subrc = 0.
+END-TEST-INJECTION.`;
+
+    const res2 = await runFORM(abap);
+    expect(res2[0].toTextEdges()).to.equal(`"start#1" -> "end#1";`);
+  });
+
 });
