@@ -264,6 +264,12 @@ export class StatementFlow {
       graph.addEdge(current, name, FLOW_EDGE_TYPE.undefined);
       graph.addEdge(name, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
 
+    } else if (type instanceof Structures.TestSeam) {
+      const name = StatementFlow.buildName(n.getFirstStatement()!);
+      const sub = this.traverseBody(this.findBody(n), context);
+      graph.addEdge(current, name, FLOW_EDGE_TYPE.undefined);
+      graph.addGraph(name, sub, FLOW_EDGE_TYPE.undefined);
+      graph.addEdge(sub.getEnd(), graph.getEnd(), FLOW_EDGE_TYPE.undefined);
     } else if (type instanceof Structures.AtFirst
         || type instanceof Structures.AtLast
         || type instanceof Structures.At
@@ -345,7 +351,8 @@ export class StatementFlow {
       if (othersFound === false) {
         graph.addEdge(caseName, graph.getEnd(), FLOW_EDGE_TYPE.undefined);
       }
-    } else if (type instanceof Structures.Define) {
+    } else if (type instanceof Structures.Define
+      || type instanceof Structures.TestInjection) {
       // do nothing
     } else {
       console.dir("StatementFlow,todo, " + n.get().constructor.name);

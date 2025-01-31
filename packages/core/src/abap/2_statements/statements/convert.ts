@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, per} from "../combi";
+import {seq, alt, per, ver} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class Convert implements IStatement {
 
@@ -21,14 +22,17 @@ export class Convert implements IStatement {
     const tim = seq("TIME", Source);
 
     const stamp = seq("INTO TIME STAMP", Target);
+    const intoutc = ver(Version.v754, seq("INTO UTCLONG", Target));
     const invert = seq("INTO INVERTED-DATE", Target);
 
     const date = seq(per(dat, tim),
-                     per(daylight, stamp, zone, invert));
+                     per(daylight, stamp, zone, invert, intoutc));
 
     const inv = seq("INVERTED-DATE", Source, "INTO DATE", Target);
 
-    return seq("CONVERT", alt(time, date, inv));
+    const utclong = ver(Version.v754, seq("UTCLONG", Source, per(zone, into, daylight)));
+
+    return seq("CONVERT", alt(time, date, inv, utclong));
   }
 
 }
