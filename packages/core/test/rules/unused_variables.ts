@@ -1589,7 +1589,7 @@ result = floor( EXACT #( remainder / 2 ) ).`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("dynamic method call", async () => {
+  it("dynamic method call", async () => {
     const abap = `
   DATA(class_name) = 'ZCL_TEST'.
   DATA(method_name) = 'TEST'.
