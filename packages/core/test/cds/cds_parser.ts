@@ -1072,7 +1072,7 @@ key a.objid as Obj,
     expect(parsed).to.not.equal(undefined);
   });
 
-  it.only("cast with arithmetics", () => {
+  it("cast with arithmetics", () => {
     const cds = `
 define view entity ZI_TaxItem
   as select from I_TaxItem
