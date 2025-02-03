@@ -47,7 +47,13 @@ export class MethodSource {
     }
 
     if (context instanceof VoidType) {
-      // todo, if there are more dynamic with variables, the references for the variables are not added?
+      while (children.length > 0) {
+        const current = children.shift();
+        if (current instanceof ExpressionNode && current.get() instanceof Expressions.Dynamic) {
+          new Dynamic().runSyntax(current, input);
+        }
+      }
+
       return context;
     }
 

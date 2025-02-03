@@ -1072,4 +1072,25 @@ key a.objid as Obj,
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("cast with arithmetics", () => {
+    const cds = `
+define view entity ZI_TaxItem
+  as select from I_TaxItem
+  {
+    key CompanyCode,
+    key AccountingDocument,
+    key FiscalYear,
+    key TaxItem,
+        TaxCode,
+        @Semantics.amount.currencyCode: 'CompanyCodeCurrency'
+        cast( cast( cast( TaxRate as abap.dec( 11, 2 ) ) / 10  as abap.dec(11,2) ) as abap.curr( 23, 2 ) ) as TaxRate,
+        GLAccount,
+        CountryCurrency
+  }
+`;
+    const file = new MemoryFile("zi_taxitem.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
