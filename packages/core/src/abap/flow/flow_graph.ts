@@ -56,19 +56,6 @@ export class FlowGraph {
     return list;
   }
 
-  public listInto(to: string, skipStart = true): string[] {
-    const ret: string[] = [];
-    for (const e of this.listEdges()) {
-      if (skipStart === true && e.from === this.getStart()) {
-        continue;
-      }
-      if (e.to === to) {
-        ret.push(e.from);
-      }
-    }
-    return ret;
-  }
-
   public listNodes() {
     const set = new Set<string>();
     for (const l of this.listEdges()) {
@@ -78,7 +65,7 @@ export class FlowGraph {
     return Array.from(set.values());
   }
 
-  public hasEdges(): boolean {
+  private hasEdges(): boolean {
     return Object.keys(this.edges).length > 0;
   }
 
