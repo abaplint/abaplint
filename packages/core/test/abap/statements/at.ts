@@ -11,6 +11,7 @@ const tests = [
   "AT group.",
   "AT END OF field(10).",
   "AT NEW field+4(2).",
+  `AT %FG01.`,
 ];
 
 statementType(tests, "AT", Statements.At);
