@@ -93,4 +93,11 @@ DATA: lt_stream_line TYPE i,
     expect(issues[0].getStart().getRow()).to.equal(3);
   });
 
+  it("bdef type", async () => {
+    const abap = `DATA foo TYPE TABLE FOR CREATE zr_foo.`;
+    const file = new MemoryFile("zrange.prog.abap", abap);
+    const issues = await run(file);
+    expect(issues.length).to.equal(0);
+  });
+
 });
