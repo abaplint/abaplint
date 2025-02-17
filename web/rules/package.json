@@ -10,16 +10,16 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/core": "^2.113.87",
-    "@abaplint/monaco": "^2.113.87",
+    "@abaplint/core": "^2.113.102",
+    "@abaplint/monaco": "^2.113.102",
     "@types/node": "=22.5.1",
     "fuse.js": "^7.0.0",
     "monaco-editor": "^0.48.0",
     "buffer": "^6.0.3",
-    "ts-loader": "^9.5.1",
+    "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^5.1.4",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
     "yaserver": "^0.4.0"
   }
 }
