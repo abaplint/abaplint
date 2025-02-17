@@ -145,6 +145,14 @@ const tests = [
          WHERE matnr = matnr
          AND   werks = werks
          GROUP BY matnr.`,
+
+  `SELECT SUM( labst )
+    INTO <foo>-labst UP TO 1 ROWS
+    FROM mard
+    WHERE matnr = <mooo>-matnr
+      AND werks = <mooo>-werks
+      AND lgort = <mooo>-lgpro
+    GROUP BY matnr.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
