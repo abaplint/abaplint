@@ -12,6 +12,11 @@ const tests = [
   "CALL METHOD OF app 'Create' = handle NO FLUSH QUEUE-ONLY.",
   "CALL METHOD OF var1 var2.",
   `CALL METHOD OF sdf-fds VERB = sdf->sdfa-sdf NO FLUSH QUEUE-ONLY.`,
+  `CALL METHOD OF sdfsd 'field' = para
+    NO FLUSH
+    QUEUEONLY
+    EXPORTING #1 = foo-bar
+              #2 = param_id.`,
 ];
 
 statementType(tests, "CALL METHOD OF", Statements.CallOLE);
