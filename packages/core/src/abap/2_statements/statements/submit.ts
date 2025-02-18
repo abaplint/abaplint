@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, per, alt, plus, optPrio, altPrio} from "../combi";
+import {verNot, str, seq, opt, alt, optPrio, altPrio, per, plus} from "../combi";
 import {Source, Dynamic, AndReturn, FieldSub, IncludeName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -36,6 +36,7 @@ export class Submit implements IStatement {
 
     const perm = per(plus(awith),
                      selectionTable,
+                     plus(awith),
                      spool,
                      lineSize,
                      lineCount,

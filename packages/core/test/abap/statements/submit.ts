@@ -25,12 +25,10 @@ const tests = [
   "SUBMIT zsdfsdf WITH num EQ lv_num WITH date GE '00000000'.",
   "SUBMIT zfoobar WITH field BETWEEN foo AND bar SIGN 'I' AND RETURN.",
 
-  /* todo, how to handle this
   "SUBMIT zblah\n" +
   "  WITH p_bukrs = p_bukrs\n" +
   "  WITH SELECTION-TABLE lt_belnr\n" +
   "  WITH p_list = p_list.",
-*/
 
   "SUBMIT zfoo AND RETURN\n" +
   "  WITH s_type = lv_type\n" +
@@ -63,13 +61,11 @@ const tests = [
   AND RETURN.`,
   */
 
-  /*
   `SUBMIT zmoo VIA SELECTION-SCREEN
     WITH  p_werks  = go->werk
     WITH SELECTION-TABLE lt_seltab
     WITH  p_name   = space
-    WITH  p_print  = 'ZMOO'`,
-  */
+    WITH  p_print  = 'ZMOO'.`,
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

@@ -33,7 +33,8 @@ export class Select {
 
     const fields = this.findFields(node, input);
     if (fields.length === 0
-        && node.findDirectExpression(Expressions.SQLFieldListLoop) === undefined) {
+        && node.findDirectExpression(Expressions.SQLFieldListLoop) === undefined
+        && node.findDirectExpression(Expressions.SQLAggregation) === undefined) {
       const message = `SELECT: fields missing`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;

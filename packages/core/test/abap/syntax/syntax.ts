@@ -11085,4 +11085,21 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT loop, fields ok", () => {
+    const abap = `
+FIELD-SYMBOLS <foo> TYPE voided.
+FIELD-SYMBOLS <mooo> TYPE voided.
+
+SELECT SUM( labst )
+    INTO <foo>-labst UP TO 1 ROWS
+    FROM mard
+    WHERE matnr = <mooo>-matnr
+      AND werks = <mooo>-werks
+      AND lgort = <mooo>-lgpro
+    GROUP BY matnr.
+ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
