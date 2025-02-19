@@ -7,6 +7,8 @@ import {InfoAttribute} from "../abap/4_file_information/_abap_file_information";
 import {ABAPFile} from "../abap/abap_file";
 import {EndMethod} from "../abap/2_statements/statements";
 import {Position} from "../position";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 
 export class Symbols {
   private readonly reg: IRegistry;
@@ -24,6 +26,7 @@ export class Symbols {
     const ret: LServer.DocumentSymbol[] = [];
     ret.push(...this.outputClasses(file));
     ret.push(...this.outputForms(file));
+    ret.push(...this.outputModules(file));
     return ret;
   }
 
@@ -69,6 +72,24 @@ export class Symbols {
       const symbol = this.newSymbol(form.identifier, LServer.SymbolKind.Function, []);
       ret.push(symbol);
     }
+    return ret;
+  }
+
+  private outputModules(file: ABAPFile): LServer.DocumentSymbol[] {
+    const ret: LServer.DocumentSymbol[] = [];
+
+    for (const statement of file.getStatements()) {
+      if (statement.get() instanceof Statements.Module) {
+        const nameToken = statement.findFirstExpression(Expressions.FormName)?.getFirstToken();
+        if (nameToken === undefined) {
+          continue;
+        }
+        const identifier = new Identifier(nameToken, file.getFilename());
+        const symbol = this.newSymbol(identifier, LServer.SymbolKind.Module, []);
+        ret.push(symbol);
+      }
+    }
+
     return ret;
   }
 
