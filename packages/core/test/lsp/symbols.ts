@@ -78,4 +78,18 @@ ENDCLASS.`);
     expect(symbols[0].children![0].range.end.line).to.equal(4);
   });
 
+  it("module", async () => {
+    const file = new MemoryFile("zfoobar.prog.abap", `
+MODULE display_alv OUTPUT.
+
+  PERFORM alv_display.
+
+ENDMODULE.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const symbols = new Symbols(reg).find(file.getFilename());
+    expect(symbols.length).to.equal(1);
+    expect(symbols[0].name).to.equal("display_alv");
+  });
+
 });
