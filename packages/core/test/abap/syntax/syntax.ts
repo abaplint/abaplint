@@ -11102,7 +11102,7 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("infer inside cond infer", () => {
+  it.only("infer inside cond infer", () => {
     const abap = `
 CLASS lcl DEFINITION.
 ENDCLASS.
