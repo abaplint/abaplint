@@ -11102,4 +11102,17 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("infer inside cond infer", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+DATA buffer TYPE REF TO lcl.
+buffer = COND #( WHEN buffer IS BOUND THEN buffer ELSE NEW #( ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
