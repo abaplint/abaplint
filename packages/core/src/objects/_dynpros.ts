@@ -9,6 +9,7 @@ export type DynproHeader = {
   number: string,
   description: string,
   nextScreen: string,
+  type: string,
   fields: DynproField[],
 };
 export type DynproList = DynproHeader[];
@@ -30,6 +31,7 @@ export function parseDynpros(parsed: any): DynproList {
         number: d.HEADER.SCREEN,
         description: d.HEADER.DESCRIPT,
         nextScreen: d.HEADER.NEXTSCREEN,
+        type: d.HEADER.TYPE,
         fields: fields,
       });
     }
