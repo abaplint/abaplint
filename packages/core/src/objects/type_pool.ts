@@ -23,7 +23,7 @@ export class TypePool extends ABAPObject {
   }
 
   public getDescription(): string | undefined {
-    // todo
-    return undefined;
+    const parsed = super.parseRaw2();
+    return parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DDTEXT || "";
   }
 }
