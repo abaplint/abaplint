@@ -12,6 +12,7 @@ const tests = [
   {c: "|sdf{sdf }|", r: new Expressions.StringTemplate(), e: false},
   {c: "|sdf{ sdf}|", r: new Expressions.StringTemplate(), e: false},
   {c: "|{ l_max NUMBER = (cl_abap_format=>n_user) }|", r: new Expressions.StringTemplate(), e: true},
+  {c: "|{ timestamp timestamp = (cl_abap_format=>ts_raw) }|", r: new Expressions.StringTemplate(), e: true},
 ];
 
 describe("Test expression, StringTemplate", () => {
