@@ -17,6 +17,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly static: boolean;
   private readonly raising: string[];
   private readonly exceptions: string[];
+  private readonly className: string;
 
 // todo: final flag
 
@@ -30,6 +31,8 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
     super(found.getFirstToken(), input.filename);
+
+    this.className = input.scope.getName();
 
     this.redefinition = false;
     if (node.findDirectExpression(Expressions.Redefinition)) {
@@ -88,6 +91,10 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
   public getVisibility(): Visibility {
     return this.visibility;
+  }
+
+  public getClassName(): string {
+    return this.className;
   }
 
   public isRedefinition(): boolean {

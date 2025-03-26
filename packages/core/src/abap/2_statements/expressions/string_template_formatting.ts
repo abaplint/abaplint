@@ -14,7 +14,7 @@ export class StringTemplateFormatting extends Expression {
 
     const dateTimeOptions = altPrio("RAW", "ISO", "USER", "ENVIRONMENT", Source, Dynamic);
 
-    const timeStampOptions = altPrio("SPACE", "ISO", "USER", "ENVIRONMENT", Source);
+    const timeStampOptions = altPrio("SPACE", "ISO", "USER", "ENVIRONMENT", Source, Dynamic);
 
     const numberOptions = altPrio("RAW", "USER", "ENVIRONMENT", Source, Dynamic);
 
