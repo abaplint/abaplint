@@ -28,16 +28,16 @@
     "license": "MIT",
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@eslint/compat": "^1.2.7",
+        "@eslint/compat": "^1.2.8",
         "@eslint/eslintrc": "^3.3.1",
-        "@eslint/js": "^9.23.0",
-        "@typescript-eslint/eslint-plugin": "^8.29.0",
-        "@typescript-eslint/parser": "^8.29.0",
+        "@eslint/js": "^9.24.0",
+        "@typescript-eslint/eslint-plugin": "^8.29.1",
+        "@typescript-eslint/parser": "^8.29.1",
         "chai": "^4.5.0",
-        "eslint": "^9.22.0",
+        "eslint": "^9.24.0",
         "globals": "^16.0.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-        "typescript": "^5.8.2",
+        "typescript": "^5.8.3",
         "vscode-languageserver-types": "^3.17.5",
         "xml-js": "^1.6.11"
     }
