@@ -43,6 +43,7 @@ export class CloudTypes implements IRule {
   public static isCloud(obj: IObject): boolean {
     return obj instanceof Objects.ApplicationJobCatalogEntry
       || obj instanceof Objects.ApplicationJobTemplate
+      || obj instanceof Objects.APIReleaseState
       || obj instanceof Objects.AssignmentServiceToAuthorizationGroup
       || obj instanceof Objects.ATCCheckCategory
       || obj instanceof Objects.ATCCheckObject
