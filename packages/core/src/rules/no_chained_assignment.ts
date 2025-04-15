@@ -5,6 +5,8 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {StatementNode} from "../abap/nodes";
+import {EditHelper, IEdit} from "../edit_helper";
 
 export class NoChainedAssignmentConf extends BasicRuleConfig {
 }
@@ -44,12 +46,25 @@ var1 = var2.`,
 
       if (s.findDirectExpressions(Expressions.Target).length >= 2) {
         const message = "No chained assignment";
-        const issue = Issue.atStatement(file, s, message, this.getMetadata().key);
+        const fix = this.buildFix(file, s);
+        const issue = Issue.atStatement(file, s, message, this.getMetadata().key, this.getConfig().severity, fix);
         issues.push(issue);
       }
     }
 
     return issues;
+  }
+
+  private buildFix(file: ABAPFile, node: StatementNode): IEdit | undefined{
+    // window of 3 expressions
+    const children = node.getChildren();
+    let res = "";
+
+    for (let i = children.length - 4; i >= 0 ; i = i - 2) {
+      const concat = children[i].concatTokens() + " " + children[i + 1].concatTokens() + " " + children[i + 2].concatTokens();
+      res += concat + ".\n";
+    }
+    return EditHelper.replaceRange(file, node.getStart(), node.getEnd(), res.trimEnd());
   }
 
 }

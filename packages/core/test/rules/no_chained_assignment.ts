@@ -14,14 +14,14 @@ var1 = var3.`, cnt: 0},
 
 testRule(tests, NoChainedAssignment);
 
-describe.only("Rule: no_chained_assignment", () => {
+describe("Rule: no_chained_assignment", () => {
 
   it("quick fix 1", async () => {
     const abap = `
 var1 = var2 = var3.`;
     const expected = `
 var2 = var3.
-var1 = var3.`;
+var1 = var2.`;
     testFix(abap, expected, false);
   });
 
