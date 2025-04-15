@@ -10,6 +10,7 @@ export * from "./atc_check_category";
 export * from "./atc_check_object";
 export * from "./atc_check_variant";
 export * from "./authorization_check_field";
+export * from "./application_descriptors_fiori";
 export * from "./authorization_group";
 export * from "./authorization_object_class";
 export * from "./authorization_object_extension";
