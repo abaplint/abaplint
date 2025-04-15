@@ -2684,7 +2684,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_chained_assignment"
+              "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/no_chained_assignment"
             },
             "no_external_form_calls": {
               "anyOf": [
@@ -4576,7 +4576,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_chained_assignment"
+              "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/no_chained_assignment"
             },
             "no_external_form_calls": {
               "anyOf": [
