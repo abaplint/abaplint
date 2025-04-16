@@ -4,7 +4,6 @@
 [![Slack](https://img.shields.io/badge/Join-Slack-blue)](https://communityinviter.com/apps/abapgit/abap)
 
 # abaplint
-
 Linter for ABAP, code must be serialized using [abapGit](https://github.com/abapGit/abapGit).
 
 Versioning: semantic versioning is currently not followed, recommend fixing usage to a specific version.
