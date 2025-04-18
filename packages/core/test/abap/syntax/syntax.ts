@@ -11115,4 +11115,29 @@ buffer = COND #( WHEN buffer IS BOUND THEN buffer ELSE NEW #( ) ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("the destructor is special somehow", () => {
+    const abap = `
+CLASS lcl_sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS destructor.
+ENDCLASS.
+
+CLASS lcl_sup IMPLEMENTATION.
+  METHOD destructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM lcl_sup.
+  PUBLIC SECTION.
+    METHODS destructor.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD destructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

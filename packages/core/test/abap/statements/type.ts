@@ -1,4 +1,4 @@
-import {statementExpectFail, statementType, statementVersion} from "../_utils";
+import {statementExpectFail, statementType, statementVersion, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -58,3 +58,10 @@ const fails = [
   `TYPES something TYPE STANDARD TABLE OF  WITH DEFAULT KEY.`,
 ];
 statementExpectFail(fails, "TYPES");
+
+const ok = [
+  {abap: `TYPES !ty_moo TYPE string.`, ver: Version.Cloud},
+  {abap: `TYPES !ty_moo TYPE string.`, ver: Version.v740sp02},
+];
+
+statementVersionOk(ok, "TYPES", Statements.Type);
