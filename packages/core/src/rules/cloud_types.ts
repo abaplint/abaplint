@@ -46,7 +46,7 @@ export class CloudTypes implements IRule {
       || obj instanceof Objects.APIReleaseState
       || obj instanceof Objects.AssignmentServiceToAuthorizationGroup
       || obj instanceof Objects.ATCCheckCategory
-      || obj instanceof Objects.AppliactionDescriptorsFiori
+      || obj instanceof Objects.ApplicationDescriptorsFiori
       || obj instanceof Objects.ATCCheckObject
       || obj instanceof Objects.ATCCheckVariant
       || obj instanceof Objects.AuthorizationCheckField
