@@ -1,6 +1,6 @@
 import {AbstractObject} from "./_abstract_object";
 
-export class AppliactionDescriptorsFiori extends AbstractObject {
+export class ApplicationDescriptorsFiori extends AbstractObject {
 
   public getType(): string {
     return "UIAD";
