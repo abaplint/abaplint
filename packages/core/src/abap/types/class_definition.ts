@@ -160,7 +160,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
         const name = m.getName().toUpperCase();
         if (m.getVisibility() === Visibility.Private) {
           continue;
-        } else if (name === "CONSTRUCTOR" || name === "CLASS_CONSTRUCTOR") {
+        } else if (name === "CONSTRUCTOR"
+            || name === "DESTRUCTOR"
+            || name === "CLASS_CONSTRUCTOR") {
           continue;
         }
         names.add(name);
@@ -172,7 +174,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
 
     for (const m of this.getMethodDefinitions().getAll()) {
-      if (names.has(m.getName().toUpperCase()) && m.isRedefinition() === false) {
+      if (names.has(m.getName().toUpperCase())
+          && m.isRedefinition() === false) {
         throw new Error(`${m.getName().toUpperCase()} already declared in superclass`);
       }
     }
