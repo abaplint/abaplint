@@ -11115,7 +11115,7 @@ buffer = COND #( WHEN buffer IS BOUND THEN buffer ELSE NEW #( ) ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("the destructor is special somehow", () => {
+  it("the destructor is special somehow", () => {
     const abap = `
 CLASS lcl_sup DEFINITION.
   PUBLIC SECTION.
