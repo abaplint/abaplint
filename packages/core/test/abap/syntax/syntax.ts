@@ -11140,4 +11140,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("method parameters, only one error expected", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS method_name
+      IMPORTING
+        first TYPE any
+        second TYPE any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD method_name.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM foo.
+  lcl=>method_name( EXPORTING first = 1 third = 2 second = 2 ).
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+  });
+
 });
