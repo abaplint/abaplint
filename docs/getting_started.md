@@ -19,7 +19,8 @@ Suggest starting by running only the syntax check relevant rules, having this wo
 ```json
 {
   "global": {
-    "files": "/src/**/*.*"
+    "files": "/src/**/*.*",
+    "skipGeneratedFunctionGroups": true
   },
   "dependencies": [
     {
