@@ -20,8 +20,11 @@ export class SelectOption implements StatementSyntax {
       return;
     }
 
-    for(const d of node.findDirectExpressions(Expressions.Dynamic)) {
+    for (const d of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, input);
+      input.scope.addIdentifier(
+        new TypedIdentifier(nameToken, input.filename, new VoidType("DYNAMIC_SELECT_OPTION")));
+      return;
     }
 
     const nameExpression = node.findFirstExpression(Expressions.FieldChain);
