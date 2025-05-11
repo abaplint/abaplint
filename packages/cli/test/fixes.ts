@@ -191,4 +191,28 @@ ENDCLASS.`;
 
     expect(expected).to.equal(result);
   });
+
+  it.only("after fixing, there should be no syntax errors, check", async () => {
+    const prog = new MemoryFile("zcheck.prog.abap", `
+  CHECK sy-subrc EQ 0.
+`);
+
+    const reg = new Registry().addFile(prog);
+
+    const config = reg.getConfig().get();
+    config.syntax.version = Version.v702;
+    reg.setConfig(new Config(JSON.stringify(config)));
+
+    reg.parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[prog.getFilename()] = prog.getRaw();
+    const mockFS = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
+
+    await applyFixes(reg, mockFS);
+
+    const result = reg.getFirstObject()?.getFiles()[0].getRaw();
+
+    expect(result).to.include(`IF NOT sy-subrc EQ 0.`);
+  });
 });
