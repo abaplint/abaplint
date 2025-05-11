@@ -41,6 +41,7 @@ testRule(tests2, ExitOrCheck, config2);
 const fixes = [
   {input: "EXIT.", output: "RETURN."},
   {input: "CHECK foo = bar.", output: `IF NOT foo = bar.\n  RETURN.\nENDIF.`},
+  {input: "CHECK sy-subrc = 0.", output: `IF NOT sy-subrc = 0.\n  RETURN.\nENDIF.`},
 ];
 
 testRuleFix(fixes, ExitOrCheck);
