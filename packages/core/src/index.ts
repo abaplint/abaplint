@@ -70,6 +70,7 @@ const Edits = {
 const Files = {
   MemoryFile,
   ABAPFile,
+  AbstractFile,
 };
 
 // file used to build typings, index.d.ts
@@ -80,7 +81,7 @@ export {Issue, Config, Version, CyclomaticComplexityStats,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
-  IDependency, AbstractFile, SpaghettiScopeNode, MacroCall, MacroContent, NativeSQL, ReferenceType,
+  IDependency, SpaghettiScopeNode, MacroCall, MacroContent, NativeSQL, ReferenceType,
   Edits, Files,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
