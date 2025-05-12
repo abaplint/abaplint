@@ -6,7 +6,7 @@ import {Class} from "../objects";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 import {RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {ABAPObject} from "..";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class SuperclassFinalConf extends BasicRuleConfig {
 }

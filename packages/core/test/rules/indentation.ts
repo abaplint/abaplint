@@ -1,8 +1,9 @@
 import {testRule, testRuleFixSingle} from "./_utils";
 import {expect} from "chai";
 import {Indentation, IndentationConf} from "../../src/rules/indentation";
-import {MemoryFile, Registry} from "../../src";
 import {applyEditList} from "../../src/edit_helper";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src";
 
 async function run(file: MemoryFile){
   const reg = new Registry().addFile(file);

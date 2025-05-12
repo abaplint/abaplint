@@ -1,6 +1,7 @@
 import {expect} from "chai";
-import {Config, Version, MemoryFile, Registry, Issue, Position} from "../src";
+import {Config, Version, Registry, Issue, Position} from "../src";
 import {Severity} from "../src/severity";
+import {MemoryFile} from "../src/files/memory_file";
 
 describe("severity", () => {
 

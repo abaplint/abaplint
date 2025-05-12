@@ -1,6 +1,7 @@
-import {ABAPFile, Issue} from "..";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 import {BuiltIn} from "../abap/5_syntax/_builtin";
+import {ABAPFile} from "../abap/abap_file";
+import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";

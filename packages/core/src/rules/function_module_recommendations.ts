@@ -1,5 +1,7 @@
-import {ABAPFile, Issue, Version} from "..";
 import {FunctionName} from "../abap/2_statements/expressions";
+import {ABAPFile} from "../abap/abap_file";
+import {Issue} from "../issue";
+import {Version} from "../version";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";

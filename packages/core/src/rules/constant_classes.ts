@@ -1,9 +1,12 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {IObject, IRegistry, Objects, Visibility} from "..";
 import {InfoConstant} from "../abap/4_file_information/_abap_file_information";
 import {Class} from "../objects";
+import {IRegistry} from "../_iregistry";
+import {IObject} from "../objects/_iobject";
+import * as Objects from "../objects";
+import {Visibility} from "../abap/4_file_information/visibility";
 
 export interface DomainClassMapping {
   /** Domain name. The domain must have fixed values. */

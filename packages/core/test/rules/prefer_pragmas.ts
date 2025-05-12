@@ -1,6 +1,7 @@
 import {expect} from "chai";
-import {MemoryFile, Registry} from "../../src";
+import {Registry} from "../../src";
 import {PreferPragmas} from "../../src/rules";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function findIssues(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));

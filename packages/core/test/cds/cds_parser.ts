@@ -1,8 +1,8 @@
-import {MemoryFile} from "../../src";
 import {expect} from "chai";
 import {CDSLexer} from "../../src/cds/cds_lexer";
 import {CDSParser} from "../../src/cds/cds_parser";
 import {ExpressionNode} from "../../src/abap/nodes";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("CDS Parser", () => {
 

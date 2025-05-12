@@ -1,7 +1,8 @@
 import {expect} from "chai";
-import {MemoryFile, Registry} from "../../src";
+import {Registry} from "../../src";
 import {UnnecessaryReturn, UnnecessaryReturnConf} from "../../src/rules";
 import {testRuleFixCount} from "./_utils";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function findIssues(abap: string, config?: UnnecessaryReturnConf) {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));

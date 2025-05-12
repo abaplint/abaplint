@@ -1,7 +1,8 @@
 import {CallTransactionAuthorityCheck} from "../../src/rules/call_transaction_authority_check";
 import {testRule} from "./_utils";
-import {Config, Issue, MemoryFile, Registry, Version} from "../../src";
+import {Config, Issue, Registry, Version} from "../../src";
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 
 const tests = [
   {abap: "CALL TRANSACTION 'ZFOO' WITH AUTHORITY-CHECK.", cnt: 0},

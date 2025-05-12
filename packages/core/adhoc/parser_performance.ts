@@ -1,7 +1,8 @@
-import {MemoryFile, Version} from "../src";
 import {Lexer} from "../src/abap/1_lexer/lexer";
 import * as fs from "fs";
 import {StatementParser} from "../src/abap/2_statements/statement_parser";
+import {MemoryFile} from "../src/files/memory_file";
+import {Version} from "../src";
 
 console.log("========================");
 const file = new MemoryFile("abapgit.abap", fs.readFileSync("./lexer_performance.abap", "utf-8"));
