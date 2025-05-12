@@ -11,7 +11,7 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 [Online playground](https://playground.abaplint.org)
 
-## Support
+## License and Support
 
 From 3.0.0 and forward abaplint is [fair-code](https://faircode.io) distributed under the [Sustainable Use License](https://github.com/abaplint/abaplint/blob/master/LICENSE.md).
 
