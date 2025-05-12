@@ -1,6 +1,6 @@
-import {MemoryFile} from "../../src";
 import {expect} from "chai";
 import {CDSLexer} from "../../src/cds/cds_lexer";
+import {MemoryFile} from "../../src/files/memory_file";
 
 describe("CDS Lexer", () => {
 

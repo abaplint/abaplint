@@ -1,10 +1,19 @@
-import {Issue} from "../issue";
+import {ABAPFile} from "../abap/abap_file";
+import {ABAPObject} from "../objects/_abap_object";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {ABAPFile, ABAPObject, Comment, Expressions, IObject, IRegistry, ISpaghettiScope, Position, Statements, SyntaxLogic} from "..";
-import {Table} from "../objects";
-import {StatementNode} from "../abap/nodes";
 import {EditHelper} from "../edit_helper";
+import {IObject} from "../objects/_iobject";
+import {IRegistry} from "../_iregistry";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {Issue} from "../issue";
+import {StatementNode} from "../abap/nodes";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {Table} from "../objects";
+import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../abap/2_statements/statements";
+import {Comment} from "../abap/2_statements/statements/_statement";
+import {Position} from "../position";
+import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 
 export class SelectSingleFullKeyConf extends BasicRuleConfig {
   public allowPseudo = true;

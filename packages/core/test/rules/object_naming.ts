@@ -1,7 +1,8 @@
 import {ObjectNaming, ObjectNamingConf} from "../../src/rules";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
-import {Issue, MemoryFile} from "../../src";
+import {Issue} from "../../src";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function findIssues(filename: string, expectedIssueCount: number, config?: ObjectNamingConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, ""));

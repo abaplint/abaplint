@@ -1,7 +1,8 @@
 import {expect} from "chai";
-import {Config, Issue, MemoryFile, Registry, Version} from "../../src";
+import {Config, Issue, Registry, Version} from "../../src";
 import {FunctionModuleRecommendations} from "../../src/rules/function_module_recommendations";
 import {testRule} from "./_utils";
+import {MemoryFile} from "../../src/files/memory_file";
 
 
 const tests = [

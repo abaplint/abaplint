@@ -4,7 +4,7 @@ import * as path from "path";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
 import * as JSON5 from "json5";
-import {Issue, IProgress, IFile, Position, Config, Registry, Version, MemoryFile, IRegistry} from "@abaplint/core";
+import {Issue, IProgress, IFile, Position, Config, Registry, Version, IRegistry, MemoryFile} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";

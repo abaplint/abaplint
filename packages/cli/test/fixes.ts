@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {Registry, MemoryFile, IRegistry, Config, Version} from "@abaplint/core";
+import {Registry, IRegistry, Config, Version, MemoryFile} from "@abaplint/core";
 import {ApplyFixes} from "../src/fixes";
 import {PartialFS} from "../src/partial_fs";
 

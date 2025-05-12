@@ -1,7 +1,8 @@
 import {expect} from "chai";
-import {Issue, MemoryFile, Registry} from "../../src";
+import {Issue, Registry} from "../../src";
 import {ModifyOnlyOwnDBTables, ModifyOnlyOwnDBTablesConf} from "../../src/rules";
 import {testRule} from "./_utils";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));

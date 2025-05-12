@@ -1,4 +1,4 @@
-import {Issue, IRegistry, applyEditList, IEdit, RulesRunner, ABAPObject} from "@abaplint/core";
+import {Issue, IRegistry, Edits, IEdit, RulesRunner, ABAPObject} from "@abaplint/core";
 import {PartialFS} from "./partial_fs";
 
 export class ApplyFixes {
@@ -142,7 +142,7 @@ export class ApplyFixes {
     }
     */
 
-    const changed = applyEditList(reg, edits);
+    const changed = Edits.applyEditList(reg, edits);
 
     for (const filename of changed) {
       this.changedFiles.add(filename);

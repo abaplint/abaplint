@@ -1,7 +1,8 @@
 import {testRule} from "./_utils";
 import {UnnecessaryPragma, UnnecessaryPragmaConf} from "../../src/rules/unnecessary_pragma";
-import {MemoryFile, Registry} from "../../src";
+import {Registry} from "../../src";
 import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
 
 async function findIssues(abap: string, filename?: string, conf?: UnnecessaryPragmaConf) {
   const reg = new Registry().addFile(new MemoryFile(filename || "zunn.prog.abap", abap));

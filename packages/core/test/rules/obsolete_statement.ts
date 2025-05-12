@@ -1,7 +1,8 @@
 import {expect} from "chai";
-import {Config, Issue, MemoryFile, Registry, Version} from "../../src";
+import {Config, Issue, Registry, Version} from "../../src";
 import {ObsoleteStatement} from "../../src/rules/obsolete_statement";
 import {testRule, testRuleFix} from "./_utils";
+import {MemoryFile} from "../../src/files/memory_file";
 
 const tests = [
   {abap: "REFRESH lt_table.", cnt: 1, fix: true},

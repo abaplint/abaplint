@@ -7,7 +7,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {Position} from "../position";
 import {StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
-import {Statements} from "..";
+import * as Statements from "../abap/2_statements/statements";
 import {EditHelper, IEdit} from "../edit_helper";
 
 

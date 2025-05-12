@@ -57,21 +57,29 @@ import {CyclomaticComplexityStats} from "./utils/cyclomatic_complexity_stats";
 import {SkipLogic} from "./skip_logic";
 import {Diagnostics} from "./lsp/diagnostics";
 import {LSPEdit} from "./lsp/_edit";
+import {ReferenceType} from "./abap/5_syntax/_reference";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
 
+const Edits = {
+  applyEditSingle,
+  applyEditList,
+};
+
 // file used to build typings, index.d.ts
-export {MemoryFile, Issue, Config, Version, CyclomaticComplexityStats,
+export {Issue, Config, Version, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile, SkipLogic,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
-  IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
-  MacroCall, MacroContent, NativeSQL,
+  IDependency, SpaghettiScopeNode, MacroCall, MacroContent, NativeSQL, ReferenceType,
+  Edits, MemoryFile,
+  ABAPFile,
+  AbstractFile,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
-  ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
+  CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   Diagnostics, IRenameSettings, Info, Visibility, Severity, RuleTag, LSPEdit};

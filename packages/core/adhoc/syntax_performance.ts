@@ -1,5 +1,6 @@
-import {Config, MemoryFile, Registry} from "../src";
+import {Config, Registry} from "../src";
 import * as fs from "fs";
+import {MemoryFile} from "../src/files/memory_file";
 
 console.log("========================");
 

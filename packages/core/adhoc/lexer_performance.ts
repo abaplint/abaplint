@@ -1,6 +1,6 @@
-import {MemoryFile} from "../src";
 import {Lexer} from "../src/abap/1_lexer/lexer";
 import * as fs from "fs";
+import {MemoryFile} from "../src/files/memory_file";
 
 console.log("========================");
 const file = new MemoryFile("abapgit.abap", fs.readFileSync("./lexer_performance.abap", "utf-8"));

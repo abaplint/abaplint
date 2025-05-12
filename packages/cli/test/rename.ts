@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {MemoryFile, Registry} from "@abaplint/core";
+import {Registry, MemoryFile} from "@abaplint/core";
 import {Rename} from "../src/rename";
 
 describe("Apply rename", () => {
