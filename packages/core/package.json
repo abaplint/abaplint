@@ -44,7 +44,7 @@
         "lint"
     ],
     "author": "Lars Hvam Petersen",
-    "license": "MIT",
+    "license": "Sustainable Use License",
     "bugs": {
         "url": "https://github.com/abaplint/abaplint/issues"
     },
@@ -63,7 +63,7 @@
         "typescript": "^5.8.3"
     },
     "dependencies": {
-        "fast-xml-parser": "^5.2.2",
+        "fast-xml-parser": "^5.2.3",
         "json5": "^2.2.3",
         "vscode-languageserver-types": "^3.17.5"
     }

@@ -13,11 +13,13 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 ## Support
 
-Support the project by finding bugs, fixing code, or [sponsoring](https://github.com/sponsors/larshp).
+abaplint is [fair-code](https://faircode.io) distributed under the [Sustainable Use License](https://github.com/abaplint/abaplint/blob/master/LICENSE.md).
 
-[abaplint.app](https://github.com/marketplace/abaplint) is available via GitHub marketplace for single click installation and setup.
+- **Source Available**: Always visible source code
+- **Self-Hostable**: Deploy anywhere
+- **Extensible**: Add your own nodes and functionality
 
-For commercial support agreements please contact@heliconialabs.com
+[Enterprise licenses](mailto:contact@heliconialabs.com) available for additional features and support.
 
 ## Documentation
 
