@@ -11,7 +11,7 @@
     "publish:patch": "npm --no-git-tag-version version patch && rm -rf build && npm install && npm run test && npm publish --access public"
   },
   "author": "Lars Hvam Petersen",
-  "license": "Sustainable Use License",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/abaplint/abaplint/issues"
   },
