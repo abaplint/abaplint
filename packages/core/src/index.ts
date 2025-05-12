@@ -67,12 +67,6 @@ const Edits = {
   applyEditList,
 };
 
-const Files = {
-  MemoryFile,
-  ABAPFile,
-  AbstractFile,
-};
-
 // file used to build typings, index.d.ts
 export {Issue, Config, Version, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
@@ -82,7 +76,9 @@ export {Issue, Config, Version, CyclomaticComplexityStats,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, SpaghettiScopeNode, MacroCall, MacroContent, NativeSQL, ReferenceType,
-  Edits, Files,
+  Edits, MemoryFile,
+  ABAPFile,
+  AbstractFile,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,

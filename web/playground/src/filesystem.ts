@@ -1,10 +1,11 @@
 import {ProblemsWidget, EditorWidget} from "./widgets";
-import {Registry, IRegistry, Config, MemoryFile, IFile} from "@abaplint/core";
+import * as abaplint from "@abaplint/core";
+import {Registry, IRegistry, Config, IFile} from "@abaplint/core";
 import {DockPanel} from "@phosphor/widgets";
 
 // magic God class
 export class FileSystem {
-  private static files: MemoryFile[];
+  private static files: abaplint.Files.MemoryFile[];
   private static reg: IRegistry;
   private static problems: ProblemsWidget;
   private static dock: DockPanel;

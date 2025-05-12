@@ -4,7 +4,7 @@ import * as path from "path";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
 import * as JSON5 from "json5";
-import {Issue, IProgress, IFile, Position, Config, Registry, Version, Files, IRegistry} from "@abaplint/core";
+import {Issue, IProgress, IFile, Position, Config, Registry, Version, IRegistry, MemoryFile} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
@@ -228,7 +228,7 @@ export async function run(arg: Arguments) {
         // require('v8').writeHeapSnapshot();
       }
     } catch (error) {
-      const file = new Files.MemoryFile("generic", "dummy");
+      const file = new MemoryFile("generic", "dummy");
       const message = error.toString() + " " + error.stack?.split("\n")[1]?.trim();
       const issue = Issue.atPosition(file, new Position(1, 1), message, GENERIC_ERROR);
       issues = [issue];
