@@ -13,11 +13,7 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 ## Support
 
-abaplint is [fair-code](https://faircode.io) distributed under the [Sustainable Use License](https://github.com/abaplint/abaplint/blob/master/LICENSE.md).
-
-- **Source Available**: Always visible source code
-- **Self-Hostable**: Deploy anywhere
-- **Extensible**: Add your own nodes and functionality
+From 3.0.0 and forward abaplint is [fair-code](https://faircode.io) distributed under the [Sustainable Use License](https://github.com/abaplint/abaplint/blob/master/LICENSE.md).
 
 [Enterprise licenses](mailto:contact@heliconialabs.com) available for additional features and support.
 
