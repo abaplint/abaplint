@@ -11,11 +11,13 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 [Online playground](https://playground.abaplint.org)
 
-## License and Support
+## Support
 
-From 3.0.0 and forward abaplint is [fair-code](https://faircode.io) distributed under the [Sustainable Use License](https://github.com/abaplint/abaplint/blob/master/LICENSE.md).
+Support the project by finding bugs, fixing code, or [sponsoring](https://github.com/sponsors/larshp).
 
-Please [contact](mailto:contact@heliconialabs.com) regarding commercial-use licensing and support agreements.
+[abaplint.app](https://github.com/marketplace/abaplint) is available via GitHub marketplace for single click installation and setup.
+
+For commercial support agreements please contact@heliconialabs.com
 
 ## Documentation
 
