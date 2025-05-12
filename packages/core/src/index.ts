@@ -39,7 +39,6 @@ import {Empty, Unknown, Comment, MacroCall, MacroContent, NativeSQL} from "./aba
 import {applyEditSingle, applyEditList, IEdit} from "./edit_helper";
 import {IClassDefinition} from "./abap/types/_class_definition";
 import {IInterfaceDefinition} from "./abap/types/_interface_definition";
-import {IReference, IReferenceExtras, ReferenceType} from "./abap/5_syntax/_reference";
 import {IObject} from "./objects/_iobject";
 import {BuiltIn} from "./abap/5_syntax/_builtin";
 import {ABAPFile} from "./abap/abap_file";
@@ -63,9 +62,8 @@ import {LSPEdit} from "./lsp/_edit";
 // https://github.com/abaplint/abaplint/issues/873
 
 // file used to build typings, index.d.ts
-export {MemoryFile, Issue, Config, Version, ReferenceType, CyclomaticComplexityStats,
+export {MemoryFile, Issue, Config, Version, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
-  IReferenceExtras, IReference,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile, SkipLogic,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
