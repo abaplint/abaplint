@@ -1,6 +1,5 @@
 import {Range, RenameFile, TextDocumentEdit, TextEdit} from "vscode-languageserver-types";
 import {Table} from "../table";
-import {ReferenceType} from "../..";
 import {Identifier} from "../../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../../abap/5_syntax/syntax";
 import {ScopeType} from "../../abap/5_syntax/_scope_type";
@@ -11,6 +10,7 @@ import {ABAPObject} from "../_abap_object";
 import {AbstractObject} from "../_abstract_object";
 import {IObject} from "../_iobject";
 import {DataElement} from "../data_element";
+import {ReferenceType} from "../../abap/5_syntax/_reference";
 
 export class RenamerHelper {
   private readonly reg: IRegistry;

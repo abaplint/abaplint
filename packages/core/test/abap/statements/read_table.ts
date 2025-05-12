@@ -49,6 +49,7 @@ const tests = [
   "read table <table> from <from> into <into> transporting (name).",
   "read table <table> index lv_line into <target> comparing (name) transporting (name).",
   `READ TABLE res INDEX sy-tabix COMPARING ranc name(4).`,
+  `READ TABLE sdf WITH TABLE KEY division = fields-material/foo/bar INTO ls_res.`,
 ];
 
 statementType(tests, "READ TABLE", Statements.ReadTable);

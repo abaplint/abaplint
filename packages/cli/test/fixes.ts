@@ -191,4 +191,5 @@ ENDCLASS.`;
 
     expect(expected).to.equal(result);
   });
+
 });

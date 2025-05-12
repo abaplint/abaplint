@@ -2283,4 +2283,12 @@ DATA foo TYPE tt.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("dynamic select option", () => {
+    const abap = `
+SELECT-OPTIONS s_any FOR ('ANYTHING').`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
