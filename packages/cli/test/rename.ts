@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {MemoryFile, Registry} from "@abaplint/core";
+import {Registry, Files} from "@abaplint/core";
 import {Rename} from "../src/rename";
 
 describe("Apply rename", () => {
@@ -21,8 +21,8 @@ CLASS zcl_clas IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
 
-    const file1 = new MemoryFile("zif_intf.intf.abap", intf);
-    const file2 = new MemoryFile("zcl_clas.clas.abap", clas);
+    const file1 = new Files.MemoryFile("zif_intf.intf.abap", intf);
+    const file2 = new Files.MemoryFile("zcl_clas.clas.abap", clas);
     const reg = new Registry().addFiles([file1, file2]).parse();
 
     const jsonFiles: any = {};

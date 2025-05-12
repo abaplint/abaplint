@@ -1,7 +1,7 @@
-import {AbstractFile} from "@abaplint/core";
+import {Files} from "@abaplint/core";
 import * as zlib from "zlib";
 
-export class CompressedFile extends AbstractFile {
+export class CompressedFile extends Files.AbstractFile {
   private readonly compressed: string;
 
   public constructor(filename: string, compressed: string) {

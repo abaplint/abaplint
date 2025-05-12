@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as memfs from "memfs";
-import {Registry, MemoryFile, IRegistry, Config, Version} from "@abaplint/core";
+import {Registry, Files, IRegistry, Config, Version} from "@abaplint/core";
 import {ApplyFixes} from "../src/fixes";
 import {PartialFS} from "../src/partial_fs";
 
@@ -10,7 +10,7 @@ async function applyFixes(reg: IRegistry, fs: PartialFS) {
 
 describe("Apply fixes", () => {
   it("test 1", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "CREATE OBJECT lo_obj.");
+    const file = new Files.MemoryFile("zfoobar.prog.abap", "CREATE OBJECT lo_obj.");
     const reg = new Registry().addFile(file).parse();
 
     const jsonFiles: any = {};
@@ -24,7 +24,7 @@ describe("Apply fixes", () => {
   });
 
   it("test 2, subsequent fix,", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "method( var1 = value1 var2 = value2 ).");
+    const file = new Files.MemoryFile("zfoobar.prog.abap", "method( var1 = value1 var2 = value2 ).");
     const reg = new Registry().addFile(file).parse();
 
     const jsonFiles: any = {};
@@ -38,7 +38,7 @@ describe("Apply fixes", () => {
   });
 
   it("test 3, overlapping fixes", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "DATA: foo, bar.");
+    const file = new Files.MemoryFile("zfoobar.prog.abap", "DATA: foo, bar.");
     const reg = new Registry().addFile(file).parse();
 
     const jsonFiles: any = {};
@@ -70,7 +70,7 @@ describe("Apply fixes", () => {
   lv_text = |abc|.
   lv_class = |abc|.
 ENDFORM.`;
-    const file = new MemoryFile("zfoobar.prog.abap", abap);
+    const file = new Files.MemoryFile("zfoobar.prog.abap", abap);
     const reg = new Registry().addFile(file).parse();
 
     const jsonFiles: any = {};
@@ -95,7 +95,7 @@ ENDFORM.`);
   });
 
   it("must not fix excluded object", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "CREATE OBJECT lo_obj.");
+    const file = new Files.MemoryFile("zfoobar.prog.abap", "CREATE OBJECT lo_obj.");
     const reg = new Registry().addFile(file);
 
     const config = reg.getConfig().get();
@@ -115,8 +115,8 @@ ENDFORM.`);
   });
 
   it("after fixing, there should be no syntax errors", async () => {
-    const prog = new MemoryFile("zfoobar.prog.abap", "zcl_bar=>run( ).");
-    const clas = new MemoryFile("zcl_bar.clas.abap", `
+    const prog = new Files.MemoryFile("zfoobar.prog.abap", "zcl_bar=>run( ).");
+    const clas = new Files.MemoryFile("zcl_bar.clas.abap", `
 CLASS zcl_bar DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS run.
@@ -148,7 +148,7 @@ ENDCLASS.    `);
   });
 
   it("after fixing, there should be no syntax errors, rm methods", async () => {
-    const clas = new MemoryFile("zcl_bar.clas.abap", `
+    const clas = new Files.MemoryFile("zcl_bar.clas.abap", `
 CLASS zcl_bar DEFINITION PUBLIC.
   PRIVATE SECTION.
     METHODS:

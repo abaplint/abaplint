@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as zlib from "zlib";
 import * as glob from "glob";
-import {IProgress, IFile, MemoryFile} from "@abaplint/core";
+import {IProgress, IFile, Files} from "@abaplint/core";
 import {CompressedFile} from "./compressed_file";
 
 export class FileOperations {
@@ -43,7 +43,7 @@ export class FileOperations {
 // todo, util.promisify(zlib.deflate) does not seem to work?
         files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
       } else {
-        files.push(new MemoryFile(filename, raw));
+        files.push(new Files.MemoryFile(filename, raw));
       }
     }
     return files;
