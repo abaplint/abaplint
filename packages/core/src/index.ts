@@ -62,13 +62,18 @@ import {ReferenceType} from "./abap/5_syntax/_reference";
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
 
-const edits = {
+const Edits = {
   applyEditSingle,
   applyEditList,
 };
 
+const Files = {
+  MemoryFile,
+  ABAPFile,
+};
+
 // file used to build typings, index.d.ts
-export {MemoryFile, Issue, Config, Version, CyclomaticComplexityStats,
+export {Issue, Config, Version, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile, SkipLogic,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
@@ -76,8 +81,8 @@ export {MemoryFile, Issue, Config, Version, CyclomaticComplexityStats,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, MacroCall, MacroContent, NativeSQL, ReferenceType,
-  edits,
+  Edits, Files,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
-  ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
+  CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   Diagnostics, IRenameSettings, Info, Visibility, Severity, RuleTag, LSPEdit};
