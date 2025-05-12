@@ -223,6 +223,7 @@ export * from "./raise_entity_event";
 export * from "./refresh_control";
 export * from "./delete_dynpro";
 export * from "./generate_dynpro";
+export * from "./process_on_help_request";
 export * from "./detail";
 export * from "./editor_call";
 export * from "./break";
