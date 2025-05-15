@@ -6,6 +6,7 @@ const tests = [
   "FIELD sdfds MODULE sdfs.",
   "field go->gv module sdfsd on request.",
   "field foo-bar.", // used in CHAINs
+  "FIELD foo-bar MODULE check_matnr ON CHAIN-REQUEST.",
 ];
 
 statementType(tests, "FIELD", Statements.Field);

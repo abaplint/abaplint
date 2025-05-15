@@ -30,6 +30,7 @@ const tests = [
   "DESCRIBE LIST INDEX 1 PAGE page TOP-LINES top.",
   "DESCRIBE LIST NUMBER OF PAGES tot INDEX 0.",
   `DESCRIBE LIST PAGE sy-cpage LINE-COUNT l_cnt LINE-SIZE l_lin.`,
+  `DESCRIBE LIST PAGE page LINES lines.`,
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);
