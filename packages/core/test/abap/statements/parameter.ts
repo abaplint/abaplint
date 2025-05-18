@@ -41,6 +41,7 @@ const tests = [
   `PARAMETERS dy_bar LIKE foo-bar FOR TABLE tab VALUE-REQUEST.`,
   `PARAMETERS sdf RADIOBUTTON GROUP a DEFAULT 'X' USER-COMMAND ?.`,
   `PARAMETERS sdf RADIOBUTTON GROUP a USER-COMMAND /0.`,
+  `PARAMETERS p_spmon LIKE s513-spmon+2(4).`,
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);
