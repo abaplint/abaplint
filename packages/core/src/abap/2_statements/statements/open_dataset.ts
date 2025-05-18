@@ -29,7 +29,7 @@ export class OpenDataset implements IStatement {
 
     const ret = seq("OPEN DATASET",
                     Source,
-                    per(direction, type, mode, wbom, replacement, filter, encoding, pos, message, ignoring, bom, code, feed, windows));
+                    opt(per(direction, type, mode, wbom, replacement, filter, encoding, pos, message, ignoring, bom, code, feed, windows)));
 
     return verNot(Version.Cloud, ret);
   }

@@ -43,6 +43,8 @@ export * from "./provide";
 export * from "./public_section";
 export * from "./section_contents";
 export * from "./select";
+export * from "./process_on_help_request";
+export * from "./dynpro_loop";
 export * from "./statics";
 export * from "./test_injection";
 export * from "./test_seam";

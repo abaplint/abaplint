@@ -10,6 +10,7 @@ export class DynproLogic implements IStructure {
       sub(Structures.ProcessBeforeOutput),
       sub(Structures.ProcessAfterInput),
       opt(sub(Structures.ProcessOnValueRequest)),
+      opt(sub(Structures.ProcessOnHelpRequest)),
     );
   }
 

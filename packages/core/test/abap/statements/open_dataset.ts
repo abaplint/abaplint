@@ -35,6 +35,7 @@ const tests = [
   "  AT POSITION iv_position MESSAGE lv_message IGNORING CONVERSION ERRORS.",
   "OPEN DATASET file FOR INPUT IN TEXT MODE FILTER filter ENCODING DEFAULT.",
   "OPEN DATASET 'foobar.txt' FOR APPENDING IN TEXT MODE ENCODING DEFAULT.",
+  `OPEN DATASET currfile.`,
 ];
 
 statementType(tests, "OPEN", Statements.OpenDataset);

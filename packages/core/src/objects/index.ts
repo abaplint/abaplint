@@ -27,7 +27,10 @@ export * from "./business_function_set_assignment";
 export * from "./business_object_model";
 export * from "./business_object_type";
 export * from "./cds_metadata_extension";
+export * from "./badi_definition";
+export * from "./entity_type";
 export * from "./cds_type";
+
 export * from "./change_document";
 export * from "./chapter_of_book_structure";
 export * from "./checkpoint_group";
@@ -65,6 +68,7 @@ export * from "./gateway_model_metadata";
 export * from "./gateway_model";
 export * from "./gateway_project";
 export * from "./gateway_service_groups_metadata";
+export * from "./web_reporting_template";
 export * from "./gateway_service";
 export * from "./gateway_vocabulary_annotation";
 export * from "./general_hierarchy_storage_extrension_name";
