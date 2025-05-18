@@ -6,6 +6,7 @@ const tests = [
   "RANGES moo FOR foo-bar OCCURS 50.",
   "RANGES $tadir$ FOR tadir-devclass OCCURS 10.",
   "RANGES lr_prctr FOR <foo>-prctr.",
+  `RANGES r_sdata FOR data-sdata(3).`,
 ];
 
 statementType(tests, "RANGES", Statements.Ranges);
