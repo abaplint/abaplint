@@ -28,6 +28,7 @@ export * from "./business_object_model";
 export * from "./business_object_type";
 export * from "./cds_metadata_extension";
 export * from "./badi_definition";
+export * from "./entity_type";
 export * from "./cds_type";
 export * from "./change_document";
 export * from "./chapter_of_book_structure";
