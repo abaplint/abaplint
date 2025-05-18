@@ -3,7 +3,7 @@ import {AbstractObject} from "./_abstract_object";
 export class WebReportingTemplate extends AbstractObject {
 
   public getType(): string {
-    return "UENO";
+    return "W3HT";
   }
 
   public getAllowedNaming() {
