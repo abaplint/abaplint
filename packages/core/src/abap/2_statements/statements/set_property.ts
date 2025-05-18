@@ -13,7 +13,8 @@ export class SetProperty implements IStatement {
                     "=",
                     Source,
                     optPrio("NO FLUSH"),
-                    opt(OLEExporting));
+                    opt(OLEExporting),
+                    opt("QUEUEONLY"));
 
     return verNot(Version.Cloud, ret);
   }

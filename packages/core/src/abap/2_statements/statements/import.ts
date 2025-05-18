@@ -22,8 +22,9 @@ export class Import implements IStatement {
     const table = seq("INTERNAL TABLE", Source);
     const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(dto, client, id));
     const database = seq("DATABASE", cluster, per(dto, client, id, using));
+    const logfile = seq("LOGFILE ID", Source);
 
-    const source = alt(buffer, memory, database, table, shared);
+    const source = alt(buffer, memory, database, table, shared, logfile);
 
     const to = plus(seq(ComponentChainSimple, alt("TO", "INTO"), Target));
 
