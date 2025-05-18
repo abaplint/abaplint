@@ -13,6 +13,7 @@ const tests = [
   "STATICS foo TYPE p DECIMALS 2.",
   "STATICS lv_stat2 LENGTH 1 TYPE c.",
   "STATICS foo-bar TYPE i.",
+  `STATICS t_set(100) OCCURS 0 WITH HEADER LINE.`,
 ];
 
 statementType(tests, "STATIC", Statements.Static);
