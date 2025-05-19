@@ -1598,4 +1598,12 @@ result = floor( EXACT #( remainder / 2 ) ).`;
     expect(issues.length).to.equal(0);
   });
 
+  it("dynamic perform in program", async () => {
+    const abap = `
+DATA name TYPE string.
+PERFORM sdf IN PROGRAM (name).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
