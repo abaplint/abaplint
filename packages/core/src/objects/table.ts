@@ -48,6 +48,7 @@ export class Table extends AbstractObject {
       REFTYPE?: string,
       DDTEXT?: string,
     }[]} | undefined;
+  private parsedType: AbstractType | undefined = undefined;
 
   public getType(): string {
     return "TABL";
@@ -78,6 +79,7 @@ export class Table extends AbstractObject {
 
   public setDirty(): void {
     this.parsedData = undefined;
+    this.parsedType = undefined;
     super.setDirty();
   }
 
@@ -116,6 +118,10 @@ export class Table extends AbstractObject {
     if (reg.getConfig().getVersion() === Version.Cloud
         && this.parsedData.dataClass === "USER3") {
       return new Types.UnknownType("Data class = USER3 not allowed in cloud");
+    }
+
+    if (this.parsedType) {
+      return this.parsedType;
     }
 
     const references: IObjectAndToken[] = [];
@@ -164,25 +170,6 @@ export class Table extends AbstractObject {
         } else {
           components.push({name: field.FIELDNAME, type: found});
         }
-        /*
-      } else if (comptype === "S" && field.FIELDNAME.startsWith(".INCLU-")) {
-        const lookup = ddic.lookupTableOrView(field.PRECFIELD);
-        if (lookup.object) {
-          references.push({object: lookup.object});
-        }
-        const found = lookup.type;
-        if (found instanceof Types.VoidType) {
-          // set the full structure to void
-          return found;
-        } else if (found instanceof Types.StructureType) {
-          const suffix = field.FIELDNAME.split("-")[1];
-          for (const c of found.getComponents()) {
-            components.push({name: c.name + suffix, type: c.type});
-          }
-        } else if (found instanceof Types.UnknownType) {
-          return found;
-        }
-          */
       } else if (comptype === "S") {
         const lookup = ddic.lookupTableOrView(field.ROLLNAME);
         components.push({name: field.FIELDNAME, type: lookup.type});
@@ -266,7 +253,8 @@ export class Table extends AbstractObject {
     }
 
     reg.getDDICReferences().setUsing(this, references);
-    return new Types.StructureType(components, this.getName(), this.getName(), this.getDescription());
+    this.parsedType = new Types.StructureType(components, this.getName(), this.getName(), this.getDescription());
+    return this.parsedType;
   }
 
   public getTableCategory(): TableCategory | undefined {

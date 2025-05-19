@@ -31,11 +31,11 @@ export class FindGlobalDefinitions {
       if ((o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined) {
         candidates.push(o);
       } else if (o instanceof DataElement
-          || o instanceof View
+          || o instanceof Table
           || o instanceof TableType
+          || o instanceof View
           || o instanceof LockObject
-          || o instanceof AuthorizationCheckField
-          || o instanceof Table) {
+          || o instanceof AuthorizationCheckField) {
         o.parseType(this.reg); // make sure the references are set after parsing finishes
       }
     }

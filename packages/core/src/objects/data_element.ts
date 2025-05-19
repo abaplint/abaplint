@@ -19,6 +19,7 @@ export class DataElement extends AbstractObject {
       heading?: string,
     }
     decimals?: string} | undefined = undefined;
+  private parsedType: AbstractType | undefined = undefined;
 
   public getType(): string {
     return "DTEL";
@@ -38,6 +39,7 @@ export class DataElement extends AbstractObject {
 
   public setDirty(): void {
     this.parsedXML = undefined;
+    this.parsedType = undefined;
     super.setDirty();
   }
 
@@ -58,6 +60,10 @@ export class DataElement extends AbstractObject {
     if (this.parsedXML === undefined) {
       lookup = {type: new Types.UnknownType("Data Element " + this.getName() + ", parser error")};
     } else {
+      if (this.parsedType) {
+        return this.parsedType;
+      }
+
       const ddic = new DDIC(reg);
       if (this.parsedXML.refkind === "D") {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
@@ -93,7 +99,9 @@ export class DataElement extends AbstractObject {
       references.push({object: lookup.object});
     }
     reg.getDDICReferences().setUsing(this, references);
-    return lookup.type;
+
+    this.parsedType = lookup.type;
+    return this.parsedType;
   }
 
   public parse() {

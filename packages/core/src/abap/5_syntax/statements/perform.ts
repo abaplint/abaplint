@@ -7,6 +7,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
+import {Dynamic} from "../expressions/dynamic";
 
 export class Perform implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -40,7 +41,9 @@ export class Perform implements StatementSyntax {
       return; // in external program, not checked, todo
     }
 
-    if (node.findFirstExpression(Expressions.Dynamic)) {
+    const dynamic = node.findFirstExpression(Expressions.Dynamic);
+    if (dynamic) {
+      new Dynamic().runSyntax(dynamic, input);
       return; // todo, maybe some parts can be checked
     }
 
