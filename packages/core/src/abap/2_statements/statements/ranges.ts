@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt} from "../combi";
-import {Source, SimpleName, SimpleFieldChain2} from "../expressions";
+import {verNot, seq, optPrio} from "../combi";
+import {Source, SimpleName, SimpleFieldChain2, FieldLength} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -13,7 +13,8 @@ export class Ranges implements IStatement {
                     SimpleName,
                     "FOR",
                     SimpleFieldChain2,
-                    opt(occurs));
+                    optPrio(occurs),
+                    optPrio(FieldLength));
 
     return verNot(Version.Cloud, ret);
   }

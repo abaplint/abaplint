@@ -7,6 +7,12 @@ const tests = [
   "open cursor l_cursor for select * from ztab connection foo.",
   "OPEN CURSOR WITH HOLD mv_cursor FOR SELECT (iv_select) FROM (iv_from) WHERE (iv_where) GROUP BY (iv_group) ORDER BY (iv_order).",
   "OPEN CURSOR WITH HOLD lv_cursor FOR SELECT (lt_fields) FROM (lv_tab) WHERE (lt_where) %_HINTS DB6 'USE_FOO'.",
+  `OPEN CURSOR WITH HOLD lv_cur
+    FOR SELECT (name) FROM (tabname)
+    CLIENT SPECIFIED
+    %_HINTS ORACLE var
+            INFORMIX var
+            MSSQLNT 'TABLE &TABLE& INDEX=0'.`,
 ];
 
 statementType(tests, "OPEN CURSOR", Statements.OpenCursor);

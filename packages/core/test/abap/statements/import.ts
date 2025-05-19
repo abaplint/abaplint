@@ -28,6 +28,7 @@ const tests = [
   "IMPORT foo = lv_bar FROM DATABASE indx(^a) ID lc_id.",
   "IMPORT <bar> = <bar> FROM DATABASE indx(as) ID lv_bar.",
   "IMPORT foo FROM MEMORY.",
+  `IMPORT foo TO bar FROM LOGFILE ID key.`,
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

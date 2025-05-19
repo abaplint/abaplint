@@ -43,6 +43,7 @@ export class StringTemplateFormatting extends Expression {
     const decimals = seq("DECIMALS =", Source);
     const alpha = ver(Version.v740sp02, seq("ALPHA =", alphaOptions));
     const xsd = ver(Version.v740sp02, seq("XSD =", zeroXSDOptions));
+    const country = seq("COUNTRY =", Source);
 
     const formatting = altPrio(seq("TIME =", dateTimeOptions),
                                seq("DATE =", dateTimeOptions),
@@ -52,8 +53,7 @@ export class StringTemplateFormatting extends Expression {
                                xsd,
                                seq("STYLE =", styleOptions),
                                seq("CURRENCY =", Source),
-                               seq("COUNTRY =", Source),
-                               per(sign, number, decimals, width, pad, alpha, align),
+                               per(sign, number, decimals, width, pad, alpha, align, country),
                                per(timezone, timestamp));
 
     return formatting;

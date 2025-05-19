@@ -28,6 +28,8 @@ export class Submit implements IStatement {
     const newList = seq("NEW LIST IDENTIFICATION", Source);
     const layout = seq("LAYOUT", Source);
     const cover = seq("SAP COVER PAGE", Source);
+    const copies = seq("COPIES", Source);
+    const datasetExpiration = seq("DATASET EXPIRATION", Source);
 
     const keep = seq("KEEP IN SPOOL", Source);
     const imm = seq("IMMEDIATELY", Source);
@@ -53,6 +55,8 @@ export class Submit implements IStatement {
                      free,
                      newList,
                      uss,
+                     copies,
+                     datasetExpiration,
                      "TO SAP-SPOOL",
                      "WITHOUT SPOOL DYNPRO",
                      "VIA SELECTION-SCREEN",

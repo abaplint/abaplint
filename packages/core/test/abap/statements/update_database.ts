@@ -17,6 +17,11 @@ const tests = [
   "UPDATE table CONNECTION (lv_conn) SET field = value.",
   "update ztab using client '123' set field = @lv_value.",
   "UPDATE ztab SET column = column + input-menge WHERE val = input-val.",
+  `UPDATE zmoo SET (lt_set).`,
+  `UPDATE zmoo SET (lt_set[]).`,
+  `UPDATE zmoo CLIENT SPECIFIED SET (lt_set[]).`,
+  `UPDATE (gv-bar) CLIENT SPECIFIED SET (lt_set[]).`,
+  `UPDATE (gv-bar) CLIENT SPECIFIED SET (lt_set[]) WHERE mandt EQ sy-mandt AND (lt_where[]).`,
 ];
 
 statementType(tests, "UPDATE", Statements.UpdateDatabase);

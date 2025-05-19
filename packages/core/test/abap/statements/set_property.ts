@@ -6,6 +6,7 @@ const tests = [
   "SET PROPERTY OF cell 'Text' = text NO FLUSH.",
   "SET PROPERTY OF foo-bar PROPERTY = value NO FLUSH EXPORTING foo = P1.",
   "SET PROPERTY OF foo-bar PROPERTY = value NO FLUSH EXPORTING #1 = P1 #2 = P2.",
+  `SET PROPERTY OF ex 'Visible' = 1 no flush queueonly.`,
 ];
 
 statementType(tests, "SET PROPERTY", Statements.SetProperty);

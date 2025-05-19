@@ -146,7 +146,7 @@ export class IncludeGraph implements IIncludeGraph {
                 this.issues.push(issue);
               }
             } else if (found.include === false) {
-              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program", new CheckInclude().getMetadata().key, Severity.Error);
+              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program, " + name, new CheckInclude().getMetadata().key, Severity.Error);
               this.issues.push(issue);
             } else {
               this.graph.addEdge(found, f.getFilename());
