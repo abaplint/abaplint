@@ -53,7 +53,7 @@
         "@microsoft/api-extractor": "^7.52.8",
         "@types/chai": "^4.3.20",
         "@types/mocha": "^10.0.10",
-        "@types/node": "^22.15.18",
+        "@types/node": "^22.15.19",
         "chai": "^4.5.0",
         "eslint": "^9.27.0",
         "mocha": "^11.3.0",
