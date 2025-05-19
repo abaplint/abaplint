@@ -9,6 +9,9 @@ const tests = [
   "ADD sdf-dsf THEN sdf-dsf UNTIL sdf-dsf GIVING sdf-sdf.",
   `ADD sdfsd THEN sdfsd UNTIL sdfsd TO sdfds.`,
   `ADD foo THEN foo UNTIL foo GIVING foo ACCORDING TO foo.`,
+  `ADD <ledger>-tsl01 THEN <ledger>-tsl02 UNTIL <ledger>-tsl16
+    ACCORDING TO lo=>pos
+    GIVING gs-vas.`,
 ];
 
 statementType(tests, "ADD", Statements.Add);
