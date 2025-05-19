@@ -9,12 +9,13 @@ export class DynproLoop implements IStatement {
     const into = seq("INTO", SimpleSource2);
     const cursor = seq("CURSOR", SimpleSource2);
     const withControl = seq("WITH CONTROL", SimpleSource2);
-    const fromTo = seq("FROM", SimpleSource2, "TO", SimpleSource2);
+    const from = seq("FROM", SimpleSource2);
+    const to = seq("TO", SimpleSource2);
 
     return seq(
       "LOOP AT",
       SimpleSource2,
-      per(into, withControl, cursor, fromTo));
+      per(into, withControl, cursor, from, to));
   }
 
 }
