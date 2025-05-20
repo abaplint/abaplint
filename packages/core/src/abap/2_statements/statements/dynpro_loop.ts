@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {per, seq} from "../combi";
+import {altPrio, per, seq} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {SimpleSource2} from "../expressions/simple_source2";
 
@@ -12,10 +12,12 @@ export class DynproLoop implements IStatement {
     const from = seq("FROM", SimpleSource2);
     const to = seq("TO", SimpleSource2);
 
-    return seq(
-      "LOOP AT",
+    const at = seq(
+      "AT",
       SimpleSource2,
       per(into, withControl, cursor, from, to));
+
+    return seq("LOOP", altPrio(at, withControl));
   }
 
 }
