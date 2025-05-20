@@ -1,6 +1,7 @@
 import {CompressedFile} from "./compressed_file";
 import {IProgress, IFile, MemoryFile} from "@abaplint/core";
 import * as fs from "node:fs";
+import * as fsPromises from "node:fs/promises";
 import * as glob from "glob";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -28,7 +29,7 @@ export class FileOperations {
   private static async readFile(filename: string, compress: boolean | undefined): Promise<IFile> {
 // note that readFileSync is typically faster than async readFile,
 // https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
-    const raw = fs.readFileSync(filename, "utf8");
+    const raw = await fsPromises.readFile(filename, {encoding: "utf8"});
     if (compress === true) {
 // todo, util.promisify(zlib.deflate) does not seem to work?
       return new CompressedFile(filename, zlib.deflateSync(raw).toString("base64"));
@@ -38,17 +39,13 @@ export class FileOperations {
   }
 
   public static async loadFiles(compress: boolean | undefined, input: string[], bar: IProgress): Promise<IFile[]> {
-//    const files: IFile[] = [];
-
     let concurrency = os.cpus().length;
     if (concurrency > 8) {
       concurrency = 8;
     } else if (concurrency < 1) {
       concurrency = 1;
     }
-
-    const limit = pLimit(10);
-    console.dir(limit);
+    const limit = pLimit(concurrency);
 
     input = input.filter((filename) => {
       const base = filename.split("/").reverse()[0];
