@@ -23,6 +23,18 @@ export class FileOperations {
     return files;
   }
 
+  private static async readFile(filename: string, compress: boolean | undefined): Promise<IFile> {
+// note that readFileSync is typically faster than async readFile,
+// https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
+    const raw = fs.readFileSync(filename, "utf8");
+    if (compress === true) {
+// todo, util.promisify(zlib.deflate) does not seem to work?
+      return new CompressedFile(filename, zlib.deflateSync(raw).toString("base64"));
+    } else {
+      return new MemoryFile(filename, raw);
+    }
+  }
+
   public static async loadFiles(compress: boolean | undefined, input: string[], bar: IProgress): Promise<IFile[]> {
     const files: IFile[] = [];
 
@@ -36,15 +48,7 @@ export class FileOperations {
         continue; // not a abapGit file
       }
 
-// note that readFileSync is typically faster than async readFile,
-// https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
-      const raw = fs.readFileSync(filename, "utf8");
-      if (compress === true) {
-// todo, util.promisify(zlib.deflate) does not seem to work?
-        files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
-      } else {
-        files.push(new MemoryFile(filename, raw));
-      }
+      files.push(await this.readFile(filename, compress));
     }
     return files;
   }
