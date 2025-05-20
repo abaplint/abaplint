@@ -21,6 +21,19 @@ PROCESS BEFORE OUTPUT.
 PROCESS AFTER INPUT.
   LOOP AT gt_data.
   ENDLOOP.`},
+
+  {abap: `
+PROCESS BEFORE OUTPUT.
+
+PROCESS AFTER INPUT.
+  LOOP AT tb_exit.
+    CHAIN.
+      FIELD sdf-grpno.
+      MODULE sdf ON CHAIN-REQUEST.
+    ENDCHAIN.
+  ENDLOOP.
+  MODULE twer.
+`},
 ];
 
 structureType(cases, new DynproLogic());
