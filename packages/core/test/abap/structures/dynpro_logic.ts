@@ -34,6 +34,17 @@ PROCESS AFTER INPUT.
   ENDLOOP.
   MODULE twer.
 `},
+
+  {abap: `
+PROCESS BEFORE OUTPUT.
+
+PROCESS AFTER INPUT.
+  LOOP AT idata.
+    module data_value.
+  ENDLOOP.
+
+  MODULE USER_COMMAND_0150.
+`},
 ];
 
 structureType(cases, new DynproLogic());

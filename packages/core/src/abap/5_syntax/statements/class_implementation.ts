@@ -40,6 +40,7 @@ export class ClassImplementation implements StatementSyntax {
     }
     input.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(classDefinition)));
     helper.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
+    helper.addAliasedTypes(classDefinition);
 
     const classAttributes = classDefinition.getAttributes();
     if (classAttributes !== undefined) {

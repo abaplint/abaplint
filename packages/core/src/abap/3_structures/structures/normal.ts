@@ -215,6 +215,7 @@ export class Normal implements IStructure {
                sta(Statements.ModifyEntities),
                sta(Statements.ReadEntities),
                sta(Statements.RollbackEntities),
+               sta(Statements.Module),
 
                sub(Structures.Define),
                sub(Structures.TestInjection),

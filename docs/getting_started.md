@@ -77,6 +77,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "check_include": true,
     "check_syntax": true,
     "cloud_types": true,
+    "sy_modification": true,
     "global_class": true,
     "implement_methods": true,
     "method_implemented_twice": true,
