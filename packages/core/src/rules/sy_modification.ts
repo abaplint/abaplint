@@ -20,7 +20,9 @@ export class SyModification extends ABAPRule {
       shortDescription: `Finds modification of sy fields`,
       extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abensystem_fields.htm
 
-Changes to SY-TVAR* fields are not reported`,
+Changes to SY-TVAR* fields are not reported
+
+Modification of SY fields is not allwed in ABAP Cloud language version`,
       tags: [RuleTag.SingleFile],
       badExample: `sy-uname = 2.
 sy = sy.`,
