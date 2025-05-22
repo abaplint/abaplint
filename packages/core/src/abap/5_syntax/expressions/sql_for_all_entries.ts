@@ -17,7 +17,7 @@ export class SQLForAllEntries {
         return;
       }
       if (!(type instanceof TableType)) {
-        const message = "FAE parameter must be table type";
+        const message = "FAE parameter must be table type, " + type?.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }

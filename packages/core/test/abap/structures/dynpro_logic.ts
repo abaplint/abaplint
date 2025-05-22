@@ -45,6 +45,18 @@ PROCESS AFTER INPUT.
 
   MODULE USER_COMMAND_0150.
 `},
+
+  {abap: `
+PROCESS BEFORE OUTPUT.
+
+PROCESS AFTER INPUT.
+  LOOP AT t_log_ven.
+    CHAIN.
+      FIELD t_log_ven-foo.
+    ENDCHAIN.
+    FIELD t_log_ven-bar MODULE mod ON REQUEST.
+  ENDLOOP.
+`},
 ];
 
 structureType(cases, new DynproLogic());
