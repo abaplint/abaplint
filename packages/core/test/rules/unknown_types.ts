@@ -2291,4 +2291,31 @@ SELECT-OPTIONS s_any FOR ('ANYTHING').`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("type alias via interface", () => {
+    const abap = `
+INTERFACE lif.
+  TYPES: BEGIN OF ty_s_structure,
+           field TYPE string,
+         END OF ty_s_structure.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES ty_s_structure FOR lif~ty_s_structure.
+    METHODS test.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD test.
+    DATA ls_structure TYPE ty_s_structure.
+
+    ls_structure-field = 'hello world'.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

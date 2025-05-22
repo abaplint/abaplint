@@ -69,6 +69,26 @@ export class ObjectOriented {
     }
   }
 
+  public addAliasedTypes(classDefinition: IClassDefinition): void {
+    for (const alias of classDefinition.getAliases() || []) {
+      const comp = alias.getComponent();
+      const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
+      if (idef) {
+        const found = idef.getTypeDefinitions()!.getByName(comp.split("~")[1]);
+        if (found) {
+          this.scope.addType(found);
+        }
+      }
+    }
+    const superName = classDefinition.getSuperClass();
+    if (superName !== undefined) {
+      const def = this.scope.findClassDefinition(superName);
+      if (def) {
+        this.addAliasedTypes(def);
+      }
+    }
+  }
+
   private findMethodInInterface(interfaceName: string, methodName: string):
   {method: IMethodDefinition, def: IInterfaceDefinition} | undefined {
 
