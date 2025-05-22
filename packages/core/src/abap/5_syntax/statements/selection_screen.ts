@@ -11,7 +11,11 @@ export class SelectionScreen implements StatementSyntax {
     const blockNode = node.findFirstExpression(Expressions.BlockName);
     const blockToken = blockNode?.getFirstToken();
     const blockName = blockNode?.concatTokens();
-    if (blockName !== undefined && blockName.length > 16) {
+    const concat = node.concatTokens().toUpperCase();
+
+    const maxNameLengthAllowed = concat.includes("BEGIN OF TABBED BLOCK") ? 16 : 20;
+
+    if (blockName !== undefined && blockName.length > maxNameLengthAllowed) {
       const message = "SELECTION-SCREEN block name too long, " + blockName;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
@@ -26,7 +30,6 @@ export class SelectionScreen implements StatementSyntax {
 
     const fieldName = field?.getFirstToken();
 
-    const concat = node.concatTokens().toUpperCase();
     if (concat.includes("BEGIN OF TABBED BLOCK") && blockToken) {
       const type = new StructureType([
         {name: "PROG", type: new CharacterType(40)},

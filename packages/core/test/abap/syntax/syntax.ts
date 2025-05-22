@@ -10752,20 +10752,40 @@ write ref->attr.`;
 
   it("selection screen block name length okay", () => {
     const abap = `
-SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selection FOR 16 LINES,
+SELECTION-SCREEN: BEGIN OF BLOCK b_selection___twenty,
 TAB (30) t_number USER-COMMAND ordn,
 TAB (30) t_select USER-COMMAND sele,
-END OF BLOCK tb_selection.`;
+END OF BLOCK b_selection___twenty.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("selection screen block name length more than 30", () => {
+  it("selection screen block name length more than 20", () => {
     const abap = `
-SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selectionaaassss FOR 16 LINES,
+SELECTION-SCREEN: BEGIN OF BLOCK b_selection__too_long,
 TAB (30) t_number USER-COMMAND ordn,
 TAB (30) t_select USER-COMMAND sele,
-END OF BLOCK tb_selectionaaasss.`;
+END OF BLOCK b_selection__too_long.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("too long");
+  });
+
+  it("selection screen tabbed block name length okay", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selection__ok FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selection__ok.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("selection screen tabbed block name length more than 30 (14+16)", () => {
+    const abap = `
+SELECTION-SCREEN: BEGIN OF TABBED BLOCK tb_selection__nok FOR 16 LINES,
+TAB (30) t_number USER-COMMAND ordn,
+TAB (30) t_select USER-COMMAND sele,
+END OF BLOCK tb_selection__nok.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("too long");
   });
