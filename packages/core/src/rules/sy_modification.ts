@@ -22,7 +22,8 @@ export class SyModification extends ABAPRule {
 
 Changes to SY-TVAR* fields are not reported
 
-Modification of SY fields is not allwed in ABAP Cloud language version`,
+Modification of SY fields is not allwed in ABAP Cloud language version,
+https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/ABENSYSTEM_FIELDS.html`,
       tags: [RuleTag.SingleFile],
       badExample: `sy-uname = 2.
 sy = sy.`,
