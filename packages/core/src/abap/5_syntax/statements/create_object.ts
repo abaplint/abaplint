@@ -126,16 +126,12 @@ export class CreateObject implements StatementSyntax {
       const source = p.findDirectExpression(Expressions.Source);
       const sourceType = new Source().runSyntax(source, input);
 
-      const calculated = source?.findFirstExpression(Expressions.MethodCallChain) !== undefined
-        || source?.findFirstExpression(Expressions.StringTemplate) !== undefined
-        || source?.findFirstExpression(Expressions.ArithOperator) !== undefined;
-
       const found = allImporting?.find(p => p.getName().toUpperCase() === name);
       if (found === undefined) {
         const message = `constructor parameter "${name}" does not exist`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
-      } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, found.getType(), calculated) === false) {
+      } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, found.getType(), source) === false) {
         const message = `constructor parameter "${name}" type not compatible`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;

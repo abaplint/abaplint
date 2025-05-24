@@ -28,6 +28,8 @@ export interface IGlobalConfig {
 export interface IDependency {
   /** Url of a git repository */
   url?: string;
+  /** Git branch */
+  branch?: string;
   /** Name of local folder with dependencies */
   folder?: string;
   /** File search, glob pattern */

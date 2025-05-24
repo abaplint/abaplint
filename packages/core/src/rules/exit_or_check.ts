@@ -58,6 +58,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-re
       } else if (this.conf.allowCheck === false && get instanceof Statements.Check && stack.length === 0) {
         const message = "CHECK is not allowed outside of loops";
         let tokensString = statement.concatTokens();
+        tokensString = tokensString.replace(/^check /i, "CHECK ");
         tokensString = tokensString.split("CHECK")[1].trim();
         const replacement = "IF NOT " + tokensString + "\n  RETURN.\nENDIF.";
         const fix = EditHelper.replaceRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd(), replacement);

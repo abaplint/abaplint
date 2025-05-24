@@ -48,8 +48,9 @@ ENDINTERFACE.`,
     const issues: Issue[] = [];
 
     for (const s of file.getStructure()?.findAllStatements(Statements.MethodDef) || []) {
-      if (s.findDirectExpression(Expressions.MethodDefExceptions)) {
-        issues.push(Issue.atStatement(file, s, this.getMessage(), this.getMetadata().key));
+      const expr = s.findDirectExpression(Expressions.MethodDefExceptions);
+      if (expr) {
+        issues.push(Issue.atToken(file, expr.getFirstToken(), this.getMessage(), this.getMetadata().key));
       }
     }
     return issues;

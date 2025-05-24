@@ -179,14 +179,11 @@ export class MethodParameters {
 
     for (const item of items) {
       const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
-      const calculated = item.source.findFirstExpression(Expressions.MethodCallChain) !== undefined
-        || item.source.findFirstExpression(Expressions.StringTemplate) !== undefined
-        || item.source.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (parameter === undefined) {
         const message = "Method importing parameter \"" + item.name + "\" does not exist";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         continue;
-      } else if (new TypeUtils(input.scope).isAssignableStrict(item.sourceType, parameter.getType(), calculated) === false) {
+      } else if (new TypeUtils(input.scope).isAssignableStrict(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
