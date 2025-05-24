@@ -15,6 +15,8 @@ const tests = [
         endloop.`, cnt: 0},
   {abap: "EXIT.", cnt: 1, fix: true},
   {abap: "CHECK foo = bar.", cnt: 1, fix: true},
+  {abap: "check foo = bar.", cnt: 1, fix: true},
+  {abap: "ChecK foo = bar.", cnt: 1, fix: true},
   {abap: `SELECT kunnr INTO lv_kunnr FROM kna1.
             CHECK sy-dbcnt > is_paging-skip.
           ENDSELECT.`, cnt: 0},
