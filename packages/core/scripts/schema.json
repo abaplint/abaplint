@@ -5384,6 +5384,10 @@
     "IDependency": {
       "additionalProperties": false,
       "properties": {
+        "branch": {
+          "description": "Git branch",
+          "type": "string"
+        },
         "files": {
           "description": "File search, glob pattern",
           "type": "string"
