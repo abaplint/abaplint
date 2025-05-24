@@ -295,11 +295,13 @@ export class TypeUtils {
     } else if (source instanceof StringType) {
       if (target instanceof StructureType && this.structureContainsString(target)) {
         return false;
+        /*
       } else if (target instanceof CharacterType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
         }
         return false;
+        */
       } else if (target instanceof IntegerType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
