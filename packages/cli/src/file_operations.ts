@@ -19,7 +19,7 @@ export class FileOperations {
   }
 
   public static loadFileNames(arg: string, error = true): string[] {
-    const files = glob.sync(arg, {nosort: true, nodir: true});
+    const files = glob.sync(arg, {nodir: true});
     if (files.length === 0 && error) {
       throw "Error: No files found";
     }
