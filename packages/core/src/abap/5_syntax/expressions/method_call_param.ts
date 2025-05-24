@@ -71,14 +71,11 @@ export class MethodCallParam {
         sourceType = new Source().runSyntax(child, input, targetType);
       }
 
-      const calculated = child.findFirstExpression(Expressions.MethodCallChain) !== undefined
-        || child.findFirstExpression(Expressions.StringTemplate) !== undefined
-        || child.findFirstExpression(Expressions.ArithOperator) !== undefined;
       if (sourceType === undefined) {
         const message = "No source type determined, method source";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
-      } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType, calculated) === false) {
+      } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType, child) === false) {
         const message = "Method parameter type not compatible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;

@@ -11182,4 +11182,27 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
+  it.skip("return type doesnt match importing", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_val TYPE c LENGTH 4.
+    METHODS ret RETURNING VALUE(sdf) TYPE string.
+    METHODS imp IMPORTING foo TYPE ty_val.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD ret.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo->imp( lo->ret( ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.include("incompatible");
+  });
+
 });

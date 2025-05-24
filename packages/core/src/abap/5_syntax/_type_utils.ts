@@ -3,6 +3,8 @@ import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataTyp
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
+import * as Expressions from "../2_statements/expressions";
+import {ExpressionNode} from "../nodes";
 
 // todo: refactor to static? for performance
 export class TypeUtils {
@@ -228,9 +230,17 @@ export class TypeUtils {
     return false;
   }
 
+  private isCalculated(node: ExpressionNode): boolean {
+    const calculated = node.findFirstExpression(Expressions.MethodCallChain) !== undefined
+      || node.findFirstExpression(Expressions.StringTemplate) !== undefined
+      || node.findFirstExpression(Expressions.ArithOperator) !== undefined;
+    return calculated;
+  }
+
   public isAssignableStrict(source: AbstractType | undefined,
                             target: AbstractType | undefined,
-                            calculated: boolean = false): boolean {
+                            node?: ExpressionNode): boolean {
+    const calculated = node ? this.isCalculated(node) : false;
 /*
     console.dir(source);
     console.dir(target);
