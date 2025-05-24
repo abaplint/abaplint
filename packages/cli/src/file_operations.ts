@@ -23,7 +23,6 @@ export class FileOperations {
     if (files.length === 0 && error) {
       throw "Error: No files found";
     }
-    console.dir(files);
     return files;
   }
 
