@@ -114,7 +114,11 @@ async function loadDependencies(config: Config, compress: boolean | undefined, b
     if (d.url) {
       process.stderr.write("Clone: " + d.url + "\n");
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
-      childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
+      let branch = "";
+      if (d.branch) {
+        branch = "-b " + d.branch + " ";
+      }
+      childProcess.execSync("git clone --quiet --depth 1 " + branch + d.url + " .", {cwd: dir, stdio: "inherit"});
       const names = FileOperations.loadFileNames(dir + d.files);
       files = files.concat(await FileOperations.loadFiles(compress, names, bar));
       FileOperations.deleteFolderRecursive(dir);
