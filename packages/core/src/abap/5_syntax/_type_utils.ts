@@ -231,6 +231,11 @@ export class TypeUtils {
   }
 
   private isCalculated(node: ExpressionNode): boolean {
+    if (node.getChildren().length === 1
+        && node.get() instanceof Expressions.Source
+        && node.getFirstChild()?.get() instanceof Expressions.MethodCallChain) {
+      return false;
+    }
     const calculated = node.findFirstExpression(Expressions.MethodCallChain) !== undefined
       || node.findFirstExpression(Expressions.StringTemplate) !== undefined
       || node.findFirstExpression(Expressions.ArithOperator) !== undefined;
@@ -287,6 +292,11 @@ export class TypeUtils {
       }
     } else if (source instanceof StringType) {
       if (target instanceof StructureType && this.structureContainsString(target)) {
+        return false;
+      } else if (target instanceof CharacterType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
         return false;
       } else if (target instanceof IntegerType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {

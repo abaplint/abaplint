@@ -11182,7 +11182,7 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("return type doesnt match importing", () => {
+  it.only("return type doesnt match importing", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -11202,7 +11202,7 @@ START-OF-SELECTION.
   DATA lo TYPE REF TO lcl.
   lo->imp( lo->ret( ) ).`;
     const issues = runProgram(abap);
-    expect(issues[0].getMessage()).to.include("incompatible");
+    expect(issues[0].getMessage()).to.include("not compatible");
   });
 
 });
