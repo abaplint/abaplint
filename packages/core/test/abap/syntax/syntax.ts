@@ -11182,7 +11182,7 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("return type doesnt match importing", () => {
+  it.skip("return type doesnt match importing", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

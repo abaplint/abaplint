@@ -231,11 +231,13 @@ export class TypeUtils {
   }
 
   private isCalculated(node: ExpressionNode): boolean {
+    /*
     if (node.getChildren().length === 1
         && node.get() instanceof Expressions.Source
         && node.getFirstChild()?.get() instanceof Expressions.MethodCallChain) {
       return false;
     }
+    */
     const calculated = node.findFirstExpression(Expressions.MethodCallChain) !== undefined
       || node.findFirstExpression(Expressions.StringTemplate) !== undefined
       || node.findFirstExpression(Expressions.ArithOperator) !== undefined;
