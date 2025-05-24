@@ -19,7 +19,7 @@ export class FileOperations {
   }
 
   public static loadFileNames(arg: string, error = true): string[] {
-    const files = glob.sync(arg, {nosort: true, nodir: true});
+    const files = glob.sync(arg, {nodir: true, absolute: true, posix: true});
     if (files.length === 0 && error) {
       throw "Error: No files found";
     }
@@ -27,8 +27,6 @@ export class FileOperations {
   }
 
   private static async readFile(filename: string, compress: boolean | undefined): Promise<IFile> {
-// note that readFileSync is typically faster than async readFile,
-// https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
     const raw = await fsPromises.readFile(filename, {encoding: "utf8"});
     if (compress === true) {
 // todo, util.promisify(zlib.deflate) does not seem to work?
