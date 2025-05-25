@@ -1,6 +1,7 @@
 import {Issue, Position} from "@abaplint/core";
 import {Total} from "./total";
 import {IFormatter} from "./_iformatter";
+import * as path from "node:path";
 
 type IssueDetails = {
   filename: string,
@@ -61,11 +62,12 @@ export class Standard implements IFormatter {
   }
 
   private build(issue: Issue): IssueDetails {
+    const filename = path.normalize(issue.getFilename());
     return {
-      filename: issue.getFilename() + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
+      filename: filename + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
       description: issue.getMessage() + " (" + issue.getKey() + ")",
       startPos: issue.getStart(),
-      rawFilename: issue.getFilename(),
+      rawFilename: filename,
       severity: issue.getSeverity().toString(),
     };
   }
