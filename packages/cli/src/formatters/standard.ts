@@ -62,8 +62,7 @@ export class Standard implements IFormatter {
   }
 
   private build(issue: Issue): IssueDetails {
-    let filename = issue.getFilename();
-    filename = path.win32.normalize(filename);
+    const filename = path.normalize(issue.getFilename());
     return {
       filename: filename + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
       description: issue.getMessage() + " (" + issue.getKey() + ")",
