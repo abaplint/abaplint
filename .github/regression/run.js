@@ -120,7 +120,7 @@ for (let name in map) {
       continue;
     }
     console.log(i.file);
-    let urlFile = i.file.split("/").splice(4).join("/");
+    let urlFile = i.file.split("/").splice(1).join("/");
     let url = "https://github.com/" + name + "/blob/main/" + urlFile.replace(/#/g, "%23") + "#L" + i.start.row;
     i.description = i.description.replace(/~/g, "\\~");
     i.description = i.description.replace(/</g, "\\<");
