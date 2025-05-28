@@ -456,6 +456,33 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
         ON B~AABB = A~/foo/val
         INTO target
         WHERE B~SPRAS IN moo.`,
+
+  `SELECT a~werks a~grund a~bwart a~matnr a~mblnr a~menge a~hwaer
+    a~zeile a~dmbtr
+             b~vkorg b~vtweg b~name1 b~stras b~pstlz b~ort01 b~land1
+             b~regio
+             c~mjahr c~bldat c~usnam
+             d~meins
+             e~ean11 e~mhdhb e~mhdlp
+             f~zzges f~zset f~zrep f~zcat
+             f~zsube
+             g~zzav
+        INTO CORRESPONDING FIELDS OF TABLE pt_masf
+        FROM ( ( ( ( ( s584 AS a INNER JOIN t001w AS b ON a~werks = b~werks )
+             INNER JOIN mkpf AS c ON a~mblnr = c~mblnr AND a~gjahr = c~mjahr )
+             INNER JOIN mseg AS d ON a~mblnr = d~mblnr AND a~gjahr = d~mjahr AND a~zeile = d~zeile )
+             INNER JOIN mara AS e ON a~matnr = e~matnr )
+             INNER JOIN mvke AS f ON a~matnr = f~matnr AND b~vtweg =
+             f~vtweg )
+             LEFT OUTER JOIN s532 AS g ON a~ssour = g~ssour
+                         AND a~vrsio = g~vrsio AND a~spmon = g~spmon
+                         AND a~sptag = g~sptag AND a~spwoc = g~spwoc
+                         AND a~spbup = g~spbup AND a~mblnr = g~mblnr
+                         AND a~gjahr = g~mjahr AND a~budat = g~budat
+                         AND a~zeile = g~zeile AND a~werks = g~werks
+                         AND a~matnr = g~matnr AND a~bwart = g~bwart
+                         AND a~grund = g~grund
+       WHERE a~vrsio = '000'.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
