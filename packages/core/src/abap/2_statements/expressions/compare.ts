@@ -25,6 +25,8 @@ export class Compare extends Expression {
 
     const between = seq(optPrio("NOT"), "BETWEEN", Source, "AND", Source);
 
+// https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abennews-740_sp08-expressions.htm
+// but also seems to work in v740sp05, blah
     const predicate = ver(Version.v740sp08, MethodCallChain);
 
     const rett = seq(Source, altPrio(seq(CompareOperator, Source), inn, between, sopt));
