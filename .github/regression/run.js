@@ -125,7 +125,7 @@ for (let name in map) {
     i.description = i.description.replace(/~/g, "\\~");
     i.description = i.description.replace(/</g, "\\<");
     i.description = i.description.replace(/>/g, "\\>");
-    issues += "[`" + i.file + ":" + i.start.row + "`](" + url + "): " + i.description + "(" + i.key + ")\n"
+    issues += "[`" + urlFile + ":" + i.start.row + "`](" + url + "): " + i.description + "(" + i.key + ")\n"
   }
 }
 comment += "\n" + issues;
