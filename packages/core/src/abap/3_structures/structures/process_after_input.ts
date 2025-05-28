@@ -4,6 +4,7 @@ import {alt, seq, sta, star, sub} from "./_combi";
 import {IStructureRunnable} from "./_structure_runnable";
 import {Chain} from "./chain";
 import {Loop} from "./loop";
+import {DynproLoop} from "./dynpro_loop";
 
 export class ProcessAfterInput implements IStructure {
 
@@ -13,6 +14,7 @@ export class ProcessAfterInput implements IStructure {
       sta(Statements.Field),
       sta(Statements.CallSubscreen),
       sub(Chain),
+      sub(DynproLoop),
       sub(Loop)));
 
     return seq(

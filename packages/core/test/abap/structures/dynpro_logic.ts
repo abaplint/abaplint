@@ -57,6 +57,19 @@ PROCESS AFTER INPUT.
     FIELD t_log_ven-bar MODULE mod ON REQUEST.
   ENDLOOP.
 `},
+
+  {abap: `
+process before output.
+
+process after input.
+  loop with control tc_hdr.
+    chain.
+      field: zpro-selkz.
+      module hdr_fill_table on chain-request.
+    endchain.
+  endloop.
+  module user_command_header.
+`},
 ];
 
 structureType(cases, new DynproLogic());

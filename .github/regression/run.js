@@ -119,12 +119,13 @@ for (let name in map) {
     if (issues.length > 20000) { // keep the comment at a reasonable size
       continue;
     }
-    let urlFile = i.file.split("/").splice(1).join("/");
+    console.log(i.file);
+    let urlFile = i.file.split("/").splice(5).join("/");
     let url = "https://github.com/" + name + "/blob/main/" + urlFile.replace(/#/g, "%23") + "#L" + i.start.row;
     i.description = i.description.replace(/~/g, "\\~");
     i.description = i.description.replace(/</g, "\\<");
     i.description = i.description.replace(/>/g, "\\>");
-    issues += "[`" + i.file + ":" + i.start.row + "`](" + url + "): " + i.description + "(" + i.key + ")\n"
+    issues += "[`" + urlFile + ":" + i.start.row + "`](" + url + "): " + i.description + "(" + i.key + ")\n"
   }
 }
 comment += "\n" + issues;

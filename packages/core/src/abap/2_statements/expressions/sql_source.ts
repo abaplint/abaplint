@@ -1,4 +1,4 @@
-import {seq, ver, tok, Expression, alt, altPrio} from "../combi";
+import {seq, ver, tok, Expression, altPrio} from "../combi";
 import {Version} from "../../../version";
 import {WAt, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {SQLAliasField, Source, SimpleSource3} from ".";
@@ -10,6 +10,6 @@ export class SQLSource extends Expression {
 
     const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)));
 
-    return alt(SQLAliasField, SimpleSource3, at);
+    return altPrio(SQLAliasField, SimpleSource3, at);
   }
 }

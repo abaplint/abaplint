@@ -62,12 +62,18 @@ export class Standard implements IFormatter {
   }
 
   private build(issue: Issue): IssueDetails {
-    const filename = path.normalize(issue.getFilename());
+    let filename = path.normalize(issue.getFilename());
+    if (filename.startsWith("\\\\?\\")) {
+      // windows UNC path
+      filename = filename.substring(4);
+    }
+    const relativePath = path.relative(process.cwd(), filename);
+
     return {
-      filename: filename + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
+      filename: relativePath + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
       description: issue.getMessage() + " (" + issue.getKey() + ")",
       startPos: issue.getStart(),
-      rawFilename: filename,
+      rawFilename: relativePath,
       severity: issue.getSeverity().toString(),
     };
   }
