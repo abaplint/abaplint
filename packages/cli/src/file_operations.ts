@@ -36,14 +36,18 @@ export class FileOperations {
     }
   }
 
-  public static async loadFiles(compress: boolean | undefined, input: string[], bar: IProgress): Promise<IFile[]> {
+  private static setupPLimit() {
     let concurrency = os.cpus().length;
     if (concurrency > 8) {
       concurrency = 8;
     } else if (concurrency < 1) {
       concurrency = 1;
     }
-    const limit = pLimit(concurrency);
+    return pLimit(concurrency);
+  }
+
+  public static async loadFiles(compress: boolean | undefined, input: string[], bar: IProgress): Promise<IFile[]> {
+    const limit = this.setupPLimit();
 
     input = input.filter((filename) => {
       const base = filename.split("/").reverse()[0];
