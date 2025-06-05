@@ -66,18 +66,6 @@ export class FileOperations {
     });
     const files = await Promise.all(promises);
 
-    /*
-    for (const filename of input) {
-      bar.tick("Reading files - " + path.basename(filename));
-
-      const base = filename.split("/").reverse()[0];
-      if (base.split(".").length <= 2) {
-        continue; // not a abapGit file
-      }
-
-      files.push(await this.readFile(filename, compress));
-    }
-      */
     return files;
   }
 
