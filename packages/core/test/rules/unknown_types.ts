@@ -2335,4 +2335,21 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("LIKE LINE OF unknown in OO", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA bar1 LIKE LINE OF t100.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+  });
+
 });
