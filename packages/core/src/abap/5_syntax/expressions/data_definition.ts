@@ -35,7 +35,6 @@ export class DataDefinition {
     }
 
     if (name) {
-      console.dir("undef");
       return new TypedIdentifier(name.getFirstToken(), input.filename, new UnknownType("DataDefinition, fallback"));
     }
 

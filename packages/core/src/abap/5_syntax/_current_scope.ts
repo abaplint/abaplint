@@ -515,6 +515,20 @@ export class CurrentScope {
     return false;
   }
 
+  public isAnyOO(): boolean {
+    let curr = this.current;
+    while (curr !== undefined) {
+      const stype = curr.getIdentifier().stype;
+      if (stype === ScopeType.ClassDefinition
+          || stype === ScopeType.ClassImplementation
+          || stype === ScopeType.Interface) {
+        return true;
+      }
+      curr = curr.getParent();
+    }
+    return false;
+  }
+
   public isGlobalOO(): boolean {
     return this.parentObj.getType() === "INTF" || this.parentObj.getType() === "CLAS";
   }
