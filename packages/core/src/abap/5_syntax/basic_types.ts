@@ -154,7 +154,7 @@ export class BasicTypes {
         type = this.input.scope.getDDIC().lookupNoVoid(name)?.type;
       }
 
-      if (type === undefined && this.input.scope.isOO() === false && this.input.scope.getDDIC().inErrorNamespace(name) === false) {
+      if (type === undefined && this.input.scope.isAnyOO() === false && this.input.scope.getDDIC().inErrorNamespace(name) === false) {
         this.input.scope.addReference(chain.getChildren()[0].getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
         return new Types.VoidType(name);
       }

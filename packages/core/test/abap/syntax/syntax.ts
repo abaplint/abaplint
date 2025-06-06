@@ -8968,8 +8968,8 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equal(0);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+    expect(issues.length).to.equal(0);
   });
 
   it("incompatible type, const int into string", () => {

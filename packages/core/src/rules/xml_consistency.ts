@@ -62,9 +62,7 @@ export class XMLConsistency implements IRule {
       } else if (obj.getMainABAPFile()?.getStructure() !== undefined && obj.getClassDefinition() === undefined) {
         issues.push(Issue.atRow(file, 1, "Class matching XML name not found in ABAP file", this.getMetadata().key, this.conf.severity));
       }
-    }
-
-    if (obj instanceof Objects.Interface) {
+    } else if (obj instanceof Objects.Interface) {
       const name = obj.getNameFromXML();
       if (name === undefined) {
         issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getMetadata().key, this.conf.severity));
