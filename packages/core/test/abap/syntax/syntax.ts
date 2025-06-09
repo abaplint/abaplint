@@ -11024,6 +11024,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Method parameter type not compatible");
   });
 
+  it("type compatible, char 40 to xstring, constant", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xstring.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 'AAAA' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("strict mode must escape variables, constants", () => {
     const abap = `
 TYPES: BEGIN OF type,
