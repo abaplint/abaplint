@@ -7,7 +7,7 @@ const repos = [
   "abap-observability-tools/abap-metrics-provider",
   "abap-openapi/abap-openapi",
   "abap2xlsx/abap2xlsx",
-  "abapGit/abapgit-review-example",
+//  "abapGit/abapgit-review-example",  this is slow
   "abapGit/abapGit",
   "abapGit/background_modes",
   "abapGit/ci_tools",
