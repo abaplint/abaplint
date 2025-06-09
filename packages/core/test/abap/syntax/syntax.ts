@@ -11007,6 +11007,23 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("must be escaped with @ in strict mode");
   });
 
+  it("type not compatible, char 40 to xstring", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xstring.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA var TYPE c LENGTH 40.
+    foo( var ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Method parameter type not compatible");
+  });
+
   it("strict mode must escape variables, constants", () => {
     const abap = `
 TYPES: BEGIN OF type,
