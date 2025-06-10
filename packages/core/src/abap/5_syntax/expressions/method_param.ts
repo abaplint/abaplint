@@ -31,9 +31,9 @@ export class MethodParam {
 
     const concat = type.concatTokens().toUpperCase();
     if (concat === "TYPE C" || concat.startsWith("TYPE C ")) {
-      return new TypedIdentifier(name.getFirstToken(), input.filename, new CGenericType(), meta);
+      return new TypedIdentifier(name.getFirstToken(), input.filename, CGenericType.get(), meta);
     } else if (concat === "TYPE X" || concat.startsWith("TYPE X ")) {
-      return new TypedIdentifier(name.getFirstToken(), input.filename, new XGenericType(), meta);
+      return new TypedIdentifier(name.getFirstToken(), input.filename, XGenericType.get(), meta);
     }
 
     const found = new BasicTypes(input).parseType(type);
