@@ -9,11 +9,11 @@ export class SetHandler implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.MethodSource)) {
-      new MethodSource().runSyntax(s, input);
+      MethodSource.runSyntax(s, input);
     }
 
   }

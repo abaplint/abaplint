@@ -7,7 +7,7 @@ import {SyntaxInput} from "../_syntax_input";
 export class SetPFStatus implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
   }
 }

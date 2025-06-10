@@ -5,7 +5,7 @@ import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SourceFieldSymbol {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
     const token = node.getFirstToken();
     const found = input.scope.findVariable(token.getStr());
     if (found === undefined) {

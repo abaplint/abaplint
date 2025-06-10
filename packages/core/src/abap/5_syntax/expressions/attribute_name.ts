@@ -11,7 +11,7 @@ import {AnyType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeName {
-  public runSyntax(
+  public static runSyntax(
     context: AbstractType | undefined,
     node: INode,
     input: SyntaxInput,

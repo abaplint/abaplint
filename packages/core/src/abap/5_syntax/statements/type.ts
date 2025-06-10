@@ -10,7 +10,7 @@ export class Type {
   public runSyntax(node: StatementNode, input: SyntaxInput, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      return new TypeTable().runSyntax(node, input, qualifiedNamePrefix);
+      return TypeTable.runSyntax(node, input, qualifiedNamePrefix);
     }
 
     const found = new BasicTypes(input).simpleType(node, qualifiedNamePrefix);

@@ -8,16 +8,16 @@ import {Source} from "./source";
 
 export class ComponentCompareSimple {
 
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, rowType: AbstractType): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, rowType: AbstractType): void {
     let targetType: AbstractType | undefined = undefined;
     for (const c of node.getChildren()) {
       if (c instanceof ExpressionNode) {
         if (c.get() instanceof Expressions.ComponentChainSimple) {
-          targetType = new ComponentChain().runSyntax(rowType, c, input);
+          targetType = ComponentChain.runSyntax(rowType, c, input);
         } else if (c.get() instanceof Expressions.Dynamic) {
           targetType = undefined;
         } else if (c.get() instanceof Expressions.Source) {
-          const sourceType = new Source().runSyntax(c, input, targetType);
+          const sourceType = Source.runSyntax(c, input, targetType);
           if (targetType && new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
             const message = "ComponentCompareSimple, incompatible types";
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

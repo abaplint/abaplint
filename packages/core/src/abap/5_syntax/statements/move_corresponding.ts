@@ -18,8 +18,8 @@ export class MoveCorresponding implements StatementSyntax {
       return;
     }
 
-    const sourceType = new Source().runSyntax(s, input);
-    const targetType = new Target().runSyntax(t, input);
+    const sourceType = Source.runSyntax(s, input);
+    const targetType = Target.runSyntax(t, input);
 
     if (input.scope.getVersion() < Version.v740sp05 && input.scope.getVersion() !== Version.Cloud) {
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {

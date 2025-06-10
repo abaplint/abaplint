@@ -4,9 +4,9 @@ import {Source} from "./source";
 import {SyntaxInput} from "../_syntax_input";
 
 export class MessageSource {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput) {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput) {
     for (const f of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(f, input);
+      Source.runSyntax(f, input);
     }
 
     if (node.getFirstToken().getStr().toUpperCase() === "ID") {

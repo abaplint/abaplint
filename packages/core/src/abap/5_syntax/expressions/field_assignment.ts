@@ -7,7 +7,7 @@ import {Source} from "./source";
 
 export class FieldAssignment {
 
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode | StatementNode,
     input: SyntaxInput,
     targetType: AbstractType | undefined): void {
@@ -45,7 +45,7 @@ export class FieldAssignment {
       type = targetType;
     }
 
-    new Source().runSyntax(s, input, type);
+    Source.runSyntax(s, input, type);
   }
 
 }

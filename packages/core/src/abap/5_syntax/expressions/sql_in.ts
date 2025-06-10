@@ -6,12 +6,12 @@ import {SQLSource} from "./sql_source";
 
 export class SQLIn {
 
-  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): void {
+  public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): void {
 
     if (node.getChildren().length === 2) {
       const insource = node.findFirstExpression(Expressions.SQLSource);
       if (insource) {
-        const intype = new SQLSource().runSyntax(insource, input);
+        const intype = SQLSource.runSyntax(insource, input);
         if (intype &&
             !(intype instanceof VoidType) &&
             !(intype instanceof UnknownType) &&
@@ -25,10 +25,10 @@ export class SQLIn {
     }
 
     for (const s of node.findDirectExpressions(Expressions.SQLSource)) {
-      new SQLSource().runSyntax(s, input);
+      SQLSource.runSyntax(s, input);
     }
     for (const s of node.findDirectExpressions(Expressions.SQLSourceNoSpace)) {
-      new SQLSource().runSyntax(s, input);
+      SQLSource.runSyntax(s, input);
     }
 
   }

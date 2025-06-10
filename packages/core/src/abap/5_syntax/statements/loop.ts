@@ -18,7 +18,7 @@ export class Loop implements StatementSyntax {
     const loopTarget = node.findDirectExpression(Expressions.LoopTarget);
 
     let target = loopTarget?.findDirectExpression(Expressions.Target);
-    const targetType = target ? new Target().runSyntax(target, input) : undefined;
+    const targetType = target ? Target.runSyntax(target, input) : undefined;
     if (target === undefined) {
       target = node.findDirectExpression(Expressions.FSTarget);
     }
@@ -30,7 +30,7 @@ export class Loop implements StatementSyntax {
     if (firstSource === undefined) {
       firstSource = sources[0];
     }
-    let sourceType = firstSource ? new Source().runSyntax(firstSource, input, targetType, write) : undefined;
+    let sourceType = firstSource ? Source.runSyntax(firstSource, input, targetType, write) : undefined;
     let rowType: AbstractType | undefined = undefined;
 
     const concat = node.concatTokens().toUpperCase();
@@ -83,37 +83,37 @@ export class Loop implements StatementSyntax {
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, sourceType);
+      InlineData.runSyntax(inline, input, sourceType);
     }
 
     for (const s of sources) {
       if (s === firstSource) {
         continue;
       }
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     const inlinefs = target?.findDirectExpression(Expressions.InlineFS);
     if (inlinefs) {
-      new InlineFS().runSyntax(inlinefs, input, sourceType);
+      InlineFS.runSyntax(inlinefs, input, sourceType);
     } else {
       const fstarget = loopTarget?.findDirectExpression(Expressions.FSTarget);
       if (fstarget) {
-        new FSTarget().runSyntax(fstarget, input, sourceType);
+        FSTarget.runSyntax(fstarget, input, sourceType);
       }
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, input, rowType);
+      ComponentCond.runSyntax(t, input, rowType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(t, input);
+      Dynamic.runSyntax(t, input);
     }
 
     const group = node.findDirectExpression(Expressions.LoopGroupBy);
     if (group) {
-      new LoopGroupBy().runSyntax(group, input);
+      LoopGroupBy.runSyntax(group, input);
     }
 
   }

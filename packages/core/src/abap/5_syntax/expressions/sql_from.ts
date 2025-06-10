@@ -6,17 +6,17 @@ import {SyntaxInput} from "../_syntax_input";
 
 export class SQLFrom {
 
-  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): DatabaseTableSource[] {
+  public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): DatabaseTableSource[] {
     const ret: DatabaseTableSource[] = [];
     const fromList = node.findAllExpressions(Expressions.SQLFromSource);
     for (const from of fromList) {
       for (const d of from.findAllExpressions(Expressions.Dynamic)) {
-        new Dynamic().runSyntax(d, input);
+        Dynamic.runSyntax(d, input);
       }
 
       const dbtab = from.findFirstExpression(Expressions.DatabaseTable);
       if (dbtab !== undefined) {
-        ret.push(new DatabaseTable().runSyntax(dbtab, input));
+        ret.push(DatabaseTable.runSyntax(dbtab, input));
       }
     }
     return ret;

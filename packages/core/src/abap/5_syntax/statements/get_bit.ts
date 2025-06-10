@@ -14,7 +14,7 @@ export class GetBit implements StatementSyntax {
 
     let lastType: AbstractType | undefined = undefined;
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      lastType = new Source().runSyntax(s, input);
+      lastType = Source.runSyntax(s, input);
     }
 
     if (lastType && new TypeUtils(input.scope).isHexLike(lastType) === false) {
@@ -26,9 +26,9 @@ export class GetBit implements StatementSyntax {
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       const inline = t?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(t, input, IntegerType.get());
+        InlineData.runSyntax(t, input, IntegerType.get());
       } else {
-        new Target().runSyntax(t, input);
+        Target.runSyntax(t, input);
       }
     }
 

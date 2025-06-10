@@ -8,7 +8,8 @@ import {TypeTableKey} from "./type_table_key";
 import {SyntaxInput} from "../_syntax_input";
 
 export class TypeTable {
-  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
+  public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput,
+                          qualifiedNamePrefix?: string): TypedIdentifier | undefined {
     // todo, input is currently the statement, but should be the expression?
     let nameExpr = node.findFirstExpression(Expressions.DefinitionName);
     if (nameExpr === undefined) {
@@ -34,7 +35,7 @@ export class TypeTable {
     }
 
     for (const tt of node.findAllExpressions(Expressions.TypeTableKey)) {
-      const error = new TypeTableKey().runSyntax(tt, type);
+      const error = TypeTableKey.runSyntax(tt, type);
       if (error) {
         type = error;
       }

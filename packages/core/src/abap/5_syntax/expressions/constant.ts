@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {Integer} from "../../2_statements/expressions";
 
 export class Constant {
-  public runSyntax(node: ExpressionNode): AbstractType {
+  public static runSyntax(node: ExpressionNode): AbstractType {
     // todo: ConcatenatedConstant is not used?
     if (node.findDirectExpression(Integer)) {
       return IntegerType.get({derivedFromConstant: true});

@@ -7,13 +7,13 @@ import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class StringTemplate {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
     const typeUtils = new TypeUtils(input.scope);
     const ret = StringType.get();
 
     for (const templateSource of node.findAllExpressions(Expressions.StringTemplateSource)) {
       const s = templateSource.findDirectExpression(Expressions.Source);
-      const type = new Source().runSyntax(s, input, ret);
+      const type = Source.runSyntax(s, input, ret);
       if (type === undefined) {
         const message = "No target type determined";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -28,7 +28,7 @@ export class StringTemplate {
       const format = templateSource.findDirectExpression(Expressions.StringTemplateFormatting);
       const formatConcat = format?.concatTokens();
       for (const formatSource of format?.findAllExpressions(Expressions.Source) || []) {
-        new Source().runSyntax(formatSource, input);
+        Source.runSyntax(formatSource, input);
       }
 
       if (format

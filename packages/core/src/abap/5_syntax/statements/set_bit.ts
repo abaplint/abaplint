@@ -9,11 +9,11 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 export class SetBit implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
-      const typ = new Target().runSyntax(t, input);
+      const typ = Target.runSyntax(t, input);
       if (typ && new TypeUtils(input.scope).isHexLike(typ) === false) {
         const message = "Input must be byte-like";
         input.issues.push(syntaxIssue(input, t.getFirstToken(), message));

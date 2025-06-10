@@ -9,7 +9,7 @@ import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode | undefined,
     input: SyntaxInput,
     targetType: AbstractType | undefined): AbstractType | undefined {
@@ -21,12 +21,12 @@ export class ValueBody {
     let letScoped = false;
     const letNode = node.findDirectExpression(Expressions.Let);
     if (letNode) {
-      letScoped = new Let().runSyntax(letNode, input);
+      letScoped = Let.runSyntax(letNode, input);
     }
 
     let forScopes = 0;
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
-      const scoped = new For().runSyntax(forNode, input);
+      const scoped = For.runSyntax(forNode, input);
       if (scoped === true) {
         forScopes++;
       }
@@ -34,7 +34,7 @@ export class ValueBody {
 
     const fields = new Set<string>();
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
-      new FieldAssignment().runSyntax(s, input, targetType);
+      FieldAssignment.runSyntax(s, input, targetType);
 
       const fieldname = s.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
       if (fieldname) {
@@ -49,7 +49,7 @@ export class ValueBody {
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      type = new Source().runSyntax(s, input, type);
+      type = Source.runSyntax(s, input, type);
     }
 
     for (const foo of node.findDirectExpressions(Expressions.ValueBodyLine)) {
@@ -70,14 +70,14 @@ export class ValueBody {
       for (const l of foo.findDirectExpressions(Expressions.ValueBodyLines)) {
         for (const s of l.findDirectExpressions(Expressions.Source)) {
 // LINES OF ?? todo, pass type,
-          new Source().runSyntax(s, input);
+          Source.runSyntax(s, input);
         }
       }
       for (const s of foo.findDirectExpressions(Expressions.FieldAssignment)) {
-        new FieldAssignment().runSyntax(s, input, rowType);
+        FieldAssignment.runSyntax(s, input, rowType);
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, input, rowType);
+        Source.runSyntax(s, input, rowType);
       }
     }
 

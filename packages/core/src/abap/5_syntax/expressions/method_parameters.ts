@@ -62,7 +62,7 @@ export class MethodParameters {
             const node = children.shift()! as ExpressionNode;
             const exceptions = node.findFirstExpression(Expressions.ParameterException);
             for (const s of exceptions?.findAllExpressions(Expressions.SimpleFieldChain) || []) {
-              new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
+              FieldChain.runSyntax(s, input, ReferenceType.DataReadReference);
             }
           }
           break;
@@ -92,9 +92,9 @@ export class MethodParameters {
     const target = node.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, type);
+      InlineData.runSyntax(inline, input, type);
     } else if (target) {
-      const targetType = new Target().runSyntax(target, input);
+      const targetType = Target.runSyntax(target, input);
       if (targetType && new TypeUtils(input.scope).isAssignable(type, targetType) === false) {
         const message = "Method returning value not type compatible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -120,7 +120,7 @@ export class MethodParameters {
 
       const inline = item.target.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, parameterType);
+        InlineData.runSyntax(inline, input, parameterType);
       } else if (item.targetType === undefined) {
         const message = "Could not determine target type";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -239,7 +239,7 @@ export class MethodParameters {
           }
         }
       }
-      let sourceType = new Source().runSyntax(source, input, targetType);
+      let sourceType = Source.runSyntax(source, input, targetType);
 
       if (sourceType === undefined) {
         if (method instanceof VoidType) {
@@ -284,7 +284,7 @@ export class MethodParameters {
         throw new AssertError("parameterListT, no target found");
       }
 
-      const targetType = new Target().runSyntax(target, input);
+      const targetType = Target.runSyntax(target, input);
 
       ret.push({name, target, targetType});
     }

@@ -10,8 +10,8 @@ import {ObjectOriented} from "../_object_oriented";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ComponentChain {
-  public runSyntax(context: AbstractType | undefined, node: ExpressionNode,
-                   input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(context: AbstractType | undefined, node: ExpressionNode,
+                          input: SyntaxInput): AbstractType | undefined {
 
     if (context === undefined) {
       return undefined;

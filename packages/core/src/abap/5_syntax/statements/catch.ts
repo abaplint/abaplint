@@ -56,7 +56,7 @@ export class Catch implements StatementSyntax {
         input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
       }
     } else if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
 
   }

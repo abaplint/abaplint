@@ -15,7 +15,7 @@ import {AttributeName} from "./attribute_name";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodCallChain {
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode,
     input: SyntaxInput,
     targetType?: AbstractType): AbstractType | undefined {
@@ -86,14 +86,14 @@ export class MethodCallChain {
 
         const param = current.findDirectExpression(Expressions.MethodCallParam);
         if (param && method) {
-          new MethodCallParam().runSyntax(param, input, method);
+          MethodCallParam.runSyntax(param, input, method);
         } else if (param && context instanceof VoidType) {
-          new MethodCallParam().runSyntax(param, input, context);
+          MethodCallParam.runSyntax(param, input, context);
         }
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
-        context = new ComponentName().runSyntax(context, current, input);
+        context = ComponentName.runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, input);
+        context = AttributeName.runSyntax(context, current, input);
       }
 
       previous = current;
@@ -104,7 +104,7 @@ export class MethodCallChain {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType | undefined {
+  private static findTop(first: INode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const token = first.getFirstToken();
       const className = token.getStr();
@@ -121,11 +121,11 @@ export class MethodCallChain {
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, input, ReferenceType.DataReadReference);
+      return FieldChain.runSyntax(first, input, ReferenceType.DataReadReference);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
-      return new NewObject().runSyntax(first, input, targetType);
+      return NewObject.runSyntax(first, input, targetType);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {
-      return new Cast().runSyntax(first, input, targetType);
+      return Cast.runSyntax(first, input, targetType);
     } else {
       const meType = input.scope.findVariable("me")?.getType();
       if (meType) {

@@ -12,7 +12,7 @@ export class Select implements StatementSyntax {
     for (let i = 0; i < selects.length; i++) {
       const last = i === selects.length - 1;
       const s = selects[i];
-      new SelectExpression().runSyntax(s, input, last === false);
+      SelectExpression.runSyntax(s, input, last === false);
     }
 
   }

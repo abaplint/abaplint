@@ -5,17 +5,17 @@ import {Target} from "./target";
 import {SyntaxInput} from "../_syntax_input";
 
 export class ReduceNext {
-  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
+  public static runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
     if (node === undefined) {
       return;
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.SimpleTarget)) {
-      new Target().runSyntax(s, input);
+      Target.runSyntax(s, input);
     }
   }
 }

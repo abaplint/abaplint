@@ -15,7 +15,7 @@ export class CallFunction implements StatementSyntax {
     const name = node.findFirstExpression(Expressions.FunctionName);
     const chain = name?.findFirstExpression(Expressions.FieldChain);
     if (chain) {
-      new FieldChain().runSyntax(chain, input, ReferenceType.DataReadReference);
+      FieldChain.runSyntax(chain, input, ReferenceType.DataReadReference);
     } else if (input.scope.getVersion() === Version.Cloud
         && node.findDirectExpression(Expressions.Destination) === undefined) {
       const functionName = name?.concatTokens().replace(/'/g, "");
@@ -28,21 +28,21 @@ export class CallFunction implements StatementSyntax {
 
     // just recurse
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const t of node.findAllExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, input);
+      Target.runSyntax(t, input);
     }
     for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     const exceptions = node.findFirstExpression(Expressions.ParameterException);
     for (const s of exceptions?.findAllExpressions(Expressions.SimpleFieldChain) || []) {
-      new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
+      FieldChain.runSyntax(s, input, ReferenceType.DataReadReference);
     }
   }
 }

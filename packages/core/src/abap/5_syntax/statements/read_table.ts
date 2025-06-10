@@ -20,7 +20,7 @@ export class ReadTable implements StatementSyntax {
     if (firstSource === undefined) {
       firstSource = sources[0];
     }
-    const sourceType = firstSource ? new Source().runSyntax(firstSource, input) : undefined;
+    const sourceType = firstSource ? Source.runSyntax(firstSource, input) : undefined;
 
     if (sourceType === undefined) {
       const message = "No source type determined, read table";
@@ -39,12 +39,12 @@ export class ReadTable implements StatementSyntax {
 
     const components = node.findDirectExpression(Expressions.ComponentCompareSimple);
     if (components !== undefined) {
-      new ComponentCompareSimple().runSyntax(components, input, rowType);
+      ComponentCompareSimple.runSyntax(components, input, rowType);
     }
 
     const indexSource = node.findExpressionAfterToken("INDEX");
     if (indexSource) {
-      const indexType = new Source().runSyntax(indexSource, input);
+      const indexType = Source.runSyntax(indexSource, input);
       if (new TypeUtils(input.scope).isAssignable(indexType, IntegerType.get()) === false) {
         const message = "READ TABLE, INDEX must be simple, got " + indexType?.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -54,7 +54,7 @@ export class ReadTable implements StatementSyntax {
 
     const fromSource = node.findExpressionAfterToken("FROM");
     if (fromSource) {
-      const fromType = new Source().runSyntax(fromSource, input);
+      const fromType = Source.runSyntax(fromSource, input);
       if (new TypeUtils(input.scope).isAssignable(fromType, rowType) === false) {
         const message = "READ TABLE, FROM must be compatible";
         input.issues.push(syntaxIssue(input, fromSource.getFirstToken(), message));
@@ -67,7 +67,7 @@ export class ReadTable implements StatementSyntax {
       if (s === firstSource || s === indexSource || s === fromSource) {
         continue;
       }
-      const type = new Source().runSyntax(s, input);
+      const type = Source.runSyntax(s, input);
       if (s === afterKey) {
         if (type instanceof StringType || type instanceof TableType || type instanceof ObjectReferenceType) {
           const message = "Key cannot be string or table or reference";
@@ -87,11 +87,11 @@ export class ReadTable implements StatementSyntax {
       const fst = target.findDirectExpression(Expressions.FSTarget);
       const t = target.findFirstExpression(Expressions.Target);
       if (inline) {
-        new InlineData().runSyntax(inline, input, rowType);
+        InlineData.runSyntax(inline, input, rowType);
       } else if (fst) {
-        new FSTarget().runSyntax(fst, input, rowType);
+        FSTarget.runSyntax(fst, input, rowType);
       } else if (t) {
-        const targetType = new Target().runSyntax(t, input);
+        const targetType = Target.runSyntax(t, input);
         if (new TypeUtils(input.scope).isAssignable(rowType, targetType) === false) {
           const message = "Incompatible types";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

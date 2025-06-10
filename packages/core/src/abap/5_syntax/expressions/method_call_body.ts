@@ -9,7 +9,7 @@ import {SyntaxInput} from "../_syntax_input";
 
 export class MethodCallBody {
 
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
     const parameters = node.findDirectExpression(Expressions.MethodParameters);
     if (parameters) {
       new MethodParameters().runSyntax(parameters, input, method);
@@ -17,12 +17,12 @@ export class MethodCallBody {
 
     const param = node.findDirectExpression(Expressions.MethodCallParam);
     if (param) {
-      new MethodCallParam().runSyntax(param, input, method);
+      MethodCallParam.runSyntax(param, input, method);
     }
 
     // for PARAMETER-TABLE and EXCEPTION-TABLE
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
   }
 

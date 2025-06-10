@@ -30,9 +30,9 @@ export class WhenType implements StatementSyntax {
     const target = node?.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, type);
+      InlineData.runSyntax(inline, input, type);
     } else if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
   }
 }

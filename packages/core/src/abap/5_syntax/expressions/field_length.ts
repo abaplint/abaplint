@@ -5,11 +5,11 @@ import {SyntaxInput} from "../_syntax_input";
 import {FieldChain} from "./field_chain";
 
 export class FieldLength {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): number | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): number | undefined {
 
     const field = node.findDirectExpression(Expressions.SimpleFieldChain2);
     if (field) {
-      new FieldChain().runSyntax(field, input, ReferenceType.DataReadReference);
+      FieldChain.runSyntax(field, input, ReferenceType.DataReadReference);
       return undefined;
     } else {
       const children = node.getChildren();

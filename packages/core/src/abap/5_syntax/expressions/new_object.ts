@@ -13,7 +13,7 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class NewObject {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
     let ret: AbstractType | undefined = undefined;
 
     const typeExpr = node.findDirectExpression(Expressions.TypeNameOrInfer);
@@ -86,7 +86,7 @@ export class NewObject {
       this.parameters(node, ret, input);
     } else {
       for (const s of node.findAllExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, input, ret);
+        Source.runSyntax(s, input, ret);
       }
     }
 
@@ -99,7 +99,7 @@ export class NewObject {
     return ret;
   }
 
-  private parameters(node: ExpressionNode, obj: ObjectReferenceType, input: SyntaxInput) {
+  private static parameters(node: ExpressionNode, obj: ObjectReferenceType, input: SyntaxInput) {
     const name = obj.getIdentifier().getName();
     const def = input.scope.findObjectDefinition(name);
     const helper = new ObjectOriented(input.scope);
@@ -117,7 +117,7 @@ export class NewObject {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-      const sourceType = new Source().runSyntax(source, input, type);
+      const sourceType = Source.runSyntax(source, input, type);
       if (new TypeUtils(input.scope).isAssignableStrict(sourceType, type) === false) {
         const message = `NEW parameter type not compatible`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -138,7 +138,7 @@ export class NewObject {
     }
   }
 
-  private defaultImportingType(method: IMethodDefinition | undefined) {
+  private static defaultImportingType(method: IMethodDefinition | undefined) {
     let targetType: AbstractType | undefined = undefined;
     if (method === undefined) {
       return undefined;

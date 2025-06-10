@@ -10,7 +10,7 @@ export class Static {
   public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      const ttfound = new TypeTable().runSyntax(node, input);
+      const ttfound = TypeTable.runSyntax(node, input);
       if (ttfound) {
         return ttfound;
       }

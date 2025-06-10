@@ -10,7 +10,7 @@ import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodCallParam {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
     if (!(node.get() instanceof Expressions.MethodCallParam)) {
       const message = "MethodCallParam, unexpected input";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -68,7 +68,7 @@ export class MethodCallParam {
       }
       let sourceType: AbstractType | undefined = StringType.get();
       if (child.get() instanceof Expressions.Source) {
-        sourceType = new Source().runSyntax(child, input, targetType);
+        sourceType = Source.runSyntax(child, input, targetType);
       }
 
       if (sourceType === undefined) {

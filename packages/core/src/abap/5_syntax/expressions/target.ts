@@ -16,7 +16,7 @@ import {Cast} from "./cast";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Target {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
 
     const concat = node.concatTokens();
     if (concat.includes("-")) {
@@ -79,7 +79,7 @@ export class Target {
           context = context.getType();
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
-        context = new ComponentName().runSyntax(context, current, input);
+        context = ComponentName.runSyntax(context, current, input);
       } else if (current.get() instanceof Expressions.TableBody) {
         if (!(context instanceof TableType)
             && !(context instanceof VoidType)
@@ -99,13 +99,13 @@ export class Target {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
-        new TableExpression().runSyntax(current, input);
+        TableExpression.runSyntax(current, input);
         if (!(context instanceof VoidType)) {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
         const type = children.length === 0 ? ReferenceType.DataWriteReference : ReferenceType.DataReadReference;
-        context = new AttributeName().runSyntax(context, current, input, type);
+        context = AttributeName.runSyntax(context, current, input, type);
       }
     }
 
@@ -116,7 +116,7 @@ export class Target {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
       }
-      new FieldOffset().runSyntax(offset, input);
+      FieldOffset.runSyntax(offset, input);
     }
 
     const length = node.findDirectExpression(Expressions.FieldLength);
@@ -126,7 +126,7 @@ export class Target {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
       }
-      new FieldLength().runSyntax(length, input);
+      FieldLength.runSyntax(length, input);
     }
 
     return context;
@@ -134,7 +134,7 @@ export class Target {
 
 /////////////////////////////////
 
-  private findTop(node: INode | undefined, input: SyntaxInput): AbstractType | undefined {
+  private static findTop(node: INode | undefined, input: SyntaxInput): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -167,7 +167,7 @@ export class Target {
         return new UnknownType(name + " unknown, Target");
       }
     } else if (node.get() instanceof Expressions.Cast && node instanceof ExpressionNode) {
-      const ret = new Cast().runSyntax(node, input, undefined);
+      const ret = Cast.runSyntax(node, input, undefined);
       if (ret instanceof UnknownType) {
         const message = "CAST, uknown type";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

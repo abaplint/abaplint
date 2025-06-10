@@ -17,17 +17,17 @@ export class Move implements StatementSyntax {
 
     let targetType: AbstractType | undefined = undefined;
     if (inline === undefined) {
-      targetType = firstTarget ? new Target().runSyntax(firstTarget, input) : undefined;
+      targetType = firstTarget ? Target.runSyntax(firstTarget, input) : undefined;
       for (const t of targets) {
         if (t === firstTarget) {
           continue;
         }
-        new Target().runSyntax(t, input);
+        Target.runSyntax(t, input);
       }
     }
 
     const source = node.findDirectExpression(Expressions.Source);
-    const sourceType = source ? new Source().runSyntax(source, input, targetType) : undefined;
+    const sourceType = source ? Source.runSyntax(source, input, targetType) : undefined;
     if (sourceType === undefined) {
       const message = "No source type determined";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -35,7 +35,7 @@ export class Move implements StatementSyntax {
     }
 
     if (inline) {
-      new InlineData().runSyntax(inline, input, sourceType);
+      InlineData.runSyntax(inline, input, sourceType);
       targetType = sourceType;
     }
 

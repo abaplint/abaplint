@@ -12,10 +12,10 @@ export class Receive implements StatementSyntax {
 
     // just recurse
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const t of node.findAllExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, input);
+      Target.runSyntax(t, input);
     }
 
   }

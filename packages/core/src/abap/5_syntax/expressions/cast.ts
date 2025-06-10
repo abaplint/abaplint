@@ -9,7 +9,7 @@ import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Cast {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
     const sourceNode = node.findDirectExpression(Expressions.Source);
     if (sourceNode === undefined) {
       const message = "Cast, source node not found";
@@ -17,7 +17,7 @@ export class Cast {
       return VoidType.get(CheckSyntaxKey);
     }
 
-    const sourceType = new Source().runSyntax(sourceNode, input);
+    const sourceType = Source.runSyntax(sourceNode, input);
     let tt: AbstractType | undefined = undefined;
 
     const typeExpression = node.findDirectExpression(Expressions.TypeNameOrInfer);
@@ -57,7 +57,7 @@ export class Cast {
         return VoidType.get(CheckSyntaxKey);
       }
     }
-    new Source().addIfInferred(node, input, tt);
+    Source.addIfInferred(node, input, tt);
 
     if (new TypeUtils(input.scope).isCastable(sourceType, tt) === false) {
       const message = "Cast, incompatible types";

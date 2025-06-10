@@ -18,7 +18,7 @@ import {AssertError} from "../assert_error";
 
 export class MethodSource {
 
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): IMethodDefinition | VoidType | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): IMethodDefinition | VoidType | undefined {
 
     const helper = new ObjectOriented(input.scope);
     const children = node.getChildren().slice();
@@ -50,7 +50,7 @@ export class MethodSource {
       while (children.length > 0) {
         const current = children.shift();
         if (current instanceof ExpressionNode && current.get() instanceof Expressions.Dynamic) {
-          new Dynamic().runSyntax(current, input);
+          Dynamic.runSyntax(current, input);
         }
       }
 
@@ -81,7 +81,7 @@ export class MethodSource {
           || current.get() instanceof Expressions.SourceField) {
 
         if (context instanceof AbstractType) {
-          const attr = new AttributeName().runSyntax(context, current, input, ReferenceType.DataReadReference, false);
+          const attr = AttributeName.runSyntax(context, current, input, ReferenceType.DataReadReference, false);
           const isSyntaxError = attr instanceof VoidType && attr.getVoided() === CheckSyntaxKey;
           if (isSyntaxError === false) {
             context = attr;
@@ -114,9 +114,9 @@ export class MethodSource {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
         }
-        context = new ComponentName().runSyntax(context, current, input);
+        context = ComponentName.runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.Dynamic) {
-        new Dynamic().runSyntax(current, input);
+        Dynamic.runSyntax(current, input);
         context = VoidType.get("Dynamic");
       }
     }
@@ -136,7 +136,7 @@ export class MethodSource {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, input: SyntaxInput, children: any[]): AbstractType | undefined {
+  private static findTop(first: INode, input: SyntaxInput, children: any[]): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       // todo, refactor this part to new expression handler,
       const token = first.getFirstToken();
@@ -154,11 +154,11 @@ export class MethodSource {
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceField && children.length > 0) {
-      return new SourceField().runSyntax(first, input, ReferenceType.DataReadReference);
+      return SourceField.runSyntax(first, input, ReferenceType.DataReadReference);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.SourceFieldSymbol) {
-      return new SourceFieldSymbol().runSyntax(first, input);
+      return SourceFieldSymbol.runSyntax(first, input);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dynamic) {
-      new Dynamic().runSyntax(first, input);
+      Dynamic.runSyntax(first, input);
       return VoidType.get("Dynamic");
     }
 

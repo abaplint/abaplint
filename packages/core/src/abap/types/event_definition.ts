@@ -34,7 +34,7 @@ export class EventDefinition extends Identifier implements IEventDefinition {
 
   private parse(node: StatementNode, input: SyntaxInput) {
     for (const e of node.findAllExpressions(MethodParamExpression)) {
-      this.parameters.push(new MethodParam().runSyntax(e, input, []));
+      this.parameters.push(MethodParam.runSyntax(e, input, []));
     }
   }
 

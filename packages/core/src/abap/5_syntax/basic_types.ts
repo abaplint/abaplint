@@ -128,7 +128,7 @@ export class BasicTypes {
 
     let type: AbstractType | undefined = undefined;
     if (children[1] && ( children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
-      type = new FieldChain().runSyntax(chain, this.input, ReferenceType.TypeReference);
+      type = FieldChain.runSyntax(chain, this.input, ReferenceType.TypeReference);
     } else {
       const name = children.shift()!.getFirstToken().getStr();
       let found = this.input.scope.findVariable(name);

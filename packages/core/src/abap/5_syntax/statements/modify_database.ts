@@ -10,7 +10,7 @@ import {SyntaxInput} from "../_syntax_input";
 export class ModifyDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(d, input);
+      Dynamic.runSyntax(d, input);
     }
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
@@ -20,18 +20,18 @@ export class ModifyDatabase implements StatementSyntax {
         if (found) {
           input.scope.addReference(dbtab.getFirstToken(), found, ReferenceType.DataWriteReference, input.filename);
         } else {
-          new DatabaseTable().runSyntax(dbtab, input);
+          DatabaseTable.runSyntax(dbtab, input);
         }
       } else {
-        new DatabaseTable().runSyntax(dbtab, input);
+        DatabaseTable.runSyntax(dbtab, input);
       }
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
   }
 }

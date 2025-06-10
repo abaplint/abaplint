@@ -4,7 +4,7 @@ import * as Basic from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ComponentName {
-  public runSyntax(context: AbstractType | undefined, node: INode, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(context: AbstractType | undefined, node: INode, input: SyntaxInput): AbstractType | undefined {
     if (context instanceof Basic.VoidType) {
       return context;
     }

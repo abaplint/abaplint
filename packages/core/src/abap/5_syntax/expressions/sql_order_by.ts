@@ -5,10 +5,10 @@ import {Dynamic} from "./dynamic";
 
 export class SQLOrderBy {
 
-  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): void {
+  public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): void {
     const dyn = node.findDirectExpression(Expressions.Dynamic);
     if (dyn) {
-      new Dynamic().runSyntax(dyn, input);
+      Dynamic.runSyntax(dyn, input);
     }
   }
 

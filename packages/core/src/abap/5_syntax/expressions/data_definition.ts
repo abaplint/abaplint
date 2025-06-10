@@ -7,10 +7,10 @@ import {TypeTable} from "./type_table";
 import {SyntaxInput} from "../_syntax_input";
 
 export class DataDefinition {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      return new TypeTable().runSyntax(node, input);
+      return TypeTable.runSyntax(node, input);
     }
 
     const valueNode = node.findFirstExpression(Expressions.Value);

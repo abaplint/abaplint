@@ -4,13 +4,13 @@ import {Source} from "./source";
 import {SyntaxInput} from "../_syntax_input";
 
 export class TableExpression {
-  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput) {
+  public static runSyntax(node: ExpressionNode | undefined, input: SyntaxInput) {
     if (node === undefined) {
       return;
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
   }
 }

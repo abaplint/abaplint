@@ -10,7 +10,7 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 export class GetReference implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const s = node.findDirectExpression(Expressions.Source);
-    const type = new Source().runSyntax(s, input);
+    const type = Source.runSyntax(s, input);
 
     const target = node.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
@@ -21,9 +21,9 @@ export class GetReference implements StatementSyntax {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-      new InlineData().runSyntax(inline, input, type ? new DataReference(type) : undefined);
+      InlineData.runSyntax(inline, input, type ? new DataReference(type) : undefined);
     } else if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
   }
 }

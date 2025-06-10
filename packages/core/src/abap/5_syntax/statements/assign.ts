@@ -29,13 +29,13 @@ export class Assign implements StatementSyntax {
       }
       sourceType = VoidType.get("Dynamic");
     } else {
-      sourceType = new Source().runSyntax(theSource, input);
+      sourceType = Source.runSyntax(theSource, input);
     }
 
     if (assignSource?.getChildren().length === 5
         && assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
       const componentSource = sources[sources.length - 2];
-      const componentType = new Source().runSyntax(componentSource, input);
+      const componentType = Source.runSyntax(componentSource, input);
       if (new TypeUtils(input.scope).isAssignable(componentType, new CharacterType(30)) === false) {
         const message = "component name must be charlike";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -47,15 +47,15 @@ export class Assign implements StatementSyntax {
       sourceType = AnyType.get();
     }
     for (const d of assignSource?.findAllExpressions(Expressions.Dynamic) || []) {
-      new Dynamic().runSyntax(d, input);
+      Dynamic.runSyntax(d, input);
     }
 
     const target = node.findDirectExpression(Expressions.FSTarget);
     if (target) {
       if (assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
-        new FSTarget().runSyntax(target, input, AnyType.get());
+        FSTarget.runSyntax(target, input, AnyType.get());
       } else {
-        new FSTarget().runSyntax(target, input, sourceType);
+        FSTarget.runSyntax(target, input, sourceType);
       }
     }
 
@@ -63,7 +63,7 @@ export class Assign implements StatementSyntax {
       if (s === theSource) {
         continue;
       }
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
   }

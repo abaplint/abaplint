@@ -10,7 +10,7 @@ export class ClassData {
   public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier | undefined {
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
-      const found = new DataDefinition().runSyntax(dd, input);
+      const found = DataDefinition.runSyntax(dd, input);
       if (found === undefined) {
         return undefined;
       }

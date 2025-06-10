@@ -20,17 +20,17 @@ export class Perform implements StatementSyntax {
 
     for (const c of node.findDirectExpressions(Expressions.PerformChanging)) {
       for (const s of c.findDirectExpressions(Expressions.Target)) {
-        new Target().runSyntax(s, input);
+        Target.runSyntax(s, input);
       }
     }
     for (const t of node.findDirectExpressions(Expressions.PerformTables)) {
       for (const s of t.findDirectExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, input);
+        Source.runSyntax(s, input);
       }
     }
     for (const u of node.findDirectExpressions(Expressions.PerformUsing)) {
       for (const s of u.findDirectExpressions(Expressions.Source)) {
-        new Source().runSyntax(s, input);
+        Source.runSyntax(s, input);
       }
     }
 
@@ -43,7 +43,7 @@ export class Perform implements StatementSyntax {
 
     const dynamic = node.findFirstExpression(Expressions.Dynamic);
     if (dynamic) {
-      new Dynamic().runSyntax(dynamic, input);
+      Dynamic.runSyntax(dynamic, input);
       return; // todo, maybe some parts can be checked
     }
 

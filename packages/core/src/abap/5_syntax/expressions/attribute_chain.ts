@@ -9,7 +9,7 @@ import {AttributeName} from "../../2_statements/expressions";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeChain {
-  public runSyntax(
+  public static runSyntax(
     inputContext: AbstractType | undefined,
     node: INode,
     input: SyntaxInput,

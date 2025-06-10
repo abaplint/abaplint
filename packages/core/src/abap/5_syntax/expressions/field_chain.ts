@@ -18,7 +18,7 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class FieldChain {
 
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode,
     input: SyntaxInput,
     refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
@@ -92,12 +92,12 @@ export class FieldChain {
           return VoidType.get(CheckSyntaxKey);
         }
       } else if (current.get() instanceof DereferenceExpression) {
-        context = new Dereference().runSyntax(current, context, input);
+        context = Dereference.runSyntax(current, context, input);
       } else if (current.get() instanceof Expressions.ComponentName) {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
         }
-        context = new ComponentName().runSyntax(context, current, input);
+        context = ComponentName.runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {
@@ -105,14 +105,14 @@ export class FieldChain {
           input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
-        new TableExpression().runSyntax(current, input);
+        TableExpression.runSyntax(current, input);
         if (!(context instanceof VoidType)) {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, input, refType);
+        context = AttributeName.runSyntax(context, current, input, refType);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
-        const offset = new FieldOffset().runSyntax(current, input);
+        const offset = FieldOffset.runSyntax(current, input);
         if (offset) {
           if (context instanceof CharacterType) {
             context = new CharacterType(context.getLength() - offset);
@@ -121,7 +121,7 @@ export class FieldChain {
           }
         }
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
-        const length = new FieldLength().runSyntax(current, input);
+        const length = FieldLength.runSyntax(current, input);
         if (length) {
           if (context instanceof CharacterType) {
             context = new CharacterType(length);
@@ -138,7 +138,7 @@ export class FieldChain {
 
   ////////////////
 
-  private findTop(
+  private static findTop(
     node: INode | undefined,
     input: SyntaxInput,
     type: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
@@ -149,13 +149,13 @@ export class FieldChain {
 
     if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceFieldSymbol) {
-      return new SourceFieldSymbol().runSyntax(node, input);
+      return SourceFieldSymbol.runSyntax(node, input);
     } else if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceField) {
-      return new SourceField().runSyntax(node, input, type);
+      return SourceField.runSyntax(node, input, type);
     } else if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.Field) {
-      return new SourceField().runSyntax(node, input, type);
+      return SourceField.runSyntax(node, input, type);
     } else if (node.get() instanceof Expressions.ClassName) {
       const classTok = node.getFirstToken();
       const classNam = classTok.getStr();

@@ -12,7 +12,7 @@ export class Data {
     const name = node.findFirstExpression(Expressions.DefinitionName);
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
-      const id = new DataDefinition().runSyntax(dd, input);
+      const id = DataDefinition.runSyntax(dd, input);
       if (id?.getType().isGeneric() === true
           && id?.getType().containsVoid() === false) {
         const message = "DATA definition cannot be generic, " + name?.concatTokens();

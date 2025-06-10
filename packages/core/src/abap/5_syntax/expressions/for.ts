@@ -13,7 +13,7 @@ import {Let} from "./let";
 import {SyntaxInput} from "../_syntax_input";
 
 export class For {
-  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): boolean {
+  public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): boolean {
     let scoped = false;
     const inlineLoop = node.findDirectExpressions(Expressions.InlineLoopDefinition);
     const inlineField = node.findDirectExpressions(Expressions.InlineFieldDefinition);
@@ -30,11 +30,11 @@ export class For {
     }
 
     for (const s of inlineLoop) {
-      new InlineLoopDefinition().runSyntax(s, input);
+      InlineLoopDefinition.runSyntax(s, input);
     }
 
     for (const f of inlineField) {
-      new InlineFieldDefinition().runSyntax(f, input);
+      InlineFieldDefinition.runSyntax(f, input);
     }
 
     if (groupsToken !== undefined) {
@@ -45,19 +45,19 @@ export class For {
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(s, input);
+      ComponentCond.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(s, input);
+      Cond.runSyntax(s, input);
     }
 
     if (lett) {
-      new Let().runSyntax(lett, input, true);
+      Let.runSyntax(lett, input, true);
     }
 
     return scoped;

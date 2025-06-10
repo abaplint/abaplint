@@ -198,7 +198,7 @@ export class MethodParameters implements IMethodParameters {
 
     const returning = node.findFirstExpression(Expressions.MethodDefReturning);
     if (returning) {
-      this.returning = new MethodDefReturning().runSyntax(returning, input, [IdentifierMeta.MethodReturning]);
+      this.returning = MethodDefReturning.runSyntax(returning, input, [IdentifierMeta.MethodReturning]);
     }
 
     this.workaroundRAP(node, input, parentName);
@@ -263,7 +263,7 @@ export class MethodParameters implements IMethodParameters {
       if (abstractMethod === true) {
         extraMeta.push(IdentifierMeta.Abstract);
       }
-      const id = new MethodParam().runSyntax(p, input, [...meta, ...extraMeta]);
+      const id = MethodParam.runSyntax(p, input, [...meta, ...extraMeta]);
       input.scope.addIdentifier(id);
       target.push(id);
       if (opt.findDirectTokenByText("OPTIONAL")) {
@@ -285,7 +285,7 @@ export class MethodParameters implements IMethodParameters {
 
     const params = source.findAllExpressions(Expressions.MethodParam);
     for (const param of params) {
-      target.push(new MethodParam().runSyntax(param, input, meta));
+      target.push(MethodParam.runSyntax(param, input, meta));
     }
   }
 

@@ -4,9 +4,9 @@ import {Source} from "./source";
 import {SyntaxInput} from "../_syntax_input";
 
 export class RaiseWith {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput) {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput) {
     for (const f of node.findAllExpressionsMulti([Expressions.SimpleSource1, Expressions.Source])) {
-      new Source().runSyntax(f, input);
+      Source.runSyntax(f, input);
     }
   }
 }

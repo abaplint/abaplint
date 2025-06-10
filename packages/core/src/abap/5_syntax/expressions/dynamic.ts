@@ -5,11 +5,11 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput} from "../_syntax_input";
 
 export class Dynamic {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput) {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput) {
 
     const chain = node.findDirectExpression(Expressions.FieldChain);
     if (chain) {
-      new FieldChain().runSyntax(chain, input, ReferenceType.DataReadReference);
+      FieldChain.runSyntax(chain, input, ReferenceType.DataReadReference);
     }
 
   }

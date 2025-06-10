@@ -6,11 +6,11 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class FSTarget {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
 
     const inlinefs = node?.findDirectExpression(Expressions.InlineFS);
     if (inlinefs) {
-      new InlineFS().runSyntax(inlinefs, input, type);
+      InlineFS.runSyntax(inlinefs, input, type);
     }
 
     const target = node?.findDirectExpression(Expressions.TargetFieldSymbol);

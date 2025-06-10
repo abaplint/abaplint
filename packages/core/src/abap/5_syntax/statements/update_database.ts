@@ -15,7 +15,7 @@ export class UpdateDatabase implements StatementSyntax {
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
     if (dbtab !== undefined) {
-      new DatabaseTable().runSyntax(dbtab, input);
+      DatabaseTable.runSyntax(dbtab, input);
     }
 
     const tableName = node.findDirectExpression(Expressions.DatabaseTable);
@@ -34,14 +34,14 @@ export class UpdateDatabase implements StatementSyntax {
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(d, input);
+      Dynamic.runSyntax(d, input);
     }
 
     if (input.scope.getType() === ScopeType.OpenSQL) {

@@ -6,18 +6,18 @@ import {SourceFieldSymbol} from "./source_field_symbol";
 import {SyntaxInput} from "../_syntax_input";
 
 export class Compare {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
 
     for (const t of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(t, input);
+      Source.runSyntax(t, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.SourceFieldSymbolChain)) {
-      new SourceFieldSymbol().runSyntax(t, input);
+      SourceFieldSymbol.runSyntax(t, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.MethodCallChain)) {
-      new MethodCallChain().runSyntax(t, input);
+      MethodCallChain.runSyntax(t, input);
     }
 
   }

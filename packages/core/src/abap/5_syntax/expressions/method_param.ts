@@ -9,7 +9,7 @@ import {SyntaxInput} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class MethodParam {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[]): TypedIdentifier {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[]): TypedIdentifier {
     const name = node.findDirectExpression(Expressions.MethodParamName);
     if (name === undefined) {
       throw new AssertError("MethodParam, todo, handle pass by value and reference");
@@ -23,7 +23,7 @@ export class MethodParam {
     const def = type.findDirectExpression(Expressions.Default);
     if (def) {
       try {
-        new Default().runSyntax(def, input);
+        Default.runSyntax(def, input);
       } catch (e) {
         return new TypedIdentifier(name.getFirstToken(), input.filename, new UnknownType(e.toString()), meta);
       }

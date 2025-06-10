@@ -8,12 +8,12 @@ import {SyntaxInput} from "../_syntax_input";
 export class Transfer implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     for (const source of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(source, input);
+      Source.runSyntax(source, input);
     }
 
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
   }
 }

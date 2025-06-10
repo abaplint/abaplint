@@ -14,7 +14,7 @@ export class DeleteInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     let targetType: AbstractType | undefined = undefined;
@@ -29,7 +29,7 @@ export class DeleteInternal implements StatementSyntax {
         }
       }
       if (tabl === undefined) {
-        targetType = new Target().runSyntax(target, input);
+        targetType = Target.runSyntax(target, input);
         if (targetType instanceof TableType) {
           targetType = targetType.getRowType();
         }
@@ -37,11 +37,11 @@ export class DeleteInternal implements StatementSyntax {
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      new ComponentCompare().runSyntax(t, input, targetType);
+      ComponentCompare.runSyntax(t, input, targetType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, input, targetType);
+      ComponentCond.runSyntax(t, input, targetType);
     }
 
   }

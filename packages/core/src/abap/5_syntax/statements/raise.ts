@@ -45,7 +45,7 @@ export class Raise implements StatementSyntax {
 
     const c = node.findExpressionAfterToken("EXCEPTION");
     if (c instanceof ExpressionNode && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
-      const type = new Source().runSyntax(c, input);
+      const type = Source.runSyntax(c, input);
       if (type instanceof VoidType) {
         method = type;
       } else if (type instanceof ObjectReferenceType) {
@@ -69,18 +69,18 @@ export class Raise implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpressions(Expressions.RaiseWith)) {
-      new RaiseWith().runSyntax(s, input);
+      RaiseWith.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.MessageSource)) {
-      new MessageSource().runSyntax(s, input);
+      MessageSource.runSyntax(s, input);
     }
 
     const id = node.findExpressionAfterToken("ID")?.concatTokens();

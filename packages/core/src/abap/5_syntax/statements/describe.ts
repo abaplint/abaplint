@@ -13,19 +13,19 @@ export class Describe implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findDirectExpressions(Expressions.FieldChain)) {
-      new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
+      FieldChain.runSyntax(s, input, ReferenceType.DataReadReference);
     }
 
     const linesTarget = node.findExpressionAfterToken("LINES");
     if (linesTarget?.get() instanceof Expressions.Target) {
       const inline = linesTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, IntegerType.get());
+        InlineData.runSyntax(inline, input, IntegerType.get());
       } else {
-        new Target().runSyntax(linesTarget, input);
+        Target.runSyntax(linesTarget, input);
       }
     }
 
@@ -33,9 +33,9 @@ export class Describe implements StatementSyntax {
     if (typeTarget?.get() instanceof Expressions.Target) {
       const inline = typeTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new CharacterType(1));
+        InlineData.runSyntax(inline, input, new CharacterType(1));
       } else {
-        new Target().runSyntax(typeTarget, input);
+        Target.runSyntax(typeTarget, input);
       }
     }
 
@@ -43,9 +43,9 @@ export class Describe implements StatementSyntax {
     if (lengthTarget?.get() instanceof Expressions.Target) {
       const inline = lengthTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, IntegerType.get());
+        InlineData.runSyntax(inline, input, IntegerType.get());
       } else {
-        new Target().runSyntax(lengthTarget, input);
+        Target.runSyntax(lengthTarget, input);
       }
     }
 
@@ -53,9 +53,9 @@ export class Describe implements StatementSyntax {
     if (componentsTarget?.get() instanceof Expressions.Target) {
       const inline = componentsTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, IntegerType.get());
+        InlineData.runSyntax(inline, input, IntegerType.get());
       } else {
-        new Target().runSyntax(componentsTarget, input);
+        Target.runSyntax(componentsTarget, input);
       }
     }
 

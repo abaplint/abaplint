@@ -21,7 +21,7 @@ export class SelectOption implements StatementSyntax {
     }
 
     for (const d of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(d, input);
+      Dynamic.runSyntax(d, input);
       input.scope.addIdentifier(
         new TypedIdentifier(nameToken, input.filename, VoidType.get("DYNAMIC_SELECT_OPTION")));
       return;

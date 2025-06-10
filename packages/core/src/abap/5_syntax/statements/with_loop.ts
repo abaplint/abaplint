@@ -9,11 +9,11 @@ export class WithLoop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findAllExpressions(Expressions.Select)) {
-      new Select().runSyntax(s, input);
+      Select.runSyntax(s, input);
     }
 
     for (const s of node.findAllExpressions(Expressions.SelectLoop)) {
-      new SelectLoop().runSyntax(s, input);
+      SelectLoop.runSyntax(s, input);
     }
 
   }

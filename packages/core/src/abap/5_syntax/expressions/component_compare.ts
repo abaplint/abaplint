@@ -7,7 +7,7 @@ import {Source} from "./source";
 
 export class ComponentCompare {
 
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, type?: AbstractType): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, type?: AbstractType): void {
 
     const chain = node.findDirectExpression(Expressions.ComponentChainSimple);
     if (chain === undefined) {
@@ -16,10 +16,10 @@ export class ComponentCompare {
       return;
     }
 
-    new ComponentChain().runSyntax(type, chain, input);
+    ComponentChain.runSyntax(type, chain, input);
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
   }
 

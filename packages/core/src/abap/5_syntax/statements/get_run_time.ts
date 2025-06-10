@@ -13,9 +13,9 @@ export class GetRunTime implements StatementSyntax {
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, IntegerType.get());
+      InlineData.runSyntax(inline, input, IntegerType.get());
     } else if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
 
   }

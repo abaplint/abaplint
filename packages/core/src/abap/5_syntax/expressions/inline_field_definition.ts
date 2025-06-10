@@ -10,7 +10,7 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
 
 export class InlineFieldDefinition {
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode | StatementNode,
     input: SyntaxInput,
     targetType?: AbstractType): AbstractType | undefined {
@@ -24,7 +24,7 @@ export class InlineFieldDefinition {
 
     const source = node.findDirectExpression(Expressions.Source);
     if (source) {
-      type = new Source().runSyntax(source, input);
+      type = Source.runSyntax(source, input);
     }
     const typeName = node.findDirectExpression(Expressions.TypeName);
     if (typeName) {

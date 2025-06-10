@@ -11,7 +11,7 @@ import {ScopeType} from "../_scope_type";
 import {SyntaxInput} from "../_syntax_input";
 
 export class ReduceBody {
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode | undefined,
     input: SyntaxInput,
     targetType: AbstractType | undefined): AbstractType | undefined {
@@ -23,7 +23,7 @@ export class ReduceBody {
     let scoped = false;
     const letNode = node.findDirectExpression(Expressions.Let);
     if (letNode) {
-      scoped = new Let().runSyntax(letNode, input);
+      scoped = Let.runSyntax(letNode, input);
     }
 
     let first: AbstractType | undefined = undefined;
@@ -36,10 +36,10 @@ export class ReduceBody {
       let foundType = targetType;
       const source = i.findDirectExpression(Expressions.Source);
       if (source) {
-        foundType = new Source().runSyntax(source, input, targetType);
+        foundType = Source.runSyntax(source, input, targetType);
       }
 
-      const found = new InlineFieldDefinition().runSyntax(i, input, foundType);
+      const found = InlineFieldDefinition.runSyntax(i, input, foundType);
       if (found && first === undefined) {
         first = found;
       }
@@ -47,18 +47,18 @@ export class ReduceBody {
 
     let forScopes = 0;
     for (const forNode of node.findDirectExpressions(Expressions.For) || []) {
-      const scoped = new For().runSyntax(forNode, input);
+      const scoped = For.runSyntax(forNode, input);
       if (scoped === true) {
         forScopes++;
       }
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.ReduceNext)) {
-      new ReduceNext().runSyntax(s, input);
+      ReduceNext.runSyntax(s, input);
     }
 
     if (scoped === true) {

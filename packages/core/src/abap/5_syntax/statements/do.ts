@@ -13,7 +13,7 @@ export class Do implements StatementSyntax {
     const afterDo = node.findExpressionAfterToken("DO");
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      const type = new Source().runSyntax(s, input);
+      const type = Source.runSyntax(s, input);
       if (s === afterDo
           && new TypeUtils(input.scope).isAssignable(type, IntegerType.get()) === false) {
         const message = "DO TIMES must be numeric";
@@ -23,7 +23,7 @@ export class Do implements StatementSyntax {
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, input);
+      Target.runSyntax(t, input);
     }
   }
 }
