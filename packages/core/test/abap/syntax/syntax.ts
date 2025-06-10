@@ -324,6 +324,29 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("constructor, global class from program", () => {
+    const clas = `
+class zcl_filter definition public.
+  public section.
+    methods constructor importing iv_name type string.
+endclass.
+
+class zcl_filter implementation.
+  method constructor.
+    write iv_name.
+  endmethod.
+endclass.`;
+    const prog = `
+data ref type ref to zcl_filter.
+create object ref.
+    `;
+    const issues = runMulti([
+      {filename: "zcl_filter.clas.abap", contents: clas},
+      {filename: "zprog.prog.abap", contents: prog},
+    ]);
+    expect(issues[0]?.getMessage()).to.contain("constructor parameter");
+  });
+
   it("locals impl, error descriptions, double error", () => {
     const def =
       "CLASS lcl_foobar DEFINITION.\n" +

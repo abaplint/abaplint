@@ -90,6 +90,10 @@ export class CreateObject implements StatementSyntax {
           return;
         }
       }
+
+      if (found instanceof ObjectReferenceType && cdef === undefined) {
+        cdef = input.scope.findClassDefinition(found.getQualifiedName());
+      }
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
