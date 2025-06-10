@@ -166,7 +166,7 @@ export class BuiltIn {
       mandatory: {
         "val": IntegerType.get(),
       },
-      return: new XStringType(),
+      return: XStringType.get(),
       version: Version.v702,
     },
 
@@ -187,7 +187,7 @@ export class BuiltIn {
       optional: {
         "bit": IntegerType.get(),
       },
-      return: new XStringType(),
+      return: XStringType.get(),
       version: Version.v702,
     },
 
@@ -1121,7 +1121,7 @@ export class BuiltIn {
 
     for (const e of extras) {
       const id = new TokenIdentifier(new Position(this.row++, 1), e);
-      ret.push(new TypedIdentifier(id, BuiltIn.filename, new VoidType(e), [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn], "'?'"));
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, VoidType.get(e), [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn], "'?'"));
     }
 
     return ret;
@@ -1131,7 +1131,7 @@ export class BuiltIn {
 
   private buildVariable(name: string) {
     const id = new TokenIdentifier(new Position(this.row++, 1), name);
-    return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name), [IdentifierMeta.BuiltIn]);
+    return new TypedIdentifier(id, BuiltIn.filename, VoidType.get(name), [IdentifierMeta.BuiltIn]);
   }
 
   private buildSY(): TypedIdentifier[] {
@@ -1327,7 +1327,7 @@ export class BuiltIn {
   private buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
     const id = new TokenIdentifier(new Position(this.row++, 1), name);
     if (type === undefined) {
-      type = new VoidType(name);
+      type = VoidType.get(name);
     }
     if (value === undefined) {
       value = "'?'";

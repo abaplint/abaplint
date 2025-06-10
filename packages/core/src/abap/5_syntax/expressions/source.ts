@@ -118,7 +118,7 @@ export class Source {
           if (new TypeUtils(input.scope).isAssignable(foundType, bodyType) === false) {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           }
           this.addIfInferred(node, input, foundType);
           return foundType;
@@ -197,7 +197,7 @@ export class Source {
         if (context === undefined) {
           const message = "Method has no RETURNING value";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
         context = new FieldChain().runSyntax(first, input, type);
@@ -235,7 +235,7 @@ export class Source {
             && !(context instanceof UnknownType)) {
           const message = "Operator only valid for XSTRING or HEX";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
         if (hexNext === false) {
           hexExpected = false;
@@ -323,7 +323,7 @@ export class Source {
       if (found && found instanceof UnknownType) {
         if (input.scope.getDDIC().inErrorNamespace(typeName) === false) {
           input.scope.addReference(typeToken, undefined, ReferenceType.VoidType, input.filename);
-          return new VoidType(typeName);
+          return VoidType.get(typeName);
         } else {
           const tid = new TypedIdentifier(typeToken, input.filename, found);
           input.scope.addReference(typeToken, tid, ReferenceType.TypeReference, input.filename);
@@ -332,7 +332,7 @@ export class Source {
       } else if (found === undefined) {
         const message = "Type \"" + typeName + "\" not found in scope, VALUE";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
 
       return found;

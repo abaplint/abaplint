@@ -27,7 +27,7 @@ export class Assign implements StatementSyntax {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-      sourceType = new VoidType("Dynamic");
+      sourceType = VoidType.get("Dynamic");
     } else {
       sourceType = new Source().runSyntax(theSource, input);
     }

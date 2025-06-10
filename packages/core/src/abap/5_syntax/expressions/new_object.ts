@@ -33,7 +33,7 @@ export class NewObject {
         if (intf) {
           const message = intf.getName() + " is an interface, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
       }
       ret = targetType;
@@ -41,7 +41,7 @@ export class NewObject {
       if (clas?.isAbstract() === true) {
         const message = clas.getName() + " is abstract, cannot be instantiated";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
     } else if (typeName === "#" && targetType) {
       ret = targetType;
@@ -60,7 +60,7 @@ export class NewObject {
         if (clas?.isAbstract() === true) {
           const message = clas.getName() + " is abstract, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
         ret = objref;
       }
@@ -78,7 +78,7 @@ export class NewObject {
       } else {
         const message = "Type \"" + typeName + "\" not found in scope, NewObject";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
     }
 
@@ -93,7 +93,7 @@ export class NewObject {
     if (ret instanceof UnknownType && input.scope.getDDIC().inErrorNamespace(typeName) === true) {
       const message = "Class or type \"" + typeName + "\" not found";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     return ret;

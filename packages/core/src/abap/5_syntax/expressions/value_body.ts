@@ -41,7 +41,7 @@ export class ValueBody {
         if (fields.has(fieldname)) {
           const message = "Duplicate field assignment";
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
         fields.add(fieldname);
       }
@@ -60,7 +60,7 @@ export class ValueBody {
           && !(targetType instanceof VoidType)) {
         const message = "Value, not a table type";
         input.issues.push(syntaxIssue(input, foo.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
       let rowType: AbstractType | undefined = targetType;
       if (targetType instanceof TableType) {

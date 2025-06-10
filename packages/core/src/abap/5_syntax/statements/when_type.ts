@@ -18,7 +18,7 @@ export class WhenType implements StatementSyntax {
     const className = nameToken.getStr();
     const found = input.scope.findObjectDefinition(className);
     if (found === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
-      type = new VoidType(className);
+      type = VoidType.get(className);
     } else if (found === undefined) {
       const message = "Class " + className + " not found";
       input.issues.push(syntaxIssue(input, nameToken, message));

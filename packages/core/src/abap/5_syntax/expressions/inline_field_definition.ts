@@ -41,7 +41,7 @@ export class InlineFieldDefinition {
     if (input.scope.findVariable(name) !== undefined) {
       const message = `Variable ${name} already defined`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     const identifier = new TypedIdentifier(field, input.filename, type, [IdentifierMeta.InlineDefinition]);

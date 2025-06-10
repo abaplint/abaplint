@@ -31,7 +31,7 @@ export class Raise implements StatementSyntax {
       } else if (input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(classTok, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
-        method = new VoidType(className);
+        method = VoidType.get(className);
       } else {
         const message = "RAISE, unknown class " + className;
         input.issues.push(syntaxIssue(input, classTok, message));
@@ -39,7 +39,7 @@ export class Raise implements StatementSyntax {
       }
 
       if (method === undefined) {
-        method = new VoidType(className);
+        method = VoidType.get(className);
       }
     }
 
@@ -59,7 +59,7 @@ export class Raise implements StatementSyntax {
     }
 
     if (method === undefined) {
-      method = new VoidType("Exception");
+      method = VoidType.get("Exception");
     }
 
     // check parameters vs constructor

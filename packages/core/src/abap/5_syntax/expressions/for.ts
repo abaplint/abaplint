@@ -38,7 +38,7 @@ export class For {
     }
 
     if (groupsToken !== undefined) {
-      const type = new VoidType("todoGroupBy");
+      const type = VoidType.get("todoGroupBy");
       const identifier = new TypedIdentifier(groupsToken, input.filename, type, [IdentifierMeta.InlineDefinition]);
       input.scope.addIdentifier(identifier);
       input.scope.addReference(groupsToken, identifier, ReferenceType.DataWriteReference, input.filename);

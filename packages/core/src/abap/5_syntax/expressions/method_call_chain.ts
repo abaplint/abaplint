@@ -27,7 +27,7 @@ export class MethodCallChain {
     if (first === undefined) {
       const message = "MethodCallChain, first child expected";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     let context: AbstractType | undefined = this.findTop(first, input, targetType);
@@ -59,7 +59,7 @@ export class MethodCallChain {
           if (previous && previous.getFirstToken().getStr() === "=>" && method?.isStatic() === false) {
             const message = "Method \"" + methodName + "\" not static";
             input.issues.push(syntaxIssue(input, methodToken!, message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           }
           const voidedName = context instanceof VoidType ? context.getVoided() : undefined;
           const extra = helper.methodReferenceExtras(foundDef, className || voidedName);
@@ -78,7 +78,7 @@ export class MethodCallChain {
         } else if (method === undefined && !(context instanceof VoidType)) {
           const message = "Method \"" + methodName + "\" not found, methodCallChain";
           input.issues.push(syntaxIssue(input, methodToken!, message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         } else if (method) {
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;
@@ -112,11 +112,11 @@ export class MethodCallChain {
       if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
-        return new VoidType(className);
+        return VoidType.get(className);
       } else if (classDefinition === undefined) {
         const message = "Class " + className + " not found";
         input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);

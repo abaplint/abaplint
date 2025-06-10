@@ -51,7 +51,7 @@ export class AuthorizationCheckField extends AbstractObject {
       } else if (ddic.inErrorNamespace(this.parsedXML.rollname)) {
         return new UnknownType(this.parsedXML.rollname + " not found");
       } else {
-        return new VoidType(this.parsedXML.rollname);
+        return VoidType.get(this.parsedXML.rollname);
       }
     } else {
       return new UnknownType("Parsing error");

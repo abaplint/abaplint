@@ -27,7 +27,7 @@ export class Call implements StatementSyntax {
     const body = children[3];
     if (body instanceof ExpressionNode) {
       // todo, resolve the method definition above and pass, if possible, in case of dynamic pass void
-      new MethodCallBody().runSyntax(body, input, methodDef || new VoidType("CallTODO"));
+      new MethodCallBody().runSyntax(body, input, methodDef || VoidType.get("CallTODO"));
     }
 
   }

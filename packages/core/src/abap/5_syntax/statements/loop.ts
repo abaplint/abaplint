@@ -43,7 +43,7 @@ export class Loop implements StatementSyntax {
     } else if (sourceType instanceof UnknownType) {
       const message = "Loop, not a table type, " + sourceType.getError();
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      sourceType = new VoidType("Loop, not a table type");
+      sourceType = VoidType.get("Loop, not a table type");
     } else if (sourceType instanceof TableType
         && target === undefined
         && sourceType.isWithHeader() === false

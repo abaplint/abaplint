@@ -11,7 +11,7 @@ export class SourceFieldSymbol {
     if (found === undefined) {
       const message = "\"" + node.getFirstToken().getStr() + "\" not found, SourceFieldSymbol";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
     input.scope.addReference(token, found, ReferenceType.DataReadReference, input.filename);
     return found.getType();

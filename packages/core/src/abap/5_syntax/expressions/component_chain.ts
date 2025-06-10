@@ -32,20 +32,20 @@ export class ComponentChain {
           if (!(context instanceof StructureType)) {
             const message = "ComponentChain, not a structure";
             input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
 
           }
         } else if (concat === "=>") {
           if (!(context instanceof ObjectReferenceType)) {
             const message = "ComponentChain, not a reference";
             input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           }
         } else if (concat === "->") {
           if (!(context instanceof ObjectReferenceType) && !(context instanceof DataReference)) {
             const message = "ComponentChain, not a reference";
             input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           }
         }
       } else if (child.get() instanceof Expressions.ComponentName) {
@@ -63,7 +63,7 @@ export class ComponentChain {
           if (context === undefined) {
             const message = "Component \"" + name + "\" not found in structure";
             input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           }
         } else if (context instanceof ObjectReferenceType) {
           const id = context.getIdentifier();
@@ -71,7 +71,7 @@ export class ComponentChain {
           if (def === undefined) {
             const message = id.getName() + " not found in scope";
             input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           }
 
           const helper = new ObjectOriented(input.scope);
@@ -81,7 +81,7 @@ export class ComponentChain {
           if (context === undefined) {
             const message = "Attribute \"" + name + "\" not found";
             input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           } else {
             const extra: IReferenceExtras = {
               ooName: id.getName(),
@@ -91,7 +91,7 @@ export class ComponentChain {
         } else {
           const message = "ComponentChain, not a structure, " + context?.constructor.name;
           input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
       }
     }

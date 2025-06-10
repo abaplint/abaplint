@@ -17,7 +17,7 @@ export class CommitEntities implements StatementSyntax {
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       const inline = t?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new VoidType("CommitEntities"));
+        new InlineData().runSyntax(inline, input, VoidType.get("CommitEntities"));
       } else {
         new Target().runSyntax(t, input);
       }

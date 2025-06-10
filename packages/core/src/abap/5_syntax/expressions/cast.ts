@@ -14,7 +14,7 @@ export class Cast {
     if (sourceNode === undefined) {
       const message = "Cast, source node not found";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     const sourceType = new Source().runSyntax(sourceNode, input);
@@ -25,13 +25,13 @@ export class Cast {
     if (typeName === undefined) {
       const message = "Cast, child TypeNameOrInfer not found";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     } else if (typeName === "#" && targetType) {
       tt = targetType;
     } else if (typeName === "#") {
       const message = "Cast, todo, infer type";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     if (tt === undefined && typeExpression) {
@@ -47,14 +47,14 @@ export class Cast {
         tt = new DataReference(tt, typeName);
       }
       if (tt === undefined && input.scope.getDDIC().inErrorNamespace(typeName) === false) {
-        tt = new VoidType(typeName);
+        tt = VoidType.get(typeName);
       } else if (typeName.toUpperCase() === "OBJECT") {
         return new GenericObjectReferenceType();
       } else if (tt === undefined) {
         // todo, this should be an UnknownType instead?
         const message = "Type \"" + typeName + "\" not found in scope, Cast";
         input.issues.push(syntaxIssue(input, typeExpression.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
     }
     new Source().addIfInferred(node, input, tt);
@@ -62,7 +62,7 @@ export class Cast {
     if (new TypeUtils(input.scope).isCastable(sourceType, tt) === false) {
       const message = "Cast, incompatible types";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     return tt!;

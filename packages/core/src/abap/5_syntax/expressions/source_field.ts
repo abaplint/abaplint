@@ -16,7 +16,7 @@ export class SourceField {
       if (error === true) {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       }
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     if (type) {

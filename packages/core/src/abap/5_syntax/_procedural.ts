@@ -179,7 +179,7 @@ export class Procedural {
       }
 
       if (found instanceof UnknownType && new DDIC(this.reg).inErrorNamespace(param.type) === false) {
-        found = new VoidType(param.type);
+        found = VoidType.get(param.type);
       }
 
       if (allNames.has(param.name.toUpperCase())) {

@@ -17,7 +17,7 @@ export class Concatenate implements StatementSyntax {
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
       if (byteMode) {
-        new InlineData().runSyntax(inline, input, new XStringType());
+        new InlineData().runSyntax(inline, input, XStringType.get());
       } else {
         new InlineData().runSyntax(inline, input, StringType.get());
       }

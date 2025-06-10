@@ -1,13 +1,17 @@
 import {AbstractType, AbstractTypeData} from "./_abstract_type";
 
 export class StringType extends AbstractType {
-  private static readonly singleton = new StringType();
+  private static readonly singletons = new Map<string, StringType>();
 
   public static get(input?: AbstractTypeData): StringType {
-    if (input === undefined) {
-      return this.singleton;
+    const key = JSON.stringify(input);
+    if (this.singletons.has(key)) {
+      return this.singletons.get(key)!;
     }
-    return new StringType(input);
+
+    const ret = new StringType(input);
+    this.singletons.set(key, ret);
+    return ret;
   }
 
   private constructor(input?: AbstractTypeData) {

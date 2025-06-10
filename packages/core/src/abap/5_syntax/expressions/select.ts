@@ -169,7 +169,7 @@ export class Select {
     if (intoStructure) {
       for (const inline of intoStructure.findAllExpressions(Expressions.InlineData)) {
         // todo, for now these are voided
-        new InlineData().runSyntax(inline, input, new VoidType("SELECT_todo"));
+        new InlineData().runSyntax(inline, input, VoidType.get("SELECT_todo"));
       }
     }
 
@@ -195,7 +195,7 @@ export class Select {
             return;
           }
 
-          let type: AbstractType = new VoidType("SELECT_todo");
+          let type: AbstractType = VoidType.get("SELECT_todo");
 
           if (isSimple.test(field.code)) {
             for (const dbSource of dbSources) {
@@ -255,16 +255,16 @@ export class Select {
 
   private buildTableType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
     if (dbSources.length !== 1) {
-      return new VoidType("SELECT_todo");
+      return VoidType.get("SELECT_todo");
     }
 
     if (dbSources[0] === undefined) {
       // then its a voided table
-      return new VoidType("SELECT_todo");
+      return VoidType.get("SELECT_todo");
     }
     const dbType = dbSources[0].parseType(scope.getRegistry());
     if (!(dbType instanceof StructureType)) {
-      return new VoidType("SELECT_todo");
+      return VoidType.get("SELECT_todo");
     }
 
     if (fields.length === 1 && fields[0].code === "*") {
@@ -277,14 +277,14 @@ export class Select {
       for (const field of fields) {
         const type = dbType.getComponentByName(field.code);
         if (type === undefined) {
-          return new VoidType("SELECT_todo");
+          return VoidType.get("SELECT_todo");
         }
         components.push({name: field.code, type});
       }
       return new TableType(new StructureType(components), {withHeader: false, keyType: TableKeyType.default}, undefined);
     }
 
-    return new VoidType("SELECT_todo");
+    return VoidType.get("SELECT_todo");
   }
 
   private findFields(node: ExpressionNode, input: SyntaxInput): FieldList {

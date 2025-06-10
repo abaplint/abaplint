@@ -15,7 +15,7 @@ export class SwitchBody {
     if (!(thenSource?.get() instanceof Expressions.Source)) {
       const message = "SwitchBody, unexpected";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
     const type = new Source().runSyntax(thenSource, input);
 

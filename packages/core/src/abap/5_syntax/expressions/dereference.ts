@@ -16,7 +16,7 @@ export class Dereference {
     if (!(type instanceof DataReference)) {
       const message = "Not a data reference, cannot be dereferenced";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     return type.getType();

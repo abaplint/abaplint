@@ -15,7 +15,7 @@ export class LoopAtScreen implements StatementSyntax {
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, new VoidType("SCREEN"));
+      new InlineData().runSyntax(inline, input, VoidType.get("SCREEN"));
     }
   }
 }

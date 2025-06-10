@@ -18,7 +18,7 @@ export class ClassData {
           && found?.getType().containsVoid() === false) {
         const message = "DATA definition cannot be generic, " + found.getName();
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new TypedIdentifier(found.getToken(), input.filename, new VoidType(CheckSyntaxKey));
+        return new TypedIdentifier(found.getToken(), input.filename, VoidType.get(CheckSyntaxKey));
       }
       const meta = [...found.getMeta(), IdentifierMeta.Static];
       return new TypedIdentifier(found.getToken(), input.filename, found.getType(), meta, found.getValue());

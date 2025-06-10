@@ -23,7 +23,7 @@ export class SelectOption implements StatementSyntax {
     for (const d of node.findDirectExpressions(Expressions.Dynamic)) {
       new Dynamic().runSyntax(d, input);
       input.scope.addIdentifier(
-        new TypedIdentifier(nameToken, input.filename, new VoidType("DYNAMIC_SELECT_OPTION")));
+        new TypedIdentifier(nameToken, input.filename, VoidType.get("DYNAMIC_SELECT_OPTION")));
       return;
     }
 
@@ -38,7 +38,7 @@ export class SelectOption implements StatementSyntax {
           }
         }
         if (length === 0) {
-          found = new VoidType("Selectoption, fallback");
+          found = VoidType.get("Selectoption, fallback");
         } else {
           found = new CharacterType(length);
         }
@@ -59,6 +59,6 @@ export class SelectOption implements StatementSyntax {
 
     const magicName = "%_" + nameToken.getStr() + "_%_app_%";
     const magicToken = new Identifier(nameToken.getStart(), magicName);
-    input.scope.addIdentifier(new TypedIdentifier(magicToken, input.filename, new VoidType("SELECT-OPTION magic")));
+    input.scope.addIdentifier(new TypedIdentifier(magicToken, input.filename, VoidType.get("SELECT-OPTION magic")));
   }
 }

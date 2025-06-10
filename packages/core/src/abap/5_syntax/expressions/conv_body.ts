@@ -18,7 +18,7 @@ export class ConvBody {
     if (s === undefined) {
       const message = "ConvBody, no source found";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
     const sourceType = new Source().runSyntax(s, input);
 

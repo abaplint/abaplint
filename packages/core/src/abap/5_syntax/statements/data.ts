@@ -17,7 +17,7 @@ export class Data {
           && id?.getType().containsVoid() === false) {
         const message = "DATA definition cannot be generic, " + name?.concatTokens();
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new TypedIdentifier(id.getToken(), input.filename, new VoidType(CheckSyntaxKey));
+        return new TypedIdentifier(id.getToken(), input.filename, VoidType.get(CheckSyntaxKey));
       }
       return id;
     }

@@ -42,7 +42,7 @@ export class MethodSource {
       if (name !== undefined && input.scope.findClassDefinition(name) === undefined) {
         const message = `Class "${name}" not found/released`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
     }
 
@@ -67,11 +67,11 @@ export class MethodSource {
         if (context instanceof UnknownType) {
           const message = "Not a structure, type unknown, MethodSource";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         } else if (!(context instanceof StructureType)) {
           const message = "Not a structure, MethodSource";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
       } else if (current.get() instanceof InstanceArrow
           || current.get() instanceof StaticArrow) {
@@ -98,11 +98,11 @@ export class MethodSource {
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
 
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
-          context = new VoidType("CONSTRUCTOR"); // todo, this is a workaround, constructors always exists
+          context = VoidType.get("CONSTRUCTOR"); // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
           const message = "Method or attribute \"" + methodName + "\" not found, MethodSource";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         } else if (method) {
           const extra = helper.methodReferenceExtras(foundDef, className);
           input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);
@@ -117,18 +117,18 @@ export class MethodSource {
         context = new ComponentName().runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.Dynamic) {
         new Dynamic().runSyntax(current, input);
-        context = new VoidType("Dynamic");
+        context = VoidType.get("Dynamic");
       }
     }
 
     if (context instanceof AbstractType && !(context instanceof VoidType)) {
       const message = "Not a method, MethodSource";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     } else if (context === undefined) {
       const message = "Not found, MethodSource";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     return context;
@@ -145,11 +145,11 @@ export class MethodSource {
       if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
-        return new VoidType(className);
+        return VoidType.get(className);
       } else if (classDefinition === undefined) {
         const message = "Class " + className + " not found";
         input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
@@ -159,7 +159,7 @@ export class MethodSource {
       return new SourceFieldSymbol().runSyntax(first, input);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dynamic) {
       new Dynamic().runSyntax(first, input);
-      return new VoidType("Dynamic");
+      return VoidType.get("Dynamic");
     }
 
     return undefined;

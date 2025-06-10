@@ -17,12 +17,12 @@ export class StringTemplate {
       if (type === undefined) {
         const message = "No target type determined";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       } else if ((typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false)
           || type instanceof StructureType) {
         const message = "String template, not character like, " + type.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
 
       const format = templateSource.findDirectExpression(Expressions.StringTemplateFormatting);
@@ -43,7 +43,7 @@ export class StringTemplate {
           && !(type instanceof AnyType)) {
         const message = `Cannot apply ALPHA to this type (${type.constructor.name})`;
         input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
     }
 

@@ -247,7 +247,7 @@ export class MethodParameters {
         } else {
           const message = "No source type determined for parameter " + name + " input";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          sourceType = new VoidType(CheckSyntaxKey);
+          sourceType = VoidType.get(CheckSyntaxKey);
         }
       }
 

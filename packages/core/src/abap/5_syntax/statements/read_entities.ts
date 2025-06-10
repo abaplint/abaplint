@@ -17,7 +17,7 @@ export class ReadEntities implements StatementSyntax {
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       const inline = t?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new VoidType("ReadEntities"));
+        new InlineData().runSyntax(inline, input, VoidType.get("ReadEntities"));
       } else {
         new Target().runSyntax(t, input);
       }

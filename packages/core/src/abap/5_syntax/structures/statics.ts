@@ -57,7 +57,7 @@ export class Statics {
         if (!(found instanceof Basic.StructureType)) {
           const message = "not structured, " + typeName;
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new TypedIdentifier(name, input.filename, new Basic.VoidType(CheckSyntaxKey));
+          return new TypedIdentifier(name, input.filename, Basic.VoidType.get(CheckSyntaxKey));
         }
         for (const c of found.getComponents()) {
           components.push(c);

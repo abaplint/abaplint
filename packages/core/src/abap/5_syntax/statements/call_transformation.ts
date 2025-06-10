@@ -22,7 +22,7 @@ export class CallTransformation implements StatementSyntax {
     for (const t of node.findAllExpressions(Expressions.Target)) {
       const inline = t?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new XStringType());
+        new InlineData().runSyntax(inline, input, XStringType.get());
       } else {
         new Target().runSyntax(t, input);
       }

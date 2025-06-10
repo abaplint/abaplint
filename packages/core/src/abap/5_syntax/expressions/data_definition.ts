@@ -22,7 +22,7 @@ export class DataDefinition {
     const name = node.findFirstExpression(Expressions.DefinitionName);
     const typeStructure = node.findFirstExpression(Expressions.TypeStructure);
     if (typeStructure && name) {
-      return new TypedIdentifier(name.getFirstToken(), input.filename, new VoidType("DataDefinition, TypeStructure"));
+      return new TypedIdentifier(name.getFirstToken(), input.filename, VoidType.get("DataDefinition, TypeStructure"));
     }
 
     const bfound = new BasicTypes(input).simpleType(node);

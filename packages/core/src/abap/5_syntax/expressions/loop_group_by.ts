@@ -14,18 +14,18 @@ export class LoopGroupBy {
     for (const t of node.findAllExpressions(Expressions.Target)) {
       const inline = t.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new VoidType("todoGroupBy"));
+        new InlineData().runSyntax(inline, input, VoidType.get("todoGroupBy"));
       } else {
         new Target().runSyntax(t, input);
       }
     }
 
     for (const t of node.findAllExpressions(Expressions.FSTarget)) {
-      new FSTarget().runSyntax(t, input, new VoidType("todoGroupBy"));
+      new FSTarget().runSyntax(t, input, VoidType.get("todoGroupBy"));
     }
 
     for (const t of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(t, input, new VoidType("todoGroupBy"));
+      new Source().runSyntax(t, input, VoidType.get("todoGroupBy"));
     }
 
     for (const c of node.findDirectExpressions(Expressions.LoopGroupByComponent)) {
