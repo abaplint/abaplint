@@ -21,26 +21,28 @@ export class MethodCallChain {
     targetType?: AbstractType): AbstractType | undefined {
 
     const helper = new ObjectOriented(input.scope);
-    const children = node.getChildren().slice();
+    const children = node.getChildren();
 
-    const first = children.shift();
+    const first = children[0];
     if (first === undefined) {
       const message = "MethodCallChain, first child expected";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
     }
 
+    let currentIndex = 1;
     let context: AbstractType | undefined = this.findTop(first, input, targetType);
     if (first.get() instanceof Expressions.MethodCall) {
-      children.unshift(first);
+      currentIndex--;
     }
 
     let previous: ExpressionNode | TokenNode | undefined = undefined;
-    while (children.length > 0) {
-      const current = children.shift();
+    while (currentIndex <= children.length) {
+      const current = children[currentIndex];
       if (current === undefined) {
         break;
       }
+      currentIndex++;
 
       if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
         // for built-in methods set className to undefined
