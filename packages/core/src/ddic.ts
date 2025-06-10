@@ -82,13 +82,13 @@ export class DDIC {
       case "DECFLOAT":
         return new Types.DecFloatType({qualifiedName: qualifiedName});
       case "ANY":
-        return new Types.AnyType({qualifiedName: qualifiedName});
+        return Types.AnyType.get({qualifiedName: qualifiedName});
       case "SIMPLE":
         return new Types.SimpleType({qualifiedName: qualifiedName});
       case "%_C_POINTER":
         return new Types.HexType(8, qualifiedName);
       case "TABLE":
-        return new Types.TableType(new Types.AnyType(), {withHeader: false, keyType: Types.TableKeyType.default});
+        return new Types.TableType(Types.AnyType.get(), {withHeader: false, keyType: Types.TableKeyType.default});
       case "DATA":
         return new Types.DataType({qualifiedName: qualifiedName});
       case "NUMERIC":

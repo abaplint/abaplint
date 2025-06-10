@@ -107,7 +107,7 @@ export class Procedural {
     for (const param of definition.getParameters()) {
       let found: AbstractType | undefined = undefined;
       if (param.type === undefined || param.type === "") {
-        found = new AnyType();
+        found = AnyType.get();
       } else if (param.type.includes("=>")) {
         // then its a type from global INTF or CLAS
         const [clas, name] = param.type.split("=>");

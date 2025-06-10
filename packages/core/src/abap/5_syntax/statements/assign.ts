@@ -44,7 +44,7 @@ export class Assign implements StatementSyntax {
     }
 
     if (sourceType === undefined || assignSource?.findDirectExpression(Expressions.Dynamic)) {
-      sourceType = new AnyType();
+      sourceType = AnyType.get();
     }
     for (const d of assignSource?.findAllExpressions(Expressions.Dynamic) || []) {
       new Dynamic().runSyntax(d, input);
@@ -53,7 +53,7 @@ export class Assign implements StatementSyntax {
     const target = node.findDirectExpression(Expressions.FSTarget);
     if (target) {
       if (assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
-        new FSTarget().runSyntax(target, input, new AnyType());
+        new FSTarget().runSyntax(target, input, AnyType.get());
       } else {
         new FSTarget().runSyntax(target, input, sourceType);
       }

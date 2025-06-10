@@ -416,7 +416,7 @@ export class BasicTypes {
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), options);
+      return new Types.TableType(Types.AnyType.get(), options);
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
@@ -522,7 +522,7 @@ export class BasicTypes {
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), keyType: Types.TableKeyType.default});
+      return new Types.TableType(Types.AnyType.get(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), keyType: Types.TableKeyType.default});
     } else if (text.startsWith("LIKE ")) {
       let sub = node.findFirstExpression(Expressions.Type);
       if (sub === undefined) {

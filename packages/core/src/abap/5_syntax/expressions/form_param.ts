@@ -28,7 +28,7 @@ export class FormParam {
 
     if (node.getChildren().length === 1 && nameToken) {
       // untyped FORM parameter
-      return new TypedIdentifier(nameToken, input.filename, new AnyType(), [IdentifierMeta.FormParameter]);
+      return new TypedIdentifier(nameToken, input.filename, AnyType.get(), [IdentifierMeta.FormParameter]);
     }
 
     const bfound = new BasicTypes(input).parseType(node);

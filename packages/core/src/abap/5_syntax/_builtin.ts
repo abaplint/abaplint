@@ -259,7 +259,7 @@ export class BuiltIn {
     "CONCAT_LINES_OF": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "table": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
+        "table": new TableType(AnyType.get(), {withHeader: false, keyType: TableKeyType.default}),
       },
       optional: {
         "sep": CLikeType.get(),
@@ -562,7 +562,7 @@ export class BuiltIn {
     "LINE_EXISTS": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new AnyType(),
+        "val": AnyType.get(),
       },
       return: new CharacterType(1),
       predicate: true,
@@ -572,7 +572,7 @@ export class BuiltIn {
     "LINE_INDEX": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new AnyType(),
+        "val": AnyType.get(),
       },
       return: IntegerType.get(),
       version: Version.v740sp02,
@@ -581,7 +581,7 @@ export class BuiltIn {
     "LINES": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new TableType(new AnyType(), {withHeader: false, keyType: TableKeyType.default}),
+        "val": new TableType(AnyType.get(), {withHeader: false, keyType: TableKeyType.default}),
       },
       return: IntegerType.get(),
     },
@@ -1184,7 +1184,7 @@ export class BuiltIn {
     components.push({name: "dayst", type: new CharacterType(1)});
     components.push({name: "ftype", type: new CharacterType(1)});
     components.push({name: "appli", type: new HexType(2)});
-    components.push({name: "fdayw", type: new AnyType()});
+    components.push({name: "fdayw", type: AnyType.get()});
     components.push({name: "ccurs", type: new PackedType(5, 0)});
     components.push({name: "ccurt", type: new PackedType(5, 0)});
     components.push({name: "debug", type: new CharacterType(1)});
