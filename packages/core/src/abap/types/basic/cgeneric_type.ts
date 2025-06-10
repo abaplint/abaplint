@@ -1,6 +1,16 @@
 import {AbstractType} from "./_abstract_type";
 
 export class CGenericType extends AbstractType {
+  private static readonly singleton = new CGenericType();
+
+  public static get(): CGenericType {
+    return this.singleton;
+  }
+
+  private constructor() {
+    super();
+  }
+
   public toText() {
     return "```c```";
   }

@@ -42,16 +42,16 @@ export class CreateObject implements StatementSyntax {
 
     // just recurse
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const t of node.findDirectExpression(Expressions.ParameterListExceptions)?.findAllExpressions(Expressions.Target) || []) {
-      new Target().runSyntax(t, input);
+      Target.runSyntax(t, input);
     }
 
     const t = node.findDirectExpression(Expressions.Target);
     if (t) {
-      const found = new Target().runSyntax(t, input);
+      const found = Target.runSyntax(t, input);
       if (found instanceof VoidType) {
         // do nothing
       } else if (found instanceof UnknownType) {
@@ -90,10 +90,14 @@ export class CreateObject implements StatementSyntax {
           return;
         }
       }
+
+      if (found instanceof ObjectReferenceType && cdef === undefined) {
+        cdef = input.scope.findClassDefinition(found.getQualifiedName());
+      }
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(t, input);
+      Dynamic.runSyntax(t, input);
     }
 
     input.scope.addReference(t?.getFirstToken(), cdef, ReferenceType.ConstructorReference, input.filename,
@@ -106,7 +110,7 @@ export class CreateObject implements StatementSyntax {
     if (cdef === undefined) {
       const sources = node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.Source);
       for (const s of sources || []) {
-        new Source().runSyntax(s, input);
+        Source.runSyntax(s, input);
       }
       return;
     }
@@ -124,7 +128,7 @@ export class CreateObject implements StatementSyntax {
       }
 
       const source = p.findDirectExpression(Expressions.Source);
-      const sourceType = new Source().runSyntax(source, input);
+      const sourceType = Source.runSyntax(source, input);
 
       const found = allImporting?.find(p => p.getName().toUpperCase() === name);
       if (found === undefined) {

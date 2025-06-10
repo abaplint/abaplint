@@ -58,9 +58,9 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     for (const param of tables.findAllExpressions(Expressions.FormParam)) {
       if (param.getChildren().length === 1) {
         // untyped TABLES parameter
-        ret.push(new TypedIdentifier(param.getFirstToken(), input.filename, new VoidType("FORM:UNTYPED"), [IdentifierMeta.FormParameter]));
+        ret.push(new TypedIdentifier(param.getFirstToken(), input.filename, VoidType.get("FORM:UNTYPED"), [IdentifierMeta.FormParameter]));
       } else {
-        const p = new FormParam().runSyntax(param, input);
+        const p = FormParam.runSyntax(param, input);
 
         let type = p.getType();
 
@@ -93,7 +93,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
   private findParams(node: ExpressionNode | StatementNode, input: SyntaxInput) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
-      const p = new FormParam().runSyntax(param, input);
+      const p = FormParam.runSyntax(param, input);
       res.push(p);
     }
     return res;

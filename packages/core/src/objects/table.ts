@@ -183,7 +183,7 @@ export class Table extends AbstractObject {
         if (field.ROLLNAME === "DATA") {
           components.push({
             name: field.FIELDNAME,
-            type: new DataReference(new AnyType())});
+            type: new DataReference(AnyType.get())});
         } else if (field.ROLLNAME === "OBJECT") {
           components.push({
             name: field.FIELDNAME,

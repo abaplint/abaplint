@@ -11,15 +11,15 @@ export class ReadEntities implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       const inline = t?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new VoidType("ReadEntities"));
+        InlineData.runSyntax(inline, input, VoidType.get("ReadEntities"));
       } else {
-        new Target().runSyntax(t, input);
+        Target.runSyntax(t, input);
       }
     }
 

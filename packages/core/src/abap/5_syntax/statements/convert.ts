@@ -13,16 +13,16 @@ export class Convert implements StatementSyntax {
 // todo, the source must be of a specific type
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     const timeTarget = node.findExpressionAfterToken("TIME");
     if (timeTarget?.get() instanceof Expressions.Target) {
       const inline = timeTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new TimeType());
+        InlineData.runSyntax(inline, input, new TimeType());
       } else {
-        new Target().runSyntax(timeTarget, input);
+        Target.runSyntax(timeTarget, input);
       }
     }
 
@@ -30,9 +30,9 @@ export class Convert implements StatementSyntax {
     if (dateTarget?.get() instanceof Expressions.Target) {
       const inline = dateTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new DateType());
+        InlineData.runSyntax(inline, input, new DateType());
       } else {
-        new Target().runSyntax(dateTarget, input);
+        Target.runSyntax(dateTarget, input);
       }
     }
 
@@ -40,9 +40,9 @@ export class Convert implements StatementSyntax {
     if (stampTarget?.get() instanceof Expressions.Target) {
       const inline = stampTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, new PackedType(8, 4));
+        InlineData.runSyntax(inline, input, new PackedType(8, 4));
       } else {
-        new Target().runSyntax(stampTarget, input);
+        Target.runSyntax(stampTarget, input);
       }
     }
 

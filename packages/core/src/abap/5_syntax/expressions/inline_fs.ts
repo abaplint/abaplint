@@ -7,7 +7,7 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput} from "../_syntax_input";
 
 export class InlineFS {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
     const token = node.findFirstExpression(Expressions.TargetFieldSymbol)?.getFirstToken();
     if (token && type) {
       const identifier = new TypedIdentifier(token, input.filename, type, [IdentifierMeta.InlineDefinition]);

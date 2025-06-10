@@ -128,7 +128,7 @@ export class BasicTypes {
 
     let type: AbstractType | undefined = undefined;
     if (children[1] && ( children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
-      type = new FieldChain().runSyntax(chain, this.input, ReferenceType.TypeReference);
+      type = FieldChain.runSyntax(chain, this.input, ReferenceType.TypeReference);
     } else {
       const name = children.shift()!.getFirstToken().getStr();
       let found = this.input.scope.findVariable(name);
@@ -156,7 +156,7 @@ export class BasicTypes {
 
       if (type === undefined && this.input.scope.isAnyOO() === false && this.input.scope.getDDIC().inErrorNamespace(name) === false) {
         this.input.scope.addReference(chain.getChildren()[0].getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
-        return new Types.VoidType(name);
+        return Types.VoidType.get(name);
       }
 
       while (children.length > 0) {
@@ -416,7 +416,7 @@ export class BasicTypes {
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), options);
+      return new Types.TableType(Types.AnyType.get(), options);
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
@@ -450,11 +450,11 @@ export class BasicTypes {
       const name = typename.concatTokens();
       const type = this.input.scope.getDDIC().lookupDDLS(name)?.type;
       if (type) {
-        return new Types.TableType(new VoidType("RapTodo"), options);
+        return new Types.TableType(VoidType.get("RapTodo"), options);
       } else if (this.input.scope.getDDIC().inErrorNamespace(name)) {
         return new Types.UnknownType(`DDLS ${name} not found`);
       } else {
-        return new Types.VoidType(name);
+        return Types.VoidType.get(name);
       }
     }
 
@@ -522,7 +522,7 @@ export class BasicTypes {
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), keyType: Types.TableKeyType.default});
+      return new Types.TableType(Types.AnyType.get(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), keyType: Types.TableKeyType.default});
     } else if (text.startsWith("LIKE ")) {
       let sub = node.findFirstExpression(Expressions.Type);
       if (sub === undefined) {
@@ -661,7 +661,7 @@ export class BasicTypes {
           this.input.scope.addReference(
             expr.getFirstToken(), undefined,
             ReferenceType.ObjectOrientedVoidReference, this.input.filename, {ooName: className.toUpperCase()});
-          return new Types.VoidType(className);
+          return Types.VoidType.get(className);
         } else if (obj === undefined) {
           return new Types.UnknownType("Could not resolve top " + className + ", resolveTypeChain");
         }
@@ -747,7 +747,7 @@ export class BasicTypes {
       }
       if (foundType === undefined && this.input.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
         this.input.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
-        return new Types.VoidType(subs[0]);
+        return Types.VoidType.get(subs[0]);
       } else if (foundType instanceof Types.VoidType) {
         this.input.scope.addReference(expr.getFirstToken(), undefined, ReferenceType.VoidType, this.input.filename);
         return foundType;
@@ -872,12 +872,12 @@ export class BasicTypes {
     }
 
     if (this.input.scope.isBadiDef(name) === true) {
-      return new Types.VoidType(name);
+      return Types.VoidType.get(name);
     }
 
     if (this.input.scope.getDDIC()?.inErrorNamespace(name) === false) {
 //      this.scope.addReference(chain.getFirstToken(), undefined, ReferenceType.VoidType, this.filename);
-      return new Types.VoidType(name);
+      return Types.VoidType.get(name);
     }
 
     return new Types.UnknownType("REF, unable to resolve " + name);

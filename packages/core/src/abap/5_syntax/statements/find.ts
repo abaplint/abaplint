@@ -12,7 +12,7 @@ export class Find implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     const rfound = node.findExpressionAfterToken("RESULTS");
@@ -64,9 +64,9 @@ export class Find implements StatementSyntax {
         }
         const inline = t?.findDirectExpression(Expressions.InlineData);
         if (inline) {
-          new InlineData().runSyntax(inline, input, StringType.get());
+          InlineData.runSyntax(inline, input, StringType.get());
         } else {
-          new Target().runSyntax(t, input);
+          Target.runSyntax(t, input);
         }
       }
     }
@@ -77,9 +77,9 @@ export class Find implements StatementSyntax {
   private inline(node: ExpressionNode, input: SyntaxInput, type: AbstractType): void {
     const inline = node.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, type);
+      InlineData.runSyntax(inline, input, type);
     } else {
-      new Target().runSyntax(node, input);
+      Target.runSyntax(node, input);
     }
   }
 

@@ -36,7 +36,7 @@ export class ClassImplementation implements StatementSyntax {
       input.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
     } else {
       // todo: instead of the void type, do proper typing, ie. only empty constructor method
-      input.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new VoidType("noSuper")));
+      input.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, VoidType.get("noSuper")));
     }
     input.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(classDefinition)));
     helper.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static

@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Dereference {
-  public runSyntax(node: INode, type: AbstractType | undefined, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(node: INode, type: AbstractType | undefined, input: SyntaxInput): AbstractType | undefined {
     if (type instanceof VoidType
         || type instanceof AnyType
         || type instanceof DataType
@@ -16,7 +16,7 @@ export class Dereference {
     if (!(type instanceof DataReference)) {
       const message = "Not a data reference, cannot be dereferenced";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     return type.getType();

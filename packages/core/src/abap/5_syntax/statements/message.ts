@@ -14,19 +14,19 @@ export class Message implements StatementSyntax {
     const inline = found?.findDirectExpression(Expressions.InlineData);
 
     if (inline) {
-      new InlineData().runSyntax(inline, input, StringType.get());
+      InlineData.runSyntax(inline, input, StringType.get());
     } else if (found) {
-      new Target().runSyntax(found, input);
+      Target.runSyntax(found, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findDirectExpressions(Expressions.MessageSource)) {
-      new MessageSource().runSyntax(s, input);
+      MessageSource.runSyntax(s, input);
     }
 
   }

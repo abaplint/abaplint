@@ -8,7 +8,7 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InlineLoopDefinition {
-  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
+  public static runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
     if (node === undefined) {
       return;
     }
@@ -20,7 +20,7 @@ export class InlineLoopDefinition {
     const source = node.findDirectExpression(Expressions.Source);
 
     if (source && target) {
-      const sourceType = new Source().runSyntax(source, input);
+      const sourceType = Source.runSyntax(source, input);
       let rowType: AbstractType | undefined = undefined;
       if (sourceType instanceof TableType) {
         rowType = sourceType.getRowType();

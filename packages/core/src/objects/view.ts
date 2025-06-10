@@ -79,7 +79,7 @@ export class View extends AbstractObject {
       } else if (this.parsedData.header.VIEWCLASS === ViewClass.ExternalView) {
         components.push({
           name: field.VIEWFIELD,
-          type: new Types.VoidType("ExternalView")});
+          type: Types.VoidType.get("ExternalView")});
         continue;
       } else if (field.TABNAME === this.getName()) {
         throw new Error("Unexpected self reference in view " + this.getName() + ", " + field.FIELDNAME + " " + field.FIELDNAME);

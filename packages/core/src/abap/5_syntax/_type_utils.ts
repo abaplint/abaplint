@@ -272,6 +272,11 @@ export class TypeUtils {
           return true;
         }
         return false;
+      } else if (target instanceof XStringType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return true;
+        }
+        return false;
       } else if (target instanceof StringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;

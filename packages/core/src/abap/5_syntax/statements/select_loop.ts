@@ -8,7 +8,7 @@ export class SelectLoop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const s = node.findDirectExpression(Expressions.SelectLoop);
     if (s) {
-      new SelectLoopExpression().runSyntax(s, input);
+      SelectLoopExpression.runSyntax(s, input);
     }
   }
 }

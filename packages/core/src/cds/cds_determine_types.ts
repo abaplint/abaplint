@@ -9,7 +9,7 @@ export class CDSDetermineTypes {
     const ddic = new DDIC(reg);
 
     if (parsedData?.fields.length === 0) {
-      return new VoidType("DDLS:todo");
+      return VoidType.get("DDLS:todo");
     } else {
       const components: IStructureComponent[] = [];
 
@@ -25,7 +25,7 @@ export class CDSDetermineTypes {
               || parsedData.associations.find((s) => s.as?.toUpperCase() === prefixUpper))) {
             components.push({
               name: f.name,
-              type: new VoidType("DDLS:association"),
+              type: VoidType.get("DDLS:association"),
             });
             continue;
           }
@@ -33,7 +33,7 @@ export class CDSDetermineTypes {
             if (prefixUpper.startsWith("_")) {
               components.push({
                 name: f.name,
-                type: new VoidType("DDLS:association"),
+                type: VoidType.get("DDLS:association"),
               });
               continue;
             }
@@ -74,13 +74,13 @@ export class CDSDetermineTypes {
           } else {
             components.push({
               name: f.name,
-              type: new VoidType(source.name),
+              type: VoidType.get(source.name),
             });
           }
         } else {
           components.push({
             name: f.name,
-            type: new VoidType("DDLS:fieldname:" + ddlsName),
+            type: VoidType.get("DDLS:fieldname:" + ddlsName),
           });
         }
       }

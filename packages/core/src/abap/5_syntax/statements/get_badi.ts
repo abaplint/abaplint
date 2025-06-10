@@ -10,15 +10,15 @@ export class GetBadi implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, input);
+      Target.runSyntax(t, input);
     }
 
     for (const d of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(d, input);
+      Dynamic.runSyntax(d, input);
     }
 
   }

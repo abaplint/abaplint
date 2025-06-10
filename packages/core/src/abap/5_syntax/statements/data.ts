@@ -12,12 +12,12 @@ export class Data {
     const name = node.findFirstExpression(Expressions.DefinitionName);
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
-      const id = new DataDefinition().runSyntax(dd, input);
+      const id = DataDefinition.runSyntax(dd, input);
       if (id?.getType().isGeneric() === true
           && id?.getType().containsVoid() === false) {
         const message = "DATA definition cannot be generic, " + name?.concatTokens();
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new TypedIdentifier(id.getToken(), input.filename, new VoidType(CheckSyntaxKey));
+        return new TypedIdentifier(id.getToken(), input.filename, VoidType.get(CheckSyntaxKey));
       }
       return id;
     }

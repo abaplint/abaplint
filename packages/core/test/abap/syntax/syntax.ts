@@ -324,6 +324,29 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("constructor, global class from program", () => {
+    const clas = `
+class zcl_filter definition public.
+  public section.
+    methods constructor importing iv_name type string.
+endclass.
+
+class zcl_filter implementation.
+  method constructor.
+    write iv_name.
+  endmethod.
+endclass.`;
+    const prog = `
+data ref type ref to zcl_filter.
+create object ref.
+    `;
+    const issues = runMulti([
+      {filename: "zcl_filter.clas.abap", contents: clas},
+      {filename: "zprog.prog.abap", contents: prog},
+    ]);
+    expect(issues[0]?.getMessage()).to.contain("constructor parameter");
+  });
+
   it("locals impl, error descriptions, double error", () => {
     const def =
       "CLASS lcl_foobar DEFINITION.\n" +
@@ -11005,6 +11028,39 @@ START-OF-SELECTION.
     INTO package.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("must be escaped with @ in strict mode");
+  });
+
+  it("type not compatible, char 40 to xstring", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xstring.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA var TYPE c LENGTH 40.
+    foo( var ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("Method parameter type not compatible");
+  });
+
+  it("type compatible, char 40 to xstring, constant", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xstring.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( 'AAAA' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("strict mode must escape variables, constants", () => {

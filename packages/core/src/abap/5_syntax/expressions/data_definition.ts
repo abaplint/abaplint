@@ -7,10 +7,10 @@ import {TypeTable} from "./type_table";
 import {SyntaxInput} from "../_syntax_input";
 
 export class DataDefinition {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      return new TypeTable().runSyntax(node, input);
+      return TypeTable.runSyntax(node, input);
     }
 
     const valueNode = node.findFirstExpression(Expressions.Value);
@@ -22,7 +22,7 @@ export class DataDefinition {
     const name = node.findFirstExpression(Expressions.DefinitionName);
     const typeStructure = node.findFirstExpression(Expressions.TypeStructure);
     if (typeStructure && name) {
-      return new TypedIdentifier(name.getFirstToken(), input.filename, new VoidType("DataDefinition, TypeStructure"));
+      return new TypedIdentifier(name.getFirstToken(), input.filename, VoidType.get("DataDefinition, TypeStructure"));
     }
 
     const bfound = new BasicTypes(input).simpleType(node);

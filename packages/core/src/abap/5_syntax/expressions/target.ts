@@ -16,7 +16,7 @@ import {Cast} from "./cast";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Target {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
 
     const concat = node.concatTokens();
     if (concat.includes("-")) {
@@ -38,7 +38,7 @@ export class Target {
     if (context === undefined) {
       const message = `"${first.getFirstToken().getStr()}" not found, Target`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     while (children.length > 0) {
@@ -51,14 +51,14 @@ export class Target {
         if (context instanceof UnknownType) {
           const message = "Not a structure, type unknown, target";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         } else if (!(context instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType)
             && !(context instanceof VoidType)) {
           const message = "Not a structure, target";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
       } else if (current.get() instanceof InstanceArrow) {
         if (!(context instanceof ObjectReferenceType)
@@ -66,20 +66,20 @@ export class Target {
             && !(context instanceof VoidType)) {
           const message = "Not an object reference, target";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
       } else if (current.get() instanceof Dereference) {
         if (!(context instanceof DataReference) && !(context instanceof VoidType)) {
           const message = "Not an object reference, target";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
 
         if (!(context instanceof VoidType)) {
           context = context.getType();
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
-        context = new ComponentName().runSyntax(context, current, input);
+        context = ComponentName.runSyntax(context, current, input);
       } else if (current.get() instanceof Expressions.TableBody) {
         if (!(context instanceof TableType)
             && !(context instanceof VoidType)
@@ -87,7 +87,7 @@ export class Target {
             && !(context instanceof UnknownType)) {
           const message = "Not a internal table, \"[]\"";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
         if (context instanceof TableType && context.isWithHeader()) {
           context = new TableType(context.getRowType(), {...context.getOptions(), withHeader: false});
@@ -97,15 +97,15 @@ export class Target {
         if (!(context instanceof TableType) && !(context instanceof VoidType)) {
           const message = "Table expression, expected table";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
-        new TableExpression().runSyntax(current, input);
+        TableExpression.runSyntax(current, input);
         if (!(context instanceof VoidType)) {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
         const type = children.length === 0 ? ReferenceType.DataWriteReference : ReferenceType.DataReadReference;
-        context = new AttributeName().runSyntax(context, current, input, type);
+        context = AttributeName.runSyntax(context, current, input, type);
       }
     }
 
@@ -114,9 +114,9 @@ export class Target {
       if (context instanceof XStringType || context instanceof StringType) {
         const message = "xstring/string offset/length in writer position not possible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
-      new FieldOffset().runSyntax(offset, input);
+      FieldOffset.runSyntax(offset, input);
     }
 
     const length = node.findDirectExpression(Expressions.FieldLength);
@@ -124,9 +124,9 @@ export class Target {
       if (context instanceof XStringType || context instanceof StringType) {
         const message = "xstring/string offset/length in writer position not possible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
-      new FieldLength().runSyntax(length, input);
+      FieldLength.runSyntax(length, input);
     }
 
     return context;
@@ -134,7 +134,7 @@ export class Target {
 
 /////////////////////////////////
 
-  private findTop(node: INode | undefined, input: SyntaxInput): AbstractType | undefined {
+  private static findTop(node: INode | undefined, input: SyntaxInput): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -162,16 +162,16 @@ export class Target {
         return new ObjectReferenceType(found);
       } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name, ooType: "CLAS"});
-        return new VoidType(name);
+        return VoidType.get(name);
       } else {
         return new UnknownType(name + " unknown, Target");
       }
     } else if (node.get() instanceof Expressions.Cast && node instanceof ExpressionNode) {
-      const ret = new Cast().runSyntax(node, input, undefined);
+      const ret = Cast.runSyntax(node, input, undefined);
       if (ret instanceof UnknownType) {
         const message = "CAST, uknown type";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
       return ret;
     }

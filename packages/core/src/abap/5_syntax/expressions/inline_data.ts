@@ -7,7 +7,7 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InlineData {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
     const token = node.findFirstExpression(Expressions.TargetField)?.getFirstToken();
     if (token && type) {
       if (type instanceof CSequenceType || type instanceof CLikeType) {

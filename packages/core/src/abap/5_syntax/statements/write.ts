@@ -20,7 +20,7 @@ export class Write implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      const type = new Source().runSyntax(s, input);
+      const type = Source.runSyntax(s, input);
       if (s === second
           && new TypeUtils(input.scope).isCharLike(type) === false
           && new TypeUtils(input.scope).isHexLike(type) === false) {
@@ -31,16 +31,16 @@ export class Write implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpression(Expressions.WriteOffsetLength)?.findDirectExpressions(Expressions.SimpleFieldChain2) || []) {
-      new FieldChain().runSyntax(s, input, ReferenceType.DataReadReference);
+      FieldChain.runSyntax(s, input, ReferenceType.DataReadReference);
     }
 
     for (const s of node.findAllExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(s, input);
+      Dynamic.runSyntax(s, input);
     }
 
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
 
   }

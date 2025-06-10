@@ -4,7 +4,7 @@ import * as Basic from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ComponentName {
-  public runSyntax(context: AbstractType | undefined, node: INode, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(context: AbstractType | undefined, node: INode, input: SyntaxInput): AbstractType | undefined {
     if (context instanceof Basic.VoidType) {
       return context;
     }
@@ -16,7 +16,7 @@ export class ComponentName {
       const ret = context.getComponentByName(name);
       if (ret === undefined) {
         input.issues.push(syntaxIssue(input, nameToken, "Component \"" + name + "\" not found in structure"));
-        return new Basic.VoidType(CheckSyntaxKey);
+        return Basic.VoidType.get(CheckSyntaxKey);
       }
       return ret;
     }
@@ -31,14 +31,14 @@ export class ComponentName {
         const ret = rowType.getComponentByName(name);
         if (ret === undefined) {
           input.issues.push(syntaxIssue(input, nameToken, "Component \"" + name + "\" not found in structure"));
-          return new Basic.VoidType(CheckSyntaxKey);
+          return Basic.VoidType.get(CheckSyntaxKey);
         }
         return ret;
       }
     }
 
     input.issues.push(syntaxIssue(input, nameToken, "Not a structure, ComponentName, \"" + name + "\""));
-    return new Basic.VoidType(CheckSyntaxKey);
+    return Basic.VoidType.get(CheckSyntaxKey);
   }
 
 }

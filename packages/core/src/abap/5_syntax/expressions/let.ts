@@ -5,7 +5,7 @@ import {ScopeType} from "../_scope_type";
 import {SyntaxInput} from "../_syntax_input";
 
 export class Let {
-  public runSyntax(node: ExpressionNode | undefined, input: SyntaxInput, skipScope = false): boolean {
+  public static runSyntax(node: ExpressionNode | undefined, input: SyntaxInput, skipScope = false): boolean {
     if (node === undefined) {
       return false;
     }
@@ -15,7 +15,7 @@ export class Let {
     }
 
     for (const f of node.findDirectExpressions(Expressions.InlineFieldDefinition)) {
-      new InlineFieldDefinition().runSyntax(f, input);
+      InlineFieldDefinition.runSyntax(f, input);
     }
 
     return true;

@@ -8,11 +8,11 @@ export class EditorCall implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const t of node.findDirectExpressions(Expressions.SimpleSource3)) {
-      new Source().runSyntax(t, input);
+      Source.runSyntax(t, input);
     }
 
   }

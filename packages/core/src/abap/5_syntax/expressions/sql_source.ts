@@ -6,12 +6,12 @@ import {Source} from "./source";
 
 export class SQLSource {
 
-  public runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): AbstractType | undefined {
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      return new Source().runSyntax(s, input);
+      return Source.runSyntax(s, input);
     }
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      return new Source().runSyntax(s, input);
+      return Source.runSyntax(s, input);
     }
     return undefined;
   }

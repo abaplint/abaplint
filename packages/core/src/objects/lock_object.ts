@@ -47,7 +47,7 @@ export class LockObject extends AbstractObject {
       } else if (ddic.inErrorNamespace(this.parsedXML.primaryTable)) {
         return new UnknownType(this.parsedXML.primaryTable + " not found");
       } else {
-        return new VoidType(this.parsedXML.primaryTable);
+        return VoidType.get(this.parsedXML.primaryTable);
       }
     } else {
       return new UnknownType("Parsing error");

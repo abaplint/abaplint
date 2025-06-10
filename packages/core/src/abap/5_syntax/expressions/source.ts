@@ -37,7 +37,7 @@ import {AssertError} from "../assert_error";
 */
 
 export class Source {
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode | undefined,
     input: SyntaxInput,
     targetType?: AbstractType,
@@ -63,20 +63,20 @@ export class Source {
         {
           const method = new BuiltIn().searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
+          Cond.runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return StringType.get();
         }
         case "XSDBOOL":
         {
           const method = new BuiltIn().searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
+          Cond.runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"});
         }
         case "REDUCE":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), input, foundType);
+          const bodyType = ReduceBody.runSyntax(node.findDirectExpression(Expressions.ReduceBody), input, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
@@ -87,7 +87,7 @@ export class Source {
         case "SWITCH":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), input);
+          const bodyType = SwitchBody.runSyntax(node.findDirectExpression(Expressions.SwitchBody), input);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
@@ -98,7 +98,7 @@ export class Source {
         case "COND":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), input, foundType);
+          const bodyType = CondBody.runSyntax(node.findDirectExpression(Expressions.CondBody), input, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
@@ -114,11 +114,11 @@ export class Source {
         case "CONV":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
+          const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
           if (new TypeUtils(input.scope).isAssignable(foundType, bodyType) === false) {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-            return new VoidType(CheckSyntaxKey);
+            return VoidType.get(CheckSyntaxKey);
           }
           this.addIfInferred(node, input, foundType);
           return foundType;
@@ -126,7 +126,7 @@ export class Source {
         case "REF":
         {
           const foundType = this.determineType(node, input, targetType);
-          const s = new Source().runSyntax(node.findDirectExpression(Expressions.Source), input);
+          const s = Source.runSyntax(node.findDirectExpression(Expressions.Source), input);
           if (foundType === undefined && s) {
             return new DataReference(s);
           } else if (foundType) {
@@ -137,7 +137,7 @@ export class Source {
         case "FILTER":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = new FilterBody().runSyntax(node.findDirectExpression(Expressions.FilterBody), input, foundType);
+          const bodyType = FilterBody.runSyntax(node.findDirectExpression(Expressions.FilterBody), input, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
@@ -153,21 +153,21 @@ export class Source {
         case "CORRESPONDING":
         {
           const foundType = this.determineType(node, input, targetType);
-          new CorrespondingBody().runSyntax(node.findDirectExpression(Expressions.CorrespondingBody), input, foundType);
+          CorrespondingBody.runSyntax(node.findDirectExpression(Expressions.CorrespondingBody), input, foundType);
           this.addIfInferred(node, input, foundType);
           return foundType;
         }
         case "EXACT":
         {
           const foundType = this.determineType(node, input, targetType);
-          new Source().runSyntax(node.findDirectExpression(Expressions.Source), input, foundType);
+          Source.runSyntax(node.findDirectExpression(Expressions.Source), input, foundType);
           this.addIfInferred(node, input, foundType);
           return foundType;
         }
         case "VALUE":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), input, foundType);
+          const bodyType = ValueBody.runSyntax(node.findDirectExpression(Expressions.ValueBody), input, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
@@ -193,26 +193,26 @@ export class Source {
     let hexNext = false;
     while (children.length >= 0) {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
-        context = new MethodCallChain().runSyntax(first, input, targetType);
+        context = MethodCallChain.runSyntax(first, input, targetType);
         if (context === undefined) {
           const message = "Method has no RETURNING value";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-        context = new FieldChain().runSyntax(first, input, type);
+        context = FieldChain.runSyntax(first, input, type);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
-        context = new StringTemplate().runSyntax(first, input);
+        context = StringTemplate.runSyntax(first, input);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Source) {
-        const found = new Source().runSyntax(first, input);
+        const found = Source.runSyntax(first, input);
         context = this.infer(context, found);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
-        const found = new Constant().runSyntax(first);
+        const found = Constant.runSyntax(first);
         context = this.infer(context, found);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dereference) {
-        context = new Dereference().runSyntax(first, context, input);
+        context = Dereference.runSyntax(first, context, input);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
-        context = new ComponentChain().runSyntax(context, first, input);
+        context = ComponentChain.runSyntax(context, first, input);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArithOperator) {
         if (first.concatTokens() === "**") {
           context = new FloatType();
@@ -223,7 +223,7 @@ export class Source {
           hexNext = true;
         }
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeChain) {
-        context = new AttributeChain().runSyntax(context, first, input, type);
+        context = AttributeChain.runSyntax(context, first, input, type);
       }
 
       if (hexExpected === true) {
@@ -235,7 +235,7 @@ export class Source {
             && !(context instanceof UnknownType)) {
           const message = "Operator only valid for XSTRING or HEX";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return new VoidType(CheckSyntaxKey);
+          return VoidType.get(CheckSyntaxKey);
         }
         if (hexNext === false) {
           hexExpected = false;
@@ -258,14 +258,14 @@ export class Source {
 
 ////////////////////////////////
 
-  private traverseRemainingChildren(children: (ExpressionNode | TokenNode)[], input: SyntaxInput) {
+  private static traverseRemainingChildren(children: (ExpressionNode | TokenNode)[], input: SyntaxInput) {
     const last = children[children.length - 1];
     if (last && last.get() instanceof Expressions.Source) {
-      new Source().runSyntax(last as ExpressionNode, input);
+      Source.runSyntax(last as ExpressionNode, input);
     }
   }
 
-  private infer(context: AbstractType | undefined, found: AbstractType | undefined) {
+  private static infer(context: AbstractType | undefined, found: AbstractType | undefined) {
     if (context instanceof FloatType && found instanceof IntegerType) {
       return context;
     } else {
@@ -273,7 +273,7 @@ export class Source {
     }
   }
 
-  public addIfInferred(
+  public static addIfInferred(
     node: ExpressionNode,
     input: SyntaxInput,
     inferredType: AbstractType | undefined): void {
@@ -302,7 +302,7 @@ export class Source {
 
   }
 
-  private determineType(
+  private static determineType(
     node: ExpressionNode,
     input: SyntaxInput,
     targetType: AbstractType | undefined): AbstractType | undefined {
@@ -323,7 +323,7 @@ export class Source {
       if (found && found instanceof UnknownType) {
         if (input.scope.getDDIC().inErrorNamespace(typeName) === false) {
           input.scope.addReference(typeToken, undefined, ReferenceType.VoidType, input.filename);
-          return new VoidType(typeName);
+          return VoidType.get(typeName);
         } else {
           const tid = new TypedIdentifier(typeToken, input.filename, found);
           input.scope.addReference(typeToken, tid, ReferenceType.TypeReference, input.filename);
@@ -332,7 +332,7 @@ export class Source {
       } else if (found === undefined) {
         const message = "Type \"" + typeName + "\" not found in scope, VALUE";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
 
       return found;

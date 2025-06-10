@@ -18,7 +18,7 @@ export class Append implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
-      targetType = new Target().runSyntax(target, input);
+      targetType = Target.runSyntax(target, input);
     }
 
     const fsTarget = node.findExpressionAfterToken("ASSIGNING");
@@ -29,7 +29,7 @@ export class Append implements StatementSyntax {
         return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
-      new FSTarget().runSyntax(fsTarget, input, rowType);
+      FSTarget.runSyntax(fsTarget, input, rowType);
     }
 
     const dataTarget = node.findExpressionAfterToken("INTO");
@@ -40,7 +40,7 @@ export class Append implements StatementSyntax {
         return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
-      new InlineData().runSyntax(dataTarget, input, new DataReference(rowType));
+      InlineData.runSyntax(dataTarget, input, new DataReference(rowType));
     }
 
     let source = node.findDirectExpression(Expressions.SimpleSource4);
@@ -63,7 +63,7 @@ export class Append implements StatementSyntax {
       } else if (targetType instanceof VoidType) {
         rowType = targetType;
       }
-      let sourceType = new Source().runSyntax(source, input, rowType);
+      let sourceType = Source.runSyntax(source, input, rowType);
 
       if (node.findDirectTokenByText("LINES")) {
         // hmm, checking only the row types are compatible will not check the table type, e.g. sorted or hashed
@@ -89,11 +89,11 @@ export class Append implements StatementSyntax {
 
     const from = node.findExpressionAfterToken("FROM");
     if (from && from.get() instanceof Expressions.Source) {
-      new Source().runSyntax(from, input);
+      Source.runSyntax(from, input);
     }
     const to = node.findExpressionAfterToken("TO");
     if (to && to.get() instanceof Expressions.Source) {
-      new Source().runSyntax(to, input);
+      Source.runSyntax(to, input);
     }
 
   }

@@ -70,7 +70,7 @@ export class DDIC {
       case "STRING":
         return Types.StringType.get({qualifiedName: qualifiedName || name});
       case "XSTRING":
-        return new Types.XStringType({qualifiedName: qualifiedName || name});
+        return Types.XStringType.get({qualifiedName: qualifiedName || name});
       case "D":
         return new Types.DateType({qualifiedName: qualifiedName || name});
       case "T":
@@ -82,13 +82,13 @@ export class DDIC {
       case "DECFLOAT":
         return new Types.DecFloatType({qualifiedName: qualifiedName});
       case "ANY":
-        return new Types.AnyType({qualifiedName: qualifiedName});
+        return Types.AnyType.get({qualifiedName: qualifiedName});
       case "SIMPLE":
         return new Types.SimpleType({qualifiedName: qualifiedName});
       case "%_C_POINTER":
         return new Types.HexType(8, qualifiedName);
       case "TABLE":
-        return new Types.TableType(new Types.AnyType(), {withHeader: false, keyType: Types.TableKeyType.default});
+        return new Types.TableType(Types.AnyType.get(), {withHeader: false, keyType: Types.TableKeyType.default});
       case "DATA":
         return new Types.DataType({qualifiedName: qualifiedName});
       case "NUMERIC":
@@ -164,7 +164,7 @@ export class DDIC {
     if (this.inErrorNamespace(name) === true) {
       return {type: new UnknownType(name)};
     } else {
-      return {type: new VoidType(name)};
+      return {type: VoidType.get(name)};
     }
   }
 
@@ -223,7 +223,7 @@ export class DDIC {
     if (this.reg.inErrorNamespace(name)) {
       return {type: new Types.UnknownType(name + " not found, lookup")};
     } else {
-      return {type: new Types.VoidType(name)};
+      return {type: Types.VoidType.get(name)};
     }
   }
 
@@ -234,7 +234,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return {type: new Types.UnknownType(name + ", lookupDomain"), object: undefined};
     } else {
-      return {type: new Types.VoidType(name), object: undefined};
+      return {type: Types.VoidType.get(name), object: undefined};
     }
   }
 
@@ -248,7 +248,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return {type: new Types.UnknownType(name + " not found, lookupDataElement")};
     } else {
-      return {type: new Types.VoidType(name)};
+      return {type: Types.VoidType.get(name)};
     }
   }
 
@@ -297,7 +297,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found, lookupTable");
     } else {
-      return new Types.VoidType(name);
+      return Types.VoidType.get(name);
     }
   }
 
@@ -311,7 +311,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return {type: new Types.UnknownType(name + " not found, lookupView")};
     } else {
-      return {type: new Types.VoidType(name)};
+      return {type: Types.VoidType.get(name)};
     }
   }
 
@@ -325,7 +325,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return {type: new Types.UnknownType(name + " not found, lookupTableType")};
     } else {
-      return {type: new Types.VoidType(name)};
+      return {type: Types.VoidType.get(name)};
     }
   }
 
@@ -426,7 +426,7 @@ export class DDIC {
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":
-        return new Types.XStringType({qualifiedName: input.qualifiedName});
+        return Types.XStringType.get({qualifiedName: input.qualifiedName});
       case "D16S":
       case "D34S":
       case "DF16_SCL":

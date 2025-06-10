@@ -13,13 +13,13 @@ export class GetParameter implements StatementSyntax {
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, new CharacterType(40));
+      InlineData.runSyntax(inline, input, new CharacterType(40));
     } else if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
   }

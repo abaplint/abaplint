@@ -17,7 +17,7 @@ export class InsertInternal implements StatementSyntax {
     let targetType: AbstractType | undefined;
     const t = node.findDirectExpression(Expressions.Target);
     if (t) {
-      targetType = new Target().runSyntax(t, input);
+      targetType = Target.runSyntax(t, input);
     }
     if (!(targetType instanceof TableType)
         && !(targetType instanceof VoidType)
@@ -36,7 +36,7 @@ export class InsertInternal implements StatementSyntax {
     if (source === undefined) {
       source = node.findDirectExpression(Expressions.Source);
     }
-    const sourceType = source ? new Source().runSyntax(source, input, targetType) : targetType;
+    const sourceType = source ? Source.runSyntax(source, input, targetType) : targetType;
 
     if (targetType === undefined
         && !(sourceType instanceof TableType)
@@ -52,9 +52,9 @@ export class InsertInternal implements StatementSyntax {
     if (afterAssigning?.get() instanceof Expressions.FSTarget) {
       const inlinefs = afterAssigning?.findDirectExpression(Expressions.InlineFS);
       if (inlinefs) {
-        new InlineFS().runSyntax(inlinefs, input, sourceType);
+        InlineFS.runSyntax(inlinefs, input, sourceType);
       } else {
-        new FSTarget().runSyntax(afterAssigning, input, sourceType);
+        FSTarget.runSyntax(afterAssigning, input, sourceType);
       }
     }
 
@@ -75,9 +75,9 @@ export class InsertInternal implements StatementSyntax {
     if (afterInto?.get() instanceof Expressions.Target && sourceType) {
       const inline = afterInto.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(afterInto, input, new DataReference(sourceType));
+        InlineData.runSyntax(afterInto, input, new DataReference(sourceType));
       } else {
-        new Target().runSyntax(afterInto, input);
+        Target.runSyntax(afterInto, input);
       }
     }
 
@@ -85,7 +85,7 @@ export class InsertInternal implements StatementSyntax {
       if (s === source) {
         continue;
       }
-      new Source().runSyntax(s, input, targetType);
+      Source.runSyntax(s, input, targetType);
     }
 
   }

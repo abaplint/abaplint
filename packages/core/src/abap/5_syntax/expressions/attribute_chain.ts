@@ -9,7 +9,7 @@ import {AttributeName} from "../../2_statements/expressions";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeChain {
-  public runSyntax(
+  public static runSyntax(
     inputContext: AbstractType | undefined,
     node: INode,
     input: SyntaxInput,
@@ -19,21 +19,21 @@ export class AttributeChain {
       return inputContext;
     } else if (!(inputContext instanceof ObjectReferenceType)) {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), "Not an object reference(AttributeChain)"));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     const children = node.getChildren().slice();
     const first = children[0];
     if (!(first.get() instanceof AttributeName)) {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), "AttributeChain, unexpected first child"));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     const def = input.scope.findObjectDefinition(inputContext.getIdentifierName());
     if (def === undefined) {
       const message = "Definition for \"" + inputContext.getIdentifierName() + "\" not found in scope(AttributeChain)";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
     const nameToken = first.getFirstToken();
     const name = nameToken.getStr();
@@ -46,7 +46,7 @@ export class AttributeChain {
     if (context === undefined) {
       const message = "Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"";
       input.issues.push(syntaxIssue(input, nameToken, message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
     for (const t of type) {
       input.scope.addReference(nameToken, context, t, input.filename);

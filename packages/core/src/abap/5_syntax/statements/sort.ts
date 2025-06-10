@@ -10,12 +10,12 @@ export class Sort implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Dynamic)) {
-      new Dynamic().runSyntax(s, input);
+      Dynamic.runSyntax(s, input);
     }
 
     const tnode = node.findDirectExpression(Expressions.Target);
     if (tnode) {
-      const ttype = new Target().runSyntax(tnode, input);
+      const ttype = Target.runSyntax(tnode, input);
       if (ttype instanceof TableType) {
         if (ttype.getOptions()?.primaryKey?.type === TableAccessType.sorted) {
           const message = `Sorted table, already sorted`;

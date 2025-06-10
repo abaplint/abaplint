@@ -10,7 +10,7 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
 
 export class InlineFieldDefinition {
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode | StatementNode,
     input: SyntaxInput,
     targetType?: AbstractType): AbstractType | undefined {
@@ -24,7 +24,7 @@ export class InlineFieldDefinition {
 
     const source = node.findDirectExpression(Expressions.Source);
     if (source) {
-      type = new Source().runSyntax(source, input);
+      type = Source.runSyntax(source, input);
     }
     const typeName = node.findDirectExpression(Expressions.TypeName);
     if (typeName) {
@@ -41,7 +41,7 @@ export class InlineFieldDefinition {
     if (input.scope.findVariable(name) !== undefined) {
       const message = `Variable ${name} already defined`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     const identifier = new TypedIdentifier(field, input.filename, type, [IdentifierMeta.InlineDefinition]);

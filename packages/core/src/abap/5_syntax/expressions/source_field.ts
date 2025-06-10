@@ -5,8 +5,8 @@ import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SourceField {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[],
-                   error = true): AbstractType | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[],
+                          error = true): AbstractType | undefined {
     const token = node.getFirstToken();
     const name = token.getStr();
 
@@ -16,7 +16,7 @@ export class SourceField {
       if (error === true) {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       }
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     if (type) {

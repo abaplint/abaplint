@@ -7,7 +7,7 @@ import {SyntaxInput} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class MethodDefReturning {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[]): TypedIdentifier {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[]): TypedIdentifier {
     const name = node.findDirectExpression(Expressions.MethodParamName);
     if (name === undefined) {
       throw new AssertError("method_parameter.ts, todo, handle pass by value and reference");

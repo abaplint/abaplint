@@ -8,7 +8,7 @@ export class Condense implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, input);
+      Target.runSyntax(t, input);
     }
 
   }

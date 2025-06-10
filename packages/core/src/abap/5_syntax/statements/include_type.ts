@@ -52,11 +52,11 @@ export class IncludeType {
     } else if (ityp && ityp instanceof VoidType) {
       return ityp;
     } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
-      return new VoidType(name);
+      return VoidType.get(name);
     } else {
       const message = "IncludeType, type not found \"" + iname.concatTokens() + "\"";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     return components;

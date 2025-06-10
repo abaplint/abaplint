@@ -46,7 +46,7 @@ export class Catch implements StatementSyntax {
         input.scope.addIdentifier(identifier);
         input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
       } else if (token && input.scope.getDDIC().inErrorNamespace(firstClassName) === false) {
-        const identifier = new TypedIdentifier(token, input.filename, new VoidType(firstClassName), [IdentifierMeta.InlineDefinition]);
+        const identifier = new TypedIdentifier(token, input.filename, VoidType.get(firstClassName), [IdentifierMeta.InlineDefinition]);
         input.scope.addIdentifier(identifier);
         input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
       } else if (token) {
@@ -56,7 +56,7 @@ export class Catch implements StatementSyntax {
         input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
       }
     } else if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
 
   }

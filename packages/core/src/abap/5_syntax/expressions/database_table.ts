@@ -6,7 +6,7 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 export type DatabaseTableSource = Table | DataDefinition | View | undefined;
 
 export class DatabaseTable {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): DatabaseTableSource {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): DatabaseTableSource {
     const token = node.getFirstToken();
     const name = token.getStr();
     if (name === "(") {

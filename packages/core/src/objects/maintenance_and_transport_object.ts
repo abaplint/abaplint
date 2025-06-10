@@ -63,10 +63,10 @@ export class MaintenanceAndTransportObject extends AbstractObject {
       } else if (ddic.inErrorNamespace(this.parsedXML.objectName)) {
         return new UnknownType(this.parsedXML.objectName + " not found");
       } else {
-        return new VoidType(this.parsedXML.objectName);
+        return VoidType.get(this.parsedXML.objectName);
       }
     } else if (this.parsedXML?.objectType !== "S" && this.parsedXML?.objectName){
-      return new VoidType(this.parsedXML.objectName);
+      return VoidType.get(this.parsedXML.objectName);
     } else {
       return new UnknownType("Parsing error");
     }

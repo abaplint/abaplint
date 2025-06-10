@@ -20,11 +20,11 @@ type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
 
 export class Select {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false): void {
     const token = node.getFirstToken();
 
     const from = node.findDirectExpression(Expressions.SQLFrom);
-    const dbSources = from ? new SQLFrom().runSyntax(from, input) : [];
+    const dbSources = from ? SQLFrom.runSyntax(from, input) : [];
     if (from === undefined) {
       const message = `Missing FROM`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -47,11 +47,11 @@ export class Select {
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
       input.scope.push(ScopeType.OpenSQL, "SELECT", token.getStart(), input.filename);
-      new SQLForAllEntries().runSyntax(fae, input);
+      SQLForAllEntries.runSyntax(fae, input);
     }
 
     for (const t of node.findAllExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, input);
+      Target.runSyntax(t, input);
     }
 
     // check implicit into, the target field is implict equal to the table name
@@ -78,25 +78,25 @@ export class Select {
 
     // OFFSET
     for (const s of node.findDirectExpressions(Expressions.SQLSource)) {
-      new SQLSource().runSyntax(s, input);
+      SQLSource.runSyntax(s, input);
     }
     for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
       for (const s of up.findDirectExpressions(Expressions.SQLSource)) {
-        new SQLSource().runSyntax(s, input);
+        SQLSource.runSyntax(s, input);
       }
     }
     for (const fae of node.findDirectExpressions(Expressions.SQLForAllEntries)) {
       for (const s of fae.findDirectExpressions(Expressions.SQLSource)) {
-        new SQLSource().runSyntax(s, input);
+        SQLSource.runSyntax(s, input);
       }
     }
 
     for (const s of node.findAllExpressions(Expressions.SQLCompare)) {
-      new SQLCompare().runSyntax(s, input, dbSources);
+      SQLCompare.runSyntax(s, input, dbSources);
     }
 
     for (const s of node.findDirectExpressions(Expressions.SQLOrderBy)) {
-      new SQLOrderBy().runSyntax(s, input);
+      SQLOrderBy.runSyntax(s, input);
     }
 
     if (this.isStrictMode(node)) {
@@ -109,7 +109,7 @@ export class Select {
   }
 
   // there are multiple rules, but gotta start somewhere
-  private isStrictMode(node: ExpressionNode) {
+  private static isStrictMode(node: ExpressionNode) {
     const into = node.findDirectExpressionsMulti([Expressions.SQLIntoList, Expressions.SQLIntoStructure, Expressions.SQLIntoTable])[0];
     const where = node.findDirectExpression(Expressions.SQLCond);
 
@@ -139,7 +139,7 @@ export class Select {
     return false;
   }
 
-  private strictModeChecks(node: ExpressionNode, input: SyntaxInput) {
+  private static strictModeChecks(node: ExpressionNode, input: SyntaxInput) {
 
     const sources = node.findAllExpressions(Expressions.SQLSource);
     for (const source of sources) {
@@ -156,12 +156,12 @@ export class Select {
     }
   }
 
-  private handleInto(node: ExpressionNode, input: SyntaxInput, fields: FieldList, dbSources: DatabaseTableSource[]) {
+  private static handleInto(node: ExpressionNode, input: SyntaxInput, fields: FieldList, dbSources: DatabaseTableSource[]) {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope));
+        InlineData.runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope));
       }
     }
 
@@ -169,7 +169,7 @@ export class Select {
     if (intoStructure) {
       for (const inline of intoStructure.findAllExpressions(Expressions.InlineData)) {
         // todo, for now these are voided
-        new InlineData().runSyntax(inline, input, new VoidType("SELECT_todo"));
+        InlineData.runSyntax(inline, input, VoidType.get("SELECT_todo"));
       }
     }
 
@@ -195,7 +195,7 @@ export class Select {
             return;
           }
 
-          let type: AbstractType = new VoidType("SELECT_todo");
+          let type: AbstractType = VoidType.get("SELECT_todo");
 
           if (isSimple.test(field.code)) {
             for (const dbSource of dbSources) {
@@ -213,13 +213,13 @@ export class Select {
             }
           }
 
-          new InlineData().runSyntax(inline, input, type);
+          InlineData.runSyntax(inline, input, type);
         }
       }
     }
   }
 
-  private checkFields(fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput, node: ExpressionNode) {
+  private static checkFields(fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput, node: ExpressionNode) {
     if (dbSources.length > 1) {
       return;
     }
@@ -253,18 +253,18 @@ export class Select {
     }
   }
 
-  private buildTableType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
+  private static buildTableType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
     if (dbSources.length !== 1) {
-      return new VoidType("SELECT_todo");
+      return VoidType.get("SELECT_todo");
     }
 
     if (dbSources[0] === undefined) {
       // then its a voided table
-      return new VoidType("SELECT_todo");
+      return VoidType.get("SELECT_todo");
     }
     const dbType = dbSources[0].parseType(scope.getRegistry());
     if (!(dbType instanceof StructureType)) {
-      return new VoidType("SELECT_todo");
+      return VoidType.get("SELECT_todo");
     }
 
     if (fields.length === 1 && fields[0].code === "*") {
@@ -277,17 +277,17 @@ export class Select {
       for (const field of fields) {
         const type = dbType.getComponentByName(field.code);
         if (type === undefined) {
-          return new VoidType("SELECT_todo");
+          return VoidType.get("SELECT_todo");
         }
         components.push({name: field.code, type});
       }
       return new TableType(new StructureType(components), {withHeader: false, keyType: TableKeyType.default}, undefined);
     }
 
-    return new VoidType("SELECT_todo");
+    return VoidType.get("SELECT_todo");
   }
 
-  private findFields(node: ExpressionNode, input: SyntaxInput): FieldList {
+  private static findFields(node: ExpressionNode, input: SyntaxInput): FieldList {
     let expr: ExpressionNode | undefined = undefined;
     const ret = [];
 
@@ -297,7 +297,7 @@ export class Select {
     }
 
     if (expr?.getFirstChild()?.get() instanceof Expressions.Dynamic) {
-      new Dynamic().runSyntax(expr.getFirstChild() as ExpressionNode, input);
+      Dynamic.runSyntax(expr.getFirstChild() as ExpressionNode, input);
     }
 
     for (const field of expr?.findDirectExpressionsMulti([Expressions.SQLField, Expressions.SQLFieldName]) || []) {

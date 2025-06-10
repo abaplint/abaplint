@@ -7,7 +7,7 @@ import {SyntaxInput} from "../_syntax_input";
 export class If implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(s, input);
+      Cond.runSyntax(s, input);
     }
   }
 }

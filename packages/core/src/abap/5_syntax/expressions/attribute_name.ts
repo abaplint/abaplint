@@ -11,7 +11,7 @@ import {AnyType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeName {
-  public runSyntax(
+  public static runSyntax(
     context: AbstractType | undefined,
     node: INode,
     input: SyntaxInput,
@@ -31,7 +31,7 @@ export class AttributeName {
       if (def === undefined) {
         const message = "Definition for \"" + context.getIdentifierName() + "\" not found in scope(AttributeName)";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
       const token = node.getFirstToken();
       const name = token.getStr();
@@ -44,7 +44,7 @@ export class AttributeName {
         if (error === true) {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         }
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
       if (type) {
         input.scope.addReference(token, found, type, input.filename);
@@ -65,18 +65,18 @@ export class AttributeName {
       if (!(sub instanceof StructureType)) {
         const message = "Data reference not structured";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
       ret = sub.getComponentByName(name);
       if (ret === undefined) {
         const message = "Component \"" + name + "\" not found in data reference structure";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return new VoidType(CheckSyntaxKey);
+        return VoidType.get(CheckSyntaxKey);
       }
     } else {
       const message = "Not an object reference, attribute name";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return new VoidType(CheckSyntaxKey);
+      return VoidType.get(CheckSyntaxKey);
     }
 
     return ret;

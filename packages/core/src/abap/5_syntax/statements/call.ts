@@ -12,7 +12,7 @@ export class Call implements StatementSyntax {
 
     if (children.length === 2) {
       const first = children[0] as ExpressionNode;
-      new MethodCallChain().runSyntax(first, input);
+      MethodCallChain.runSyntax(first, input);
       return;
     }
 
@@ -22,12 +22,12 @@ export class Call implements StatementSyntax {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
     }
-    const methodDef = new MethodSource().runSyntax(methodSource, input);
+    const methodDef = MethodSource.runSyntax(methodSource, input);
 
     const body = children[3];
     if (body instanceof ExpressionNode) {
       // todo, resolve the method definition above and pass, if possible, in case of dynamic pass void
-      new MethodCallBody().runSyntax(body, input, methodDef || new VoidType("CallTODO"));
+      MethodCallBody.runSyntax(body, input, methodDef || VoidType.get("CallTODO"));
     }
 
   }

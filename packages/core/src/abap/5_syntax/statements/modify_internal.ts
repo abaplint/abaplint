@@ -12,7 +12,7 @@ export class ModifyInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     // there is only one
@@ -20,7 +20,7 @@ export class ModifyInternal implements StatementSyntax {
     const targetExpression = target;
     if (targetExpression) {
       // it might be a dynamic target
-      const targetType = new Target().runSyntax(targetExpression, input);
+      const targetType = Target.runSyntax(targetExpression, input);
       if (targetType instanceof VoidType
           || targetType instanceof AnyType
           || targetType instanceof UnknownType) {
@@ -50,11 +50,11 @@ export class ModifyInternal implements StatementSyntax {
 
     const fstarget = node.findDirectExpression(Expressions.FSTarget);
     if (fstarget) {
-      new FSTarget().runSyntax(fstarget, input, undefined);
+      FSTarget.runSyntax(fstarget, input, undefined);
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      new ComponentCond().runSyntax(t, input);
+      ComponentCond.runSyntax(t, input);
     }
 
   }

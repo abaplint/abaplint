@@ -31,7 +31,7 @@ export class Raise implements StatementSyntax {
       } else if (input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(classTok, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
-        method = new VoidType(className);
+        method = VoidType.get(className);
       } else {
         const message = "RAISE, unknown class " + className;
         input.issues.push(syntaxIssue(input, classTok, message));
@@ -39,13 +39,13 @@ export class Raise implements StatementSyntax {
       }
 
       if (method === undefined) {
-        method = new VoidType(className);
+        method = VoidType.get(className);
       }
     }
 
     const c = node.findExpressionAfterToken("EXCEPTION");
     if (c instanceof ExpressionNode && (c.get() instanceof Expressions.SimpleSource2 || c.get() instanceof Expressions.Source)) {
-      const type = new Source().runSyntax(c, input);
+      const type = Source.runSyntax(c, input);
       if (type instanceof VoidType) {
         method = type;
       } else if (type instanceof ObjectReferenceType) {
@@ -59,7 +59,7 @@ export class Raise implements StatementSyntax {
     }
 
     if (method === undefined) {
-      method = new VoidType("Exception");
+      method = VoidType.get("Exception");
     }
 
     // check parameters vs constructor
@@ -69,18 +69,18 @@ export class Raise implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpressions(Expressions.RaiseWith)) {
-      new RaiseWith().runSyntax(s, input);
+      RaiseWith.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
     for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.MessageSource)) {
-      new MessageSource().runSyntax(s, input);
+      MessageSource.runSyntax(s, input);
     }
 
     const id = node.findExpressionAfterToken("ID")?.concatTokens();

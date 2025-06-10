@@ -17,9 +17,9 @@ export class Split implements StatementSyntax {
     for (const target of node.findAllExpressions(Expressions.Target)) {
       const inline = target.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        new InlineData().runSyntax(inline, input, type);
+        InlineData.runSyntax(inline, input, type);
       } else {
-        let targetType = new Target().runSyntax(target, input);
+        let targetType = Target.runSyntax(target, input);
         if (intoTable) {
           if (!(targetType instanceof TableType)
               && !(targetType instanceof UnknownType)
@@ -41,7 +41,7 @@ export class Split implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
   }

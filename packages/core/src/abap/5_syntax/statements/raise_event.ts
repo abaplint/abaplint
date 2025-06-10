@@ -19,7 +19,7 @@ export class RaiseEvent implements StatementSyntax {
     }
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
   }

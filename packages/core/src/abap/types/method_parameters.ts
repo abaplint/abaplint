@@ -166,7 +166,7 @@ export class MethodParameters implements IMethodParameters {
         if (found) {
           this.importing.push(new TypedIdentifier(token, this.filename, found.getType(), [IdentifierMeta.EventParameter]));
         } else if (doVoid) {
-          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType(ooName), [IdentifierMeta.EventParameter]));
+          this.importing.push(new TypedIdentifier(token, this.filename, VoidType.get(ooName), [IdentifierMeta.EventParameter]));
         } else {
           const type = new UnknownType(`handler parameter not found "${search}"`);
           this.importing.push(new TypedIdentifier(token, this.filename, type, [IdentifierMeta.EventParameter]));
@@ -198,7 +198,7 @@ export class MethodParameters implements IMethodParameters {
 
     const returning = node.findFirstExpression(Expressions.MethodDefReturning);
     if (returning) {
-      this.returning = new MethodDefReturning().runSyntax(returning, input, [IdentifierMeta.MethodReturning]);
+      this.returning = MethodDefReturning.runSyntax(returning, input, [IdentifierMeta.MethodReturning]);
     }
 
     this.workaroundRAP(node, input, parentName);
@@ -212,7 +212,7 @@ export class MethodParameters implements IMethodParameters {
         if (foo === resultName) {
           continue;
         }
-        this.importing.push(new TypedIdentifier(foo.getFirstToken(), input.filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
+        this.importing.push(new TypedIdentifier(foo.getFirstToken(), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
       }
 
       const concat = node.concatTokens().toUpperCase();
@@ -221,26 +221,26 @@ export class MethodParameters implements IMethodParameters {
           || concat.includes(" FOR FEATURES ")
           || concat.includes(" FOR MODIFY ")) {
         const token = isRap.getFirstToken();
-        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), input.filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
-        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "mapped"), input.filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
-        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), input.filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "mapped"), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
       }
     }
 
     if (resultName) {
       const token = resultName.getFirstToken();
-      this.importing.push(new TypedIdentifier(token, input.filename, new VoidType("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
+      this.importing.push(new TypedIdentifier(token, input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
     }
 
     // its some kind of magic
     if (parentName.toUpperCase() === "CL_ABAP_BEHAVIOR_SAVER") {
-      const tempChanging = this.changing.map(c => new TypedIdentifier(c.getToken(), input.filename, new VoidType("RapMethodParameter"), c.getMeta()));
+      const tempChanging = this.changing.map(c => new TypedIdentifier(c.getToken(), input.filename, VoidType.get("RapMethodParameter"), c.getMeta()));
       while (this.changing.length > 0) {
         this.changing.shift();
       }
       this.changing.push(...tempChanging);
 
-      const tempImporting = this.importing.map(c => new TypedIdentifier(c.getToken(), input.filename, new VoidType("RapMethodParameter"), c.getMeta()));
+      const tempImporting = this.importing.map(c => new TypedIdentifier(c.getToken(), input.filename, VoidType.get("RapMethodParameter"), c.getMeta()));
       while (this.importing.length > 0) {
         this.importing.shift();
       }
@@ -263,7 +263,7 @@ export class MethodParameters implements IMethodParameters {
       if (abstractMethod === true) {
         extraMeta.push(IdentifierMeta.Abstract);
       }
-      const id = new MethodParam().runSyntax(p, input, [...meta, ...extraMeta]);
+      const id = MethodParam.runSyntax(p, input, [...meta, ...extraMeta]);
       input.scope.addIdentifier(id);
       target.push(id);
       if (opt.findDirectTokenByText("OPTIONAL")) {
@@ -285,7 +285,7 @@ export class MethodParameters implements IMethodParameters {
 
     const params = source.findAllExpressions(Expressions.MethodParam);
     for (const param of params) {
-      target.push(new MethodParam().runSyntax(param, input, meta));
+      target.push(MethodParam.runSyntax(param, input, meta));
     }
   }
 

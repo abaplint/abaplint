@@ -12,9 +12,9 @@ export class GetTime implements StatementSyntax {
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
-      new InlineData().runSyntax(inline, input, new PackedType(8, 0));
+      InlineData.runSyntax(inline, input, new PackedType(8, 0));
     } else if (target) {
-      new Target().runSyntax(target, input);
+      Target.runSyntax(target, input);
     }
 
   }

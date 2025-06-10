@@ -17,12 +17,12 @@ export class Concatenate implements StatementSyntax {
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
       if (byteMode) {
-        new InlineData().runSyntax(inline, input, new XStringType());
+        InlineData.runSyntax(inline, input, XStringType.get());
       } else {
-        new InlineData().runSyntax(inline, input, StringType.get());
+        InlineData.runSyntax(inline, input, StringType.get());
       }
     } else if (target) {
-      const type = new Target().runSyntax(target, input);
+      const type = Target.runSyntax(target, input);
       const compatible = byteMode ? new TypeUtils(input.scope).isHexLike(type) : new TypeUtils(input.scope).isCharLikeStrict(type);
       if (compatible === false) {
         const message = "Target type not compatible";
@@ -33,7 +33,7 @@ export class Concatenate implements StatementSyntax {
 
     if (linesMode) {
       for (const s of node.findDirectExpressions(Expressions.Source)) {
-        const type = new Source().runSyntax(s, input);
+        const type = Source.runSyntax(s, input);
         if (!(type instanceof UnknownType) && !(type instanceof VoidType) && !(type instanceof TableType)) {
           const message = "Source must be an internal table";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -43,7 +43,7 @@ export class Concatenate implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
-      const type = new Source().runSyntax(s, input);
+      const type = Source.runSyntax(s, input);
       const compatible = byteMode ? new TypeUtils(input.scope).isHexLike(type) : new TypeUtils(input.scope).isCharLikeStrict(type);
       if (compatible === false) {
         const message = "Source type not compatible";

@@ -10,7 +10,7 @@ export class Shift implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      new Source().runSyntax(s, input);
+      Source.runSyntax(s, input);
     }
 
     const target = node.findDirectExpression(Expressions.Target);
@@ -20,7 +20,7 @@ export class Shift implements StatementSyntax {
       return;
     }
 
-    const targetType = new Target().runSyntax(target, input);
+    const targetType = Target.runSyntax(target, input);
     if (node.concatTokens().toUpperCase().includes(" IN BYTE MODE")) {
       if (new TypeUtils(input.scope).isHexLike(targetType) === false) {
         const message = "Shift, Target not hex like";

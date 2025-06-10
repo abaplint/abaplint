@@ -6,13 +6,13 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SQLForAllEntries {
 
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
     let s = node.findFirstExpression(Expressions.Source);
     if (s === undefined) {
       s = node.findFirstExpression(Expressions.SimpleSource3);
     }
     if (s) {
-      const type = new Source().runSyntax(s, input);
+      const type = Source.runSyntax(s, input);
       if (type instanceof VoidType) {
         return;
       }

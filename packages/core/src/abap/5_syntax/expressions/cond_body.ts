@@ -7,7 +7,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput} from "../_syntax_input";
 
 export class CondBody {
-  public runSyntax(
+  public static runSyntax(
     node: ExpressionNode | undefined,
     input: SyntaxInput,
     targetType: AbstractType | undefined): AbstractType | undefined {
@@ -19,19 +19,19 @@ export class CondBody {
     let scoped = false;
     const l = node.findDirectExpression(Expressions.Let);
     if (l) {
-      scoped = new Let().runSyntax(l, input);
+      scoped = Let.runSyntax(l, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
-      new Cond().runSyntax(s, input);
+      Cond.runSyntax(s, input);
     }
 
     let type: AbstractType | undefined = undefined;
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       if (type === undefined) {
-        type = new Source().runSyntax(s, input, targetType);
+        type = Source.runSyntax(s, input, targetType);
       } else {
-        new Source().runSyntax(s, input, targetType);
+        Source.runSyntax(s, input, targetType);
       }
     }
 

@@ -8,7 +8,7 @@ import {SyntaxInput} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class FormParam {
-  public runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier {
     const nameToken = node.findFirstExpression(FormParamName)?.getFirstToken();
 
     if (node.findDirectTokenByText("STRUCTURE") && nameToken) {
@@ -28,7 +28,7 @@ export class FormParam {
 
     if (node.getChildren().length === 1 && nameToken) {
       // untyped FORM parameter
-      return new TypedIdentifier(nameToken, input.filename, new AnyType(), [IdentifierMeta.FormParameter]);
+      return new TypedIdentifier(nameToken, input.filename, AnyType.get(), [IdentifierMeta.FormParameter]);
     }
 
     const bfound = new BasicTypes(input).parseType(node);
