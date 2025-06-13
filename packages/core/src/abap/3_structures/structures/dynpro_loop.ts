@@ -8,7 +8,7 @@ export class DynproLoop implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.DynproLoop),
-                    star(alt(sta(Statements.Module), sub(Chain))),
+                    star(alt(sta(Statements.Module), sta(Statements.Field), sub(Chain))),
                     sta(Statements.EndLoop));
   }
 

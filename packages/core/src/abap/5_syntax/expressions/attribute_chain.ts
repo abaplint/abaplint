@@ -22,8 +22,7 @@ export class AttributeChain {
       return VoidType.get(CheckSyntaxKey);
     }
 
-    const children = node.getChildren().slice();
-    const first = children[0];
+    const first = node.getChildren()[0];
     if (!(first.get() instanceof AttributeName)) {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), "AttributeChain, unexpected first child"));
       return VoidType.get(CheckSyntaxKey);

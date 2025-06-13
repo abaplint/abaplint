@@ -192,38 +192,41 @@ export class Source {
     let hexExpected = false;
     let hexNext = false;
     while (children.length >= 0) {
-      if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
-        context = MethodCallChain.runSyntax(first, input, targetType);
-        if (context === undefined) {
-          const message = "Method has no RETURNING value";
-          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return VoidType.get(CheckSyntaxKey);
+      if (first instanceof ExpressionNode) {
+        const get = first.get();
+        if (get instanceof Expressions.MethodCallChain) {
+          context = MethodCallChain.runSyntax(first, input, targetType);
+          if (context === undefined) {
+            const message = "Method has no RETURNING value";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
+        } else if (get instanceof Expressions.FieldChain) {
+          context = FieldChain.runSyntax(first, input, type);
+        } else if (get instanceof Expressions.StringTemplate) {
+          context = StringTemplate.runSyntax(first, input);
+        } else if (get instanceof Expressions.Source) {
+          const found = Source.runSyntax(first, input);
+          context = this.infer(context, found);
+        } else if (get instanceof Expressions.Constant) {
+          const found = Constant.runSyntax(first);
+          context = this.infer(context, found);
+        } else if (get instanceof Expressions.Dereference) {
+          context = Dereference.runSyntax(first, context, input);
+        } else if (get instanceof Expressions.ComponentChain) {
+          context = ComponentChain.runSyntax(context, first, input);
+        } else if (get instanceof Expressions.ArithOperator) {
+          if (first.concatTokens() === "**") {
+            context = new FloatType();
+          }
+          const operator = first.concatTokens().toUpperCase();
+          if (operator === "BIT-OR" || operator === "BIT-AND" || operator === "BIT-XOR") {
+            hexExpected = true;
+            hexNext = true;
+          }
+        } else if (get instanceof Expressions.AttributeChain) {
+          context = AttributeChain.runSyntax(context, first, input, type);
         }
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-        context = FieldChain.runSyntax(first, input, type);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
-        context = StringTemplate.runSyntax(first, input);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Source) {
-        const found = Source.runSyntax(first, input);
-        context = this.infer(context, found);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
-        const found = Constant.runSyntax(first);
-        context = this.infer(context, found);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Dereference) {
-        context = Dereference.runSyntax(first, context, input);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
-        context = ComponentChain.runSyntax(context, first, input);
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArithOperator) {
-        if (first.concatTokens() === "**") {
-          context = new FloatType();
-        }
-        const operator = first.concatTokens().toUpperCase();
-        if (operator === "BIT-OR" || operator === "BIT-AND" || operator === "BIT-XOR") {
-          hexExpected = true;
-          hexNext = true;
-        }
-      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.AttributeChain) {
-        context = AttributeChain.runSyntax(context, first, input, type);
       }
 
       if (hexExpected === true) {
@@ -279,7 +282,7 @@ export class Source {
     inferredType: AbstractType | undefined): void {
 
     const basic = new BasicTypes(input);
-    const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
+    const typeExpression = node.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();
 
@@ -308,7 +311,7 @@ export class Source {
     targetType: AbstractType | undefined): AbstractType | undefined {
 
     const basic = new BasicTypes(input);
-    const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
+    const typeExpression = node.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();
 

@@ -497,6 +497,9 @@ export class TypeUtils {
       } else if ((target instanceof StringType || target instanceof CharacterType)
           && source instanceof StructureType
           && this.isCharLike(source)) {
+        if (this.structureContainsString(source) === true) {
+          return false;
+        }
         return true;
       } else if (source instanceof StructureType) {
         return this.isCharLikeStrict(source);

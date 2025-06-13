@@ -70,6 +70,15 @@ process after input.
   endloop.
   module user_command_header.
 `},
+
+  {abap: `
+PROCESS BEFORE OUTPUT.
+
+PROCESS AFTER INPUT.
+  LOOP WITH CONTROL ctr1 .
+    FIELD zfoobar-kunnr MODULE check_kunnr ON REQUEST.
+  ENDLOOP.
+`},
 ];
 
 structureType(cases, new DynproLogic());
