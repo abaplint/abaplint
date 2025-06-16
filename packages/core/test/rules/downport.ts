@@ -1349,7 +1349,8 @@ DATA temp1 LIKE if_t100_message=>t100key.
 temp1-msgid = 'ZSEE'.
 temp1-msgno = '001'.
 DATA temp2 TYPE REF TO zcx_see.
-CREATE OBJECT temp2 EXPORTING textid = temp1.
+CREATE OBJECT temp2.
+temp2->if_t100_message~t100key = temp1.
 RAISE EXCEPTION temp2.`;
 
     testFix(abap, expected);
@@ -1364,7 +1365,8 @@ DATA temp1 LIKE if_t100_message=>t100key.
 temp1-msgid = 'ZFOO'.
 temp1-msgno = '002'.
 DATA temp2 TYPE REF TO zcx_foo.
-CREATE OBJECT temp2 EXPORTING textid = temp1.
+CREATE OBJECT temp2.
+temp2->if_t100_message~t100key = temp1.
 RAISE EXCEPTION temp2.`;
 
     testFix(abap, expected);
@@ -1379,7 +1381,8 @@ DATA temp1 LIKE if_t100_message=>t100key.
 temp1-msgid = 'ZFOO'.
 temp1-msgno = '100'.
 DATA temp2 TYPE REF TO zcx_tools.
-CREATE OBJECT temp2 EXPORTING textid = temp1.
+CREATE OBJECT temp2.
+temp2->if_t100_message~t100key = temp1.
 RAISE EXCEPTION temp2.`;
 
     testFix(abap, expected);
@@ -1398,7 +1401,8 @@ temp1-attr2 = 'IF_T100_DYN_MSG~MSGV2'.
 temp1-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
 temp1-attr4 = 'IF_T100_DYN_MSG~MSGV4'.
 DATA temp2 TYPE REF TO zcx_tools.
-CREATE OBJECT temp2 EXPORTING textid = temp1.
+CREATE OBJECT temp2.
+temp2->if_t100_message~t100key = temp1.
 temp2->if_t100_dyn_msg~msgty = 'E'.
 temp2->if_t100_dyn_msg~msgv1 = 2.
 temp2->if_t100_dyn_msg~msgv2 = 3.
@@ -1426,7 +1430,8 @@ temp1-attr2 = 'IF_T100_DYN_MSG~MSGV2'.
 temp1-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
 temp1-attr4 = 'IF_T100_DYN_MSG~MSGV4'.
 DATA temp2 TYPE REF TO zcx_foobar.
-CREATE OBJECT temp2 EXPORTING textid = temp1.
+CREATE OBJECT temp2.
+temp2->if_t100_message~t100key = temp1.
 temp2->if_t100_dyn_msg~msgty = 'E'.
 temp2->if_t100_dyn_msg~msgv1 = ls_return-message_v1.
 temp2->if_t100_dyn_msg~msgv2 = ls_return-message_v2.
