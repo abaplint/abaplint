@@ -9,6 +9,7 @@ export class DynproLogic implements IStructure {
     return seq(
       sub(Structures.ProcessBeforeOutput),
       sub(Structures.ProcessAfterInput),
+      opt(sub(Structures.ProcessOnHelpRequest)),
       opt(sub(Structures.ProcessOnValueRequest)),
       opt(sub(Structures.ProcessOnHelpRequest)),
     );
