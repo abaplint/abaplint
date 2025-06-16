@@ -148,7 +148,7 @@ export class Attributes implements IAttributes {
       const ctyp = c.get();
       if (c instanceof StructureNode) {
         if (ctyp instanceof Structures.Data) {
-          const found = new DataStructure().runSyntax(c, input);
+          const found = DataStructure.runSyntax(c, input);
           if (found !== undefined) {
             const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
             this.instance.push(attr);

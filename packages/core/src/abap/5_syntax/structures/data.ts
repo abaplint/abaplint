@@ -1,16 +1,25 @@
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Data as DataSyntax} from "../statements/data";
+import {IStructureComponent} from "../../types/basic";
+import {ReferenceType} from "../_reference";
+import {StatementNode, StructureNode, TokenNode} from "../../nodes";
+import {Type} from "../statements/type";
+import {TypedIdentifier} from "../../types/_typed_identifier";
+import {Types} from "./types";
+import * as Basic from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
-import {StatementNode, StructureNode} from "../../nodes";
-import {TypedIdentifier} from "../../types/_typed_identifier";
-import * as Basic from "../../types/basic";
-import {IStructureComponent} from "../../types/basic";
-import {Data as DataSyntax} from "../statements/data";
-import {ReferenceType} from "../_reference";
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Data {
-  public runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
+  public static runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
+    const fouth = node.getFirstChild()?.getChildren()[3];
+    const isCommonPart = fouth instanceof TokenNode && fouth.concatTokens() === "COMMON";
+    if (isCommonPart) {
+      this.runCommonPartSyntax(node, input);
+      return undefined;
+    }
+
     const name = node.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
     let table: boolean = false;
     const values: {[index: string]: string} = {};
@@ -27,7 +36,7 @@ export class Data {
           }
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Data) {
-        const found = new Data().runSyntax(c, input);
+        const found = Data.runSyntax(c, input);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
@@ -87,6 +96,33 @@ export class Data {
     } else {
       const val = Object.keys(values).length > 0 ? values : undefined;
       return new TypedIdentifier(name, input.filename, new Basic.StructureType(components), undefined, val);
+    }
+  }
+
+  private static runCommonPartSyntax(node: StructureNode, input: SyntaxInput): void {
+    for (const c of node.getChildren()) {
+      const ctyp = c.get();
+      if (c instanceof StatementNode && ctyp instanceof Statements.Data) {
+        const found = new DataSyntax().runSyntax(c, input);
+        if (found) {
+          input.scope.addIdentifier(found);
+        }
+      } else if (c instanceof StructureNode && ctyp instanceof Structures.Data) {
+        const found = Data.runSyntax(c, input);
+        if (found) {
+          input.scope.addIdentifier(found);
+        }
+      } else if (c instanceof StatementNode && ctyp instanceof Statements.Type) {
+        const found = new Type().runSyntax(c, input);
+        if (found) {
+          input.scope.addIdentifier(found);
+        }
+      } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {
+        const found = new Types().runSyntax(c, input);
+        if (found) {
+          input.scope.addIdentifier(found);
+        }
+      }
     }
   }
 }

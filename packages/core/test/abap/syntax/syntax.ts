@@ -11272,7 +11272,7 @@ lv_text = stru.`;
     expect(issues[0].getMessage()).to.include("Incompatible types");
   });
 
-  it.skip("basic DATA COMMON PART", () => {
+  it("basic DATA COMMON PART", () => {
     const abap = `
 DATA BEGIN OF COMMON PART hello.
 DATA bar TYPE i.
