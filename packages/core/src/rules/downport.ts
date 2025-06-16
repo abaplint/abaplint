@@ -1416,7 +1416,8 @@ ${indentation}${uniqueName1}-attr3 = 'IF_T100_DYN_MSG~MSGV3'.
 ${indentation}${uniqueName1}-attr4 = 'IF_T100_DYN_MSG~MSGV4'.\n`;
     }
     abap += `${indentation}DATA ${uniqueName2} TYPE REF TO ${className}.
-${indentation}CREATE OBJECT ${uniqueName2} EXPORTING textid = ${uniqueName1}.\n`;
+${indentation}CREATE OBJECT ${uniqueName2}.
+${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     if (withs.length > 0) {
       abap += `${indentation}${uniqueName2}->if_t100_dyn_msg~msgty = 'E'.\n`;
     }
