@@ -28,8 +28,8 @@ export class Target {
       }
     }
 
-    const children = node.getChildren().slice();
-    const first = children.shift();
+    const children = node.getChildren();
+    const first = children[0];
     if (first === undefined || !(first instanceof ExpressionNode)) {
       return undefined;
     }
@@ -41,11 +41,13 @@ export class Target {
       return VoidType.get(CheckSyntaxKey);
     }
 
-    while (children.length > 0) {
-      const current = children.shift();
+    let currentIndex = 1;
+    while (currentIndex <= children.length) {
+      const current = children[currentIndex];
       if (current === undefined) {
         break;
       }
+      currentIndex++;
 
       if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {

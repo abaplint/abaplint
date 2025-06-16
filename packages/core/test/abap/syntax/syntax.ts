@@ -11261,4 +11261,15 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.include("not compatible");
   });
 
+  it("structure into string not compatible", () => {
+    const abap = `
+DATA lv_text TYPE string.
+DATA: BEGIN OF stru,
+        bar TYPE string,
+      END OF stru.
+lv_text = stru.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.include("Incompatible types");
+  });
+
 });
