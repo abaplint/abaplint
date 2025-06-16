@@ -79,6 +79,17 @@ PROCESS AFTER INPUT.
     FIELD zfoobar-kunnr MODULE check_kunnr ON REQUEST.
   ENDLOOP.
 `},
+
+  {abap: `
+PROCESS BEFORE OUTPUT.
+
+PROCESS AFTER INPUT.
+
+PROCESS ON HELP-REQUEST.
+
+PROCESS ON VALUE-REQUEST.
+
+`},
 ];
 
 structureType(cases, new DynproLogic());

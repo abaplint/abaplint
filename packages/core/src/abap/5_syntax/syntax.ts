@@ -446,7 +446,7 @@ export class SyntaxLogic {
       this.scope.addIdentifier(new Constants().runSyntax(node, input).type);
       return true;
     } else if (stru instanceof Structures.Data) {
-      this.scope.addIdentifier(new DataStructure().runSyntax(node, input));
+      this.scope.addIdentifier(DataStructure.runSyntax(node, input));
       return true;
     } else if (stru instanceof Structures.Statics) {
       this.scope.addIdentifier(new Statics().runSyntax(node, input));
