@@ -11272,4 +11272,15 @@ lv_text = stru.`;
     expect(issues[0].getMessage()).to.include("Incompatible types");
   });
 
+  it.only("basic DATA COMMON PART", () => {
+    const abap = `
+DATA BEGIN OF COMMON PART hello.
+DATA bar TYPE i.
+DATA END OF COMMON PART hello.
+
+WRITE bar.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
