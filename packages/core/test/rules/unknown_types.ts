@@ -2352,7 +2352,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
-  it.only("basic DATA COMMON PART, types begin", () => {
+  it("basic DATA COMMON PART, types begin", () => {
     const abap = `
 DATA BEGIN OF COMMON PART hello.
 TYPES: BEGIN OF ty_foo,
