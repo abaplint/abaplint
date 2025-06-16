@@ -14,7 +14,7 @@ export class Color extends Expression {
                           "COL_POSITIVE",
                           "COL_NEGATIVE",
                           "COL_GROUP");
-    const value = alt(eq, altPrio("ON", "OFF", altPrio(integers, texts)));
+    const value = alt(eq, altPrio("ON", "OFF", "COLOR OFF", altPrio(integers, texts)));
     const toggle = altPrio("ON", "OFF");
 
     return seq("COLOR", opt(seq(value, opt(toggle))));
