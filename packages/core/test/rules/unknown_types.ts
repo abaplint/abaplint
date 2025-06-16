@@ -2352,4 +2352,18 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("basic DATA COMMON PART, types begin", () => {
+    const abap = `
+DATA BEGIN OF COMMON PART hello.
+TYPES: BEGIN OF ty_foo,
+         moo TYPE i,
+       END OF ty_foo.
+DATA END OF COMMON PART hello.
+
+DATA bar TYPE ty_foo.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

@@ -120,7 +120,7 @@ export class Data {
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {
         const found = new Types().runSyntax(c, input);
         if (found) {
-          input.scope.addIdentifier(found);
+          input.scope.addType(found);
         }
       }
     }
