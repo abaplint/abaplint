@@ -115,7 +115,7 @@ export class Data {
       } else if (c instanceof StatementNode && ctyp instanceof Statements.Type) {
         const found = new Type().runSyntax(c, input);
         if (found) {
-          input.scope.addIdentifier(found);
+          input.scope.addType(found);
         }
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {
         const found = new Types().runSyntax(c, input);
