@@ -2366,4 +2366,15 @@ DATA bar TYPE ty_foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("basic DATA COMMON PART, types basic", () => {
+    const abap = `
+DATA BEGIN OF COMMON PART.
+TYPES ty_foo TYPE i.
+DATA END OF COMMON PART.
+DATA bar TYPE ty_foo.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
