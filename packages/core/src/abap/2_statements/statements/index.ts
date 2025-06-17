@@ -89,6 +89,7 @@ export * from "./modify_entities";
 export * from "./read_entities";
 export * from "./rollback_entities";
 export * from "./summary";
+export * from "./input";
 export * from "./on_change";
 export * from "./at_user_command";
 export * from "./position";
