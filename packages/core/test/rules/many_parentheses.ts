@@ -47,10 +47,8 @@ ENDLOOP.`, cnt: 0, fix: false},
   FOR repo_result IN is_result-repo_result_list
   WHERE ( status = iv_status )
   NEXT result = result + 1 ).`, cnt: 0, fix: false},
-  /*
   {abap: `IF iv_show_progress = abap_true AND ( sy-tabix MOD 100 ) = 0.
-ENDIF.`, cnt: 1, fix: true},
-*/
+ENDIF.`, cnt: 1, fix: false},
 ];
 
 testRule(tests, ManyParentheses);
