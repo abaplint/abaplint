@@ -11283,4 +11283,18 @@ WRITE bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("read with header line is okay", () => {
+    const abap = `
+DATA: BEGIN OF tab OCCURS 0,
+        id  TYPE c LENGTH 1,
+        key TYPE c LENGTH 10,
+      END OF tab.
+
+tab-id  = 'S'.
+tab-key = 'SDF'.
+READ TABLE tab WITH KEY tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
