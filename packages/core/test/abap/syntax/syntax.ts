@@ -11307,4 +11307,16 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("number of fields okay", () => {
+    const abap = `
+DATA w_vkorg TYPE voided.
+DATA w_vtext TYPE voided.
+SELECT vkorg vtext FROM tvkot
+  INTO (w_vkorg, w_vtext)
+  WHERE vkorg IN ( SELECT foo FROM zbar ).
+ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
