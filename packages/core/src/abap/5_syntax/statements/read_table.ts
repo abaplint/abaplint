@@ -69,7 +69,9 @@ export class ReadTable implements StatementSyntax {
       }
       const type = Source.runSyntax(s, input);
       if (s === afterKey) {
-        if (type instanceof StringType || type instanceof TableType || type instanceof ObjectReferenceType) {
+        if (type instanceof StringType
+            || (type instanceof TableType && type.isWithHeader() === false)
+            || type instanceof ObjectReferenceType) {
           const message = "Key cannot be string or table or reference";
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
           return;

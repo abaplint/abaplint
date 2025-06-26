@@ -291,9 +291,10 @@ export class Select {
     let expr: ExpressionNode | undefined = undefined;
     const ret = [];
 
-    expr = node.findFirstExpression(Expressions.SQLFieldList);
-    if (expr === undefined) {
+    if (node.get() instanceof Expressions.SelectLoop) {
       expr = node.findFirstExpression(Expressions.SQLFieldListLoop);
+    } else {
+      expr = node.findFirstExpression(Expressions.SQLFieldList);
     }
 
     if (expr?.getFirstChild()?.get() instanceof Expressions.Dynamic) {

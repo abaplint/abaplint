@@ -157,7 +157,18 @@ ENDIF.
         if (current !== "") {
           found = true; // dont report for the simple case that contains quick fixes
         }
+      } else if (c instanceof ExpressionNode
+          && c.get() instanceof Expressions.Compare
+          && c.getFirstChild()?.get() instanceof Expressions.Source
+          && c.getChildren().length === 3) {
+        const concat = c.getFirstChild()?.concatTokens();
+        if (concat?.startsWith("(") && concat.endsWith(")")) {
+          const message = "Parentheses can be removed";
+          const issue = Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
+        }
       }
+
       if (comparator === "") {
         comparator = current;
       } else if (comparator !== "" && current !== "" && comparator !== current) {

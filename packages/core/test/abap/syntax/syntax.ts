@@ -11283,4 +11283,40 @@ WRITE bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("read with header line is okay", () => {
+    const abap = `
+DATA: BEGIN OF tab OCCURS 0,
+        id  TYPE c LENGTH 1,
+        key TYPE c LENGTH 10,
+      END OF tab.
+
+tab-id  = 'S'.
+tab-key = 'SDF'.
+READ TABLE tab WITH KEY tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, it has header line", () => {
+    const abap = `
+DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lt_tab LIKE foo WITH HEADER LINE.
+LOOP AT lt_tab.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("number of fields okay", () => {
+    const abap = `
+DATA w_vkorg TYPE voided.
+DATA w_vtext TYPE voided.
+SELECT vkorg vtext FROM tvkot
+  INTO (w_vkorg, w_vtext)
+  WHERE vkorg IN ( SELECT foo FROM zbar ).
+ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
