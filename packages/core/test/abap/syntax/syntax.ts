@@ -11307,7 +11307,7 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("number of fields okay", () => {
+  it("number of fields okay", () => {
     const abap = `
 DATA w_vkorg TYPE voided.
 DATA w_vtext TYPE voided.
