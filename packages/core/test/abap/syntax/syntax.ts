@@ -11297,7 +11297,7 @@ READ TABLE tab WITH KEY tab.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, it has header line", () => {
+  it("ok, it has header line", () => {
     const abap = `
 DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA lt_tab LIKE foo WITH HEADER LINE.

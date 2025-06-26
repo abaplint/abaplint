@@ -541,6 +541,8 @@ export class BasicTypes {
 
       if (found && this.isOccurs(node)) {
         found = new Types.TableType(found, {withHeader: text.includes("WITH HEADER LINE"), keyType: Types.TableKeyType.default}, qualifiedName);
+      } else if (text.endsWith(" WITH HEADER LINE") && found instanceof Types.TableType) {
+        found = new Types.TableType(found.getRowType(), {withHeader: true, keyType: Types.TableKeyType.default}, qualifiedName);
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
