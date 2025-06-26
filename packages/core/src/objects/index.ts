@@ -120,6 +120,7 @@ export * from "./object_characteristic";
 export * from "./outbound_service";
 export * from "./package_interface";
 export * from "./package";
+export * from "./page_format";
 export * from "./parameter";
 export * from "./personalization_object";
 export * from "./program";
