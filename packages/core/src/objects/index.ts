@@ -12,6 +12,7 @@ export * from "./atc_check_object";
 export * from "./atc_check_variant";
 export * from "./authorization_check_field";
 export * from "./authorization_group";
+export * from "./gateway_odata_group_and_assignment";
 export * from "./authorization_object_class";
 export * from "./authorization_object_extension";
 export * from "./authorization_object";
