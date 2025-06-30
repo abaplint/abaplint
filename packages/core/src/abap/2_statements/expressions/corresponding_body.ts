@@ -20,7 +20,7 @@ export class CorrespondingBody extends Expression {
       optPrio(discarding),
       optPrio(mapping),
       optPrio("CHANGING CONTROL"),
-      optPrio("MAPPING FROM ENTITY USING CONTROL"), // todo, version something?
+      optPrio(seq("MAPPING FROM ENTITY", optPrio("USING CONTROL"))), // todo, version something?
       optPrio(seq("EXCEPT", alt(plus(Field), "*"))),
     );
   }
