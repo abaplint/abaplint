@@ -147,6 +147,11 @@ const tests = [
     IMPORTING
         entities_create FOR CREATE LabelAll\\_Label
         entities_update FOR UPDATE Label.`,
+
+  `METHODS
+    validatetransportrequest FOR VALIDATE ON SAVE
+      IMPORTING
+        KEYS FOR Label~ValidateTransportRequest.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
