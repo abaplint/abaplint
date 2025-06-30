@@ -14,6 +14,7 @@ export class SQLFunction extends Expression {
       seq("NUMC", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
       "FLTP",
       "INT2",
+      "INT4",
       "INT8");
 
     const commaParam = seq(",", SQLFunctionInput);
