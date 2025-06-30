@@ -141,6 +141,12 @@ const tests = [
 
   `METHODS precheck_delete FOR PRECHECK
         IMPORTING keys FOR DELETE Review.`,
+
+  `METHODS
+    augment FOR MODIFY
+    IMPORTING
+        entities_create FOR CREATE LabelAll\\_Label
+        entities_update FOR UPDATE Label.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
