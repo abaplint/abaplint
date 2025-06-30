@@ -152,6 +152,11 @@ const tests = [
     validatetransportrequest FOR VALIDATE ON SAVE
       IMPORTING
         KEYS FOR Label~ValidateTransportRequest.`,
+
+  `METHODS get_global_features FOR GLOBAL FEATURES
+    IMPORTING
+    REQUEST REQUESTED_FEATURES FOR LabelText
+    RESULT result.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
