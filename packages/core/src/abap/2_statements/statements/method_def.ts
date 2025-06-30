@@ -19,11 +19,6 @@ export class MethodDef implements IStatement {
 
     const testing = seq(optPrio(Abstract), "FOR TESTING", optPrio(altPrio(MethodDefRaising, MethodDefExceptions)));
 
-// todo, this is only from version something
-    const tableFunction = seq("TABLE FUNCTION", NamespaceSimpleName);
-// todo, this is only from version something
-    const ddl = "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED";
-
     const result = seq("RESULT", MethodParamName);
     const link = seq("LINK", MethodParamName);
     const full = seq("FULL", MethodParamName);
@@ -38,6 +33,8 @@ export class MethodDef implements IStatement {
     const forfunction = seq("FOR FUNCTION", TypeName, result);
 
     const behavior = altPrio(
+      "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED",  // todo, this is only from version something
+      seq("TABLE FUNCTION", NamespaceSimpleName), // todo, this is only from version something
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, modify),
       seq("READ IMPORTING", MethodParamName, altPrio(forRead, forfunction)),
@@ -63,7 +60,7 @@ export class MethodDef implements IStatement {
                     alt(seq(optPrio(Abstract), optPrio(def), EventHandler),
                         parameters,
                         testing,
-                        seq("FOR", alt(tableFunction, ddl, behavior)),
+                        seq("FOR", behavior),
                         amdp,
                         "NOT AT END OF MODE",
                         optPrio(Redefinition)));
