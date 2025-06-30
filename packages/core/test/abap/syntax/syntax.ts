@@ -11319,4 +11319,11 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("select count FIELDS without into", () => {
+    const abap = `
+SELECT FROM zacb_recipe FIELDS COUNT(*).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
