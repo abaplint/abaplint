@@ -1072,6 +1072,20 @@ key a.objid as Obj,
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("define custom entity with composition", () => {
+    const cds = `
+define root custom entity ZCE_PRODUCT_READ
+{
+  key ProductId : abap.char(10);
+  _ProductReviews        : composition [0..*] of ZCE_PRODUCT_REVIEWS;
+}
+
+`;
+    const file = new MemoryFile("zce_product_read.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
   it("cast with arithmetics", () => {
     const cds = `
 define view entity ZI_TaxItem
