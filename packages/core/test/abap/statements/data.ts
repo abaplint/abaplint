@@ -122,6 +122,7 @@ const tests = [
   `DATA rapbo TYPE STRUCTURE FOR READ RESULT ZDMO_R_RAPG_ProjectTP\\\\node\\_Project .`,
   `data sdf type sdf boxed.`,
   `DATA t_name TYPE STANDARD TABLE OF string VALUE IS INITIAL.`,
+  `DATA change TYPE REQUEST FOR CHANGE ZACB_I_Label_S.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

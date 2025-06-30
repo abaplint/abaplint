@@ -19,8 +19,9 @@ export class TypeStructure extends Expression {
 
     const structure = seq("STRUCTURE FOR", altPrio(hier, evt, create, update, action, permissionsRequest, readResult));
     const response = seq("RESPONSE FOR", altPrio(failedEarly, mappedEarly, reportedEarly));
+    const request = seq("REQUEST FOR CHANGE", NamespaceSimpleName);
 
-    return seq("TYPE", altPrio(structure, response));
+    return seq("TYPE", altPrio(structure, response, request));
   }
 
 }

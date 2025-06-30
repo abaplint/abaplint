@@ -134,6 +134,13 @@ const tests = [
     importing
       !ljlkja
       !safdsf .`,
+
+  `METHODS
+      precheck_update FOR PRECHECK
+        IMPORTING entities FOR UPDATE Review.`,
+
+  `METHODS precheck_delete FOR PRECHECK
+        IMPORTING keys FOR DELETE Review.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

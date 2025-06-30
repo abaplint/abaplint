@@ -17,6 +17,10 @@ const tests = [
   REPORTED DATA(reported).`,
 
   `COMMIT ENTITIES RESPONSES FAILED DATA(commit_failed) REPORTED DATA(commit_reported).`,
+
+  `COMMIT ENTITIES RESPONSE OF zfoo
+    REPORTED DATA(reported_late)
+    FAILED DATA(failed_late).`,
 ];
 
 statementType(tests, "COMMIT ENTITIES", Statements.CommitEntities);
