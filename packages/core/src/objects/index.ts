@@ -22,6 +22,7 @@ export * from "./bsp_application";
 export * from "./business_add_in_implementation";
 export * from "./business_catalog_app_assignment";
 export * from "./knowledge_transfer_document";
+export * from "./business_configuration_maintenance_object";
 export * from "./business_catalog";
 export * from "./business_configuration_set";
 export * from "./business_function_assignment";
