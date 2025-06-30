@@ -37,6 +37,7 @@ export class MethodDef implements IStatement {
       seq("TABLE FUNCTION", NamespaceSimpleName), // todo, this is only from version something
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
       seq("MODIFY IMPORTING", MethodParamName, modify),
+      seq("PRECHECK IMPORTING", MethodParamName, modify),
       seq("READ IMPORTING", MethodParamName, altPrio(forRead, forfunction)),
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, result),
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR CREATE", TypeName, MethodParamName, "FOR UPDATE", TypeName, MethodParamName, "FOR DELETE", TypeName),
