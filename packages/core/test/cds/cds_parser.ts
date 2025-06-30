@@ -1086,6 +1086,20 @@ define root custom entity ZCE_PRODUCT_READ
     expect(parsed).to.not.equal(undefined);
   });
 
+  it.skip("define custom entity with association", () => {
+    const cds = `
+define root custom entity ZCE_PRODUCT_READ
+{
+  key ProductId : abap.char(10);
+  _Product    : association to parent ZCE_PRODUCT_READ on  $projection.ProductId   = _Product.ProductId;
+}
+
+`;
+    const file = new MemoryFile("zce_product_read.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
   it("cast with arithmetics", () => {
     const cds = `
 define view entity ZI_TaxItem
