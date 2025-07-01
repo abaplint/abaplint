@@ -153,7 +153,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   private checkMethodNameLength() {
     for (const m of this.methodDefs.getAll()) {
-      if (m.getName().length > 30) {
+      if (m.getName().length > 30 && m.getName().includes("~") === false) {
         const message = `Method name "${m.getName()}" is too long, maximum length is 30 characters`;
         throw new Error(message);
       }
