@@ -92,6 +92,12 @@ const tests = [
       MAPPED mapped
       REPORTED reported
       FAILED failed.`,
+
+  `MODIFY AUGMENTING ENTITIES OF ZACB_I_Label_S
+      ENTITY Label
+        CREATE BY \\_LabelText
+        FROM text_for_new_entity
+        RELATING TO entities_create BY relates_create.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

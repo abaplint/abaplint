@@ -44,6 +44,9 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     input.scope.push(ScopeType.Interface, name.getStr(), node.getFirstToken().getStart(), input.filename);
     this.parse(input, node);
     input.scope.pop(node.getLastToken().getEnd());
+
+    // perform checks after everything has been initialized
+    this.checkMethodNameLength();
   }
 
   public getSuperClass(): undefined {
@@ -83,6 +86,15 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   }
 
 /////////////////
+
+  private checkMethodNameLength() {
+    for (const m of this.methodDefinitions.getAll()) {
+      if (m.getName().length > 30) {
+        const message = `Method name "${m.getName()}" is too long, maximum length is 30 characters`;
+        throw new Error(message);
+      }
+    }
+  }
 
   private checkInterfacesExists(input: SyntaxInput, node: StructureNode) {
     for (const i of node.findAllStatements(Statements.InterfaceDef)) {

@@ -1,6 +1,6 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, ver, optPrio} from "../combi";
+import {seq, alt, altPrio, ver, optPrio, plus} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -36,7 +36,7 @@ export class MethodDef implements IStatement {
       "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED",  // todo, this is only from version something
       seq("TABLE FUNCTION", NamespaceSimpleName), // todo, this is only from version something
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
-      seq("MODIFY IMPORTING", MethodParamName, modify),
+      seq("MODIFY IMPORTING", plus(seq(MethodParamName, modify))),
       seq("PRECHECK IMPORTING", MethodParamName, modify),
       seq("READ IMPORTING", MethodParamName, altPrio(forRead, forfunction)),
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, result),
@@ -45,6 +45,7 @@ export class MethodDef implements IStatement {
       seq(alt("BEHAVIOR", "LOCK"), "IMPORTING", MethodParamName, "FOR LOCK", TypeName),
       seq("DETERMINE", alt("ON MODIFY", "ON SAVE"), "IMPORTING", MethodParamName, "FOR", TypeName),
       seq("GLOBAL AUTHORIZATION IMPORTING REQUEST", MethodParamName, "FOR", TypeName, result),
+      seq("GLOBAL FEATURES IMPORTING REQUEST", MethodParamName, "FOR", TypeName, result),
       seq("INSTANCE AUTHORIZATION IMPORTING", MethodParamName, "REQUEST", MethodParamName, "FOR", TypeName, result),
       seq("INSTANCE FEATURES IMPORTING", MethodParamName, "REQUEST", MethodParamName, "FOR", TypeName, result),
     );

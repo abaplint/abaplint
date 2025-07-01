@@ -11319,6 +11319,30 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("class method name too long", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS very_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_very.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD very_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_very.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include(" too long");
+  });
+
+  it("interface method name too long", () => {
+    const abap = `
+INTERFACE lif.
+  METHODS very_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_very.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include(" too long");
+  });
+
   it.skip("select count FIELDS without into", () => {
     const abap = `
 SELECT FROM zacb_recipe FIELDS COUNT(*).`;

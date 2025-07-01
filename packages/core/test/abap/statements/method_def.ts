@@ -141,6 +141,22 @@ const tests = [
 
   `METHODS precheck_delete FOR PRECHECK
         IMPORTING keys FOR DELETE Review.`,
+
+  `METHODS
+    augment FOR MODIFY
+    IMPORTING
+        entities_create FOR CREATE LabelAll\\_Label
+        entities_update FOR UPDATE Label.`,
+
+  `METHODS
+    validatetransportrequest FOR VALIDATE ON SAVE
+      IMPORTING
+        KEYS FOR Label~ValidateTransportRequest.`,
+
+  `METHODS get_global_features FOR GLOBAL FEATURES
+    IMPORTING
+    REQUEST REQUESTED_FEATURES FOR LabelText
+    RESULT result.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
