@@ -11319,7 +11319,7 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("method name too long", () => {
+  it("class method name too long", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -11331,7 +11331,16 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+    expect(issues[0]?.getMessage()).to.include(" too long");
+  });
+
+  it("interface method name too long", () => {
+    const abap = `
+INTERFACE lif.
+  METHODS very_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_veryvery_very.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include(" too long");
   });
 
   it.skip("select count FIELDS without into", () => {

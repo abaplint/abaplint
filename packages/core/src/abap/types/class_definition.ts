@@ -82,6 +82,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     // perform checks after everything has been initialized
     this.checkMethodsFromSuperClasses(input.scope);
+    this.checkMethodNameLength();
   }
 
   public getFriends() {
@@ -148,6 +149,15 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.addReference(token, input);
     const name = token?.getStr();
     return name;
+  }
+
+  private checkMethodNameLength() {
+    for (const m of this.methodDefs.getAll()) {
+      if (m.getName().length > 30) {
+        const message = `Method name "${m.getName()}" is too long, maximum length is 30 characters`;
+        throw new Error(message);
+      }
+    }
   }
 
   private checkMethodsFromSuperClasses(scope: CurrentScope) {
