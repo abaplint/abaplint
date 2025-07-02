@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {CDSLexer} from "../../src/cds/cds_lexer";
 import {MemoryFile} from "../../src/files/memory_file";
+import {Comment} from "../../src/abap/1_lexer/tokens";
 
 describe("CDS Lexer", () => {
 
@@ -83,6 +84,9 @@ define view zhvamfoocust as select from zhvam_cust
     expect(result.length).to.equal(17);
     expect(result[13].getStr()).to.equal("{");
     expect(result[13].getRow()).to.equal(4);
+
+    expect(result[5]).to.be.instanceof(Comment);
+    expect(result[5].getCol()).to.equal(24);
   });
 
   it("eq without spaces", () => {

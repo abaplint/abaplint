@@ -98,6 +98,11 @@ const tests = [
         CREATE BY \\_LabelText
         FROM text_for_new_entity
         RELATING TO entities_create BY relates_create.`,
+
+  `MODIFY AUGMENTING ENTITIES OF ZACB_I_Label_S
+          ENTITY LabelText
+            UPDATE FROM text_update
+            RELATING TO entities_update BY relates_update.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
