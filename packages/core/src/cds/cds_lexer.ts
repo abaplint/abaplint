@@ -42,7 +42,7 @@ class Result {
   public add(text: string, row: number, col: number, mode: Mode): string {
     if (text.length > 0) {
       if (mode === Mode.SingleLineComment) {
-        this.result.push(new Comment(new Position(row, col), text));
+        this.result.push(new Comment(new Position(row, col - text.length), text));
       } else {
         this.result.push(new Identifier(new Position(row, col), text));
       }
