@@ -157,6 +157,9 @@ const tests = [
     IMPORTING
     REQUEST REQUESTED_FEATURES FOR LabelText
     RESULT result.`,
+
+  `METHODS earlynumbering_create FOR NUMBERING
+        IMPORTING entities FOR CREATE Recipe.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
