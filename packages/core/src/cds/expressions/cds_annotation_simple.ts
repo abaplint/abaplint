@@ -10,6 +10,7 @@ export class CDSAnnotationSimple extends Expression {
                       "false",
                       regex(/^\d+$/),
                       seq(regex(/^\d+$/), ".", regex(/^\d+$/)),
+                      seq("#", "(", regex(/^[\w_]+$/), ")"),
                       regex(/^#[\w_]+$/));
 
     return value;

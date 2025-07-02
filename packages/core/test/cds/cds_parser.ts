@@ -448,6 +448,27 @@ annotate entity ZFOO with {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("extension, ANNOTATE VIEW", () => {
+    const cds = `
+annotate view ZACB_C_Label_S with
+{
+  @UI.facet: [ {
+    id: 'Transport',
+    purpose: #STANDARD,
+    type: #IDENTIFICATION_REFERENCE,
+    label: 'Transport',
+    position: 1 ,
+    hidden: #(HideTransport)
+  } ]
+  SingletonID;
+
+  TransportRequestID;
+}`;
+    const file = new MemoryFile("zacb_c_label_s.ddlx.asddlxs", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("extension, parsing error", () => {
     const cds = `
 @Metadata.layer: #CORE
