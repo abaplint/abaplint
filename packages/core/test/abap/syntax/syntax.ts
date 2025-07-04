@@ -11297,6 +11297,32 @@ READ TABLE tab WITH KEY tab.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("table convert remove header and change key", () => {
+    const abap = `
+
+TYPES: BEGIN OF ty,
+         field1 TYPE c LENGTH 2,
+         field2 TYPE i,
+       END OF ty.
+
+TYPES ty_empty TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+TYPES ty_default TYPE ty OCCURS 0.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING input TYPE ty_empty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA def TYPE ty_default.
+    run( CONV #( def[] ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, it has header line", () => {
     const abap = `
 DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
