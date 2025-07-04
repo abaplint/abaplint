@@ -11297,7 +11297,7 @@ READ TABLE tab WITH KEY tab.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("table convert remove header and change key", () => {
+  it("table convert remove header and change key", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          field1 TYPE c LENGTH 2,

@@ -115,7 +115,7 @@ export class Source {
         {
           const foundType = this.determineType(node, input, targetType);
           const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
-          if (new TypeUtils(input.scope).isAssignable(foundType, bodyType) === false) {
+          if (new TypeUtils(input.scope).isConvable(foundType, bodyType) === false) {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
