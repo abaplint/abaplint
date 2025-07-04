@@ -207,6 +207,16 @@ export class TypeUtils {
     return ret;
   }
 
+  public isConvable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+
+    if (source instanceof TableType && target instanceof TableType) {
+// table key conversion, eg DEFAULT to EMPTY
+      return this.isAssignable(source.getRowType(), target.getRowType());
+    }
+
+    return this.isAssignable(source, target);
+  }
+
   public isCastable(_source: AbstractType | undefined, _target: AbstractType | undefined): boolean {
 // todo
     return true;
