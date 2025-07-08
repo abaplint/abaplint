@@ -7,11 +7,42 @@ import {SkipLogic} from "./skip_logic";
 import {ExcludeHelper} from "./utils/excludeHelper";
 import {IRegistry, IRunInput} from "./_iregistry";
 
+class SyntaxPerformance {
+  private readonly results: {runtime: number, name: string}[] = [];
+
+  public push(obj: IObject, runtime: number): void {
+    if (runtime < 100) {
+      return;
+    }
+
+    this.results.push({
+      runtime: runtime,
+      name: obj.getType() + " " + obj.getName(),
+    });
+  }
+
+  public output() {
+    const MAX = 10;
+
+    this.results.sort((a, b) => { return b.runtime - a.runtime; });
+
+    for (let i = 0; i < MAX; i++) {
+      const row = this.results[i];
+      if (row === undefined) {
+        break;
+      }
+      process.stderr.write(`\t${row.runtime}ms\t${row.name}\n`);
+    }
+  }
+}
+
 export class RulesRunner {
   private readonly reg: IRegistry;
+  private readonly syntaxPerformance: SyntaxPerformance;
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
+    this.syntaxPerformance = new SyntaxPerformance();
   }
 
   public objectsToCheck(objects: Iterable<IObject>): readonly IObject[] {
@@ -40,8 +71,16 @@ export class RulesRunner {
     for (const obj of check) {
       input?.progress?.tick("Run Syntax - " + obj.getName());
       if (obj instanceof ABAPObject) {
+        const start = Date.now();
         new SyntaxLogic(this.reg, obj).run();
+        if (input?.outputPerformance === true) {
+          this.syntaxPerformance.push(obj, Date.now() - start);
+        }
       }
+    }
+    if (input?.outputPerformance === true) {
+      process.stderr.write("Syntax Performance:\n");
+      this.syntaxPerformance.output();
     }
 
     input?.progress?.set(rules.length, "Initialize Rules");
