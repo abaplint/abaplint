@@ -38,6 +38,8 @@ const tests = [
   "MESSAGE e014(foo/bar/moo/boo) WITH TEXT-e03.",
   `message e100(c+).`,
   `message e100(c+) raising INCONSISTENT_INPUT.`,
+  `MESSAGE s027(b~).`,
+  `MESSAGE e014(r§).`,
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);
