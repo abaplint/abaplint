@@ -88,6 +88,7 @@ export class FunctionGroup extends ABAPObject {
         }
         if ((i.startsWith("L") || namespaced) && f.getFilename().includes(search.toLowerCase() + ".")) {
           ret.push({file: f, name: i});
+          break;
         }
 
         // fix for URL encoded? Uris
@@ -95,6 +96,7 @@ export class FunctionGroup extends ABAPObject {
           search = i.replace(/\//g, "%23");
           if (f.getFilename().includes(search.toLowerCase() + ".")) {
             ret.push({file: f, name: i});
+            break;
           }
         }
       }

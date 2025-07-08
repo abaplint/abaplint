@@ -27,7 +27,7 @@ function getABAPObjects(reg: IRegistry): ABAPObject[] {
 
 interface IVertex {
   filename: string;
-  includeName: string;
+  includeName: string | undefined; // undefined for classes
   include: boolean;
 }
 
@@ -43,7 +43,9 @@ class Graph {
   }
 
   public addVertex(vertex: IVertex) {
-    this.verticesIncludenameIndex[vertex.includeName.toUpperCase()] = vertex;
+    if (vertex.includeName !== undefined) {
+      this.verticesIncludenameIndex[vertex.includeName.toUpperCase()] = vertex;
+    }
     this.verticesFilenameIndex[vertex.filename.toUpperCase()] = vertex;
   }
 
@@ -190,14 +192,14 @@ export class IncludeGraph implements IIncludeGraph {
         if (file) {
           this.graph.addVertex({
             filename: file.getFilename(),
-            includeName: o.getName(),
+            includeName: undefined,
             include: false});
         }
       } else if (o instanceof Class) {
         for (const f of o.getSequencedFiles()) {
           this.graph.addVertex({
             filename: f.getFilename(),
-            includeName: o.getName(),
+            includeName: undefined,
             include: false});
         }
       } else if (o instanceof FunctionGroup) {
@@ -211,7 +213,7 @@ export class IncludeGraph implements IIncludeGraph {
         if (file) {
           this.graph.addVertex({
             filename: file.getFilename(),
-            includeName: o.getName(),
+            includeName: undefined, // this is the SAPL program
             include: false});
         }
       }
