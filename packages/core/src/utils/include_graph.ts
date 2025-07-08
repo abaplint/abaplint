@@ -32,34 +32,27 @@ interface IVertex {
 }
 
 class Graph {
-  public readonly vertices: IVertex[];
+  public readonly verticesIncludenameIndex: {[includeName: string]: IVertex};
+  public readonly verticesFilenameIndex: {[filenameName: string]: IVertex};
   public readonly edges: {[from: string]: string[]};
 
   public constructor() {
-    this.vertices = [];
+    this.verticesIncludenameIndex = {};
+    this.verticesFilenameIndex = {};
     this.edges = {};
   }
 
   public addVertex(vertex: IVertex) {
-    this.vertices.push(vertex);
+    this.verticesIncludenameIndex[vertex.includeName.toUpperCase()] = vertex;
+    this.verticesFilenameIndex[vertex.filename.toUpperCase()] = vertex;
   }
 
   public findVertexViaIncludename(includeName: string): IVertex | undefined {
-    for (const v of this.vertices) {
-      if (v.includeName.toUpperCase() === includeName.toUpperCase()) {
-        return v;
-      }
-    }
-    return undefined;
+    return this.verticesIncludenameIndex[includeName.toUpperCase()];
   }
 
   public findVertexByFilename(filename: string): IVertex | undefined {
-    for (const v of this.vertices) {
-      if (v.filename.toUpperCase() === filename.toUpperCase()) {
-        return v;
-      }
-    }
-    return undefined;
+    return this.verticesFilenameIndex[filename.toUpperCase()];
   }
 
   public addEdge(from: IVertex, toFilename: string) {
@@ -168,7 +161,7 @@ export class IncludeGraph implements IIncludeGraph {
   }
 
   private findUnusedIncludes() {
-    for (const v of this.graph.vertices) {
+    for (const v of Object.values(this.graph.verticesFilenameIndex)) {
       if (v.include === true) {
         if (this.listMainForInclude(v.filename).length === 0) {
           const f = this.reg.getFileByName(v.filename);
