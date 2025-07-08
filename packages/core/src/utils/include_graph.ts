@@ -44,7 +44,7 @@ class Graph {
     this.vertices.push(vertex);
   }
 
-  public findInclude(includeName: string): IVertex | undefined {
+  public findVertexViaIncludename(includeName: string): IVertex | undefined {
     for (const v of this.vertices) {
       if (v.includeName.toUpperCase() === includeName.toUpperCase()) {
         return v;
@@ -53,7 +53,7 @@ class Graph {
     return undefined;
   }
 
-  public findVertex(filename: string): IVertex | undefined {
+  public findVertexByFilename(filename: string): IVertex | undefined {
     for (const v of this.vertices) {
       if (v.filename.toUpperCase() === filename.toUpperCase()) {
         return v;
@@ -75,7 +75,7 @@ class Graph {
       ret.push(...this.findTop(to));
     }
     if (ret.length === 0) {
-      const found = this.findVertex(filename);
+      const found = this.findVertexByFilename(filename);
       if (found !== undefined) {
         ret.push(found);
       }
@@ -146,7 +146,7 @@ export class IncludeGraph implements IIncludeGraph {
             if (name.match(FMXXINCLUDE)) { // function module XX includes, possibily namespaced
               continue;
             }
-            const found = this.graph.findInclude(name);
+            const found = this.graph.findVertexViaIncludename(name);
             if (found === undefined) {
               const ifFound = s.concatTokens().toUpperCase().includes("IF FOUND");
               if (ifFound === false) {
