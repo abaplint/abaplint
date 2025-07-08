@@ -83,6 +83,7 @@ export class Registry implements IRegistry {
   private readonly ddicReferences: IDDICReferences;
   private readonly msagReferences: IMSAGReferences;
   private readonly macroReferences: IMacroReferences;
+  private readonly errorNamespace: RegExp;
   private conf: IConfiguration;
 
   public constructor(conf?: IConfiguration) {
@@ -90,6 +91,7 @@ export class Registry implements IRegistry {
     this.ddicReferences = new DDICReferences();
     this.msagReferences = new MSAGReferences();
     this.macroReferences = new MacroReferences();
+    this.errorNamespace = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
   }
 
   public static abaplintVersion(): string {
@@ -190,9 +192,7 @@ export class Registry implements IRegistry {
   }
 
   public inErrorNamespace(name: string): boolean {
-    // todo: performance? cache regexp?
-    const reg = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
-    return reg.test(name);
+    return this.errorNamespace.test(name);
   }
 
   public addFile(file: IFile): IRegistry {
