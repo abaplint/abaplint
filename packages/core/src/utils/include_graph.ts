@@ -13,6 +13,8 @@ import {Severity} from "../severity";
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
 
+const FMXXINCLUDE = /^(\/\w+\/)?L.+XX$/;
+
 function getABAPObjects(reg: IRegistry): ABAPObject[] {
   const ret: ABAPObject[] = [];
   for (const o of reg.getObjects()) {
@@ -128,19 +130,24 @@ export class IncludeGraph implements IIncludeGraph {
 
     for (const o of getABAPObjects(this.reg)) {
       for (const f of o.getABAPFiles()) {
+        if (f.getFilename().includes(".prog.screen_") || f.getFilename().includes(".fugr.screen_")) {
+          // skip dynpro files
+          continue;
+        }
+
         for (const s of f.getStatements()) {
           if (s.get() instanceof Include) {
-            const ifFound = s.concatTokens().toUpperCase().includes("IF FOUND");
             const iexp = s.findFirstExpression(IncludeName);
             if (iexp === undefined) {
               throw new Error("unexpected Include node");
             }
             const name = iexp.getFirstToken().getStr().toUpperCase();
-            if (name.match(/^(\/\w+\/)?L.+XX$/)) { // function module XX includes, possibily namespaced
+            if (name.match(FMXXINCLUDE)) { // function module XX includes, possibily namespaced
               continue;
             }
             const found = this.graph.findInclude(name);
             if (found === undefined) {
+              const ifFound = s.concatTokens().toUpperCase().includes("IF FOUND");
               if (ifFound === false) {
                 const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getMetadata().key, Severity.Error);
                 this.issues.push(issue);
