@@ -13,6 +13,8 @@ import {Severity} from "../severity";
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
 
+const FMXXINCLUDE = /^(\/\w+\/)?L.+XX$/;
+
 function getABAPObjects(reg: IRegistry): ABAPObject[] {
   const ret: ABAPObject[] = [];
   for (const o of reg.getObjects()) {
@@ -30,49 +32,43 @@ interface IVertex {
 }
 
 class Graph {
-  public readonly vertices: IVertex[];
-  public readonly edges: {from: string, to: string}[];
+  public readonly verticesIncludenameIndex: {[includeName: string]: IVertex};
+  public readonly verticesFilenameIndex: {[filenameName: string]: IVertex};
+  public readonly edges: {[from: string]: string[]};
 
   public constructor() {
-    this.vertices = [];
-    this.edges = [];
+    this.verticesIncludenameIndex = {};
+    this.verticesFilenameIndex = {};
+    this.edges = {};
   }
 
   public addVertex(vertex: IVertex) {
-    this.vertices.push(vertex);
+    this.verticesIncludenameIndex[vertex.includeName.toUpperCase()] = vertex;
+    this.verticesFilenameIndex[vertex.filename.toUpperCase()] = vertex;
   }
 
-  public findInclude(includeName: string): IVertex | undefined {
-    for (const v of this.vertices) {
-      if (v.includeName.toUpperCase() === includeName.toUpperCase()) {
-        return v;
-      }
-    }
-    return undefined;
+  public findVertexViaIncludename(includeName: string): IVertex | undefined {
+    return this.verticesIncludenameIndex[includeName.toUpperCase()];
   }
 
-  public findVertex(filename: string): IVertex | undefined {
-    for (const v of this.vertices) {
-      if (v.filename.toUpperCase() === filename.toUpperCase()) {
-        return v;
-      }
-    }
-    return undefined;
+  public findVertexByFilename(filename: string): IVertex | undefined {
+    return this.verticesFilenameIndex[filename.toUpperCase()];
   }
 
   public addEdge(from: IVertex, toFilename: string) {
-    this.edges.push({from: from.filename, to: toFilename});
+    if (this.edges[from.filename] === undefined) {
+      this.edges[from.filename] = [];
+    }
+    this.edges[from.filename].push(toFilename);
   }
 
   public findTop(filename: string): IVertex[] {
     const ret: IVertex[] = [];
-    for (const e of this.edges) {
-      if (e.from === filename) {
-        ret.push(...this.findTop(e.to));
-      }
+    for (const to of this.edges[filename] || []) {
+      ret.push(...this.findTop(to));
     }
     if (ret.length === 0) {
-      const found = this.findVertex(filename);
+      const found = this.findVertexByFilename(filename);
       if (found !== undefined) {
         ret.push(found);
       }
@@ -128,19 +124,24 @@ export class IncludeGraph implements IIncludeGraph {
 
     for (const o of getABAPObjects(this.reg)) {
       for (const f of o.getABAPFiles()) {
+        if (f.getFilename().includes(".prog.screen_") || f.getFilename().includes(".fugr.screen_")) {
+          // skip dynpro files
+          continue;
+        }
+
         for (const s of f.getStatements()) {
           if (s.get() instanceof Include) {
-            const ifFound = s.concatTokens().toUpperCase().includes("IF FOUND");
             const iexp = s.findFirstExpression(IncludeName);
             if (iexp === undefined) {
               throw new Error("unexpected Include node");
             }
             const name = iexp.getFirstToken().getStr().toUpperCase();
-            if (name.match(/^(\/\w+\/)?L.+XX$/)) { // function module XX includes, possibily namespaced
+            if (name.match(FMXXINCLUDE)) { // function module XX includes, possibily namespaced
               continue;
             }
-            const found = this.graph.findInclude(name);
+            const found = this.graph.findVertexViaIncludename(name);
             if (found === undefined) {
+              const ifFound = s.concatTokens().toUpperCase().includes("IF FOUND");
               if (ifFound === false) {
                 const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getMetadata().key, Severity.Error);
                 this.issues.push(issue);
@@ -160,7 +161,7 @@ export class IncludeGraph implements IIncludeGraph {
   }
 
   private findUnusedIncludes() {
-    for (const v of this.graph.vertices) {
+    for (const v of Object.values(this.graph.verticesFilenameIndex)) {
       if (v.include === true) {
         if (this.listMainForInclude(v.filename).length === 0) {
           const f = this.reg.getFileByName(v.filename);
