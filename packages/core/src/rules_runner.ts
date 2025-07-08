@@ -85,7 +85,11 @@ export class RulesRunner {
 
     input?.progress?.set(rules.length, "Initialize Rules");
     for (const rule of rules) {
-      input?.progress?.tick("Initialize Rules - " + rule.getMetadata().key);
+      if (input?.outputPerformance === true) {
+        process.stderr.write("Initializing rule " + rule.getMetadata().key + "\n");
+      } else {
+        input?.progress?.tick("Initialize Rules - " + rule.getMetadata().key);
+      }
       if (rule.initialize === undefined) {
         throw new Error(rule.getMetadata().key + " missing initialize method");
       }
