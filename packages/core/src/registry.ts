@@ -83,15 +83,14 @@ export class Registry implements IRegistry {
   private readonly ddicReferences: IDDICReferences;
   private readonly msagReferences: IMSAGReferences;
   private readonly macroReferences: IMacroReferences;
-  private readonly errorNamespace: RegExp;
+  private errorNamespace: RegExp;
   private conf: IConfiguration;
 
   public constructor(conf?: IConfiguration) {
-    this.conf = conf ? conf : Config.getDefault();
+    this.setConfig(conf ? conf : Config.getDefault());
     this.ddicReferences = new DDICReferences();
     this.msagReferences = new MSAGReferences();
     this.macroReferences = new MacroReferences();
-    this.errorNamespace = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
   }
 
   public static abaplintVersion(): string {
@@ -188,6 +187,7 @@ export class Registry implements IRegistry {
       obj.setDirty();
     }
     this.conf = conf;
+    this.errorNamespace = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
     return this;
   }
 
