@@ -83,10 +83,11 @@ export class Registry implements IRegistry {
   private readonly ddicReferences: IDDICReferences;
   private readonly msagReferences: IMSAGReferences;
   private readonly macroReferences: IMacroReferences;
+  private errorNamespace: RegExp;
   private conf: IConfiguration;
 
   public constructor(conf?: IConfiguration) {
-    this.conf = conf ? conf : Config.getDefault();
+    this.setConfig(conf ? conf : Config.getDefault());
     this.ddicReferences = new DDICReferences();
     this.msagReferences = new MSAGReferences();
     this.macroReferences = new MacroReferences();
@@ -186,13 +187,12 @@ export class Registry implements IRegistry {
       obj.setDirty();
     }
     this.conf = conf;
+    this.errorNamespace = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
     return this;
   }
 
   public inErrorNamespace(name: string): boolean {
-    // todo: performance? cache regexp?
-    const reg = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
-    return reg.test(name);
+    return this.errorNamespace.test(name);
   }
 
   public addFile(file: IFile): IRegistry {

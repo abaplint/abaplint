@@ -8,7 +8,7 @@ import {TransportingFields} from "../expressions/transporting_fields";
 export class ReadTable implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const comparing = seq("COMPARING", alt(plus(FieldSub), Dynamic));
+    const comparing = seq("COMPARING", alt(plus(FieldSub), plus(Dynamic)));
 
     const index = seq("INDEX", Source);
 
