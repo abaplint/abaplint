@@ -33,11 +33,11 @@ interface IVertex {
 
 class Graph {
   public readonly vertices: IVertex[];
-  public readonly edges: {from: string, to: string}[];
+  public readonly edges: {[from: string]: string[]};
 
   public constructor() {
     this.vertices = [];
-    this.edges = [];
+    this.edges = {};
   }
 
   public addVertex(vertex: IVertex) {
@@ -63,15 +63,16 @@ class Graph {
   }
 
   public addEdge(from: IVertex, toFilename: string) {
-    this.edges.push({from: from.filename, to: toFilename});
+    if (this.edges[from.filename] === undefined) {
+      this.edges[from.filename] = [];
+    }
+    this.edges[from.filename].push(toFilename);
   }
 
   public findTop(filename: string): IVertex[] {
     const ret: IVertex[] = [];
-    for (const e of this.edges) {
-      if (e.from === filename) {
-        ret.push(...this.findTop(e.to));
-      }
+    for (const to of this.edges[filename] || []) {
+      ret.push(...this.findTop(to));
     }
     if (ret.length === 0) {
       const found = this.findVertex(filename);
