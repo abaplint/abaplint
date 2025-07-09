@@ -34,7 +34,7 @@ export class SelectLoop extends Expression {
                      bypass,
                      SQLGroupBy,
                      SQLForAllEntries,
-                     alt(tab, into, packTab));
+                     alt(tab, SQLIntoStructure, SQLIntoList, packTab));
 
     const strict = seq(SQLFrom,
                        ver(Version.v750, SQLFieldsLoop),
