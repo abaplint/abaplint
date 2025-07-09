@@ -153,6 +153,12 @@ const tests = [
       AND werks = <mooo>-werks
       AND lgort = <mooo>-lgpro
     GROUP BY matnr.`,
+
+  `SELECT @me->v_werks AS werks, lgort, matnr, labst
+    INTO @lt_foo
+    FROM tab
+    WHERE (lv_where_f).`,
+
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
