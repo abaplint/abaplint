@@ -92,10 +92,6 @@ export class IncludeGraph implements IIncludeGraph {
     this.build();
   }
 
-  public getIssues(): Issue[] {
-    return this.issues;
-  }
-
   public listMainForInclude(filename: string | undefined): string[] {
     const ret: string[] = [];
     if (filename === undefined) {
@@ -116,6 +112,19 @@ export class IncludeGraph implements IIncludeGraph {
         ret.push(i);
       }
     }
+
+    const v = this.graph.findVertexByFilename(file.getFilename());
+    if (v !== undefined
+        && v.include === true
+        && this.listMainForInclude(v.filename).length === 0) {
+      const f = this.reg.getFileByName(v.filename);
+      if (f === undefined) {
+        throw new Error("findUnusedIncludes internal error");
+      }
+      const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getMetadata().key, Severity.Error);
+      ret.push(issue);
+    }
+
     return ret;
   }
 
@@ -155,23 +164,6 @@ export class IncludeGraph implements IIncludeGraph {
               this.graph.addEdge(found, f.getFilename());
             }
           }
-        }
-      }
-    }
-
-    this.findUnusedIncludes();
-  }
-
-  private findUnusedIncludes() {
-    for (const v of Object.values(this.graph.verticesFilenameIndex)) {
-      if (v.include === true) {
-        if (this.listMainForInclude(v.filename).length === 0) {
-          const f = this.reg.getFileByName(v.filename);
-          if (f === undefined) {
-            throw new Error("findUnusedIncludes internal error");
-          }
-          const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getMetadata().key, Severity.Error);
-          this.issues.push(issue);
         }
       }
     }
