@@ -9,7 +9,7 @@ import {AssertError} from "../assert_error";
 
 export class Ranges implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput) {
-    const nameToken = node.findFirstExpression(Expressions.SimpleName)?.getFirstToken();
+    const nameToken = node.findFirstExpression(Expressions.DefinitionName)?.getFirstToken();
 
     const typeExpression = node.findFirstExpression(Expressions.SimpleFieldChain2);
     if (typeExpression === undefined) {
