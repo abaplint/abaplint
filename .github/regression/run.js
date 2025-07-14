@@ -14,6 +14,7 @@ const repos = [
   "abapGit/CI",
   "abapGit/performance-test",
   "abapify/assert",
+  "abap2UI5/abap2UI5",
   "abapify/fetch-cloud",
 //  "abapify/fetch-legacy",
   "abapify/fetch",
