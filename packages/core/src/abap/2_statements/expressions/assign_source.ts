@@ -6,6 +6,8 @@ import {Dynamic} from "./dynamic";
 import {Field} from "./field";
 import {SimpleSource3} from "./simple_source3";
 import {Version} from "../../../version";
+import {Dereference} from "./dereference";
+import {SimpleFieldChain} from "./simple_field_chain";
 
 export class AssignSource extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -18,7 +20,10 @@ export class AssignSource extends Expression {
 
     const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
 
-    const source = alt(seq(Source, opt(seq(arrow, Dynamic))),
+    const deref = seq(SimpleFieldChain, Dereference);
+
+    const source = alt(deref,
+                       seq(Source, opt(seq(arrow, Dynamic))),
                        component,
                        tableField,
                        seq(Dynamic, opt(seq(arrow, alt(Field, Dynamic)))));

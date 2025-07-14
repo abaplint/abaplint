@@ -1,4 +1,4 @@
-import {statementType, statementVersionOk} from "../_utils";
+import {statementType, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src";
 
@@ -89,3 +89,10 @@ const versionsOk = [
 ];
 
 statementVersionOk(versionsOk, "CALL", Statements.Call);
+
+const versionsFail = [
+  {abap: "my_object->meth( foo->* ).", ver: Version.v750},
+];
+
+statementVersionFail(versionsFail, "CALL");
+
