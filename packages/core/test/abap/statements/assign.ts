@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersion, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -50,3 +50,9 @@ const versions = [
 ];
 
 statementVersion(versions, "ASSIGN", Statements.Assign);
+
+const versionsFail = [
+  {abap: "ASSIGN COMPONENT r_interface->shlpfield OF STRUCTURE mr_data->* TO FIELD-SYMBOL(<value>).", ver: Version.v750},
+];
+
+statementVersionFail(versionsFail, "ASSIGN");
