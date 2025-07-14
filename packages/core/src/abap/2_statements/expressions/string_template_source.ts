@@ -1,10 +1,11 @@
-import {seq, Expression, optPrio} from "../combi";
-import {Source, StringTemplateFormatting} from ".";
+import {seq, Expression, optPrio, alt} from "../combi";
+import {Dereference, SimpleFieldChain2, Source, StringTemplateFormatting} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class StringTemplateSource extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ret = seq(Source, optPrio(StringTemplateFormatting));
+    const deref = seq(SimpleFieldChain2, optPrio(Dereference));
+    const ret = seq(alt(Source, deref), optPrio(StringTemplateFormatting));
     return ret;
   }
 }

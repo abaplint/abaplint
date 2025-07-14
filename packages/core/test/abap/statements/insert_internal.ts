@@ -52,7 +52,7 @@ const versions = [
 statementVersion(versions, "INSERT internal", Statements.InsertInternal);
 
 const ok = [
-  {abap: "INSERT ls_node INTO TABLE mr_dest_tree->*.", ver: Version.v702},
+  {abap: "INSERT ls_node INTO TABLE mr_dest_tree->*.", ver: Version.v702}, // yes
 ];
 
 statementVersionOk(ok, "INSERT internal", Statements.InsertInternal);

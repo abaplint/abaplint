@@ -1,6 +1,6 @@
 import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import { Version } from "../../../src";
+import {Version} from "../../../src";
 
 const tests = [
   "WRITE 'foobar'.",
@@ -91,4 +91,4 @@ const ok = [
   {abap: "WRITE / |{ lv_text }{ lr_text->* }{ cl_abap_char_utilities=>cr_lf }|.", ver: Version.v740sp05}, // this might be from 702 and up
 ];
 
-statementVersionOk(ok, "INSERT internal", Statements.InsertInternal);
+statementVersionOk(ok, "WRITE", Statements.Write);
