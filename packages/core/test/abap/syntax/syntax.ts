@@ -11407,4 +11407,13 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("Generic in ASSIGN okay in all versions", () => {
+    const abap = `
+DATA lr_context TYPE REF TO data.
+FIELD-SYMBOLS <lg_context> TYPE any.
+ASSIGN lr_context->* TO <lg_context>.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

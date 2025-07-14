@@ -94,7 +94,9 @@ export class FieldChain {
         }
       } else if (current.get() instanceof DereferenceExpression) {
         context = Dereference.runSyntax(current, context, input);
-        if (context?.isGeneric() === true && input.scope.getVersion() < Version.v756 && input.scope.getVersion() !== Version.Cloud) {
+        if (context?.isGeneric() === true
+            && input.scope.getVersion() < Version.v756
+            && input.scope.getVersion() !== Version.Cloud) {
           throw new Error("A generic reference cannot be dereferenced");
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
