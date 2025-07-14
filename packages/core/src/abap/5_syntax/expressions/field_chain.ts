@@ -22,7 +22,8 @@ export class FieldChain {
   public static runSyntax(
     node: ExpressionNode,
     input: SyntaxInput,
-    refType?: ReferenceType | ReferenceType[] | undefined): AbstractType | undefined {
+    refType?: ReferenceType | ReferenceType[] | undefined,
+    allowGenericDeference = false): AbstractType | undefined {
 
     if (node.getFirstChild()?.get() instanceof Expressions.SourceField
         && node.findDirectExpression(Expressions.ComponentName)) {
@@ -94,7 +95,8 @@ export class FieldChain {
         }
       } else if (current.get() instanceof DereferenceExpression) {
         context = Dereference.runSyntax(current, context, input);
-        if (context?.isGeneric() === true
+        if (allowGenericDeference === false
+            && context?.isGeneric() === true
             && input.scope.getVersion() < Version.v756
             && input.scope.getVersion() !== Version.Cloud) {
           throw new Error("A generic reference cannot be dereferenced");

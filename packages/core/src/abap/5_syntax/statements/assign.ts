@@ -29,7 +29,7 @@ export class Assign implements StatementSyntax {
       }
       sourceType = VoidType.get("Dynamic");
     } else {
-      sourceType = Source.runSyntax(theSource, input);
+      sourceType = Source.runSyntax(theSource, input, undefined, false, true);
     }
 
     if (assignSource?.getChildren().length === 5
