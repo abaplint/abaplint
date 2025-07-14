@@ -7,7 +7,7 @@ import {Field} from "./field";
 import {SimpleSource3} from "./simple_source3";
 import {Version} from "../../../version";
 import {Dereference} from "./dereference";
-import {SimpleFieldChain} from "./simple_field_chain";
+import {SimpleFieldChain2} from "./simple_field_chain2";
 
 export class AssignSource extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -20,7 +20,7 @@ export class AssignSource extends Expression {
 
     const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
 
-    const deref = seq(SimpleFieldChain, Dereference);
+    const deref = seq(SimpleFieldChain2, Dereference);
 
     const source = alt(deref,
                        seq(Source, opt(seq(arrow, Dynamic))),

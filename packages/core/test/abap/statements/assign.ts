@@ -38,6 +38,7 @@ const tests = [
   "ASSIGN ('sdfsdf') TO <fs> ELSE UNASSIGN.",
   "ASSIGN data->* TO <gt>[].",
   `ASSIGN pack TO <p> DECIMALS foo-bar.`,
+  `ASSIGN <ls_data_sheet>-data->* TO <any>.`,
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);
