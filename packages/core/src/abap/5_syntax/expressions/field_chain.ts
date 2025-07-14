@@ -15,6 +15,7 @@ import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SourceField} from "./source_field";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Version} from "../../../version";
 
 export class FieldChain {
 
@@ -93,6 +94,9 @@ export class FieldChain {
         }
       } else if (current.get() instanceof DereferenceExpression) {
         context = Dereference.runSyntax(current, context, input);
+        if (context?.isGeneric() === true && input.scope.getVersion() < Version.v756 && input.scope.getVersion() !== Version.Cloud) {
+          throw new Error("A generic reference cannot be dereferenced");
+        }
       } else if (current.get() instanceof Expressions.ComponentName) {
         if (context instanceof TableType && context.isWithHeader()) {
           context = context.getRowType();
