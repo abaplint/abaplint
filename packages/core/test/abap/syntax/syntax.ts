@@ -11376,4 +11376,13 @@ SELECT FROM zacb_recipe FIELDS COUNT(*).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("generic dereference not possible until 756", () => {
+    const abap = `
+DATA lo_data TYPE REF TO data.
+DATA lv_buffer TYPE c LENGTH 2.
+CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
+    const issues = runProgram(abap, [], Version.v740sp05);
+    expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
+  });
+
 });
