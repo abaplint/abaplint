@@ -36,12 +36,14 @@ import {AssertError} from "../assert_error";
 * DATA(bar) = VALUE #( ... ).     give error, no type can be derived
 */
 
+// TODO: refactor all these method parameters to objects, this is getting messy
 export class Source {
   public static runSyntax(
     node: ExpressionNode | undefined,
     input: SyntaxInput,
     targetType?: AbstractType,
-    writeReference = false): AbstractType | undefined {
+    writeReference = false,
+    allowGenericDeference = false): AbstractType | undefined {
 
     if (node === undefined) {
       return undefined;
@@ -202,7 +204,7 @@ export class Source {
             return VoidType.get(CheckSyntaxKey);
           }
         } else if (get instanceof Expressions.FieldChain) {
-          context = FieldChain.runSyntax(first, input, type);
+          context = FieldChain.runSyntax(first, input, type, allowGenericDeference);
         } else if (get instanceof Expressions.StringTemplate) {
           context = StringTemplate.runSyntax(first, input);
         } else if (get instanceof Expressions.Source) {

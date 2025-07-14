@@ -11376,4 +11376,44 @@ SELECT FROM zacb_recipe FIELDS COUNT(*).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("specific type deference, okay", () => {
+    const abap = `
+TYPES ty_char TYPE c LENGTH 2.
+DATA lo_data TYPE REF TO ty_char.
+DATA lv_buffer TYPE c LENGTH 2.
+CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("generic dereference not possible until 756", () => {
+    const abap = `
+DATA lo_data TYPE REF TO data.
+DATA lv_buffer TYPE c LENGTH 2.
+CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
+    const issues = runProgram(abap, [], Version.v740sp05);
+    expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
+  });
+
+  it("generic dereference ok on 756 and cloud", () => {
+    const abap = `
+DATA lo_data TYPE REF TO data.
+DATA lv_buffer TYPE c LENGTH 2.
+CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
+    let issues = runProgram(abap, [], Version.v756);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+
+    issues = runProgram(abap, [], Version.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Generic in ASSIGN okay in all versions", () => {
+    const abap = `
+DATA lr_context TYPE REF TO data.
+FIELD-SYMBOLS <lg_context> TYPE any.
+ASSIGN lr_context->* TO <lg_context>.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
