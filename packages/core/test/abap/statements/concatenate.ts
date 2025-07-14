@@ -1,5 +1,6 @@
-import {statementExpectFail, statementType} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src";
 
 const tests = [
   "concatenate space space into lv_foo.",
@@ -24,3 +25,9 @@ const fails = [
   "CONCATENATE 'sdfs' 'sdf' INTO DATA(dsfs) SEPARATED BY |a|.", // also error on 750
 ];
 statementExpectFail(fails, "CONCATENATE");
+
+const versionsFail = [
+  {abap: "CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lr_ref->* IN CHARACTER MODE.", ver: Version.v740sp05},
+];
+
+statementVersionFail(versionsFail, "CONCATENATE");
