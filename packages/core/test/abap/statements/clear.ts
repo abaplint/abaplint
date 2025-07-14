@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src";
 
 const tests = [
   "CLEAR foobar.",
@@ -15,3 +16,9 @@ const tests = [
 ];
 
 statementType(tests, "CLEAR", Statements.Clear);
+
+const versionsFail = [
+  {abap: "CLEAR lr_attri->r_ref->*.", ver: Version.v750},
+];
+
+statementVersionFail(versionsFail, "CALL");
