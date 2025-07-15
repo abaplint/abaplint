@@ -5,7 +5,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {AnyType, CharacterType, DataReference, StringType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, DataReference, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
@@ -77,7 +77,12 @@ export class InsertInternal implements StatementSyntax {
       if (inline) {
         InlineData.runSyntax(afterInto, input, new DataReference(sourceType));
       } else {
-        Target.runSyntax(afterInto, input);
+        const type = Target.runSyntax(afterInto, input);
+        if (type instanceof TableType && type.getAccessType() === TableAccessType.hashed) {
+          const message = "Implicit or explicit index operation on hashed table is not possible";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
       }
     }
 

@@ -1142,4 +1142,22 @@ define view entity ZI_TaxItem
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("projection with namespace and where", () => {
+    const cds = `
+define root view entity /foo/c_bar
+  as projection on /foo/i_moo
+{
+
+  key Type,
+      Description
+
+}
+where
+  SomeThing is initial
+`;
+    const file = new MemoryFile("#foo#c_bar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });

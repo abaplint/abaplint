@@ -11395,6 +11395,32 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
     expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
   });
 
+  it("hashed table expect error", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+         field2 TYPE i,
+       END OF ty.
+DATA lt_hashed TYPE HASHED TABLE OF ty WITH UNIQUE KEY field1.
+DATA row LIKE LINE OF lt_hashed.
+INSERT row INTO lt_hashed.`;
+    const issues = runProgram(abap, [], Version.v740sp05);
+    expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
+  it("hashed table, okay INTO TABLE", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE i,
+         field2 TYPE i,
+       END OF ty.
+DATA lt_hashed TYPE HASHED TABLE OF ty WITH UNIQUE KEY field1.
+DATA row LIKE LINE OF lt_hashed.
+INSERT row INTO TABLE lt_hashed.`;
+    const issues = runProgram(abap, [], Version.v740sp05);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("generic dereference ok on 756 and cloud", () => {
     const abap = `
 DATA lo_data TYPE REF TO data.
