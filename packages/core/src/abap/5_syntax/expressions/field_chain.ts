@@ -80,7 +80,7 @@ export class FieldChain {
               return VoidType.get(CheckSyntaxKey);
             }
           } else {
-            const message = "Not a structure (FieldChain, " + context?.constructor.name + ", " + current.concatTokens() + ")";
+            const message = "Not a structure, FieldChain, " + context?.constructor.name + ", " + current.concatTokens();
             input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
           }
