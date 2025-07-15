@@ -21,7 +21,7 @@ export class FileOperations {
   public static loadFileNames(arg: string, error = true): string[] {
     const files = glob.sync(arg, {nodir: true, absolute: true, posix: true});
     if (files.length === 0 && error) {
-      throw "Error: No files found" + arg;
+      throw "Error: No files found, " + arg;
     }
     return files;
   }
