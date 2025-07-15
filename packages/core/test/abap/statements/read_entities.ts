@@ -66,6 +66,12 @@ const tests = [
         ALL FIELDS WITH CORRESPONDING #( keys )
         RESULT DATA(children)
       FAILED DATA(read_failed).`,
+
+  `READ ENTITIES OF /foo/i_bar IN LOCAL MODE
+     ENTITY /foo/i_bar
+     FIELDS ( field1 field2 )
+     WITH CORRESPONDING #( keys )
+     RESULT DATA(tab).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
