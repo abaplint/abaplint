@@ -483,6 +483,12 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
                          AND a~matnr = g~matnr AND a~bwart = g~bwart
                          AND a~grund = g~grund
        WHERE a~vrsio = '000'.`,
+
+  `SELECT FROM I_Language
+      FIELDS LanguageISOCode,
+             \\_Text[ ONE TO ONE WHERE Language = @sy-langu ]-LanguageName
+      ORDER BY LanguageISOCode
+      INTO TABLE @DATA(languages).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
