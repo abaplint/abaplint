@@ -58,7 +58,7 @@ export class Target {
             && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType)
             && !(context instanceof VoidType)) {
-          const message = "Not a structure, target";
+          const message = "Not a structure, target, " + context?.constructor.name + ", " + current.concatTokens();
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
