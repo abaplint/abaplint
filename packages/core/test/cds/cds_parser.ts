@@ -1175,4 +1175,19 @@ define root view entity /foo/c_bar
     expect(parsed).to.not.equal(undefined);
   });
 
+  it.only("custom entity with association", () => {
+    const cds = `
+define custom entity /foo/i_bar
+{
+  key state       : abap.char(1);
+      foobar      : abap.string(1000);
+      _ObjectBase : association to parent /foo/i_base on  $projection.id    = _ObjectBase.id
+                                                          and $projection.state = _ObjectBase.state;
+}
+`;
+    const file = new MemoryFile("#foo#i_bar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
