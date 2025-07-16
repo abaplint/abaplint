@@ -1160,4 +1160,19 @@ where
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("projection with key", () => {
+    const cds = `
+define root view entity /foo/c_bar
+  provider contract transactional_query
+  as projection on /foo/i_bar
+{
+  key ObjectType,
+  _Texts.Description : localized
+}
+`;
+    const file = new MemoryFile("#foo#c_bar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
