@@ -221,6 +221,7 @@ export class MethodParameters implements IMethodParameters {
           || concat.includes(" FOR FEATURES ")
           || concat.includes(" FOR INSTANCE FEATURES ")
           || concat.includes(" FOR READ ")
+          || concat.includes(" FOR LOCK ")
           || concat.includes(" FOR MODIFY ")) {
         const token = isRap.getFirstToken();
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
