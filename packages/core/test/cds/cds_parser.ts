@@ -1175,7 +1175,7 @@ define root view entity /foo/c_bar
     expect(parsed).to.not.equal(undefined);
   });
 
-  it.only("custom entity with association", () => {
+  it("custom entity with association", () => {
     const cds = `
 define custom entity /foo/i_bar
 {
