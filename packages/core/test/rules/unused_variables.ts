@@ -1606,4 +1606,28 @@ PERFORM sdf IN PROGRAM (name).`;
     expect(issues.length).to.equal(0);
   });
 
+  it("cursor 1", async () => {
+    const abap = `
+DATA lv_cursor TYPE cursor.
+OPEN CURSOR @lv_cursor FOR SELECT * FROM ztab.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("cursor 2", async () => {
+    const abap = `
+DATA lv_cursor TYPE cursor.
+FETCH NEXT CURSOR @lv_cursor INTO TABLE @lt_data PACKAGE SIZE 10000.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("cursor 3", async () => {
+    const abap = `
+DATA lv_cursor TYPE cursor.
+CLOSE CURSOR @lv_cursor.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
