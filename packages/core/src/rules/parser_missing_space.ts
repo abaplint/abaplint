@@ -248,9 +248,12 @@ This rule makes sure the spaces are consistently required across the language.`,
     if (children.length >= 4
         && children[0].getStr().toUpperCase() === "CONV") {
       const directChildren = cond.getChildren();
-      const first = directChildren[2].getLastToken();
-      const second = directChildren[3].getFirstToken();
-      if (first.getRow() === second.getRow()
+      const first = directChildren[2]?.getLastToken();
+      const second = directChildren[3]?.getFirstToken();
+      if (first
+          && first.getStr() === "("
+          && second
+          && first.getRow() === second.getRow()
           && first.getCol() + 1 === second.getStart().getCol()) {
         return second.getStart();
       }
