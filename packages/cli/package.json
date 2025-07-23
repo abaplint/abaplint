@@ -42,7 +42,7 @@
         "@types/chai": "^4.3.20",
         "@types/minimist": "^1.2.5",
         "@types/mocha": "^10.0.10",
-        "@types/node": "^24.0.15",
+        "@types/node": "^24.1.0",
         "@types/progress": "^2.0.7",
         "chai": "^4.5.0",
         "p-limit": "^3.1.0",
