@@ -100,8 +100,12 @@ export class DataElement extends AbstractObject {
     }
     reg.getDDICReferences().setUsing(this, references);
 
-    this.parsedType = lookup.type;
-    return this.parsedType;
+    if (!(lookup.type instanceof Types.UnknownType)) {
+      // the referenced type might not exist or contain syntax errors(for CLAS)
+      // so dont cache it, expect the user to fix it
+      this.parsedType = lookup.type;
+    }
+    return lookup.type;
   }
 
   public parse() {
