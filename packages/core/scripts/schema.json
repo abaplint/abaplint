@@ -2607,7 +2607,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/mix_returning"
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide, SingleFile, Syntax\nhttps://rules.abaplint.org/mix_returning"
             },
             "modify_only_own_db_tables": {
               "anyOf": [
@@ -4499,7 +4499,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/mix_returning"
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide, SingleFile, Syntax\nhttps://rules.abaplint.org/mix_returning"
             },
             "modify_only_own_db_tables": {
               "anyOf": [
