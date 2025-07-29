@@ -802,13 +802,14 @@ describe("Table, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as Table;
 
-    const fields = tabl.parseType(reg);
-    if (!(fields instanceof StructureType)) {
+    const structure = tabl.parseType(reg);
+    if (!(structure instanceof StructureType)) {
       expect.fail();
     }
-    const components = fields.getComponents();
+    const components = structure.getComponents();
     expect(components.length).to.equal(4);
     expect(components[0].name).to.equal("SUBSTRUC");
+    expect(components[0].asInclude).to.equal(true);
   });
 
   it("key fields with .include", async () => {
