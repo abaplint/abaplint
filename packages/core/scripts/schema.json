@@ -5429,7 +5429,8 @@
               "type": "array"
             }
           ],
-          "description": "input files, glob format"
+          "description": "input files, glob format",
+          "uniqueItems": true
         },
         "noIssues": {
           "description": "list of files to not report any issues for, case insensitive regex",

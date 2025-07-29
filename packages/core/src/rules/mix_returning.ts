@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import * as Statements from "../abap/2_statements/statements";
@@ -18,9 +19,10 @@ export class MixReturning extends ABAPRule {
       key: "mix_returning",
       title: "Mix of returning and exporting",
       shortDescription: `Checks that methods don't have a mixture of returning and exporting/changing parameters`,
-      // eslint-disable-next-line max-len
-      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination`,
-      tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination
+
+This syntax is not allowed on versions earlier than 740sp02, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abennews-740-abap_objects.htm#!ABAP_MODIFICATION_1@1@`,
+      tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Syntax],
       badExample: `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     METHODS

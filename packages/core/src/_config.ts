@@ -2,7 +2,9 @@ import {Version} from "./version";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
-  /** input files, glob format */
+  /** input files, glob format
+   * @uniqueItems true
+  */
   files: string | string[];
   skipGeneratedBOPFInterfaces?: boolean;
   /** Skips generated table maintenances, determined via TOBJ object */
