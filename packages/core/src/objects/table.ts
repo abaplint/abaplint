@@ -150,7 +150,7 @@ export class Table extends AbstractObject {
         }
         if (found instanceof Types.StructureType) {
           if (field.GROUPNAME !== undefined) {
-            components.push({name: field.GROUPNAME, type: found});
+            components.push({name: field.GROUPNAME, type: found, asInclude: true});
           }
 
           if (field.FIELDNAME.startsWith(".INCLU-") === false
