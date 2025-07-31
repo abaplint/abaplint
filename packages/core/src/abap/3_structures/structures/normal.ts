@@ -217,6 +217,7 @@ export class Normal implements IStructure {
                sta(Statements.RollbackEntities),
                sta(Statements.Module), // todo, should be dynpro specific
                sta(Statements.Field), // todo, should be dynpro specific
+               sta(Statements.Parameter),
 
                sub(Structures.Chain), // todo, should be dynpro specific
                sub(Structures.Define),

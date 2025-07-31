@@ -15,6 +15,11 @@ const cases = [
       PERFORM foo.
     ENDON.
   ENDIF.`},
+  {abap: `
+  IF 1 = 2.
+    PARAMETERS: qq TYPE sy-datum.
+  ENDIF.
+  `},
 ];
 
 structureType(cases, new If());
