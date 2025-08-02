@@ -11,6 +11,7 @@ import {SyntaxInput} from "../5_syntax/_syntax_input";
 
 export class EventDefinition extends Identifier implements IEventDefinition {
   private readonly parameters: TypedIdentifier[];
+  private readonly is_static: boolean;
 
   public constructor(node: StatementNode, _visibility: Visibility, input: SyntaxInput) {
     if (!(node.get() instanceof Events)) {
@@ -24,10 +25,16 @@ export class EventDefinition extends Identifier implements IEventDefinition {
 
     this.parameters = [];
     this.parse(node, input);
+
+    this.is_static = node.getFirstToken().getStr().toUpperCase() === "CLASS";
   }
 
   public getParameters(): readonly TypedIdentifier[] {
     return this.parameters;
+  }
+
+  public isStatic(): boolean {
+    return this.is_static;
   }
 
 ///////////////
