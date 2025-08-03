@@ -47,6 +47,14 @@ export class BuiltInMethod extends Identifier implements IMethodDefinition, IMet
     throw new Error("BuiltInMethod->getAll, Method not implemented");
   }
 
+  public getEventName() {
+    return undefined;
+  }
+
+  public getEventClass() {
+    return undefined;
+  }
+
   public getImporting(): readonly TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
     for (const i in this.method.mandatory) {
