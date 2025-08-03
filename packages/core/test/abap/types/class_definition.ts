@@ -206,4 +206,24 @@ ENDCLASS.`;
     expect(pub!.getExceptions().length).to.equal(2);
   });
 
+  it("method, event", () => {
+    const abap = `
+CLASS zcl_moo DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo FOR EVENT double_click OF cl_salv_events_table.
+ENDCLASS.
+CLASS zcl_moo IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.getMethodDefinitions()).to.not.equal(undefined);
+    const pub = def!.getMethodDefinitions().getByName("moo");
+    expect(pub).to.not.equal(undefined);
+    expect(pub!.getEventName()).to.equal("DOUBLE_CLICK");
+    expect(pub!.getEventClass()).to.equal("CL_SALV_EVENTS_TABLE");
+  });
+
 });

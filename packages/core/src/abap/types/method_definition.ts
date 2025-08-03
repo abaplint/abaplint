@@ -13,6 +13,8 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly parameters: MethodParameters;
   private readonly redefinition: boolean;
   private readonly eventHandler: boolean;
+  private readonly eventName: string | undefined;
+  private readonly eventClass: string | undefined;
   private readonly abstract: boolean;
   private readonly static: boolean;
   private readonly raising: string[];
@@ -48,8 +50,11 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     }
 
     this.eventHandler = false;
-    if (node.findDirectExpression(Expressions.EventHandler)) {
+    const handler = node.findDirectExpression(Expressions.EventHandler);
+    if (handler) {
       this.eventHandler = true;
+      this.eventName = handler.findDirectExpression(Expressions.EventName)?.concatTokens().toUpperCase();
+      this.eventClass = handler.findDirectExpression(Expressions.ClassName)?.concatTokens().toUpperCase();
     }
 
     this.abstract = false;
@@ -111,6 +116,14 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
   public isEventHandler(): boolean {
     return this.eventHandler;
+  }
+
+  public getEventName(): string | undefined {
+    return this.eventName;
+  }
+
+  public getEventClass(): string | undefined {
+    return this.eventClass;
   }
 
   public getParameters(): MethodParameters {

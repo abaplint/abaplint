@@ -8,6 +8,8 @@ export interface IMethodDefinition extends Identifier {
   isAbstract(): boolean;
   isStatic(): boolean;
   isEventHandler(): boolean;
+  getEventName(): string | undefined;
+  getEventClass(): string | undefined;
   getParameters(): IMethodParameters;
   getRaising(): readonly string[];
   getExceptions(): readonly string[];
