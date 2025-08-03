@@ -50,10 +50,11 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     }
 
     this.eventHandler = false;
-    if (node.findDirectExpression(Expressions.EventHandler)) {
+    const handler = node.findDirectExpression(Expressions.EventHandler);
+    if (handler) {
       this.eventHandler = true;
-      this.eventName = node.findDirectExpression(Expressions.EventName)!.concatTokens().toUpperCase();
-      this.eventClass = node.findDirectExpression(Expressions.ClassName)!.concatTokens().toUpperCase();
+      this.eventName = handler.findDirectExpression(Expressions.EventName)?.concatTokens().toUpperCase();
+      this.eventClass = handler.findDirectExpression(Expressions.ClassName)?.concatTokens().toUpperCase();
     }
 
     this.abstract = false;
