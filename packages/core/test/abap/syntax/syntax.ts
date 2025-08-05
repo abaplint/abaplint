@@ -6599,7 +6599,7 @@ START-OF-SELECTION.
   DATA itab TYPE itab_data_type.
   SORT itab BY group asc number desc.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.include("Field ASC does not exist");
+    expect(issues[0]?.getMessage()).to.include("not found in structure");
   });
 
   it("SORT, table with voided row, ok", () => {
