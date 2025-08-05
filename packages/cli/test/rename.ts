@@ -32,9 +32,11 @@ ENDCLASS.`;
     const volume = memfs.Volume.fromJSON(jsonFiles);
     const mockFS = memfs.createFsFromVolume(volume);
     // patch rmSync in, https://github.com/streamich/fs-monkey/issues/320
+    /*
     mockFS.rmSync = function (name: string) {
       volume.rmSync(name);
     };
+    */
 
     const config = reg.getConfig().get();
     config.rename = {"patterns": [{"type": "CLAS|INTF", "oldName": "zif_intf", "newName": "yif_sdfsdf"}]};
