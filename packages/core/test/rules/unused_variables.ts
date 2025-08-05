@@ -1630,7 +1630,7 @@ CLOSE CURSOR @lv_cursor.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("SORT table line interfaced var", async () => {
+  it("SORT table line interfaced var", async () => {
     const abap = `
 INTERFACE lif.
   DATA foo TYPE i.

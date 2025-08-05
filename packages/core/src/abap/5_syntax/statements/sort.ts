@@ -3,8 +3,9 @@ import {StatementNode} from "../../nodes";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
-import {AnyType, StructureType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {ComponentChain} from "../expressions/component_chain";
 
 export class Sort implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -27,6 +28,8 @@ export class Sort implements StatementSyntax {
             && !(rowType instanceof UnknownType)
             && !(rowType instanceof AnyType)) {
           for (const component of node.findAllExpressions(Expressions.ComponentChain)) {
+            ComponentChain.runSyntax(rowType, component, input);
+            /*
             if (component.getChildren().length > 1) {
               continue;
             }
@@ -42,6 +45,7 @@ export class Sort implements StatementSyntax {
               input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
               return;
             }
+              */
           }
         }
       } else if (ttype !== undefined
