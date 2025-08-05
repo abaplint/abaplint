@@ -1630,4 +1630,26 @@ CLOSE CURSOR @lv_cursor.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SORT table line interfaced var", async () => {
+    const abap = `
+INTERFACE lif.
+  DATA foo TYPE i.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA tab TYPE STANDARD TABLE OF REF TO lif WITH DEFAULT KEY.
+    SORT tab BY table_line->foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
