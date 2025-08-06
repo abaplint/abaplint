@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {VoidType, TableType, UnknownType, DataReference, AnyType, DataType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
@@ -26,7 +26,7 @@ export class Loop implements StatementSyntax {
     const write = loopTarget?.findDirectTokenByText("ASSIGNING") !== undefined;
 
     const sources = node.findDirectExpressions(Expressions.Source);
-    let firstSource = node.findDirectExpression(Expressions.SimpleSource2);
+    let firstSource = node.findDirectExpression(Expressions.LoopSource)?.getFirstChild() as ExpressionNode | undefined;
     if (firstSource === undefined) {
       firstSource = sources[0];
     }

@@ -2048,12 +2048,12 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     } else if (!(high.get() instanceof Statements.Loop)) {
       return undefined;
-    } else if (high.findDirectExpression(Expressions.SimpleSource2)) {
+    } else if (high.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.SimpleSource2)) {
       return undefined;
     }
 
     // the first Source must be outlined
-    const s = high.findDirectExpression(Expressions.Source);
+    const s = high.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.Source);
     if (s === undefined) {
       return undefined;
     }
@@ -2075,7 +2075,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     }
 
-    const source = node.findDirectExpression(Expressions.SimpleSource2);
+    const source = node.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.SimpleSource2);
     if (source === undefined) {
       return undefined;
     }
