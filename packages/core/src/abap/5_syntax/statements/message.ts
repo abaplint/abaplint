@@ -19,6 +19,15 @@ export class Message implements StatementSyntax {
       Target.runSyntax(found, input);
     }
 
+    for (const mss of node.findDirectExpressions(Expressions.MessageSourceSource)) {
+      for (const s of mss.findDirectExpressions(Expressions.Source)) {
+        Source.runSyntax(s, input);
+      }
+      for (const s of mss.findDirectExpressions(Expressions.SimpleSource3)) {
+        Source.runSyntax(s, input);
+      }
+    }
+
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       Source.runSyntax(s, input);
     }
