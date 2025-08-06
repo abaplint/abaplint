@@ -1430,7 +1430,7 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     abap += `${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), abap);
-    return Issue.atToken(lowFile, startToken, "Downport RAISE MESSAGE", this.getMetadata().key, this.conf.severity, fix);
+    return Issue.atToken(lowFile, startToken, "Downport RAISE EXCEPTION MESSAGE", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private emptyKey(low: StatementNode, node: StatementNode, lowFile: ABAPFile): Issue | undefined {
