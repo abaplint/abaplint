@@ -1,13 +1,12 @@
 import {IStatement} from "./_statement";
 import {seq, opt, alt, per, optPrio, altPrio, ver, verNot} from "../combi";
-import {Target, Source, ExceptionName, MessageSource, SimpleSource3} from "../expressions";
+import {Target, Source, ExceptionName, MessageSource, MessageSourceSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 
 export class Message implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const s = alt(ver(Version.v740sp02, Source), SimpleSource3);
     const like = seq("DISPLAY LIKE", Source);
     const into = seq("INTO", Target);
     const raising = seq("RAISING", ExceptionName);
@@ -16,16 +15,16 @@ export class Message implements IStatement {
 
     const type = seq("TYPE", Source);
 
-    const sou = altPrio(options, s);
+    const sou = altPrio(options, MessageSourceSource);
     const sourc = alt(sou,
-                      seq(s, sou),
-                      seq(s, s, sou),
-                      seq(s, s, s, options));
+                      seq(MessageSourceSource, sou),
+                      seq(MessageSourceSource, MessageSourceSource, sou),
+                      seq(MessageSourceSource, MessageSourceSource, MessageSourceSource, options));
 
-    const mwith = seq("WITH", s, opt(sourc));
+    const mwith = seq("WITH", MessageSourceSource, opt(sourc));
 
     const foo = seq(MessageSource, opt(options), opt(mwith));
-    const text = seq(s, type, optPrio(like), optPrio(raising));
+    const text = seq(MessageSourceSource, type, optPrio(like), optPrio(raising));
 
     const cloud1 = seq(opt(seq("WITH", Source, opt(Source), opt(Source), opt(Source))), altPrio(into, raising));
     const cloud2 = seq(altPrio(into, raising), opt(seq("WITH", Source, opt(Source), opt(Source), opt(Source))));

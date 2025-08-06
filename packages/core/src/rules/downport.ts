@@ -1083,7 +1083,8 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
     }
 
     const source = high.findExpressionAfterToken("MESSAGE");
-    if (source?.get() instanceof Expressions.Source) {
+    if (source?.get() instanceof Expressions.MessageSourceSource
+        && source.getFirstChild()?.get() instanceof Expressions.Source) {;
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
