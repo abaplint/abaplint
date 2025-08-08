@@ -88,7 +88,7 @@ export class Source extends Expression {
                                            tok(ParenLeftW),
                                            Source,
                                            optPrio("OPTIONAL"),
-                                           rparen));
+                                           rparen), Version.OpenABAP);
 
     const exact = ver(Version.v740sp02, seq("EXACT",
                                             TypeNameOrInfer,

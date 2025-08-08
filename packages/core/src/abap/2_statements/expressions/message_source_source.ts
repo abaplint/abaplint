@@ -5,6 +5,6 @@ import {Version} from "../../../version";
 
 export class MessageSourceSource extends Expression {
   public getRunnable(): IStatementRunnable {
-    return alt(ver(Version.v740sp02, Source), SimpleSource3);
+    return alt(ver(Version.v740sp02, Source, Version.OpenABAP), SimpleSource3);
   }
 }

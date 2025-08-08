@@ -23,7 +23,7 @@ export class Move implements IStatement {
                                seq(tok(WDash), "="),
                                "/=",
                                "*=",
-                               "&&="));
+                               "&&="), Version.OpenABAP);
 
     const chained = seq("=", star(seq(Target, "=")));
 
