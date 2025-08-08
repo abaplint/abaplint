@@ -127,14 +127,15 @@ export class Source {
         }
         case "REF":
         {
-          const foundType = this.determineType(node, input, targetType);
+          let foundType = this.determineType(node, input, targetType);
           const s = Source.runSyntax(node.findDirectExpression(Expressions.Source), input);
           if (foundType === undefined && s) {
-            return new DataReference(s);
+            foundType = new DataReference(s);
           } else if (foundType) {
-            return new DataReference(foundType);
+            foundType = new DataReference(foundType);
           }
-          return undefined;
+          this.addIfInferred(node, input, foundType);
+          return foundType;
         }
         case "FILTER":
         {
