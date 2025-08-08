@@ -1652,4 +1652,12 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("MESSAGE WITH string template", async () => {
+    const abap = `
+DATA var TYPE i.
+MESSAGE s001(abc) WITH condense( |{ var }| ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

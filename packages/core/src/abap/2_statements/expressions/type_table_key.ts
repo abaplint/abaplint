@@ -8,7 +8,7 @@ export class TypeTableKey extends Expression {
 
     const uniqueness = alt("NON-UNIQUE", "UNIQUE");
     const defaultKey = "DEFAULT KEY";
-    const emptyKey = ver(Version.v740sp02, "EMPTY KEY");
+    const emptyKey = ver(Version.v740sp02, "EMPTY KEY", Version.OpenABAP);
 
     const components = plus(alt(seq("WITH", failStar()), FieldSub));
 

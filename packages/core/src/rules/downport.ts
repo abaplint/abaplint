@@ -1083,7 +1083,8 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
     }
 
     const source = high.findExpressionAfterToken("MESSAGE");
-    if (source?.get() instanceof Expressions.Source) {
+    if (source?.get() instanceof Expressions.MessageSourceSource
+        && source.getFirstChild()?.get() instanceof Expressions.Source) {;
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
@@ -1430,7 +1431,7 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     abap += `${indentation}RAISE EXCEPTION ${uniqueName2}.`;
 
     const fix = EditHelper.replaceRange(lowFile, node.getStart(), node.getEnd(), abap);
-    return Issue.atToken(lowFile, startToken, "Downport RAISE MESSAGE", this.getMetadata().key, this.conf.severity, fix);
+    return Issue.atToken(lowFile, startToken, "Downport RAISE EXCEPTION MESSAGE", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private emptyKey(low: StatementNode, node: StatementNode, lowFile: ABAPFile): Issue | undefined {
@@ -2048,12 +2049,12 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     } else if (!(high.get() instanceof Statements.Loop)) {
       return undefined;
-    } else if (high.findDirectExpression(Expressions.SimpleSource2)) {
+    } else if (high.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.SimpleSource2)) {
       return undefined;
     }
 
     // the first Source must be outlined
-    const s = high.findDirectExpression(Expressions.Source);
+    const s = high.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.Source);
     if (s === undefined) {
       return undefined;
     }
@@ -2075,7 +2076,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     }
 
-    const source = node.findDirectExpression(Expressions.SimpleSource2);
+    const source = node.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.SimpleSource2);
     if (source === undefined) {
       return undefined;
     }

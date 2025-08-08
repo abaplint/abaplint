@@ -60,7 +60,7 @@ export class Source extends Expression {
                                            lparenNoSpace,
                                            ConvBody,
                                            rparenNoSpace,
-                                           optPrio(after)));
+                                           optPrio(after)), Version.OpenABAP);
 
     const swit = ver(Version.v740sp02, seq("SWITCH",
                                            TypeNameOrInfer,
