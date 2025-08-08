@@ -451,6 +451,8 @@ const versions = [
     FOR GROUPS _tabname OF _dd03l IN dd03l
     GROUP BY _dd03l-tabname
     ( _tabname ) ).`, ver: Version.v740sp08},
+
+  {abap: "lv_foo *= 2.", ver: Version.OpenABAP},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
@@ -462,7 +464,6 @@ const ok = [
 statementVersionOk(ok, "MOVE", Statements.Move);
 
 const versionsFail = [
-  {abap: "lv_foo *= 2.", ver: Version.OpenABAP},
   {abap: "lv_foo *= 2.", ver: Version.v702},
 ];
 
