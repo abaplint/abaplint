@@ -5941,8 +5941,10 @@ ENDFORM.`;
   });
 
   it("Dont outline on open-abap", async () => {
-    const abap = `DATA max_val TYPE REF TO i.
-ASSIGN max_val->* TO FIELD-SYMBOL(<max>).`;
+    const abap = `FORM foo.
+DATA max_val TYPE REF TO i.
+ASSIGN max_val->* TO FIELD-SYMBOL(<max>).
+ENDFORM.`;
 
     const issues = await findIssues(abap, Version.OpenABAP);
     expect(issues.length).to.equal(0);
