@@ -5940,4 +5940,24 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Dont parameter DATA on open-abap", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar EXPORTING source_type TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    bar( IMPORTING source_type = DATA(source_type) ).
+  ENDMETHOD.
+
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
 });
