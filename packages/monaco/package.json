@@ -26,6 +26,6 @@
     "vscode-languageserver-types": "^3.17.5"
   },
   "dependencies": {
-    "@abaplint/core": "^2.113.156"
+    "@abaplint/core": "^2.113.157"
   }
 }
