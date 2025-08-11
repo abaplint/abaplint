@@ -102,6 +102,18 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("open abap, downport voided LOOP data", async () => {
+    const abap = `FORM bar.
+  TYPES ty_foo TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  DATA lt_rows TYPE ty_foo.
+  LOOP AT lt_rows INTO DATA(moo).
+  ENDLOOP.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Use CREATE OBJECT instead of NEW", async () => {
     const issues = await findIssues("foo = NEW #( ).");
     expect(issues.length).to.equal(1);

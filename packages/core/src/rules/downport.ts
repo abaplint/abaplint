@@ -980,7 +980,7 @@ ${indentation}`);
     return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  // the anonymous type minght be used in inferred type statements, define it so it can be referred
+  // the anonymous type might be used in inferred type statements, define it so it can be referred
   private anonymousTableType(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(high.get() instanceof Statements.Data)) {
       return undefined;
@@ -2081,6 +2081,10 @@ ${indentation}    output = ${uniqueName}.\n`;
   private outlineLoopTarget(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
 // also allows outlining of voided types
     if (!(node.get() instanceof Statements.Loop)) {
+      return undefined;
+    }
+
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
       return undefined;
     }
 
