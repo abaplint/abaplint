@@ -146,7 +146,7 @@ export class Source {
           }
 
           if (targetType && !(targetType instanceof DataReference)) {
-            const message = `REF: Types not compatible`;
+            const message = `REF: Types not compatible, ` + targetType.constructor.name;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           }
 
