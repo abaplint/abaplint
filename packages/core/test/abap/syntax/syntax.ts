@@ -11101,6 +11101,16 @@ int_ref->* = 3.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("REF and type", () => {
+    const abap = `
+DATA foo TYPE i.
+DATA ref TYPE REF TO i.
+ref = REF #( foo ).
+WRITE ref->*.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("charlike structure vs simple", () => {
     const abap = `
 REPORT zfoo.

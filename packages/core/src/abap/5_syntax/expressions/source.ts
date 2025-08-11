@@ -101,6 +101,10 @@ export class Source {
         {
           const foundType = this.determineType(node, input, targetType);
           const bodyType = CondBody.runSyntax(node.findDirectExpression(Expressions.CondBody), input, foundType);
+          /*
+          console.log("COND BODY type;:");
+          console.dir(bodyType);
+          */
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
@@ -129,11 +133,25 @@ export class Source {
         {
           let foundType = this.determineType(node, input, targetType);
           const s = Source.runSyntax(node.findDirectExpression(Expressions.Source), input);
+          /*
+          console.dir(node.concatTokens());
+          console.dir(targetType);
+          console.dir(foundType);
+          console.dir(s);
+          */
           if (foundType === undefined && s) {
             foundType = new DataReference(s);
-          } else if (foundType) {
+          } else if (foundType && targetType === undefined) {
             foundType = new DataReference(foundType);
           }
+
+          /*
+          if (targetType && !(targetType instanceof DataReference)) {
+            const message = `REF: Types not compatible, ` + targetType.constructor.name;
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          }
+          */
+
           this.addIfInferred(node, input, foundType);
           return foundType;
         }
@@ -289,10 +307,19 @@ export class Source {
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();
 
+    /*
+    console.dir(inferredType);
+    console.dir(typeToken);
+    */
+
+    // hmm, need to align all this
     if (typeName === "#" && inferredType && typeToken) {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
         input.scope.addReference(typeToken, found, ReferenceType.InferredType, input.filename);
+      } else if (inferredType instanceof DataReference) {
+        const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
       } else if (inferredType instanceof ObjectReferenceType) {
         const def = input.scope.findObjectDefinition(inferredType.getQualifiedName());
         if (def) {
