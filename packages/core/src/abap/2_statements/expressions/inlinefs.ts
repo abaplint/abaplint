@@ -10,6 +10,6 @@ export class InlineFS extends Expression {
     const left = tok(ParenLeft);
     const fs = seq("FIELD-SYMBOL", left, TargetFieldSymbol, right);
 
-    return ver(Version.v740sp02, fs);
+    return ver(Version.v740sp02, fs, Version.OpenABAP);
   }
 }
