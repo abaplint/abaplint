@@ -145,10 +145,12 @@ export class Source {
             foundType = new DataReference(foundType);
           }
 
+          /*
           if (targetType && !(targetType instanceof DataReference)) {
             const message = `REF: Types not compatible, ` + targetType.constructor.name;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           }
+          */
 
           this.addIfInferred(node, input, foundType);
           return foundType;
