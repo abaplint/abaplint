@@ -1212,6 +1212,10 @@ ${indentation}`);
   private outlineCatchSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
     // outlines "CATCH cx_bcs INTO DATA(lx_bcs_excep).", note that this does not need to look at types
 
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
+
     if (!(node.get() instanceof Statements.Catch)) {
       return undefined;
     }

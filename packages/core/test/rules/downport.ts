@@ -2039,6 +2039,16 @@ ENDTRY.`;
     testFix(abap, expected);
   });
 
+  it("CATCH voided into inline, ok on open abap", async () => {
+    const abap = `
+TRY.
+  CATCH cx_bcs INTO DATA(lx_bcs_excep).
+ENDTRY.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("outline table expression first, type is voided", async () => {
     const abap = `
   DATA it_operations TYPE voided.
