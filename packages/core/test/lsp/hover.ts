@@ -1607,4 +1607,24 @@ WRITE ref->*.`;
     expect(hover?.value).to.contain("Type: Data REF TO ```i```");
   });
 
+  it("Hover inferred type, REF vs generic method parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA int TYPE i.
+  lcl=>bar( REF #( int ) ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 10, 16));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("Type: Data REF TO ```i```");
+  });
+
 });
