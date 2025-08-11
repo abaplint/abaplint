@@ -18,6 +18,14 @@ export class FileOperations {
     fs.rmSync(dir, {recursive: true});
   }
 
+  public static toUnixPath(path: string) {
+    if (os.platform() === "win32") {
+      return path.replace(/[\\/]+/g, "/").replace(/^([a-zA-Z]+:|\.\/)/, "");
+    } else {
+      return path;
+    }
+  }
+
   public static loadFileNames(arg: string, error = true): string[] {
     const files = glob.sync(arg, {nodir: true, absolute: true, posix: true});
     if (files.length === 0 && error) {

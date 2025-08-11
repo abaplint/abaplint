@@ -60,17 +60,20 @@ export class Rename {
   ////////////////////////
 
   private write(rconfig: abaplint.IRenameSettings, base: string, fs: PartialFS) {
-    const outputFolder = base + path.sep + rconfig.output;
+    const outputFolder = base + path.posix.sep + rconfig.output;
     console.log("Base: " + base);
     console.log("Output folder: " + outputFolder);
     FileOperations.deleteFolderRecursive(outputFolder);
+
+    const myBase = FileOperations.toUnixPath(path.resolve(base));
 
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
         continue;
       }
       for (const f of o.getFiles()) {
-        const n = outputFolder + f.getFilename().replace(base, "");
+        // yea, ffs
+        const n = outputFolder + f.getFilename().replace(myBase, "").replace("//?/C:", "");
         console.log("Write " + n);
         fs.mkdirSync(path.dirname(n), {recursive: true});
         fs.writeFileSync(n, f.getRaw());
