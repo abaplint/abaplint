@@ -103,6 +103,7 @@ export class Rename {
         result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
         result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
         result.addedFiles.forEach(f => { this.addedFiles.add(f); });
+        break;
       }
     }
   }

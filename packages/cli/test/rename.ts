@@ -31,12 +31,6 @@ ENDCLASS.`;
 
     const volume = memfs.Volume.fromJSON(jsonFiles);
     const mockFS = memfs.createFsFromVolume(volume);
-    // patch rmSync in, https://github.com/streamich/fs-monkey/issues/320
-    /*
-    mockFS.rmSync = function (name: string) {
-      volume.rmSync(name);
-    };
-    */
 
     const config = reg.getConfig().get();
     config.rename = {"patterns": [{"type": "CLAS|INTF", "oldName": "zif_intf", "newName": "yif_sdfsdf"}]};
@@ -47,6 +41,34 @@ ENDCLASS.`;
     expect(intfNew).to.include("INTERFACE yif_sdfsdf");
     const clasNew = mockFS.readFileSync(file2.getFilename()).toString();
     expect(clasNew).to.include("TYPE yif_sdfsdf=>");
+  });
+
+  it("only rename with the first match", async () => {
+    const intf = `INTERFACE zif_intf PUBLIC.
+  TYPES: BEGIN of ty,
+           sdfsdf TYPE i,
+         END OF ty.
+ENDINTERFACE.`;
+
+    const file1 = new MemoryFile("zif_intf.intf.abap", intf);
+    const reg = new Registry().addFiles([file1]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[file1.getFilename()] = file1.getRaw();
+
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [
+      {"type": "INTF", "oldName": "zif_intf", "newName": "yif_sdfsdf1"},
+      {"type": "INTF", "oldName": "zif_intf", "newName": "yif_sdfsdf2"},
+    ]};
+
+    new Rename(reg).run(config, "base", mockFS, true);
+
+    const intfNew = mockFS.readFileSync("yif_sdfsdf1.intf.abap").toString();
+    expect(intfNew).to.include("INTERFACE yif_sdfsdf1");
   });
 
 });
