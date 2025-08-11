@@ -5929,4 +5929,11 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it.only("Dont outline on open-abap", async () => {
+    const abap = `DATA(sdf) = 2.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -2809,6 +2809,10 @@ ${indentation}    output = ${uniqueName}.\n`;
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     // hmm, no guard here, as DATA(SDF) is valid in 702
 
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
+
     for (const i of node.findAllExpressionsRecursive(Expressions.InlineData)) {
       const nameToken = i.findDirectExpression(Expressions.TargetField)?.getFirstToken();
       if (nameToken === undefined) {
