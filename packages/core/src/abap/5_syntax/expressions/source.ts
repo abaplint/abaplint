@@ -101,8 +101,10 @@ export class Source {
         {
           const foundType = this.determineType(node, input, targetType);
           const bodyType = CondBody.runSyntax(node.findDirectExpression(Expressions.CondBody), input, foundType);
+          /*
           console.log("COND BODY type;:");
           console.dir(bodyType);
+          */
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
