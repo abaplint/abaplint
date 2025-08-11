@@ -5285,7 +5285,7 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
-  it("CASE TYPE to open-abap version, data is outlined", async () => {
+  it("CASE TYPE to open-abap version, outlined data is okay", async () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -5300,22 +5300,9 @@ START-OF-SELECTION.
     WHEN TYPE lcl INTO DATA(lo_lcl).
       WRITE lo_lcl->foo.
   ENDCASE.`;
-    const expected = `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    DATA foo TYPE string.
-ENDCLASS.
-CLASS lcl IMPLEMENTATION.
-ENDCLASS.
 
-START-OF-SELECTION.
-  DATA lo_artefact TYPE REF TO object.
-  CASE TYPE OF lo_artefact.
-    DATA lo_lcl TYPE REF TO lcl.
-    WHEN TYPE lcl INTO lo_lcl.
-      WRITE lo_lcl->foo.
-  ENDCASE.`;
-    testFix(abap, expected, [], 1, Version.OpenABAP);
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
   });
 
   it("CASE TYPE to open-abap version, already outlined", async () => {
@@ -5929,7 +5916,7 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
-  it.only("Dont outline on open-abap", async () => {
+  it("Dont outline on open-abap", async () => {
     const abap = `DATA(sdf) = 2.`;
 
     const issues = await findIssues(abap, Version.OpenABAP);
