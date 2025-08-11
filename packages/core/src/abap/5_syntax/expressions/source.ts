@@ -132,7 +132,10 @@ export class Source {
           if (foundType === undefined && s) {
             foundType = new DataReference(s);
           } else if (foundType) {
-            foundType = new DataReference(foundType);
+            // todo: something rotten here
+            if (!(foundType instanceof DataReference)) {
+              foundType = new DataReference(foundType);
+            }
           }
           this.addIfInferred(node, input, foundType);
           return foundType;
@@ -289,10 +292,19 @@ export class Source {
     const typeToken = typeExpression?.getFirstToken();
     const typeName = typeToken?.getStr();
 
+    /*
+    console.dir(inferredType);
+    console.dir(typeToken);
+    */
+
+    // hmm, need to align all this
     if (typeName === "#" && inferredType && typeToken) {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
         input.scope.addReference(typeToken, found, ReferenceType.InferredType, input.filename);
+      } else if (inferredType instanceof DataReference) {
+        const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
       } else if (inferredType instanceof ObjectReferenceType) {
         const def = input.scope.findObjectDefinition(inferredType.getQualifiedName());
         if (def) {

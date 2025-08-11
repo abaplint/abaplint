@@ -1594,4 +1594,17 @@ ENDFORM.`);
     expect(hover2?.value).to.contain("zcl_mc");
   });
 
+  it("Hover inferred type, REF", () => {
+    const abap = `DATA foo TYPE i.
+DATA ref TYPE REF TO i.
+ref = REF #( foo ).
+WRITE ref->*.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("Type: Data REF TO ```i```");
+  });
+
 });
