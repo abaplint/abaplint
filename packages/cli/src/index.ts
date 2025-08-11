@@ -111,15 +111,10 @@ async function loadDependencies(config: Config, compress: boolean | undefined, b
       }
     }
 
-    const toUnixPath = (path: string) => path.replace(/[\\/]+/g, "/").replace(/^([a-zA-Z]+:|\.\/)/, "");
-
     if (d.url) {
       process.stderr.write("Clone: " + d.url + "\n");
       let dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
-      if (os.platform() === "win32") {
-        // must be converted to posix for glob patterns like "/{foo,src}/**/*.*" to work
-        dir = toUnixPath(dir);
-      }
+      dir = FileOperations.toUnixPath(dir);
       let branch = "";
       if (d.branch) {
         branch = "-b " + d.branch + " ";
