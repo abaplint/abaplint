@@ -1607,7 +1607,7 @@ WRITE ref->*.`;
     expect(hover?.value).to.contain("Type: Data REF TO ```i```");
   });
 
-  it.only("Hover inferred type, REF vs generic method parameter", () => {
+  it("Hover inferred type, REF vs generic method parameter", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS bar IMPORTING data TYPE data.

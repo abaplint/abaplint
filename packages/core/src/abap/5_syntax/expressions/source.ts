@@ -139,7 +139,9 @@ export class Source {
           console.dir(foundType);
           console.dir(s);
           */
-          if (foundType === undefined && s) {
+          if (foundType && foundType.isGeneric() && s) {
+            foundType = new DataReference(s);
+          } else if (foundType === undefined && s) {
             foundType = new DataReference(s);
           } else if (foundType && targetType === undefined) {
             foundType = new DataReference(foundType);
