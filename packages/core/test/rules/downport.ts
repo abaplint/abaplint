@@ -5940,6 +5940,14 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Dont outline on open-abap", async () => {
+    const abap = `DATA max_val TYPE REF TO i.
+ASSIGN max_val->* TO FIELD-SYMBOL(<max>).`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Dont parameter DATA on open-abap", async () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
