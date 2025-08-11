@@ -101,6 +101,8 @@ export class Source {
         {
           const foundType = this.determineType(node, input, targetType);
           const bodyType = CondBody.runSyntax(node.findDirectExpression(Expressions.CondBody), input, foundType);
+          console.log("COND BODY type;:");
+          console.dir(bodyType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {
@@ -129,14 +131,23 @@ export class Source {
         {
           let foundType = this.determineType(node, input, targetType);
           const s = Source.runSyntax(node.findDirectExpression(Expressions.Source), input);
+          /*
+          console.dir(node.concatTokens());
+          console.dir(targetType);
+          console.dir(foundType);
+          console.dir(s);
+          */
           if (foundType === undefined && s) {
             foundType = new DataReference(s);
-          } else if (foundType) {
-            // todo: something rotten here
-            if (!(foundType instanceof DataReference)) {
-              foundType = new DataReference(foundType);
-            }
+          } else if (foundType && targetType === undefined) {
+            foundType = new DataReference(foundType);
           }
+
+          if (targetType && !(targetType instanceof DataReference)) {
+            const message = `REF: Types not compatible`;
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          }
+
           this.addIfInferred(node, input, foundType);
           return foundType;
         }
