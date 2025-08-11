@@ -11,6 +11,6 @@ export class InlineData extends Expression {
     const data = seq("DATA", left, TargetField, right);
     const final = seq("FINAL", left, TargetField, right);
 
-    return altPrio(ver(Version.v740sp02, data), ver(Version.v757, final)) ;
+    return altPrio(ver(Version.v740sp02, data, Version.OpenABAP), ver(Version.v757, final, Version.OpenABAP)) ;
   }
 }
