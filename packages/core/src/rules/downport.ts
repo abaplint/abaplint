@@ -1273,6 +1273,10 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       return undefined;
     }
 
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
+
     const target = node.findFirstExpression(Expressions.Target);
     if (!(target?.getFirstChild()?.get() instanceof Expressions.InlineData)) {
       return undefined;

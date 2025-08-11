@@ -5933,7 +5933,7 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("Dont outline on open-abap", async () => {
+  it("Dont outline on open-abap", async () => {
     const abap = `DATA(sdf) = abap_true.`;
 
     const issues = await findIssues(abap, Version.OpenABAP);
