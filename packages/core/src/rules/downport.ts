@@ -2571,7 +2571,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       let indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       let body = "";
-      const base = valueBody?.findExpressionAfterToken("BASE");
+      const base = valueBody?.findDirectExpression(Expressions.ValueBase)?.findExpressionAfterToken("BASE");
       if (base) {
         body += indentation + uniqueName + " = " + base.concatTokens() + ".\n";
       }
