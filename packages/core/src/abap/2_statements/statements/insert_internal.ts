@@ -27,7 +27,7 @@ export class InsertInternal implements IStatement {
                       target,
                       opt(fromTo));
 
-    const src = alt(SimpleSource4, ver(Version.v740sp02, Source));
+    const src = alt(SimpleSource4, ver(Version.v740sp02, Source, Version.OpenABAP));
 
     const tab = seq("TABLE", Source);
 
