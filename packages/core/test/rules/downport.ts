@@ -102,6 +102,18 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("open abap, downport voided LOOP data", async () => {
+    const abap = `FORM bar.
+  TYPES ty_foo TYPE STANDARD TABLE OF voided WITH DEFAULT KEY.
+  DATA lt_rows TYPE ty_foo.
+  LOOP AT lt_rows INTO DATA(moo).
+  ENDLOOP.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Use CREATE OBJECT instead of NEW", async () => {
     const issues = await findIssues("foo = NEW #( ).");
     expect(issues.length).to.equal(1);
@@ -2037,6 +2049,16 @@ TRY.
   CATCH cx_bcs INTO lx_bcs_excep.
 ENDTRY.`;
     testFix(abap, expected);
+  });
+
+  it("CATCH voided into inline, ok on open abap", async () => {
+    const abap = `
+TRY.
+  CATCH cx_bcs INTO DATA(lx_bcs_excep).
+ENDTRY.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
   });
 
   it("outline table expression first, type is voided", async () => {
@@ -5285,7 +5307,7 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
-  it("CASE TYPE to open-abap version, data is outlined", async () => {
+  it("CASE TYPE to open-abap version, outlined data is okay", async () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -5300,22 +5322,9 @@ START-OF-SELECTION.
     WHEN TYPE lcl INTO DATA(lo_lcl).
       WRITE lo_lcl->foo.
   ENDCASE.`;
-    const expected = `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    DATA foo TYPE string.
-ENDCLASS.
-CLASS lcl IMPLEMENTATION.
-ENDCLASS.
 
-START-OF-SELECTION.
-  DATA lo_artefact TYPE REF TO object.
-  CASE TYPE OF lo_artefact.
-    DATA lo_lcl TYPE REF TO lcl.
-    WHEN TYPE lcl INTO lo_lcl.
-      WRITE lo_lcl->foo.
-  ENDCASE.`;
-    testFix(abap, expected, [], 1, Version.OpenABAP);
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
   });
 
   it("CASE TYPE to open-abap version, already outlined", async () => {
@@ -5927,6 +5936,50 @@ ENDFORM.`;
 ENDFORM.`;
 
     testFix(abap, expected);
+  });
+
+  it("Dont outline on open-abap", async () => {
+    const abap = `DATA(sdf) = 2.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Dont outline on open-abap", async () => {
+    const abap = `DATA(sdf) = abap_true.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Dont outline on open-abap", async () => {
+    const abap = `FORM foo.
+DATA max_val TYPE REF TO i.
+ASSIGN max_val->* TO FIELD-SYMBOL(<max>).
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Dont parameter DATA on open-abap", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar EXPORTING source_type TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    bar( IMPORTING source_type = DATA(source_type) ).
+  ENDMETHOD.
+
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
   });
 
 });

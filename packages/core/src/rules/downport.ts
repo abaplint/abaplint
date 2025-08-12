@@ -980,7 +980,7 @@ ${indentation}`);
     return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline SELECT @DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  // the anonymous type minght be used in inferred type statements, define it so it can be referred
+  // the anonymous type might be used in inferred type statements, define it so it can be referred
   private anonymousTableType(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(high.get() instanceof Statements.Data)) {
       return undefined;
@@ -1212,6 +1212,10 @@ ${indentation}`);
   private outlineCatchSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
     // outlines "CATCH cx_bcs INTO DATA(lx_bcs_excep).", note that this does not need to look at types
 
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
+
     if (!(node.get() instanceof Statements.Catch)) {
       return undefined;
     }
@@ -1266,6 +1270,10 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
 
   private outlineDataSimple(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(node.get() instanceof Statements.Move)) {
+      return undefined;
+    }
+
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
       return undefined;
     }
 
@@ -2076,6 +2084,10 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     }
 
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
+
     const source = node.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.SimpleSource2);
     if (source === undefined) {
       return undefined;
@@ -2808,6 +2820,10 @@ ${indentation}    output = ${uniqueName}.\n`;
 
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     // hmm, no guard here, as DATA(SDF) is valid in 702
+
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
 
     for (const i of node.findAllExpressionsRecursive(Expressions.InlineData)) {
       const nameToken = i.findDirectExpression(Expressions.TargetField)?.getFirstToken();
