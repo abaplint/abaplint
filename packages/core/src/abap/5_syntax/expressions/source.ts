@@ -314,24 +314,21 @@ export class Source {
     console.dir(typeToken);
     */
 
-    // hmm, need to align all this
     if (typeName === "#" && inferredType && typeToken) {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
-        input.scope.addReference(typeToken, found, ReferenceType.InferredType, input.filename);
-      } else if (inferredType instanceof DataReference) {
-        const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
-        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
+        input.scope.addReference(typeToken, found, ReferenceType.InferredType, input.filename, {foundQualified: true});
       } else if (inferredType instanceof ObjectReferenceType) {
         const def = input.scope.findObjectDefinition(inferredType.getQualifiedName());
-        if (def) {
-          const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
-          input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
-        }
-      } else if (inferredType instanceof CharacterType) {
-        // character is bit special it does not have a qualified name eg "TYPE c LENGTH 6"
         const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
-        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
+        if (def) {
+          input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename, {foundQualified: true});
+        } else {
+          input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename, {foundQualified: false});
+        }
+      } else {
+        const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename, {foundQualified: false});
       }
     }
 

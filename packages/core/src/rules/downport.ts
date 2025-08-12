@@ -2759,7 +2759,8 @@ ${indentation}    output = ${uniqueName}.\n`;
       if (r.referenceType === ReferenceType.InferredType
           && r.resolved
           && r.position.getStart().equals(firstToken.getStart())
-          && r.resolved instanceof TypedIdentifier) {
+          && r.resolved instanceof TypedIdentifier
+          && r.extra?.foundQualified === true) {
         inferred = r.resolved;
         break;
       }
