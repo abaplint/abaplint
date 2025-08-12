@@ -51,6 +51,9 @@ export class ValueBody {
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       type = Source.runSyntax(s, input, type);
     }
+    for (const s of node.findDirectExpression(Expressions.ValueBase)?.findDirectExpressions(Expressions.Source) || []) {
+      type = Source.runSyntax(s, input, type);
+    }
 
     for (const foo of node.findDirectExpressions(Expressions.ValueBodyLine)) {
       if (!(targetType instanceof TableType)

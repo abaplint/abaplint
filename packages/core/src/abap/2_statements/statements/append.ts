@@ -15,7 +15,7 @@ export class Append implements IStatement {
     const toIndex = seq("TO", Source);
     const toTarget = seq("TO", Target);
 
-    const src = alt(SimpleSource4, ver(Version.v740sp02, Source));
+    const src = alt(SimpleSource4, ver(Version.v740sp02, Source, Version.OpenABAP));
 
     return seq("APPEND",
                altPrio("INITIAL LINE", seq(optPrio("LINES OF"), src)),
