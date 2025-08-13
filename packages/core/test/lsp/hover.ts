@@ -1627,4 +1627,20 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain("Type: Data REF TO ```i```");
   });
 
+  it("Hover inferred type, named NEW", () => {
+    const abap = `CLASS lcl DEFINITION.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA ref TYPE REF TO lcl.
+  ref = NEW lcl( ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 6, 14));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("lcl");
+  });
+
 });
