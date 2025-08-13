@@ -3126,7 +3126,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
       for (const r of spag?.getData().references || []) {
         if (r.referenceType === ReferenceType.BuiltinMethodReference &&
-              new BuiltIn().isPredicate(chain.getFirstToken().getStr().toUpperCase())) {
+              BuiltIn.isPredicate(chain.getFirstToken().getStr().toUpperCase())) {
           predicate = true;
           break;
         }

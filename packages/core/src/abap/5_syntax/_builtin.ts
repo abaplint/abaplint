@@ -1034,7 +1034,7 @@ export class BuiltIn {
 
   private row = 1;
 
-  private buildDefinition(method: IBuiltinMethod, name: string): IMethodDefinition {
+  private static buildDefinition(method: IBuiltinMethod, name: string): IMethodDefinition {
     if (method.cache) {
       return method.cache;
     }
@@ -1045,7 +1045,7 @@ export class BuiltIn {
     return result;
   }
 
-  public searchBuiltin(name: string | undefined): IMethodDefinition | undefined {
+  public static searchBuiltin(name: string | undefined): IMethodDefinition | undefined {
     if (name === undefined) {
       return undefined;
     }
@@ -1058,7 +1058,7 @@ export class BuiltIn {
     return this.buildDefinition(def, name);
   }
 
-  public isPredicate(name: string | undefined): boolean | undefined {
+  public static isPredicate(name: string | undefined): boolean | undefined {
     if (name === undefined) {
       return undefined;
     }

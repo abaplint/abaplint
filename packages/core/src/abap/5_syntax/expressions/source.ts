@@ -63,14 +63,14 @@ export class Source {
           break;
         case "BOOLC":
         {
-          const method = new BuiltIn().searchBuiltin(tok);
+          const method = BuiltIn.searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
           Cond.runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return StringType.get();
         }
         case "XSDBOOL":
         {
-          const method = new BuiltIn().searchBuiltin(tok);
+          const method = BuiltIn.searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
           Cond.runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"});
