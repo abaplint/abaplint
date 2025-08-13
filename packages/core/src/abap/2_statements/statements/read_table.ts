@@ -32,7 +32,7 @@ export class ReadTable implements IStatement {
                      "BINARY SEARCH");
 
     return seq("READ TABLE",
-               alt(SimpleSource2, ver(Version.v740sp02, Source)),
+               alt(SimpleSource2, ver(Version.v740sp02, Source, Version.OpenABAP)),
                opt(perm));
   }
 
