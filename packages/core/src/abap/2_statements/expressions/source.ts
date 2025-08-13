@@ -31,8 +31,8 @@ export class Source extends Expression {
 
     const after = seq(altPrio("&", "&&", ArithOperator), Source);
 
-    const bool = seq(altPrio(ver(Version.v702, regex(/^BOOLC$/i)),
-                             ver(Version.v740sp08, regex(/^XSDBOOL$/i))),
+    const bool = seq(altPrio(ver(Version.v702, regex(/^BOOLC$/i), Version.OpenABAP),
+                             ver(Version.v740sp08, regex(/^XSDBOOL$/i)), Version.OpenABAP),
                      tok(ParenLeftW),
                      Cond,
                      ")");
