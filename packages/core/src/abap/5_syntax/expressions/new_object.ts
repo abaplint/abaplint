@@ -11,6 +11,7 @@ import {BasicTypes} from "../basic_types";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
+import {TypedIdentifier} from "../../types/_typed_identifier";
 
 export class NewObject {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
@@ -18,6 +19,9 @@ export class NewObject {
 
     const typeExpr = node.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpr?.getFirstToken();
+    if (typeToken === undefined) {
+      throw new Error("NewObject, child TypeNameOrInfer not found");
+    }
     const typeName = typeExpr?.concatTokens();
 
     if (typeName === undefined) {
@@ -25,7 +29,9 @@ export class NewObject {
     } else if (typeName === "#" && targetType && targetType instanceof ObjectReferenceType) {
       const clas = input.scope.findClassDefinition(targetType.getIdentifierName());
       if (clas) {
-        input.scope.addReference(typeToken, clas, ReferenceType.InferredType, input.filename);
+        const tid = new TypedIdentifier(typeToken, input.filename, targetType);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
+
         input.scope.addReference(typeToken, clas, ReferenceType.ConstructorReference, input.filename,
                                  {ooName: clas.getName()});
       } else {

@@ -3360,12 +3360,21 @@ ${indentation}    output = ${uniqueName}.\n`;
         // find the default parameter name for the constructor
         const spag = highSyntax.spaghetti.lookupPosition(typeToken?.getStart(), lowFile.getFilename());
 
-        let cdef: IClassDefinition | undefined = undefined;
+        let cdef: IClassDefinition | TypedIdentifier | undefined = undefined;
         for (const r of spag?.getData().references || []) {
           if ((r.referenceType === ReferenceType.InferredType
               || r.referenceType === ReferenceType.ObjectOrientedReference)
               && r.resolved && r.position.getStart().equals(typeToken.getStart())) {
-            cdef = r.resolved as IClassDefinition;
+            cdef = r.resolved as IClassDefinition | TypedIdentifier;
+          }
+        }
+
+        if (cdef instanceof TypedIdentifier) {
+          const foo = cdef.getType();
+          if (foo instanceof ObjectReferenceType) {
+            cdef = foo.getIdentifier() as IClassDefinition;
+          } else {
+            throw new Error("newParameters, downport, unexpected");
           }
         }
 
