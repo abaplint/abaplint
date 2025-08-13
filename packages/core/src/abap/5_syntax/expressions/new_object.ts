@@ -58,10 +58,13 @@ export class NewObject {
     if (ret === undefined) {
       const objDefinition = input.scope.findObjectDefinition(typeName);
       if (objDefinition) {
+        const objref = new ObjectReferenceType(objDefinition);
+        const tid = new TypedIdentifier(typeToken, input.filename, objref);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
+
         input.scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, input.filename);
         input.scope.addReference(typeToken, objDefinition, ReferenceType.ConstructorReference, input.filename,
                                  {ooName: objDefinition.getName()});
-        const objref = new ObjectReferenceType(objDefinition);
         const clas = input.scope.findClassDefinition(objref.getIdentifierName());
         if (clas?.isAbstract() === true) {
           const message = clas.getName() + " is abstract, cannot be instantiated";
