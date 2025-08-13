@@ -63,14 +63,14 @@ export class Source {
           break;
         case "BOOLC":
         {
-          const method = new BuiltIn().searchBuiltin(tok);
+          const method = BuiltIn.searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
           Cond.runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return StringType.get();
         }
         case "XSDBOOL":
         {
-          const method = new BuiltIn().searchBuiltin(tok);
+          const method = BuiltIn.searchBuiltin(tok);
           input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
           Cond.runSyntax(node.findDirectExpression(Expressions.Cond)!, input);
           return new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"});
@@ -317,7 +317,8 @@ export class Source {
     if (typeName === "#" && inferredType && typeToken) {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
-        input.scope.addReference(typeToken, found, ReferenceType.InferredType, input.filename, {foundQualified: true});
+        const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename, {foundQualified: true});
       } else if (inferredType instanceof ObjectReferenceType) {
         const def = input.scope.findObjectDefinition(inferredType.getQualifiedName());
         const tid = new TypedIdentifier(typeToken, input.filename, inferredType);

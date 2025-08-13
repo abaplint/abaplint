@@ -253,7 +253,7 @@ export class LSPLookup {
     } else if (ref.resolved instanceof TypedIdentifier) {
       ret += "\n\n" + this.dumpType(ref.resolved);
     } else if (ref.referenceType === ReferenceType.BuiltinMethodReference) {
-      const builtinDef = new BuiltIn().searchBuiltin(ref.resolved?.getName()?.toUpperCase());
+      const builtinDef = BuiltIn.searchBuiltin(ref.resolved?.getName()?.toUpperCase());
       if (builtinDef === undefined) {
         return "Error: builtin method signature not found";
       }

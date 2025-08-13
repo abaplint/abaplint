@@ -53,7 +53,7 @@ export class MethodCallChain {
         // eslint-disable-next-line prefer-const
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
         if (method === undefined && current === first) {
-          method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
+          method = BuiltIn.searchBuiltin(methodName?.toUpperCase());
           if (method) {
             input.scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, input.filename);
           }

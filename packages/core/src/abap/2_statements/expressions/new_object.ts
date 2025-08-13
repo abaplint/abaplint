@@ -17,6 +17,6 @@ export class NewObject extends Expression {
                      optPrio(alt(Source, ParameterListS, lines, linesFields)),
                      ")");
 
-    return ver(Version.v740sp02, neww);
+    return ver(Version.v740sp02, neww, Version.OpenABAP);
   }
 }

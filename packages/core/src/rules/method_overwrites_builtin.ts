@@ -52,9 +52,8 @@ ENDCLASS.`,
       methods = methods.concat(classDef.methods);
     }
 
-    const builtIn = new BuiltIn();
     for (const method of methods) {
-      if (builtIn.searchBuiltin(method.name.toUpperCase())) {
+      if (BuiltIn.searchBuiltin(method.name.toUpperCase())) {
         const message = `Method name "${method.name}" overwrites built-in SAP function name`;
         issues.push(Issue.atIdentifier(method.identifier, message, this.getMetadata().key));
       }
