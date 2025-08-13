@@ -307,14 +307,14 @@ export class Source {
     const basic = new BasicTypes(input);
     const typeExpression = node.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeToken = typeExpression?.getFirstToken();
-    const typeName = typeToken?.getStr();
+//    const typeName = typeToken?.getStr();
 
     /*
     console.dir(inferredType);
     console.dir(typeToken);
     */
 
-    if (typeName === "#" && inferredType && typeToken) {
+    if (inferredType && typeToken) {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
         const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
