@@ -317,7 +317,8 @@ export class Source {
     if (typeName === "#" && inferredType && typeToken) {
       const found = basic.lookupQualifiedName(inferredType.getQualifiedName());
       if (found) {
-        input.scope.addReference(typeToken, found, ReferenceType.InferredType, input.filename, {foundQualified: true});
+        const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename, {foundQualified: true});
       } else if (inferredType instanceof ObjectReferenceType) {
         const def = input.scope.findObjectDefinition(inferredType.getQualifiedName());
         const tid = new TypedIdentifier(typeToken, input.filename, inferredType);
