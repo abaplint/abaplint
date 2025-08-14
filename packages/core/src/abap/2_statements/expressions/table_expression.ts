@@ -12,6 +12,6 @@ export class TableExpression extends Expression {
     const ret = seq(tok(BracketLeftW),
                     alt(Source, seq(optPrio(key), opt("COMPONENTS"), altPrio(fields, index))),
                     altPrio(tok(WBracketRight), tok(WBracketRightW)));
-    return ver(Version.v740sp02, ret);
+    return ver(Version.v740sp02, ret, Version.OpenABAP);
   }
 }
