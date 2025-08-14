@@ -1660,4 +1660,18 @@ MESSAGE s001(abc) WITH condense( |{ var }| ).`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CORRESPOINDING BASE", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+         bar TYPE i,
+       END OF ty.
+DATA data1 TYPE ty.
+DATA data2 TYPE ty.
+DATA data3 TYPE ty.
+data1 = CORRESPONDING #( BASE ( data3 ) data2 ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
