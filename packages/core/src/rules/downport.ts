@@ -1522,9 +1522,10 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
       const fix = EditHelper.replaceRange(lowFile, start, end, code);
 
       return Issue.atToken(lowFile, high.getFirstToken(), "Downport, simple CORRESPONDING move", this.getMetadata().key, this.conf.severity, fix);
-    } else if (sourceRef?.getChildren().length === 5 && sourceRef.getFirstChild()?.concatTokens().toUpperCase() === "BASE") {
-      let code = `${target.concatTokens()} = ${sourceRef.getChildren()[2].concatTokens()}.\n`;
-      code += `MOVE-CORRESPONDING ${sourceRef.getChildren()[4].concatTokens()} TO ${target.concatTokens()}`;
+    } else if (sourceRef?.getChildren().length === 2 && sourceRef.findDirectExpression(Expressions.CorrespondingBodyBase) !== undefined) {
+      const base = sourceRef.findDirectExpression(Expressions.CorrespondingBodyBase)!;
+      let code = `${target.concatTokens()} = ${base.getChildren()[2].concatTokens()}.\n`;
+      code += `MOVE-CORRESPONDING ${sourceRef.getChildren()[1].concatTokens()} TO ${target.concatTokens()}`;
 
       const start = high.getFirstToken().getStart();
       const end = high.getLastToken().getStart();

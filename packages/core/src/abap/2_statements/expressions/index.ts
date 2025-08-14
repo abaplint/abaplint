@@ -25,6 +25,7 @@ export * from "./component_chain";
 export * from "./component_compare_simple";
 export * from "./value_base";
 export * from "./component_compare_single";
+export * from "./corresponding_body_base";
 export * from "./component_compare";
 export * from "./component_cond_sub";
 export * from "./component_cond";
