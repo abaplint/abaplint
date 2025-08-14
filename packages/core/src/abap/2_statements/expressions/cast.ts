@@ -11,6 +11,6 @@ export class Cast extends Expression {
 
     const cast = seq("CAST", TypeNameOrInfer, tok(ParenLeftW), optPrio(Let), Source, rparen);
 
-    return ver(Version.v740sp02, cast);
+    return ver(Version.v740sp02, cast, Version.OpenABAP);
   }
 }

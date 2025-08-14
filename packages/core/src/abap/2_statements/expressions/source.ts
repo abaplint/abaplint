@@ -53,7 +53,7 @@ export class Source extends Expression {
                                            tok(ParenLeftW),
                                            CorrespondingBody,
                                            rparen,
-                                           optPrio(after)));
+                                           optPrio(after)), Version.OpenABAP);
 
     const conv = ver(Version.v740sp02, seq("CONV",
                                            TypeNameOrInfer,
