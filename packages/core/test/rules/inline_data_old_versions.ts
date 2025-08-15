@@ -29,4 +29,9 @@ describe("Rule: inline data on old versions", () => {
     const issues = await findIssues("DATA(foo) = 2.", Version.Cloud);
     expect(issues.length).to.equal(0);
   });
+
+  it("open-abap", async () => {
+    const issues = await findIssues("DATA(foo) = 2.", Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
 });

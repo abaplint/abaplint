@@ -11452,4 +11452,15 @@ ASSIGN lr_context->* TO <lg_context>.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT SINGLE inline", () => {
+    const abap = `
+SELECT SINGLE field1 FROM ztab INTO @DATA(val).
+WRITE / val.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
 });

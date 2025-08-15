@@ -741,6 +741,16 @@ inline_struct_table = struct_table.`;
     testFix(abap, expected);
   });
 
+  it("xsdbool, not on open", async () => {
+    const abap = `
+  DATA foo TYPE abap_bool.
+  DATA moo TYPE i.
+  foo = xsdbool( moo = 2 ).`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("xsdbool, nested in source", async () => {
     const abap = `
 CLASS lcl DEFINITION.

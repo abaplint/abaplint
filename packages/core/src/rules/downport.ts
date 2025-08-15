@@ -3068,6 +3068,10 @@ ${indentation}    output = ${uniqueName}.\n`;
   }
 
   private replaceXsdBool(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
+
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
     for (const r of spag?.getData().references || []) {

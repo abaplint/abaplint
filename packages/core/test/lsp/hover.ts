@@ -1643,4 +1643,34 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain("lcl");
   });
 
+  it.skip("Hover inline SELECT data", () => {
+    const abap = `SELECT SINGLE * FROM ztab INTO @DATA(result).`;
+    const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file, tabl]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 40));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.not.contain("SELECT_todo");
+  });
+
+  it.skip("Hover inline SELECT data, one field", () => {
+    const abap = `SELECT SINGLE field1 FROM ztab INTO @DATA(result).`;
+    const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file, tabl]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 45));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.not.contain("SELECT_todo");
+  });
+
+  it.skip("Hover inline SELECT data voided", () => {
+    const abap = `SELECT SINGLE * FROM voided INTO @DATA(result).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 40));
+    console.dir(hover);
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.not.contain("SELECT_todo");
+  });
+
 });
