@@ -40,9 +40,11 @@ export class Select {
       return;
     }
 
+    const isSingle = node.getChildren()[1].concatTokens().toUpperCase() === "SINGLE";
+
     this.checkFields(fields, dbSources, input, node);
 
-    this.handleInto(node, input, fields, dbSources);
+    this.handleInto(node, input, fields, dbSources, isSingle);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
@@ -156,7 +158,10 @@ export class Select {
     }
   }
 
-  private static handleInto(node: ExpressionNode, input: SyntaxInput, fields: FieldList, dbSources: DatabaseTableSource[]) {
+  private static handleInto(node: ExpressionNode,
+                            input: SyntaxInput,
+                            fields: FieldList,
+                            dbSources: DatabaseTableSource[], isSingle: boolean) {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
@@ -168,7 +173,7 @@ export class Select {
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
     if (intoStructure) {
       const inlineList = intoStructure.findAllExpressions(Expressions.InlineData);
-      if (inlineList.length === 1 && fields.length === 1 && dbSources.length === 1) {
+      if (inlineList.length === 1 && fields.length === 1 && dbSources.length === 1 && isSingle === false) {
         InlineData.runSyntax(inlineList[0], input, this.buildTableType(fields, dbSources, input.scope));
       } else {
         for (const inline of inlineList) {
