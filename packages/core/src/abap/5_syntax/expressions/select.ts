@@ -168,7 +168,7 @@ export class Select {
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
     if (intoStructure) {
       const inlineList = intoStructure.findAllExpressions(Expressions.InlineData);
-      if (inlineList.length === 1 && fields.length === 1 && dbSources.length === 1 && fields[0].code === "*") {
+      if (inlineList.length === 1 && fields.length === 1 && dbSources.length === 1) {
         InlineData.runSyntax(inlineList[0], input, this.buildTableType(fields, dbSources, input.scope));
       } else {
         for (const inline of inlineList) {
