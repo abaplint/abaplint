@@ -167,9 +167,14 @@ export class Select {
 
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
     if (intoStructure) {
-      for (const inline of intoStructure.findAllExpressions(Expressions.InlineData)) {
-        // todo, for now these are voided
-        InlineData.runSyntax(inline, input, VoidType.get("SELECT_todo1"));
+      const inlineList = intoStructure.findAllExpressions(Expressions.InlineData);
+      if (inlineList.length === 1 && fields.length === 1 && dbSources.length === 1 && fields[0].code === "*") {
+        InlineData.runSyntax(inlineList[0], input, this.buildTableType(fields, dbSources, input.scope));
+      } else {
+        for (const inline of inlineList) {
+          // todo, for now these are voided
+          InlineData.runSyntax(inline, input, VoidType.get("SELECT_todo1"));
+        }
       }
     }
 
