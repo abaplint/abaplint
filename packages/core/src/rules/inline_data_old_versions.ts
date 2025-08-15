@@ -33,6 +33,7 @@ export class InlineDataOldVersions extends ABAPRule {
     const issues: Issue[] = [];
 
     if (this.reg.getConfig().getVersion() >= Version.v740sp02
+        || this.reg.getConfig().getVersion() === Version.OpenABAP
         || this.reg.getConfig().getVersion() === Version.Cloud) {
       return [];
     }
