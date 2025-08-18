@@ -11463,11 +11463,11 @@ WRITE / val.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("SELECT inline looped", () => {
+  it("SELECT inline looped", () => {
     const abap = `
 SELECT * FROM ztab INTO @DATA(data).
 ENDSELECT.
-WRITE / data-field1`;
+WRITE / data-field1.`;
     const issues = runMulti([
       {filename: "ztab.tabl.xml", contents: ztab},
       {filename: "zfoobar.prog.abap", contents: abap},
