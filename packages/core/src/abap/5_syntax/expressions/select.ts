@@ -40,7 +40,8 @@ export class Select {
       return;
     }
 
-    const isSingle = node.getChildren()[1].concatTokens().toUpperCase() === "SINGLE";
+    const isSingle = node.getChildren()[1].concatTokens().toUpperCase() === "SINGLE"
+      || node.get() instanceof Expressions.SelectLoop;
 
     this.checkFields(fields, dbSources, input, node);
 
