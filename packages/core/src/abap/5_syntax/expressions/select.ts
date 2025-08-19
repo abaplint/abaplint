@@ -162,7 +162,7 @@ export class Select {
   private static handleInto(node: ExpressionNode,
                             input: SyntaxInput,
                             fields: FieldList,
-                            dbSources: DatabaseTableSource[], isSingle: boolean) {
+                            dbSources: DatabaseTableSource[], _isSingle: boolean) {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
@@ -174,8 +174,8 @@ export class Select {
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
     if (intoStructure) {
       const inlineList = intoStructure.findAllExpressions(Expressions.InlineData);
-      if (inlineList.length === 1 && fields.length === 1 && dbSources.length === 1 && isSingle === false) {
-        InlineData.runSyntax(inlineList[0], input, this.buildTableType(fields, dbSources, input.scope));
+      if (inlineList.length === 1) {
+        InlineData.runSyntax(inlineList[0], input, this.buildStructureType(fields, dbSources, input.scope));
       } else {
         for (const inline of inlineList) {
           // todo, for now these are voided
@@ -261,6 +261,18 @@ export class Select {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
+    }
+  }
+
+  private static buildStructureType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope): AbstractType | undefined {
+    if (fields.length === 1 && fields[0].code === "*" && dbSources.length === 1) {
+      const dbType = dbSources[0]?.parseType(scope.getRegistry());
+      if (dbType === undefined) {
+        return VoidType.get("SELECT_todo8");
+      }
+      return dbType;
+    } else {
+      return VoidType.get("SELECT_todo9");
     }
   }
 
