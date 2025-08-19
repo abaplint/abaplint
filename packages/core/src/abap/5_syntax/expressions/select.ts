@@ -265,12 +265,26 @@ export class Select {
   }
 
   private static buildStructureType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope): AbstractType | undefined {
-    if (fields.length === 1 && fields[0].code === "*" && dbSources.length === 1) {
+    if (fields.length === 1 && dbSources.length === 1) {
       const dbType = dbSources[0]?.parseType(scope.getRegistry());
       if (dbType === undefined) {
         return VoidType.get("SELECT_todo8");
       }
-      return dbType;
+      if (fields[0].code === "*") {
+        return dbType;
+      } else {
+        if (dbType instanceof StructureType) {
+          const field = dbType.getComponentByName(fields[0].code);
+          if (field) {
+            return field;
+          } else {
+            // todo: aggregated/calculated values
+            return VoidType.get("SELECT_todo11");
+          }
+        } else {
+          return VoidType.get("SELECT_todo10");
+        }
+      }
     } else {
       return VoidType.get("SELECT_todo9");
     }
