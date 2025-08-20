@@ -8,7 +8,7 @@ export class SQLFieldList extends Expression {
   public getRunnable(): IStatementRunnable {
     const paren = seq(tok(WParenLeftW), SQLFieldName, tok(WParenRightW));
 
-    const nev = ver(Version.v740sp05, starPrio(seq(",", SQLField)));
+    const nev = ver(Version.v740sp05, starPrio(seq(",", SQLField)), Version.OpenABAP);
     const old = starPrio(SQLField);
 
     return altPrio("*",
