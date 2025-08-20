@@ -1120,6 +1120,19 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("SELECT, basic remove comma and @, ok in open abap", async () => {
+    const abap = `FORM bar.
+  DATA: BEGIN OF ls_t001w,
+          werks TYPE t001w-werks,
+          bwkey TYPE t001w-bwkey,
+        END OF ls_t001w.
+  SELECT SINGLE werks, bwkey FROM t001w INTO @ls_t001w WHERE werks = '123'.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("SELECT, single field into @DATA", async () => {
     const abap = `FORM bar.
   SELECT SINGLE field FROM tab INTO @DATA(bar).

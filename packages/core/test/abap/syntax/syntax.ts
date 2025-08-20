@@ -11475,4 +11475,15 @@ WRITE / data-field1.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("SELECT inline, FIELDS undstructured", () => {
+    const abap = `
+SELECT SINGLE FROM ztab FIELDS field1 WHERE value1 = 'E' INTO @DATA(fld).
+WRITE / fld.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
 });

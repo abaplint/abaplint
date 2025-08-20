@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/cli",
-    "version": "2.113.177",
+    "version": "2.113.178",
     "description": "abaplint - Command Line Interface",
     "funding": "https://github.com/sponsors/larshp",
     "bin": {

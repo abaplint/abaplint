@@ -268,7 +268,12 @@ export class Select {
     if (fields.length === 1 && dbSources.length === 1) {
       const dbType = dbSources[0]?.parseType(scope.getRegistry());
       if (dbType === undefined) {
-        return VoidType.get("SELECT_todo8");
+        const name = dbSources[0]?.getName() || "buildStructureTypeError";
+        if (scope.getRegistry().inErrorNamespace(name) === true) {
+          return new UnknownType("Select, " + name + " not found");
+        } else {
+          return VoidType.get(dbSources[0]?.getName());
+        }
       }
       if (fields[0].code === "*") {
         return dbType;
