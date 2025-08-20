@@ -10,7 +10,6 @@ import {EditHelper} from "../edit_helper";
 export class ExitOrCheckConf extends BasicRuleConfig {
   public allowExit: boolean = false;
   public allowCheck: boolean = false;
-  public allowContinue: boolean = false;
 }
 
 export class ExitOrCheck extends ABAPRule {
@@ -20,14 +19,12 @@ export class ExitOrCheck extends ABAPRule {
   public getMetadata(): IRuleMetadata {
     return {
       key: "exit_or_check",
-      title: "Find EXIT, CHECK or CONTINUE outside loops",
-      shortDescription: `Detects usages of EXIT, CHECK or CONTINUE statements outside of loops.
+      title: "Find EXIT or CHECK outside loops",
+      shortDescription: `Detects usages of EXIT or CHECK statements outside of loops.
 Use RETURN to leave procesing blocks instead.`,
       extendedInformation: `https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenleave_processing_blocks.htm
 https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abapcheck_processing_blocks.htm
-https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapcontinue.htm
-https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-return
-https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-check-in-other-positions`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#check-vs-return`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
     };
   }
@@ -69,11 +66,6 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-check
         issues.push(issue);
       } else if (this.conf.allowExit === false && get instanceof Statements.Exit && stack.length === 0) {
         const message = "EXIT is not allowed outside of loops";
-        const fix = EditHelper.replaceToken(file, statement.getFirstToken(), "RETURN");
-        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, fix);
-        issues.push(issue);
-      } else if (this.conf.allowContinue === false && get instanceof Statements.Continue && stack.length === 0) {
-        const message = "CONTINUE is not allowed outside of loops";
         const fix = EditHelper.replaceToken(file, statement.getFirstToken(), "RETURN");
         const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);

@@ -110,6 +110,7 @@ import {Controls} from "./statements/controls";
 import {While} from "./statements/while";
 import {SelectLoop} from "./statements/select_loop";
 import {Check} from "./statements/check";
+import {Continue} from "./statements/continue";
 import {LogPoint} from "./statements/log_point";
 import {Severity} from "../../severity";
 import {RaiseEvent} from "./statements/raise_event";
@@ -267,6 +268,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Multiply());
   addToMap(new Divide());
   addToMap(new Check());
+  addToMap(new Continue());
   addToMap(new ModifyDatabase());
   addToMap(new Form());
   addToMap(new SelectOption());
@@ -293,6 +295,7 @@ if (Object.keys(map).length === 0) {
 export class SyntaxLogic {
   private currentFile: ABAPFile;
   private issues: Issue[];
+  private loopLevel: number = 0;
 
   private readonly object: ABAPObject;
   private readonly reg: IRegistry;
@@ -390,6 +393,15 @@ export class SyntaxLogic {
     this.issues.push(issue);
   }
 
+  private isLoopStructure(node: StructureNode): boolean {
+    const stru = node.get();
+    return stru instanceof Structures.Loop ||
+           stru instanceof Structures.Do ||
+           stru instanceof Structures.While ||
+           stru instanceof Structures.Provide ||
+           stru instanceof Structures.Select;
+  }
+
   private traverse(node: StructureNode | StatementNode): void {
     for (const child of node.getChildren()) {
       const isStructure = child instanceof StructureNode;
@@ -397,8 +409,18 @@ export class SyntaxLogic {
 
       try {
         if (isStructure) {
-          const gotoNext = this.updateScopeStructure(child as StructureNode);
+          const structureNode = child as StructureNode;
+          const isLoopStructure = this.isLoopStructure(structureNode);
+          
+          if (isLoopStructure) {
+            this.loopLevel++;
+          }
+          
+          const gotoNext = this.updateScopeStructure(structureNode);
           if (gotoNext === true) {
+            if (isLoopStructure) {
+              this.loopLevel--;
+            }
             continue;
           }
         } else if (isStatement) {
@@ -421,7 +443,14 @@ export class SyntaxLogic {
       }
 
       if (isStructure || isStatement) {
+        const structureNode = child as StructureNode;
+        const isLoopStructure = isStructure && this.isLoopStructure(structureNode);
+        
         this.traverse(child as StatementNode | StructureNode);
+        
+        if (isLoopStructure) {
+          this.loopLevel--;
+        }
       }
     }
   }
@@ -437,6 +466,7 @@ export class SyntaxLogic {
       scope: this.scope,
       filename,
       issues: this.issues,
+      loopLevel: this.loopLevel,
     };
 
     if (stru instanceof Structures.ClassDefinition) {
@@ -473,6 +503,7 @@ export class SyntaxLogic {
       scope: this.scope,
       filename,
       issues: this.issues,
+      loopLevel: this.loopLevel,
     };
 
     // todo, refactor
