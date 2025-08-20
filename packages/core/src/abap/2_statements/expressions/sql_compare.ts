@@ -22,7 +22,7 @@ export class SQLCompare extends Expression {
     const arith = ver(Version.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)));
 
     const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
-    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)));
+    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)), Version.OpenABAP);
 
     const rett = seq(altPrio(SQLFunction, ConstantString, seq(altPrio(SQLPath, SQLFieldName), optPrio(arith)), at),
                      altPrio(seq(SQLCompareOperator, altPrio(sub, source)),
