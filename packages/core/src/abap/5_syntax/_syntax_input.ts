@@ -11,7 +11,6 @@ export type SyntaxInput = {
   scope: CurrentScope,
   filename: string,
   issues: Issue[],
-  loopLevel?: number,
 };
 
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string) {

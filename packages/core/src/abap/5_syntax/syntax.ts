@@ -110,7 +110,7 @@ import {Controls} from "./statements/controls";
 import {While} from "./statements/while";
 import {SelectLoop} from "./statements/select_loop";
 import {Check} from "./statements/check";
-import {Continue} from "./statements/continue";
+
 import {LogPoint} from "./statements/log_point";
 import {Severity} from "../../severity";
 import {RaiseEvent} from "./statements/raise_event";
@@ -268,7 +268,6 @@ if (Object.keys(map).length === 0) {
   addToMap(new Multiply());
   addToMap(new Divide());
   addToMap(new Check());
-  addToMap(new Continue());
   addToMap(new ModifyDatabase());
   addToMap(new Form());
   addToMap(new SelectOption());
@@ -295,7 +294,6 @@ if (Object.keys(map).length === 0) {
 export class SyntaxLogic {
   private currentFile: ABAPFile;
   private issues: Issue[];
-  private loopLevel: number = 0;
 
   private readonly object: ABAPObject;
   private readonly reg: IRegistry;
@@ -335,6 +333,9 @@ export class SyntaxLogic {
     }
 
     this.traverseObject();
+    
+    // Validate CONTINUE statements are only used inside loops
+    this.validateContinueStatements();
 
     for (;;) {
       const spaghetti = this.scope.pop(new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)); // pop built-in scopes
@@ -393,18 +394,6 @@ export class SyntaxLogic {
     this.issues.push(issue);
   }
 
-  private isLoopStructure(node: StructureNode): boolean {
-    const stru = node.get();
-    return stru instanceof Structures.Loop ||
-           stru instanceof Structures.Do ||
-           stru instanceof Structures.While ||
-           stru instanceof Structures.LoopAtScreen ||
-           stru instanceof Structures.DynproLoop ||
-           stru instanceof Structures.With ||
-           stru instanceof Structures.Provide ||
-           stru instanceof Structures.Select;
-  }
-
   private traverse(node: StructureNode | StatementNode): void {
     for (const child of node.getChildren()) {
       const isStructure = child instanceof StructureNode;
@@ -412,18 +401,8 @@ export class SyntaxLogic {
 
       try {
         if (isStructure) {
-          const structureNode = child as StructureNode;
-          const isLoopStructure = this.isLoopStructure(structureNode);
-          
-          if (isLoopStructure) {
-            this.loopLevel++;
-          }
-          
-          const gotoNext = this.updateScopeStructure(structureNode);
+          const gotoNext = this.updateScopeStructure(child as StructureNode);
           if (gotoNext === true) {
-            if (isLoopStructure) {
-              this.loopLevel--;
-            }
             continue;
           }
         } else if (isStatement) {
@@ -446,14 +425,7 @@ export class SyntaxLogic {
       }
 
       if (isStructure || isStatement) {
-        const structureNode = child as StructureNode;
-        const isLoopStructure = isStructure && this.isLoopStructure(structureNode);
-        
         this.traverse(child as StatementNode | StructureNode);
-        
-        if (isLoopStructure) {
-          this.loopLevel--;
-        }
       }
     }
   }
@@ -469,7 +441,6 @@ export class SyntaxLogic {
       scope: this.scope,
       filename,
       issues: this.issues,
-      loopLevel: this.loopLevel,
     };
 
     if (stru instanceof Structures.ClassDefinition) {
@@ -506,7 +477,6 @@ export class SyntaxLogic {
       scope: this.scope,
       filename,
       issues: this.issues,
-      loopLevel: this.loopLevel,
     };
 
     // todo, refactor
@@ -544,6 +514,49 @@ export class SyntaxLogic {
       }
       if (this.scope.getType() === ScopeType.MethodInstance) {
         this.scope.pop(node.getLastToken().getEnd());
+      }
+    }
+  }
+
+  private validateContinueStatements(): void {
+    for (const file of this.object.getSequencedFiles()) {
+      const structure = file.getStructure();
+      if (structure !== undefined) {
+        const oldFile = this.currentFile;
+        this.currentFile = file;
+        this.checkContinueInNode(structure, false);
+        this.currentFile = oldFile;
+      }
+    }
+  }
+
+  private checkContinueInNode(node: StructureNode | StatementNode, insideLoop: boolean): void {
+    if (node instanceof StatementNode) {
+      // Check if this is a CONTINUE statement
+      if (node.get() instanceof Statements.Continue) {
+        if (!insideLoop) {
+          const message = "CONTINUE is not allowed outside of loops";
+          this.newIssue(node.getFirstToken(), message);
+        }
+      }
+      return;
+    }
+
+    // For structure nodes, check if it's a loop structure
+    if (node instanceof StructureNode) {
+      const stru = node.get();
+      const isLoop = stru instanceof Structures.Loop ||
+                     stru instanceof Structures.Do ||
+                     stru instanceof Structures.While ||
+                     stru instanceof Structures.LoopAtScreen ||
+                     stru instanceof Structures.DynproLoop ||
+                     stru instanceof Structures.With ||
+                     stru instanceof Structures.Provide ||
+                     stru instanceof Structures.Select;
+
+      // Recursively check children with updated loop status
+      for (const child of node.getChildren()) {
+        this.checkContinueInNode(child, insideLoop || isLoop);
       }
     }
   }
