@@ -398,6 +398,9 @@ export class SyntaxLogic {
     return stru instanceof Structures.Loop ||
            stru instanceof Structures.Do ||
            stru instanceof Structures.While ||
+           stru instanceof Structures.LoopAtScreen ||
+           stru instanceof Structures.DynproLoop ||
+           stru instanceof Structures.With ||
            stru instanceof Structures.Provide ||
            stru instanceof Structures.Select;
   }
