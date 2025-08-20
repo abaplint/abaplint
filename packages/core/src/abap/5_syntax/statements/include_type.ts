@@ -1,6 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {IStructureComponent, StructureType, VoidType} from "../../types/basic";
+import {IStructureComponent, StructureType, VoidType, UnknownType} from "../../types/basic";
+import * as Types from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -17,6 +18,33 @@ export class IncludeType {
     const name = iname.getFirstToken().getStr();
 
     let ityp = new BasicTypes(input).parseType(iname);
+    
+    // If parseType returns VoidType, it might be a variable, not a type
+    // Check if it's a variable that exists but is not structured
+    if (ityp instanceof VoidType) {
+      let foundId = input.scope.findType(name);
+      if (foundId === undefined) {
+        foundId = input.scope.findVariable(name);
+      }
+      
+      if (foundId) {
+        const foundType = foundId.getType();
+        if (foundType) {
+          // Tables with headers can be included as they have a structure
+          if (foundType instanceof Types.TableType && foundType.isWithHeader()) {
+            // This is valid - table with header can be included
+            ityp = foundType.getRowType();
+          } else if (!(foundType instanceof StructureType) && 
+                    !(foundType instanceof VoidType) && !(foundType instanceof UnknownType)) {
+            // The type exists but is not structured - this is an error
+            const message = "not structured, " + name;
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
+        }
+      }
+    }
+    
     const as = node.findExpressionAfterToken("AS")?.concatTokens();
     if (as && ityp instanceof StructureType) {
       ityp = new StructureType(ityp.getComponents().concat([{
@@ -53,6 +81,11 @@ export class IncludeType {
       return ityp;
     } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
       return VoidType.get(name);
+    } else if (ityp) {
+      // The type exists but is not structured - this is an error
+      const message = "not structured, " + name;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return VoidType.get(CheckSyntaxKey);
     } else {
       const message = "IncludeType, type not found \"" + iname.concatTokens() + "\"";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

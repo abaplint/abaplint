@@ -1,7 +1,7 @@
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {SyntaxInput} from "../_syntax_input";
 import {Data as DataSyntax} from "../statements/data";
+import {IncludeType} from "../statements/include_type";
 import {IStructureComponent} from "../../types/basic";
-import {ReferenceType} from "../_reference";
 import {StatementNode, StructureNode, TokenNode} from "../../nodes";
 import {Type} from "../statements/type";
 import {TypedIdentifier} from "../../types/_typed_identifier";
@@ -45,47 +45,20 @@ export class Data {
           table = true;
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
-        // INCLUDES
-        const typeToken = c.findFirstExpression(Expressions.TypeName)?.getFirstToken();
-        const typeName = typeToken?.getStr();
-
-        let foundId = input.scope.findType(typeName);
-        if (foundId === undefined) {
-          foundId = input.scope.findVariable(typeName);
-        }
-
-        let found = foundId?.getType();
-        if (found === undefined) {
-          const f = input.scope.getDDIC().lookupTableOrView(typeName).type;
-          if (f instanceof TypedIdentifier) {
-            found = f.getType();
-          } else {
-            found = f;
-          }
-        } else {
-          input.scope.addReference(typeToken, foundId, ReferenceType.TypeReference, input.filename);
-        }
-        if (found instanceof Basic.VoidType) {
+        // INCLUDES - use the IncludeType class to handle AS and SUFFIX properly
+        const includeResult = new IncludeType().runSyntax(c, input);
+        if (includeResult instanceof Basic.VoidType) {
           if (table === true) {
-            const ttyp = new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default});
+            const ttyp = new Basic.TableType(includeResult, {withHeader: true, keyType: Basic.TableKeyType.default});
             return new TypedIdentifier(name, input.filename, ttyp);
           } else {
-            return new TypedIdentifier(name, input.filename, found);
+            return new TypedIdentifier(name, input.filename, includeResult);
           }
-        }
-        if (found instanceof Basic.UnknownType) {
-          return new TypedIdentifier(name, input.filename, new Basic.UnknownType("unknown type, " + typeName));
-        }
-        if (found instanceof Basic.TableType && found.isWithHeader()) {
-          found = found.getRowType();
-        }
-        if (!(found instanceof Basic.StructureType)) {
-          const message = "not structured, " + typeName;
-          input.issues.push(syntaxIssue(input, typeToken!, message));
-          return new TypedIdentifier(name, input.filename, Basic.VoidType.get(CheckSyntaxKey));
-        }
-        for (const c of found.getComponents()) {
-          components.push(c);
+        } else if (Array.isArray(includeResult)) {
+          // includeResult is IStructureComponent[]
+          for (const comp of includeResult) {
+            components.push(comp);
+          }
         }
       }
     }

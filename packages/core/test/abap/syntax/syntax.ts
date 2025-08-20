@@ -6785,7 +6785,7 @@ WRITE foo-foo2-field1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("structure suffixes with AS clause reproduce issue", () => {
+  it("structure suffixes with AS clause - should access suffixed fields directly", () => {
     const abap = `
 TYPES: BEGIN OF t_day,
          string TYPE string,
@@ -6802,14 +6802,25 @@ WRITE week-string_tue.
 WRITE week-string_wed.`;
     
     const issues = runProgram(abap);
-    // Currently this should fail because the fields are not properly accessible
-    // The issue is that the current implementation creates sub-structures like week-monday-string
-    // But the expected behavior is direct fields like week-string_mon
-    console.log("Issues found:", issues.length);
-    for (const issue of issues) {
-      console.log("- " + issue.getMessage());
-    }
+    // This test reproduces issue #3672 - structure suffixes should create 
+    // direct field access like week-string_mon, not sub-structures
     expect(issues.length).to.equal(0);
+  });
+
+  it("INCLUDE STRUCTURE with non-structured type should generate error", () => {
+    const abap = `
+DATA foo TYPE i.
+
+DATA BEGIN OF bar.
+INCLUDE STRUCTURE foo.
+DATA END OF bar.
+
+CLEAR bar.`;
+    
+    const issues = runProgram(abap);
+    // Should find exactly 1 error for non-structured include
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("not structured");
   });
 
   it("CALLed METHOD not existing, expect error", () => {
