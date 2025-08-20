@@ -6785,6 +6785,33 @@ WRITE foo-foo2-field1.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("structure suffixes with AS clause reproduce issue", () => {
+    const abap = `
+TYPES: BEGIN OF t_day,
+         string TYPE string,
+       END OF t_day.
+
+DATA BEGIN OF week.
+  INCLUDE TYPE t_day AS monday    RENAMING WITH SUFFIX _mon.
+  INCLUDE TYPE t_day AS tuesday   RENAMING WITH SUFFIX _tue.
+  INCLUDE TYPE t_day AS wednesday RENAMING WITH SUFFIX _wed.
+DATA END OF week.
+
+WRITE week-string_mon.
+WRITE week-string_tue.
+WRITE week-string_wed.`;
+    
+    const issues = runProgram(abap);
+    // Currently this should fail because the fields are not properly accessible
+    // The issue is that the current implementation creates sub-structures like week-monday-string
+    // But the expected behavior is direct fields like week-string_mon
+    console.log("Issues found:", issues.length);
+    for (const issue of issues) {
+      console.log("- " + issue.getMessage());
+    }
+    expect(issues.length).to.equal(0);
+  });
+
   it("CALLed METHOD not existing, expect error", () => {
     const abap = `
 INTERFACE lif.
