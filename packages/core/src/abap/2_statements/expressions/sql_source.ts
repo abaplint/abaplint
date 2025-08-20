@@ -8,7 +8,7 @@ export class SQLSource extends Expression {
   public getRunnable(): IStatementRunnable {
     const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
 
-    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)));
+    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)), Version.OpenABAP);
 
     return altPrio(SQLAliasField, SimpleSource3, at);
   }
