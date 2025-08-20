@@ -741,7 +741,7 @@ inline_struct_table = struct_table.`;
     testFix(abap, expected);
   });
 
-  it("xsdbool, not on open", async () => {
+  it("xsdbool, no downport on open", async () => {
     const abap = `
   DATA foo TYPE abap_bool.
   DATA moo TYPE i.
