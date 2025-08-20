@@ -20,6 +20,19 @@ const tests = [
   {abap: `SELECT kunnr INTO lv_kunnr FROM kna1.
             CHECK sy-dbcnt > is_paging-skip.
           ENDSELECT.`, cnt: 0},
+  {abap: "CONTINUE.", cnt: 1, fix: true},
+  {abap: `CASE abap_true.
+    WHEN 'X'.
+      CALL FUNCTION 'BAPI_TRANSACTION_ROLLBACK'.
+    WHEN OTHERS.
+      CONTINUE.
+  ENDCASE.`, cnt: 1, fix: true},
+  {abap: `LOOP AT items INTO item.
+    CONTINUE.
+  ENDLOOP.`, cnt: 0},
+  {abap: `DO 10 TIMES.
+    CONTINUE.
+  ENDDO.`, cnt: 0},
 ];
 
 testRule(tests, ExitOrCheck);
@@ -33,17 +46,26 @@ const tests2 = [
   {abap: `SELECT kunnr INTO lv_kunnr FROM kna1.
             CHECK sy-dbcnt > is_paging-skip.
           ENDSELECT.`, cnt: 0},
+  {abap: "CONTINUE.", cnt: 0},
+  {abap: `CASE abap_true.
+    WHEN 'X'.
+      CALL FUNCTION 'BAPI_TRANSACTION_ROLLBACK'.
+    WHEN OTHERS.
+      CONTINUE.
+  ENDCASE.`, cnt: 0},
 ];
 
 const config2 = new ExitOrCheckConf();
 config2.allowCheck = true;
 config2.allowExit = true;
+config2.allowContinue = true;
 testRule(tests2, ExitOrCheck, config2);
 
 const fixes = [
   {input: "EXIT.", output: "RETURN."},
   {input: "CHECK foo = bar.", output: `IF NOT foo = bar.\n  RETURN.\nENDIF.`},
   {input: "  CHECK sy-subrc = 0.", output: `  IF NOT sy-subrc = 0.\n  RETURN.\nENDIF.`},
+  {input: "CONTINUE.", output: "RETURN."},
 ];
 
 testRuleFix(fixes, ExitOrCheck);
