@@ -94,7 +94,7 @@ export class SkipLogic {
     }
   }
 
-  private isGeneratedFunctionGroup(group: FunctionGroup): boolean {
+  public isGeneratedFunctionGroup(group: FunctionGroup): boolean {
     if (this.tobj === undefined) {
       this.tobj = {};
 
