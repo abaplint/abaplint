@@ -85,7 +85,6 @@ export class MethodCallParam {
     } else if (child.get() instanceof Expressions.MethodParameters) {
       new MethodParameters().runSyntax(child, input, method);
     } else {
-//      console.dir(child);
       const message = "MethodCallParam, unexpected child";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;

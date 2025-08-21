@@ -1673,12 +1673,12 @@ START-OF-SELECTION.
     expect(hover?.value).to.not.contain("SELECT_todo");
   });
 
-  it.only("Hover inline void type", () => {
+  it("Hover inline void type", () => {
     const abap = `DATA classname TYPE string.
 cl_voided=>something( iv_name = CONV #( classname ) ).`;
     const file = new MemoryFile("zfoo.prog.abap", abap);
     const reg = new Registry().addFile(file).parse();
-    const hover = new Hover(reg).find(buildPosition(file, 1, 38));
+    const hover = new Hover(reg).find(buildPosition(file, 1, 37));
     console.dir(hover);
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("Void");

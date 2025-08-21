@@ -236,9 +236,13 @@ export class MethodParameters {
         for (const i of method.getParameters().getImporting()) {
           if (i.getName().toUpperCase() === name) {
             targetType = i.getType();
+            break;
           }
         }
+      } else {
+        targetType = method;
       }
+
       let sourceType = Source.runSyntax(source, input, targetType);
 
       if (sourceType === undefined) {
