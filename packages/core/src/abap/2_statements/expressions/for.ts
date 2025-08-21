@@ -24,6 +24,6 @@ export class For extends Expression {
 
     const f = seq("FOR", alt(itera, inn, groups), optPrio(Let));
 
-    return ver(Version.v740sp05, f);
+    return ver(Version.v740sp05, f, Version.OpenABAP);
   }
 }
