@@ -1679,7 +1679,6 @@ cl_voided=>something( iv_name = CONV #( classname ) ).`;
     const file = new MemoryFile("zfoo.prog.abap", abap);
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 1, 37));
-    console.dir(hover);
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("Void");
   });

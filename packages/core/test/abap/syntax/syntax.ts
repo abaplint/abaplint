@@ -11486,4 +11486,31 @@ WRITE / fld.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("RENAMING WITH SUFFIX, monday tuesday wednesday", () => {
+    const abap = `
+TYPES: BEGIN OF t_day,
+             string TYPE string,
+       END OF t_day.
+
+DATA BEGIN OF week.
+  INCLUDE TYPE t_day AS monday    RENAMING WITH SUFFIX _mon.
+  INCLUDE TYPE t_day AS tuesday   RENAMING WITH SUFFIX _tue.
+  INCLUDE TYPE t_day AS wednesday RENAMING WITH SUFFIX _wed.
+DATA END OF week.
+
+WRITE / week-string_mon.
+WRITE / week-monday-string.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("DATA include type voided", () => {
+    const abap = `
+DATA BEGIN OF week.
+  INCLUDE TYPE voided.
+DATA END OF week.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {IStructureComponent, StructureType, VoidType} from "../../types/basic";
+import {IStructureComponent, StructureType, TableType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -15,8 +15,16 @@ export class IncludeType {
       throw new AssertError("IncludeType, unexpected node structure");
     }
     const name = iname.getFirstToken().getStr();
+    const isStructure = node.findDirectTokenByText("STRUCTURE") !== undefined;
 
     let ityp = new BasicTypes(input).parseType(iname);
+    if (ityp instanceof VoidType && isStructure) {
+      const found = input.scope.findVariable(name)?.getType();
+      if (found) {
+        ityp = found;
+      }
+    }
+
     const as = node.findExpressionAfterToken("AS")?.concatTokens();
     if (as && ityp instanceof StructureType) {
       ityp = new StructureType(ityp.getComponents().concat([{
@@ -24,6 +32,16 @@ export class IncludeType {
         type: ityp,
         asInclude: true,
       }]));
+    } else if (ityp instanceof TableType && isStructure) {
+      ityp = ityp.getRowType();
+    } else if (ityp instanceof VoidType) {
+      return ityp;
+    }
+
+    if (!(ityp instanceof StructureType)) {
+      const message = "not structured, " + name;
+      input.issues.push(syntaxIssue(input, iname.getFirstToken(), message));
+      return VoidType.get(CheckSyntaxKey);
     }
 
     const suffix = node.findExpressionAfterToken("SUFFIX")?.concatTokens();

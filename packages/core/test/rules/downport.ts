@@ -751,6 +751,13 @@ inline_struct_table = struct_table.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("open, no downport of RAISE EXCEPTION NEW", async () => {
+    const abap = `RAISE EXCEPTION NEW zcx_foobar( ).`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("xsdbool, nested in source", async () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -6000,6 +6007,13 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("line_exists() ok on open abap", async () => {
+    const abap = `DATA(has_method_get_subschema) = xsdbool( line_exists( result[ cpdkey = VALUE #( clsname = name_of_callback_class cpdname = 'GET_SUBSCHEMA' ) ] ) ).`;
 
     const issues = await findIssues(abap, Version.OpenABAP);
     expect(issues.length).to.equal(0);
