@@ -24,6 +24,10 @@ export class IncludeType {
         type: ityp,
         asInclude: true,
       }]));
+    } else if (!(ityp instanceof StructureType)) {
+      const message = "not structured, " + name;
+      input.issues.push(syntaxIssue(input, iname.getFirstToken(), message));
+      return VoidType.get(CheckSyntaxKey);
     }
 
     const suffix = node.findExpressionAfterToken("SUFFIX")?.concatTokens();
