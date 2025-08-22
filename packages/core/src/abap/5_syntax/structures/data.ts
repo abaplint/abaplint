@@ -1,7 +1,6 @@
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {SyntaxInput} from "../_syntax_input";
 import {Data as DataSyntax} from "../statements/data";
 import {IStructureComponent} from "../../types/basic";
-import {ReferenceType} from "../_reference";
 import {StatementNode, StructureNode, TokenNode} from "../../nodes";
 import {Type} from "../statements/type";
 import {TypedIdentifier} from "../../types/_typed_identifier";
@@ -10,6 +9,7 @@ import * as Basic from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
+import {IncludeType} from "../statements/include_type";
 
 export class Data {
   public static runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
@@ -46,6 +46,7 @@ export class Data {
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
         // INCLUDES
+        /*
         const typeToken = c.findFirstExpression(Expressions.TypeName)?.getFirstToken();
         const typeName = typeToken?.getStr();
 
@@ -84,7 +85,18 @@ export class Data {
           input.issues.push(syntaxIssue(input, typeToken!, message));
           return new TypedIdentifier(name, input.filename, Basic.VoidType.get(CheckSyntaxKey));
         }
-        for (const c of found.getComponents()) {
+*/
+        const found = new IncludeType().runSyntax(c, input);
+        if (found instanceof Basic.VoidType) {
+          if (table === true) {
+            const ttyp = new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default});
+            return new TypedIdentifier(name, input.filename, ttyp);
+          } else {
+            return new TypedIdentifier(name, input.filename, found);
+          }
+        }
+
+        for (const c of found) {
           components.push(c);
         }
       }
