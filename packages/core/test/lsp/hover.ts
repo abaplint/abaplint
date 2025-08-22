@@ -1683,7 +1683,7 @@ cl_voided=>something( iv_name = CONV #( classname ) ).`;
     expect(hover?.value).to.contain("Void");
   });
 
-  it.only("Hover table expression inferred", () => {
+  it("Hover table expression inferred", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          BEGIN OF field,
@@ -1697,7 +1697,7 @@ WRITE / res-field-foo.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 7, 34));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("Void");
+    expect(hover?.value).to.contain("Inferred");
   });
 
 });
