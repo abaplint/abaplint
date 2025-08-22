@@ -81,7 +81,7 @@ export class Source extends Expression {
                                            tok(ParenLeftW),
                                            CondBody,
                                            rparenNoSpace,
-                                           optPrio(after)));
+                                           optPrio(after)), Version.OpenABAP);
 
     const reff = ver(Version.v740sp02, seq("REF",
                                            TypeNameOrInfer,
