@@ -33,14 +33,10 @@ export class IncludeType {
         asInclude: true,
       }]));
     } else if (ityp instanceof TableType && isStructure) {
-      const rowType = ityp.getRowType();
-      if (!(rowType instanceof StructureType)) {
-        const message = "not structured, " + name;
-        input.issues.push(syntaxIssue(input, iname.getFirstToken(), message));
-        return VoidType.get(CheckSyntaxKey);
-      }
-      ityp = rowType;
-    } else if (!(ityp instanceof StructureType)) {
+      ityp = ityp.getRowType();
+    }
+
+    if (!(ityp instanceof StructureType)) {
       const message = "not structured, " + name;
       input.issues.push(syntaxIssue(input, iname.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
