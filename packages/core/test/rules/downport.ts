@@ -6005,4 +6005,11 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("line_exists() ok on open abap", async () => {
+    const abap = `DATA(has_method_get_subschema) = xsdbool( line_exists( result[ cpdkey = VALUE #( clsname = name_of_callback_class cpdname = 'GET_SUBSCHEMA' ) ] ) ).`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -3219,6 +3219,10 @@ ${indentation}    output = ${uniqueName}.\n`;
   }
 
   private replaceLineFunctions(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
+
     const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
 
     for (const r of spag?.getData().references || []) {
