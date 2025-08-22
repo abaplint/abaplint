@@ -34,6 +34,8 @@ export class IncludeType {
       }]));
     } else if (ityp instanceof TableType && isStructure) {
       ityp = ityp.getRowType();
+    } else if (ityp instanceof VoidType) {
+      return ityp;
     }
 
     if (!(ityp instanceof StructureType)) {

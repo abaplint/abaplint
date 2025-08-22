@@ -11504,4 +11504,13 @@ WRITE / week-monday-string.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("DATA include type voided", () => {
+    const abap = `
+DATA BEGIN OF week.
+  INCLUDE TYPE voided.
+DATA END OF week.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
