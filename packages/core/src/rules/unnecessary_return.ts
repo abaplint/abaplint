@@ -80,7 +80,9 @@ ENDFORM.`,
       }
 
       const prev = statements[i - 1];
-      if (prev && prev.get() instanceof Statements.Return) {
+      if (prev
+          && prev.get() instanceof Statements.Return
+          && prev.getChildren().length === 1) {
         if (this.conf.allowEmpty === true && statementCounter === 2) {
           continue;
         }
@@ -93,6 +95,7 @@ ENDFORM.`,
       const prevprev = statements[i - 2];
       if (prev && prevprev
           && prevprev.get() instanceof Statements.Return
+          && prevprev.getChildren().length === 1
           && prev.get() instanceof Statements.EndIf) {
         const fix = EditHelper.deleteStatement(file, prevprev);
         issues.push(Issue.atStatement(file, prevprev, message, this.getMetadata().key, this.getConfig().severity, fix));
