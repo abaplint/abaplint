@@ -751,6 +751,13 @@ inline_struct_table = struct_table.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("open, no downport of RAISE EXCEPTION NEW", async () => {
+    const abap = `RAISE EXCEPTION NEW zcx_foobar( ).`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("xsdbool, nested in source", async () => {
     const abap = `
 CLASS lcl DEFINITION.
