@@ -11513,4 +11513,15 @@ DATA END OF week.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("table expression, bar not part of structure", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+DATA result TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA(res) = result[ bar = 2 ].`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("bar");
+  });
+
 });

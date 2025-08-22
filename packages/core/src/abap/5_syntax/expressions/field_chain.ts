@@ -113,7 +113,7 @@ export class FieldChain {
           input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
-        TableExpression.runSyntax(current, input);
+        TableExpression.runSyntax(current, input, context);
         if (!(context instanceof VoidType)) {
           context = context.getRowType();
         }

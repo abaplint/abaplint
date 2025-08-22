@@ -1683,4 +1683,21 @@ cl_voided=>something( iv_name = CONV #( classname ) ).`;
     expect(hover?.value).to.contain("Void");
   });
 
+  it("Hover table expression inferred", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         BEGIN OF field,
+           foo TYPE i,
+         END OF field,
+       END OF ty.
+DATA result TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA(res) = result[ field = VALUE #( foo = 2 ) ].
+WRITE / res-field-foo.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 7, 34));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+  });
+
 });
