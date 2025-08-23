@@ -111,4 +111,19 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("test METHOD return value", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RETURNING VALUE(rv_result) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    RETURN 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
