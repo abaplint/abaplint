@@ -16,7 +16,7 @@ export class Select extends Expression {
 
     const bypass = str("BYPASSING BUFFER");
 
-    const fields = ver(Version.v750, SQLFields);
+    const fields = ver(Version.v750, SQLFields, Version.OpenABAP);
 
     // todo, HINTS cannot be anywhere, need an expression dedicated for strict sql
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
