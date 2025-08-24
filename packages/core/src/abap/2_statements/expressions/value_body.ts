@@ -7,7 +7,7 @@ export class ValueBody extends Expression {
   public getRunnable(): IStatementRunnable {
     const strucOrTab = seq(optPrio(Let), optPrio(ValueBase), star(For), plusPrio(altPrio(FieldAssignment, ValueBodyLine)));
 
-    const tabdef = ver(Version.v740sp08, altPrio("OPTIONAL", seq("DEFAULT", Source)));
+    const tabdef = ver(Version.v740sp08, altPrio("OPTIONAL", seq("DEFAULT", Source)), Version.OpenABAP);
 
     return optPrio(altPrio(strucOrTab, seq(Source, optPrio(tabdef))));
   }
