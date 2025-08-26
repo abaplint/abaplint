@@ -1120,7 +1120,6 @@ describe("Table, parse XML", () => {
       expect.fail();
     }
     const components = structure.getComponents();
-    console.dir(components);
 
     let found = components.find(c => c.name === "STRING_MO");
     expect(found).to.not.equal(undefined);
