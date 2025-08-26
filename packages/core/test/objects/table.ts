@@ -1038,4 +1038,91 @@ describe("Table, parse XML", () => {
     expect(components![0].type.getDescription()).to.equal("DTEL");
   });
 
+  it.only("days and weeks", async () => {
+    const zday = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZDAY</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>Day structure</DDTEXT>
+    <MASTERLANG>E</MASTERLANG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>STRING</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>g</INTTYPE>
+     <INTLEN>000008</INTLEN>
+     <DATATYPE>STRG</DATATYPE>
+     <MASK>  STRG</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const zweek = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZWEEK</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <LANGDEP>X</LANGDEP>
+    <DDTEXT>Week structure</DDTEXT>
+    <MASTERLANG>E</MASTERLANG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>.INCLU-_MO</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <PRECFIELD>ZDAY</PRECFIELD>
+     <MASK>      S</MASK>
+     <DDTEXT>Day structure</DDTEXT>
+     <COMPTYPE>S</COMPTYPE>
+     <GROUPNAME>MONDAY</GROUPNAME>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>.INCLU-_TU</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <PRECFIELD>ZDAY</PRECFIELD>
+     <MASK>      S</MASK>
+     <DDTEXT>Day structure</DDTEXT>
+     <COMPTYPE>S</COMPTYPE>
+     <GROUPNAME>TUESDAY</GROUPNAME>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>.INCLU-_WE</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <PRECFIELD>ZDAY</PRECFIELD>
+     <MASK>      S</MASK>
+     <DDTEXT>Day structure</DDTEXT>
+     <COMPTYPE>S</COMPTYPE>
+     <GROUPNAME>WEDNESDAY</GROUPNAME>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zweek.tabl.xml", zweek));
+    reg.addFile(new MemoryFile("zday.tabl.xml", zday));
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const structure = tabl.parseType(reg);
+    if (!(structure instanceof StructureType)) {
+      expect.fail();
+    }
+    const components = structure.getComponents();
+    expect(components.length).to.equal(4);
+    expect(components[0].name).to.equal("SUBSTRUC");
+    expect(components[0].asInclude).to.equal(true);
+  });
+
 });
