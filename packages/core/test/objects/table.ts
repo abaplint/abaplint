@@ -1038,7 +1038,7 @@ describe("Table, parse XML", () => {
     expect(components![0].type.getDescription()).to.equal("DTEL");
   });
 
-  it.only("days and weeks", async () => {
+  it("days and weeks", async () => {
     const zday = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -1120,9 +1120,13 @@ describe("Table, parse XML", () => {
       expect.fail();
     }
     const components = structure.getComponents();
-    expect(components.length).to.equal(4);
-    expect(components[0].name).to.equal("SUBSTRUC");
-    expect(components[0].asInclude).to.equal(true);
+    console.dir(components);
+
+    let found = components.find(c => c.name === "STRING_MO");
+    expect(found).to.not.equal(undefined);
+
+    found = components.find(c => c.name === "MONDAY");
+    expect(found).to.not.equal(undefined);
   });
 
 });

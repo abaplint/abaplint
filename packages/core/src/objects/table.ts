@@ -159,6 +159,12 @@ export class Table extends AbstractObject {
               components.push({name: c.name, type: c.type});
             }
           }
+          if (field.FIELDNAME.startsWith(".INCLU-")) {
+            const postfix = field.FIELDNAME.substring(".INCLU-".length);
+            for (const c of found.getComponents()) {
+              components.push({name: c.name + postfix, type: c.type});
+            }
+          }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {
           continue;
