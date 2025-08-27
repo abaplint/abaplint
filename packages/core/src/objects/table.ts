@@ -153,10 +153,14 @@ export class Table extends AbstractObject {
             components.push({name: field.GROUPNAME, type: found, asInclude: true});
           }
 
-          if (field.FIELDNAME.startsWith(".INCLU-") === false
-              || field.FIELDNAME === ".INCLU--AP") {
+          if (field.FIELDNAME.startsWith(".INCLU-") === false) {
             for (const c of found.getComponents()) {
               components.push({name: c.name, type: c.type});
+            }
+          } else if (field.FIELDNAME.startsWith(".INCLU-")) {
+            const postfix = field.FIELDNAME.substring(".INCLU-".length);
+            for (const c of found.getComponents()) {
+              components.push({name: c.name + postfix, type: c.type});
             }
           }
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
