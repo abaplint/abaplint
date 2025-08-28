@@ -153,7 +153,8 @@ export class Table extends AbstractObject {
             components.push({name: field.GROUPNAME, type: found, asInclude: true});
           }
 
-          if (field.FIELDNAME.startsWith(".INCLU-") === false) {
+          // Note: "--AP" are .APPENDS
+          if (field.FIELDNAME.startsWith(".INCLU-") === false || field.FIELDNAME === ".INCLU--AP") {
             for (const c of found.getComponents()) {
               components.push({name: c.name, type: c.type});
             }
