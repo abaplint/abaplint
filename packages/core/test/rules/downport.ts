@@ -6019,4 +6019,31 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.only("downport, NEW # default name", async () => {
+    const abap = `FORM bar.
+  DATA foo TYPE REF TO zcl_global.
+  foo = NEW #( 2 ).
+ENDFORM.`;
+    const gclass = `
+CLASS zcl_global DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE i.
+ENDCLASS.
+
+CLASS zcl_global IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const zglobal = new MemoryFile("zcl_global.clas.abap", gclass);
+    const zmain = new MemoryFile("zmain.prog.abap", abap);
+
+    const reg = new Registry(buildConfig(Version.v702));
+    reg.addFile(zmain);
+    reg.addFile(zglobal);
+    reg.parse();
+    const issues = new Downport().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1, "single issue expected");
+    expect(issues[0].getDefaultFix()).to.not.equal(undefined);
+  });
+
 });
