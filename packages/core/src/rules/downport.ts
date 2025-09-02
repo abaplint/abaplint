@@ -1328,6 +1328,9 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
   }
 
   private partiallyImplemented(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (this.lowReg.getConfig().getVersion() === Version.OpenABAP) {
+      return undefined;
+    }
 
     if (node.get() instanceof Statements.InterfaceDef) {
       const partially = node.findDirectTokenByText("PARTIALLY");
