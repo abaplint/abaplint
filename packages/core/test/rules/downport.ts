@@ -6019,7 +6019,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("downport, NEW # default name", async () => {
+  it("downport, NEW # default name", async () => {
     const abap = `FORM bar.
   DATA foo TYPE REF TO zcl_global.
   foo = NEW #( 2 ).

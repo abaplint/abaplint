@@ -3362,7 +3362,6 @@ ${indentation}    output = ${uniqueName}.\n`;
   private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string | undefined {
     const typeToken = found.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
     let extra = typeToken?.getStr() === "#" ? "" : " TYPE " + typeToken?.getStr();
-
     const parameters = found.findFirstExpression(Expressions.ParameterListS);
     if (parameters) {
       extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
@@ -3380,11 +3379,10 @@ ${indentation}    output = ${uniqueName}.\n`;
             cdef = r.resolved as IClassDefinition | TypedIdentifier;
           }
         }
-
         if (cdef instanceof TypedIdentifier) {
           const foo = cdef.getType();
           if (foo instanceof ObjectReferenceType) {
-            cdef = foo.getIdentifier() as IClassDefinition;
+            cdef = spag?.findClassDefinition(foo.getQualifiedName()!);
           } else {
             throw new Error("newParameters, downport, unexpected");
           }
