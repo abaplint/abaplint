@@ -21,7 +21,7 @@ import {AnyType, ObjectReferenceType, StructureType, TableType, VoidType} from "
 import {Config} from "../config";
 import {EditHelper, IEdit} from "../edit_helper";
 import {Issue} from "../issue";
-import {Program} from "../objects";
+import {Class, Program} from "../objects";
 import {ABAPObject} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
@@ -3362,7 +3362,6 @@ ${indentation}    output = ${uniqueName}.\n`;
   private newParameters(found: ExpressionNode, name: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string | undefined {
     const typeToken = found.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
     let extra = typeToken?.getStr() === "#" ? "" : " TYPE " + typeToken?.getStr();
-
     const parameters = found.findFirstExpression(Expressions.ParameterListS);
     if (parameters) {
       extra = parameters ? extra + " EXPORTING " + parameters.concatTokens() : extra;
@@ -3380,11 +3379,14 @@ ${indentation}    output = ${uniqueName}.\n`;
             cdef = r.resolved as IClassDefinition | TypedIdentifier;
           }
         }
-
         if (cdef instanceof TypedIdentifier) {
           const foo = cdef.getType();
           if (foo instanceof ObjectReferenceType) {
-            cdef = foo.getIdentifier() as IClassDefinition;
+            cdef = spag?.findClassDefinition(foo.getQualifiedName()!);
+            if (cdef === undefined) {
+              const cglobal = this.highReg.getObject("CLAS", foo.getQualifiedName()!) as Class | undefined;
+              cdef = cglobal?.getDefinition();
+            }
           } else {
             throw new Error("newParameters, downport, unexpected");
           }
