@@ -15,7 +15,7 @@ export class InterfaceDef implements IStatement {
                         FinalMethods,
                         "ALL METHODS ABSTRACT",
                         "ALL METHODS FINAL",
-                        ver(Version.v740sp02, "PARTIALLY IMPLEMENTED"));
+                        ver(Version.v740sp02, "PARTIALLY IMPLEMENTED", Version.OpenABAP));
 
     return seq("INTERFACES",
                InterfaceName,
