@@ -41,7 +41,7 @@ export class StringTemplateFormatting extends Expression {
     const number = seq("NUMBER =", numberOptions);
     const sign = seq("SIGN =", signOptions);
     const decimals = seq("DECIMALS =", Source);
-    const alpha = ver(Version.v740sp02, seq("ALPHA =", alphaOptions));
+    const alpha = ver(Version.v740sp02, seq("ALPHA =", alphaOptions), Version.OpenABAP);
     const xsd = ver(Version.v740sp02, seq("XSD =", zeroXSDOptions));
     const country = seq("COUNTRY =", Source);
 
