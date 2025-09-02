@@ -90,6 +90,15 @@ PROCESS ON HELP-REQUEST.
 PROCESS ON VALUE-REQUEST.
 
 `},
+
+  {abap: `
+PROCESS BEFORE OUTPUT.
+  MODULE alv_8000.
+
+*PROCESS AFTER INPUT.
+* MODULE USER_COMMAND_8000.
+
+`},
 ];
 
 structureType(cases, new DynproLogic());
