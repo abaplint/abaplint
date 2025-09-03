@@ -21,7 +21,7 @@ export class Raise implements IStatement {
 
     const from = seq("TYPE",
                      ClassName,
-                     opt(alt(ver(Version.v750, alt(mess, messid)), ver(Version.v752, "USING MESSAGE"))),
+                     opt(alt(ver(Version.v750, alt(mess, messid), Version.OpenABAP), ver(Version.v752, "USING MESSAGE"))),
                      optPrio(exporting));
 
     const pre = altPrio(seq(optPrio("RESUMABLE"), "EXCEPTION"), "SHORTDUMP");
