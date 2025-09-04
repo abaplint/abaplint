@@ -102,7 +102,7 @@ export class Source extends Expression {
                            TypeNameOrInfer,
                            tok(ParenLeftW),
                            FilterBody,
-                           rparen));
+                           rparen), Version.OpenABAP);
 
     const reduce = ver(Version.v740sp08,
                        seq("REDUCE",
