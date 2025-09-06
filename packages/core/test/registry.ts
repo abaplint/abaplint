@@ -5,7 +5,7 @@ import {ABAPObject} from "../src/objects/_abap_object";
 import {Version} from "../src/version";
 import {Config} from "../src/config";
 import {MemoryFile} from "../src/files/memory_file";
-import {Class} from "../src/objects";
+import {Class, DataElement} from "../src/objects";
 import {Duration, RiskLevel} from "../src/abap/4_file_information/_abap_file_information";
 
 describe("Registry", () => {
@@ -458,6 +458,19 @@ describe("exclude list", () => {
     registry.addDependency(file1);
 
     expect(registry.isFileDependency(file1.getFilename())).to.equal(true);
+  });
+
+  it("add same dependency multiple times ", async () => {
+    const registry = new Registry();
+
+    const file1 = new MemoryFile("/deps/zdtel.dtel.xml", "deps");
+    registry.addDependency(file1);
+    registry.addDependency(file1);
+
+    expect(registry.isFileDependency(file1.getFilename())).to.equal(true);
+    const obj = registry.getObject("DTEL", "ZDTEL") as DataElement | undefined;
+    expect(obj).to.not.equal(undefined);
+    expect(obj?.getFiles().length).to.equal(1);
   });
 
   it("get info on risk and duration", async () => {

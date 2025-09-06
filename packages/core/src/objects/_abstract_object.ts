@@ -43,6 +43,15 @@ export abstract class AbstractObject implements IObject {
 
   public addFile(file: IFile) {
     this.setDirty();
+
+    // update if it already exists
+    for (let i = 0; i < this.files.length; i++) {
+      if (this.files[i].getFilename() === file.getFilename()) {
+        this.files[i] = file;
+        return;
+      }
+    }
+
     this.files.push(file);
   }
 
