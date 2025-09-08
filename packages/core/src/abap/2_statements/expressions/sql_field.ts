@@ -9,7 +9,7 @@ import {SQLPath} from "./sql_path";
 export class SQLField extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const abap = ver(Version.v740sp05, seq(tok(WAt), SimpleFieldChain2));
+    const abap = ver(Version.v740sp05, seq(tok(WAt), SimpleFieldChain2), Version.OpenABAP);
 
     const as = seq("AS", SQLAsName);
 
