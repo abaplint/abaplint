@@ -7,7 +7,7 @@ import {Version} from "../../../version";
 export class Select implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const union = ver(Version.v750, seq("UNION", optPrio(altPrio("DISTINCT", "ALL")), eSelect));
+    const union = ver(Version.v750, seq("UNION", optPrio(altPrio("DISTINCT", "ALL")), eSelect), Version.OpenABAP);
     return seq(eSelect, starPrio(union));
   }
 
