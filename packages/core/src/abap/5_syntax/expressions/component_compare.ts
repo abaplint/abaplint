@@ -16,10 +16,10 @@ export class ComponentCompare {
       return;
     }
 
-    ComponentChain.runSyntax(type, chain, input);
+    const fieldType = ComponentChain.runSyntax(type, chain, input);
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      Source.runSyntax(s, input);
+      Source.runSyntax(s, input, fieldType);
     }
   }
 

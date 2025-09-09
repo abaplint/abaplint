@@ -10,7 +10,7 @@ import {Version} from "../../../version";
 export class AssignSource extends Expression {
   public getRunnable(): IStatementRunnable {
     const component = seq("COMPONENT",
-                          alt(SimpleSource3, ver(Version.v740sp02, Source)),
+                          alt(SimpleSource3, ver(Version.v740sp02, Source, Version.OpenABAP)),
                           "OF STRUCTURE",
                           Source);
 
