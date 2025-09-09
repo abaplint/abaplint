@@ -25,8 +25,12 @@ export class FilterBody {
       }
     }
 
-    const rowType = type instanceof TableType ? type.getRowType() : undefined;
-    ComponentCond.runSyntax(node.findDirectExpression(Expressions.ComponentCond)!, input, rowType);
+    // todo
+    if (node.findDirectTokenByText("EXCEPT") === undefined) {
+      const rowType = type instanceof TableType ? type.getRowType() : undefined;
+      ComponentCond.runSyntax(node.findDirectExpression(Expressions.ComponentCond)!, input, rowType);
+    }
+
 
     return type ? type : targetType;
   }

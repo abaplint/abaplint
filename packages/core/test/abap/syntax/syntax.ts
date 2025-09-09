@@ -11543,4 +11543,16 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("FILTER, EXCEPT IN", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field1 TYPE c LENGTH 4,
+       END OF ty.
+DATA et_list TYPE SORTED TABLE OF ty WITH UNIQUE KEY field1.
+DATA lt_exclude LIKE et_list.
+et_list = FILTER #( et_list EXCEPT IN lt_exclude WHERE field1 = field1 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
