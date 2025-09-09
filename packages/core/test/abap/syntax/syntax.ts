@@ -11524,4 +11524,23 @@ DATA(res) = result[ bar = 2 ].`;
     expect(issues[0]?.getMessage()).to.contain("bar");
   });
 
+  it("FILTER with infer field", () => {
+    const abap = `
+FORM run.
+  TYPES: BEGIN OF ty,
+           field TYPE c LENGTH 10,
+         END OF ty.
+  DATA original TYPE SORTED TABLE OF ty WITH NON-UNIQUE KEY field.
+  INSERT VALUE #( ) INTO TABLE original.
+  INSERT VALUE #( field = '1' ) INTO TABLE original.
+  DATA(filtered) = FILTER #( original WHERE field <> CONV #( space ) ).
+  WRITE / lines( filtered ).
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM run.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
