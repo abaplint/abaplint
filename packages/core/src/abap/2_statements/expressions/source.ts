@@ -110,7 +110,7 @@ export class Source extends Expression {
                            tok(ParenLeftW),
                            ReduceBody,
                            rparen,
-                           optPrio(after)));
+                           optPrio(after)), Version.OpenABAP);
 
     const prefix1 = altPrio(tok(WDashW), tok(WPlusW));
 
