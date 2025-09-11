@@ -11555,4 +11555,13 @@ et_list = FILTER #( et_list EXCEPT IN lt_exclude WHERE field1 = field1 ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LINES OF must be a table", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA row LIKE LINE OF tab.
+APPEND LINES OF row TO tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
+  });
+
 });

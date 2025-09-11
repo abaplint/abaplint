@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
-import {DataReference, TableType, VoidType} from "../../types/basic";
+import {DataReference, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
@@ -69,6 +69,10 @@ export class Append implements StatementSyntax {
         // hmm, checking only the row types are compatible will not check the table type, e.g. sorted or hashed
         if (sourceType instanceof TableType) {
           sourceType = sourceType.getRowType();
+        } else if (!(sourceType instanceof VoidType) && !(sourceType instanceof UnknownType)) {
+          const message = "LINES OF must be a table type";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
         }
         if (targetType instanceof TableType) {
           targetType = targetType.getRowType();
