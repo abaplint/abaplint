@@ -14,13 +14,17 @@ export const SELECTION_EVENTS = [
 ];
 
 export const DECLARATION_STUFF = [
+  Statements.Type,
+  Statements.TypeBegin,
+  Statements.TypeEnum,
+  Statements.TypeEnumBegin,
   Statements.Data,
   Statements.DataBegin,
   Statements.Constant,
+  Statements.ConstantBegin,
   Statements.Tables,
   Statements.Include, // this is not super correct, but anyhow
   Statements.Parameter,
   Statements.SelectionScreen,
-  Statements.ConstantBegin,
   Statements.Define,
 ];

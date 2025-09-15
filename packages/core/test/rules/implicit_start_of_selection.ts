@@ -62,4 +62,13 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it("okay", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+TYPES bar TYPE i.
+
+START-OF-SELECTION.
+  WRITE 'world'.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });
