@@ -8,6 +8,7 @@ import {Comment} from "../abap/2_statements/statements/_statement";
 import {StatementNode} from "../abap/nodes";
 
 export class UnnecessaryChainingConf extends BasicRuleConfig {
+  public maxIssuesPerFile = 10;
 }
 
 export class UnnecessaryChaining extends ABAPRule {
@@ -36,6 +37,11 @@ export class UnnecessaryChaining extends ABAPRule {
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+
+    let max = this.getConfig().maxIssuesPerFile;
+    if (max === undefined || max < 1) {
+      max = 10;
+    }
 
     const statements = file.getStatements();
     for (let i = 0; i < statements.length; i++) {
@@ -70,6 +76,10 @@ export class UnnecessaryChaining extends ABAPRule {
       const message = "Unnecessary chaining";
       const issue = Issue.atToken(file, colon, message, this.getMetadata().key, this.conf.severity, fix);
       issues.push(issue);
+
+      if (issues.length >= max) {
+        break;
+      }
     }
 
     return issues;

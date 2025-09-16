@@ -74,38 +74,43 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
       return [];
     }
 
+    let max = config.maxIssuesPerFile;
+    if (max === undefined || max < 1) {
+      max = 10;
+    }
+
     if (config.data !== undefined && config.data !== "") {
       ret.push(...this.checkData(structure, new RegExp(config.data, "i"), file));
     }
-    if (ret.length >= config.maxIssuesPerFile) {
+    if (ret.length >= max) {
       return ret;
     }
 
     if (config.statics !== undefined && config.statics !== "") {
       ret.push(...this.checkStatics(structure, new RegExp(config.statics, "i"), file));
     }
-    if (ret.length >= config.maxIssuesPerFile) {
+    if (ret.length >= max) {
       return ret;
     }
 
     if (config.fieldSymbols !== undefined && config.fieldSymbols !== "") {
       ret.push(...this.checkFieldSymbols(structure, new RegExp(config.fieldSymbols, "i"), file));
     }
-    if (ret.length >= config.maxIssuesPerFile) {
+    if (ret.length >= max) {
       return ret;
     }
 
     if (config.constants !== undefined && config.constants !== "") {
       ret.push(...this.checkConstants(structure, new RegExp(config.constants, "i"), file));
     }
-    if (ret.length >= config.maxIssuesPerFile) {
+    if (ret.length >= max) {
       return ret;
     }
 
     if (config.types !== undefined && config.types !== "") {
       ret.push(...this.checkTypes(structure, new RegExp(config.types, "i"), file));
     }
-    if (ret.length >= config.maxIssuesPerFile) {
+    if (ret.length >= max) {
       return ret;
     }
 

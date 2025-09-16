@@ -471,13 +471,17 @@
           },
           "type": "array"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
       "required": [
-        "allowEndOfLine"
+        "allowEndOfLine",
+        "maxIssuesPerFile"
       ],
       "type": "object"
     },
@@ -5730,6 +5734,9 @@
         "ignoreGlobalInterface": {
           "type": "boolean"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "selectionScreenBlockIndentation": {
           "description": "Add indentation for SELECTION SCREEN BLOCK, standard pretty printer indents this from 754",
           "type": "boolean"
@@ -5745,7 +5752,8 @@
         "selectionScreenBlockIndentation",
         "globalClassSkipFirst",
         "ignoreGlobalClassDefinition",
-        "ignoreGlobalInterface"
+        "ignoreGlobalInterface",
+        "maxIssuesPerFile"
       ],
       "type": "object"
     },
@@ -5871,6 +5879,9 @@
         "ignoreLowerClassImplmentationStatement": {
           "type": "boolean"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
@@ -5887,7 +5898,8 @@
         "ignoreGlobalInterface",
         "ignoreFunctionModuleName",
         "ignoreGlobalClassBoundaries",
-        "ignoreKeywords"
+        "ignoreKeywords",
+        "maxIssuesPerFile"
       ],
       "type": "object"
     },
@@ -6613,6 +6625,9 @@
           "description": "FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex",
           "type": "string"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "methodParameters": {
           "description": "importing, exporting, returning and changing parameters, case insensitive regex",
           "type": "string"
@@ -6637,7 +6652,8 @@
         "constants",
         "types",
         "methodParameters",
-        "allowIsPrefixBoolean"
+        "allowIsPrefixBoolean",
+        "maxIssuesPerFile"
       ],
       "type": "object"
     },
@@ -8067,11 +8083,17 @@
           },
           "type": "array"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "maxIssuesPerFile"
+      ],
       "type": "object"
     },
     "UnnecessaryPragmaConf": {
