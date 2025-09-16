@@ -5965,13 +5965,17 @@
           "description": "Maximum line length in characters, trailing whitespace ignored",
           "type": "number"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
       "required": [
-        "length"
+        "length",
+        "maxIssuesPerFile"
       ],
       "type": "object"
     },
