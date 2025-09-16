@@ -101,7 +101,7 @@ const checkCommentsTests = [
     abap: testCases[4],
     description: "no end of line, select, multiple comments",
     config: configNoEndOfLine,
-    issueLength: 12,
+    issueLength: 10,
   },
   {
     abap: testCases[4],

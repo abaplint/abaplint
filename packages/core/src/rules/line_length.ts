@@ -7,6 +7,7 @@ import {RuleTag} from "./_irule";
 export class LineLengthConf extends BasicRuleConfig {
   /** Maximum line length in characters, trailing whitespace ignored */
   public length: number = 120;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 export class LineLength extends ABAPRule {
@@ -37,6 +38,11 @@ https://docs.abapopenchecks.org/checks/04/`,
     // maximum line length in abap files
     const maxLineLength: number = 255;
 
+    let max = this.getConfig().maxIssuesPerFile;
+    if (max === undefined || max < 1) {
+      max = 10;
+    }
+
     const array = file.getRawRows();
     for (let rowIndex = 0; rowIndex < array.length; rowIndex++) {
       const row = array[rowIndex].replace("\r", "");
@@ -46,6 +52,10 @@ https://docs.abapopenchecks.org/checks/04/`,
       } else if (row.length > this.conf.length) {
         const message = `Reduce line length to max ${this.conf.length}, currently ${row.length}`;
         issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key, this.conf.severity));
+      }
+
+      if (issues.length >= max) {
+        break;
       }
     }
     return issues;

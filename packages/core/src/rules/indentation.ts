@@ -26,6 +26,7 @@ export class IndentationConf extends BasicRuleConfig {
   public globalClassSkipFirst: boolean = false;
   public ignoreGlobalClassDefinition: boolean = false;
   public ignoreGlobalInterface: boolean = false;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 export class Indentation extends ABAPRule {
@@ -67,7 +68,11 @@ ENDCLASS.`,
   }
 
   public runParsed(file: ABAPFile, obj: IObject) {
-    const MAX_ISSUES = 100;
+    let max = this.getConfig().maxIssuesPerFile;
+    if (max === undefined || max < 1) {
+      max = 10;
+    }
+
     let skip = false;
 
     if (file.getStructure() === undefined) {
@@ -145,7 +150,7 @@ ENDCLASS.`,
         const message = "Indentation problem, expected " + expected + " spaces";
         const issue = Issue.atPosition(file, position, message, this.getMetadata().key, this.conf.severity, fix);
         ret.push(issue);
-        if (ret.length >= MAX_ISSUES) {
+        if (ret.length >= max) {
           break;
         }
       }

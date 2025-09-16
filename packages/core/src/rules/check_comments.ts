@@ -8,6 +8,7 @@ import {ABAPFile} from "../abap/abap_file";
 export class CheckCommentsConf extends BasicRuleConfig {
   /** Allows the use of end-of-line comments. */
   public allowEndOfLine: boolean = false;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 enum IssueType {
@@ -53,6 +54,12 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#put-comment
     if (this.conf.allowEndOfLine === true) {
       return [];
     }
+
+    let max = this.getConfig().maxIssuesPerFile;
+    if (max === undefined || max < 1) {
+      max = 10;
+    }
+
     const commentRows: number[] = [];
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -75,6 +82,9 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#put-comment
             this.getDescription(IssueType.EndOfLine),
             this.getMetadata().key,
             this.conf.severity));
+        if (issues.length >= max) {
+          break;
+        }
       }
     }
     return issues;

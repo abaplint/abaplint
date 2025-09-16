@@ -34,6 +34,7 @@ export class KeywordCaseConf extends BasicRuleConfig {
 
   /** A list of keywords to be ignored */
   public ignoreKeywords: string[] = [];
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 class Skip {
@@ -150,6 +151,11 @@ export class KeywordCase extends ABAPRule {
       }
     }
 
+    let max = this.getConfig().maxIssuesPerFile;
+    if (max === undefined || max < 1) {
+      max = 10;
+    }
+
     const skip = new Skip(this.getConfig());
     let prev: AbstractToken | undefined = undefined;
     for (const statement of file.getStatements()) {
@@ -172,6 +178,10 @@ export class KeywordCase extends ABAPRule {
           break;
         }
         prev = result[0].token;
+      }
+
+      if (issues.length >= max) {
+        break;
       }
     }
 

@@ -471,6 +471,9 @@
           },
           "type": "array"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
@@ -5730,6 +5733,9 @@
         "ignoreGlobalInterface": {
           "type": "boolean"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "selectionScreenBlockIndentation": {
           "description": "Add indentation for SELECTION SCREEN BLOCK, standard pretty printer indents this from 754",
           "type": "boolean"
@@ -5871,6 +5877,9 @@
         "ignoreLowerClassImplmentationStatement": {
           "type": "boolean"
         },
+        "maxIssuesPerFile": {
+          "type": "number"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
@@ -5951,6 +5960,9 @@
         },
         "length": {
           "description": "Maximum line length in characters, trailing whitespace ignored",
+          "type": "number"
+        },
+        "maxIssuesPerFile": {
           "type": "number"
         },
         "severity": {
@@ -6612,6 +6624,9 @@
         "fieldSymbols": {
           "description": "FIELD-SYMBOLS and inline FIELD-SYMBOLS(), case insensitive regex",
           "type": "string"
+        },
+        "maxIssuesPerFile": {
+          "type": "number"
         },
         "methodParameters": {
           "description": "importing, exporting, returning and changing parameters, case insensitive regex",
@@ -8066,6 +8081,9 @@
             "type": "string"
           },
           "type": "array"
+        },
+        "maxIssuesPerFile": {
+          "type": "number"
         },
         "severity": {
           "$ref": "#/definitions/Severity",

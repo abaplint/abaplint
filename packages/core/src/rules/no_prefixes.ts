@@ -22,7 +22,7 @@ export class NoPrefixesConf extends BasicRuleConfig {
   /** importing, exporting, returning and changing parameters, case insensitive regex */
   public methodParameters: string = "^[ICER].?_";
   public allowIsPrefixBoolean: boolean = true;
-
+  public maxIssuesPerFile: number | undefined = 10;
   // todo, public localClass: string = "";
   // todo, public localInterface: string = "";
   // todo, public functionModuleParameters: string = "";
@@ -74,24 +74,44 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
       return [];
     }
 
+    let max = config.maxIssuesPerFile;
+    if (max === undefined || max < 1) {
+      max = 10;
+    }
+
     if (config.data !== undefined && config.data !== "") {
       ret.push(...this.checkData(structure, new RegExp(config.data, "i"), file));
+    }
+    if (ret.length >= max) {
+      return ret;
     }
 
     if (config.statics !== undefined && config.statics !== "") {
       ret.push(...this.checkStatics(structure, new RegExp(config.statics, "i"), file));
     }
+    if (ret.length >= max) {
+      return ret;
+    }
 
     if (config.fieldSymbols !== undefined && config.fieldSymbols !== "") {
       ret.push(...this.checkFieldSymbols(structure, new RegExp(config.fieldSymbols, "i"), file));
+    }
+    if (ret.length >= max) {
+      return ret;
     }
 
     if (config.constants !== undefined && config.constants !== "") {
       ret.push(...this.checkConstants(structure, new RegExp(config.constants, "i"), file));
     }
+    if (ret.length >= max) {
+      return ret;
+    }
 
     if (config.types !== undefined && config.types !== "") {
       ret.push(...this.checkTypes(structure, new RegExp(config.types, "i"), file));
+    }
+    if (ret.length >= max) {
+      return ret;
     }
 
     if (config.methodParameters !== undefined && config.methodParameters !== "") {
