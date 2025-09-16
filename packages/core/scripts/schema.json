@@ -480,8 +480,7 @@
         }
       },
       "required": [
-        "allowEndOfLine",
-        "maxIssuesPerFile"
+        "allowEndOfLine"
       ],
       "type": "object"
     },
@@ -5752,8 +5751,7 @@
         "selectionScreenBlockIndentation",
         "globalClassSkipFirst",
         "ignoreGlobalClassDefinition",
-        "ignoreGlobalInterface",
-        "maxIssuesPerFile"
+        "ignoreGlobalInterface"
       ],
       "type": "object"
     },
@@ -5898,8 +5896,7 @@
         "ignoreGlobalInterface",
         "ignoreFunctionModuleName",
         "ignoreGlobalClassBoundaries",
-        "ignoreKeywords",
-        "maxIssuesPerFile"
+        "ignoreKeywords"
       ],
       "type": "object"
     },
@@ -5974,8 +5971,7 @@
         }
       },
       "required": [
-        "length",
-        "maxIssuesPerFile"
+        "length"
       ],
       "type": "object"
     },
@@ -6656,8 +6652,7 @@
         "constants",
         "types",
         "methodParameters",
-        "allowIsPrefixBoolean",
-        "maxIssuesPerFile"
+        "allowIsPrefixBoolean"
       ],
       "type": "object"
     },
@@ -8095,9 +8090,6 @@
           "description": "Problem severity"
         }
       },
-      "required": [
-        "maxIssuesPerFile"
-      ],
       "type": "object"
     },
     "UnnecessaryPragmaConf": {

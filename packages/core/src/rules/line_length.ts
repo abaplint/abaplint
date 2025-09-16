@@ -7,7 +7,7 @@ import {RuleTag} from "./_irule";
 export class LineLengthConf extends BasicRuleConfig {
   /** Maximum line length in characters, trailing whitespace ignored */
   public length: number = 120;
-  public maxIssuesPerFile = 10;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 export class LineLength extends ABAPRule {

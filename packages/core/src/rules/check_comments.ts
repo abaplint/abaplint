@@ -8,7 +8,7 @@ import {ABAPFile} from "../abap/abap_file";
 export class CheckCommentsConf extends BasicRuleConfig {
   /** Allows the use of end-of-line comments. */
   public allowEndOfLine: boolean = false;
-  public maxIssuesPerFile = 10;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 enum IssueType {

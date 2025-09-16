@@ -22,7 +22,7 @@ export class NoPrefixesConf extends BasicRuleConfig {
   /** importing, exporting, returning and changing parameters, case insensitive regex */
   public methodParameters: string = "^[ICER].?_";
   public allowIsPrefixBoolean: boolean = true;
-  public maxIssuesPerFile = 10;
+  public maxIssuesPerFile: number | undefined = 10;
   // todo, public localClass: string = "";
   // todo, public localInterface: string = "";
   // todo, public functionModuleParameters: string = "";

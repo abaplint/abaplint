@@ -8,7 +8,7 @@ import {Comment} from "../abap/2_statements/statements/_statement";
 import {StatementNode} from "../abap/nodes";
 
 export class UnnecessaryChainingConf extends BasicRuleConfig {
-  public maxIssuesPerFile = 10;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 export class UnnecessaryChaining extends ABAPRule {

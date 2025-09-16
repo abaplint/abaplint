@@ -34,7 +34,7 @@ export class KeywordCaseConf extends BasicRuleConfig {
 
   /** A list of keywords to be ignored */
   public ignoreKeywords: string[] = [];
-  public maxIssuesPerFile = 10;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 class Skip {

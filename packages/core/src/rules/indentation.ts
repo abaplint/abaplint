@@ -26,7 +26,7 @@ export class IndentationConf extends BasicRuleConfig {
   public globalClassSkipFirst: boolean = false;
   public ignoreGlobalClassDefinition: boolean = false;
   public ignoreGlobalInterface: boolean = false;
-  public maxIssuesPerFile = 10;
+  public maxIssuesPerFile: number | undefined = 10;
 }
 
 export class Indentation extends ABAPRule {
