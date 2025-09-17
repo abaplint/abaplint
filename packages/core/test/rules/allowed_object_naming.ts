@@ -153,4 +153,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("TABL, CI_ ok", async () => {
+    const issues = await findIssues("ci_hello_world.tabl.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });

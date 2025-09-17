@@ -7,13 +7,14 @@ import {At, AtW, BracketLeft, BracketLeftW, BracketRight, BracketRightW, Comment
 import {LexerBuffer} from "./lexer_buffer";
 import {LexerStream} from "./lexer_stream";
 
+const ModeNormal: number = 1;
+const ModePing: number = 2;
+const ModeStr: number = 3;
+const ModeTemplate: number = 4;
+const ModeComment: number = 5;
+const ModePragma: number = 6;
+
 export class Lexer {
-  private readonly ModeNormal: number = 1;
-  private readonly ModePing: number = 2;
-  private readonly ModeStr: number = 3;
-  private readonly ModeTemplate: number = 4;
-  private readonly ModeComment: number = 5;
-  private readonly ModePragma: number = 6;
 
   private virtual: Position | undefined;
   private tokens: AbstractToken[];
@@ -24,7 +25,7 @@ export class Lexer {
   public run(file: IFile, virtual?: Position): IABAPLexerResult {
     this.virtual = virtual;
     this.tokens = [];
-    this.m = this.ModeNormal;
+    this.m = ModeNormal;
 
     this.process(file.getRaw());
     return {file, tokens: this.tokens};
@@ -56,11 +57,11 @@ export class Lexer {
       }
 
       let tok: AbstractToken | undefined = undefined;
-      if (this.m === this.ModeComment) {
+      if (this.m === ModeComment) {
         tok = new Comment(pos, s);
-      } else if (this.m === this.ModePing || this.m === this.ModeStr) {
+      } else if (this.m === ModePing || this.m === ModeStr) {
         tok = new StringToken(pos, s);
-      } else if (this.m === this.ModeTemplate) {
+      } else if (this.m === ModeTemplate) {
         const first = s.charAt(0);
         const last = s.charAt(s.length - 1);
         if (first === "|" && last === "|") {
@@ -217,30 +218,30 @@ export class Lexer {
       const ahead = this.stream.nextChar();
       const aahead = this.stream.nextNextChar();
 
-      if (this.m === this.ModeNormal) {
+      if (this.m === ModeNormal) {
         if (splits[ahead]) {
           this.add();
         } else if (ahead === "'") {
 // start string
           this.add();
-          this.m = this.ModeStr;
+          this.m = ModeStr;
         } else if (ahead === "|" || ahead === "}") {
 // start template
           this.add();
-          this.m = this.ModeTemplate;
+          this.m = ModeTemplate;
         } else if (ahead === "`") {
 // start ping
           this.add();
-          this.m = this.ModePing;
+          this.m = ModePing;
         } else if (aahead === "##") {
 // start pragma
           this.add();
-          this.m = this.ModePragma;
+          this.m = ModePragma;
         } else if (ahead === "\""
             || (ahead === "*" && current === "\n")) {
 // start comment
           this.add();
-          this.m = this.ModeComment;
+          this.m = ModeComment;
         } else if (ahead === "@" && buf.trim().length === 0) {
           this.add();
         } else if (aahead === "->"
@@ -256,11 +257,11 @@ export class Lexer {
             || (buf === "-" && ahead !== ">"))) {
           this.add();
         }
-      } else if (this.m === this.ModePragma && (ahead === "," || ahead === ":" || ahead === "." || ahead === " " || ahead === "\n")) {
+      } else if (this.m === ModePragma && (ahead === "," || ahead === ":" || ahead === "." || ahead === " " || ahead === "\n")) {
 // end of pragma
         this.add();
-        this.m = this.ModeNormal;
-      } else if (this.m === this.ModePing
+        this.m = ModeNormal;
+      } else if (this.m === ModePing
           && buf.length > 1
           && current === "`"
           && aahead !== "``"
@@ -269,22 +270,22 @@ export class Lexer {
 // end of ping
         this.add();
         if (ahead === `"`) {
-          this.m = this.ModeComment;
+          this.m = ModeComment;
         } else {
-          this.m = this.ModeNormal;
+          this.m = ModeNormal;
         }
-      } else if (this.m === this.ModeTemplate
+      } else if (this.m === ModeTemplate
           && buf.length > 1
           && (current === "|" || current === "{")
           && (this.stream.prevChar() !== "\\" || this.stream.prevPrevChar() === "\\\\")) {
 // end of template
         this.add();
-        this.m = this.ModeNormal;
-      } else if (this.m === this.ModeTemplate
+        this.m = ModeNormal;
+      } else if (this.m === ModeTemplate
           && ahead === "}"
           && current !== "\\") {
         this.add();
-      } else if (this.m === this.ModeStr
+      } else if (this.m === ModeStr
           && current === "'"
           && buf.length > 1
           && aahead !== "''"
@@ -293,14 +294,14 @@ export class Lexer {
 // end of string
         this.add();
         if (ahead === "\"") {
-          this.m = this.ModeComment;
+          this.m = ModeComment;
         } else {
-          this.m = this.ModeNormal;
+          this.m = ModeNormal;
         }
-      } else if (ahead === "\n" && this.m !== this.ModeTemplate) {
+      } else if (ahead === "\n" && this.m !== ModeTemplate) {
         this.add();
-        this.m = this.ModeNormal;
-      } else if (this.m === this.ModeTemplate && current === "\n") {
+        this.m = ModeNormal;
+      } else if (this.m === ModeTemplate && current === "\n") {
         this.add();
       }
 
