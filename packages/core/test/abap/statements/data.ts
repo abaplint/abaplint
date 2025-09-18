@@ -124,6 +124,7 @@ const tests = [
   `DATA t_name TYPE STANDARD TABLE OF string VALUE IS INITIAL.`,
   `DATA change TYPE REQUEST FOR CHANGE ZACB_I_Label_S.`,
   `DATA text_tky_link TYPE STRUCTURE FOR READ LINK ZACB_I_Label\\_LabelText.`,
+  `data lt_delete type table for delete /foo/bar.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

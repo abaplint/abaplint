@@ -46,6 +46,7 @@ export class TypeTable extends Expression {
       "DETERMINATION",
       "READ RESULT",
       "UPDATE",
+      "DELETE",
     ), alt(TypeName, EntityAssociation)));
 
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
