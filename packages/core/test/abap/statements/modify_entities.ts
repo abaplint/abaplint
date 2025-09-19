@@ -105,6 +105,10 @@ const tests = [
             RELATING TO entities_update BY relates_update.`,
 
   `modify entities of /foo/bar entity SubHe update from lt_hdr_read.`,
+
+  `modify entity in local mode /foo/bar\\\\SubHeader
+      execute create
+      from value #( ).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
