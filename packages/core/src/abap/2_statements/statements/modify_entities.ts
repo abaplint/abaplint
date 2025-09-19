@@ -17,7 +17,7 @@ export class ModifyEntities implements IStatement {
       seq("CREATE SET FIELDS WITH", Source),
       seq("UPDATE", fieldsWith),
       seq("DELETE FROM", Source),
-      seq("UPDATE FROM", Source, relating),
+      seq("UPDATE FROM", Source, opt(relating)),
       seq("CREATE", opt(by), "FROM", Source, opt(relating)),
       seq("EXECUTE", SimpleName, "FROM", Source),
       seq("CREATE", opt(by), optPrio("AUTO FILL CID"), altPrio(withh, fieldsWith)));

@@ -38,6 +38,11 @@ export class TableType extends AbstractObject {
     return this.parsedXML?.ddtext;
   }
 
+  public getRowType(): string | undefined {
+    this.parseXML();
+    return this.parsedXML?.rowtype;
+  }
+
   public setDirty(): void {
     this.parsedXML = undefined;
     super.setDirty();

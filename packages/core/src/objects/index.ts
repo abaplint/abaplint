@@ -20,6 +20,7 @@ export * from "./behavior_definition";
 export * from "./brf_plus_system_application";
 export * from "./bsp_application";
 export * from "./business_add_in_implementation";
+export * from "./cds_entity_buffer";
 export * from "./business_catalog_app_assignment";
 export * from "./business_catalog";
 export * from "./business_configuration_maintenance_object";

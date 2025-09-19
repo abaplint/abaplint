@@ -103,6 +103,8 @@ const tests = [
           ENTITY LabelText
             UPDATE FROM text_update
             RELATING TO entities_update BY relates_update.`,
+
+  `modify entities of /foo/bar entity SubHe update from lt_hdr_read.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

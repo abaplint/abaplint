@@ -38,10 +38,17 @@ export class SQLFunction extends Expression {
     // dunno if the version for substring is correct
     const substring = ver(Version.v750, seq(reg(/^substring$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, commaParam, tok(WParenRightW)));
 
+    // dunno if the version for substring is correct
+    const dats_is_valid = ver(Version.v754, seq(reg(/^dats_is_valid$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
+    const dats_days_between = ver(Version.v754, seq(reg(/^dats_days_between$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
+    const dats_add_days = ver(Version.v754, seq(reg(/^dats_is_valid$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
+    const dats_add_months = ver(Version.v754, seq(reg(/^dats_is_valid$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
+
     const ltrim = ver(Version.v750, seq(reg(/^ltrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
     const rtrim = ver(Version.v750, seq(reg(/^rtrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
 
     return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace,
-                   length, lower, upper, round, concat_with_space, ltrim, rtrim, substring);
+                   length, lower, upper, round, concat_with_space, ltrim, rtrim, substring,
+                   dats_is_valid, dats_days_between, dats_add_days, dats_add_months);
   }
 }

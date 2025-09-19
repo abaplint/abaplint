@@ -160,6 +160,10 @@ const tests = [
 
   `METHODS earlynumbering_create FOR NUMBERING
         IMPORTING entities FOR CREATE Recipe.`,
+
+  `METHODS check_auth FOR AUTHORIZATION
+    IMPORTING it_entity_key REQUEST is_request FOR bar
+    RESULT    rt_result.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
