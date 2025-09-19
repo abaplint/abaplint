@@ -12,34 +12,36 @@ export class ModifyEntities implements IStatement {
     const by = seq("BY", AssociationName);
     const relating = seq("RELATING TO", NamespaceSimpleName, "BY", NamespaceSimpleName);
 
+    const execute = seq("EXECUTE", NamespaceSimpleName, "FROM", Source);
+    const create = seq("CREATE", opt(by), "FROM", Source, opt(relating));
+
     const operation = alt(
       seq("UPDATE SET FIELDS WITH", Source),
       seq("CREATE SET FIELDS WITH", Source),
       seq("UPDATE", fieldsWith),
       seq("DELETE FROM", Source),
       seq("UPDATE FROM", Source, opt(relating)),
-      seq("CREATE", opt(by), "FROM", Source, opt(relating)),
-      seq("EXECUTE", SimpleName, "FROM", Source),
+      create,
+      execute,
       seq("CREATE", opt(by), optPrio("AUTO FILL CID"), altPrio(withh, fieldsWith)));
 
     const failed = seq("FAILED", Target);
     const result = seq("RESULT", Target);
     const mapped = seq("MAPPED", Target);
     const reported = seq("REPORTED", Target);
-    const from = seq("FROM", Source);
-    const execute = seq("EXECUTE", NamespaceSimpleName);
+
+    const end = optPrio(per(failed,
+                            result,
+                            mapped,
+                            reported));
 
     const entities = seq(optPrio("AUGMENTING"), "ENTITIES OF", NamespaceSimpleName,
                          opt("IN LOCAL MODE"),
-                         plusPrio(seq("ENTITY", SimpleName, plus(operation))),
-                         optPrio(per(failed,
-                                     result,
-                                     mapped,
-                                     reported)));
+                         plusPrio(seq("ENTITY", SimpleName, plus(operation))));
 
-    const entity = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), execute, from, opt(mapped), opt(failed), opt(reported));
+    const entity = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), alt(execute, create));
 
-    return ver(Version.v754, seq("MODIFY", alt(entities, entity)));
+    return ver(Version.v754, seq("MODIFY", alt(entities, entity), end));
   }
 
 }

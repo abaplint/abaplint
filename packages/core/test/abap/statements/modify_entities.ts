@@ -109,6 +109,12 @@ const tests = [
   `modify entity in local mode /foo/bar\\\\SubHeader
       execute create
       from value #( ).`,
+
+  `modify entity /foo/bar
+      create from lt_create
+      failed data(ls_failed)
+      mapped data(ls_mapped)
+      reported data(ls_reported).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
