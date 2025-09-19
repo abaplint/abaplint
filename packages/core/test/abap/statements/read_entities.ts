@@ -72,6 +72,9 @@ const tests = [
      FIELDS ( field1 field2 )
      WITH CORRESPONDING #( keys )
      RESULT DATA(tab).`,
+
+  `READ ENTITY /foo/bar\\\\moo FROM VALUE #( )
+    RESULT DATA(lt_ratio_result).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
