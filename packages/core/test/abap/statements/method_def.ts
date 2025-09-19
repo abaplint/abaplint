@@ -166,6 +166,8 @@ const tests = [
     RESULT    rt_result.`,
 
   `METHODS doSave FOR DETERMINATION foo~dosave IMPORTING keys FOR bar.`,
+
+  `METHODS valida FOR VALIDATION foobar~validateRatio IMPORTING keys FOR mmoo.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
