@@ -124,6 +124,17 @@ const tests = [
       MAPPED DATA(mapped)
       REPORTED DATA(reported)
       FAILED DATA(failed).`,
+
+  `MODIFY ENTITY /foo/bar\\\\Header
+                 CREATE
+                   FIELDS ( foo bar )
+                   WITH lt_summary_header
+                 CREATE BY \\_SummaryItems
+                   FIELDS ( foo bar )
+                   WITH lt_summary_detail
+                 MAPPED ls_summary_mapped
+                 FAILED ls_summary_failed
+                 REPORTED ls_summary_reported.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
