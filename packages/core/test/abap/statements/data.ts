@@ -125,6 +125,7 @@ const tests = [
   `DATA change TYPE REQUEST FOR CHANGE ZACB_I_Label_S.`,
   `DATA text_tky_link TYPE STRUCTURE FOR READ LINK ZACB_I_Label\\_LabelText.`,
   `data lt_delete type table for delete /foo/bar.`,
+  `data lt type table for read import /foo/bar.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);

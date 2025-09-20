@@ -40,6 +40,7 @@ export class TypeTable extends Expression {
       "CREATE",
       "EVENT",
       "REPORTED EARLY",
+      "READ IMPORT",
       "FAILED EARLY",
       "FAILED",
       "LOCK",
