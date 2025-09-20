@@ -170,6 +170,9 @@ const tests = [
   `METHODS valida FOR VALIDATION foobar~validateRatio IMPORTING keys FOR mmoo.`,
 
   `METHODS modify FOR BEHAVIOR IMPORTING foo FOR UPDATE moo.`,
+
+  `class-methods get amdp options cds session client dependent
+      importing value(iv_source) type /foo/bar.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
