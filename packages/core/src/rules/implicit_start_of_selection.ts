@@ -7,7 +7,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 import {Program} from "../objects";
 import {StatementNode, StructureNode} from "../abap/nodes";
-import {DECLARATION_STUFF, SELECTION_EVENTS} from "../abap/flow/selection_events";
+import {DECLARATION_STUFF, SELECTION_EVENTS} from "../stuff";
 
 export class ImplicitStartOfSelectionConf extends BasicRuleConfig {
 }

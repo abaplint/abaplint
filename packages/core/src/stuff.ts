@@ -1,4 +1,4 @@
-import * as Statements from "../2_statements/statements";
+import * as Statements from "./abap/2_statements/statements";
 
 export const SELECTION_EVENTS = [
   Statements.StartOfSelection,

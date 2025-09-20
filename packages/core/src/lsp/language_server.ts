@@ -14,7 +14,6 @@ import {IRegistry} from "../_iregistry";
 import {References} from "./references";
 import {Implementation} from "./implementation";
 import {SemanticHighlighting} from "./semantic";
-import {StatementFlow} from "../abap/flow/statement_flow";
 import {CodeLens, CodeLensSettings} from "./code_lens";
 import {InlayHints, InlayHintsSettings} from "./inlay_hints";
 
@@ -155,24 +154,6 @@ export class LanguageServer {
 
   public listWritePositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
     return new Highlight(this.reg).listWritePositions(textDocument);
-  }
-
-  public dumpStatementFlows(textDocument: LServer.TextDocumentIdentifier): string {
-    const file = LSPUtils.getABAPFile(this.reg, textDocument.uri);
-    if (file === undefined) {
-      return "file not found";
-    }
-    const obj = this.reg.findObjectForFile(file);
-    if (obj === undefined) {
-      return "obj not found";
-    }
-    const stru = file.getStructure();
-    if (stru === undefined) {
-      return "empty structure";
-    }
-    const graphs = new StatementFlow().build(stru, obj);
-    const wiz = graphs.map(g => g.toDigraph());
-    return JSON.stringify(wiz);
   }
 
 }
