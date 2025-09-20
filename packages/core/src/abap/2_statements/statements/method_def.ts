@@ -45,6 +45,7 @@ export class MethodDef implements IStatement {
       seq("FEATURES IMPORTING", MethodParamName, "REQUEST", NamespaceSimpleName, "FOR", NamespaceSimpleName, result),
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR CREATE", TypeName, MethodParamName, "FOR UPDATE", TypeName, MethodParamName, "FOR DELETE", TypeName),
       seq("BEHAVIOR IMPORTING", MethodParamName, "FOR READ", TypeName, result),
+      seq("BEHAVIOR IMPORTING", MethodParamName, "FOR UPDATE", TypeName),
       seq(alt("BEHAVIOR", "LOCK"), "IMPORTING", MethodParamName, "FOR LOCK", TypeName),
       seq("DETERMINE", alt("ON MODIFY", "ON SAVE"), "IMPORTING", MethodParamName, "FOR", TypeName),
       seq("GLOBAL AUTHORIZATION IMPORTING REQUEST", MethodParamName, "FOR", TypeName, result),
@@ -55,7 +56,7 @@ export class MethodDef implements IStatement {
 
 // todo, this is only from version something
     const amdp = seq(
-      "AMDP OPTIONS", optPrio("READ-ONLY"), "CDS SESSION CLIENT CURRENT",
+      "AMDP OPTIONS", optPrio("READ-ONLY"), "CDS SESSION CLIENT", alt("CURRENT", "DEPENDENT"),
       optPrio(MethodDefImporting),
       optPrio(MethodDefExporting),
       optPrio(MethodDefRaising));

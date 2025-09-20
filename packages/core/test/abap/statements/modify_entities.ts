@@ -115,6 +115,15 @@ const tests = [
       failed data(ls_failed)
       mapped data(ls_mapped)
       reported data(ls_reported).`,
+
+  `modify entity /foo/bar\\\\boo update from lt_upd_week.`,
+
+  `modify entity /foo/bvar create from lt_create.`,
+
+  `MODIFY ENTITY /foo/bar DELETE FROM tab
+      MAPPED DATA(mapped)
+      REPORTED DATA(reported)
+      FAILED DATA(failed).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
