@@ -126,6 +126,7 @@ const tests = [
   `DATA text_tky_link TYPE STRUCTURE FOR READ LINK ZACB_I_Label\\_LabelText.`,
   `data lt_delete type table for delete /foo/bar.`,
   `data lt type table for read import /foo/bar.`,
+  `data lt type table for update /foo/bar\\\\/bar/moo.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
