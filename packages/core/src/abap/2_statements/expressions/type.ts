@@ -1,9 +1,11 @@
 import {seq, optPrio, Expression, altPrio} from "../combi";
-import {TypeName, Default, FieldChain, LOBHandle} from ".";
+import {TypeName, Default, FieldChain, LOBHandle, ComponentName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Type extends Expression {
   public getRunnable(): IStatementRunnable {
+
+    const indicators = seq("WITH INDICATORS", ComponentName, "TYPE", TypeName);
 
     const typeType = seq(TypeName, optPrio(Default));
 
@@ -15,7 +17,7 @@ export class Type extends Expression {
                          seq("REF TO", typeType),
                          seq(typeType, optPrio(LOBHandle)));
 
-    const ret = altPrio(seq("LIKE", like), seq("TYPE", type));
+    const ret = seq(altPrio(seq("LIKE", like), seq("TYPE", type)), optPrio(indicators));
 
     return ret;
   }

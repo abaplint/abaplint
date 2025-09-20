@@ -164,6 +164,10 @@ const tests = [
   `METHODS check_auth FOR AUTHORIZATION
     IMPORTING it_entity_key REQUEST is_request FOR bar
     RESULT    rt_result.`,
+
+  `METHODS doSave FOR DETERMINATION foo~dosave IMPORTING keys FOR bar.`,
+
+  `METHODS valida FOR VALIDATION foobar~validateRatio IMPORTING keys FOR mmoo.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

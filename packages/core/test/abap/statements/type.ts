@@ -43,6 +43,7 @@ const tests = [
   `TYPES t_mapped TYPE RESPONSE FOR MAPPED EARLY ZDMO_R_RAPG_ProjectTP.`,
   `TYPES t_reported TYPE RESPONSE FOR REPORTED EARLY ZDMO_R_RAPG_ProjectTP.  `,
   `TYPES /foo/bar/foo/bar TYPE c.`,
+  `types ty_s_sbu_upd_ind type /foo/bar with indicators upddd type abap_bool.`,
 ];
 
 statementType(tests, "TYPE", Statements.Type);

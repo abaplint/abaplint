@@ -22,6 +22,7 @@ const tests = [
   `UPDATE zmoo CLIENT SPECIFIED SET (lt_set[]).`,
   `UPDATE (gv-bar) CLIENT SPECIFIED SET (lt_set[]).`,
   `UPDATE (gv-bar) CLIENT SPECIFIED SET (lt_set[]) WHERE mandt EQ sy-mandt AND (lt_where[]).`,
+  `update /foo/bar from table @tab indicators set structure sdfds.`,
 ];
 
 statementType(tests, "UPDATE", Statements.UpdateDatabase);
