@@ -115,6 +115,8 @@ const tests = [
       failed data(ls_failed)
       mapped data(ls_mapped)
       reported data(ls_reported).`,
+
+  `modify entity /foo/bar\\\\boo update from lt_upd_week.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

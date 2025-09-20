@@ -14,13 +14,14 @@ export class ModifyEntities implements IStatement {
 
     const execute = seq("EXECUTE", NamespaceSimpleName, "FROM", Source);
     const create = seq("CREATE", opt(by), "FROM", Source, opt(relating));
+    const updateFrom = seq("UPDATE FROM", Source, opt(relating));
 
     const operation = alt(
       seq("UPDATE SET FIELDS WITH", Source),
       seq("CREATE SET FIELDS WITH", Source),
       seq("UPDATE", fieldsWith),
       seq("DELETE FROM", Source),
-      seq("UPDATE FROM", Source, opt(relating)),
+      updateFrom,
       create,
       execute,
       seq("CREATE", opt(by), optPrio("AUTO FILL CID"), altPrio(withh, fieldsWith)));
@@ -39,7 +40,10 @@ export class ModifyEntities implements IStatement {
                          opt("IN LOCAL MODE"),
                          plusPrio(seq("ENTITY", SimpleName, plus(operation))));
 
-    const entity = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), alt(execute, create));
+    const entity = seq("ENTITY",
+                       opt("IN LOCAL MODE"),
+                       alt(NamespaceSimpleName, EntityAssociation),
+                       alt(execute, create, updateFrom));
 
     return ver(Version.v754, seq("MODIFY", alt(entities, entity), end));
   }
