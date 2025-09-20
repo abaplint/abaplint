@@ -75,6 +75,11 @@ const tests = [
 
   `READ ENTITY /foo/bar\\\\moo FROM VALUE #( )
     RESULT DATA(lt_ratio_result).`,
+
+  `READ ENTITY IN LOCAL MODE /foo/bar\\\\TRange
+       ALL FIELDS
+       WITH CORRESPONDING #( keys )
+       RESULT DATA(lt_records).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
