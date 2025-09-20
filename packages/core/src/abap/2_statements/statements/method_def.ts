@@ -36,7 +36,7 @@ export class MethodDef implements IStatement {
       "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED",  // todo, this is only from version something
       seq("TABLE FUNCTION", NamespaceSimpleName), // todo, this is only from version something
       seq("VALIDATE ON SAVE IMPORTING", MethodParamName, "FOR", TypeName),
-      seq("MODIFY IMPORTING", plus(seq(MethodParamName, modify))),
+      seq("MODIFY", opt("IMPORTING"), plus(seq(MethodParamName, modify))),
       seq("PRECHECK IMPORTING", MethodParamName, modify),
       seq("DETERMINATION", TypeName, "IMPORTING", MethodParamName, "FOR", TypeName),
       seq("VALIDATION", TypeName, "IMPORTING", MethodParamName, "FOR", TypeName),

@@ -29,6 +29,7 @@ const tests = [
   {abap: "SELECT COUNT(*) FROM e070 WHERE trkorr = iv_transport AND trstatus = 'R'.", cnt: 1},
   {abap: "DELETE (iv_name) FROM TABLE <lg_del>.", cnt: 1},
   {abap: "DELETE (iv_name) FROM TABLE @<lg_del>.", cnt: 0},
+  {abap: "modify et_table from ls_row.", cnt: 0},
 ];
 
 testRule(tests, SQLEscapeHostVariables);

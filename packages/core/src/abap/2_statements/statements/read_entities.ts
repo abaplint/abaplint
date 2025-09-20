@@ -13,6 +13,7 @@ export class ReadEntities implements IStatement {
     const all = seq("ALL FIELDS WITH", Source);
     const result = seq("RESULT", Target);
     const failed = seq("FAILED", Target);
+    const reported = seq("REPORTED", Target);
 
     const entity = seq("ENTITY", NamespaceSimpleName,
                        opt(seq("BY", AssociationName)),
@@ -24,9 +25,9 @@ export class ReadEntities implements IStatement {
                   plus(entity),
                   optPrio(seq("LINK", Target)),
                   optPrio(failed),
-                  optPrio(seq("REPORTED", Target)));
+                  optPrio(reported));
 
-    const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), alt(all, fields, from), result, optPrio(failed));
+    const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), alt(all, fields, from), result, optPrio(failed), optPrio(reported));
     return ver(Version.v754, seq("READ", alt(s, single)));
   }
 

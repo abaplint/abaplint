@@ -49,17 +49,25 @@ export class SQLEscapeHostVariables extends ABAPRule {
     }
 
     for (const s of file.getStatements()) {
-      if (s.get() instanceof Statements.UpdateDatabase
-          || s.get() instanceof Statements.ModifyDatabase
-          || s.get() instanceof Statements.Select
-          || s.get() instanceof Statements.SelectLoop
-          || s.get() instanceof Statements.InsertDatabase
-          || s.get() instanceof Statements.DeleteDatabase) {
+      const get = s.get();
+      if (get instanceof Statements.UpdateDatabase
+          || get instanceof Statements.ModifyDatabase
+          || get instanceof Statements.Select
+          || get instanceof Statements.SelectLoop
+          || get instanceof Statements.InsertDatabase
+          || get instanceof Statements.DeleteDatabase) {
 
         for (const o of s.findAllExpressionsMulti([Expressions.SQLSource, Expressions.SQLSourceSimple])) {
           const first = o.getFirstChild();
           if ((first?.get() instanceof Expressions.Source && first.getChildren()[0].get() instanceof Expressions.FieldChain)
               || (first?.get() instanceof Expressions.SimpleSource3 && first.getChildren()[0].get() instanceof Expressions.FieldChain)) {
+
+            if (get instanceof Statements.ModifyDatabase
+                && first.getFirstToken().getStr().toUpperCase().startsWith("LS_")) {
+              // heuristic, might not be correct in all cases
+              continue;
+            }
+
             const message = "Escape SQL host variables";
             const firstToken = o.getFirstChild()!.getFirstToken();
             const fix = EditHelper.replaceToken(file, firstToken, "@" + firstToken?.getStr());

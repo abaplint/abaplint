@@ -173,6 +173,8 @@ const tests = [
 
   `class-methods get amdp options cds session client dependent
       importing value(iv_source) type /foo/bar.`,
+
+  `METHODS reload FOR MODIFY abc FOR ACTION foo~reload.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 

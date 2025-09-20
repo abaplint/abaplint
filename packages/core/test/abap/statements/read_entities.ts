@@ -85,6 +85,13 @@ const tests = [
           FIELDS ( moo ) WITH lt_struct
           RESULT DATA(lt_result)
           FAILED DATA(lt_failed).`,
+
+  `READ ENTITY IN LOCAL MODE /foo/bar\\\\sfsdf
+     ALL FIELDS
+     WITH VALUE #( )
+     RESULT    DATA(lt_assign)
+     FAILED    failed
+     REPORTED  reported.`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
