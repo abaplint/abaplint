@@ -117,6 +117,8 @@ const tests = [
       reported data(ls_reported).`,
 
   `modify entity /foo/bar\\\\boo update from lt_upd_week.`,
+
+  `modify entity /foo/bvar create from lt_create.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
