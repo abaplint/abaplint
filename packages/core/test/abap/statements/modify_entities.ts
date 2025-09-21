@@ -163,6 +163,14 @@ const tests = [
       create fields ( field1 field2 )
       with tab
       failed data(lt_failed).`,
+
+  `modify entity in local mode /foo/bar\\\\moo
+    create from lt_bar
+    create by \\_sdf from lt_oui
+    create by \\_sdf from lt_kklj
+    mapped   data(lt_mapped)
+    failed   data(lt_failed)
+    reported data(lt_reported).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

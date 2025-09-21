@@ -309,7 +309,7 @@ export class BasicTypes {
   }
 
   public parseTable(node: ExpressionNode | StatementNode, name?: string): AbstractType | undefined {
-    const typename = node.findFirstExpression(Expressions.TypeName);
+    const typename = node.findFirstExpression(Expressions.TypeName) || node.findFirstExpression(Expressions.EntityAssociation);
 
     const text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
     if (text === undefined) {

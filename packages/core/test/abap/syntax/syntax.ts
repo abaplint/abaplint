@@ -11564,4 +11564,12 @@ APPEND LINES OF row TO tab.`;
     expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
   });
 
+  it("TYPE TABLE FOR UPDATE", () => {
+    const abap = `
+DATA lt_upd TYPE TABLE FOR UPDATE /foo/bar\\\\moo.
+WRITE / lines( lt_upd ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
