@@ -26,9 +26,10 @@ export class ReadEntities implements IStatement {
                   optPrio(seq("LINK", Target)),
                   optPrio(per(failed, reported)));
 
+    const byall = seq("BY", AssociationName, all);
     const by = seq("BY", AssociationName, fields);
-
-    const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), alt(all, fields, from, by), result, optPrio(failed), optPrio(reported));
+    const sub = seq(alt(all, fields, from, by, byall), result);
+    const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), plus(sub), optPrio(failed), optPrio(reported));
     return ver(Version.v754, seq("READ", alt(s, single)));
   }
 
