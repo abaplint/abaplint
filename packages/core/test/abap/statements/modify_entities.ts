@@ -135,6 +135,12 @@ const tests = [
                  MAPPED ls_summary_mapped
                  FAILED ls_summary_failed
                  REPORTED ls_summary_reported.`,
+
+  `modify entity in local mode /foo/bar\\\\moo
+     update
+     fields ( bar ) with lt
+     failed   ftab
+     reported rtab.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
