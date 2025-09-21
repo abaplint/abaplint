@@ -42,7 +42,7 @@ export class ModifyEntities implements IStatement {
                          opt("IN LOCAL MODE"),
                          plusPrio(seq("ENTITY", NamespaceSimpleName, plus(operation))));
 
-    const create2 = seq("CREATE", fieldsWith, "CREATE BY", AssociationName, fieldsWith);
+    const create2 = seq("CREATE", fieldsWith, opt(seq("CREATE BY", AssociationName, fieldsWith)));
     const create3 = seq("CREATE BY", AssociationName, fieldsWith);
 
     const entity = seq("ENTITY",
