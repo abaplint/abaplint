@@ -30,6 +30,7 @@ export class TypeTable {
     }
 
     let type = new BasicTypes(input).parseTable(node, qualifiedName);
+    console.dir(type);
     if (type === undefined) {
       return new TypedIdentifier(name, input.filename, new UnknownType("TableType, fallback"));
     }
