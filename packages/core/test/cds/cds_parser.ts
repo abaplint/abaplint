@@ -1190,4 +1190,26 @@ define custom entity /foo/i_bar
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("cds parameters", () => {
+    const cds = `
+define view entity /foo/bar
+  as select from DDCDS_CUSTOMER_DOMAIN_VALUE
+                 ( p_domain_name : '/FOO/MOO' )
+  association [1] to DDCDS_CUSTOMER_DOMAIN_VALUE_T as _ValueText on  $projection.DomainName    = _ValueText.domain_name
+                                                                 and $projection.ValuePosition = _ValueText.value_position
+                                                                 and $projection.Value         = _ValueText.value_low
+                                                                 and _ValueText.language       = $session.system_language
+{
+  key domain_name                                                   as DomainName,
+  key value_position                                                as ValuePosition,
+      value_low                                                     as Value,
+      _ValueText( p_domain_name : '/FOO/MOO' ).text as Text
+}
+
+`;
+    const file = new MemoryFile("#foo#i_bar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
