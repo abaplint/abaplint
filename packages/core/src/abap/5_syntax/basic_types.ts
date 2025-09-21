@@ -447,6 +447,7 @@ export class BasicTypes {
       return new Types.TableType(structure, options);
     } else if (typename && (text.startsWith("TYPE TABLE FOR CREATE ")
         || text.startsWith("TYPE TABLE FOR READ ")
+        || text.startsWith("TYPE TABLE FOR DELETE ")
         || text.startsWith("TYPE TABLE FOR UPDATE "))) {
       const name = typename.concatTokens();
       const type = this.input.scope.getDDIC().lookupDDLS(name)?.type;
