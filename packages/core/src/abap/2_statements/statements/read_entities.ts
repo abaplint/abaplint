@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, ver, tok, plus, alt, optPrio, opt} from "../combi";
+import {seq, ver, tok, plus, alt, optPrio, opt, per} from "../combi";
 import {AssociationName, EntityAssociation, NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
@@ -24,10 +24,11 @@ export class ReadEntities implements IStatement {
                   opt("IN LOCAL MODE"),
                   plus(entity),
                   optPrio(seq("LINK", Target)),
-                  optPrio(failed),
-                  optPrio(reported));
+                  optPrio(per(failed, reported)));
 
-    const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), alt(all, fields, from), result, optPrio(failed), optPrio(reported));
+    const by = seq("BY", AssociationName, fields);
+
+    const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), alt(all, fields, from, by), result, optPrio(failed), optPrio(reported));
     return ver(Version.v754, seq("READ", alt(s, single)));
   }
 

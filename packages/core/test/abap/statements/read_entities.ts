@@ -92,6 +92,19 @@ const tests = [
      RESULT    DATA(lt_assign)
      FAILED    failed
      REPORTED  reported.`,
+
+  `read entity in local mode /foo/bar\\\\moo
+        by \\_foosub
+           fields ( foo bar )
+           with value #( )
+           result    data(result).`,
+
+  `read entities of /foo/bar
+      entity ename
+      all fields with tabbb
+      result lt_res
+      reported data(lt_reported)
+      failed data(lt_failed).`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
