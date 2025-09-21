@@ -141,6 +141,15 @@ const tests = [
      fields ( bar ) with lt
      failed   ftab
      reported rtab.`,
+
+  `modify entities of /foo/bar in local mode
+        entity /foo/bar
+             create by \\_ref
+             fields ( field bar foo )
+               with tab
+        mapped data(lt_mapped)
+        failed data(lt_failed)
+        reported data(lt_reported).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
