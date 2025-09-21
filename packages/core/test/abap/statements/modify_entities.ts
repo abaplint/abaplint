@@ -150,6 +150,14 @@ const tests = [
         mapped data(lt_mapped)
         failed data(lt_failed)
         reported data(lt_reported).`,
+
+  `modify entity in local mode /foo/bar\\\\set
+          create by \\\_sub
+          fields ( foo bar moo )
+          with lt
+        mapped   map
+        failed   fail
+        reported reported.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
