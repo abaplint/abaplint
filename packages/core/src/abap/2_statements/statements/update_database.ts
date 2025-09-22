@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, star} from "../combi";
+import {seq, opt, alt, star, ver} from "../combi";
 import {SQLSource, DatabaseTable, Dynamic, SQLFieldAndValue, SQLCond, DatabaseConnection, SQLClient, ComponentName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class UpdateDatabase implements IStatement {
 
@@ -16,7 +17,7 @@ export class UpdateDatabase implements IStatement {
 
     const fromTable = seq("FROM",
                           opt("TABLE"),
-                          SQLSource, opt(indicators));
+                          SQLSource, opt(ver(Version.v755, indicators)));
 
     const ret = seq("UPDATE",
                     DatabaseTable,
