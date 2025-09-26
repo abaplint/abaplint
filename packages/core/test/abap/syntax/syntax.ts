@@ -11572,7 +11572,7 @@ WRITE / lines( lt_upd ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("basic WITH INDICATORS", () => {
+  it("basic WITH INDICATORS", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          fname TYPE i,
