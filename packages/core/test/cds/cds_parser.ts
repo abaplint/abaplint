@@ -1212,4 +1212,18 @@ define view entity /foo/bar
     expect(parsed).to.not.equal(undefined);
   });
 
+  it.only("another test", () => {
+    const cds = `
+define view entity /foo/bar as select from /moo/sdf
+{
+  key keyfield,
+      case something when '0000000000' then ''
+                       else /moo/sdf._something.more end,
+      another
+}`;
+    const file = new MemoryFile("#foo#bar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
