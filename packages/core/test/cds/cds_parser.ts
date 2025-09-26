@@ -1212,7 +1212,7 @@ define view entity /foo/bar
     expect(parsed).to.not.equal(undefined);
   });
 
-  it.only("another test", () => {
+  it("another test", () => {
     const cds = `
 define view entity /foo/bar as select from /moo/sdf
 {
