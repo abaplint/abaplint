@@ -595,7 +595,20 @@ export class BasicTypes {
           found = new Types.TableType(found, {withHeader: concat.includes(" WITH HEADER LINE"), keyType: Types.TableKeyType.default}, qualifiedName);
         }
       }
+    }
 
+    if (text.includes(" WITH INDICATORS ")) {
+      const componentName = node.findFirstExpression(Expressions.Type)
+        ?.findDirectExpression(Expressions.ComponentName)?.concatTokens().toUpperCase();
+      if (componentName === undefined) {
+        throw new Error("parseType, componentName expected");
+      }
+
+      if (found instanceof Types.StructureType) {
+        const newComponents = found.getComponents();
+        newComponents.push({name: componentName, type: Types.VoidType.get("INDICATORStodo")});
+        found = new Types.StructureType(newComponents, qualifiedName);
+      }
     }
 
     return found;

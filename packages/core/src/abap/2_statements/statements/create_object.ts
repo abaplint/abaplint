@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, optPrio, altPrio, per} from "../combi";
+import {seq, optPrio, altPrio, per, verNot} from "../combi";
 import {Target, ParameterListS, ParameterListExceptions, Source, ClassName, Dynamic} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class CreateObject implements IStatement {
 
@@ -15,7 +16,7 @@ export class CreateObject implements IStatement {
 
     const ret = seq("CREATE OBJECT",
                     Target,
-                    optPrio(per(type, area)),
+                    optPrio(per(type, verNot(Version.Cloud, area))),
                     optPrio(altPrio(exporting, ptable)),
                     optPrio(altPrio(exceptions, etable)));
 
