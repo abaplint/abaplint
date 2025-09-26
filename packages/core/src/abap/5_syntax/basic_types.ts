@@ -605,7 +605,7 @@ export class BasicTypes {
       }
 
       if (found instanceof Types.StructureType) {
-        const newComponents = found.getComponents();
+        const newComponents = [...found.getComponents()];
         newComponents.push({name: componentName, type: Types.VoidType.get("INDICATORStodo")});
         found = new Types.StructureType(newComponents, qualifiedName);
       }

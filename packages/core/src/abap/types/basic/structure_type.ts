@@ -32,7 +32,7 @@ export class StructureType extends AbstractType {
     this.components = components;
   }
 
-  public getComponents(): IStructureComponent[] {
+  public getComponents(): readonly IStructureComponent[] {
     return this.components;
   }
 
