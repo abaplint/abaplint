@@ -1226,4 +1226,17 @@ define view entity /foo/bar as select from /moo/sdf
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("projection with virtual", () => {
+    const cds = `
+define root view entity /foo/bar as projection on /foo/moo
+{
+  key     LogID,
+  virtual sometext : abap.string
+}
+`;
+    const file = new MemoryFile("#foo#bar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
