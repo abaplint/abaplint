@@ -11572,4 +11572,18 @@ WRITE / lines( lt_upd ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("basic WITH INDICATORS", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         fname TYPE i,
+       END OF ty.
+TYPES indicatortype TYPE ty WITH INDICATORS ind.
+DATA bar TYPE indicatortype.
+
+WRITE / bar-ind-fname.
+WRITE / bar-fname.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

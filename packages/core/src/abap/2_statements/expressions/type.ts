@@ -6,7 +6,7 @@ import {Version} from "../../../version";
 export class Type extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const indicators = seq("WITH INDICATORS", ComponentName, "TYPE", TypeName);
+    const indicators = seq("WITH INDICATORS", ComponentName, optPrio(seq("TYPE", TypeName)));
 
     const typeType = seq(TypeName, optPrio(Default));
 
