@@ -39,7 +39,7 @@ export class CDSDetermineTypes {
             }
             components.push({
               name: f.name,
-              type: new UnknownType("CDS parser error, unknown source, " + ddlsName),
+              type: new UnknownType("CDS parser error, unknown source, " + f.name + ", " + ddlsName),
             });
             continue;
           }

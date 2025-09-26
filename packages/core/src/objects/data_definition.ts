@@ -2,7 +2,7 @@ import {ExpressionNode} from "../abap/nodes";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CDSDetermineTypes} from "../cds/cds_determine_types";
 import {CDSParser} from "../cds/cds_parser";
-import {CDSAnnotate, CDSAnnotation, CDSAs, CDSAssociation, CDSDefineProjection, CDSElement, CDSName, CDSRelation, CDSSelect, CDSSource} from "../cds/expressions";
+import {CDSAnnotate, CDSAnnotation, CDSAs, CDSAssociation, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation, CDSSelect, CDSSource} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
@@ -162,13 +162,15 @@ export class DataDefinition extends AbstractObject {
       let prefix = "";
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       if (found === undefined) {
-        const list = e.findAllExpressions(CDSName);
-        if (e.concatTokens().toUpperCase().includes(" REDIRECTED TO ")) {
-          found = list[0];
-        } else {
-          found = list[list.length - 1];
-          if (list.length > 1) {
-            prefix = list[0].concatTokens();
+        const list = e.findDirectExpression(CDSPrefixedName)?.findAllExpressions(CDSName);
+        if (list) {
+          if (e.concatTokens().toUpperCase().includes(" REDIRECTED TO ")) {
+            found = list[0];
+          } else {
+            found = list[list.length - 1];
+            if (list.length > 1) {
+              prefix = list[0].concatTokens();
+            }
           }
         }
       }

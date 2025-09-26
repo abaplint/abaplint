@@ -61,6 +61,14 @@ define view ZAG_UNIT_TEST
 {
   tadir.pgmid,
   tadir.object,
+      @EndUserText.label: 'Local Currency'
+      @Consumption.valueHelpDefinition: [{
+          qualifier: '',
+          entity: {
+              name: '/foo/bar',
+              element: 'Currency'
+          }
+      }]
   tadir.obj_name
 }`;
     const reg = new Registry().addFiles([
@@ -74,6 +82,9 @@ define view ZAG_UNIT_TEST
     expect(type).to.be.instanceof(StructureType);
     if (type instanceof StructureType) {
       expect(type.getComponents().length).to.equal(3);
+      for (const component of type.getComponents()) {
+        expect(component.type).to.be.instanceof(VoidType);
+      }
     }
   });
 
