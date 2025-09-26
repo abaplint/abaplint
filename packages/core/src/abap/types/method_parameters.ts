@@ -218,12 +218,13 @@ export class MethodParameters implements IMethodParameters {
       const concat = node.concatTokens().toUpperCase();
       if (concat.includes(" FOR VALIDATE ")
           || concat.includes(" FOR BEHAVIOR ")
+          || concat.includes(" FOR DETERMINE ")
           || concat.includes(" FOR FEATURES ")
           || concat.includes(" FOR INSTANCE FEATURES ")
+          || concat.includes(" FOR LOCK ")
+          || concat.includes(" FOR NUMBERING ")
           || concat.includes(" FOR READ ")
           || concat.includes(" FOR VALIDATION ")
-          || concat.includes(" FOR DETERMINE ")
-          || concat.includes(" FOR LOCK ")
           || concat.includes(" FOR MODIFY ")) {
         const token = isRap.getFirstToken();
         this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodExporting]));
