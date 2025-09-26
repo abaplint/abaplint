@@ -2377,4 +2377,25 @@ DATA bar TYPE ty_foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("aliased via class via intf", () => {
+    const abap = `
+INTERFACE lif.
+  TYPES ty_text TYPE string.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    ALIASES ty_text FOR lif~ty_text.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>ty_text.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

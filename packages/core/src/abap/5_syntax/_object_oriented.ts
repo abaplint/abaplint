@@ -257,6 +257,16 @@ export class ObjectOriented {
       return search;
     }
 
+    for (const a of def.getAliases()) {
+      if (a.getName().toUpperCase() === name.toUpperCase()) {
+        const comp = a.getComponent();
+        const res = this.searchTypeName(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
+        if (res) {
+          return res;
+        }
+      }
+    }
+
     if (name.includes("~")) {
       const interfaceName = name.split("~")[0];
       if (def.getImplementing().some((a) => a.name.toUpperCase() === interfaceName.toUpperCase())) {
