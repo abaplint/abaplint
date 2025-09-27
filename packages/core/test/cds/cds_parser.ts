@@ -11,7 +11,7 @@ describe("CDS Parser", () => {
 define view zhvamfoocust as select from zhvam_cust {
   key foo as sdfdsf
 }`;
-    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const file = new MemoryFile("zhvamfoocust.ddls.asddls", cds);
     const result = CDSLexer.run(file);
     expect(result.length).to.equal(18);
 
@@ -24,7 +24,7 @@ define view zhvamfoocust as select from zhvam_cust {
 define view zhvamfoocust as select from zhvam_cust {
   key foo as sdfdsf
 };`;
-    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const file = new MemoryFile("zhvamfoocust.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
@@ -1235,6 +1235,21 @@ define root view entity /foo/bar as projection on /foo/moo
 }
 `;
     const file = new MemoryFile("#foo#bar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("projection as localized", () => {
+    const cds = `
+define view entity ZACB_C_Label as projection on ZACB_I_Label
+{
+  key LabelId,
+  LabelColor,
+  _ConfignDeprecationCodeText.ConfignDeprecationCodeName as ConfigurationDeprecation_Text : localized,
+  _LabelText : redirected to composition child ZACB_C_LabelText
+}
+`;
+    const file = new MemoryFile("zacb_c_label.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.not.equal(undefined);
   });

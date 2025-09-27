@@ -11379,9 +11379,9 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.include(" too long");
   });
 
-  it.skip("select count FIELDS without into", () => {
+  it("select count FIELDS without into", () => {
     const abap = `
-SELECT FROM zacb_recipe FIELDS COUNT(*).`;
+SELECT FROM voided FIELDS COUNT(*).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
@@ -11582,6 +11582,15 @@ DATA bar TYPE indicatortype.
 
 WRITE / bar-ind-fname.
 WRITE / bar-fname.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("table expression, unknown data", () => {
+// note: this is unknown, so no syntax error as such, to not cascade the unknown error
+    const abap = `
+DATA foo TYPE ty_unknown.
+WRITE / foo[ 1 ].`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
