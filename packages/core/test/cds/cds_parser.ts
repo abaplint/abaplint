@@ -1239,4 +1239,19 @@ define root view entity /foo/bar as projection on /foo/moo
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("projection with virtual", () => {
+    const cds = `
+define view entity ZACB_C_Label as projection on ZACB_I_Label
+{
+  key LabelId,
+  LabelColor,
+  _ConfignDeprecationCodeText.ConfignDeprecationCodeName as ConfigurationDeprecation_Text : localized,
+  _LabelText : redirected to composition child ZACB_C_LabelText
+}
+`;
+    const file = new MemoryFile("zacb_c_label.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });

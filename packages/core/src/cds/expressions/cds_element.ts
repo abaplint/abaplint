@@ -7,7 +7,7 @@ import {CDSCast} from "./cds_cast";
 export class CDSElement extends Expression {
   public getRunnable(): IStatementRunnable {
     const redirected = seq(": REDIRECTED TO", opt(alt("PARENT", "COMPOSITION CHILD")), CDSName);
-    const colonThing = seq(":", alt(CDSName, CDSType));
+    const colonThing = seq(":", alt(CDSName, CDSType, "LOCALIZED"));
 
     return seq(starPrio(CDSAnnotation),
                optPrio(altPrio("KEY", "VIRTUAL")),
@@ -18,7 +18,7 @@ export class CDSElement extends Expression {
                        CDSCast,
                        CDSCase,
                        seq("(", CDSCase, ")"),
-                       seq(CDSPrefixedName, opt(alt(redirected, colonThing))),
+                       seq(CDSPrefixedName, opt(CDSAs), opt(alt(redirected, colonThing))),
                        CDSInteger),
                opt(CDSAs));
   }
