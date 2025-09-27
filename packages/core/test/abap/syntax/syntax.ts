@@ -11586,4 +11586,13 @@ WRITE / bar-fname.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("table expression, unknown data", () => {
+// note: this is unknown, so no syntax error as such, to not cascade the unknown error
+    const abap = `
+DATA foo TYPE ty_unknown.
+WRITE / foo[ 1 ].`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

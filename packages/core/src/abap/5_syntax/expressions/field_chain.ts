@@ -108,13 +108,13 @@ export class FieldChain {
         context = ComponentName.runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode
           && current.get() instanceof Expressions.TableExpression) {
-        if (!(context instanceof TableType) && !(context instanceof VoidType)) {
+        if (!(context instanceof TableType) && !(context instanceof VoidType) && !(context instanceof UnknownType)) {
           const message = "Table expression, expected table";
           input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
         TableExpression.runSyntax(current, input, context);
-        if (!(context instanceof VoidType)) {
+        if (!(context instanceof VoidType) && !(context instanceof UnknownType)) {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
