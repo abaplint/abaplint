@@ -11379,9 +11379,9 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.include(" too long");
   });
 
-  it.skip("select count FIELDS without into", () => {
+  it("select count FIELDS without into", () => {
     const abap = `
-SELECT FROM zacb_recipe FIELDS COUNT(*).`;
+SELECT FROM voided FIELDS COUNT(*).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });

@@ -23,7 +23,11 @@ export class Select {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false): void {
     const token = node.getFirstToken();
 
-    const from = node.findDirectExpression(Expressions.SQLFrom);
+    let from = node.findDirectExpression(Expressions.SQLFrom);
+    if (from === undefined) {
+      // huh, sometimes the select expression is wrapped
+      from = node.findFirstExpression(Expressions.SQLFrom);
+    }
     const dbSources = from ? SQLFrom.runSyntax(from, input) : [];
     if (from === undefined) {
       const message = `Missing FROM`;
@@ -40,7 +44,7 @@ export class Select {
       return;
     }
 
-    const isSingle = node.getChildren()[1].concatTokens().toUpperCase() === "SINGLE"
+    const isSingle = node.getChildren()[1]?.concatTokens().toUpperCase() === "SINGLE"
       || node.get() instanceof Expressions.SelectLoop;
 
     this.checkFields(fields, dbSources, input, node);
