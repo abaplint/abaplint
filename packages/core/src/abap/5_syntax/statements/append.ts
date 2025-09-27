@@ -23,7 +23,7 @@ export class Append implements StatementSyntax {
 
     const fsTarget = node.findExpressionAfterToken("ASSIGNING");
     if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
-      if (!(targetType instanceof TableType) && !(targetType instanceof VoidType)) {
+      if (!(targetType instanceof TableType) && !(targetType instanceof VoidType) && !(targetType instanceof UnknownType)) {
         const message = "APPEND to non table type, " + targetType?.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
@@ -34,7 +34,7 @@ export class Append implements StatementSyntax {
 
     const dataTarget = node.findExpressionAfterToken("INTO");
     if (dataTarget && node.concatTokens().toUpperCase().includes(" REFERENCE INTO DATA(")) {
-      if (!(targetType instanceof TableType) && !(targetType instanceof VoidType)) {
+      if (!(targetType instanceof TableType) && !(targetType instanceof VoidType) && !(targetType instanceof UnknownType)) {
         const message = "APPEND to non table type, " + targetType?.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;

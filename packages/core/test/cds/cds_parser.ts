@@ -1239,7 +1239,7 @@ define root view entity /foo/bar as projection on /foo/moo
     expect(parsed).to.not.equal(undefined);
   });
 
-  it("projection with virtual", () => {
+  it("projection as localized", () => {
     const cds = `
 define view entity ZACB_C_Label as projection on ZACB_I_Label
 {
