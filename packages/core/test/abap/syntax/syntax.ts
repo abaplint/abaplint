@@ -11595,4 +11595,13 @@ WRITE / foo[ 1 ].`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("structure, unknown data, dont cascade errors", () => {
+// note: this is unknown, so no syntax error as such, to not cascade the unknown error
+    const abap = `
+DATA ls_result TYPE zunknown.
+WRITE ls_result-bar.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
