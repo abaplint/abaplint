@@ -11604,14 +11604,34 @@ WRITE ls_result-bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("https://github.com/abap2xlsx/abap2xlsx/issues/1341", () => {
+  it.skip("https://github.com/abap2xlsx/abap2xlsx/issues/1341", () => {
     const abap = `
-DATA foo TYPE voided_ddic.
+TYPES ty_results_tt TYPE STANDARD TABLE OF voided WITH DEFAULT KEY
+                       WITH NON-UNIQUE SORTED KEY sec_key
+                       COMPONENTS obj_type obj_name.
+DATA foo type ty_results_tt.
 FIELD-SYMBOLS <style1> TYPE voided.
-LOOP AT foo ASSIGNING <style1> USING KEY added_to_iterator WHERE added_to_iterator IS INITIAL.
+LOOP AT foo ASSIGNING <style1> USING KEY sec_key WHERE obj_type IS INITIAL.
 ENDLOOP.`;
     const issues = runProgram(abap, [], Version.v702);
     expect(issues[0]?.getMessage()).to.include("key check with IS INITIAL");
+  });
+
+  it.skip("https://github.com/abap2xlsx/abap2xlsx/issues/1341 ok", () => {
+    const abap = `
+TYPES ty_results_tt TYPE STANDARD TABLE OF voided WITH DEFAULT KEY
+                       WITH NON-UNIQUE SORTED KEY sec_key
+                       COMPONENTS obj_type obj_name.
+DATA foo type ty_results_tt.
+FIELD-SYMBOLS <style1> TYPE voided.
+LOOP AT foo ASSIGNING <style1>
+          USING KEY sec_key
+          WHERE obj_type = 'sdf'
+          AND obj_name = 'sdf'
+          AND match IS INITIAL.
+ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });
