@@ -11604,4 +11604,14 @@ WRITE ls_result-bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("https://github.com/abap2xlsx/abap2xlsx/issues/1341", () => {
+    const abap = `
+DATA foo TYPE voided_ddic.
+FIELD-SYMBOLS <style1> TYPE voided.
+LOOP AT foo ASSIGNING <style1> USING KEY added_to_iterator WHERE added_to_iterator IS INITIAL.
+ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.include("key check with IS INITIAL");
+  });
+
 });
