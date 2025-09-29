@@ -11606,7 +11606,11 @@ WRITE ls_result-bar.`;
 
   it.skip("https://github.com/abap2xlsx/abap2xlsx/issues/1341", () => {
     const abap = `
-TYPES ty_results_tt TYPE STANDARD TABLE OF voided WITH DEFAULT KEY
+types: begin of ty,
+         obj_type type c length 10,
+         obj_name type c length 10,
+       end of ty.
+TYPES ty_results_tt TYPE STANDARD TABLE OF ty WITH DEFAULT KEY
                        WITH NON-UNIQUE SORTED KEY sec_key
                        COMPONENTS obj_type obj_name.
 DATA foo type ty_results_tt.
@@ -11618,8 +11622,13 @@ ENDLOOP.`;
   });
 
   it.skip("https://github.com/abap2xlsx/abap2xlsx/issues/1341 ok", () => {
+// this is okay, the match field is not part of the key
     const abap = `
-TYPES ty_results_tt TYPE STANDARD TABLE OF voided WITH DEFAULT KEY
+types: begin of ty,
+         obj_type type c length 10,
+         obj_name type c length 10,
+       end of ty.
+TYPES ty_results_tt TYPE STANDARD TABLE OF ty WITH DEFAULT KEY
                        WITH NON-UNIQUE SORTED KEY sec_key
                        COMPONENTS obj_type obj_name.
 DATA foo type ty_results_tt.

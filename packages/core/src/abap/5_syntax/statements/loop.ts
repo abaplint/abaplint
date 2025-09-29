@@ -66,6 +66,7 @@ export class Loop implements StatementSyntax {
     }
 
     const targetConcat = loopTarget?.concatTokens().toUpperCase();
+    const topType = sourceType; // todo: refactor topType vs sourceType vs rowType
     if (sourceType instanceof TableType) {
       rowType = sourceType.getRowType();
       sourceType = rowType;
@@ -88,28 +89,36 @@ export class Loop implements StatementSyntax {
     }
 
     if (node.findDirectTokenByText("USING") !== undefined
-        && sourceType instanceof TableType) {
-    /*
-        && cond?.concatTokens().toUpperCase().includes(" IS INITIAL") === true
-        && input.scope.getRegistry().getConfig().getVersion() <= Version.v740sp02
-        */
+        && cond !== undefined
+        && topType instanceof TableType) {
+
+    //    && cond?.concatTokens().toUpperCase().includes(" IS INITIAL") === true
+    //    && input.scope.getRegistry().getConfig().getVersion() <= Version.v740sp02
+
       // https://github.com/abap2xlsx/abap2xlsx/issues/1341
       console.dir(sourceType);
       const keyName = node.findExpressionAfterToken("KEY");
       let key: ITableKey | undefined = undefined;
       if (keyName?.get() instanceof Expressions.SimpleName) {
-        key = sourceType.getOptions().secondary?.find(k => k.name === keyName.getFirstToken().getStr().toUpperCase());
+        key = topType.getOptions().secondary?.find(k => k.name === keyName.getFirstToken().getStr().toUpperCase());
       }
+      console.dir(key);
       if (key === undefined) {
         const message = "Key " + keyName?.concatTokens() + " not found in table type";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-      /*
-      const message = "Loop, key check with IS INITIAL cannot optimized before 7.40 SP02";
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
-      */
+
+      const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
+      console.dir(compares);
+      for (const keyField of key.keyFields) {
+        console.dir(keyField);
+        if (compares.find(c => c === keyField.toUpperCase() + " IS INITIAL") !== undefined) {
+          const message = "Loop, key check with IS INITIAL cannot optimized before 7.40 SP02";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
+      }
     }
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
