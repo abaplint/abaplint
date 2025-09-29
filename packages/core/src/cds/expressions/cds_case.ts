@@ -5,7 +5,7 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 export class CDSCase extends Expression {
   public getRunnable(): IStatementRunnable {
     const name = seq(CDSName, starPrio(seq(".", CDSName)));
-    const value = altPrio(CDSFunction, CDSString, CDSCase, CDSCast, CDSArithmetics, name);
+    const value = altPrio(CDSString, CDSCase, CDSCast, CDSArithmetics, CDSFunction, name);
     const thenValue = altPrio(seq("(", value, ")"), value);
     const simple = seq(altPrio(CDSFunction, name), plusPrio(seq("WHEN", value, "THEN", thenValue)));
     const complex = plusPrio(seq("WHEN", CDSCondition, "THEN", thenValue));

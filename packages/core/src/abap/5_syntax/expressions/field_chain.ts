@@ -57,8 +57,10 @@ export class FieldChain {
         return VoidType.get(CheckSyntaxKey);
       } else if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {
+          /*
           const message = "Not a structure, type unknown, FieldChain";
           input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
+          */
           return VoidType.get(CheckSyntaxKey);
         } else if (!(context instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader())

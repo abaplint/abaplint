@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {VoidType, TableType, UnknownType, DataReference, AnyType, DataType} from "../../types/basic";
+import {VoidType, TableType, UnknownType, DataReference, AnyType, DataType, ITableKey} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
@@ -12,6 +12,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Version} from "../../../version";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -65,6 +66,7 @@ export class Loop implements StatementSyntax {
     }
 
     const targetConcat = loopTarget?.concatTokens().toUpperCase();
+    const topType = sourceType; // todo: refactor topType vs sourceType vs rowType
     if (sourceType instanceof TableType) {
       rowType = sourceType.getRowType();
       sourceType = rowType;
@@ -73,12 +75,46 @@ export class Loop implements StatementSyntax {
       }
     }
 
+    const cond = node.findDirectExpression(Expressions.ComponentCond);
+    if (cond !== undefined) {
+      ComponentCond.runSyntax(cond, input, rowType);
+    }
+
     if (targetConcat
         && targetConcat.startsWith("TRANSPORTING ")
         && node.findDirectTokenByText("WHERE") === undefined) {
       const message = "Loop, TRANSPORTING NO FIELDS only with WHERE";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
+    }
+
+    if (node.findDirectTokenByText("USING") !== undefined
+        && cond !== undefined
+        && topType instanceof TableType) {
+
+      // https://github.com/abap2xlsx/abap2xlsx/issues/1341
+      const keyName = node.findExpressionAfterToken("KEY");
+      let key: ITableKey | undefined = undefined;
+      if (keyName?.get() instanceof Expressions.SimpleName) {
+        // it might be dynamic, in that case we cannot check anything
+        key = topType.getOptions().secondary?.find(k => k.name.toUpperCase() === keyName.getFirstToken().getStr().toUpperCase());
+        if (key === undefined) {
+          const message = "Key " + keyName?.concatTokens() + " not found in table type";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
+
+        if (input.scope.getRegistry().getConfig().getVersion() <= Version.v740sp02) {
+          const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
+          for (const keyField of key.keyFields) {
+            if (compares.find(c => c === keyField.toUpperCase() + " IS INITIAL") !== undefined) {
+              const message = "Loop, key check with IS INITIAL cannot optimized before 7.40 SP02";
+              input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+              return;
+            }
+          }
+        }
+      }
     }
 
     const inline = target?.findDirectExpression(Expressions.InlineData);
@@ -101,10 +137,6 @@ export class Loop implements StatementSyntax {
       if (fstarget) {
         FSTarget.runSyntax(fstarget, input, sourceType);
       }
-    }
-
-    for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
-      ComponentCond.runSyntax(t, input, rowType);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Dynamic)) {

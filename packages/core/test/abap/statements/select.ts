@@ -489,6 +489,14 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
              \\_Text[ ONE TO ONE WHERE Language = @sy-langu ]-LanguageName
       ORDER BY LanguageISOCode
       INTO TABLE @DATA(languages).`,
+
+  `SELECT
+    FROM /foo/bar
+    FIELDS (mv_sql_select)
+    WHERE uuid = @mv__uuid
+    AND \\_foo\\_bar-top IN @mt_top
+    GROUP BY (mv_sql_group)
+    INTO CORRESPONDING FIELDS OF TABLE @mt_result.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

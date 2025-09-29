@@ -11595,4 +11595,53 @@ WRITE / foo[ 1 ].`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("structure, unknown data, dont cascade errors", () => {
+// note: this is unknown, so no syntax error as such, to not cascade the unknown error
+    const abap = `
+DATA ls_result TYPE zunknown.
+WRITE ls_result-bar.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("https://github.com/abap2xlsx/abap2xlsx/issues/1341", () => {
+    const abap = `
+types: begin of ty,
+         obj_type type c length 10,
+         obj_name type c length 10,
+       end of ty.
+TYPES ty_results_tt TYPE STANDARD TABLE OF ty WITH DEFAULT KEY
+                       WITH NON-UNIQUE SORTED KEY sec_key
+                       COMPONENTS obj_type obj_name.
+DATA foo type ty_results_tt.
+FIELD-SYMBOLS <style1> TYPE voided.
+LOOP AT foo ASSIGNING <style1> USING KEY sec_key WHERE obj_type IS INITIAL.
+ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.include("key check with IS INITIAL");
+  });
+
+  it("https://github.com/abap2xlsx/abap2xlsx/issues/1341 ok", () => {
+// this is okay, the match field is not part of the key
+    const abap = `
+types: begin of ty,
+         obj_type type c length 10,
+         obj_name type c length 10,
+         match type c length 1,
+       end of ty.
+TYPES ty_results_tt TYPE STANDARD TABLE OF ty WITH DEFAULT KEY
+                       WITH NON-UNIQUE SORTED KEY sec_key
+                       COMPONENTS obj_type obj_name.
+DATA foo type ty_results_tt.
+FIELD-SYMBOLS <style1> TYPE voided.
+LOOP AT foo ASSIGNING <style1>
+          USING KEY sec_key
+          WHERE obj_type = 'sdf'
+          AND obj_name = 'sdf'
+          AND match IS INITIAL.
+ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
