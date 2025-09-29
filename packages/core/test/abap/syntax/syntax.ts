@@ -11604,7 +11604,7 @@ WRITE ls_result-bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("https://github.com/abap2xlsx/abap2xlsx/issues/1341", () => {
+  it("https://github.com/abap2xlsx/abap2xlsx/issues/1341", () => {
     const abap = `
 types: begin of ty,
          obj_type type c length 10,
@@ -11621,12 +11621,13 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.include("key check with IS INITIAL");
   });
 
-  it.skip("https://github.com/abap2xlsx/abap2xlsx/issues/1341 ok", () => {
+  it("https://github.com/abap2xlsx/abap2xlsx/issues/1341 ok", () => {
 // this is okay, the match field is not part of the key
     const abap = `
 types: begin of ty,
          obj_type type c length 10,
          obj_name type c length 10,
+         match type c length 1,
        end of ty.
 TYPES ty_results_tt TYPE STANDARD TABLE OF ty WITH DEFAULT KEY
                        WITH NON-UNIQUE SORTED KEY sec_key

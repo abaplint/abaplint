@@ -12,7 +12,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
-// import {Version} from "../../../version";
+import {Version} from "../../../version";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -92,31 +92,26 @@ export class Loop implements StatementSyntax {
         && cond !== undefined
         && topType instanceof TableType) {
 
-    //    && cond?.concatTokens().toUpperCase().includes(" IS INITIAL") === true
-    //    && input.scope.getRegistry().getConfig().getVersion() <= Version.v740sp02
-
       // https://github.com/abap2xlsx/abap2xlsx/issues/1341
-      console.dir(sourceType);
       const keyName = node.findExpressionAfterToken("KEY");
       let key: ITableKey | undefined = undefined;
       if (keyName?.get() instanceof Expressions.SimpleName) {
-        key = topType.getOptions().secondary?.find(k => k.name === keyName.getFirstToken().getStr().toUpperCase());
-      }
-      console.dir(key);
-      if (key === undefined) {
-        const message = "Key " + keyName?.concatTokens() + " not found in table type";
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return;
-      }
-
-      const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
-      console.dir(compares);
-      for (const keyField of key.keyFields) {
-        console.dir(keyField);
-        if (compares.find(c => c === keyField.toUpperCase() + " IS INITIAL") !== undefined) {
-          const message = "Loop, key check with IS INITIAL cannot optimized before 7.40 SP02";
+        key = topType.getOptions().secondary?.find(k => k.name.toUpperCase() === keyName.getFirstToken().getStr().toUpperCase());
+        if (key === undefined) {
+          const message = "Key " + keyName?.concatTokens() + " not found in table type";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
+        }
+
+        if (input.scope.getRegistry().getConfig().getVersion() <= Version.v740sp02) {
+          const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
+          for (const keyField of key.keyFields) {
+            if (compares.find(c => c === keyField.toUpperCase() + " IS INITIAL") !== undefined) {
+              const message = "Loop, key check with IS INITIAL cannot optimized before 7.40 SP02";
+              input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+              return;
+            }
+          }
         }
       }
     }
