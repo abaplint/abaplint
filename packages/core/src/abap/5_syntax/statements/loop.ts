@@ -12,7 +12,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
-import { Version } from "../../../version";
+import {Version} from "../../../version";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
