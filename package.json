@@ -40,6 +40,5 @@
         "typescript": "^5.9.2",
         "vscode-languageserver-types": "^3.17.5",
         "xml-js": "^1.6.11"
-
     }
 }
