@@ -96,6 +96,7 @@ export class Loop implements StatementSyntax {
       const keyName = node.findExpressionAfterToken("KEY");
       let key: ITableKey | undefined = undefined;
       if (keyName?.get() instanceof Expressions.SimpleName) {
+        // it might be dynamic, in that case we cannot check anything
         key = topType.getOptions().secondary?.find(k => k.name.toUpperCase() === keyName.getFirstToken().getStr().toUpperCase());
         if (key === undefined) {
           const message = "Key " + keyName?.concatTokens() + " not found in table type";
