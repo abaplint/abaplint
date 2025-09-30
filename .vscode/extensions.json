@@ -2,7 +2,9 @@
 	"recommendations": [
     "mrmlnc.vscode-duplicate",
     "dbaeumer.vscode-eslint",
-    "pflannery.vscode-versionlens"
+	"pflannery.vscode-versionlens",
+	"hbenl.vscode-mocha-test-adapter",
+	"hbenl.vscode-test-explorer"
 	],
 	"unwantedRecommendations": [
 
