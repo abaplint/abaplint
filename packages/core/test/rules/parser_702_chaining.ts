@@ -66,4 +66,32 @@ describe("Rule: Parser702Chaining", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("no issues, method call3", async () => {
+    const abap = `lcl=>method( EXPORTING iv_value = lcl=>method( 42 ) ).`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  describe("variable assignment through functional method", () => {
+    it("no issues, method call with implicit importing parameter", async () => {
+      const abap = "foo = lcl=>method( 42 ).";
+      const issues = await findIssues(abap);
+      expect(issues.length).to.equal(0);
+    });
+    it("no issues, method call with explicit importing parameter name without EXPORTING keyword", async () => {
+      const abap = "foo = lcl=>method( iv_value = 42 ).";
+      const issues = await findIssues(abap);
+      expect(issues.length).to.equal(0);
+    });
+    it("issue, method call with explicit parameter name with EXPORTING keyword", async () => {
+      const abap = "foo = lcl=>method( EXPORTING iv_value = 42 ).";
+      const issues = await findIssues(abap);
+      expect(issues.length).to.equal(1);
+    });
+    it("issue, method call inside method parameter with explicit parameter name with EXPORTING keyword", async () => {
+      const abap = "lcl=>method( EXPORTING iv_value = lcl=>method( EXPORTING iv_value = 42 ) ).";
+      const issues = await findIssues(abap);
+      expect(issues.length).to.equal(1);
+    });
+  });
 });
