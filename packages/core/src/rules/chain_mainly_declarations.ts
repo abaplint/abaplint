@@ -171,8 +171,7 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
     let start: Position;
     if (prevFix === undefined) {
       start = statementNode.getStart();
-    }
-    else {
+    } else {
       start = statementNode.getTokens()[1].getStart();
     }
 

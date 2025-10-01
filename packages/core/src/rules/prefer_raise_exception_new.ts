@@ -73,8 +73,7 @@ From 752 and up`,
     if (withExporting) {
       const fixText = "( " + children[5].concatTokens() + " ).";
       contentFix = EditHelper.replaceRange(file, children[3].getLastToken().getEnd(), statement.getEnd(), fixText);
-    }
-    else {
+    } else {
       contentFix = EditHelper.replaceRange(file, children[3].getLastToken().getEnd(), statement.getEnd(), "( ).");
     }
 

@@ -91,8 +91,7 @@ ENDIF.`,
       const fix = EditHelper.replaceRange(file, token.getStart(), token.getEnd(), replacementToken);
       const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity, fix);
       return issue;
-    }
-    else {
+    } else {
       const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
       return issue;
     }

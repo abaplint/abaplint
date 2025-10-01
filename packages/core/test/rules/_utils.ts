@@ -47,8 +47,7 @@ export function testRule(tests: TestRuleType, rule: new () => IRule, config?: an
           issues.forEach((issue) => {
             if (test.fix === true) {
               expect(issue.getDefaultFix()).to.not.equals(undefined, "Expected fix to exist");
-            }
-            else {
+            } else {
               expect(issue.getDefaultFix()).to.equals(undefined, "Expected fix not to exist");
             }
           });
