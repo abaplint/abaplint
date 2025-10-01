@@ -42,7 +42,7 @@ From 752 and up`,
 
   public runParsed(file: ABAPFile): Issue[] {
     if (this.reg.getConfig().getVersion() < Version.v752) {
-      return[];
+      return [];
     }
 
     const issues: Issue[] = [];

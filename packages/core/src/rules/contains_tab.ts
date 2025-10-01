@@ -52,7 +52,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#indent-and-
       const tabCol = lines[i].indexOf("\t");
       if (tabCol >= 0) {
         let tabAmount = 1;
-        while(lines[i].indexOf("\t", tabCol + tabAmount - 1) >= 0){
+        while (lines[i].indexOf("\t", tabCol + tabAmount - 1) >= 0){
           tabAmount++;
         }
         issues.push(this.createIssue(i, tabCol, tabAmount, file));

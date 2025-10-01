@@ -5,7 +5,7 @@ import path from "node:path";
 import {fileURLToPath} from "node:url";
 import js from "@eslint/js";
 import {FlatCompat} from "@eslint/eslintrc";
-import stylistic from '@stylistic/eslint-plugin'
+import stylistic from "@stylistic/eslint-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,7 +37,7 @@ export default [...fixupConfigRules(compat.extends(
   },
 
   plugins: {
-    '@stylistic': stylistic
+    "@stylistic": stylistic,
   },
 
   rules: {
@@ -52,7 +52,8 @@ export default [...fixupConfigRules(compat.extends(
     "@typescript-eslint/no-unused-vars": "off",
     "no-useless-escape": "off",
     "no-undef": "off",
-    '@stylistic/brace-style': ["error", "1tbs", { allowSingleLine: true }],
+    "@stylistic/brace-style": ["error", "1tbs", {allowSingleLine: true}],
+    "keyword-spacing": "error",
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "no-control-regex": "off",

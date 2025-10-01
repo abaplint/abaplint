@@ -2246,7 +2246,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       }
 
       let inGroup = "";
-      if(forLoop.concatTokens().toUpperCase().includes(" IN GROUP ")) {
+      if (forLoop.concatTokens().toUpperCase().includes(" IN GROUP ")) {
         inGroup = "-items";
       }
 
@@ -3038,7 +3038,7 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     let postfix = "";
-    if(spag.getIdentifier().stype === ScopeType.ClassDefinition) {
+    if (spag.getIdentifier().stype === ScopeType.ClassDefinition) {
 // try making sure this name is not used in subclasses
       const hash = crypto.createHash("sha1").update(spag.getIdentifier().sname).digest("hex");
       postfix = "_" + hash.substring(0, 10);
