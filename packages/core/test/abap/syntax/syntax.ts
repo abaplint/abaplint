@@ -11644,4 +11644,18 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("infer BASE value", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         value1 TYPE i,
+       END OF ty.
+DATA lt_res TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA ls_row LIKE LINE OF lt_res.
+
+APPEND CORRESPONDING #( BASE ( VALUE #(
+  value1 = 1 ) ) ls_row ) TO lt_res.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
