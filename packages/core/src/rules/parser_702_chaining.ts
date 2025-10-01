@@ -64,7 +64,8 @@ Only active on target version 702 and below.`,
         if (param.findDirectTokenByText("IMPORTING")
             || param.findDirectTokenByText("CHANGING")
             || param.findDirectTokenByText("EXCEPTIONS")) {
-          this.pushIssue(file, param, issues);
+          const message = "This kind of method chaining not possible in 702";
+          this.pushIssue(message, file, param, issues);
         }
       }
     }
@@ -96,19 +97,19 @@ Only active on target version 702 and below.`,
 
 
   private ensureSourceHasNoProceduralKeywords(source: ExpressionNode, file: ABAPFile, issues: Issue[]) {
+    const forbiddenTokens = ["EXPORTING", "IMPORTING", "CHANGING", "EXCEPTIONS"];
     for (const param of source.findAllExpressions(Expressions.MethodParameters)) {
-      if (param.findDirectTokenByText("EXPORTING")
-        || param.findDirectTokenByText("IMPORTING")
-        || param.findDirectTokenByText("CHANGING")
-        || param.findDirectTokenByText("EXCEPTIONS")) {
-        this.pushIssue(file, param, issues);
+      const usedForbiddenToken = forbiddenTokens.find(text => param.findDirectTokenByText(text));
+
+      if (usedForbiddenToken) {
+        const message = `Unexpected word ${usedForbiddenToken} in functional method call`;
+        this.pushIssue(message, file, param, issues);
       }
     }
   }
 
-  private pushIssue(file: ABAPFile, param: ExpressionNode, issues: Issue[]) {
-    const message = "This kind of method chaining not possible in 702";
-    const issue = Issue.atPosition(file, param.getFirstToken().getStart(), message, this.getMetadata().key, this.conf.severity);
+  private pushIssue(message: string, file: ABAPFile, node: ExpressionNode, issues: Issue[]) {
+    const issue = Issue.atPosition(file, node.getFirstToken().getStart(), message, this.getMetadata().key, this.conf.severity);
     issues.push(issue);
   }
 }

@@ -87,11 +87,13 @@ describe("Rule: Parser702Chaining", () => {
       const abap = "foo = lcl=>method( EXPORTING iv_value = 42 ).";
       const issues = await findIssues(abap);
       expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal("Unexpected word EXPORTING in functional method call");
     });
     it("issue, method call inside method parameter with explicit parameter name with EXPORTING keyword", async () => {
       const abap = "lcl=>method( EXPORTING iv_value = lcl=>method( EXPORTING iv_value = 42 ) ).";
       const issues = await findIssues(abap);
       expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal("Unexpected word EXPORTING in functional method call");
     });
   });
 });
