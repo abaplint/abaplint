@@ -1,9 +1,7 @@
 name: Regression
 
 on:
-  push:
-    branches-ignore:
-      - 'main'
+  pull_request_target:
 
 permissions:
   contents: read
