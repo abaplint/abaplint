@@ -245,10 +245,9 @@ export class ImplementMethods extends ABAPRule {
     // look up in superclass if method is abstract there
     const superClass = this.findClass(def.superClassName);
     const superInterface = superClass?.def.interfaces.find(iface => iface.name.toUpperCase() === m.objectName.toUpperCase());
-    if(superClass && superInterface) {
+    if (superClass && superInterface) {
       return this.isAbstract(m, superInterface, superClass.def);
-    }
-    else {
+    } else {
       return false;
     }
   }
