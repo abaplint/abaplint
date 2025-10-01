@@ -5,7 +5,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {Class, Interface, Program} from "../objects";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
-import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
+import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoMethodDefinition, InfoImplementing} from "../abap/4_file_information/_abap_file_information";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
@@ -214,7 +214,7 @@ export class ImplementMethods extends ABAPRule {
       }
 
       for (const m of this.findInterfaceMethods(idef)) {
-        if (interfaceInfo.abstractMethods.includes(m.method.name.toUpperCase())) {
+        if (this.isAbstract(m, interfaceInfo, def)) {
           continue;
         }
 
@@ -233,6 +233,24 @@ export class ImplementMethods extends ABAPRule {
     }
 
     return ret;
+  }
+
+  private isAbstract(m: IMethod, interfaceInfo: InfoImplementing, def: InfoClassDefinition): boolean {
+    if (interfaceInfo.abstractMethods.includes(m.method.name.toUpperCase())) {
+      return true;
+    }
+    if (!def.superClassName) {
+      return false;
+    }
+    // look up in superclass if method is abstract there
+    const superClass = this.findClass(def.superClassName);
+    const superInterface = superClass?.def.interfaces.find(iface => iface.name.toUpperCase() === m.objectName.toUpperCase());
+    if(superClass && superInterface) {
+      return this.isAbstract(m, superInterface, superClass.def);
+    }
+    else {
+      return false;
+    }
   }
 
   private isImplemented(m: IMethod, def: InfoClassDefinition, impl: InfoClassImplementation | undefined): boolean {
