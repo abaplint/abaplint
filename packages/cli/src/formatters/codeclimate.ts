@@ -26,7 +26,7 @@ export class CodeClimate implements IFormatter {
             end: issue.getEnd().getRow(),
           },
         },
-        severity: ( severityArray.includes(issue.getSeverity().toLowerCase()) ) ? issue.getSeverity().toLowerCase() : defaultSeverity,
+        severity: severityArray.includes(issue.getSeverity().toLowerCase()) ? issue.getSeverity().toLowerCase() : defaultSeverity,
         fingerprint: md5(issue.getKey() + issue.getMessage() + issue.getFilename() + issue.getStart().getRow() + issue.getEnd().getRow()),
       };
       out.push(single);

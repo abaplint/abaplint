@@ -42,7 +42,7 @@ From 752 and up`,
 
   public runParsed(file: ABAPFile): Issue[] {
     if (this.reg.getConfig().getVersion() < Version.v752) {
-      return[];
+      return [];
     }
 
     const issues: Issue[] = [];
@@ -56,7 +56,7 @@ From 752 and up`,
         if (concat.startsWith("RAISE EXCEPTION TYPE ")) {
           const message = "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE";
 
-          const fix = this.getFix(file, statement, concat.includes(" EXPORTING" ) ? true : false);
+          const fix = this.getFix(file, statement, concat.includes(" EXPORTING") ? true : false);
 
           issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, fix));
         }
@@ -73,8 +73,7 @@ From 752 and up`,
     if (withExporting) {
       const fixText = "( " + children[5].concatTokens() + " ).";
       contentFix = EditHelper.replaceRange(file, children[3].getLastToken().getEnd(), statement.getEnd(), fixText);
-    }
-    else {
+    } else {
       contentFix = EditHelper.replaceRange(file, children[3].getLastToken().getEnd(), statement.getEnd(), "( ).");
     }
 

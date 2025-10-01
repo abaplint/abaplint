@@ -51,7 +51,7 @@ export class ColonMissingSpace extends ABAPRule {
       // todo: this can be more smart, performance wise
       const tokens = [...statement.getTokens()];
       tokens.push(colon);
-      tokens.sort((a, b) => a.getStart().isAfter(b.getStart()) ? 1 : -1 );
+      tokens.sort((a, b) => a.getStart().isAfter(b.getStart()) ? 1 : -1);
 
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];

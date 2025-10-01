@@ -88,7 +88,7 @@ export class Rename {
         continue;
       }
       for (const p of rconfig.patterns || []) {
-        if (!(o.getType().match(p.type))) {
+        if (!o.getType().match(p.type)) {
           continue;
         }
         const regex = new RegExp(p.oldName, "i");

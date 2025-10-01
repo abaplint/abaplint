@@ -1084,7 +1084,7 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
 
     const source = high.findExpressionAfterToken("MESSAGE");
     if (source?.get() instanceof Expressions.MessageSourceSource
-        && source.getFirstChild()?.get() instanceof Expressions.Source) {;
+        && source.getFirstChild()?.get() instanceof Expressions.Source) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
@@ -1553,7 +1553,7 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     }
     const sourceRef = high.findFirstExpression(Expressions.Source)?.findDirectExpression(Expressions.Source);
     if (sourceRef === undefined
-        || sourceRef.getChildren().length !== 1 ) {
+        || sourceRef.getChildren().length !== 1) {
       return undefined;
     }
 
@@ -1777,7 +1777,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     }
 
     let pre = "";
-    for (const c of fieldChain!.getChildren() ) {
+    for (const c of fieldChain!.getChildren()) {
       if (c === tableExpression) {
         break;
       }
@@ -2246,7 +2246,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       }
 
       let inGroup = "";
-      if(forLoop.concatTokens().toUpperCase().includes(" IN GROUP ")) {
+      if (forLoop.concatTokens().toUpperCase().includes(" IN GROUP ")) {
         inGroup = "-items";
       }
 
@@ -3038,7 +3038,7 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     let postfix = "";
-    if(spag.getIdentifier().stype === ScopeType.ClassDefinition) {
+    if (spag.getIdentifier().stype === ScopeType.ClassDefinition) {
 // try making sure this name is not used in subclasses
       const hash = crypto.createHash("sha1").update(spag.getIdentifier().sname).digest("hex");
       postfix = "_" + hash.substring(0, 10);

@@ -61,7 +61,7 @@ export class LocalClassNaming extends ABAPRule {
 
       if (classDef.isForTesting) {
         expected = this.conf.test;
-      } else if (ddic.isException(classDef, obj) ) {
+      } else if (ddic.isException(classDef, obj)) {
         expected = this.conf.exception;
       } else {
         expected = this.conf.local;

@@ -141,8 +141,7 @@ export class UnusedTypes implements IRule {
       }
       if (statement.getPragmas().some(t => t.getStr() === this.getMetadata().pragma)) {
         continue;
-      }
-      else if (this.suppressedbyPseudo(statement, file)) {
+      } else if (this.suppressedbyPseudo(statement, file)) {
         continue;
       }
 

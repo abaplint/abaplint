@@ -197,10 +197,10 @@ export class DoubleSpace extends ABAPRule {
 
       if (prev.get().getStart().getRow() === n.get().getStart().getRow()
           && prev.get().getEnd().getCol() + 1 < n.get().getStart().getCol()) {
-        const issueStartPos = new Position(prev.get().getEnd().getRow(), prev.get().getEnd().getCol() + 1 );
+        const issueStartPos = new Position(prev.get().getEnd().getRow(), prev.get().getEnd().getCol() + 1);
         const issueEndPos = new Position(n.get().getRow(), n.get().getCol());
         const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
+        issues.push(Issue.atRange(file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
         return issues;
       }
 

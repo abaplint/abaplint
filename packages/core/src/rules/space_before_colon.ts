@@ -53,7 +53,7 @@ export class SpaceBeforeColon extends ABAPRule {
       // todo: this can be more smart, performance wise
       const tokens = [...statement.getTokens()];
       tokens.push(colon);
-      tokens.sort((a, b) => a.getStart().isAfter(b.getStart()) ? 1 : -1 );
+      tokens.sort((a, b) => a.getStart().isAfter(b.getStart()) ? 1 : -1);
 
       let prev = tokens[0];
 

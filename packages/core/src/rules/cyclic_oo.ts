@@ -144,8 +144,8 @@ References in testclass includes are ignored`,
       }
 
       if (this.conf.skipTestclasses === true
-          && ( r.position.getFilename().includes(".testclasses.")
-          || r.resolved.getFilename().includes(".testclasses.") ) ) {
+          && (r.position.getFilename().includes(".testclasses.")
+          || r.resolved.getFilename().includes(".testclasses."))) {
         continue;
       }
 

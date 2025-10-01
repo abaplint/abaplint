@@ -166,7 +166,7 @@ ENDIF.`,
           || (sta instanceof Statements.Move && this.conf.move
           && staNode.getTokens()[0].getStr().toUpperCase() === "MOVE"
           && staNode.getTokens()[1].getStr() !== "-"
-          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT") ) {
+          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT")) {
         if (prev === undefined || staNode.getStart().getCol() !== prev.getCol() || staNode.getStart().getRow() !== prev.getRow()) {
           const message = "Statement \"" + staNode.getFirstToken().getStr() + "\" is obsolete";
           const fix = this.getFix(file, sta, staNode);
@@ -357,8 +357,7 @@ ENDIF.`,
             const issue = Issue.atStatement(file, staNode, "REGEX obsolete, use PCRE", this.getMetadata().key, this.conf.severity);
             issues.push(issue);
           }
-        }
-        else {
+        } else {
           const classNameExpression = staNode.findAllExpressions(Expressions.ClassName);
           const methodNameExpression = staNode.findAllExpressions(Expressions.MethodName);
 
@@ -371,8 +370,7 @@ ENDIF.`,
                 const issue = Issue.atStatement(file, staNode, "create_posix obsolete, use create_pcre", this.getMetadata().key, this.conf.severity);
                 issues.push(issue);
               }
-            }
-            else if (className === "cl_abap_matcher") {
+            } else if (className === "cl_abap_matcher") {
               if (methodName.includes("posix")) {
                 const issue = Issue.atStatement(file, staNode, "posix methods obsolete, use pcre methods", this.getMetadata().key, this.conf.severity);
                 issues.push(issue);
@@ -392,23 +390,20 @@ ENDIF.`,
       }
 
       return EditHelper.replaceToken(file, statementNode.getFirstToken(), "CLEAR");
-    }
-    else if (statement instanceof Statements.Compute) {
+    } else if (statement instanceof Statements.Compute) {
       const children = statementNode.getChildren();
       if (children.length === 5) {
         const tokenForDeletion = statementNode.getFirstToken();
         let endPosition = tokenForDeletion.getEnd();
         endPosition = new Position(endPosition.getRow(), endPosition.getCol() + 1);
         return EditHelper.deleteRange(file, tokenForDeletion.getStart(), endPosition);
-      }
-      else {
+      } else {
         const targetString = children[2].concatTokens();
         const sourceString = children[4].concatTokens();
         const replacement = targetString + " = EXACT #( " + sourceString + " ).";
         return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
       }
-    }
-    else if (statement instanceof Statements.Add ||
+    } else if (statement instanceof Statements.Add ||
             statement instanceof Statements.Subtract) {
       const children = statementNode.getChildren();
       const sourceString = children[1].concatTokens();
@@ -417,14 +412,12 @@ ENDIF.`,
 
       if (statement instanceof Statements.Add) {
         replacement = targetString + " = " + targetString + " + " + sourceString + ".";
-      }
-      else if (statement instanceof Statements.Subtract) {
+      } else if (statement instanceof Statements.Subtract) {
         replacement = targetString + " = " + targetString + " - " + sourceString + ".";
       }
 
       return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
-    }
-    else if (statement instanceof Statements.Multiply ||
+    } else if (statement instanceof Statements.Multiply ||
           statement instanceof Statements.Divide) {
       const children = statementNode.getChildren();
       const targetString = children[1].concatTokens();
@@ -433,14 +426,12 @@ ENDIF.`,
 
       if (statement instanceof Statements.Multiply) {
         replacement = targetString + " = " + targetString + " * " + sourceString + ".";
-      }
-      else if (statement instanceof Statements.Divide) {
+      } else if (statement instanceof Statements.Divide) {
         replacement = targetString + " = " + targetString + " / " + sourceString + ".";
       }
 
       return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
-    }
-    else if (statement instanceof Statements.Move) {
+    } else if (statement instanceof Statements.Move) {
       if (statementNode.getColon() !== undefined) {
         return undefined;
       }
@@ -452,23 +443,20 @@ ENDIF.`,
       let operator = children[2].concatTokens().toUpperCase();
       if (operator === "TO") {
         operator = " = ";
-      }
-      else {
+      } else {
         operator = " ?= ";
       }
 
       const replacement = targetString + operator + sourceString + ".";
 
       return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), replacement);
-    }
-    else if (statement instanceof Statements.ClassDefinitionLoad ||
+    } else if (statement instanceof Statements.ClassDefinitionLoad ||
             statement instanceof Statements.InterfaceLoad) {
 
       let token = undefined;
       if (statement instanceof Statements.ClassDefinitionLoad) {
         token = statementNode.getChildren()[3].getFirstToken();
-      }
-      else {
+      } else {
         token = statementNode.getChildren()[2].getFirstToken();
       }
 

@@ -16,7 +16,7 @@ export class CorrespondingBody {
 
     const base = node.findDirectExpression(Expressions.CorrespondingBodyBase)?.findDirectExpression(Expressions.Source);
     if (base) {
-      Source.runSyntax(base, input);
+      Source.runSyntax(base, input, targetType);
     }
 
     let type: AbstractType | undefined = undefined;

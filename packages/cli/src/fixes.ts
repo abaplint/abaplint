@@ -16,10 +16,10 @@ export class ApplyFixes {
     const objects = new RulesRunner(reg).objectsToCheck(reg.getObjects());
     const rules = reg.getConfig().getEnabledRules();
 
-    while(iteration <= MAX_ITERATIONS) {
+    while (iteration <= MAX_ITERATIONS) {
       let changed = 0;
       for (const rule of rules) {
-        while(iteration <= MAX_ITERATIONS) {
+        while (iteration <= MAX_ITERATIONS) {
           const before = Date.now();
 
           rule.initialize(reg);

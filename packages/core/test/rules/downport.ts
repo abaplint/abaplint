@@ -5179,9 +5179,10 @@ DATA: BEGIN OF ls_split,
       END OF ls_split.
 
 ls_split-bar = 2.
-DATA temp1 LIKE LINE OF lt_res.
-temp1 = CORRESPONDING #( BASE ( VALUE #( field = 1 ) ) ls_split ).
-APPEND temp1 TO lt_res.`;
+DATA temp1 TYPE ty1.
+CLEAR temp1.
+temp1-field = 1.
+APPEND CORRESPONDING #( BASE ( temp1 ) ls_split ) TO lt_res.`;
     testFix(abap, expected);
   });
 

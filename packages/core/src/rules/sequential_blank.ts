@@ -56,7 +56,7 @@ export class SequentialBlank extends ABAPRule {
 
       if (blanks === this.conf.lines) {
         let blankCounter = 1;
-        while(i + blankCounter < rows.length && SequentialBlank.isBlankOrWhitespace(rows[i + blankCounter])){
+        while (i + blankCounter < rows.length && SequentialBlank.isBlankOrWhitespace(rows[i + blankCounter])){
           ++blankCounter;
         }
         const reportPos = new Position(i + 1, 1);

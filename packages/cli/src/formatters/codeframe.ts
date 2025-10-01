@@ -16,8 +16,8 @@ type IssueDetails = {
 
 function issueSort(a: IssueDetails, b: IssueDetails): number {
   return a.filename.localeCompare(b.filename)
-    || ( a.row - b.row )
-    || ( a.col - b.col );
+    || (a.row - b.row)
+    || (a.col - b.col);
 }
 
 export class CodeFrame implements IFormatter {
@@ -30,7 +30,7 @@ export class CodeFrame implements IFormatter {
     const builtIssues = this.convertAllIssues(issues).sort(issueSort); // Make sure it is sorted by filename for caching to work
     return [
       ...builtIssues.map(i => this.renderIssue(i)),
-      (issues.length > 0 ? chalk.red(new Total().output(issues, fileCount)) : chalk.green(new Total().output(issues, fileCount))),
+      issues.length > 0 ? chalk.red(new Total().output(issues, fileCount)) : chalk.green(new Total().output(issues, fileCount)),
     ].join("\n");
   }
 

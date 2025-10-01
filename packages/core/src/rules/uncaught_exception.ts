@@ -231,8 +231,8 @@ export class UncaughtException extends ABAPRule {
     }
 
     return this.sinked.some(a => a.toUpperCase() === name.toUpperCase())
-      || ( sup !== undefined && this.isSinked(sup) === true )
-      || ( lsup !== undefined && this.isSinked(lsup) === true );
+      || (sup !== undefined && this.isSinked(sup) === true)
+      || (lsup !== undefined && this.isSinked(lsup) === true);
   }
 
   private findGlobalExceptions() {

@@ -123,8 +123,7 @@ cl_abap_typedescr=>describe_by_name(
         methodSourceStr = `${methodSourceStr}( `;
         methodBodyStr = `${methodBody.concatTokens()} ).`;
       }
-    }
-    else {
+    } else {
       // no body means no parentheses and no parameters
       methodBodyStr = "( ).";
     }
