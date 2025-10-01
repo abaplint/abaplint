@@ -150,7 +150,7 @@ export class TypeUtils {
         return true;
       }
     } else if (sid instanceof ClassDefinition && tid instanceof InterfaceDefinition) {
-      if (sid.getImplementing().some(i => i.name === tname) ) {
+      if (sid.getImplementing().some(i => i.name === tname)) {
         return true;
       }
       const slist = this.listAllInterfaces(sid);
@@ -161,7 +161,7 @@ export class TypeUtils {
       if (sname === tname) {
         return true;
       }
-      if (sid.getImplementing().some(i => i.name === tname) ) {
+      if (sid.getImplementing().some(i => i.name === tname)) {
         return true;
       }
       const slist = this.listAllInterfaces(sid);

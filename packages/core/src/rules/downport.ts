@@ -1553,7 +1553,7 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     }
     const sourceRef = high.findFirstExpression(Expressions.Source)?.findDirectExpression(Expressions.Source);
     if (sourceRef === undefined
-        || sourceRef.getChildren().length !== 1 ) {
+        || sourceRef.getChildren().length !== 1) {
       return undefined;
     }
 
@@ -1777,7 +1777,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     }
 
     let pre = "";
-    for (const c of fieldChain!.getChildren() ) {
+    for (const c of fieldChain!.getChildren()) {
       if (c === tableExpression) {
         break;
       }

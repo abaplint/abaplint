@@ -127,7 +127,7 @@ export class BasicTypes {
     }
 
     let type: AbstractType | undefined = undefined;
-    if (children[1] && ( children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
+    if (children[1] && (children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
       type = FieldChain.runSyntax(chain, this.input, ReferenceType.TypeReference);
     } else {
       const name = children.shift()!.getFirstToken().getStr();
@@ -290,7 +290,7 @@ export class BasicTypes {
       if (this.input.scope.isTypePool() === true) {
         qualifiedName = name.getStr();
       } else {
-        qualifiedName = ( qualifiedNamePrefix || "" ) + name.getStr();
+        qualifiedName = (qualifiedNamePrefix || "") + name.getStr();
         if (this.input.scope.getType() === ScopeType.ClassDefinition
             || this.input.scope.getType() === ScopeType.Interface) {
           qualifiedName = this.input.scope.getName() + "=>" + qualifiedName;

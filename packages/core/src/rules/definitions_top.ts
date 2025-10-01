@@ -121,7 +121,7 @@ ENDFORM.`,
             // this is not perfect, but will work for now
             const start = c.getFirstChild()?.getFirstChild()?.getFirstToken().getStart();
             const end = c.getLastChild()?.getLastChild()?.getLastToken().getEnd();
-            if (start && end ) {
+            if (start && end) {
               let concat = c.concatTokens();
               concat = concat.replace(/,/g, ".\n");
               const fix1 = EditHelper.deleteRange(file, start, end);

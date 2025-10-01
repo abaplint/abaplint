@@ -166,7 +166,7 @@ ENDIF.`,
           || (sta instanceof Statements.Move && this.conf.move
           && staNode.getTokens()[0].getStr().toUpperCase() === "MOVE"
           && staNode.getTokens()[1].getStr() !== "-"
-          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT") ) {
+          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT")) {
         if (prev === undefined || staNode.getStart().getCol() !== prev.getCol() || staNode.getStart().getRow() !== prev.getRow()) {
           const message = "Statement \"" + staNode.getFirstToken().getStr() + "\" is obsolete";
           const fix = this.getFix(file, sta, staNode);

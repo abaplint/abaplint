@@ -33,7 +33,7 @@ export class Sonarqube implements IFormatter {
       const single: sonarIssue = {
         engineId: "abaplint",
         ruleId: issue.getKey(),
-        severity: ( severityArray.includes(issue.getSeverity().toUpperCase()) ) ? issue.getSeverity().toUpperCase() : defaultSeverity,
+        severity: (severityArray.includes(issue.getSeverity().toUpperCase())) ? issue.getSeverity().toUpperCase() : defaultSeverity,
         type:"CODE_SMELL",
         primaryLocation: {
           message: issue.getMessage(),
@@ -47,7 +47,7 @@ export class Sonarqube implements IFormatter {
         },
         effortMinutes: 10,
       };
-      if (startOffset >= endOffset ) {
+      if (startOffset >= endOffset) {
         delete single.primaryLocation.textRange.startColumn;
         delete single.primaryLocation.textRange.endColumn;
       }

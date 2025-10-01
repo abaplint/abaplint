@@ -56,7 +56,7 @@ From 752 and up`,
         if (concat.startsWith("RAISE EXCEPTION TYPE ")) {
           const message = "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE";
 
-          const fix = this.getFix(file, statement, concat.includes(" EXPORTING" ) ? true : false);
+          const fix = this.getFix(file, statement, concat.includes(" EXPORTING") ? true : false);
 
           issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, fix));
         }
