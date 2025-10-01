@@ -374,6 +374,36 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("PROG, no problems, interfaced interface abstract in super class inherited by abstract class", async () => {
+    const prog = `
+INTERFACE lif_top.
+  METHODS moo.
+ENDINTERFACE.
+
+INTERFACE lif_sub.
+  INTERFACES lif_top.
+ENDINTERFACE.
+
+CLASS lcl_super DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif_top ABSTRACT METHODS moo.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_clas DEFINITION INHERITING FROM lcl_super ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif_sub.
+ENDCLASS.
+
+CLASS lcl_clas IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("ALL METHODS ABSTRACT", async () => {
     const prog = `
 INTERFACE lif_bar.
