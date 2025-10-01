@@ -54,6 +54,9 @@ export default [...fixupConfigRules(compat.extends(
     "no-undef": "off",
     "@stylistic/brace-style": ["error", "1tbs", {allowSingleLine: true}],
     "keyword-spacing": "error",
+    "no-extra-parens": ["error", "all", {
+      nestedBinaryExpressions: false,
+      "ternaryOperandBinaryExpressions": false}],
     "@stylistic/space-in-parens": ["error", "never"],
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/ban-ts-comment": "off",

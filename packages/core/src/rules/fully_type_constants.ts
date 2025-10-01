@@ -44,7 +44,7 @@ export class FullyTypeConstants extends ABAPRule {
     for (const stat of file.getStatements()) {
       if ((stat.get() instanceof Statements.Constant
           || (this.conf.checkData === true && stat.get() instanceof Statements.Data))
-          && (!this.isTyped(stat))) {
+          && !this.isTyped(stat)) {
         const type = stat.get() instanceof Statements.Constant ? "constant definition" : "data definition";
 
         let token = stat.findFirstExpression(NamespaceSimpleName)?.getFirstToken();
@@ -68,6 +68,6 @@ export class FullyTypeConstants extends ABAPRule {
   }
 
   private isTyped(stat: StatementNode) {
-    return (stat.findFirstExpression(Type) || stat.findFirstExpression(TypeTable));
+    return stat.findFirstExpression(Type) || stat.findFirstExpression(TypeTable);
   }
 }

@@ -438,7 +438,7 @@ export class TypeUtils {
             && this.structureContainsString(targetRowType)) {
           if (!(sourceRowType instanceof StructureType)) {
             return false;
-          } else if (!(this.structureContainsString(sourceRowType))
+          } else if (!this.structureContainsString(sourceRowType)
               && this.structureContainsVoid(sourceRowType) === false) {
             return false;
           }
@@ -446,7 +446,7 @@ export class TypeUtils {
             && this.structureContainsString(sourceRowType)) {
           if (!(targetRowType instanceof StructureType)) {
             return false;
-          } else if (!(this.structureContainsString(targetRowType))
+          } else if (!this.structureContainsString(targetRowType)
           && this.structureContainsVoid(targetRowType) === false) {
             return false;
           }

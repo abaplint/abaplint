@@ -62,9 +62,9 @@ ENDFORM.`,
     for (let i = 0; i < statements.length; i++) {
       const node = statements[i];
       const nodeType = node.get();
-      if ((nodeType instanceof Statements.MethodImplementation
+      if (nodeType instanceof Statements.MethodImplementation
           || nodeType instanceof Statements.Form
-          || nodeType instanceof Statements.FunctionModule)) {
+          || nodeType instanceof Statements.FunctionModule) {
         statementCounter = 0;
         continue;
       }
