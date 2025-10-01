@@ -47,8 +47,7 @@ export class Sonarqube implements IFormatter {
         },
         effortMinutes: 10,
       };
-      if (startOffset >= endOffset )
-      {
+      if (startOffset >= endOffset ) {
         delete single.primaryLocation.textRange.startColumn;
         delete single.primaryLocation.textRange.endColumn;
       }
