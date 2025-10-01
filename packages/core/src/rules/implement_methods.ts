@@ -97,7 +97,15 @@ export class ImplementMethods extends ABAPRule {
           const issue = Issue.atIdentifier(found, "Do not implement abstract method \"" + md.name + "\"", this.getMetadata().key, this.conf.severity);
           ret.push(issue);
         }
-        continue;
+        if (def.isAbstract) {
+          continue;
+        }
+        else {
+          const message = "Abstract methods can only be defined in abstract classes.";
+          const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
+          ret.push(issue);
+          break;
+        }
       }
 
       if (impl === undefined) {
@@ -215,7 +223,14 @@ export class ImplementMethods extends ABAPRule {
 
       for (const m of this.findInterfaceMethods(idef)) {
         if (this.isAbstract(m, interfaceInfo, def)) {
-          continue;
+          if (def.isAbstract) {
+            continue;
+          } else {
+            const message = "Abstract methods can only be defined in abstract classes.";
+            const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
+            ret.push(issue);
+            break;
+          }
         }
 
         if (this.isImplemented(m, def, impl) === false) {

@@ -78,9 +78,9 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("abstract method", async () => {
+  it("abstract method in abstract class", async () => {
     const contents =
-    `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+    `CLASS zcl_foobar DEFINITION PUBLIC ABSTRACT CREATE PUBLIC.
       PUBLIC SECTION.
         METHODS foobar ABSTRACT.
      ENDCLASS.
@@ -90,8 +90,20 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("abstract method in non-abstract class", async () => {
+    const contents =
+    `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+      PUBLIC SECTION.
+        METHODS foobar ABSTRACT.
+     ENDCLASS.
+     CLASS zcl_foobar IMPLEMENTATION.
+     ENDCLASS.`;
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    expect(issues.length).to.equals(1);
+  });
+
   it("abstract method, do not implement", async () => {
-    const contents = `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+    const contents = `CLASS zcl_foobar DEFINITION PUBLIC ABSTRACT CREATE PUBLIC.
         PUBLIC SECTION.
           METHODS foobar ABSTRACT.
       ENDCLASS.
@@ -253,7 +265,7 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("INTERFACES ABSTRACT METHODS", async () => {
+  it("INTERFACES ABSTRACT METHODS abstract class", async () => {
     const prog = `
 INTERFACE lcl_intf.
   METHODS method_name.
@@ -269,6 +281,24 @@ ENDCLASS.`;
     const issues = await runMulti([
       {filename: "zfoobar.prog.abap", contents: prog}]);
     expect(issues.length).to.equals(0);
+  });
+
+  it("INTERFACES ABSTRACT METHODS non-abstract class", async () => {
+    const prog = `
+INTERFACE lcl_intf.
+  METHODS method_name.
+ENDINTERFACE.
+
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lcl_intf ABSTRACT METHODS method_name.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(1);
   });
 
   it("class, local interface", async () => {
