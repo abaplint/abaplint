@@ -15,10 +15,12 @@ export class ReadEntities implements IStatement {
     const failed = seq("FAILED", Target);
     const reported = seq("REPORTED", Target);
 
+    const foo = seq(opt(seq("BY", AssociationName)),
+                    alt(fields, from, all),
+                    optPrio(result));
+
     const entity = seq("ENTITY", NamespaceSimpleName,
-                       opt(seq("BY", AssociationName)),
-                       alt(fields, from, all),
-                       optPrio(result));
+                       plus(foo));
 
     const s = seq("ENTITIES OF", NamespaceSimpleName,
                   opt("IN LOCAL MODE"),
