@@ -5,6 +5,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Version} from "../version";
+import {Statements} from "..";
+import {ExpressionNode} from "../abap/nodes";
 
 export class Parser702ChainingConf extends BasicRuleConfig {
 }
@@ -15,7 +17,7 @@ export class Parser702Chaining extends ABAPRule {
   public getMetadata(): IRuleMetadata {
     return {
       key: "parser_702_chaining",
-      title: "Parser Error, bad chanining on 702",
+      title: "Parser Error, bad chaining on 702",
       shortDescription:
 `ABAP on 702 does not allow for method chaining with IMPORTING/EXPORTING/CHANGING keywords,
 this rule finds these and reports errors.
@@ -63,13 +65,51 @@ Only active on target version 702 and below.`,
             || param.findDirectTokenByText("CHANGING")
             || param.findDirectTokenByText("EXCEPTIONS")) {
           const message = "This kind of method chaining not possible in 702";
-          const issue = Issue.atPosition(file, param.getFirstToken().getStart(), message, this.getMetadata().key, this.conf.severity);
-          issues.push(issue);
+          this.pushIssue(message, file, param, issues);
         }
+      }
+    }
+
+    // after a value assignment (move statement whose source is a method call, or method parameter assignment),
+    // there can't be any EXPORTING/IMPORTING/CHANGING/EXCEPTIONS
+    for (const statement of file.getStatements()) {
+      if (!(statement.get() instanceof Statements.Move)) {
+        continue;
+      }
+      const source = statement.findDirectExpression(Expressions.Source);
+      if (source === undefined) {
+        continue;
+      }
+      this.ensureSourceHasNoProceduralKeywords(source, file, issues);
+    }
+    for (const methodParameters of stru.findAllExpressions(Expressions.MethodParameters)) {
+      for (const params of methodParameters.findAllExpressions(Expressions.ParameterS)) {
+        const source = params.findDirectExpression(Expressions.Source);
+        if (source === undefined) {
+          continue;
+        }
+        this.ensureSourceHasNoProceduralKeywords(source, file, issues);
       }
     }
 
     return issues;
   }
 
+
+  private ensureSourceHasNoProceduralKeywords(source: ExpressionNode, file: ABAPFile, issues: Issue[]) {
+    const forbiddenTokens = ["EXPORTING", "IMPORTING", "CHANGING", "EXCEPTIONS"];
+    for (const param of source.findAllExpressions(Expressions.MethodParameters)) {
+      const usedForbiddenToken = forbiddenTokens.find(text => param.findDirectTokenByText(text));
+
+      if (usedForbiddenToken) {
+        const message = `Unexpected word ${usedForbiddenToken} in functional method call`;
+        this.pushIssue(message, file, param, issues);
+      }
+    }
+  }
+
+  private pushIssue(message: string, file: ABAPFile, node: ExpressionNode, issues: Issue[]) {
+    const issue = Issue.atPosition(file, node.getFirstToken().getStart(), message, this.getMetadata().key, this.conf.severity);
+    issues.push(issue);
+  }
 }
