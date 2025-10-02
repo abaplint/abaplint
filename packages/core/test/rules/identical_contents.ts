@@ -65,6 +65,18 @@ const tests = [
   ENDIF.`, cnt: 1},
 
   {abap: `
+IF 3 = bar.
+  gv_init = abap_true.
+  CALL SCREEN 2000.
+ELSEIF 1 = 2.
+  gv_init = abap_true.
+  CALL SCREEN 2000.
+ELSE.
+  gv_init = abap_true.
+  CALL SCREEN 2000.
+ENDIF.`, cnt: 1},
+
+  {abap: `
   IF lv_a = lv_b.
     lv_foo = lv_bar.
   ELSE.
