@@ -74,6 +74,9 @@ WRITE 'world'.`,
     const ifBody = node.findDirectStructure(Structures.Body);
     const elseIfBodies = node.findDirectStructures(Structures.ElseIf) || [];
     const elseBody = node.findDirectStructure(Structures.Else)?.findDirectStructure(Structures.Body);
+    if (elseBody === undefined) {
+      return [];
+    }
 
     const ifFirst = ifBody?.getFirstChild();
     const elseFirst = elseBody?.getFirstChild();

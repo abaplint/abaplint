@@ -111,6 +111,15 @@ ENDIF.`, cnt: 1},
     ENDLOOP.
   ENDIF.`, cnt: 0},
 
+  {abap: `
+    IF is_operation-request_body-schema_ref IS NOT INITIAL.
+      lv_str = |      body TYPE { find_schema( is_operation-request_body-schema_ref )-abap_name }|.
+      APPEND lv_str TO lt_list.
+    ELSEIF is_operation-request_body-schema IS NOT INITIAL.
+      lv_str = |      body TYPE { is_operation-request_body-schema->get_simple_type( ) }|.
+      APPEND lv_str TO lt_list.
+    ENDIF.`, cnt: 0},
+
 // with syntax error
   {abap: `
 IF lv_error = abap_false.
