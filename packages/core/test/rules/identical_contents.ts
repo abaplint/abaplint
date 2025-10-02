@@ -112,6 +112,21 @@ ENDIF.`, cnt: 1},
   ENDIF.`, cnt: 0},
 
   {abap: `
+    IF iv_length <= 191.
+      lv_octet = iv_length.
+      write_octet( lv_octet ).
+    ELSEIF iv_length <= 8383.
+      lv_octet = ( ( iv_length - 192 ) DIV 256 ) + 192.
+      write_octet( lv_octet ).
+      lv_octet = ( iv_length - 192 ) MOD 256.
+      write_octet( lv_octet ).
+    ELSE.
+      write_octet( 'FF' ).
+      lv_octet4 = iv_length.
+      write_octets( lv_octet4 ).
+    ENDIF.`, cnt: 0},
+
+  {abap: `
     IF is_operation-request_body-schema_ref IS NOT INITIAL.
       lv_str = |      body TYPE { find_schema( is_operation-request_body-schema_ref )-abap_name }|.
       APPEND lv_str TO lt_list.

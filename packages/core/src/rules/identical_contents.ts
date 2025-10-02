@@ -92,14 +92,21 @@ WRITE 'world'.`,
         const elseifFirst = elseifBody?.getFirstChild();
         const elseifLast = elseifBody?.getLastChild();
 
-        if (ifFirst === undefined || ifLast === undefined) {
+        if (ifFirst === undefined
+            || ifLast === undefined
+            || elseLast === undefined
+            || elseFirst === undefined) {
           return [];
         }
 
-        if (elseifFirst === undefined || ifFirst.concatTokens() !== elseifFirst.concatTokens()) {
+        if (elseifFirst === undefined
+            || ifFirst.concatTokens() !== elseifFirst.concatTokens()
+            || elseFirst.concatTokens() !== elseifFirst.concatTokens()) {
           firstMatch = false;
         }
-        if (elseifLast === undefined || ifLast.concatTokens() !== elseifLast.concatTokens()) {
+        if (elseifLast === undefined
+            || ifLast.concatTokens() !== elseifLast.concatTokens()
+            || elseLast.concatTokens() !== elseifLast.concatTokens()) {
           lastMatch = false;
         }
       }
