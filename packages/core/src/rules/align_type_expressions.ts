@@ -92,6 +92,7 @@ ENDINTERFACE.`,
 
     issues.push(...this.checkTypes(stru, file));
     issues.push(...this.checkMethods(stru, file));
+    issues.push(...this.checkEvents(stru, file));
 
     return issues;
   }
@@ -153,6 +154,29 @@ ENDINTERFACE.`,
           nameEnd: name.getLastToken().getEnd(),
           after: ret.findFirstExpression(Expressions.TypeParam)!.getFirstToken().getStart()});
         column = Math.max(column, name.getLastToken().getEnd().getCol() + 1);
+      }
+
+      issues.push(...this.check(fields, column, file));
+    }
+
+    return issues;
+  }
+
+  private checkEvents(stru: StructureNode, file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
+
+    const events = stru.findAllStatements(Statements.Events);
+    for (const e of events) {
+      const fields: fields = [];
+      const params = e.findAllExpressions(Expressions.MethodParam);
+      let column = 0;
+      for (const p of params) {
+        const children = p.getChildren();
+        const name = children[children.length - 2];
+        fields.push({
+          nameEnd: name.getLastToken().getEnd(),
+          after: p.findFirstExpression(Expressions.TypeParam)!.getFirstToken().getStart()});
+        column = Math.max(column, name.getFirstToken().getEnd().getCol() + 1);
       }
 
       issues.push(...this.check(fields, column, file));

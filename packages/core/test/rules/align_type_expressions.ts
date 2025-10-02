@@ -137,4 +137,23 @@ TYPES: BEGIN OF foo,
     testFix(input, expected);
   });
 
+  it("Align EVENTS TYPE", async () => {
+    const input = `
+INTERFACE lif.
+  EVENTS sapevent
+    EXPORTING
+      VALUE(action) TYPE c OPTIONAL
+      VALUE(query_table) TYPE any OPTIONAL.
+ENDINTERFACE.`;
+
+    const expected = `
+INTERFACE lif.
+  EVENTS sapevent
+    EXPORTING
+      VALUE(action)      TYPE c OPTIONAL
+      VALUE(query_table) TYPE any OPTIONAL.
+ENDINTERFACE.`;
+    testFix(input, expected);
+  });
+
 });
