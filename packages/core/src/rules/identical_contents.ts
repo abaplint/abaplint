@@ -54,6 +54,7 @@ WRITE 'world'.`,
     if (structure === undefined) {
       return [];
     }
+
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Unknown) {
         return []; // contains parser errors
@@ -70,22 +71,58 @@ WRITE 'world'.`,
 ////////////////
 
   private analyzeIf(file: ABAPFile, node: StructureNode): Issue[] {
-    if (node.getChildren().length !== 4) {
+    const ifBody = node.findDirectStructure(Structures.Body);
+    const elseIfBodies = node.findDirectStructures(Structures.ElseIf) || [];
+    const elseBody = node.findDirectStructure(Structures.Else)?.findDirectStructure(Structures.Body);
+    if (elseBody === undefined) {
       return [];
     }
 
-    const ifBody = node.findDirectStructure(Structures.Body);
-    if (node.findDirectStructure(Structures.ElseIf)) {
+    const ifFirst = ifBody?.getFirstChild();
+    const elseFirst = elseBody?.getFirstChild();
+
+    const ifLast = ifBody?.getLastChild();
+    const elseLast = elseBody?.getLastChild();
+
+    if (elseIfBodies.length > 0) {
+      let firstMatch = true;
+      let lastMatch = true;
+      for (const elseif of elseIfBodies) {
+        const elseifBody = elseif.findDirectStructure(Structures.Body);
+        const elseifFirst = elseifBody?.getFirstChild();
+        const elseifLast = elseifBody?.getLastChild();
+
+        if (ifFirst === undefined
+            || ifLast === undefined
+            || elseLast === undefined
+            || elseFirst === undefined) {
+          return [];
+        }
+
+        if (elseifFirst === undefined
+            || ifFirst.concatTokens() !== elseifFirst.concatTokens()
+            || elseFirst.concatTokens() !== elseifFirst.concatTokens()) {
+          firstMatch = false;
+        }
+        if (elseifLast === undefined
+            || ifLast.concatTokens() !== elseifLast.concatTokens()
+            || elseLast.concatTokens() !== elseifLast.concatTokens()) {
+          lastMatch = false;
+        }
+      }
+
+      if (firstMatch === true || lastMatch === true) {
+        const message = "Identical contents";
+        const issue = Issue.atToken(file, node.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
+        return [issue];
+      }
+
       return [];
-    }
-    const elseBody = node.findDirectStructure(Structures.Else)?.findDirectStructure(Structures.Body);
-    if (elseBody === undefined || ifBody === undefined) {
+    } else if (elseBody === undefined || ifBody === undefined) {
       return [];
     }
 
     {
-      const ifFirst = ifBody.getFirstChild();
-      const elseFirst = elseBody.getFirstChild();
       if (ifFirst === undefined || elseFirst === undefined || this.isChained(ifFirst)) {
         return [];
       } else if (ifFirst.concatTokens() === elseFirst.concatTokens()) {
@@ -96,8 +133,6 @@ WRITE 'world'.`,
     }
 
     {
-      const ifLast = ifBody.getLastChild();
-      const elseLast = elseBody.getLastChild();
       if (ifLast === undefined || elseLast === undefined || this.isChained(ifLast)) {
         return [];
       } else if (ifLast.concatTokens() === elseLast.concatTokens()) {

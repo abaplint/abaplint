@@ -17,9 +17,10 @@ export class ModifyEntities implements IStatement {
     const updateFrom = seq("UPDATE FROM", Source, opt(relating));
     const deleteFrom = seq("DELETE FROM", Source);
     const updateFields = seq("UPDATE", fieldsWith);
+    const updateSetFields = seq("UPDATE SET FIELDS WITH", Source);
 
     const operation = alt(
-      seq("UPDATE SET FIELDS WITH", Source),
+      updateSetFields,
       seq("CREATE SET FIELDS WITH", Source),
       updateFields,
       deleteFrom,
@@ -49,7 +50,7 @@ export class ModifyEntities implements IStatement {
     const entity = seq("ENTITY",
                        opt("IN LOCAL MODE"),
                        alt(NamespaceSimpleName, EntityAssociation),
-                       alt(execute, create, updateFields, deleteFrom, updateFrom, create2, create3, create4));
+                       alt(execute, create, updateFields, deleteFrom, updateSetFields, updateFrom, create2, create3, create4));
 
     return ver(Version.v754, seq("MODIFY", alt(entities, entity), end));
   }

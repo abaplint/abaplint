@@ -171,6 +171,13 @@ const tests = [
     mapped   data(lt_mapped)
     failed   data(lt_failed)
     reported data(lt_reported).`,
+
+  `MODIFY ENTITY  /foo/bar
+      UPDATE
+      SET FIELDS WITH lt_update
+      MAPPED DATA(mapped_resp)
+      FAILED DATA(failed_resp)
+      REPORTED DATA(reported_resp).`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);

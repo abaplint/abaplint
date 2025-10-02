@@ -5,7 +5,7 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 export class CDSFunctionInput extends Expression {
   public getRunnable(): IStatementRunnable {
     const qualified = seq(CDSName, opt(CDSParameters), starPrio(seq(".", CDSName, opt(CDSParameters))));
-    const input = altPrio(CDSCast, CDSFunction, CDSArithmetics, CDSCase, CDSString, qualified, CDSInteger);
+    const input = altPrio(CDSArithmetics, CDSCast, CDSFunction, CDSCase, CDSString, qualified, CDSInteger);
 
     return input;
   }

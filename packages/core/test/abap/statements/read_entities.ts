@@ -110,6 +110,20 @@ const tests = [
                 all fields with value #( ) result data(lt_assumption)
       by \\_bus all fields with value #( ) result data(lt_bus)
       by \\_car all fields with value #( ) result data(lt_car).`,
+
+  `read entities of /foo/bar in local mode
+      entity theName
+             all fields
+               with value #( )
+             result data(lt_res1)
+
+       by \\_bar
+        fields ( field1 field2 )
+            with value #( )
+        result data(lt_res2)
+
+       failed failed
+       reported reported.`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);

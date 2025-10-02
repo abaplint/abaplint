@@ -65,6 +65,18 @@ const tests = [
   ENDIF.`, cnt: 1},
 
   {abap: `
+IF 3 = bar.
+  gv_init = abap_true.
+  CALL SCREEN 2000.
+ELSEIF 1 = 2.
+  gv_init = abap_true.
+  CALL SCREEN 2000.
+ELSE.
+  gv_init = abap_true.
+  CALL SCREEN 2000.
+ENDIF.`, cnt: 1},
+
+  {abap: `
   IF lv_a = lv_b.
     lv_foo = lv_bar.
   ELSE.
@@ -98,6 +110,30 @@ const tests = [
       WRITE: AT /5 lv_package.
     ENDLOOP.
   ENDIF.`, cnt: 0},
+
+  {abap: `
+    IF iv_length <= 191.
+      lv_octet = iv_length.
+      write_octet( lv_octet ).
+    ELSEIF iv_length <= 8383.
+      lv_octet = ( ( iv_length - 192 ) DIV 256 ) + 192.
+      write_octet( lv_octet ).
+      lv_octet = ( iv_length - 192 ) MOD 256.
+      write_octet( lv_octet ).
+    ELSE.
+      write_octet( 'FF' ).
+      lv_octet4 = iv_length.
+      write_octets( lv_octet4 ).
+    ENDIF.`, cnt: 0},
+
+  {abap: `
+    IF is_operation-request_body-schema_ref IS NOT INITIAL.
+      lv_str = |      body TYPE { find_schema( is_operation-request_body-schema_ref )-abap_name }|.
+      APPEND lv_str TO lt_list.
+    ELSEIF is_operation-request_body-schema IS NOT INITIAL.
+      lv_str = |      body TYPE { is_operation-request_body-schema->get_simple_type( ) }|.
+      APPEND lv_str TO lt_list.
+    ENDIF.`, cnt: 0},
 
 // with syntax error
   {abap: `
