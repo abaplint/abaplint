@@ -653,7 +653,7 @@ ENDCLASS.
 
 CLASS lcl_redef DEFINITION INHERITING FROM lcl_abstract.
   PUBLIC SECTION.
-    METHODS lif~abs REDEFINITION.
+    METHODS lif~abs redefinition.
 ENDCLASS.
 CLASS lcl_redef IMPLEMENTATION.
   METHOD lif~abs.
