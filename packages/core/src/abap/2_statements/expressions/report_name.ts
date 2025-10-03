@@ -4,6 +4,6 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class ReportName extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(reg(/^[\w/$%]+$/), star(seq(tok(Dash), reg(/^\w+$/))));
+    return seq(reg(/^[\w/$%&]+$/), star(seq(tok(Dash), reg(/^\w+$/))));
   }
 }
