@@ -497,6 +497,15 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     AND \\_foo\\_bar-top IN @mt_top
     GROUP BY (mv_sql_group)
     INTO CORRESPONDING FIELDS OF TABLE @mt_result.`,
+
+  `SELECT matnr,
+               CASE @me->mode
+                WHEN 'I' THEN 'I'
+                WHEN 'D' THEN ' '
+               END AS activity
+        INTO TABLE @tab
+        FROM ztab.`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
