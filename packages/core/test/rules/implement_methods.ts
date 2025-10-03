@@ -615,4 +615,53 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("ok, redefinition of abstract method", async () => {
+    const prog = `
+CLASS lcl_abstract DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS abs ABSTRACT.
+ENDCLASS.
+CLASS lcl_abstract IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_redef DEFINITION INHERITING FROM lcl_abstract.
+  PUBLIC SECTION.
+    METHODS abs REDEFINITION.
+ENDCLASS.
+CLASS lcl_redef IMPLEMENTATION.
+  METHOD abs.
+  ENDMETHOD.
+ENDCLASS.
+`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok, redefinition of abstract method via interface", async () => {
+    const prog = `
+INTERFACE lif.
+  METHODS ABS.
+ENDINTERFACE.
+
+CLASS lcl_abstract DEFINITION abstract.
+  PUBLIC SECTION.
+    INTERFACES lif abstract METHODS abs.
+ENDCLASS.
+CLASS lcl_abstract IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_redef DEFINITION INHERITING FROM lcl_abstract.
+  PUBLIC SECTION.
+    METHODS lif~abs redefinition.
+ENDCLASS.
+CLASS lcl_redef IMPLEMENTATION.
+  METHOD lif~abs.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

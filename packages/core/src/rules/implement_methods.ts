@@ -100,8 +100,8 @@ export class ImplementMethods extends ABAPRule {
         if (def.isAbstract) {
           continue;
         } else {
-          const message = "Abstract methods can only be defined in abstract classes.";
-          const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
+          const message = "Abstract methods can only be defined in abstract classes, " + md.name;
+          const issue = Issue.atIdentifier(md.identifier, message, this.getMetadata().key, this.conf.severity);
           ret.push(issue);
           break;
         }
@@ -225,10 +225,13 @@ export class ImplementMethods extends ABAPRule {
           if (def.isAbstract) {
             continue;
           } else {
-            const message = "Abstract methods can only be defined in abstract classes.";
-            const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
+            // there is some bug here, which I cannot reproduce right now
+            /*
+            const message = "Abstract methods can only be defined in abstract classes, " + m.method.name;
+            const issue = Issue.atIdentifier(m.method.identifier, message, this.getMetadata().key, this.conf.severity);
             ret.push(issue);
             break;
+            */
           }
         }
 
