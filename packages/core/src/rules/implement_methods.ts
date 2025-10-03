@@ -225,7 +225,7 @@ export class ImplementMethods extends ABAPRule {
           if (def.isAbstract) {
             continue;
           } else {
-            const message = "Abstract methods can only be defined in abstract interfaces";
+            const message = "Abstract methods can only be defined in abstract classes, " + m.method.name;
             const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
             ret.push(issue);
             break;
