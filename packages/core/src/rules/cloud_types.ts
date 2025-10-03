@@ -63,6 +63,7 @@ export class CloudTypes implements IRule {
       || obj instanceof Objects.ApplicationLogObject
       || obj instanceof Objects.CommunicationScenario
       || obj instanceof Objects.DataControl
+      || obj instanceof Objects.Namespace
       || obj instanceof Objects.KnowledgeTransferDocument
       || obj instanceof Objects.DataDefinition
       || obj instanceof Objects.DataElement

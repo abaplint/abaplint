@@ -30,6 +30,8 @@ export class Submit implements IStatement {
     const cover = seq("SAP COVER PAGE", Source);
     const copies = seq("COPIES", Source);
     const datasetExpiration = seq("DATASET EXPIRATION", Source);
+    const coverText = seq("COVER TEXT", Source);
+    const listName = seq("LIST NAME", Source);
 
     const keep = seq("KEEP IN SPOOL", Source);
     const imm = seq("IMMEDIATELY", Source);
@@ -51,6 +53,8 @@ export class Submit implements IStatement {
                      imm,
                      layout,
                      dest,
+                     coverText,
+                     listName,
                      language,
                      free,
                      newList,
