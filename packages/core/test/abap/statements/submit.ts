@@ -66,6 +66,16 @@ const tests = [
     WITH SELECTION-TABLE lt_seltab
     WITH  p_name   = space
     WITH  p_print  = 'ZMOO'.`,
+
+  `SUBMIT zfoo
+TO SAP-SPOOL
+LINE-COUNT 65
+LINE-SIZE  200
+LIST NAME c_text1
+COVER TEXT  text
+NEW LIST IDENTIFICATION 'X'
+WITHOUT SPOOL DYNPRO
+AND RETURN.`,
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);
