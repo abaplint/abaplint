@@ -5,6 +5,7 @@ import {IncludeGraph} from "../utils/include_graph";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
+import {Program} from "../objects";
 
 export class CheckIncludeConf extends BasicRuleConfig {
 }
@@ -22,7 +23,8 @@ export class CheckInclude implements IRule {
       extendedInformation: `
 * Reports unused includes
 * Errors if the includes are not found
-* Error if including a main program`,
+* Error if including a main program
+* Skips ZX* includes`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -43,6 +45,10 @@ export class CheckInclude implements IRule {
 
   public run(obj: IObject): readonly Issue[] {
     if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    if (obj instanceof Program && obj.isInclude() === true && obj.getName().startsWith("ZX")) {
       return [];
     }
 
