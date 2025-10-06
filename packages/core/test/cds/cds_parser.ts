@@ -1284,4 +1284,20 @@ where
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("from without AS is okay", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'zhvam2'
+define view zhvam as select from t100 sdf
+{
+    sprsl as Sprsl,
+    sdf.arbgb as Arbgb,
+    msgnr as Msgnr,
+    text as Text
+}
+`;
+    const file = new MemoryFile("zhvam.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
