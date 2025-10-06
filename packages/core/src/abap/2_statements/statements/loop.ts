@@ -10,7 +10,7 @@ export class Loop implements IStatement {
   public getMatcher(): IStatementRunnable {
     const where = seq("WHERE", alt(ComponentCond, Dynamic));
 
-    const group = ver(Version.v740sp08, seq("GROUP BY", LoopGroupBy));
+    const group = ver(Version.v740sp08, seq("GROUP BY", LoopGroupBy), Version.OpenABAP);
 
     const step = ver(Version.v757, seq("STEP", Source));
 
@@ -24,7 +24,7 @@ export class Loop implements IStatement {
 
     const at = seq("AT",
                    opt(seq("SCREEN", failCombinator())),
-                   opt(ver(Version.v740sp08, "GROUP")),
+                   opt(ver(Version.v740sp08, "GROUP", Version.OpenABAP)),
                    LoopSource,
                    opt(options));
 

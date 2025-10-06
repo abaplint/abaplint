@@ -16,7 +16,6 @@ export class CDSParser {
 
     let tokens = CDSLexer.run(file);
     tokens = tokens.filter(t => !(t instanceof Comment));
-    // console.dir(tokens);
 
     let res = Combi.run(new Expressions.CDSDefineView(), tokens, defaultVersion);
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {

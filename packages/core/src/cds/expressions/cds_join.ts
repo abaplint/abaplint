@@ -7,6 +7,6 @@ export class CDSJoin extends Expression {
   public getRunnable(): IStatementRunnable {
     const cond = seq(CDSSource, "ON", CDSCondition);
     const foo = altPrio(seq("(", cond, ")"), cond);
-    return seq(optPrio(altPrio("LEFT OUTER TO ONE", "LEFT OUTER", "INNER", "CROSS", "RIGHT OUTER")), "JOIN", foo);
+    return seq(optPrio(altPrio("LEFT OUTER TO ONE", "LEFT OUTER", "INNER", "CROSS", "RIGHT OUTER")), "JOIN", altPrio(foo, CDSSource));
   }
 }

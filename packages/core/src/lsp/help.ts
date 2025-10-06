@@ -54,7 +54,7 @@ export class Help {
       const tokens = CDSLexer.run(file);
       content += `<h3>Tokens</h3>\n<pre>\n`;
       for (const t of tokens) {
-        content += JSON.stringify(t) + "\n";
+        content += JSON.stringify(t) + " " + t.constructor.name + "\n";
       }
       content += `</pre>\n`;
     }

@@ -1254,4 +1254,64 @@ define view entity ZACB_C_Label as projection on ZACB_I_Label
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("cross join", () => {
+    const cds = `
+define view entity /foo/moo
+  as select from /foo/foo1 as foo1
+    cross join   /foo/foo2 as foo2
+{
+  key foo1.field1,
+      foo2.field2
+}`;
+    const file = new MemoryFile("#foo#moo.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("abap.char", () => {
+    const cds = `
+define view entity moo
+  as select distinct from bar
+{
+  key foo1,
+      bar as Short
+}
+where
+  Valid = abap.char'X'
+`;
+    const file = new MemoryFile("moo.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("from without AS is okay", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'zhvam2'
+define view zhvam as select from t100 sdf
+{
+    sprsl as Sprsl,
+    sdf.arbgb as Arbgb,
+    msgnr as Msgnr,
+    text as Text
+}
+`;
+    const file = new MemoryFile("zhvam.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
+  it("double dash comment, without whitespace", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'zhvam2'
+define view zhvam as select from t100
+{
+    sprsl as Sprsl,
+    text as Text--bar
+}
+`;
+    const file = new MemoryFile("zhvam.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
