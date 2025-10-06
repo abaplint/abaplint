@@ -1268,4 +1268,20 @@ define view entity /foo/moo
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("abap.char", () => {
+    const cds = `
+define view entity moo
+  as select distinct from bar
+{
+  key foo1,
+      bar as Short
+}
+where
+  Valid = abap.char'X'
+`;
+    const file = new MemoryFile("moo.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
