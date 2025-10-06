@@ -1300,4 +1300,18 @@ define view zhvam as select from t100 sdf
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("double dash comment, without whitespace", () => {
+    const cds = `
+@AbapCatalog.sqlViewName: 'zhvam2'
+define view zhvam as select from t100
+{
+    sprsl as Sprsl,
+    text as Text--bar
+}
+`;
+    const file = new MemoryFile("zhvam.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });

@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {CDSLexer} from "../../src/cds/cds_lexer";
 import {MemoryFile} from "../../src/files/memory_file";
-import {Comment} from "../../src/abap/1_lexer/tokens";
+import {Comment, Identifier} from "../../src/abap/1_lexer/tokens";
 
 describe("CDS Lexer", () => {
 
@@ -111,6 +111,15 @@ define view zhvamfoocust as select from zhvam_cust
     const result = CDSLexer.run(file);
     expect(result.length).to.equal(8);
     expect(result[4].getStr()).to.equal(">");
+  });
+
+  it("dash dash comment without whitespace", () => {
+    const cds = `foo--comment`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const result = CDSLexer.run(file);
+    expect(result.length).to.equal(2);
+    expect(result[0]).to.be.instanceof(Identifier);
+    expect(result[1]).to.be.instanceof(Comment);
   });
 
 });
