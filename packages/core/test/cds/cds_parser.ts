@@ -1254,4 +1254,18 @@ define view entity ZACB_C_Label as projection on ZACB_I_Label
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("cross join", () => {
+    const cds = `
+define view entity /foo/moo
+  as select from /foo/foo1 as foo1
+    cross join   /foo/foo2 as foo2
+{
+  key foo1.field1,
+      foo2.field2
+}`;
+    const file = new MemoryFile("#foo#moo.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.not.equal(undefined);
+  });
+
 });
