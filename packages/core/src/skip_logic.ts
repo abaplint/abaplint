@@ -98,12 +98,8 @@ export class SkipLogic {
     if (this.tobj === undefined) {
       this.tobj = {};
 
-      for (const obj of this.reg.getObjects()) {
-        if (obj.getType() !== "TOBJ") {
-          continue;
-        }
-        const tobj = obj as MaintenanceAndTransportObject;
-        const area = tobj.getArea()?.toUpperCase();
+      for (const tobj of this.reg.getObjectsByType("TOBJ")) {
+        const area = (tobj as MaintenanceAndTransportObject).getArea()?.toUpperCase();
         if (area) {
           this.tobj[area] = true;
         }
