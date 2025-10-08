@@ -11680,4 +11680,15 @@ SELECT SINGLE FROM t100 FIELDS
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, ranges", () => {
+    const abap = `
+TYPES ty_char4 TYPE c LENGTH 4.
+DATA lt_range TYPE RANGE OF ty_char4.
+lt_range = VALUE #( sign = 'I'
+  option = 'EQ' ( low  = 'ABCD' )
+  option = 'BT' ( low  = '1111' high = '2222' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
