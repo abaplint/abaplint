@@ -405,6 +405,30 @@ EXPORT values = lt_values TO DATABASE rsix(zz) FROM lv_test ID lv_id.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CLEAR", async () => {
+    const abap = `
+    DATA bar TYPE abap_bool.
+    CLEAR bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("FREE", async () => {
+    const abap = `
+    DATA bar TYPE abap_bool.
+    FREE bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("REFRESH", async () => {
+    const abap = `
+    DATA bar TYPE abap_bool.
+    REFRESH bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Table expression", async () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF i.
