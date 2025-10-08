@@ -69,6 +69,10 @@ DATA END OF foo.`,
       if (t.getChildren().length !== 3) {
         continue;
       }
+      const data = t.findFirstStatement(Statements.DataBegin);
+      if (data?.findDirectTokenByText("OCCURS")) {
+        continue;
+      }
       if (t.findFirstStatement(Statements.IncludeType)) {
         const token = t.getFirstToken();
         const message = "DATA BEGIN with single INCLUDE";
