@@ -68,6 +68,8 @@ import {Do} from "./statements/do";
 import {Concatenate} from "./statements/concatenate";
 import {CallFunction} from "./statements/call_function";
 import {Clear} from "./statements/clear";
+import {Refresh} from "./statements/refresh";
+import {Free} from "./statements/free";
 import {Replace} from "./statements/replace";
 import {GetBit} from "./statements/get_bit";
 import {Raise} from "./statements/raise";
@@ -197,6 +199,8 @@ if (Object.keys(map).length === 0) {
   addToMap(new DeleteInternal());
   addToMap(new DeleteCluster());
   addToMap(new Clear());
+  addToMap(new Free());
+  addToMap(new Refresh());
   addToMap(new Receive());
   addToMap(new GetBit());
   addToMap(new ClassLocalFriends());
