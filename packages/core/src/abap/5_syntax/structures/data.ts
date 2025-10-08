@@ -10,8 +10,8 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {IncludeType} from "../statements/include_type";
-import { Constant } from "../statements/constant";
-import { Constants } from "./constants";
+import {Constant} from "../statements/constant";
+import {Constants} from "./constants";
 
 export class Data {
   public static runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
