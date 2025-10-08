@@ -11691,4 +11691,17 @@ lt_range = VALUE #( sign = 'I'
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("include structure, voided headered table", () => {
+    const abap = `
+DATA BEGIN OF tab OCCURS 10.
+INCLUDE STRUCTURE voided.
+DATA END OF tab.
+
+DATA BEGIN OF foo.
+INCLUDE STRUCTURE tab.
+DATA END OF foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
