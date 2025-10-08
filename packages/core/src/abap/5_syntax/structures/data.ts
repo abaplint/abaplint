@@ -48,46 +48,6 @@ export class Data {
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
         // INCLUDES
-        /*
-        const typeToken = c.findFirstExpression(Expressions.TypeName)?.getFirstToken();
-        const typeName = typeToken?.getStr();
-
-        let foundId = input.scope.findType(typeName);
-        if (foundId === undefined) {
-          foundId = input.scope.findVariable(typeName);
-        }
-
-        let found = foundId?.getType();
-        if (found === undefined) {
-          const f = input.scope.getDDIC().lookupTableOrView(typeName).type;
-          if (f instanceof TypedIdentifier) {
-            found = f.getType();
-          } else {
-            found = f;
-          }
-        } else {
-          input.scope.addReference(typeToken, foundId, ReferenceType.TypeReference, input.filename);
-        }
-        if (found instanceof Basic.VoidType) {
-          if (table === true) {
-            const ttyp = new Basic.TableType(found, {withHeader: true, keyType: Basic.TableKeyType.default});
-            return new TypedIdentifier(name, input.filename, ttyp);
-          } else {
-            return new TypedIdentifier(name, input.filename, found);
-          }
-        }
-        if (found instanceof Basic.UnknownType) {
-          return new TypedIdentifier(name, input.filename, new Basic.UnknownType("unknown type, " + typeName));
-        }
-        if (found instanceof Basic.TableType && found.isWithHeader()) {
-          found = found.getRowType();
-        }
-        if (!(found instanceof Basic.StructureType)) {
-          const message = "not structured, " + typeName;
-          input.issues.push(syntaxIssue(input, typeToken!, message));
-          return new TypedIdentifier(name, input.filename, Basic.VoidType.get(CheckSyntaxKey));
-        }
-*/
         const found = new IncludeType().runSyntax(c, input);
         if (found instanceof Basic.VoidType) {
           if (table === true) {
