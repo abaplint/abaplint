@@ -534,10 +534,10 @@ export class BasicTypes {
         sub = node.findFirstExpression(Expressions.TypeParam);
       }
       if (sub === undefined) {
-        sub = node.findFirstExpression(Expressions.FieldChain);
+        sub = node.findFirstExpression(Expressions.TypeName);
       }
       if (sub === undefined) {
-        sub = node.findFirstExpression(Expressions.TypeName);
+        sub = node.findFirstExpression(Expressions.FieldChain);
       }
       found = this.resolveLikeName(sub);
 

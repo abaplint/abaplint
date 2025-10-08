@@ -2398,7 +2398,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("parameters default sub", () => {
+  it("parameters default sub", () => {
     const abap = `
 TABLES foobar.
 PARAMETERS p_gjahr LIKE foobar-gjahr OBLIGATORY DEFAULT sy-datum(4).`;
