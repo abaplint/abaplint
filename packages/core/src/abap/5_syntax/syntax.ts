@@ -152,6 +152,7 @@ import {ModifyEntities} from "./statements/modify_entities";
 import {CommitEntities} from "./statements/commit_entities";
 import {CheckSyntaxKey, SyntaxInput} from "./_syntax_input";
 import {AssertError} from "./assert_error";
+import {FieldGroup} from "./statements/field_group";
 
 // -----------------------------------
 
@@ -284,6 +285,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Translate());
   addToMap(new ModifyInternal());
   addToMap(new ReadTextpool());
+  addToMap(new FieldGroup());
   addToMap(new EditorCall());
   addToMap(new DeleteMemory());
 }
