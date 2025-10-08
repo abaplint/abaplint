@@ -11658,4 +11658,15 @@ APPEND CORRESPONDING #( BASE ( VALUE #(
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT, CASE ELSE, okay", () => {
+    const abap = `
+DATA foo TYPE c LENGTH 10.
+SELECT SINGLE FROM t100 FIELDS
+  CASE WHEN arbgb = ' ' THEN @foo ELSE arbgb END
+  AS alias
+  INTO @DATA(sdf).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

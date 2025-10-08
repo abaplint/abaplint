@@ -510,6 +510,7 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   `SELECT ( arbgb ) FROM t100 INTO TABLE @DATA(sdf).`,
   `SELECT ( arbgb ) AS bar FROM t100 INTO TABLE @DATA(sdf).`,
   `SELECT ( arbgb ), text AS bar FROM t100 INTO TABLE @DATA(sdf).`,
+//  `SELECT ( 'F' && arbgb ) AS bar FROM t100 INTO TABLE @<tab>.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
