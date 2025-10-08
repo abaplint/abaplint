@@ -11293,6 +11293,17 @@ WRITE bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("basic DATA COMMON PART, constants", () => {
+    const abap = `
+DATA BEGIN OF COMMON PART zsdf.
+CONSTANTS yes TYPE c LENGTH 1 VALUE 'X'.
+DATA END OF COMMON PART zsdf.
+
+WRITE / yes.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("read with header line is okay", () => {
     const abap = `
 DATA: BEGIN OF tab OCCURS 0,
