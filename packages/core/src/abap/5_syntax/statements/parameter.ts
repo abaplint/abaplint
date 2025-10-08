@@ -34,7 +34,6 @@ export class Parameter implements StatementSyntax {
 
     const magicName = "%_" + nameToken.getStr() + "_%_app_%";
     const magicToken = new Identifier(nameToken.getStart(), magicName);
-    input.scope.addIdentifier(new TypedIdentifier(magicToken, input.filename, VoidType.get("PARAMETER magic")));
-
+    input.scope.addIdentifier(new TypedIdentifier(magicToken, input.filename, VoidType.get("PARAMETER-MAGIC")));
   }
 }

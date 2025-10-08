@@ -2398,4 +2398,13 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("parameters default sub", () => {
+    const abap = `
+TABLES foobar.
+PARAMETERS p_gjahr LIKE foobar-gjahr OBLIGATORY DEFAULT sy-datum(4).`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

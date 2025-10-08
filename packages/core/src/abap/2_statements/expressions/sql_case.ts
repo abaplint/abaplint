@@ -20,7 +20,7 @@ export class SQLCase extends Expression {
                           Constant);
     const sub = seq(altPrio("+", "-", "*", "/", "&&"), optPrio(tok(WParenLeftW)), field, optPrio(tok(WParenRightW)));
 
-    const sourc = altPrio(SQLCase, SQLAggregation, SQLFunction, SQLSource, Constant);
+    const sourc = altPrio(SQLCase, SQLAggregation, SQLFunction, SQLFieldName, SQLSource, Constant);
     const val = altPrio(SQLCond, Constant, abap);
     const when = seq("WHEN", val, "THEN", sourc, starPrio(sub));
     const els = seq("ELSE", sourc);

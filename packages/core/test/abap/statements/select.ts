@@ -506,6 +506,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
         INTO TABLE @tab
         FROM ztab.`,
 
+  `SELECT CAST( arbgb AS DATS ) AS foo FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT ( arbgb ) FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT ( arbgb ) AS bar FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT ( arbgb ), text AS bar FROM t100 INTO TABLE @DATA(sdf).`,
+//  `SELECT ( 'F' && arbgb ) AS bar FROM t100 INTO TABLE @<tab>.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
@@ -537,6 +542,8 @@ const versionsFail = [
   {abap: `SELECT foo bar, moo
   FROM ztab INTO TABLE @DATA(tab)
   ORDER BY PRIMARY KEY.`, ver: Version.v750},
+  {abap: `SELECT ( arbgb, text ) AS bar FROM t100 INTO TABLE @DATA(sdf).`, ver: Version.v750},
+  {abap: `SELECT ( arbgb AS bar ) FROM t100 INTO TABLE @DATA(sdf).`, ver: Version.v750},
 ];
 
 statementVersionFail(versionsFail, "SELECT");

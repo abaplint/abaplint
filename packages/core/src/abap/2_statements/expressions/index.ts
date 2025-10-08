@@ -163,6 +163,7 @@ export * from "./sql_arithmetic_operator";
 export * from "./sql_arithmetics";
 export * from "./sql_as_name";
 export * from "./sql_case";
+export * from "./sql_cast";
 export * from "./sql_cds_parameters";
 export * from "./sql_client";
 export * from "./sql_compare_operator";

@@ -36,14 +36,17 @@ export class ValueBody {
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
       FieldAssignment.runSyntax(s, input, targetType);
 
-      const fieldname = s.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
-      if (fieldname) {
-        if (fields.has(fieldname)) {
-          const message = "Duplicate field assignment";
-          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
-          return VoidType.get(CheckSyntaxKey);
+      if (node.findDirectExpression(Expressions.ValueBodyLine) === undefined) {
+        // todo: refine, still needs to be checked when there are table lines
+        const fieldname = s.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
+        if (fieldname) {
+          if (fields.has(fieldname)) {
+            const message = "Duplicate field assignment";
+            input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
+          fields.add(fieldname);
         }
-        fields.add(fieldname);
       }
     }
 

@@ -11293,6 +11293,17 @@ WRITE bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("basic DATA COMMON PART, constants", () => {
+    const abap = `
+DATA BEGIN OF COMMON PART zsdf.
+CONSTANTS yes TYPE c LENGTH 1 VALUE 'X'.
+DATA END OF COMMON PART zsdf.
+
+WRITE / yes.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("read with header line is okay", () => {
     const abap = `
 DATA: BEGIN OF tab OCCURS 0,
@@ -11654,6 +11665,28 @@ DATA ls_row LIKE LINE OF lt_res.
 
 APPEND CORRESPONDING #( BASE ( VALUE #(
   value1 = 1 ) ) ls_row ) TO lt_res.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT, CASE ELSE, okay", () => {
+    const abap = `
+DATA foo TYPE c LENGTH 10.
+SELECT SINGLE FROM t100 FIELDS
+  CASE WHEN arbgb = ' ' THEN @foo ELSE arbgb END
+  AS alias
+  INTO @DATA(sdf).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, ranges", () => {
+    const abap = `
+TYPES ty_char4 TYPE c LENGTH 4.
+DATA lt_range TYPE RANGE OF ty_char4.
+lt_range = VALUE #( sign = 'I'
+  option = 'EQ' ( low  = 'ABCD' )
+  option = 'BT' ( low  = '1111' high = '2222' ) ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
