@@ -2407,7 +2407,7 @@ PARAMETERS p_gjahr LIKE foobar-gjahr OBLIGATORY DEFAULT sy-datum(4).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("INCLUDE STRUCTURE data", () => {
+  it("INCLUDE STRUCTURE data", () => {
     const abap = `
 DATA: BEGIN OF zedi_pos,
         xfii TYPE x LENGTH 2,

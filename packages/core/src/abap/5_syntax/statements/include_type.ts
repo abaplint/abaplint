@@ -23,6 +23,8 @@ export class IncludeType {
       if (found) {
         ityp = found;
       }
+    } else if (ityp instanceof UnknownType) {
+      ityp = input.scope.findVariable(name)?.getType() ?? ityp;
     }
 
     const as = node.findExpressionAfterToken("AS")?.concatTokens();
