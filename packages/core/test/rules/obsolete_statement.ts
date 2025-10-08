@@ -80,6 +80,9 @@ END OF li_order.`, cnt: 1, fix: false},
   {abap: "INSERT zfoo CLIENT SPECIFIED.", cnt: 1},
   {abap: "FORM foo DEFINITION.", cnt: 1},
   {abap: "FORM foo IMPLEMENTATION. ENDFORM.", cnt: 1},
+  {abap: `DATA BEGIN OF COMMON PART zsdf.
+CONSTANTS yes TYPE c LENGTH 1 VALUE 'X'.
+DATA END OF COMMON PART zsdf.`, cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);

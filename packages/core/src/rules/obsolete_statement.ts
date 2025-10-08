@@ -70,6 +70,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public formDefinition: boolean = true;
   /** Check for FORM IMPLEMENTATION */
   public formImplementation: boolean = true;
+  /** Check for COMMON PART */
+  public commonPart: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -183,6 +185,11 @@ ENDIF.`,
 
       if (this.conf.communication && sta instanceof Statements.Communication) {
         const issue = Issue.atStatement(file, staNode, "COMMUNICATION is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.commonPart && sta instanceof Statements.DataBegin && staNode.findDirectTokenByText("COMMON PART")) {
+        const issue = Issue.atStatement(file, staNode, "COMMON PART is obsolete", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 
